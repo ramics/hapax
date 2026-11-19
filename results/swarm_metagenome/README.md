@@ -50,6 +50,11 @@ The sister pairs are the point of the design. By consensus identity: the two
 the *gag-pol* swarm, and the two HCV strains in host Pt3 share no exact 31-mers
 at all. A tool that cannot tell two hosts' swarms apart will show it here.
 
+Tool versions, since the manifests for these runs recorded only paths (fixed in
+`experiments/common.py` afterwards): MEGAHIT 1.2.9, SPAdes 4.3.0 in metaSPAdes
+mode, Haploflow 1.0 (bioconda `h9948957_5`), ART 2016.06.05, minimap2
+2.31-r1302, samtools 1.24, MAFFT 7.526. All from bioconda via micromamba.
+
 ## Headline: 5 seeds, mean ± sd
 
 | tool | swarms found /8 | contigs per found swarm | completeness | cross-swarm chimaeras | haplotypes resolved | variant recall | variant precision | wall (s) | peak RSS (GB) |
