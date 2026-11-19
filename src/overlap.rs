@@ -228,7 +228,8 @@ fn oriented<'a>(reads: &'a [Vec<u8>], c: &Candidate, buf: &'a mut Vec<u8>) -> (&
 enum Tier1 {
     Accept(Edge),
     Reject,
-    Ambiguous,
+    /// carries the ungapped estimate, used if the pair is skipped by lazy tier 2
+    Ambiguous(Edge),
 }
 
 /// Tier 1: ungapped nucleotide comparison along the seed diagonal.
@@ -253,13 +254,14 @@ fn tier1(reads: &[Vec<u8>], c: &Candidate, sc: &Scorer, p: &OverlapParams) -> Ti
     }
     let l = (e0 - s0) as f32;
     let div = mm as f32 / l;
+    let e = Edge { a: c.a, b: c.b, rev: c.rev, offset: d, score: sc1, per_col: sc1 / l, identity: 1.0 - div, tier: 1 };
     if c.spread == 0 && div <= p.easy_div {
-        return Tier1::Accept(Edge { a: c.a, b: c.b, rev: c.rev, offset: d, score: sc1, per_col: sc1 / l, identity: 1.0 - div, tier: 1 });
+        return Tier1::Accept(e);
     }
     if c.spread == 0 && div > p.hard_div {
         return Tier1::Reject;
     }
-    Tier1::Ambiguous
+    Tier1::Ambiguous(Edge { tier: 3, ..e })
 }
 
 /// Tier 2: codon HMM over three offsets (or nucleotide-only in the ablation).
@@ -319,7 +321,7 @@ pub fn dispatch(reads: &[Vec<u8>], cands: &[Candidate], sc: &Scorer, p: &Overlap
     let t1: Vec<Tier1> = cands.par_iter().map(|c| tier1(reads, c, sc, p)).collect();
     let mut dsu = crate::layout::Dsu::new(reads.len());
     let mut edges = Vec::new();
-    let mut amb = Vec::new();
+    let mut amb: Vec<(Candidate, Edge)> = Vec::new();
     for (c, r) in cands.iter().zip(t1) {
         match r {
             Tier1::Accept(e) => {
@@ -330,16 +332,23 @@ pub fn dispatch(reads: &[Vec<u8>], cands: &[Candidate], sc: &Scorer, p: &Overlap
             Tier1::Reject => {
                 st.t1_reject.fetch_add(1, Ordering::Relaxed);
             }
-            Tier1::Ambiguous => amb.push(*c),
+            Tier1::Ambiguous(e) => amb.push((*c, e)),
         }
     }
     let comp: Vec<u32> = (0..reads.len() as u32).map(|i| dsu.find(i)).collect();
     let todo: Vec<Candidate> = if p.lazy_t2 {
-        let (keep, skip): (Vec<Candidate>, Vec<Candidate>) = amb.into_iter().partition(|c| comp[c.a as usize] != comp[c.b as usize]);
+        let (keep, skip): (Vec<(Candidate, Edge)>, Vec<(Candidate, Edge)>) = amb.into_iter().partition(|(c, _)| comp[c.a as usize] != comp[c.b as usize]);
         st.t2_skipped.fetch_add(skip.len() as u64, Ordering::Relaxed);
-        keep
+        // A skipped pair is already connected through near-identical joins, so
+        // its edge cannot change connectivity. It is still kept, with its cheap
+        // ungapped estimate (tier 3), because grouping ranks each read's edges
+        // and counts bridges: dropping these would leave reads with thinner
+        // edge lists, and a weak cross-population edge could then rank in a
+        // read's top k. (Observed: one sister-population merge in 5 seeds.)
+        edges.extend(skip.into_iter().map(|(_, e)| e));
+        keep.into_iter().map(|(c, _)| c).collect()
     } else {
-        amb
+        amb.into_iter().map(|(c, _)| c).collect()
     };
     edges.extend(todo.par_iter().filter_map(|c| tier2(reads, c, sc, p, st)).collect::<Vec<Edge>>());
     Dispatched { edges, tier1_comp: comp }

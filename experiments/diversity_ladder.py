@@ -48,6 +48,7 @@ CONFIGS = {
     "codon-spaced-cap": ["--mode", "codon", "--seed", "spaced", "-k", "16", "--lazy-t2", "0"],
     "codon-spaced-t1groups": ["--mode", "codon", "--seed", "spaced", "-k", "16", "--stage1", "tier1"],
     "nucleotide-spaced-t1groups": ["--mode", "nucleotide", "--seed", "spaced", "-k", "16", "--stage1", "tier1"],
+    "nucleotide-spaced-v0": ["--mode", "nucleotide", "--seed", "spaced", "-k", "16", "--bucket-cap", "0", "--lazy-t2", "0"],
 }
 DEFAULT_CONFIGS = ["codon", "nucleotide", "codon-spaced", "nucleotide-spaced"]
 
