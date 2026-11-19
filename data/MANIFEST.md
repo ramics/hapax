@@ -8,6 +8,6 @@ download date when a file is fetched.
 |---|---|---|---|
 | HIV-1 reference (coordinates for *env*, *gag/pol*) | HXB2, GenBank K03455 | 2026-11-19 (efetch fasta + gb) | thesis EvolveAGene seed was HXB2 *env* |
 | HIV-1 *env* population data with ground truth | Imo's curated alignments (thesis ch. 2/4) | not yet | ask Imo for location |
-| HBV reference (dual-coding stress test) | NC_003977 | 2026-11-19 (efetch fasta + gb) | ~2/3 of the genome is dual-coding |
+| HBV reference (dual-coding stress test) | NC_003977 | 2026-11-19 (efetch fasta + gb) | about half the genome is dual-coding (1,591 of 3,215 nt by CDS) |
 | Public wastewater metagenome | to choose (SRA) | not yet | pick after HIV results |
 | Human astrovirus 1 (ORF annotation truth) | NC_001943 | 2026-11-19 (efetch fasta + gb) | used by experiments/orf_annotation.py |
