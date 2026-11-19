@@ -62,6 +62,8 @@ REAL_PAIRS = [
 
 
 def env_pairs(env_fa: Path, targets=(0.002, 0.005, 0.01, 0.02), tol=0.4):
+    # targets are settable from the command line so the ladder can be filled in
+    # where it matters: the interesting region is between 2.5% and 10%.
     """Real env haplotype pairs nearest each target divergence."""
     s = read_fasta(env_fa)
     s = {k: v for k, v in s.items() if set(v) <= set("ACGT")}
@@ -117,14 +119,16 @@ def main():
     ap.add_argument("--cov-b", type=float, default=25.0)
     ap.add_argument("--read-len", type=int, default=250)
     ap.add_argument("--seed", type=int, default=1)
+    ap.add_argument("--env-targets", type=float, nargs="+", default=[0.002, 0.005, 0.01, 0.02])
+    ap.add_argument("--skip-real-pairs", action="store_true")
     a = ap.parse_args()
 
     rungs = []
-    for name, acc_a, acc_b in REAL_PAIRS:
+    for name, acc_a, acc_b in ([] if a.skip_real_pairs else REAL_PAIRS):
         sa = max(read_fasta(a.refdir / f"{acc_a}.fa").values(), key=len)
         sb = max(read_fasta(a.refdir / f"{acc_b}.fa").values(), key=len)
         rungs.append((name, sa, sb, divergence(sa, sb)))
-    for name, _, _, div, sa, sb in env_pairs(a.env):
+    for name, _, _, div, sa, sb in env_pairs(a.env, tuple(a.env_targets)):
         rungs.append((name, sa, sb, div))
     rungs.sort(key=lambda r: r[3])
 
