@@ -52,9 +52,9 @@ fn swarm_of_two_becomes_one_contig() {
     let op = OverlapParams::default();
     let cands = overlap::candidates(&reads, &idx, &op);
     let st = DispatchStats::default();
-    let edges = overlap::dispatch(&reads, &cands, &Scorer::new(ModelParams::default()), &op, &st);
+    let edges = overlap::dispatch(&reads, &cands, &Scorer::new(ModelParams::default()), &op, &st).edges;
     let lens: Vec<usize> = reads.iter().map(|r| r.len()).collect();
-    let groups = layout::group(reads.len(), &edges, 6, 5, 0.1);
+    let groups = layout::group(reads.len(), &edges, 6, 5, 0.1, None);
     let comps = layout::layout(&lens, &edges, Some(&groups));
     let sizes: Vec<usize> = comps.iter().map(|c| c.len()).collect();
     eprintln!("sizes {:?} edges {} t1 {} t2 {} t2acc {}", &sizes[..sizes.len().min(10)], edges.len(), st.get(&st.t1_accept), st.get(&st.t2), st.get(&st.t2_accept));

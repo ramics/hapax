@@ -73,9 +73,29 @@ class Genome:
     phase: list  # two lists of ints
     omega: list
     orig: list
+    # relative substitution rate per site (hypervariable loops > 1); None = uniform
+    rate: list | None = None
+    # per-site codon-indel hotspot flag (1 = indels of 1-4 codons allowed here)
+    hot: list | None = None
 
     def copy(self) -> "Genome":
-        return Genome(list(self.seq), [list(self.phase[0]), list(self.phase[1])], list(self.omega), list(self.orig))
+        return Genome(
+            list(self.seq),
+            [list(self.phase[0]), list(self.phase[1])],
+            list(self.omega),
+            list(self.orig),
+            None if self.rate is None else list(self.rate),
+            None if self.hot is None else list(self.hot),
+        )
+
+    def arrays(self):
+        """All per-position arrays, for splicing on indels."""
+        out = [self.seq, self.phase[0], self.phase[1], self.omega, self.orig]
+        if self.rate is not None:
+            out.append(self.rate)
+        if self.hot is not None:
+            out.append(self.hot)
+        return out
 
     def region_of(self, p: int) -> str:
         n = (self.phase[0][p] >= 0) + (self.phase[1][p] >= 0)
@@ -175,9 +195,12 @@ def mutate(rng, g: Genome, n_subs: int, omega: float, kappa: float = 2.0, indel_
     p_ts = kappa / (kappa + 2.0)
     done = 0
     tries = 0
+    cum = None
+    if g.rate is not None:
+        cum = np.cumsum(g.rate)
     while done < n_subs and tries < 200 * (n_subs + 1):
         tries += 1
-        p = int(rng.integers(len(g.seq)))
+        p = int(rng.integers(len(g.seq))) if cum is None else int(np.searchsorted(cum, rng.random() * cum[-1], side="right"))
         cur = g.seq[p]
         if rng.random() < p_ts:
             new = TRANSITION[cur]
@@ -188,38 +211,56 @@ def mutate(rng, g: Genome, n_subs: int, omega: float, kappa: float = 2.0, indel_
             done += 1
     n_indel = rng.poisson(n_subs * indel_per_sub)
     for _ in range(n_indel):
-        p = int(rng.integers(len(g.seq) - 3))
-        if g.phase[1][p] >= 0:
-            continue  # dual-coding regions tolerate no indels
-        if g.phase[0][p] >= 0:
-            p -= g.phase[0][p]  # codon boundary
-            if g.phase[1][p] >= 0 or g.phase[0][p] != 0:
-                continue
-            if rng.random() < 0.5:
-                for arr in (g.seq, g.phase[0], g.phase[1], g.omega, g.orig):
-                    del arr[p : p + 3]
-            else:
-                ins = None
-                for _ in range(20):
-                    c = sim.SENSE_CODONS[int(rng.integers(61))]
-                    ins = c
-                    break
-                g.seq[p:p] = list(ins)
-                g.phase[0][p:p] = [0, 1, 2]
-                g.phase[1][p:p] = [-1, -1, -1]
-                g.omega[p:p] = [1.0, 1.0, 1.0]
-                g.orig[p:p] = [-1, -1, -1]
-        else:
-            if rng.random() < 0.5:
-                for arr in (g.seq, g.phase[0], g.phase[1], g.omega, g.orig):
-                    del arr[p]
-            else:
-                g.seq.insert(p, str(rng.choice(list(BASES))))
-                g.phase[0].insert(p, -1)
-                g.phase[1].insert(p, -1)
-                g.omega.insert(p, 1.0)
-                g.orig.insert(p, -1)
+        p = int(rng.integers(len(g.seq) - 3)) if cum is None else int(np.searchsorted(cum, rng.random() * cum[-1], side="right"))
+        p = min(p, len(g.seq) - 4)
+        _indel_at(rng, g, p)
     return g
+
+
+def _splice_insert(g: Genome, p: int, bases: list, ph0: list) -> None:
+    n = len(bases)
+    g.seq[p:p] = bases
+    g.phase[0][p:p] = ph0
+    g.phase[1][p:p] = [-1] * n
+    g.omega[p:p] = [1.0] * n
+    g.orig[p:p] = [-1] * n
+    if g.rate is not None:
+        g.rate[p:p] = [g.rate[p - 1] if p > 0 else 1.0] * n
+    if g.hot is not None:
+        g.hot[p:p] = [g.hot[p - 1] if p > 0 else 0] * n
+
+
+def _indel_at(rng, g: Genome, p: int) -> None:
+    """One indel at p: frame-preserving in coding sequence, free in UTRs.
+
+    Dual-coding sites take none. Hotspot sites (hypervariable loops) take
+    indels of 1-4 codons, as env V1/V2/V4/V5 do; other coding sites take one
+    codon at most.
+    """
+    if g.phase[1][p] >= 0:
+        return
+    if g.phase[0][p] >= 0:
+        p -= g.phase[0][p]  # codon boundary
+        if p < 0 or g.phase[1][p] >= 0 or g.phase[0][p] != 0:
+            return
+        n_cod = int(rng.integers(1, 5)) if (g.hot is not None and g.hot[p]) else 1
+        if rng.random() < 0.5:
+            span = 3 * n_cod
+            if any(g.phase[0][q] < 0 or g.phase[1][q] >= 0 for q in range(p, min(p + span, len(g.seq)))):
+                return
+            for arr in g.arrays():
+                del arr[p : p + span]
+        else:
+            ins = []
+            for _ in range(n_cod):
+                ins += list(sim.SENSE_CODONS[int(rng.integers(61))])
+            _splice_insert(g, p, ins, [0, 1, 2] * n_cod)
+    else:
+        if rng.random() < 0.5:
+            for arr in g.arrays():
+                del arr[p]
+        else:
+            _splice_insert(g, p, [str(rng.choice(list(BASES)))], [-1])
 
 
 def random_tree(rng, n_tips: int):

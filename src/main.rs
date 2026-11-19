@@ -13,8 +13,11 @@
 //!   --omega FLOAT              model dN/dS [0.23]
 //!   --sub-err FLOAT            per-base substitution error [0.005]
 //!   --max-partners INT         candidate partners per read [16]
+//!   --bucket-cap INT           per-bucket, per-strand entries paired with each read [48]; 0 = all
 //!   --min-contig INT           shortest contig written [300]
 //!   --best-k INT               stage-1 clusters from each read's top k edges [6]
+//!   --lazy-t2 0|1              skip the HMM for pairs tier 1 already joined [1]
+//!   --stage1 bestk|tier1       first-stage clusters for grouping [bestk]
 //!   --min-bridge INT           edges needed to merge two clusters [5]
 //!   --bridge-frac FLOAT        ...and as a fraction of the smaller cluster [0.1]
 //!   --dump-edges 0|1           write edges.tsv for calibration [0]
@@ -50,6 +53,7 @@ fn main() {
     let mut dump_edges = false;
     let mut best_k = 6usize;
     let mut min_bridge = 5usize;
+    let mut stage1_tier1 = false;
     let mut bridge_frac = 0.1f32;
     let mut i = 2;
     while i < args.len() {
@@ -70,9 +74,12 @@ fn main() {
             "--omega" => mp.omega = v().parse().unwrap(),
             "--sub-err" => mp.sub_err = v().parse().unwrap(),
             "--max-partners" => op.max_partners = v().parse().unwrap(),
+            "--bucket-cap" => op.bucket_cap = v().parse().unwrap(),
             "--min-contig" => min_contig = v().parse().unwrap(),
             "-t" => threads = v().parse().unwrap(),
             "--best-k" => best_k = v().parse().unwrap(),
+            "--lazy-t2" => op.lazy_t2 = v() == "1",
+            "--stage1" => stage1_tier1 = v() == "tier1",
             "--min-bridge" => min_bridge = v().parse().unwrap(),
             "--bridge-frac" => bridge_frac = v().parse().unwrap(),
             "--dump-edges" => dump_edges = v() == "1",
@@ -102,7 +109,8 @@ fn main() {
     let t = Instant::now();
     let scorer = Scorer::new(mp.clone());
     let st = DispatchStats::default();
-    let edges = overlap::dispatch(&reads, &cands, &scorer, &op, &st);
+    let disp = overlap::dispatch(&reads, &cands, &scorer, &op, &st);
+    let edges = disp.edges;
     let t_overlap = t.elapsed().as_secs_f64();
 
     if dump_edges {
@@ -114,7 +122,8 @@ fn main() {
     }
     let t = Instant::now();
     let lens: Vec<usize> = reads.iter().map(|r| r.len()).collect();
-    let groups = layout::group(reads.len(), &edges, best_k, min_bridge, bridge_frac);
+    let stage1 = if stage1_tier1 { Some(&disp.tier1_comp[..]) } else { None };
+    let groups = layout::group(reads.len(), &edges, best_k, min_bridge, bridge_frac, stage1);
     let comps = layout::layout(&lens, &edges, Some(&groups));
     let n_groups = { let mut g = groups.clone(); g.sort(); g.dedup(); g.len() };
     let t_layout = t.elapsed().as_secs_f64();
@@ -194,7 +203,7 @@ fn main() {
         concat!(
             "{{\n  \"reads\": {},\n  \"mode\": \"{:?}\",\n  \"seed_shape\": \"{:?}\",\n  \"k\": {},\n  \"w\": {},\n  \"tau\": {},\n",
             "  \"candidates\": {},\n  \"tier1_accept\": {},\n  \"tier1_reject\": {},\n  \"tier2\": {},\n  \"tier2_accept\": {},\n",
-            "  \"tier2_dual_fallback\": {},\n  \"hmm_fraction\": {:.4},\n  \"tier2_codon_scored_nt\": {},\n  \"tier2_nucleotide_scored_nt\": {},\n",
+            "  \"tier2_dual_fallback\": {},\n  \"tier2_skipped_same_cluster\": {},\n  \"hmm_fraction\": {:.4},\n  \"tier2_codon_scored_nt\": {},\n  \"tier2_nucleotide_scored_nt\": {},\n",
             "  \"tier2_syn_mismatch\": {},\n  \"tier2_nonsyn_mismatch\": {},\n  \"phase_wins\": [{}, {}, {}],\n  \"edges\": {},\n  \"read_groups\": {},\n",
             "  \"components\": {},\n  \"contigs\": {},\n  \"contig_bases\": {},\n  \"placed_reads\": {},\n  \"variants\": {},\n",
             "  \"seconds\": {{\"read\": {:.3}, \"index\": {:.3}, \"candidates\": {:.3}, \"overlap\": {:.3}, \"layout\": {:.3}, \"consensus\": {:.3}, \"total\": {:.3}}}\n}}\n"
@@ -211,6 +220,7 @@ fn main() {
         g(&st.t2),
         g(&st.t2_accept),
         g(&st.t2_dual),
+        g(&st.t2_skipped),
         st.hmm_fraction(),
         g(&st.t2_codon_nt),
         g(&st.t2_nuc_nt),

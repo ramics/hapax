@@ -160,7 +160,9 @@ impl Index {
             .enumerate()
             .flat_map(|(i, ms)| ms.iter().map(move |m| (m.hash, i as u32, m.pos, m.rev)))
             .collect();
-        entries.par_sort_unstable_by_key(|e| (e.0, e.1, e.2));
+        // within a bucket: by canonical strand, then by seed position, so that a
+        // query can binary-search for the entries whose diagonal is nearest its own
+        entries.par_sort_unstable_by_key(|e| (e.0, e.3, e.2, e.1));
         // drop over-represented buckets
         let mut kept = Vec::with_capacity(entries.len());
         let mut i = 0;
@@ -175,6 +177,30 @@ impl Index {
             i = j;
         }
         Index { entries: kept, params: p, per_read }
+    }
+
+    /// Up to `cap` entries of bucket `h` on canonical strand `rev`, chosen as
+    /// those whose seed position is nearest `key`.
+    ///
+    /// This is what keeps candidate generation linear in depth. In a deep
+    /// sample every bucket holds hundreds of reads, and pairing a read with
+    /// all of them is quadratic in coverage. For fixed-length reads the
+    /// diagonal between two reads sharing a seed is a linear function of the
+    /// partner's seed position, so the entries nearest in position are the
+    /// partners with the largest overlaps -- the ones layout wants -- and the
+    /// same partners are nearest in every bucket the pair shares, so their
+    /// anchors still accumulate. `cap = 0` disables the cap.
+    pub fn nearest(&self, h: u64, rev: bool, key: i64, cap: usize) -> &[(u64, u32, u32, bool)] {
+        let b = self.lookup(h);
+        let lo = b.partition_point(|e| e.3 < rev);
+        let hi = b.partition_point(|e| e.3 <= rev);
+        let sub = &b[lo..hi];
+        if cap == 0 || sub.len() <= cap {
+            return sub;
+        }
+        let at = sub.partition_point(|e| (e.2 as i64) < key);
+        let start = at.saturating_sub(cap / 2).min(sub.len() - cap);
+        &sub[start..start + cap]
     }
 
     pub fn lookup(&self, h: u64) -> &[(u64, u32, u32, bool)] {
