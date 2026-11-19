@@ -48,6 +48,7 @@ use hapax::layout;
 use hapax::model::{ModelParams, Scorer};
 use hapax::overlap::{self, DispatchStats, Mode, OverlapParams};
 use hapax::phase::{self, PhaseParams};
+use hapax::lineage::{self, LineageParams};
 use hapax::seq;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
@@ -83,6 +84,28 @@ fn split_recursive(
     }
 }
 
+/// Split a contig into lineages (src/lineage.rs) and rebuild each; repeat on each
+/// piece, since a rebuilt consensus is cleaner and can expose a lineage the
+/// mixed one hid.
+fn split_lineages(
+    c: consensus::Contig,
+    reads: &[Vec<u8>],
+    cp: &ConsensusParams,
+    lp: &LineageParams,
+    depth: usize,
+    counter: &std::sync::atomic::AtomicUsize,
+) -> Vec<consensus::Contig> {
+    if depth >= lp.max_depth {
+        return vec![c];
+    }
+    let sets = lineage::split(&c, lp);
+    if sets.is_empty() {
+        return vec![c];
+    }
+    counter.fetch_add(sets.len() - 1, std::sync::atomic::Ordering::Relaxed);
+    sets.iter().flat_map(|s| split_lineages(consensus::build(reads, s, cp), reads, cp, lp, depth + 1, counter)).collect()
+}
+
 fn usage() -> ! {
     eprintln!("usage: hapax assemble -i reads.fa -o outdir [options]  (see src/main.rs header)");
     std::process::exit(2);
@@ -106,6 +129,8 @@ fn main() {
     let mut threads = 0usize;
     let mut dump_edges = false;
     let mut split_phase = false;
+    let mut split_lineage = false;
+    let mut lp = LineageParams::default();
     let mut split_cut = 0.0f32;
     let mut split_cut_depth = 1usize;
     let mut pp = PhaseParams::default();
@@ -135,6 +160,7 @@ fn main() {
             "--bucket-cap" => op.bucket_cap = v().parse().unwrap(),
             "--orf-caller" => cp.orf_caller = parse_caller(&v()),
             "--min-orf" => cp.min_orf = v().parse().unwrap(),
+            "--rounds" => cp.rounds = v().parse().unwrap(),
             "--min-contig" => min_contig = v().parse().unwrap(),
             "-t" => threads = v().parse().unwrap(),
             "--best-k" => best_k = v().parse().unwrap(),
@@ -146,6 +172,12 @@ fn main() {
             "--split-cut" => split_cut = v().parse().unwrap(),
             "--split-cut-depth" => split_cut_depth = v().parse().unwrap(),
             "--split-phase" => split_phase = v() == "1",
+            "--split-lineage" => split_lineage = v() == "1",
+            "--lineage-div" => lp.max_div = v().parse().unwrap(),
+            "--lineage-min-reads" => lp.min_lineage_reads = v().parse().unwrap(),
+            "--lineage-depth" => lp.max_depth = v().parse().unwrap(),
+            "--lineage-split-div" => lp.min_split_div = v().parse().unwrap(),
+            "--lineage-conflict-frac" => lp.max_conflict_frac = v().parse().unwrap(),
             "--split-sep" => pp.min_sep = v().parse().unwrap(),
             "--split-min-af" => pp.min_af = v().parse().unwrap(),
             "--split-sites" => pp.min_sites = v().parse().unwrap(),
@@ -207,6 +239,9 @@ fn main() {
         .filter(|c| c.len() >= 2)
         .flat_map(|c| {
             let built = consensus::build(&reads, c, &cp);
+            if split_lineage {
+                return split_lineages(built, &reads, &cp, &lp, 0, &splits);
+            }
             if split_phase {
                 split_recursive(built, &reads, &cp, &pp, 0, &splits)
             } else {

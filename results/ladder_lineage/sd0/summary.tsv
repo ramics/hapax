@@ -1,0 +1,9 @@
+assembler	diversity	n_seeds	tau	chimaera_rate_mean	chimaera_rate_sd	chimeric_base_fraction_mean	chimeric_base_fraction_sd	entities_missed_mean	entities_missed_sd	hmm_fraction_mean	hmm_fraction_sd	mean_contigs_per_found_entity_mean	mean_contigs_per_found_entity_sd	mean_recovered_mean	mean_recovered_sd	wall_s_mean	wall_s_sd
+hapax-codon-lineage	0.05	5	0.9	0.0	0.0	0.0	0.0	0.0	0.0	0.0189	0.0076	2.0	0.1768	0.9988	0.0006	3.7173	0.9403
+hapax-nucleotide-lineage	0.05	5	0.9	0.0	0.0	0.0	0.0	0.0	0.0	0.0189	0.0076	2.0	0.1768	0.9988	0.0006	3.2369	0.2182
+hapax-codon-lineage	0.1	5	0.9	0.0	0.0	0.0	0.0	0.0	0.0	0.0503	0.0129	3.25	0.6847	0.9955	0.0062	3.6051	0.113
+hapax-nucleotide-lineage	0.1	5	0.9	0.0	0.0	0.0	0.0	0.0	0.0	0.0503	0.0129	3.25	0.6847	0.9955	0.0062	3.9565	0.8119
+hapax-codon-lineage	0.15	5	0.9	0.0	0.0	0.0	0.0	0.0	0.0	0.0871	0.0253	3.1	0.4183	0.9969	0.0029	4.1429	1.008
+hapax-nucleotide-lineage	0.15	5	0.9	0.0	0.0	0.0	0.0	0.0	0.0	0.0871	0.0253	3.2	0.4108	0.9962	0.0033	3.9256	0.916
+hapax-codon-lineage	0.2	5	0.9	0.0	0.0	0.0	0.0	0.0	0.0	0.1487	0.0206	3.7	1.1646	0.9924	0.01	3.7343	0.098
+hapax-nucleotide-lineage	0.2	5	0.9	0.0	0.0	0.0	0.0	0.0	0.0	0.1487	0.0206	4.35	0.9454	0.9967	0.001	3.4168	0.1257

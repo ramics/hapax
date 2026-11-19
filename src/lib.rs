@@ -7,6 +7,7 @@ pub mod hmm;
 pub mod consensus;
 pub mod index;
 pub mod layout;
+pub mod lineage;
 pub mod overlap;
 pub mod phase;
 pub mod model;

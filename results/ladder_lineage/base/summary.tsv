@@ -1,0 +1,9 @@
+assembler	diversity	n_seeds	tau	chimaera_rate_mean	chimaera_rate_sd	chimeric_base_fraction_mean	chimeric_base_fraction_sd	entities_missed_mean	entities_missed_sd	hmm_fraction_mean	hmm_fraction_sd	mean_contigs_per_found_entity_mean	mean_contigs_per_found_entity_sd	mean_recovered_mean	mean_recovered_sd	wall_s_mean	wall_s_sd
+hapax-codon	0.05	5	0.9	0.0	0.0	0.0	0.0	0.0	0.0	0.0189	0.0076	1.0	0.0	0.9991	0.0005	1.94	0.0868
+hapax-nucleotide	0.05	5	0.9	0.0	0.0	0.0	0.0	0.0	0.0	0.0189	0.0076	1.0	0.0	0.9991	0.0005	1.8762	0.0626
+hapax-codon	0.1	5	0.9	0.0667	0.1491	0.0654	0.1461	0.2	0.4472	0.0503	0.0129	1.05	0.1118	0.949	0.112	2.0333	0.0567
+hapax-nucleotide	0.1	5	0.9	0.0667	0.1491	0.0653	0.1461	0.2	0.4472	0.0503	0.0129	1.05	0.1118	0.949	0.112	1.8928	0.0485
+hapax-codon	0.15	5	0.9	0.04	0.0894	0.04	0.0893	0.0	0.0	0.0871	0.0253	1.25	0.3062	0.9976	0.0026	2.1484	0.0694
+hapax-nucleotide	0.15	5	0.9	0.04	0.0894	0.04	0.0894	0.0	0.0	0.0871	0.0253	1.35	0.285	0.9975	0.0025	1.9099	0.0682
+hapax-codon	0.2	5	0.9	0.04	0.0894	0.0387	0.0865	0.2	0.4472	0.1487	0.0206	1.6333	0.415	0.9459	0.1164	2.3024	0.0304
+hapax-nucleotide	0.2	5	0.9	0.0	0.0	0.0	0.0	0.0	0.0	0.1487	0.0206	1.7	0.3708	0.998	0.0007	1.9414	0.0973

@@ -1,0 +1,56 @@
+contig_1	1990	A	{'G': 16, 'A': 12}
+contig_1	1993	T	{'A': 16, 'T': 12}
+contig_1	1996	A	{'T': 16, 'A': 12}
+contig_1	2038	C	{'C': 10, 'T': 16}
+contig_1	2122	G	{'A': 17}
+contig_1	2128	A	{'T': 17, 'A': 2}
+contig_1	2140	A	{'G': 14, 'A': 5}
+contig_1	2245	T	{'C': 46, 'T': 26}
+contig_1	2273	T	{'G': 49, 'T': 24}
+contig_1	2274	T	{'A': 49, 'T': 24}
+contig_1	2282	T	{'C': 28, 'T': 23}
+contig_1	2289	T	{'C': 27, 'T': 22}
+contig_1	2305	T	{'T': 24, 'C': 42, '-': 2}
+contig_1	2834	A	{'G': 21, 'A': 13}
+contig_1	3023	G	{'A': 18, 'G': 16}
+contig_1	3152	A	{'G': 13, 'A': 11}
+contig_1	3194	C	{'C': 15, 'T': 16}
+contig_1	3242	C	{'C': 15, 'T': 22}
+contig_1	3287	G	{'G': 17, 'A': 30}
+contig_1	3514	G	{'A': 21, 'G': 19, 'C': 1}
+contig_1	3635	A	{'C': 14, 'T': 14, 'A': 12}
+contig_1	3647	A	{'T': 22, 'A': 16}
+contig_1	3794	A	{'G': 16, 'A': 15, 'T': 1}
+contig_1	4270	C	{'T': 28, 'C': 1}
+contig_1	4393	G	{'A': 2}
+contig_1	4821	T	{'C': 30, 'A': 1, 'T': 24}
+contig_1	4860	C	{'C': 16, 'T': 42}
+contig_1	4918	C	{'C': 40, 'T': 48}
+contig_1	4981	A	{'G': 67, 'A': 14}
+contig_1	5029	T	{'T': 17, 'C': 37}
+contig_1	5149	G	{'A': 29, 'G': 19}
+contig_1	5170	C	{'C': 25, 'T': 37}
+contig_1	5206	A	{'A': 29, 'G': 48}
+contig_1	5212	G	{'G': 29, 'A': 48}
+contig_1	5281	C	{'C': 31, 'A': 33}
+contig_1	5503	A	{'A': 24, 'G': 34}
+contig_1	5524	T	{'T': 28, 'C': 33}
+contig_1	5614	G	{'A': 28, 'G': 10}
+contig_1	5734	C	{'T': 9, 'C': 6}
+contig_1	5764	G	{'A': 8, 'G': 6}
+contig_1	5854	G	{'A': 5, 'G': 1}
+contig_1	5857	G	{'T': 5, 'C': 1}
+contig_1	5860	C	{'T': 6}
+contig_1	5872	A	{'A': 4, 'G': 5}
+contig_1	5914	A	{'G': 8, 'A': 5}
+contig_1	5917	T	{'C': 8, 'T': 5}
+contig_1	5932	A	{'G': 8, 'A': 6}
+contig_1	5953	A	{'G': 10, 'A': 5}
+contig_1	5956	A	{'G': 10, 'A': 5}
+contig_1	5968	G	{'A': 10, 'G': 5}
+contig_2	35	C	{'T': 5, 'C': 4}
+contig_2	290	T	{'T': 26, 'C': 31}
+contig_2	308	C	{'T': 33, 'C': 19}
+contig_2	409	G	{'A': 21, 'G': 18}
+contig_2	410	A	{'G': 22, 'A': 18}
+contig_7	344	A	{'A': 2, 'G': 4}

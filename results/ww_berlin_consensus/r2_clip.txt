@@ -1,0 +1,1 @@
+  reads 2572 clipped>=10: 2455 mode: (14, 1580)

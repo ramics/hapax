@@ -1,0 +1,7 @@
+run	blocks	identity
+default	2	97.81%
+split	2	99.63%
+split_div0.06	2	99.63%
+split_div0.09	3	98.66%
+split_nt	2	99.63%
+megahit_trimmed	2	98.92%
