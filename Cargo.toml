@@ -1,0 +1,13 @@
+[package]
+name = "hapax"
+version = "0.1.0"
+edition = "2021"
+description = "Codon-aware assembly for viral populations"
+
+[dependencies]
+rayon = "1.10"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
