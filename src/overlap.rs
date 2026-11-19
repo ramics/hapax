@@ -42,6 +42,9 @@ pub struct OverlapParams {
     pub min_overlap: usize,
     /// max candidate partners kept per read (by anchor support)
     pub max_partners: usize,
+    /// per-bucket, per-strand cap on entries a read pairs with (0 = none)
+    pub bucket_cap: usize,
+    pub lazy_t2: bool,
     /// diagonal tolerance when clustering anchors
     pub diag_tol: i64,
     pub easy_div: f32,
@@ -60,6 +63,8 @@ impl Default for OverlapParams {
             min_anchors: 2,
             min_overlap: 50,
             max_partners: 16,
+            bucket_cap: 48,
+            lazy_t2: true,
             diag_tol: 10,
             easy_div: 0.03,
             hard_div: 0.30,
@@ -104,6 +109,8 @@ pub struct DispatchStats {
     pub t2: AtomicU64,
     pub t2_accept: AtomicU64,
     pub t2_dual: AtomicU64,
+    /// ambiguous pairs not sent to the HMM because tier 1 already joined them
+    pub t2_skipped: AtomicU64,
     pub t2_codon_nt: AtomicU64,
     pub t2_nuc_nt: AtomicU64,
     pub t2_syn: AtomicU64,
@@ -139,7 +146,10 @@ pub fn candidates(reads: &[Vec<u8>], idx: &Index, p: &OverlapParams) -> Vec<Cand
             let la = reads[i].len() as i64;
             let mut anchors: Vec<(u32, bool, i64)> = Vec::new();
             for s in &idx.per_read[i] {
-                for &(_, j, pb, rb) in idx.lookup(s.hash) {
+                // same orientation partners: pb near pa; opposite: pb near la - span - pa
+                let same = idx.nearest(s.hash, s.rev, s.pos as i64, p.bucket_cap);
+                let opp = idx.nearest(s.hash, !s.rev, la - span - s.pos as i64, p.bucket_cap);
+                for &(_, j, pb, rb) in same.iter().chain(opp.iter()) {
                     if j as usize == i {
                         continue;
                     }
@@ -205,91 +215,134 @@ pub fn candidates(reads: &[Vec<u8>], idx: &Index, p: &OverlapParams) -> Vec<Cand
     all
 }
 
+fn oriented<'a>(reads: &'a [Vec<u8>], c: &Candidate, buf: &'a mut Vec<u8>) -> (&'a [u8], &'a [u8]) {
+    let a = &reads[c.a as usize];
+    if c.rev {
+        *buf = revcomp(&reads[c.b as usize]);
+        (a, &buf[..])
+    } else {
+        (a, &reads[c.b as usize][..])
+    }
+}
+
+enum Tier1 {
+    Accept(Edge),
+    Reject,
+    Ambiguous,
+}
+
+/// Tier 1: ungapped nucleotide comparison along the seed diagonal.
+fn tier1(reads: &[Vec<u8>], c: &Candidate, sc: &Scorer, p: &OverlapParams) -> Tier1 {
+    let mut buf = Vec::new();
+    let (a, b) = oriented(reads, c, &mut buf);
+    let d = c.diag;
+    let s0 = d.max(0) as usize;
+    let e0 = (a.len() as i64).min(d + b.len() as i64).max(0) as usize;
+    if e0 <= s0 || e0 - s0 < p.min_overlap {
+        return Tier1::Reject;
+    }
+    let mut mm = 0usize;
+    let mut sc1 = 0.0f32;
+    for ia in s0..e0 {
+        let x = a[ia];
+        let y = b[(ia as i64 - d) as usize];
+        if x != y {
+            mm += 1;
+        }
+        sc1 += sc.nuc(x, y);
+    }
+    let l = (e0 - s0) as f32;
+    let div = mm as f32 / l;
+    if c.spread == 0 && div <= p.easy_div {
+        return Tier1::Accept(Edge { a: c.a, b: c.b, rev: c.rev, offset: d, score: sc1, per_col: sc1 / l, identity: 1.0 - div, tier: 1 });
+    }
+    if c.spread == 0 && div > p.hard_div {
+        return Tier1::Reject;
+    }
+    Tier1::Ambiguous
+}
+
+/// Tier 2: codon HMM over three offsets (or nucleotide-only in the ablation).
+fn tier2(reads: &[Vec<u8>], c: &Candidate, sc: &Scorer, p: &OverlapParams, st: &DispatchStats) -> Option<Edge> {
+    let mut buf = Vec::new();
+    let (a, b) = oriented(reads, c, &mut buf);
+    let d = c.diag;
+    st.t2.fetch_add(1, Ordering::Relaxed);
+    let aln = match p.mode {
+        Mode::Nucleotide => hmm::align(a, b, d, None, sc, &p.hmm)?,
+        Mode::Codon => {
+            let ps = hmm::score_pair(a, b, d, sc, &p.hmm, p.dual_margin)?;
+            if ps.dual {
+                st.t2_dual.fetch_add(1, Ordering::Relaxed);
+                ps.nucleotide
+            } else {
+                // count a phase win only where codon scoring was actually used
+                // and beat the other grids (identical reads tie on all three)
+                if ps.best.codon_nt > 0 && ps.per_phase.iter().filter(|&&x| x >= ps.best.score).count() == 1 {
+                    st.phase_wins[ps.best.phase as usize].fetch_add(1, Ordering::Relaxed);
+                }
+                ps.best
+            }
+        }
+    };
+    st.t2_codon_nt.fetch_add(aln.codon_nt as u64, Ordering::Relaxed);
+    st.t2_nuc_nt.fetch_add(aln.nuc_nt as u64, Ordering::Relaxed);
+    st.t2_syn.fetch_add(aln.syn as u64, Ordering::Relaxed);
+    st.t2_nonsyn.fetch_add(aln.nonsyn as u64, Ordering::Relaxed);
+    let per_col = aln.score / aln.cols.max(1) as f32;
+    if aln.identity() >= p.min_ident && aln.overlap_len() as usize >= p.min_overlap && per_col >= p.tau {
+        st.t2_accept.fetch_add(1, Ordering::Relaxed);
+        Some(Edge { a: c.a, b: c.b, rev: c.rev, offset: aln.a_start as i64 - aln.b_start as i64, score: aln.score, per_col, identity: aln.identity(), tier: 2 })
+    } else {
+        None
+    }
+}
+
+/// Output of dispatch: accepted edges plus the tier-1 component of each read.
+pub struct Dispatched {
+    pub edges: Vec<Edge>,
+    pub tier1_comp: Vec<u32>,
+}
+
 /// Run the two tiers over all candidates.
-pub fn dispatch(reads: &[Vec<u8>], cands: &[Candidate], sc: &Scorer, p: &OverlapParams, st: &DispatchStats) -> Vec<Edge> {
+///
+/// Tier 1 runs first over everything. Its accepts are near-identical,
+/// indel-free overlaps, so their connected components are clusters of reads
+/// from one haplotype neighbourhood that no codon model would separate. When
+/// `lazy_t2` is set, an ambiguous pair whose two reads already sit in the same
+/// tier-1 component is not sent to the HMM: its answer cannot change the
+/// grouping, and it is exactly the work the two-tier design exists to avoid.
+/// The HMM is spent only on pairs that would join different clusters -- the
+/// decisions where synonymous versus non-synonymous differences matter.
+pub fn dispatch(reads: &[Vec<u8>], cands: &[Candidate], sc: &Scorer, p: &OverlapParams, st: &DispatchStats) -> Dispatched {
     st.candidates.fetch_add(cands.len() as u64, Ordering::Relaxed);
-    cands
-        .par_iter()
-        .filter_map(|c| {
-            let a = &reads[c.a as usize];
-            let braw = &reads[c.b as usize];
-            let bo;
-            let b: &[u8] = if c.rev {
-                bo = revcomp(braw);
-                &bo
-            } else {
-                braw
-            };
-            // ---- tier 1: ungapped along the median diagonal
-            let d = c.diag;
-            let s0 = d.max(0) as usize;
-            let e0 = (a.len() as i64).min(d + b.len() as i64).max(0) as usize;
-            if e0 <= s0 || e0 - s0 < p.min_overlap {
-                st.t1_reject.fetch_add(1, Ordering::Relaxed);
-                return None;
-            }
-            let mut mm = 0usize;
-            let mut sc1 = 0.0f32;
-            for ia in s0..e0 {
-                let x = a[ia];
-                let y = b[(ia as i64 - d) as usize];
-                if x != y {
-                    mm += 1;
-                }
-                sc1 += sc.nuc(x, y);
-            }
-            let l = (e0 - s0) as f32;
-            let div = mm as f32 / l;
-            if c.spread == 0 && div <= p.easy_div {
+    let t1: Vec<Tier1> = cands.par_iter().map(|c| tier1(reads, c, sc, p)).collect();
+    let mut dsu = crate::layout::Dsu::new(reads.len());
+    let mut edges = Vec::new();
+    let mut amb = Vec::new();
+    for (c, r) in cands.iter().zip(t1) {
+        match r {
+            Tier1::Accept(e) => {
                 st.t1_accept.fetch_add(1, Ordering::Relaxed);
-                return Some(Edge { a: c.a, b: c.b, rev: c.rev, offset: d, score: sc1, per_col: sc1 / l, identity: 1.0 - div, tier: 1 });
+                dsu.union(e.a, e.b);
+                edges.push(e);
             }
-            if c.spread == 0 && div > p.hard_div {
+            Tier1::Reject => {
                 st.t1_reject.fetch_add(1, Ordering::Relaxed);
-                return None;
             }
-            // ---- tier 2: codon HMM over three offsets (or nucleotide-only)
-            st.t2.fetch_add(1, Ordering::Relaxed);
-            let aln = match p.mode {
-                Mode::Nucleotide => hmm::align(a, b, d, None, sc, &p.hmm)?,
-                Mode::Codon => {
-                    let ps = hmm::score_pair(a, b, d, sc, &p.hmm, p.dual_margin)?;
-                    if ps.dual {
-                        st.t2_dual.fetch_add(1, Ordering::Relaxed);
-                        ps.nucleotide
-                    } else {
-                        // count a phase win only where codon scoring was actually used
-                        // and beat the other grids (identical reads tie on all three)
-                        let second = ps.per_phase.iter().filter(|&&x| x < ps.best.score).fold(f32::MIN, |m, &x| m.max(x));
-                        if ps.best.codon_nt > 0 && ps.per_phase.iter().filter(|&&x| x >= ps.best.score).count() == 1 && second < ps.best.score {
-                            st.phase_wins[ps.best.phase as usize].fetch_add(1, Ordering::Relaxed);
-                        }
-                        ps.best
-                    }
-                }
-            };
-            st.t2_codon_nt.fetch_add(aln.codon_nt as u64, Ordering::Relaxed);
-            st.t2_nuc_nt.fetch_add(aln.nuc_nt as u64, Ordering::Relaxed);
-            st.t2_syn.fetch_add(aln.syn as u64, Ordering::Relaxed);
-            st.t2_nonsyn.fetch_add(aln.nonsyn as u64, Ordering::Relaxed);
-            let per_col = aln.score / aln.cols.max(1) as f32;
-            if aln.identity() >= p.min_ident && aln.overlap_len() as usize >= p.min_overlap && per_col >= p.tau {
-                st.t2_accept.fetch_add(1, Ordering::Relaxed);
-                Some(Edge {
-                    a: c.a,
-                    b: c.b,
-                    rev: c.rev,
-                    offset: aln.a_start as i64 - aln.b_start as i64,
-                    score: aln.score,
-                    per_col,
-                    identity: aln.identity(),
-                    tier: 2,
-                })
-            } else {
-                None
-            }
-        })
-        .collect()
+            Tier1::Ambiguous => amb.push(*c),
+        }
+    }
+    let comp: Vec<u32> = (0..reads.len() as u32).map(|i| dsu.find(i)).collect();
+    let todo: Vec<Candidate> = if p.lazy_t2 {
+        let (keep, skip): (Vec<Candidate>, Vec<Candidate>) = amb.into_iter().partition(|c| comp[c.a as usize] != comp[c.b as usize]);
+        st.t2_skipped.fetch_add(skip.len() as u64, Ordering::Relaxed);
+        keep
+    } else {
+        amb
+    };
+    edges.extend(todo.par_iter().filter_map(|c| tier2(reads, c, sc, p, st)).collect::<Vec<Edge>>());
+    Dispatched { edges, tier1_comp: comp }
 }
 
 #[cfg(test)]

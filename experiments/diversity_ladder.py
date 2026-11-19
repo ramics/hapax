@@ -43,7 +43,13 @@ CONFIGS = {
     "nucleotide": ["--mode", "nucleotide", "--seed", "contiguous"],
     "codon-spaced": ["--mode", "codon", "--seed", "spaced", "-k", "16"],
     "nucleotide-spaced": ["--mode", "nucleotide", "--seed", "spaced", "-k", "16"],
+    # dispatch ablations (experiments/README: "dispatch")
+    "codon-spaced-v0": ["--mode", "codon", "--seed", "spaced", "-k", "16", "--bucket-cap", "0", "--lazy-t2", "0"],
+    "codon-spaced-cap": ["--mode", "codon", "--seed", "spaced", "-k", "16", "--lazy-t2", "0"],
+    "codon-spaced-t1groups": ["--mode", "codon", "--seed", "spaced", "-k", "16", "--stage1", "tier1"],
+    "nucleotide-spaced-t1groups": ["--mode", "nucleotide", "--seed", "spaced", "-k", "16", "--stage1", "tier1"],
 }
+DEFAULT_CONFIGS = ["codon", "nucleotide", "codon-spaced", "nucleotide-spaced"]
 
 
 def run_external(tool: str, reads: Path, out: Path, threads: int) -> Path | None:
@@ -72,7 +78,7 @@ def main():
     ap.add_argument("--n-seeds", type=int, default=5)
     ap.add_argument("--diversities", type=float, nargs="+", default=[0.05, 0.10, 0.15, 0.20])
     ap.add_argument("--taus", type=float, nargs="+", default=[0.7, 0.9, 1.0])
-    ap.add_argument("--configs", nargs="+", default=list(CONFIGS))
+    ap.add_argument("--configs", nargs="+", default=DEFAULT_CONFIGS, choices=list(CONFIGS))
     ap.add_argument("--sister-div", type=float, default=0.30)
     ap.add_argument("--coverage", type=float, default=50.0)
     ap.add_argument("--external", nargs="*", default=[], help="megahit metaspades penguin")

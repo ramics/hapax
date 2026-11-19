@@ -97,13 +97,21 @@ pub fn best_k(n: usize, edges: &[Edge], k: usize, mutual: bool) -> Vec<Edge> {
 /// swarm share hundreds of accepted overlaps; two sister populations meet in a
 /// handful of conserved stretches. Counting bridges is what tells them apart,
 /// where no single overlap score can.
-pub fn group(n: usize, edges: &[Edge], k: usize, min_bridge: usize, bridge_frac: f32) -> Vec<u32> {
-    let strong = best_k(n, edges, k, false);
-    let mut d1 = Dsu::new(n);
-    for e in &strong {
-        d1.union(e.a, e.b);
-    }
-    let c1: Vec<u32> = (0..n as u32).map(|i| d1.find(i)).collect();
+///
+/// `stage1`, when given, replaces the best-k clusters (the tier-1 components
+/// from dispatch are the natural choice: near-identical, indel-free joins).
+pub fn group(n: usize, edges: &[Edge], k: usize, min_bridge: usize, bridge_frac: f32, stage1: Option<&[u32]>) -> Vec<u32> {
+    let c1: Vec<u32> = match stage1 {
+        Some(s) => s.to_vec(),
+        None => {
+            let strong = best_k(n, edges, k, false);
+            let mut d1 = Dsu::new(n);
+            for e in &strong {
+                d1.union(e.a, e.b);
+            }
+            (0..n as u32).map(|i| d1.find(i)).collect()
+        }
+    };
     let mut size = std::collections::HashMap::<u32, usize>::new();
     for &c in &c1 {
         *size.entry(c).or_insert(0) += 1;
