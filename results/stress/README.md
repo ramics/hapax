@@ -58,5 +58,53 @@ how a novel virus gets invented rather than missed.
 
 ## Results
 
-(filled in by the runs; each table carries the panel's divergence and the
-tool's wall clock and peak memory from the same run)
+### The community, Illumina and nanopore (seed 1)
+
+Panel: 33 truth sequences, 23 scored genomes (three bacterial background
+chromosomes plus twenty viral) and ten env swarm haplotypes. Wall clock and
+peak memory on 4 cores: MEGAHIT 1228 s / 142 MB, metaSPAdes 708 s / 1078 MB,
+Haploflow 203 s, metaFlye 125 s / 303 MB (nanopore, 27 Mbp at ~8x mean).
+
+See `table.md`. In short: nobody collapsed more than one relative, nobody
+recovered a single swarm haplotype, and the two tools with the cleanest
+novelty scores are the two plain metagenome assemblers.
+
+- **MEGAHIT** 18 of 23 genomes, 5 of 7 relatives separate, no collapse, no
+  real cross-genome chimaera. Its three chimaeras are all joins between env
+  swarm haplotypes.
+- **metaSPAdes** deleted RaTG13 outright: zero contigs assigned to it, 0%
+  covered, while SARS-CoV-2 came back complete. It also emitted a 13.8 kb
+  contig that runs HIV-1 subtype B from 1275 to 9275, wraps through B's
+  start, then continues as subtype C, every 500 nt window matching its part
+  at 100% identity. A fabricated inter-subtype recombinant.
+- **Haploflow** 1 of 7 relatives, bat CoV BM48-31 collapsed, and 7
+  cross-genome chimaeras. It is built for two-strain mixtures and this is not
+  one.
+- **metaFlye** on nanopore collapsed nothing but joined bacteria to viruses:
+  E. coli to HHV-5, and E. coli to bat CoV BM48-31 over 36 kb.
+
+One join is not an error and is excluded: phage lambda and E. coli K-12 share
+3.5 kb at 98% identity, so a contig running between them is correct sequence.
+
+### Where the collapse threshold sits
+
+`ladder.md`: the same two-member mixture at 100x and 25x, MEGAHIT, across real
+sequence pairs. The minor member is **erased at or below 2.5% divergence**
+(zero contigs, zero coverage, and at the two closest rungs the single output
+contig is a mosaic of both), half recovered at 4%, and cleanly separate from
+10.5% upwards.
+
+That is the number this exercise was for. Between-species novelty is solved:
+a relative 10% away comes back as its own genome from a 2010s de Bruijn
+assembler. Below about 4%, a virus that is really there disappears into its
+neighbour. Intra-host swarms, and the novel viruses that are near-relatives of
+known ones, live entirely inside that blind spot.
+
+### The haplotype panels
+
+`within_*`, `ctrl*` and `p*` JSONs: on real within-host env sets, no
+short-read tool recovered more than 2 of 20 co-existing haplotypes, and on
+5-haplotype panels at even abundance no tool exceeded 2 of 5. These runs are
+single-seed and the tools are built for whole genomes rather than a 2.5 kb
+amplicon, so they are a weaker claim than the community results and are kept
+as supporting evidence, not a headline.

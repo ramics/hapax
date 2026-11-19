@@ -29,3 +29,21 @@ sample of the haplotypes that co-existed in one person.
 
 Two ZM247F sequences carry IUPAC ambiguity codes and are dropped by
 `bench_panel.build_panel` rather than resolved.
+
+## Mock metagenome components
+
+Downloaded 2026-11-19 from NCBI nuccore. Background: `NC_000913.3` (E. coli
+K-12 MG1655), `NC_007795.1` (S. aureus NCTC 8325), `NC_009614.1` (Phocaeicola
+vulgatus ATCC 8482). Phages: `NC_001416.1` (lambda), `NC_002167.1` (HK97),
+`NC_000866.4` (T4), `NC_001422.1` (phiX174), `NC_024711.1` (Carjivirus
+communis / crAssphage). Viruses: `NC_045512.2` (SARS-CoV-2), `MN996532.2`
+(RaTG13), `NC_014470.1` (bat CoV BM48-31), `NC_003977.2` (HBV genotype D),
+`X70185.1` (HBV genotype A), `NC_001802.1` (HIV-1 subtype B), `AY772699.1`
+(HIV-1 subtype C, 04ZASK146B1), `NC_001526.4` (HPV16), `NC_001525.1` (HPV11),
+`NC_006273.2` (HHV-5 Merlin), `NC_001716.2` (HHV-7), `NC_002076.2` (TTV1),
+`NC_039477.1` (norovirus GII), `NC_001542.1` (rabies), `NC_075022.1` (VEEV).
+
+Measured whole-genome divergence of the known/relative pairs (edit distance
+over the longer genome): SARS-CoV-2/RaTG13 0.040, HBV D/A 0.105, HIV-1 B/C
+0.163, SARS-CoV-2/BM48-31 0.240, lambda/HK97 0.458, HPV16/HPV11 0.506,
+HHV-5/HHV-7 0.546.

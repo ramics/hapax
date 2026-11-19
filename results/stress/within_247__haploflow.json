@@ -1,0 +1,98 @@
+{
+  "n_truth": 20,
+  "n_contigs": 6,
+  "total_contig_bp": 12555,
+  "n50": 2256,
+  "recovered": 2,
+  "recovered_frac": 0.1,
+  "recovered_names": [
+    "EU166791.1",
+    "JX239306.1"
+  ],
+  "best_identity_median": 1.0,
+  "cross_host_chimaeras": 0,
+  "within_host_switches": 4,
+  "contigs_with_frameshift": 2,
+  "frameshifts_total": 16,
+  "frameshifts_per_kb": 1.2744,
+  "per_contig": [
+    {
+      "contig": "Contig_0_flow_187.071_cc_0",
+      "length": 2544,
+      "best": "EU166791.1",
+      "identity": 1.0,
+      "orientation": "-",
+      "frameshifts": 0,
+      "indels": 0,
+      "fs_per_kb": 0.0,
+      "cross_host_chimaera": false,
+      "within_host_switch": false,
+      "window_haplotypes": 1
+    },
+    {
+      "contig": "Contig_1_flow_86.3153_cc_0",
+      "length": 2492,
+      "best": "JX239306.1",
+      "identity": 1.0,
+      "orientation": "-",
+      "frameshifts": 0,
+      "indels": 0,
+      "fs_per_kb": 0.0,
+      "cross_host_chimaera": false,
+      "within_host_switch": true,
+      "window_haplotypes": 2
+    },
+    {
+      "contig": "Contig_2_flow_54.1982_cc_0",
+      "length": 2228,
+      "best": "JX239326.1",
+      "identity": 0.99596,
+      "orientation": "-",
+      "frameshifts": 0,
+      "indels": 0,
+      "fs_per_kb": 0.0,
+      "cross_host_chimaera": false,
+      "within_host_switch": true,
+      "window_haplotypes": 2
+    },
+    {
+      "contig": "Contig_3_flow_27.2917_cc_0",
+      "length": 2256,
+      "best": "JX239306.1",
+      "identity": 0.96144,
+      "orientation": "-",
+      "frameshifts": 14,
+      "indels": 14,
+      "fs_per_kb": 6.206,
+      "cross_host_chimaera": false,
+      "within_host_switch": true,
+      "window_haplotypes": 7
+    },
+    {
+      "contig": "Contig_4_flow_28.6099_cc_0",
+      "length": 1910,
+      "best": "JX239308.1",
+      "identity": 0.98586,
+      "orientation": "-",
+      "frameshifts": 2,
+      "indels": 2,
+      "fs_per_kb": 1.047,
+      "cross_host_chimaera": false,
+      "within_host_switch": true,
+      "window_haplotypes": 5
+    },
+    {
+      "contig": "Contig_6_flow_16.7868_cc_0",
+      "length": 1125,
+      "best": "JX239316.1",
+      "identity": 1.0,
+      "orientation": "-",
+      "frameshifts": 0,
+      "indels": 0,
+      "fs_per_kb": 0.0,
+      "cross_host_chimaera": false,
+      "within_host_switch": false,
+      "window_haplotypes": 1
+    }
+  ]
+}

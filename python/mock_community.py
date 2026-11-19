@@ -16,7 +16,7 @@ The novelty ladder, divergence measured by edit distance over the whole genome
 |---|---|
 | SARS-CoV-2 / bat RaTG13 | 0.040 |
 | HBV genotype D / genotype A | 0.105 |
-| HIV-1 subtype B / subtype C | 0.163 |
+| West Nile lineage 1 / lineage 2 | 0.205 |
 | SARS-CoV-2 / bat CoV BM48-31 | 0.240 |
 | phage lambda / phage HK97 | 0.458 |
 | HPV16 / HPV11 | 0.506 |
@@ -73,8 +73,14 @@ COMMUNITY = [
     ("batcov_bm4831", "NC_014470.1", 10.0, "novel", "sars2"),
     ("hbv_d", "NC_003977.2", 120.0, "known", "hbv_a"),
     ("hbv_a", "X70185.1", 30.0, "novel", "hbv_d"),
-    ("hiv1_b", "NC_001802.1", 80.0, "known", "hiv1_c"),
-    ("hiv1_c", "AY772699.1", 20.0, "novel", "hiv1_b"),
+    # West Nile lineage 1/2 stands where HIV-1 subtype B/C stood. Full HIV-1
+    # genomes cannot be in the same truth set as the env swarm: a swarm
+    # haplotype IS the env gene of an HIV-1 genome, so a contig running from
+    # one into the other is a nesting in the truth set rather than a
+    # misassembly, and the chimaera count becomes unreadable. The pair is
+    # replaced by one at a comparable divergence with nothing nested in it.
+    ("wnv1", "NC_009942.1", 80.0, "known", "wnv2"),
+    ("wnv2", "NC_001563.2", 20.0, "novel", "wnv1"),
     ("hpv16", "NC_001526.4", 70.0, "known", "hpv11"),
     ("hpv11", "NC_001525.1", 15.0, "novel", "hpv16"),
     ("hhv5", "NC_006273.2", 15.0, "known", "hhv7"),
