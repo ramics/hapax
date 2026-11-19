@@ -292,17 +292,21 @@ genome in half rather than the population, because that is the cheaper cut in a
 linear graph. `--split-phase` and `--split-cut` are in the binary, off by
 default, with the measurements in `sister_pairs/`.
 
-The same experiment also found that hapax's ORF caller overcalls dual-coding on
-real genomes (60% of an HCV polyprotein contig), which switches codon scoring
-off where it should be on, so **codon-versus-nucleotide results from real data
-are not interpretable until that is fixed**.
+Codon mode and nucleotide mode are indistinguishable on this sample, on every
+aggregate and per-swarm number. My first explanation for that — the dual-coding
+overcall of the old region caller — was wrong: as §4 establishes, the
+annotation never reaches the scorer. What the run does show is that the HMM's
+own per-pair fallback scores 35 to 36% of tier-2 columns in nucleotide mode,
+and that the merge failure dominates the aggregates, so this sample cannot say
+much about codon scoring either way. With the §4 caller the annotations here are
+largely right: HCV polyprotein contigs 100% single-coding, HBV 59% dual.
 
 ## Where this leaves the kill criteria (METHOD.md §5)
 
 | criterion | status |
 |---|---|
 | No gain over nucleotide assemblers | **Failing on real multi-swarm data (§5).** On the simulator, codon scoring beats the same pipeline in nucleotide mode by 0.1 to 0.35 contigs per entity at ≥ 0.15 diversity. On eight real within-host swarms in one metagenome, metaSPAdes beats hapax on every aggregate measure and the codon-versus-nucleotide ablation shows no difference at all. |
-| Collapsing erases differences in overlapping genes | **Blocked by a bug (§5).** The region caller overcalls dual-coding on real genomes, so the nucleotide fallback is taken where it should not be. Fix `find_orfs` before running the HBV and *gag/pol* test. |
+| Collapsing erases differences in overlapping genes | **Still untested (§5).** The region caller is fixed (§4) and HBV's annotation is now about right, but nothing yet measures whether variation in overlapping genes survives, and on the multi-swarm sample hapax loses one of the two HBV swarms outright. |
 | Too slow | **Passed after v2.** At most 15% of candidates reach the HMM, and codon mode costs about 1.3× nucleotide mode. |
 | Chimaeras increase | **Not from codon scoring, but the grouping step is worse than the simulator showed (§5).** In v2 chimaeras appear equally in both modes, and tier-1 grouping removes them at a contiguity cost. On real swarms from different hosts, every configuration merges them: 3.6 to 3.8 cross-swarm chimaeras against MEGAHIT's 1.8. |
 

@@ -50,6 +50,11 @@ The sister pairs are the point of the design. By consensus identity: the two
 the *gag-pol* swarm, and the two HCV strains in host Pt3 share no exact 31-mers
 at all. A tool that cannot tell two hosts' swarms apart will show it here.
 
+These runs predate the ORF-caller fix now on `main` (`results/README.md` §4).
+That changes the annotation columns of the outputs and nothing else — the
+scorer never reads them (finding 4) — so the numbers below stand; the dual
+-coding percentages quoted in finding 4 were re-measured with the new caller.
+
 Tool versions, since the manifests for these runs recorded only paths (fixed in
 `experiments/common.py` afterwards): MEGAHIT 1.2.9, SPAdes 4.3.0 in metaSPAdes
 mode, Haploflow 1.0 (bioconda `h9948957_5`), ART 2016.06.05, minimap2
@@ -110,19 +115,30 @@ produce columns of apparent variation that is really misalignment. The one
 swarm where precision is high (`hcv_Pt3P`, 1.00) is the one whose sister shares
 no exact 31-mers with it, so no merge is possible.
 
-**4. Codon scoring and nucleotide scoring are indistinguishable here, and part
-of the reason is a bug in hapax's own region caller.** The two modes agree to
-three decimal places on every aggregate number. Dual-coding regions fall back
-to nucleotide scoring by design, and on real genomes the ORF caller
-(`find_orfs`, `src/consensus.rs`) overcalls them badly: it accepts every
-stop-free stretch of 300 nt in all six frames, with no start codon and no
-scoring, so the HCV polyprotein contigs — one long ORF, plus a short ARF — come
-back 60% dual-coding, and HIV *gag-pol* 21%. HBV's 71% is about right, since
-HBV genuinely is overlapping ORFs almost throughout. So codon scoring is
-switched off over most of the coding sequence in this sample, and no
-codon-versus-nucleotide number from real data should be believed until the ORF
-caller is fixed. (Found independently by the wastewater work on a real
-astrovirus genome.)
+**4. Codon scoring and nucleotide scoring are indistinguishable here.** The two
+modes agree to three decimal places on every aggregate number and on every
+per-swarm number. Two things are worth saying about why, and the first is a
+correction of my own first explanation.
+
+I initially attributed the null result to hapax's region caller overcalling
+dual-coding, on the grounds that dual regions fall back to nucleotide scoring.
+That was wrong, and the ORF work on `main` (`results/README.md` §4) shows why:
+the region annotation is computed from the finished consensus and is read by
+nothing but `regions.tsv` and the syn/nonsyn column of `variants.tsv`. Neither
+`src/overlap.rs` nor `src/hmm.rs` ever sees it, and that thread rechecked all
+80 ladder runs with the new caller and got identical numbers. The mode choice
+inside the HMM is made per read pair, not from the annotation. With `main`'s
+scored caller the annotations on this sample are also largely right: the HCV
+polyprotein contigs come back 100% single-coding (they were 60% dual under the
+old caller), HBV 59% dual against about 49% by its GenBank CDS, and HIV
+*gag-pol* 2% dual, which is an undercall of its short real overlaps.
+
+What is true is that the HMM's own per-pair fallback is used a great deal: 35
+to 36% of tier-2 aligned columns are scored in nucleotide mode on every seed.
+And the merge failure dominates every aggregate here, so an ablation that only
+changes how pairs are scored has little room to show. A clean test of codon
+scoring on real swarms needs a sample without sister populations in it, or a
+hapax that can separate them.
 
 **5. Haploflow is the cautionary comparison.** It finds all eight swarms at the
 highest completeness of any tool and the best variant recall, and makes 12.4
@@ -190,7 +206,7 @@ is not a tweak.
 | criterion | status after this experiment |
 |---|---|
 | No gain over nucleotide assemblers | **Failing, on short reads with several swarms.** metaSPAdes beats hapax on swarms found, completeness, chimaeras, variant recall and precision, at half the memory. hapax's only edge is variant recall on the most diverse swarm, about double metaSPAdes', and only when it keeps that swarm whole. The internal codon-versus-nucleotide ablation shows no difference at all here. |
-| Collapsing erases differences in overlapping genes | **Untested, and now blocked by a bug.** The region caller overcalls dual-coding on real genomes (finding 4), so the dual-coding path is being taken where it should not be. HBV, where two thirds of the genome genuinely is overlapping ORFs, is the test to run once that is fixed. |
+| Collapsing erases differences in overlapping genes | **Untested.** HBV is in this sample and its annotation is now about right (59% dual against 49% by CDS), but nothing here measures whether variation in its overlapping genes survives, and hapax never gets a second HBV host's swarm out at all. The test wants a sample without a sister HBV population in it. |
 | Too slow | **Passed.** 280 s on 530k reads at 2.3 GB, against metaSPAdes' 374 s. The HMM fraction stays near 0.01 at this coverage. |
 | Chimaeras increase | **Confirmed, and worse than the simulator showed.** 3.6 to 3.8 cross-swarm chimaeras against 1.8 for MEGAHIT, every one of them a merge of two hosts' swarms. The simulator's sister populations were 0.30 subs/site apart, which is far enough to be separable; real sister swarms at 9 to 14% are not. |
 
