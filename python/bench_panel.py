@@ -63,6 +63,16 @@ def build_panel(rng, refdir: Path, hosts, n_per_host=None, sigma=1.0):
         # a handful of deposited sequences carry IUPAC ambiguity codes; drop them
         # rather than resolving, so the truth set is unaltered submitted sequence
         s = {k: v for k, v in s.items() if set(v) <= set("ACGT")}
+        # identical sequences occur within a host's set (the same haplotype
+        # amplified twice). No assembler can be asked to return both, and
+        # keeping them would make recovery unreachable by construction, so a
+        # panel holds distinct sequences only.
+        seen, uniq = set(), {}
+        for k in sorted(s):
+            if s[k] not in seen:
+                seen.add(s[k])
+                uniq[k] = s[k]
+        s = uniq
         ks = sorted(s)
         if n_per_host:
             ks = [ks[i] for i in rng.choice(len(ks), size=min(n_per_host, len(ks)), replace=False)]
@@ -72,6 +82,26 @@ def build_panel(rng, refdir: Path, hosts, n_per_host=None, sigma=1.0):
             host_of[k] = h
     ab = rng.lognormal(0.0, sigma, size=len(seqs)) if sigma > 0 else np.ones(len(seqs))
     return names, seqs, ab / ab.sum(), host_of
+
+
+def divergence_stats(seqs):
+    """Pairwise divergence of the panel; the minimum is what sets the floor.
+
+    An assembler cannot be asked to separate haplotypes closer than its own
+    error model, so the minimum pairwise divergence is reported with every
+    panel and quoted with every result.
+    """
+    import itertools
+
+    import edlib
+
+    d = [edlib.align(a, b, task="distance")["editDistance"] / max(len(a), len(b))
+         for a, b in itertools.combinations(seqs, 2)]
+    if not d:
+        return None
+    d.sort()
+    return {"n_pairs": len(d), "min": round(d[0], 5), "median": round(d[len(d) // 2], 5),
+            "mean": round(sum(d) / len(d), 5), "max": round(d[-1], 5)}
 
 
 def write_panel(out: Path, names, seqs, ab, host_of, meta, reads_pe=None, reads_np=None):
@@ -119,7 +149,7 @@ def main():
     pe = sq.paired_end(rng, seqs, ab, a.coverage, read_len=a.read_len)
     nps = {c: sq.nanopore(rng, seqs, ab, a.nanopore_reads, c) for c in a.chem}
     meta = vars(a) | {"out": str(a.out), "refdir": str(a.refdir), "n_haplotypes": len(seqs),
-                      "lengths": [len(s) for s in seqs]}
+                      "lengths": [len(s) for s in seqs], "divergence": divergence_stats(seqs)}
     write_panel(a.out, names, seqs, ab, host_of, meta, pe, nps)
     print(f"{len(seqs)} haplotypes, {len(pe[0])} pairs, " + ", ".join(f"{c}:{len(nps[c][0])}" for c in nps))
 
