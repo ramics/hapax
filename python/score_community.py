@@ -23,6 +23,15 @@ the other two exist to qualify:
    with the genomes involved, because a chimaera between a known virus and
    its relative is the specific failure that produces a fake "novel" genome.
 
+   Not every switch is the assembler's fault. Real genomes share real
+   sequence: phage lambda and E. coli K-12 share 3.5 kb at 98% identity
+   (MG1655 carries lambdoid prophage material), so a contig running from one
+   into the other is correct sequence that no assembler could or should
+   split. Pairs of truth genomes sharing a block of >= `share_len` at
+   >= `share_ident` are found first, and a chimaera confined to one such pair
+   is reported as `explained_by_shared_sequence` and excluded from the
+   headline count. Counting those as errors would manufacture a result.
+
 Contig-to-genome assignment uses minimap2 (via mappy) rather than edlib:
 whole bacterial chromosomes make an all-against-all edit distance pointless,
 and a metagenome assembly's contigs need a real aligner's placement anyway.
@@ -68,8 +77,47 @@ def parse_truth(truth_fa: Path):
     return meta, seqs
 
 
+def pair_shares_sequence(seqs, share_len=500, share_ident=0.95, max_global=0.5):
+    """Do these two genomes genuinely share a long, near-identical block?
+
+    The exemption is only for genomes that are otherwise unrelated: a local
+    block they share does not make them confusable. Two genomes that are
+    near-identical along their whole length -- haplotypes of one swarm -- share
+    sequence by definition, and a contig switching between them is the
+    resolution failure this benchmark exists to measure, so those pairs are
+    never exempted. The cut is at `max_global`: a pair aligning over more than
+    that fraction of its windows is treated as the same entity.
+
+    It is computed per pair, against an index of that one genome, because a
+    genome mapped to an index containing itself returns only the self-hit, and
+    a genome mapped to an index of ten near-identical haplotypes splits its
+    windows between them and so looks unrelated to each one.
+    """
+    a, b = seqs
+    aln = mappy.Aligner(seq=a, preset="asm20")
+    step = 1000
+    n_win = max(len(b) // step, 1)
+    matched, longest = 0, 0
+    for i in range(0, len(b) - step + 1, step):
+        best = None
+        for h in aln.map(b[i : i + step]):
+            if best is None or h.mlen > best.mlen:
+                best = h
+        if best is not None and best.blen >= step * 0.5 and best.mlen / best.blen >= share_ident:
+            matched += 1
+            longest = max(longest, best.blen)
+    return matched * step >= share_len and matched / n_win <= max_global
+
+
 def score(truth_fa: Path, contigs_fa: Path, min_len=500, win=500, cov_thr=0.9, ident_thr=0.95):
     meta, truth = parse_truth(truth_fa)
+    shared_cache = {}
+
+    def shared(a, b):
+        key = tuple(sorted((a, b)))
+        if key not in shared_cache:
+            shared_cache[key] = pair_shares_sequence((truth[key[0]], truth[key[1]]))
+        return shared_cache[key]
     aln = mappy.Aligner(str(truth_fa), preset="asm10", n_threads=4)
     if not aln:
         raise RuntimeError("failed to index truth")
@@ -105,8 +153,11 @@ def score(truth_fa: Path, contigs_fa: Path, min_len=500, win=500, cov_thr=0.9, i
         switch = len(set(genomes)) > 1
         if switch:
             hosts = {meta.get(g, {}).get("host", g) for g in genomes}
-            chimaeras.append(dict(contig=cname, length=len(c), genomes=sorted(set(genomes)),
-                                  cross_host=len(hosts) > 1))
+            gs = sorted(set(genomes))
+            explained = all(shared(a, b) for i, a in enumerate(gs) for b in gs[i + 1:])
+            chimaeras.append(dict(contig=cname, length=len(c), genomes=gs,
+                                  cross_host=len(hosts) > 1,
+                                  explained_by_shared_sequence=explained))
         per_contig.append(dict(contig=cname, length=len(c), assigned=best.ctg,
                                identity=round(best.mlen / max(best.blen, 1), 5),
                                aligned_bp=best.blen, windows=len(wins),
@@ -147,7 +198,11 @@ def score(truth_fa: Path, contigs_fa: Path, min_len=500, win=500, cov_thr=0.9, i
                                     if v["recovered"] and v["role"] in ("known", "novel")),
         novel_recovered=sum(1 for p in pairs if p["novel_recovered"]),
         novel_collapsed=sum(1 for p in pairs if p["collapsed"]),
-        chimaeras=len(chimaeras), cross_host_chimaeras=sum(1 for c in chimaeras if c["cross_host"]),
+        chimaeras=sum(1 for c in chimaeras if not c["explained_by_shared_sequence"]),
+        cross_host_chimaeras=sum(1 for c in chimaeras
+                                 if c["cross_host"] and not c["explained_by_shared_sequence"]),
+        chimaeras_explained_by_shared_sequence=sum(1 for c in chimaeras if c["explained_by_shared_sequence"]),
+        shared_sequence_pairs=sorted("/".join(k) for k, v in shared_cache.items() if v),
         pairs=pairs, per_genome=per_genome, chimaera_detail=chimaeras, per_contig=per_contig,
     )
 
