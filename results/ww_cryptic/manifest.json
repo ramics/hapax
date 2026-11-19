@@ -1,0 +1,12 @@
+{
+  "experiment": "experiments/ww_cryptic.sh",
+  "date": "2026-11-19",
+  "git_sha": "fb259cd06826cfdba7bffcac2238b394e4a24698",
+  "run": "SRR15202285",
+  "bioproject": "PRJNA746354",
+  "reference": "NC_045512.2 (Wuhan-Hu-1)",
+  "reads": {"pairs": 331714, "length": 100, "mapped_to_ref_pct": 61.57, "mean_depth": 1349, "positions_ge_10x": 11994},
+  "tools": {"hapax": "fb259cd release build", "megahit": "v1.2.9", "minimap2": "2.31-r1302", "samtools": "1.25"},
+  "hapax_params": "defaults: --mode codon --seed contiguous -k 15 -w 5 --tau 0.8 --min-contig 300",
+  "notes": "Deterministic; no seed. hapax input is reference-mapped reads, MEGAHIT input is the raw pair."
+}
