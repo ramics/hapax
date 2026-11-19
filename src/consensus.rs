@@ -302,7 +302,10 @@ fn call(cols: &[Column], ins: &[std::collections::HashMap<Vec<u8>, u32>]) -> (Ve
 pub fn annotate_regions(len: usize, orfs: &[Orf]) -> Vec<Region> {
     let mut n = vec![0u8; len];
     for o in orfs {
-        for x in &mut n[o.start..o.end] {
+        // clamped: a split read set (src/phase.rs) can leave a consensus
+        // shorter than the sequence its ORFs were called on
+        let (s, e) = (o.start.min(len), o.end.min(len));
+        for x in &mut n[s..e] {
             *x += 1;
         }
     }

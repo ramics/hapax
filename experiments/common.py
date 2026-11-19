@@ -8,6 +8,7 @@ reproduced from a committed script plus a seed.
 from __future__ import annotations
 
 import json
+import os
 import platform
 import shutil
 import subprocess
@@ -49,8 +50,23 @@ def tool_versions() -> dict:
         v["rustc"] = subprocess.check_output(["rustc", "--version"], text=True).strip()
     except Exception:
         pass
-    for tool in ("megahit", "spades.py", "plass", "penguin"):
-        v[tool] = shutil.which(tool) or "not installed"
+    # the external assemblers live in a micromamba env, not on PATH: look there
+    # too, or every manifest records "not installed" for tools that did run
+    env = Path(os.environ.get("HAPAX_TOOLS", "/home/user/mamba/envs/asm/bin"))
+    for tool in ("megahit", "metaspades.py", "spades.py", "haploflow", "art_illumina", "minimap2", "samtools", "plass", "penguin"):
+        p = shutil.which(tool) or (str(env / tool) if (env / tool).exists() else None)
+        if not p:
+            v[tool] = "not installed"
+            continue
+        ver = ""
+        for flag in ("--version", "-v"):
+            try:
+                ver = subprocess.run([p, flag], capture_output=True, text=True, timeout=30).stdout.strip().splitlines()[0]
+            except Exception:
+                ver = ""
+            if ver:
+                break
+        v[tool] = f"{p} {ver}".strip()
     return v
 
 
