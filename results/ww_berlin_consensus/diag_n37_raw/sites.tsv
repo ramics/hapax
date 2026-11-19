@@ -1,0 +1,18 @@
+kind	n	ctg	qpos	qlen	end_dist	strand	tpos	tbase	qbase	hbase	hmaj	hdepth	hcounts	tmaj	tdepth	tminor	tcounts	verdict	own_lineage	other_lineages
+sub	1	contig_1	1962	2057	94	-	170	C	T	A	A	40	{'A': 21, 'G': 19}	T	40	0.475	{'C': 19, 'T': 21}	target_minor_allele		
+ins	13	contig_1	1747	2057	309	-	373			A	A	15	{'-': 2, 'A': 13}	C	24	0.0	{'C': 24}	indel		
+sub	1	contig_1	1689	2057	367	-	430	T	C	G	G	136	{'G': 80, 'A': 56}	C	134	0.44	{'C': 75, 'T': 59}	target_minor_allele		
+sub	1	contig_1	1062	2057	994	-	1057	A	G	C	T	55	{'C': 27, 'T': 28}	A	54	0.481	{'A': 28, 'G': 26}	hapax_not_majority		
+sub	1	contig_1	825	2057	825	-	1294	G	A	T	T	49	{'C': 21, 'T': 28}	G	56	0.5	{'G': 28, 'A': 28}	polymorphic_hapax_took_other		
+del	1	contig_1	254	2057	254	-	1865			T	T	25	{'T': 25}	A	25	0.0	{'A': 25}	indel		
+sub	1	contig_1	67	2057	67	-	2053	T	C	G	G	16	{'G': 10, 'A': 6}	T	16	0.5	{'T': 8, 'C': 8}	polymorphic_hapax_took_other		
+del	1	contig_2	127	1677	127	+	3980			G	G	19	{'G': 19}	G	17	0.118	{'G': 14, 'T': 2, 'A': 1}	indel		
+ins	4	contig_2	1042	1677	634	+	4896			T	T	58	{'T': 33, '-': 25}	T	61	0.0	{'T': 61}	indel		
+del	9	contig_2	1080	1677	596	+	4930			C	C	40	{'C': 40}	C	29	0.0	{'C': 29}	indel		
+del	241	contig_2	1290	1677	386	+	5149			G	G	44	{'G': 44}	A	50	0.02	{'C': 1, 'A': 49}	indel		
+del	23	contig_3	427	1877	427	+	2467			T	T	103	{'T': 103}	T	116	0.017	{'T': 114, 'G': 2}	indel		
+ins	15	contig_3	693	1877	693	+	2756			G	G	11	{'G': 8, '-': 3}	G	21	0.048	{'G': 20, 'T': 1}	indel		
+sub	1	contig_3	786	1877	786	+	2834	A	G	G	G	28	{'G': 16, 'A': 12}	G	29	0.448	{'G': 16, 'A': 13}	target_minor_allele		
+sub	1	contig_3	975	1877	901	+	3023	G	A	A	A	34	{'A': 18, 'G': 16}	A	34	0.471	{'A': 18, 'G': 16}	target_minor_allele		
+sub	1	contig_3	1029	1877	847	+	3077	T	C	C	C	33	{'C': 17, 'T': 16}	C	33	0.485	{'C': 17, 'T': 16}	target_minor_allele		
+sub	1	contig_3	1635	1877	241	+	3683	A	G	G	G	14	{'G': 8, 'A': 6}	G	14	0.429	{'G': 8, 'A': 6}	target_minor_allele		

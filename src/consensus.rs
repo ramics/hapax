@@ -24,6 +24,8 @@ const MISMATCH: i32 = -3;
 const GAP_OPEN: i32 = -5;
 const GAP_EXT: i32 = -2;
 const PAD: i64 = 40;
+/// Cost of leaving a read end unaligned. See `align_to_ref`.
+const CLIP: i32 = 10;
 
 #[derive(Clone, Debug)]
 pub struct ReadAln {
@@ -38,8 +40,19 @@ pub struct ReadAln {
     pub score: i32,
 }
 
-/// Semi-global affine alignment: the read is aligned end to end, the reference
-/// window has free ends.
+/// Affine alignment of a read into a reference window. The window has free ends;
+/// each read end may be left unaligned (clipped) for a fixed cost `CLIP`.
+///
+/// Why clipping. Aligning every read base end to end forces anything at a read end
+/// that is not template into the pileup as mismatches and indels. On real libraries
+/// that is common: in Berlin wastewater run SRR23973193, 96% of mate-2 reads start
+/// with ~12 bp of non-template sequence (random-primer/linker; minimap2 soft-clips
+/// it), at full base quality, so quality trimming does not remove it. End to end,
+/// those bases made mate-2 reads look ~9% divergent from the draft and left 9-241 bp
+/// junk indels in the consensus, the main cause of hapax's 97.0% identity there.
+/// CLIP = 10 matches minimap2's short-read end bonus: a tail is clipped only if
+/// aligning it scores below -10, which a genuine SNP near a read end (-3) never does.
+/// Clipped bases are not voted; the read itself is kept whole.
 pub fn align_to_ref(q: &[u8], r: &[u8]) -> Option<(usize, usize, Vec<u8>, Vec<(usize, Vec<u8>)>, i32)> {
     let m = q.len();
     let n = r.len();
@@ -59,6 +72,10 @@ pub fn align_to_ref(q: &[u8], r: &[u8]) -> Option<(usize, usize, Vec<u8>, Vec<(u
         f[i * w] = GAP_OPEN + GAP_EXT * (i as i32 - 1);
         h[i * w] = f[i * w];
         tb[i * w] = 2 | (1 << 3);
+        if -CLIP > h[i * w] {
+            h[i * w] = -CLIP;
+            tb[i * w] = 3 | (1 << 3);
+        }
         for j in 1..=n {
             let c = i * w + j;
             // E: deletion (move in j)
@@ -74,13 +91,27 @@ pub fn align_to_ref(q: &[u8], r: &[u8]) -> Option<(usize, usize, Vec<u8>, Vec<(u
             let s = if q[i - 1] == r[j - 1] && q[i - 1] < 4 { MATCH } else { MISMATCH };
             let dv = h[c - w - 1] + s;
             let (hv, hb) = if dv >= ev && dv >= fv { (dv, 0u8) } else if ev >= fv { (ev, 1u8) } else { (fv, 2u8) };
+            // hb = 3: the alignment starts after this cell, read[..i] clipped
+            let (hv, hb) = if -CLIP > hv { (-CLIP, 3u8) } else { (hv, hb) };
             h[c] = hv;
             tb[c] = hb | (eb << 2) | (fb << 3);
         }
     }
-    let (mut j, best) = (0..=n).map(|j| (j, h[m * w + j])).max_by_key(|x| x.1).unwrap();
+    // best end: the full read (row m), or a clipped tail at cost CLIP
+    let mut best = NEG;
+    let (mut i, mut j) = (m, 0);
+    for ii in 1..=m {
+        let pen = if ii < m { CLIP } else { 0 };
+        for jj in 0..=n {
+            let v = h[ii * w + jj] - pen;
+            if v > best || (v == best && ii == m && i != m) {
+                best = v;
+                i = ii;
+                j = jj;
+            }
+        }
+    }
     let end = j;
-    let mut i = m;
     let mut state = 0u8; // 0=H, 1=E, 2=F
     let mut ops: Vec<(u8, u8)> = Vec::new(); // (op, base) op 0=match/mismatch, 1=del, 2=ins
     while i > 0 {
@@ -88,6 +119,9 @@ pub fn align_to_ref(q: &[u8], r: &[u8]) -> Option<(usize, usize, Vec<u8>, Vec<(u
         match state {
             0 => {
                 let hb = tb[c] & 3;
+                if hb == 3 {
+                    break; // read[..i] is clipped
+                }
                 if hb == 0 {
                     ops.push((0, q[i - 1]));
                     i -= 1;
@@ -113,7 +147,7 @@ pub fn align_to_ref(q: &[u8], r: &[u8]) -> Option<(usize, usize, Vec<u8>, Vec<(u
                 }
             }
         }
-        if j == 0 && i > 0 && state == 0 && tb[i * w] != 0 {
+        if j == 0 && i > 0 && state == 0 && tb[i * w] & 3 == 2 {
             // remaining read bases are an insertion before the window
             state = 2;
         }
@@ -275,10 +309,11 @@ fn pileup(len: usize, alns: &[ReadAln]) -> (Vec<Column>, Vec<std::collections::H
     (cols, ins)
 }
 
-/// Build a new consensus from a pileup; returns it with a map old col -> new col.
-fn call(cols: &[Column], ins: &[std::collections::HashMap<Vec<u8>, u32>]) -> (Vec<u8>, Vec<usize>) {
-    let mut out = Vec::with_capacity(cols.len());
-    let mut map = Vec::with_capacity(cols.len());
+/// Build a new consensus by per-column majority; returns it with a map old col -> new col.
+fn call(len: usize, alns: &[ReadAln]) -> (Vec<u8>, Vec<usize>) {
+    let (cols, ins) = pileup(len, alns);
+    let mut out = Vec::with_capacity(len);
+    let mut map = Vec::with_capacity(len);
     for (c, col) in cols.iter().enumerate() {
         map.push(out.len());
         let d = col.depth();
@@ -362,13 +397,15 @@ pub fn build(reads: &[Vec<u8>], comp: &[Placement], p: &ConsensusParams) -> Cont
         if round == p.rounds {
             break;
         }
-        let (c, ins) = pileup(draft.len(), &alns);
-        let (new, map) = call(&c, &ins);
-        // move placements into the new coordinates
-        pl = alns
-            .iter()
-            .map(|a| Placement { read: a.read, rev: a.rev, x: map.get(a.ref_start).copied().unwrap_or(0) as i64 })
-            .collect();
+        let (new, map) = call(draft.len(), &alns);
+        // move placements into the new coordinates. Reads that failed to realign
+        // this round keep their previous placement (mapped across) and are retried
+        // against the next draft, rather than being dropped for good after one bad
+        // round: early drafts are the noisiest, so that is when misses happen.
+        let mv = |x: i64| map.get(x.max(0) as usize).copied().unwrap_or(map.last().copied().unwrap_or(0)) as i64;
+        let old: std::collections::HashMap<u32, Placement> = pl.iter().map(|q| (q.read, *q)).collect();
+        pl = alns.iter().map(|a| Placement { read: a.read, rev: a.rev, x: mv(a.ref_start as i64) }).collect();
+        pl.extend(unplaced.iter().filter_map(|r| old.get(r)).map(|q| Placement { x: mv(q.x), ..*q }));
         draft = new;
     }
     let (columns, _) = pileup(draft.len(), &alns);
@@ -472,5 +509,22 @@ mod tests {
         let (_, _, cols2, ins2, _) = align_to_ref(&q2, &r).unwrap();
         assert_eq!(cols2.len(), 20);
         assert_eq!(ins2.len(), 1);
+    }
+
+    #[test]
+    fn non_template_read_ends_are_clipped_not_voted() {
+        // 12 bp of non-template sequence before the true read, as on mate 2 of the
+        // Berlin wastewater library: it must not appear as an insertion or mismatches.
+        let r = encode(b"TTGCATTGCAACGTACGGATCCATGCAGGGTACCTTAGGCATTGACCGTA");
+        let q = encode(b"GGGGCCCCGGGGACGTACGGATCCATGCAGGGTACCTTAGG");
+        let (s, e, cols, ins, _) = align_to_ref(&q, &r).unwrap();
+        assert_eq!((s, e), (10, 39));
+        assert!(ins.is_empty());
+        assert!(cols.iter().zip(&r[s..e]).all(|(a, b)| a == b));
+        // a genuine SNP two bases from the end is kept, not clipped
+        let q3 = encode(b"ACGTACGGATCCATGCAGGGTACCTTAGGCATTGACCGAA");
+        let (s3, e3, cols3, _, _) = align_to_ref(&q3, &r).unwrap();
+        assert_eq!((s3, e3), (10, 50));
+        assert_eq!(cols3[38], 0);
     }
 }

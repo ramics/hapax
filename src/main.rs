@@ -84,6 +84,7 @@ fn main() {
             "--bucket-cap" => op.bucket_cap = v().parse().unwrap(),
             "--orf-caller" => cp.orf_caller = parse_caller(&v()),
             "--min-orf" => cp.min_orf = v().parse().unwrap(),
+            "--rounds" => cp.rounds = v().parse().unwrap(),
             "--min-contig" => min_contig = v().parse().unwrap(),
             "-t" => threads = v().parse().unwrap(),
             "--best-k" => best_k = v().parse().unwrap(),

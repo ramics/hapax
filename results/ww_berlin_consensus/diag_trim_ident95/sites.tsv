@@ -1,0 +1,72 @@
+kind	n	ctg	qpos	qlen	end_dist	strand	tpos	tbase	qbase	hbase	hmaj	hdepth	hcounts	tmaj	tdepth	tminor	tcounts	verdict	own_lineage	other_lineages
+sub	1	contig_1	126	6031	126	+	170	C	T	T	T	40	{'T': 21, 'C': 19}	T	40	0.475	{'C': 19, 'T': 21}	target_minor_allele	{'T': 21, 'C': 19}	{}
+sub	1	contig_1	386	6031	386	+	430	T	C	C	C	136	{'C': 80, 'T': 56}	C	134	0.44	{'C': 75, 'T': 59}	target_minor_allele	{'C': 80, 'T': 56}	{}
+sub	1	contig_1	1250	6031	1250	+	1294	G	A	A	A	52	{'G': 24, 'A': 28}	G	56	0.5	{'G': 28, 'A': 28}	polymorphic_hapax_took_other	{'G': 24, 'A': 28}	{}
+sub	1	contig_1	2009	6031	2009	+	2053	T	C	C	T	16	{'T': 8, 'C': 8}	T	16	0.5	{'T': 8, 'C': 8}	polymorphic_hapax_took_other	{'T': 8, 'C': 8}	{}
+sub	1	contig_1	2790	6031	2790	+	2834	A	G	G	G	33	{'G': 21, 'A': 12}	G	34	0.382	{'G': 21, 'A': 13}	target_minor_allele	{'G': 14, 'A': 12}	{'NC_001943.1': {'G': 3}, '?': {'G': 4}}
+sub	1	contig_1	2979	6031	2979	+	3023	G	A	A	A	34	{'A': 18, 'G': 16}	A	34	0.471	{'A': 18, 'G': 16}	target_minor_allele	{'A': 18, 'G': 16}	{}
+sub	1	contig_1	3108	6031	2922	+	3152	G	A	A	G	24	{'G': 13, 'A': 11}	G	25	0.4	{'G': 15, 'A': 10}	hapax_not_majority	{'G': 13, 'A': 6}	{'NC_001943.1': {'A': 5}}
+sub	1	contig_1	3180	6031	2850	+	3224	C	T	T	T	35	{'T': 21, 'C': 14}	C	18	0.111	{'C': 16, 'T': 2}	hapax_majority_target_majority_differ	{'T': 1, 'C': 14}	{'NC_001943.1': {'T': 20}}
+sub	1	contig_1	3204	6031	2826	+	3248	C	G	G	G	35	{'G': 22, 'C': 13}	C	18	0.056	{'G': 1, 'C': 17}	hapax_majority_target_majority_differ	{'C': 13}	{'NC_001943.1': {'G': 22}}
+sub	1	contig_1	3234	6031	2796	+	3278	G	C	C	C	47	{'C': 30, 'A': 8, 'G': 9}	G	30	0.3	{'A': 9, 'G': 16, 'C': 5}	polymorphic_hapax_took_other	{'A': 3, 'G': 9}	{'NC_001943.1': {'C': 17}, 'NODE_13532': {'C': 11, 'A': 5}, 'JQ403108.1': {'C': 2}}
+sub	1	contig_1	3266	6031	2764	+	3310	G	A	A	A	52	{'A': 37, 'G': 15}	G	34	0.471	{'A': 16, 'G': 18}	polymorphic_hapax_took_other	{'A': 5, 'G': 9}	{'NC_001943.1': {'A': 18}, 'NODE_13532': {'A': 11, 'G': 6}, 'JQ403108.1': {'A': 3}}
+sub	1	contig_1	3267	6031	2763	+	3311	G	A	A	A	54	{'G': 15, 'A': 39}	G	34	0.206	{'G': 27, 'A': 7}	polymorphic_hapax_took_other	{'G': 14}	{'NC_001943.1': {'A': 17, 'G': 1}, 'NODE_13532': {'A': 19}, 'JQ403108.1': {'A': 3}}
+sub	1	contig_1	3279	6031	2751	+	3323	C	T	T	T	46	{'C': 12, 'T': 34}	C	38	0.368	{'C': 24, 'T': 14}	polymorphic_hapax_took_other	{'C': 11}	{'NC_001943.1': {'T': 11, 'C': 1}, 'NODE_13532': {'T': 20}, 'JQ403108.1': {'T': 3}}
+sub	1	contig_1	3282	6031	2748	+	3326	T	C	C	C	46	{'T': 12, 'C': 34}	T	35	0.4	{'T': 21, 'C': 14}	polymorphic_hapax_took_other	{'T': 11}	{'NC_001943.1': {'C': 11, 'T': 1}, 'NODE_13532': {'C': 20}, 'JQ403108.1': {'C': 3}}
+sub	1	contig_1	3287	6031	2743	+	3331	A	G	G	G	46	{'G': 35, 'A': 11}	A	35	0.314	{'A': 24, 'G': 11}	polymorphic_hapax_took_other	{'A': 10}	{'NC_001943.1': {'G': 12, 'A': 1}, 'NODE_13532': {'G': 20}, 'JQ403108.1': {'G': 3}}
+sub	1	contig_1	3591	6031	2439	+	3635	C	A	A	C	40	{'C': 14, 'T': 14, 'A': 12}	C	40	0.35	{'C': 14, 'T': 14, 'A': 12}	hapax_not_majority	{'C': 14, 'T': 14}	{'NC_001943.1': {'A': 11}, 'JQ403108.1': {'A': 1}}
+sub	1	contig_1	3603	6031	2427	+	3647	T	A	A	T	38	{'T': 22, 'A': 16}	T	35	0.371	{'T': 22, 'A': 13}	hapax_not_majority	{'T': 22}	{'NC_001943.1': {'A': 10}, 'JQ403108.1': {'A': 5}, 'NODE_1338': {'A': 1}}
+sub	1	contig_1	3657	6031	2373	+	3701	G	A	A	A	36	{'G': 8, 'A': 28}	A	33	0.303	{'G': 10, 'A': 23}	target_minor_allele	{'G': 8, 'A': 6}	{'NC_001943.1': {'A': 4}, 'NODE_1338': {'A': 8}, 'JQ403108.1': {'A': 9}, 'NODE_60396': {'A': 1}}
+sub	1	contig_1	3660	6031	2370	+	3704	A	G	G	G	39	{'A': 15, 'G': 24}	G	35	0.486	{'A': 17, 'G': 18}	target_minor_allele	{'A': 15}	{'NC_001943.1': {'G': 4}, 'NODE_1338': {'G': 8}, 'JQ403108.1': {'G': 9}, 'NODE_60396': {'G': 1}, '?': {'G': 2}}
+sub	1	contig_1	3750	6031	2280	+	3794	G	A	A	G	32	{'G': 16, 'A': 15, 'T': 1}	G	31	0.452	{'G': 16, 'A': 14, 'T': 1}	hapax_not_majority	{'G': 16, 'T': 1}	{'JQ403108.1': {'A': 1}, 'NODE_60396': {'A': 3}, '?': {'A': 2}, 'NODE_1338': {'A': 9}}
+sub	1	contig_1	3762	6031	2268	+	3806	G	A	A	A	31	{'G': 14, 'A': 17}	A	31	0.452	{'G': 14, 'A': 17}	target_minor_allele	{'G': 14, 'A': 5}	{'NODE_1338': {'A': 9}, 'NODE_60396': {'A': 2}, '?': {'A': 1}}
+sub	1	contig_1	4226	6031	1804	+	4270	T	C	C	T	29	{'T': 28, 'C': 1}	T	29	0.034	{'T': 28, 'C': 1}	hapax_not_majority	{'T': 28, 'C': 1}	{}
+sub	1	contig_1	4607	6031	1423	+	4651	C	T	T	T	71	{'T': 43, 'C': 28}	C	62	0.403	{'C': 37, 'T': 25}	polymorphic_hapax_took_other	{'T': 15, 'C': 28}	{'NODE_1338': {'T': 15}, 'NODE_1845': {'T': 13}}
+sub	1	contig_1	4610	6031	1420	+	4654	G	A	A	A	67	{'G': 30, 'A': 37}	G	58	0.207	{'G': 46, 'A': 12}	polymorphic_hapax_took_other	{'G': 30, 'A': 9}	{'NODE_1338': {'A': 15}, 'NODE_1845': {'A': 13}}
+sub	1	contig_1	4634	6031	1396	+	4678	A	C	C	C	54	{'A': 22, 'C': 32}	A	37	0.081	{'A': 34, 'G': 3}	hapax_majority_target_majority_differ	{'A': 22}	{'NODE_1845': {'C': 17}, 'NODE_1338': {'C': 15}}
+sub	1	contig_1	4643	6031	1387	+	4687	T	C	C	C	61	{'T': 20, 'C': 41}	T	38	0.079	{'T': 35, 'C': 3}	hapax_majority_target_majority_differ	{'T': 20}	{'NODE_1845': {'C': 18}, 'NODE_1338': {'C': 23}}
+sub	1	contig_1	4655	6031	1375	+	4699	C	T	T	T	66	{'C': 24, 'T': 42}	C	45	0.133	{'C': 39, 'T': 6}	hapax_majority_target_majority_differ	{'C': 22}	{'NODE_1845': {'T': 19}, 'NODE_1338': {'T': 23}, '?': {'C': 2}}
+sub	1	contig_1	4718	6031	1312	+	4762	T	C	C	C	113	{'T': 45, 'C': 53, 'A': 13, 'G': 2}	T	105	0.41	{'T': 47, 'C': 43, 'A': 13, 'G': 2}	polymorphic_hapax_took_other	{'T': 43, 'C': 17}	{'NODE_1338': {'C': 34}, 'NODE_1845': {'A': 13, 'G': 2}, '?': {'C': 2, 'T': 2}}
+sub	1	contig_1	4781	6031	1249	+	4825	T	C	C	C	74	{'T': 21, 'A': 17, 'C': 36}	T	100	0.34	{'T': 49, 'A': 17, 'C': 34}	polymorphic_hapax_took_other	{'T': 20, 'C': 6}	{'NODE_1338': {'A': 17}, 'NODE_1845': {'C': 30}, '?': {'T': 1}}
+sub	1	contig_1	4796	6031	1234	+	4840	G	A	A	A	59	{'G': 15, 'A': 44}	G	76	0.079	{'G': 70, 'A': 6}	hapax_majority_target_majority_differ	{'G': 14}	{'NODE_1338': {'A': 11}, 'NODE_1845': {'A': 33}, '?': {'G': 1}}
+sub	1	contig_1	4820	6031	1210	+	4864	A	G	G	G	55	{'A': 4, 'G': 50, 'T': 1}	A	71	0.014	{'A': 70, 'G': 1}	hapax_majority_target_majority_differ	{'A': 4}	{'NODE_1845': {'G': 30, 'T': 1}, 'NODE_1338': {'G': 20}}
+sub	1	contig_1	4836	6031	1194	+	4880	G	A	A	A	56	{'A': 56}	G	73	0.11	{'G': 65, 'A': 8}	hapax_majority_target_majority_differ	{}	{'NODE_1845': {'A': 21}, 'NODE_1338': {'A': 35}}
+sub	1	contig_1	4839	6031	1191	+	4883	A	G	G	G	61	{'G': 60, 'T': 1}	A	71	0.0	{'A': 71}	hapax_majority_target_majority_differ	{}	{'NODE_1845': {'G': 20, 'T': 1}, 'NODE_1338': {'G': 40}}
+sub	1	contig_1	4849	6031	1181	+	4893	C	G	G	G	50	{'G': 50}	C	59	0.0	{'C': 59}	hapax_majority_target_majority_differ	{}	{'NODE_1845': {'G': 8}, 'NODE_1338': {'G': 42}}
+sub	1	contig_1	4858	6031	1172	+	4902	T	C	C	C	58	{'C': 58}	T	32	0.0	{'T': 32}	hapax_majority_target_majority_differ	{}	{'NODE_1845': {'C': 14}, 'NODE_1338': {'C': 42}, '?': {'C': 2}}
+sub	1	contig_1	4859	6031	1171	+	4903	G	A	A	A	58	{'A': 58}	G	30	0.0	{'G': 30}	hapax_majority_target_majority_differ	{}	{'NODE_1845': {'A': 14}, 'NODE_1338': {'A': 42}, '?': {'A': 2}}
+sub	1	contig_1	4862	6031	1168	+	4906	A	G	G	G	58	{'G': 58}	A	29	0.0	{'A': 29}	hapax_majority_target_majority_differ	{}	{'NODE_1845': {'G': 14}, 'NODE_1338': {'G': 42}, '?': {'G': 2}}
+sub	1	contig_1	4865	6031	1165	+	4909	G	A	A	A	58	{'A': 58}	G	29	0.0	{'G': 29}	hapax_majority_target_majority_differ	{}	{'NODE_1845': {'A': 14}, 'NODE_1338': {'A': 42}, '?': {'A': 2}}
+sub	1	contig_1	4868	6031	1162	+	4912	T	C	C	C	57	{'C': 57}	T	30	0.0	{'T': 30}	hapax_majority_target_majority_differ	{}	{'NODE_1845': {'C': 13}, 'NODE_1338': {'C': 42}, '?': {'C': 2}}
+sub	1	contig_1	4870	6031	1160	+	4914	G	A	A	A	61	{'A': 61}	G	30	0.0	{'G': 30}	hapax_majority_target_majority_differ	{}	{'NODE_1845': {'A': 17}, 'NODE_1338': {'A': 42}, '?': {'A': 2}}
+sub	1	contig_1	4880	6031	1150	+	4924	A	T	T	T	67	{'T': 42, 'C': 16, 'A': 9}	A	30	0.0	{'A': 30}	hapax_majority_target_majority_differ	{'A': 9}	{'NODE_1338': {'T': 42}, 'NODE_1845': {'C': 14}, '?': {'C': 2}}
+sub	1	contig_1	4883	6031	1147	+	4927	C	T	T	T	68	{'T': 59, 'C': 9}	C	30	0.0	{'C': 30}	hapax_majority_target_majority_differ	{'C': 9}	{'NODE_1338': {'T': 42}, 'NODE_1845': {'T': 15}, '?': {'T': 2}}
+sub	1	contig_1	4892	6031	1138	+	4936	C	T	T	T	70	{'T': 56, 'C': 14}	C	29	0.0	{'C': 29}	hapax_majority_target_majority_differ	{'C': 14}	{'NODE_1338': {'T': 38}, 'NODE_1845': {'T': 16}, '?': {'T': 2}}
+sub	1	contig_1	4919	6031	1111	+	4963	T	C	C	T	88	{'C': 40, 'T': 48}	T	61	0.328	{'T': 41, 'C': 20}	hapax_not_majority	{'T': 32, 'C': 20}	{'NODE_1338': {'C': 20}, 'NODE_1845': {'T': 16}}
+sub	1	contig_1	4982	6031	1048	+	5026	G	A	A	G	81	{'G': 67, 'A': 14}	G	68	0.0	{'G': 68}	hapax_not_majority	{'G': 67}	{'NODE_1338': {'A': 14}}
+sub	1	contig_1	5030	6031	1000	+	5074	C	T	T	C	54	{'T': 17, 'C': 37}	C	38	0.0	{'C': 38}	hapax_not_majority	{'C': 37}	{'NODE_1338': {'T': 17}}
+sub	1	contig_1	5150	6031	880	+	5194	A	G	G	A	48	{'A': 29, 'G': 19}	A	41	0.049	{'A': 39, 'G': 2}	hapax_not_majority	{'A': 29, 'G': 2}	{'NODE_1845': {'G': 3}, 'NODE_1338': {'G': 14}}
+sub	1	contig_1	5170	6031	860	+	5214	G	A	A	A	62	{'G': 14, 'A': 48}	G	36	0.0	{'G': 36}	hapax_majority_target_majority_differ	{'G': 14}	{'NODE_1845': {'A': 11}, 'NODE_1338': {'A': 37}}
+sub	1	contig_1	5189	6031	841	+	5233	G	A	A	A	82	{'G': 11, 'A': 71}	G	44	0.0	{'G': 44}	hapax_majority_target_majority_differ	{'G': 11}	{'NODE_1845': {'A': 28}, 'NODE_1338': {'A': 43}}
+sub	1	contig_1	5204	6031	826	+	5248	G	A	A	A	78	{'G': 1, 'A': 77}	G	33	0.0	{'G': 33}	hapax_majority_target_majority_differ	{'G': 1}	{'NODE_1845': {'A': 29}, 'NODE_1338': {'A': 48}}
+sub	1	contig_1	5222	6031	808	+	5266	A	G	G	G	81	{'G': 79, 'A': 2}	A	34	0.0	{'A': 34}	hapax_majority_target_majority_differ	{'A': 2}	{'NODE_1845': {'G': 29}, 'NODE_1338': {'G': 50}}
+sub	1	contig_1	5225	6031	805	+	5269	T	C	C	C	80	{'C': 78, 'T': 2}	T	34	0.0	{'T': 34}	hapax_majority_target_majority_differ	{'T': 2}	{'NODE_1338': {'C': 50}, 'NODE_1845': {'C': 28}}
+sub	1	contig_1	5240	6031	790	+	5284	T	C	C	C	83	{'C': 78, 'T': 5}	T	41	0.22	{'T': 32, 'C': 9}	polymorphic_hapax_took_other	{'T': 5}	{'NODE_1338': {'C': 52}, 'NODE_1845': {'C': 26}}
+sub	1	contig_1	5246	6031	784	+	5290	T	C	C	C	77	{'C': 73, 'T': 4}	T	40	0.4	{'T': 24, 'C': 16}	polymorphic_hapax_took_other	{'T': 4, 'C': 1}	{'NODE_1338': {'C': 48}, 'NODE_1845': {'C': 24}}
+sub	1	contig_1	5249	6031	781	+	5293	G	A	A	A	75	{'A': 70, 'G': 5}	G	40	0.225	{'G': 31, 'A': 9}	polymorphic_hapax_took_other	{'G': 5}	{'NODE_1338': {'A': 47}, 'NODE_1845': {'A': 23}}
+sub	1	contig_1	5252	6031	778	+	5296	C	T	T	T	76	{'T': 71, 'C': 5}	C	43	0.302	{'C': 30, 'T': 13}	polymorphic_hapax_took_other	{'C': 5}	{'NODE_1338': {'T': 47}, 'NODE_1845': {'T': 24}}
+sub	1	contig_1	5288	6031	742	+	5332	A	G	G	G	51	{'G': 32, 'A': 18, 'T': 1}	G	38	0.368	{'A': 14, 'T': 1, 'G': 23}	target_minor_allele	{'A': 14, 'T': 1}	{'NODE_1338': {'G': 32}, 'NODE_1845': {'A': 4}}
+sub	1	contig_1	5327	6031	703	+	5371	A	G	G	G	49	{'G': 28, 'A': 20, 'T': 1}	A	42	0.429	{'G': 18, 'A': 23, 'T': 1}	polymorphic_hapax_took_other	{'A': 20, 'T': 1}	{'NODE_1338': {'G': 21}, 'NODE_1845': {'G': 7}}
+sub	1	contig_1	5339	6031	691	+	5383	A	G	G	G	47	{'G': 26, 'A': 21}	A	40	0.4	{'A': 24, 'G': 16}	polymorphic_hapax_took_other	{'A': 21}	{'NODE_1338': {'G': 17}, 'NODE_1845': {'G': 7}, '?': {'G': 2}}
+sub	1	contig_1	5504	6031	526	+	5548	G	A	A	G	58	{'A': 24, 'G': 34}	G	45	0.133	{'A': 6, 'G': 39}	hapax_not_majority	{'A': 6, 'G': 34}	{'NODE_1338': {'A': 18}}
+sub	1	contig_1	5525	6031	505	+	5569	C	T	T	C	61	{'T': 28, 'C': 33}	C	44	0.182	{'T': 8, 'C': 36}	hapax_not_majority	{'T': 12, 'C': 33}	{'NODE_1338': {'T': 16}}
+sub	1	contig_1	5701	6031	329	+	5745	A	G	G	G	25	{'A': 8, 'G': 17}	G	27	0.37	{'A': 10, 'G': 17}	target_minor_allele	{'A': 4, 'G': 8}	{'NODE_1338': {'G': 4}, 'JQ403108.1': {'G': 5, 'A': 4}}
+sub	1	contig_1	5729	6031	301	+	5773	A	G	G	G	16	{'A': 5, 'G': 11}	A	15	0.467	{'A': 8, 'G': 7}	polymorphic_hapax_took_other	{'A': 1, 'G': 3}	{'JQ403108.1': {'G': 8, 'A': 4}}
+sub	1	contig_1	5750	6031	280	+	5794	T	C	C	C	14	{'C': 12, 'T': 2}	T	9	0.333	{'T': 6, 'C': 3}	polymorphic_hapax_took_other	{'T': 2}	{'JQ403108.1': {'C': 12}}
+sub	1	contig_1	5752	6031	278	+	5796	A	G	G	G	14	{'G': 12, 'A': 2}	A	9	0.333	{'A': 6, 'G': 3}	polymorphic_hapax_took_other	{'A': 2}	{'JQ403108.1': {'G': 12}}
+sub	1	contig_1	5756	6031	274	+	5800	G	A	A	A	14	{'A': 12, 'G': 2}	G	9	0.333	{'G': 6, 'A': 3}	polymorphic_hapax_took_other	{'G': 2}	{'JQ403108.1': {'A': 12}}
+sub	1	contig_1	5762	6031	268	+	5806	A	G	G	G	15	{'G': 12, 'A': 3}	A	9	0.333	{'A': 6, 'G': 3}	polymorphic_hapax_took_other	{'A': 3}	{'JQ403108.1': {'G': 12}}
+sub	1	contig_1	5768	6031	262	+	5812	G	A	A	A	14	{'A': 11, 'G': 3}	G	9	0.333	{'G': 6, 'A': 3}	polymorphic_hapax_took_other	{'G': 3}	{'JQ403108.1': {'A': 11}}
+sub	1	contig_1	5780	6031	250	+	5824	A	T	T	T	8	{'T': 7, 'A': 1}	A	7	0.429	{'T': 3, 'A': 4}	polymorphic_hapax_took_other	{'A': 1}	{'JQ403108.1': {'T': 7}}
+sub	1	contig_1	5789	6031	241	+	5833	A	G	G	G	8	{'G': 7, 'A': 1}	A	7	0.429	{'G': 3, 'A': 4}	polymorphic_hapax_took_other	{'A': 1}	{'JQ403108.1': {'G': 7}}
+sub	1	contig_1	5798	6031	232	+	5842	G	A	A	A	8	{'A': 7, 'G': 1}	G	7	0.429	{'A': 3, 'G': 4}	polymorphic_hapax_took_other	{'G': 1}	{'JQ403108.1': {'A': 7}}
