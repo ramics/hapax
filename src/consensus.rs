@@ -13,8 +13,9 @@
 //! which reads belong together); placement against the draft is a much easier
 //! problem and the nucleotides are what get emitted.
 
-use crate::genetic::{aa, codon_index, is_stop};
+use crate::genetic::{aa, codon_index};
 use crate::layout::Placement;
+pub use crate::orf::{Orf, OrfCaller};
 use crate::seq::revcomp;
 use rayon::prelude::*;
 
@@ -184,13 +185,6 @@ impl Region {
     }
 }
 
-#[derive(Clone, Debug)]
-pub struct Orf {
-    /// 0..3 forward frames, 3..6 reverse
-    pub frame: u8,
-    pub start: usize,
-    pub end: usize,
-}
 
 #[derive(Clone, Debug)]
 pub struct Contig {
@@ -210,11 +204,12 @@ pub struct ConsensusParams {
     pub min_af: f32,
     pub min_depth: u32,
     pub min_orf: usize,
+    pub orf_caller: OrfCaller,
 }
 
 impl Default for ConsensusParams {
     fn default() -> Self {
-        ConsensusParams { rounds: 3, min_alt: 2, min_af: 0.05, min_depth: 4, min_orf: 300 }
+        ConsensusParams { rounds: 3, min_alt: 2, min_af: 0.05, min_depth: 4, min_orf: 300, orf_caller: OrfCaller::Scored }
     }
 }
 
@@ -304,42 +299,7 @@ fn call(cols: &[Column], ins: &[std::collections::HashMap<Vec<u8>, u32>]) -> (Ve
     (out, map)
 }
 
-pub fn find_orfs(seq: &[u8], min_len: usize) -> Vec<Orf> {
-    let mut orfs = Vec::new();
-    let rc = revcomp(seq);
-    for strand in 0..2 {
-        let s = if strand == 0 { seq } else { &rc[..] };
-        for f in 0..3 {
-            let mut start = f;
-            let mut i = f;
-            while i + 3 <= s.len() {
-                let stop = codon_index(&s[i..i + 3]).map_or(false, is_stop);
-                if stop {
-                    if i - start >= min_len {
-                        orfs.push(mk_orf(strand, f, start, i, s.len()));
-                    }
-                    start = i + 3;
-                }
-                i += 3;
-            }
-            let end = f + (s.len() - f) / 3 * 3;
-            if end >= start && end - start >= min_len {
-                orfs.push(mk_orf(strand, f, start, end, s.len()));
-            }
-        }
-    }
-    orfs
-}
-
-fn mk_orf(strand: usize, f: usize, start: usize, end: usize, len: usize) -> Orf {
-    if strand == 0 {
-        Orf { frame: f as u8, start, end }
-    } else {
-        Orf { frame: 3 + f as u8, start: len - end, end: len - start }
-    }
-}
-
-fn annotate_regions(len: usize, orfs: &[Orf]) -> Vec<Region> {
+pub fn annotate_regions(len: usize, orfs: &[Orf]) -> Vec<Region> {
     let mut n = vec![0u8; len];
     for o in orfs {
         // clamped: a split read set (src/phase.rs) can leave a consensus
@@ -415,7 +375,7 @@ pub fn build(reads: &[Vec<u8>], comp: &[Placement], p: &ConsensusParams) -> Cont
         draft = new;
     }
     let (columns, _) = pileup(draft.len(), &alns);
-    let orfs = find_orfs(&draft, p.min_orf);
+    let orfs = crate::orf::call_orfs(&draft, p.min_orf, p.orf_caller);
     let region = annotate_regions(draft.len(), &orfs);
     let mut variants = Vec::new();
     for (pos, col) in columns.iter().enumerate() {
@@ -515,11 +475,5 @@ mod tests {
         let (_, _, cols2, ins2, _) = align_to_ref(&q2, &r).unwrap();
         assert_eq!(cols2.len(), 20);
         assert_eq!(ins2.len(), 1);
-    }
-    #[test]
-    fn orfs_and_regions() {
-        let s = encode(b"ATGAAACCCGGGTTTAAACCCGGGTTTTAA");
-        let orfs = find_orfs(&s, 18);
-        assert!(orfs.iter().any(|o| o.frame == 0 && o.start == 0 && o.end == 27));
     }
 }

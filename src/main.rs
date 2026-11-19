@@ -1,6 +1,8 @@
 //! hapax command line.
 //!
 //! hapax assemble -i reads.fa -o outdir [options]
+//! hapax orfs -i genomes.fa [--orf-caller scored|union] [--min-orf INT]
+//!     prints the ORFs and per-base region runs the annotation would use
 //!
 //! Options (defaults in brackets):
 //!   --mode codon|nucleotide    overlap scoring [codon]; nucleotide is the ablation baseline
@@ -14,6 +16,8 @@
 //!   --sub-err FLOAT            per-base substitution error [0.005]
 //!   --max-partners INT         candidate partners per read [16]
 //!   --bucket-cap INT           per-bucket, per-strand entries paired with each read [48]; 0 = all
+//!   --orf-caller scored|union  region annotation ORF caller [scored]
+//!   --min-orf INT              shortest ORF annotated [300]
 //!   --min-contig INT           shortest contig written [300]
 //!   --best-k INT               stage-1 clusters from each read's top k edges [6]
 //!   --lazy-t2 0|1              skip the HMM for pairs tier 1 already joined [1]
@@ -86,6 +90,9 @@ fn usage() -> ! {
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
+    if args.len() >= 2 && args[1] == "orfs" {
+        return orfs_cmd(&args[2..]);
+    }
     if args.len() < 2 || args[1] != "assemble" {
         usage();
     }
@@ -94,7 +101,7 @@ fn main() {
     let mut sp = SeedParams::default();
     let mut op = OverlapParams::default();
     let mut mp = ModelParams::default();
-    let cp = ConsensusParams::default();
+    let mut cp = ConsensusParams::default();
     let mut min_contig = 300usize;
     let mut threads = 0usize;
     let mut dump_edges = false;
@@ -126,6 +133,8 @@ fn main() {
             "--sub-err" => mp.sub_err = v().parse().unwrap(),
             "--max-partners" => op.max_partners = v().parse().unwrap(),
             "--bucket-cap" => op.bucket_cap = v().parse().unwrap(),
+            "--orf-caller" => cp.orf_caller = parse_caller(&v()),
+            "--min-orf" => cp.min_orf = v().parse().unwrap(),
             "--min-contig" => min_contig = v().parse().unwrap(),
             "-t" => threads = v().parse().unwrap(),
             "--best-k" => best_k = v().parse().unwrap(),
@@ -318,4 +327,49 @@ fn main() {
     );
     std::fs::write(format!("{}/stats.json", out), &stats).unwrap();
     eprint!("{}", stats);
+}
+
+fn parse_caller(s: &str) -> hapax::orf::OrfCaller {
+    if s == "union" {
+        hapax::orf::OrfCaller::Union
+    } else if s == "atg" {
+        hapax::orf::OrfCaller::Atg
+    } else {
+        hapax::orf::OrfCaller::Scored
+    }
+}
+
+fn orfs_cmd(args: &[String]) {
+    let mut input = None;
+    let mut caller = hapax::orf::OrfCaller::Scored;
+    let mut min_orf = ConsensusParams::default().min_orf;
+    let mut i = 0;
+    while i < args.len() {
+        let v = args.get(i + 1).cloned().unwrap_or_else(|| usage());
+        match args[i].as_str() {
+            "-i" => input = Some(v),
+            "--orf-caller" => caller = parse_caller(&v),
+            "--min-orf" => min_orf = v.parse().unwrap(),
+            _ => usage(),
+        }
+        i += 2;
+    }
+    let recs = seq::read_seqs(&input.unwrap_or_else(|| usage())).expect("reading input");
+    println!("seq\tkind\tstart\tend\tvalue");
+    for r in recs {
+        let orfs = hapax::orf::call_orfs(&r.seq, min_orf, caller);
+        for o in &orfs {
+            println!("{}\torf\t{}\t{}\t{}", r.name, o.start + 1, o.end, o.frame);
+        }
+        let reg = consensus::annotate_regions(r.seq.len(), &orfs);
+        let mut s = 0;
+        while s < reg.len() {
+            let mut e = s;
+            while e < reg.len() && reg[e] == reg[s] {
+                e += 1;
+            }
+            println!("{}\tregion\t{}\t{}\t{}", r.name, s + 1, e, reg[s].name());
+            s = e;
+        }
+    }
 }

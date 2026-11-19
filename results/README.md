@@ -213,7 +213,61 @@ each comparison against v0 is paired. Results at τ = 0.9, mean ± sd over 5 see
 
 ---
 
-## 4. Several real swarms in one metagenome (the external comparison)
+## 4. ORF annotation fix (`orf_annotation/`)
+
+The wastewater probe found that the original ORF caller marked 26–40% of a real
+astrovirus contig as dual-coding. The true dual-coding extent there is about 8 nt.
+That caller took every stop-free stretch of at least 300 nt in all six frames and
+called any base covered twice "dual".
+
+**What it affected:** only the annotation outputs, `regions.tsv` and the
+syn/nonsyn column of `variants.tsv`. Overlap scoring never reads it. The HMM
+chooses codon or nucleotide scoring per region from the read pair itself (its
+nucleotide state, plus the fallback when two offsets both win). So the
+codon-vs-nucleotide comparisons above were not affected. That was checked
+directly: all 80 runs of the four main ladder configs (5 seeds × 4 diversities,
+τ = 0.9) were rerun with the new caller, and every contig, miss, chimaera,
+recovery and HMM-fraction number matches `ladder_v2/runs.tsv` exactly.
+
+**The fix** (`src/orf.rs`, now the default; `--orf-caller union` restores the old
+caller for comparison):
+- ORFs start at an ATG, or at the contig edge when the reading frame runs off it.
+- The longest non-overlapping ORFs train a codon-usage profile, scored against
+  the same spans read in their other five frames.
+- An ORF that overlaps a longer one in another frame is kept only if its codon
+  usage looks like the genome's genes (mean log ratio ≥ −0.1) and it is at least
+  450 nt long.
+
+Base-level scores against GenBank CDS
+(`experiments/orf_annotation.py --seed 0`):
+
+| genome | caller | true dual (nt) | called dual (nt) | dual precision | dual recall | false dual, share of genome | coding recall |
+|---|---|---|---|---|---|---|---|
+| astrovirus NC_001943 | union (old) | 9 | 2,449 | 0.004 | 1.00 | **35.8%** | 1.00 |
+| | scored (new) | 9 | 185 | 0.03 | 0.56 | **2.6%** | 0.94 |
+| HIV-1 HXB2 K03455 | union (old) | 468 | 1,834 | 0.18 | 0.69 | **15.5%** | 0.95 |
+| | scored (new) | 468 | 53 | 1.00 | 0.11 | **0%** | 0.95 |
+| HBV NC_003977 | union (old) | 1,591 | 2,415 | 0.65 | 0.99 | **26.3%** | 1.00 |
+| | scored (new) | 1,591 | 1,244 | 1.00 | 0.78 | **0%** | 1.00 |
+
+**Findings and caveats**
+
+- False dual calls drop from 16–36% of each genome to 0–2.6%. Every dual call on
+  HIV and HBV is now real.
+- The remaining astrovirus error is a start-site problem, not a shadow ORF. ORF2
+  is called from an in-frame ATG about 180 nt upstream of its true start, so it
+  appears to overlap ORF1b.
+- HIV dual recall is low (0.11) because its real overlaps are short genes:
+  *rev* exon 2 is 275 nt and *vpr* is 237 nt. Those are below what a
+  de novo caller can separate from chance stop-free runs. A reference-guided
+  annotation would be needed for them.
+- The two thresholds (−0.1 and 1.5 × min length) were chosen on these same
+  three genomes, so these numbers are fitted, not held out. The next genome
+  annotated should be scored before trusting them further.
+
+---
+
+## 5. Several real swarms in one metagenome (the external comparison)
 
 `swarm_metagenome/README.md` and `sister_pairs/summary.md`. Eight real
 within-host swarms (two HIV *env* hosts, HIV *gag-pol*, three HCV strains
@@ -247,7 +301,9 @@ are not interpretable until that is fixed**.
 
 | criterion | status |
 |---|---|
-| No gain over nucleotide assemblers | **Failing on real multi-swarm data (§4).** On the simulator, codon scoring beats the same pipeline in nucleotide mode by 0.1 to 0.35 contigs per entity at ≥ 0.15 diversity. On eight real within-host swarms in one metagenome, metaSPAdes beats hapax on every aggregate measure and the codon-versus-nucleotide ablation shows no difference at all. |
-| Collapsing erases differences in overlapping genes | **Blocked by a bug (§4).** The region caller overcalls dual-coding on real genomes, so the nucleotide fallback is taken where it should not be. Fix `find_orfs` before running the HBV and *gag/pol* test. |
+| No gain over nucleotide assemblers | **Failing on real multi-swarm data (§5).** On the simulator, codon scoring beats the same pipeline in nucleotide mode by 0.1 to 0.35 contigs per entity at ≥ 0.15 diversity. On eight real within-host swarms in one metagenome, metaSPAdes beats hapax on every aggregate measure and the codon-versus-nucleotide ablation shows no difference at all. |
+| Collapsing erases differences in overlapping genes | **Blocked by a bug (§5).** The region caller overcalls dual-coding on real genomes, so the nucleotide fallback is taken where it should not be. Fix `find_orfs` before running the HBV and *gag/pol* test. |
 | Too slow | **Passed after v2.** At most 15% of candidates reach the HMM, and codon mode costs about 1.3× nucleotide mode. |
-| Chimaeras increase | **Not from codon scoring, but the grouping step is worse than the simulator showed (§4).** In v2 chimaeras appear equally in both modes, and tier-1 grouping removes them at a contiguity cost. On real swarms from different hosts, every configuration merges them: 3.6 to 3.8 cross-swarm chimaeras against MEGAHIT's 1.8. |
+| Chimaeras increase | **Not from codon scoring, but the grouping step is worse than the simulator showed (§5).** In v2 chimaeras appear equally in both modes, and tier-1 grouping removes them at a contiguity cost. On real swarms from different hosts, every configuration merges them: 3.6 to 3.8 cross-swarm chimaeras against MEGAHIT's 1.8. |
+
+---
