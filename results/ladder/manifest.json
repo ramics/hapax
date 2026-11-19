@@ -1,0 +1,78 @@
+{
+  "seed": {
+    "first": 1,
+    "n": 5
+  },
+  "git_sha": "4e55e5448421d956a4c2fd942abf1c9351ed118a",
+  "params": {
+    "seed": 1,
+    "n_seeds": 5,
+    "diversities": [
+      0.05,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "taus": [
+      0.7,
+      0.9,
+      1.0
+    ],
+    "configs": [
+      "codon",
+      "nucleotide",
+      "codon-spaced",
+      "nucleotide-spaced"
+    ],
+    "sister_div": 0.3,
+    "coverage": 50.0,
+    "external": [],
+    "threads": 4,
+    "out": "../results/ladder"
+  },
+  "timings_s": {
+    "total": 422.6480405689997,
+    "simulation": 15.622100955000406
+  },
+  "tools": {
+    "python": "3.13.18",
+    "platform": "Linux-6.18.44-fc-v653-x86_64-with-glibc2.39",
+    "rustc": "rustc 1.97.0 (2d8144b78 2026-07-07)",
+    "megahit": "not installed",
+    "spades.py": "not installed",
+    "plass": "not installed",
+    "penguin": "not installed"
+  },
+  "command": "diversity_ladder.py --seed 1 --n-seeds 5 --out ../results/ladder",
+  "date": "2026-11-19T15:59:48Z",
+  "configs": {
+    "codon": [
+      "--mode",
+      "codon",
+      "--seed",
+      "contiguous"
+    ],
+    "nucleotide": [
+      "--mode",
+      "nucleotide",
+      "--seed",
+      "contiguous"
+    ],
+    "codon-spaced": [
+      "--mode",
+      "codon",
+      "--seed",
+      "spaced",
+      "-k",
+      "16"
+    ],
+    "nucleotide-spaced": [
+      "--mode",
+      "nucleotide",
+      "--seed",
+      "spaced",
+      "-k",
+      "16"
+    ]
+  }
+}
