@@ -8,6 +8,7 @@ pub mod consensus;
 pub mod index;
 pub mod layout;
 pub mod overlap;
+pub mod phase;
 pub mod model;
 pub mod orf;
 pub mod seq;

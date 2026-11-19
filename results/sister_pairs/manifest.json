@@ -1,0 +1,25 @@
+{
+  "seed": 1,
+  "git_sha": "202dac017c49dea73a1f666e241a63012b2a53b7-dirty",
+  "params": {
+    "seed": 1,
+    "n_seeds": 3,
+    "covs": "30,300",
+    "threads": 2,
+    "out": "results/sister_pairs"
+  },
+  "timings_s": {
+    "total": 628.7523755729999
+  },
+  "tools": {
+    "python": "3.13.18",
+    "platform": "Linux-6.18.44-fc-v653-x86_64-with-glibc2.39",
+    "rustc": "rustc 1.97.0 (2d8144b78 2026-07-07)",
+    "megahit": "not installed",
+    "spades.py": "not installed",
+    "plass": "not installed",
+    "penguin": "not installed"
+  },
+  "command": "experiments/sister_pairs.py --seed 1 --n-seeds 3 --covs 30,300 --out results/sister_pairs",
+  "date": "2026-11-19T20:59:13Z"
+}

@@ -1,0 +1,43 @@
+{
+  "seed": 1,
+  "git_sha": "202dac017c49dea73a1f666e241a63012b2a53b7-dirty",
+  "params": {
+    "seed": 1,
+    "n_seeds": 1,
+    "swarm_cov": 300.0,
+    "sigma": 1.0,
+    "tools": "hapax-codon,hapax-nucleotide,hapax-codon-t1groups,megahit,metaspades,haploflow",
+    "threads": 4,
+    "timeout": 3600,
+    "out": "results/swarm_metagenome",
+    "keep_reads": true
+  },
+  "timings_s": {
+    "simulate": 11.222904521000032,
+    "hapax-codon": 106.51369382500002,
+    "hapax-nucleotide": 96.29337255700011,
+    "hapax-codon-t1groups": 96.27436200800003,
+    "megahit": 96.31422258099997,
+    "metaspades": 3600.003987045,
+    "haploflow": 130.74992778399974
+  },
+  "tools": {
+    "python": "3.13.18",
+    "platform": "Linux-6.18.44-fc-v653-x86_64-with-glibc2.39",
+    "rustc": "rustc 1.97.0 (2d8144b78 2026-07-07)",
+    "megahit": "not installed",
+    "spades.py": "not installed",
+    "plass": "not installed",
+    "penguin": "not installed"
+  },
+  "command": "experiments/swarm_metagenome.py --seed 1 --n-seeds 1 --keep-reads --out results/swarm_metagenome",
+  "date": "2026-11-19T18:22:53Z",
+  "status": {
+    "hapax-codon": "ok",
+    "hapax-nucleotide": "ok",
+    "hapax-codon-t1groups": "ok",
+    "megahit": "ok",
+    "metaspades": "timeout",
+    "haploflow": "ok"
+  }
+}
