@@ -1,0 +1,21 @@
+{
+  "experiment": "experiments/ww_berlin.sh",
+  "date": "2026-11-19",
+  "git_sha": "dc2d1b09219ef9cade2c70c16d978f2068d5040d",
+  "run": "SRR23973193",
+  "sample": "RNA_WW_211013_20-22hmix",
+  "geo": "GSE228220", "bioproject": "PRJNA948850",
+  "paper": "Wyler et al. 2024, Environment International 190:108875",
+  "target": "WW_211013_20-22hmix_S5_L001_NODE_37_length_6823_cov_11.736554 (authors' SPAdes astrovirus contig, 6823 bp, 57% identity to NC_001943)",
+  "reads": {"pairs": 8731224, "length": 107, "astro_reads_recruited": 5171, "target_mean_depth": 43, "target_ge_10x": "6471/6823"},
+  "diversity": {"sites_ge_20x": 5000, "minor_allele_20_80pct": 82},
+  "results": {
+    "spades_authors": {"contigs": 1, "covered": 6802, "identity_pct": 100.0, "misjoins": 0},
+    "megahit": {"contigs_touching": 12, "covered": 6709, "identity_pct": 99.2, "misjoins": 0, "total_contigs": 20292},
+    "hapax": {"contigs_touching": 4, "covered": 6663, "identity_pct": 97.0, "misjoins": 0, "longest": 4147}
+  },
+  "hapax_stats": {"hmm_fraction": 0.276, "region_dual_pct": 26, "filtered_variant_sites": 536, "single_frame_syn": 254, "single_frame_nonsyn": 60},
+  "tools": {"megahit": "v1.2.9", "minimap2": "2.31-r1302", "samtools": "1.25"},
+  "hapax_params": "defaults: --mode codon --seed contiguous -k 15 -w 5 --tau 0.8 --min-contig 300",
+  "notes": "Deterministic; no seed. hapax input is astrovirus-recruited reads; MEGAHIT and SPAdes saw the whole sample."
+}
