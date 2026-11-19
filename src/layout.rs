@@ -83,9 +83,53 @@ pub fn best_k(n: usize, edges: &[Edge], k: usize, mutual: bool) -> Vec<Edge> {
     edges.iter().zip(votes).filter(|(_, v)| *v >= need).map(|(e, _)| *e).collect()
 }
 
+/// Group reads into entities in two stages.
+///
+/// Stage 1 takes connected components of the best-k graph. That graph is
+/// precise but, at high per-variant coverage, it tends to phase a population
+/// apart: every read's top partners are reads of its own haplotype, so
+/// cross-variant edges never make anyone's top k and one population splits
+/// into several haplotype clusters. That is the opposite of what is wanted.
+///
+/// Stage 2 therefore merges stage-1 clusters back together when the *full*
+/// accepted-edge set links them by many edges: at least `min_bridge`, and at
+/// least `bridge_frac` of the smaller cluster's reads. Two haplotypes of one
+/// swarm share hundreds of accepted overlaps; two sister populations meet in a
+/// handful of conserved stretches. Counting bridges is what tells them apart,
+/// where no single overlap score can.
+pub fn group(n: usize, edges: &[Edge], k: usize, min_bridge: usize, bridge_frac: f32) -> Vec<u32> {
+    let strong = best_k(n, edges, k, false);
+    let mut d1 = Dsu::new(n);
+    for e in &strong {
+        d1.union(e.a, e.b);
+    }
+    let c1: Vec<u32> = (0..n as u32).map(|i| d1.find(i)).collect();
+    let mut size = std::collections::HashMap::<u32, usize>::new();
+    for &c in &c1 {
+        *size.entry(c).or_insert(0) += 1;
+    }
+    let mut bridges = std::collections::HashMap::<(u32, u32), usize>::new();
+    for e in edges {
+        let (x, y) = (c1[e.a as usize], c1[e.b as usize]);
+        if x != y {
+            *bridges.entry((x.min(y), x.max(y))).or_insert(0) += 1;
+        }
+    }
+    let mut b: Vec<((u32, u32), usize)> = bridges.into_iter().collect();
+    b.sort_by(|x, y| y.1.cmp(&x.1).then(x.0.cmp(&y.0)));
+    let mut d2 = Dsu::new(n);
+    for ((x, y), cnt) in b {
+        let small = size[&x].min(size[&y]);
+        if cnt >= min_bridge && cnt as f32 >= bridge_frac * small as f32 {
+            d2.union(x, y);
+        }
+    }
+    (0..n).map(|i| d2.find(c1[i])).collect()
+}
+
 /// Returns placements grouped by component (largest first). Singletons are
 /// returned as their own components so that nothing is silently dropped.
-pub fn layout(lens: &[usize], edges: &[Edge]) -> Vec<Vec<Placement>> {
+pub fn layout(lens: &[usize], edges: &[Edge], groups: Option<&[u32]>) -> Vec<Vec<Placement>> {
     let n = lens.len();
     let mut order: Vec<usize> = (0..edges.len()).collect();
     order.sort_by(|&x, &y| edges[y].score.partial_cmp(&edges[x].score).unwrap());
@@ -93,6 +137,11 @@ pub fn layout(lens: &[usize], edges: &[Edge]) -> Vec<Vec<Placement>> {
     let mut adj: Vec<Vec<(u32, bool, i64, bool)>> = vec![Vec::new(); n]; // (nbr, rev, offset, i_is_a)
     for &e in &order {
         let ed = &edges[e];
+        if let Some(g) = groups {
+            if g[ed.a as usize] != g[ed.b as usize] {
+                continue;
+            }
+        }
         if dsu.union(ed.a, ed.b) {
             adj[ed.a as usize].push((ed.b, ed.rev, ed.offset, true));
             adj[ed.b as usize].push((ed.a, ed.rev, ed.offset, false));
@@ -153,7 +202,7 @@ mod tests {
         let lens = vec![150, 150, 150];
         // r0 (a) to r2 (b), same orientation, offset 100
         let edges = vec![e(0, 1, true, 50), e(0, 2, false, 100)];
-        let comps = layout(&lens, &edges);
+        let comps = layout(&lens, &edges, None);
         assert_eq!(comps.len(), 1);
         let mut c = comps[0].clone();
         c.sort_by_key(|p| p.read);

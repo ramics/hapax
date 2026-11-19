@@ -14,8 +14,9 @@
 //!   --sub-err FLOAT            per-base substitution error [0.005]
 //!   --max-partners INT         candidate partners per read [16]
 //!   --min-contig INT           shortest contig written [300]
-//!   --best-k INT               keep edges in each read's top k [6]; 0 = all
-//!   --mutual 0|1               require top-k at both ends [0]
+//!   --best-k INT               stage-1 clusters from each read's top k edges [6]
+//!   --min-bridge INT           edges needed to merge two clusters [5]
+//!   --bridge-frac FLOAT        ...and as a fraction of the smaller cluster [0.1]
 //!   --dump-edges 0|1           write edges.tsv for calibration [0]
 //!   -t INT                     threads [all]
 
@@ -48,7 +49,8 @@ fn main() {
     let mut threads = 0usize;
     let mut dump_edges = false;
     let mut best_k = 6usize;
-    let mut mutual = false;
+    let mut min_bridge = 5usize;
+    let mut bridge_frac = 0.1f32;
     let mut i = 2;
     while i < args.len() {
         let a = args[i].as_str();
@@ -71,7 +73,8 @@ fn main() {
             "--min-contig" => min_contig = v().parse().unwrap(),
             "-t" => threads = v().parse().unwrap(),
             "--best-k" => best_k = v().parse().unwrap(),
-            "--mutual" => mutual = v() == "1",
+            "--min-bridge" => min_bridge = v().parse().unwrap(),
+            "--bridge-frac" => bridge_frac = v().parse().unwrap(),
             "--dump-edges" => dump_edges = v() == "1",
             _ => usage(),
         }
@@ -111,8 +114,9 @@ fn main() {
     }
     let t = Instant::now();
     let lens: Vec<usize> = reads.iter().map(|r| r.len()).collect();
-    let kept = layout::best_k(reads.len(), &edges, best_k, mutual);
-    let comps = layout::layout(&lens, &kept);
+    let groups = layout::group(reads.len(), &edges, best_k, min_bridge, bridge_frac);
+    let comps = layout::layout(&lens, &edges, Some(&groups));
+    let n_groups = { let mut g = groups.clone(); g.sort(); g.dedup(); g.len() };
     let t_layout = t.elapsed().as_secs_f64();
 
     let t = Instant::now();
@@ -191,7 +195,7 @@ fn main() {
             "{{\n  \"reads\": {},\n  \"mode\": \"{:?}\",\n  \"seed_shape\": \"{:?}\",\n  \"k\": {},\n  \"w\": {},\n  \"tau\": {},\n",
             "  \"candidates\": {},\n  \"tier1_accept\": {},\n  \"tier1_reject\": {},\n  \"tier2\": {},\n  \"tier2_accept\": {},\n",
             "  \"tier2_dual_fallback\": {},\n  \"hmm_fraction\": {:.4},\n  \"tier2_codon_scored_nt\": {},\n  \"tier2_nucleotide_scored_nt\": {},\n",
-            "  \"tier2_syn_mismatch\": {},\n  \"tier2_nonsyn_mismatch\": {},\n  \"phase_wins\": [{}, {}, {}],\n  \"edges\": {},\n  \"edges_kept\": {},\n",
+            "  \"tier2_syn_mismatch\": {},\n  \"tier2_nonsyn_mismatch\": {},\n  \"phase_wins\": [{}, {}, {}],\n  \"edges\": {},\n  \"read_groups\": {},\n",
             "  \"components\": {},\n  \"contigs\": {},\n  \"contig_bases\": {},\n  \"placed_reads\": {},\n  \"variants\": {},\n",
             "  \"seconds\": {{\"read\": {:.3}, \"index\": {:.3}, \"candidates\": {:.3}, \"overlap\": {:.3}, \"layout\": {:.3}, \"consensus\": {:.3}, \"total\": {:.3}}}\n}}\n"
         ),
@@ -216,7 +220,7 @@ fn main() {
         g(&st.phase_wins[1]),
         g(&st.phase_wins[2]),
         edges.len(),
-        kept.len(),
+        n_groups,
         comps.len(),
         contigs.len(),
         total_len,
