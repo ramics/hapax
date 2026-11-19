@@ -48,7 +48,9 @@ this work; every other row includes the consensus fixes below.
 | target lineage only, trimmed | 3 | 3,829 | 6,300 | **99.77%** | 0.037 |
 
 For comparison (from `results/ww_berlin`): MEGAHIT on the whole raw sample 99.2% over 12 contigs,
-6,709 covered; authors' SPAdes 100% by construction. MEGAHIT on the trimmed sample: see the end.
+6,709 covered; authors' SPAdes 100% by construction. **MEGAHIT on the whole sample with the same
+14 bp mate-2 trim: 2 contigs, longest block 3,737, 6,741 covered, 98.92%, no misjoins**: the prefix
+costs MEGAHIT contiguity too (12 contigs raw), and its identity sits level with hapax at a 0.95 floor.
 
 Reading the table:
 
