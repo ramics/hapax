@@ -1,6 +1,6 @@
 {
   "seed": 0,
-  "git_sha": "202dac017c49dea73a1f666e241a63012b2a53b7-dirty",
+  "git_sha": "b1f23b2db73617413879052add2a07ab88a5f840",
   "params": {
     "seed": "0",
     "min_orf": "300",
@@ -8,7 +8,7 @@
     "out": "../results/orf_annotation"
   },
   "timings_s": {
-    "total": 0.033976471999949354
+    "total": 0.030988291999960893
   },
   "tools": {
     "python": "3.13.18",
@@ -20,7 +20,7 @@
     "penguin": "not installed"
   },
   "command": "orf_annotation.py --seed 0 --out ../results/orf_annotation",
-  "date": "2026-11-19T20:43:56Z",
+  "date": "2026-11-19T20:44:13Z",
   "accessions": {
     "NC_001943": "human astrovirus 1",
     "K03455": "HIV-1 HXB2",
