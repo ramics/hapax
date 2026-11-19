@@ -1,0 +1,135 @@
+{
+  "seed": {
+    "first": 1,
+    "n": 5
+  },
+  "git_sha": "5f8a7e2bf47316b8f4b28c0c650424462ff8dac3",
+  "params": {
+    "seed": 1,
+    "n_seeds": 5,
+    "diversities": [
+      0.05,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "taus": [
+      0.9,
+      1.0
+    ],
+    "configs": [
+      "codon",
+      "nucleotide",
+      "codon-spaced",
+      "nucleotide-spaced",
+      "codon-spaced-v0",
+      "nucleotide-spaced-v0",
+      "codon-spaced-t1groups",
+      "nucleotide-spaced-t1groups"
+    ],
+    "sister_div": 0.3,
+    "coverage": 50.0,
+    "external": [],
+    "threads": 4,
+    "out": "../results/ladder_v2"
+  },
+  "timings_s": {
+    "total": 399.0478127780002,
+    "simulation": 15.625648956000532
+  },
+  "tools": {
+    "python": "3.13.18",
+    "platform": "Linux-6.18.44-fc-v653-x86_64-with-glibc2.39",
+    "rustc": "rustc 1.97.0 (2d8144b78 2026-07-07)",
+    "megahit": "not installed",
+    "spades.py": "not installed",
+    "plass": "not installed",
+    "penguin": "not installed"
+  },
+  "command": "diversity_ladder.py --seed 1 --n-seeds 5 --taus 0.9 1.0 --configs codon nucleotide codon-spaced nucleotide-spaced codon-spaced-v0 nucleotide-spaced-v0 codon-spaced-t1groups nucleotide-spaced-t1groups --out ../results/ladder_v2",
+  "date": "2026-11-19T16:22:12Z",
+  "configs": {
+    "codon": [
+      "--mode",
+      "codon",
+      "--seed",
+      "contiguous"
+    ],
+    "nucleotide": [
+      "--mode",
+      "nucleotide",
+      "--seed",
+      "contiguous"
+    ],
+    "codon-spaced": [
+      "--mode",
+      "codon",
+      "--seed",
+      "spaced",
+      "-k",
+      "16"
+    ],
+    "nucleotide-spaced": [
+      "--mode",
+      "nucleotide",
+      "--seed",
+      "spaced",
+      "-k",
+      "16"
+    ],
+    "codon-spaced-v0": [
+      "--mode",
+      "codon",
+      "--seed",
+      "spaced",
+      "-k",
+      "16",
+      "--bucket-cap",
+      "0",
+      "--lazy-t2",
+      "0"
+    ],
+    "codon-spaced-cap": [
+      "--mode",
+      "codon",
+      "--seed",
+      "spaced",
+      "-k",
+      "16",
+      "--lazy-t2",
+      "0"
+    ],
+    "codon-spaced-t1groups": [
+      "--mode",
+      "codon",
+      "--seed",
+      "spaced",
+      "-k",
+      "16",
+      "--stage1",
+      "tier1"
+    ],
+    "nucleotide-spaced-t1groups": [
+      "--mode",
+      "nucleotide",
+      "--seed",
+      "spaced",
+      "-k",
+      "16",
+      "--stage1",
+      "tier1"
+    ],
+    "nucleotide-spaced-v0": [
+      "--mode",
+      "nucleotide",
+      "--seed",
+      "spaced",
+      "-k",
+      "16",
+      "--bucket-cap",
+      "0",
+      "--lazy-t2",
+      "0"
+    ]
+  }
+}

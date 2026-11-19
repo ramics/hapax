@@ -1,0 +1,368 @@
+//! Candidate generation and two-tier overlap dispatch.
+//!
+//! Tier 1 is cheap nucleotide work: minimizer anchors are grouped by read pair
+//! and diagonal, and an ungapped comparison along the best diagonal settles the
+//! easy majority. A pair whose anchors all sit on one diagonal (no indel) and
+//! whose ungapped mismatch rate is below `easy_div` is accepted outright -- a
+//! nucleotide assembler would join it too, and the codon model has nothing to
+//! add. A pair whose ungapped mismatch rate is above `hard_div` is rejected
+//! outright: no sensible within-population join looks like that.
+//!
+//! Everything in between is ambiguous and goes to tier 2, the codon HMM
+//! (`hmm::score_pair`). This is the zone where the synonymous/non-synonymous
+//! character of the differences is what decides, and it is the only place the
+//! expensive machinery runs. The fraction of candidates reaching tier 2 is the
+//! kill-criterion number of METHOD.md 5 and is reported on every run.
+//!
+//! Joins always demand shared nucleotide identity: a pair is only a candidate
+//! if it shares exact seeds on a consistent diagonal, and an accepted tier-2
+//! overlap must also clear a nucleotide-identity floor (`min_ident`). The codon
+//! model changes how differences are *weighed*, never whether homology is
+//! demanded.
+
+use crate::hmm::{self, HmmParams};
+use crate::index::Index;
+use crate::model::Scorer;
+use crate::seq::revcomp;
+use rayon::prelude::*;
+use std::sync::atomic::{AtomicU64, Ordering};
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Mode {
+    /// codon scoring with per-region fallback (the method)
+    Codon,
+    /// nucleotide scoring only (internal ablation baseline)
+    Nucleotide,
+}
+
+#[derive(Clone, Debug)]
+pub struct OverlapParams {
+    pub mode: Mode,
+    pub min_anchors: usize,
+    pub min_overlap: usize,
+    /// max candidate partners kept per read (by anchor support)
+    pub max_partners: usize,
+    /// per-bucket, per-strand cap on entries a read pairs with (0 = none)
+    pub bucket_cap: usize,
+    pub lazy_t2: bool,
+    /// diagonal tolerance when clustering anchors
+    pub diag_tol: i64,
+    pub easy_div: f32,
+    pub hard_div: f32,
+    pub min_ident: f32,
+    /// minimum log-odds per aligned column for a tier-2 accept
+    pub tau: f32,
+    pub dual_margin: f32,
+    pub hmm: HmmParams,
+}
+
+impl Default for OverlapParams {
+    fn default() -> Self {
+        OverlapParams {
+            mode: Mode::Codon,
+            min_anchors: 2,
+            min_overlap: 50,
+            max_partners: 16,
+            bucket_cap: 48,
+            lazy_t2: true,
+            diag_tol: 10,
+            easy_div: 0.03,
+            hard_div: 0.30,
+            min_ident: 0.70,
+            tau: 0.8,
+            dual_margin: 8.0,
+            hmm: HmmParams::default(),
+        }
+    }
+}
+
+/// A candidate pair from seeding: B (oriented by `rev`) is expected to start at
+/// A coordinate `diag`.
+#[derive(Clone, Copy, Debug)]
+pub struct Candidate {
+    pub a: u32,
+    pub b: u32,
+    pub rev: bool,
+    pub diag: i64,
+    pub anchors: u32,
+    pub spread: i64,
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct Edge {
+    pub a: u32,
+    pub b: u32,
+    pub rev: bool,
+    /// start of oriented B in A coordinates
+    pub offset: i64,
+    pub score: f32,
+    pub per_col: f32,
+    pub identity: f32,
+    pub tier: u8,
+}
+
+#[derive(Default, Debug)]
+pub struct DispatchStats {
+    pub candidates: AtomicU64,
+    pub t1_accept: AtomicU64,
+    pub t1_reject: AtomicU64,
+    pub t2: AtomicU64,
+    pub t2_accept: AtomicU64,
+    pub t2_dual: AtomicU64,
+    /// ambiguous pairs not sent to the HMM because tier 1 already joined them
+    pub t2_skipped: AtomicU64,
+    pub t2_codon_nt: AtomicU64,
+    pub t2_nuc_nt: AtomicU64,
+    pub t2_syn: AtomicU64,
+    pub t2_nonsyn: AtomicU64,
+    pub phase_wins: [AtomicU64; 3],
+}
+
+impl DispatchStats {
+    pub fn get(&self, x: &AtomicU64) -> u64 {
+        x.load(Ordering::Relaxed)
+    }
+    pub fn hmm_fraction(&self) -> f64 {
+        let c = self.get(&self.candidates);
+        if c == 0 {
+            0.0
+        } else {
+            self.get(&self.t2) as f64 / c as f64
+        }
+    }
+}
+
+/// Convert a candidate seen from read `a` into the frame of read `b`.
+fn flip(c: Candidate, la: i64, lb: i64) -> Candidate {
+    let diag = if c.rev { lb - la + c.diag } else { -c.diag };
+    Candidate { a: c.b, b: c.a, rev: c.rev, diag, anchors: c.anchors, spread: c.spread }
+}
+
+pub fn candidates(reads: &[Vec<u8>], idx: &Index, p: &OverlapParams) -> Vec<Candidate> {
+    let span = idx.params.span() as i64;
+    let per_read: Vec<Vec<Candidate>> = (0..reads.len())
+        .into_par_iter()
+        .map(|i| {
+            let la = reads[i].len() as i64;
+            let mut anchors: Vec<(u32, bool, i64)> = Vec::new();
+            for s in &idx.per_read[i] {
+                // same orientation partners: pb near pa; opposite: pb near la - span - pa
+                let same = idx.nearest(s.hash, s.rev, s.pos as i64, p.bucket_cap);
+                let opp = idx.nearest(s.hash, !s.rev, la - span - s.pos as i64, p.bucket_cap);
+                for &(_, j, pb, rb) in same.iter().chain(opp.iter()) {
+                    if j as usize == i {
+                        continue;
+                    }
+                    let lb = reads[j as usize].len() as i64;
+                    let rev = rb != s.rev;
+                    let d = if !rev { s.pos as i64 - pb as i64 } else { s.pos as i64 - (lb - pb as i64 - span) };
+                    anchors.push((j, rev, d));
+                }
+            }
+            anchors.sort_unstable();
+            let mut out: Vec<Candidate> = Vec::new();
+            let mut g = 0;
+            while g < anchors.len() {
+                let mut h = g;
+                while h < anchors.len() && anchors[h].0 == anchors[g].0 && anchors[h].1 == anchors[g].1 {
+                    h += 1;
+                }
+                // best diagonal cluster within the group (diags sorted)
+                let grp = &anchors[g..h];
+                let (mut best_n, mut best_lo, mut best_hi) = (0usize, 0usize, 0usize);
+                let mut lo = 0;
+                for hi in 0..grp.len() {
+                    while grp[hi].2 - grp[lo].2 > p.diag_tol {
+                        lo += 1;
+                    }
+                    if hi - lo + 1 > best_n {
+                        best_n = hi - lo + 1;
+                        best_lo = lo;
+                        best_hi = hi;
+                    }
+                }
+                if best_n >= p.min_anchors {
+                    let cl = &grp[best_lo..=best_hi];
+                    let med = cl[cl.len() / 2].2;
+                    let lb = reads[grp[0].0 as usize].len() as i64;
+                    let ov = (la.min(med + lb) - med.max(0)) as usize;
+                    if ov >= p.min_overlap {
+                        out.push(Candidate {
+                            a: i as u32,
+                            b: grp[0].0,
+                            rev: grp[0].1,
+                            diag: med,
+                            anchors: best_n as u32,
+                            spread: cl[cl.len() - 1].2 - cl[0].2,
+                        });
+                    }
+                }
+                g = h;
+            }
+            out.sort_unstable_by(|x, y| y.anchors.cmp(&x.anchors));
+            out.truncate(p.max_partners);
+            out
+        })
+        .collect();
+    // canonicalise to a < b and dedupe
+    let mut all: Vec<Candidate> = per_read
+        .into_iter()
+        .flatten()
+        .map(|c| if c.a < c.b { c } else { flip(c, reads[c.a as usize].len() as i64, reads[c.b as usize].len() as i64) })
+        .collect();
+    all.par_sort_unstable_by_key(|c| (c.a, c.b, c.rev, std::cmp::Reverse(c.anchors)));
+    all.dedup_by_key(|c| (c.a, c.b, c.rev));
+    all
+}
+
+fn oriented<'a>(reads: &'a [Vec<u8>], c: &Candidate, buf: &'a mut Vec<u8>) -> (&'a [u8], &'a [u8]) {
+    let a = &reads[c.a as usize];
+    if c.rev {
+        *buf = revcomp(&reads[c.b as usize]);
+        (a, &buf[..])
+    } else {
+        (a, &reads[c.b as usize][..])
+    }
+}
+
+enum Tier1 {
+    Accept(Edge),
+    Reject,
+    /// carries the ungapped estimate, used if the pair is skipped by lazy tier 2
+    Ambiguous(Edge),
+}
+
+/// Tier 1: ungapped nucleotide comparison along the seed diagonal.
+fn tier1(reads: &[Vec<u8>], c: &Candidate, sc: &Scorer, p: &OverlapParams) -> Tier1 {
+    let mut buf = Vec::new();
+    let (a, b) = oriented(reads, c, &mut buf);
+    let d = c.diag;
+    let s0 = d.max(0) as usize;
+    let e0 = (a.len() as i64).min(d + b.len() as i64).max(0) as usize;
+    if e0 <= s0 || e0 - s0 < p.min_overlap {
+        return Tier1::Reject;
+    }
+    let mut mm = 0usize;
+    let mut sc1 = 0.0f32;
+    for ia in s0..e0 {
+        let x = a[ia];
+        let y = b[(ia as i64 - d) as usize];
+        if x != y {
+            mm += 1;
+        }
+        sc1 += sc.nuc(x, y);
+    }
+    let l = (e0 - s0) as f32;
+    let div = mm as f32 / l;
+    let e = Edge { a: c.a, b: c.b, rev: c.rev, offset: d, score: sc1, per_col: sc1 / l, identity: 1.0 - div, tier: 1 };
+    if c.spread == 0 && div <= p.easy_div {
+        return Tier1::Accept(e);
+    }
+    if c.spread == 0 && div > p.hard_div {
+        return Tier1::Reject;
+    }
+    Tier1::Ambiguous(Edge { tier: 3, ..e })
+}
+
+/// Tier 2: codon HMM over three offsets (or nucleotide-only in the ablation).
+fn tier2(reads: &[Vec<u8>], c: &Candidate, sc: &Scorer, p: &OverlapParams, st: &DispatchStats) -> Option<Edge> {
+    let mut buf = Vec::new();
+    let (a, b) = oriented(reads, c, &mut buf);
+    let d = c.diag;
+    st.t2.fetch_add(1, Ordering::Relaxed);
+    let aln = match p.mode {
+        Mode::Nucleotide => hmm::align(a, b, d, None, sc, &p.hmm)?,
+        Mode::Codon => {
+            let ps = hmm::score_pair(a, b, d, sc, &p.hmm, p.dual_margin)?;
+            if ps.dual {
+                st.t2_dual.fetch_add(1, Ordering::Relaxed);
+                ps.nucleotide
+            } else {
+                // count a phase win only where codon scoring was actually used
+                // and beat the other grids (identical reads tie on all three)
+                if ps.best.codon_nt > 0 && ps.per_phase.iter().filter(|&&x| x >= ps.best.score).count() == 1 {
+                    st.phase_wins[ps.best.phase as usize].fetch_add(1, Ordering::Relaxed);
+                }
+                ps.best
+            }
+        }
+    };
+    st.t2_codon_nt.fetch_add(aln.codon_nt as u64, Ordering::Relaxed);
+    st.t2_nuc_nt.fetch_add(aln.nuc_nt as u64, Ordering::Relaxed);
+    st.t2_syn.fetch_add(aln.syn as u64, Ordering::Relaxed);
+    st.t2_nonsyn.fetch_add(aln.nonsyn as u64, Ordering::Relaxed);
+    let per_col = aln.score / aln.cols.max(1) as f32;
+    if aln.identity() >= p.min_ident && aln.overlap_len() as usize >= p.min_overlap && per_col >= p.tau {
+        st.t2_accept.fetch_add(1, Ordering::Relaxed);
+        Some(Edge { a: c.a, b: c.b, rev: c.rev, offset: aln.a_start as i64 - aln.b_start as i64, score: aln.score, per_col, identity: aln.identity(), tier: 2 })
+    } else {
+        None
+    }
+}
+
+/// Output of dispatch: accepted edges plus the tier-1 component of each read.
+pub struct Dispatched {
+    pub edges: Vec<Edge>,
+    pub tier1_comp: Vec<u32>,
+}
+
+/// Run the two tiers over all candidates.
+///
+/// Tier 1 runs first over everything. Its accepts are near-identical,
+/// indel-free overlaps, so their connected components are clusters of reads
+/// from one haplotype neighbourhood that no codon model would separate. When
+/// `lazy_t2` is set, an ambiguous pair whose two reads already sit in the same
+/// tier-1 component is not sent to the HMM: its answer cannot change the
+/// grouping, and it is exactly the work the two-tier design exists to avoid.
+/// The HMM is spent only on pairs that would join different clusters -- the
+/// decisions where synonymous versus non-synonymous differences matter.
+pub fn dispatch(reads: &[Vec<u8>], cands: &[Candidate], sc: &Scorer, p: &OverlapParams, st: &DispatchStats) -> Dispatched {
+    st.candidates.fetch_add(cands.len() as u64, Ordering::Relaxed);
+    let t1: Vec<Tier1> = cands.par_iter().map(|c| tier1(reads, c, sc, p)).collect();
+    let mut dsu = crate::layout::Dsu::new(reads.len());
+    let mut edges = Vec::new();
+    let mut amb: Vec<(Candidate, Edge)> = Vec::new();
+    for (c, r) in cands.iter().zip(t1) {
+        match r {
+            Tier1::Accept(e) => {
+                st.t1_accept.fetch_add(1, Ordering::Relaxed);
+                dsu.union(e.a, e.b);
+                edges.push(e);
+            }
+            Tier1::Reject => {
+                st.t1_reject.fetch_add(1, Ordering::Relaxed);
+            }
+            Tier1::Ambiguous(e) => amb.push((*c, e)),
+        }
+    }
+    let comp: Vec<u32> = (0..reads.len() as u32).map(|i| dsu.find(i)).collect();
+    let todo: Vec<Candidate> = if p.lazy_t2 {
+        let (keep, skip): (Vec<(Candidate, Edge)>, Vec<(Candidate, Edge)>) = amb.into_iter().partition(|(c, _)| comp[c.a as usize] != comp[c.b as usize]);
+        st.t2_skipped.fetch_add(skip.len() as u64, Ordering::Relaxed);
+        // A skipped pair is already connected through near-identical joins, so
+        // its edge cannot change connectivity. It is still kept, with its cheap
+        // ungapped estimate (tier 3), because grouping ranks each read's edges
+        // and counts bridges: dropping these would leave reads with thinner
+        // edge lists, and a weak cross-population edge could then rank in a
+        // read's top k. (Observed: one sister-population merge in 5 seeds.)
+        edges.extend(skip.into_iter().map(|(_, e)| e));
+        keep.into_iter().map(|(c, _)| c).collect()
+    } else {
+        amb.into_iter().map(|(c, _)| c).collect()
+    };
+    edges.extend(todo.par_iter().filter_map(|c| tier2(reads, c, sc, p, st)).collect::<Vec<Edge>>());
+    Dispatched { edges, tier1_comp: comp }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn flip_roundtrip() {
+        let c = Candidate { a: 1, b: 2, rev: true, diag: 40, anchors: 3, spread: 0 };
+        let f = flip(flip(c, 150, 140), 140, 150);
+        assert_eq!(f.diag, 40);
+        let c = Candidate { rev: false, ..c };
+        assert_eq!(flip(c, 150, 140).diag, -40);
+    }
+}
