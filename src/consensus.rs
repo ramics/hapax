@@ -38,6 +38,9 @@ pub struct ReadAln {
     /// insertions: (ref column after which it sits, inserted bases)
     pub ins: Vec<(usize, Vec<u8>)>,
     pub score: i32,
+    /// read bases left unaligned before ref_start / after ref_end (see `CLIP`)
+    pub clip_l: Vec<u8>,
+    pub clip_r: Vec<u8>,
 }
 
 /// Affine alignment of a read into a reference window. The window has free ends;
@@ -54,6 +57,12 @@ pub struct ReadAln {
 /// aligning it scores below -10, which a genuine SNP near a read end (-3) never does.
 /// Clipped bases are not voted; the read itself is kept whole.
 pub fn align_to_ref(q: &[u8], r: &[u8]) -> Option<(usize, usize, Vec<u8>, Vec<(usize, Vec<u8>)>, i32)> {
+    align_clipped(q, r).map(|(s, e, c, i, sc, _, _)| (s, e, c, i, sc))
+}
+
+/// `align_to_ref`, also returning how many read bases were clipped at each end.
+#[allow(clippy::type_complexity)]
+fn align_clipped(q: &[u8], r: &[u8]) -> Option<(usize, usize, Vec<u8>, Vec<(usize, Vec<u8>)>, i32, usize, usize)> {
     let m = q.len();
     let n = r.len();
     if m == 0 || n == 0 {
@@ -112,6 +121,7 @@ pub fn align_to_ref(q: &[u8], r: &[u8]) -> Option<(usize, usize, Vec<u8>, Vec<(u
         }
     }
     let end = j;
+    let rclip = m - i;
     let mut state = 0u8; // 0=H, 1=E, 2=F
     let mut ops: Vec<(u8, u8)> = Vec::new(); // (op, base) op 0=match/mismatch, 1=del, 2=ins
     while i > 0 {
@@ -153,6 +163,7 @@ pub fn align_to_ref(q: &[u8], r: &[u8]) -> Option<(usize, usize, Vec<u8>, Vec<(u
         }
     }
     ops.reverse();
+    let lclip = i;
     let start = j;
     let mut cols = Vec::with_capacity(end - start);
     let mut ins: Vec<(usize, Vec<u8>)> = Vec::new();
@@ -175,7 +186,7 @@ pub fn align_to_ref(q: &[u8], r: &[u8]) -> Option<(usize, usize, Vec<u8>, Vec<(u
             }
         }
     }
-    Some((start, end, cols, ins, best))
+    Some((start, end, cols, ins, best, lclip, rclip))
 }
 
 #[derive(Clone, Debug, Default)]
@@ -268,8 +279,8 @@ fn realign(reads: &[Vec<u8>], pl: &[Placement], draft: &[u8]) -> (Vec<ReadAln>, 
             if ws >= we {
                 return Err(p.read);
             }
-            match align_to_ref(&q, &draft[ws..we]) {
-                Some((s, e, cols, ins, score)) if score > (q.len() as i32) / 2 => Ok(ReadAln {
+            match align_clipped(&q, &draft[ws..we]) {
+                Some((s, e, cols, ins, score, lc, rc)) if score > (q.len() as i32) / 2 => Ok(ReadAln {
                     read: p.read,
                     rev: p.rev,
                     ref_start: ws + s,
@@ -277,6 +288,8 @@ fn realign(reads: &[Vec<u8>], pl: &[Placement], draft: &[u8]) -> (Vec<ReadAln>, 
                     cols,
                     ins: ins.into_iter().map(|(c, v)| (c + ws, v)).collect(),
                     score,
+                    clip_l: q[..lc].to_vec(),
+                    clip_r: q[q.len() - rc..].to_vec(),
                 }),
                 _ => Err(p.read),
             }
@@ -310,14 +323,16 @@ fn pileup(len: usize, alns: &[ReadAln]) -> (Vec<Column>, Vec<std::collections::H
 }
 
 /// Build a new consensus by per-column majority; returns it with a map old col -> new col.
-fn call(len: usize, alns: &[ReadAln]) -> (Vec<u8>, Vec<usize>) {
+fn call(len: usize, alns: &[ReadAln], draft: &[u8]) -> (Vec<u8>, Vec<usize>) {
     let (cols, ins) = pileup(len, alns);
+    let fill = missing_sequence(alns, draft, &cols);
     let mut out = Vec::with_capacity(len);
     let mut map = Vec::with_capacity(len);
+    let mut skip_to = 0usize;
     for (c, col) in cols.iter().enumerate() {
         map.push(out.len());
         let d = col.depth();
-        if d == 0 {
+        if d == 0 || c < skip_to {
             continue;
         }
         let b = argmax(&col.counts);
@@ -330,8 +345,148 @@ fn call(len: usize, alns: &[ReadAln]) -> (Vec<u8>, Vec<usize>) {
                 out.extend_from_slice(s);
             }
         }
+        if let Some((drop, f)) = fill.get(&c) {
+            out.extend_from_slice(f);
+            skip_to = c + 1 + drop;
+        }
     }
     (out, map)
+}
+
+/// Sequence missing from the draft, recovered from clipped read ends.
+///
+/// Why. Read-end clipping (`CLIP`) keeps non-template ends out of the vote, but
+/// it also means a read spanning a stretch the draft lacks or has wrong clips
+/// there instead of carrying a long insertion -- clipping costs 10, a 45 bp gap
+/// 93. Long insertions were never callable anyway: reads cover them partially,
+/// so no single inserted string wins a majority. On Berlin that left a 45 bp
+/// hole in the target-lineage contig with 68 reads spanning it
+/// (results/ww_berlin_consensus).
+///
+/// Rule: a column where at least `FILL_MIN` reads, and `FILL_FRAC` of the
+/// depth, are clipped on the right is a left edge of a hole; the same on the
+/// left is a right edge. The clipped tails' per-offset majority `t` reads into
+/// the hole from the left, the heads' majority `h` from the right. A repair is
+/// made only when it is anchored on both sides by agreement with sequence:
+/// `t` rejoining the draft after its edge (an insertion), or `t` and `h`
+/// overlapping each other by `FILL_ANCHOR` bases (the hole, possibly with wrong
+/// draft columns between the two edges, is replaced by `t` + `h`). Clipped
+/// non-template ends never pass: they differ between reads, so no per-offset
+/// majority forms. Returns, per left-edge column, (columns to drop after it,
+/// bases to insert).
+fn missing_sequence(alns: &[ReadAln], draft: &[u8], cols: &[Column]) -> std::collections::HashMap<usize, (usize, Vec<u8>)> {
+    use std::collections::HashMap;
+    const FILL_MIN: usize = 4;
+    const FILL_FRAC: f32 = 0.25;
+    const FILL_ANCHOR: usize = 12;
+    const FILL_SPAN: usize = 200;
+    let mut tails: HashMap<usize, Vec<Vec<u8>>> = HashMap::new();
+    let mut heads: HashMap<usize, Vec<Vec<u8>>> = HashMap::new();
+    for a in alns {
+        if a.ref_end <= a.ref_start {
+            continue;
+        }
+        if a.clip_r.len() >= FILL_ANCHOR && a.ref_end < draft.len() {
+            tails.entry(a.ref_end - 1).or_default().push(a.clip_r.clone());
+        }
+        if a.clip_l.len() >= FILL_ANCHOR && a.ref_start > 0 {
+            // reversed, so offset 0 is the base next to the edge
+            heads.entry(a.ref_start).or_default().push(a.clip_l.iter().rev().copied().collect());
+        }
+    }
+    let enough = |n: usize, c: usize| n >= FILL_MIN && n as f32 >= FILL_FRAC * cols[c].depth() as f32;
+    let consensus = |ts: &[Vec<u8>]| {
+        let mut out = Vec::new();
+        for k in 0.. {
+            let mut cnt = [0usize; 4];
+            for t in ts {
+                if k < t.len() && t[k] < 4 {
+                    cnt[t[k] as usize] += 1;
+                }
+            }
+            let n: usize = cnt.iter().sum();
+            let (b, top) = cnt.iter().enumerate().max_by_key(|x| *x.1).map(|(b, &v)| (b, v)).unwrap();
+            if n < FILL_MIN || 2 * top <= n {
+                break;
+            }
+            out.push(b as u8);
+        }
+        out
+    };
+    let close = |x: &[u8], y: &[u8]| x.len() == y.len() && x.iter().zip(y).filter(|(a, b)| a != b).count() <= 1.max(x.len() / 20);
+    let head_cons: HashMap<usize, Vec<u8>> = heads
+        .iter()
+        .filter(|(c, h)| enough(h.len(), **c))
+        .map(|(c, h)| (*c, consensus(h).into_iter().rev().collect::<Vec<u8>>()))
+        .collect();
+    let mut out = HashMap::new();
+    let mut lefts: Vec<usize> = tails.keys().copied().filter(|c| enough(tails[c].len(), *c)).collect();
+    lefts.sort_unstable();
+    let mut done_to = 0usize;
+    for c in lefts {
+        if c < done_to {
+            continue;
+        }
+        let t = consensus(&tails[&c]);
+        if t.len() < FILL_ANCHOR {
+            continue;
+        }
+        // (a) t rejoins the draft: insertion of t[..l]; l = 0 means nothing is missing
+        let mut fixed = false;
+        for l in 0..=t.len() - FILL_ANCHOR {
+            if c + 1 + FILL_ANCHOR > draft.len() {
+                break;
+            }
+            if close(&t[l..l + FILL_ANCHOR], &draft[c + 1..c + 1 + FILL_ANCHOR]) {
+                if l > 0 {
+                    out.insert(c, (0, t[..l].to_vec()));
+                }
+                fixed = true;
+                break;
+            }
+        }
+        if fixed {
+            continue;
+        }
+        // (b) bridge to the right edge with the most support within FILL_SPAN
+        let mut edges: Vec<(&usize, &Vec<u8>)> = head_cons.iter().filter(|(e, _)| **e > c && **e <= c + FILL_SPAN).collect();
+        edges.sort_by_key(|(e, _)| std::cmp::Reverse(heads[*e].len()));
+        for (&e, h) in edges {
+            // h ends at the edge; find the shift s with t[s..] overlapping h's start
+            let mut bridge = None;
+            for sft in 0..t.len() {
+                let ov = (t.len() - sft).min(h.len());
+                if ov < FILL_ANCHOR {
+                    break;
+                }
+                if close(&t[sft..sft + ov], &h[..ov]) {
+                    let mut seq = t[..sft].to_vec();
+                    seq.extend_from_slice(h);
+                    bridge = Some(seq);
+                    break;
+                }
+            }
+            // or h reaches back past the left edge: t's start lies inside h
+            if bridge.is_none() {
+                for sft in 1..h.len() {
+                    let ov = (h.len() - sft).min(t.len());
+                    if ov < FILL_ANCHOR {
+                        break;
+                    }
+                    if close(&h[sft..sft + ov], &t[..ov]) {
+                        bridge = Some(h[sft..].to_vec());
+                        break;
+                    }
+                }
+            }
+            if let Some(seq) = bridge {
+                out.insert(c, (e - c - 1, seq));
+                done_to = e;
+                break;
+            }
+        }
+    }
+    out
 }
 
 pub fn annotate_regions(len: usize, orfs: &[Orf]) -> Vec<Region> {
@@ -400,7 +555,7 @@ pub fn build(reads: &[Vec<u8>], comp: &[Placement], p: &ConsensusParams) -> Cont
         if round == p.rounds {
             break;
         }
-        let (new, map) = call(draft.len(), &alns);
+        let (new, map) = call(draft.len(), &alns, &draft);
         // move placements into the new coordinates. Reads that failed to realign
         // this round keep their previous placement (mapped across) and are retried
         // against the next draft, rather than being dropped for good after one bad

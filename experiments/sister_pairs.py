@@ -57,6 +57,8 @@ GRID = [
     ("t1groups", ["--stage1", "tier1"]),
     ("split-phase", ["--split-phase", "1"]),
     ("split-cut-0.05", ["--split-cut", "0.05"]),
+    ("split-lineage", ["--split-lineage", "1"]),
+    ("split-lineage-0.075", ["--split-lineage", "1", "--lineage-split-div", "0.075"]),
 ]
 
 
@@ -143,6 +145,7 @@ def main() -> None:
     ap.add_argument("--covs", default="30,100,300")
     ap.add_argument("--threads", type=int, default=2)
     ap.add_argument("--out", default=str(ROOT / "results" / "sister_pairs"))
+    ap.add_argument("--configs", nargs="+", default=[c for c, _ in GRID], choices=[c for c, _ in GRID])
     a = ap.parse_args()
     ensure_release_build()
     out = Path(a.out)
@@ -155,7 +158,7 @@ def main() -> None:
                 work = out / "work" / f"{pname}_cov{cov:g}_seed{seed}"
                 work.mkdir(parents=True, exist_ok=True)
                 reads = simulate_pair(pair, cov, seed, work)
-                for cfg, extra in GRID:
+                for cfg, extra in [g for g in GRID if g[0] in a.configs]:
                     o = work / cfg
                     o.mkdir(exist_ok=True)
                     t = time.perf_counter()
