@@ -12,12 +12,32 @@ from __future__ import annotations
 import argparse
 import json
 import random
+import hashlib
 import subprocess
 from pathlib import Path
 
 from residue_structure_analyse import AXES, load
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def _provenance() -> dict:
+    """Git SHA, whether the tree was dirty, and a content hash of this script.
+
+    The SHA alone is not provenance when the tree is dirty: it names HEAD, not the code that
+    ran, so two runs can carry the same SHA and different code. That is not hypothetical -
+    it is how a codon-table fix landing midway through a multi-seed run produced a results
+    directory nobody could sort afterwards. The content hash pins the code whatever the tree
+    looked like, and unlike a file timestamp it survives the container.
+    """
+    sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True,
+                         text=True).stdout.strip()
+    dirty = bool(subprocess.run(["git", "status", "--porcelain"], cwd=ROOT,
+                                capture_output=True, text=True).stdout.strip())
+    return {"git_sha": sha + ("-dirty" if dirty else ""),
+            "tree_dirty": dirty,
+            "script_sha256": hashlib.sha256(
+                Path(__file__).read_bytes()).hexdigest()[:16]}
 
 
 def main() -> None:
@@ -84,8 +104,7 @@ def main() -> None:
                             + "\t".join(f"{r[c]:.4f}" for c in cols) + "\n")
     (args.out / f"points_manifest_s{args.block}.json").write_text(json.dumps({
         "script": "experiments/residue_structure_points.py",
-        "git_sha": subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT,
-                                  capture_output=True, text=True).stdout.strip(),
+        **_provenance(),
         "parameters": {k: str(v) for k, v in vars(args).items()},
     }, indent=2))
     print({k: (v["n_total"], v["n_plotted"]) for k, v in out["populations"].items()})

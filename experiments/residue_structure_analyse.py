@@ -36,6 +36,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import hashlib
 import subprocess
 import time
 from pathlib import Path
@@ -236,6 +237,25 @@ def separability(Xr: np.ndarray, Xs: np.ndarray, seed: int) -> dict:
             "n_residue": len(Xr), "n_subtracted": len(Xs)}
 
 
+def _provenance() -> dict:
+    """Git SHA, whether the tree was dirty, and a content hash of this script.
+
+    The SHA alone is not provenance when the tree is dirty: it names HEAD, not the code that
+    ran, so two runs can carry the same SHA and different code. That is not hypothetical -
+    it is how a codon-table fix landing midway through a multi-seed run produced a results
+    directory nobody could sort afterwards. The content hash pins the code whatever the tree
+    looked like, and unlike a file timestamp it survives the container.
+    """
+    sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True,
+                         text=True).stdout.strip()
+    dirty = bool(subprocess.run(["git", "status", "--porcelain"], cwd=ROOT,
+                                capture_output=True, text=True).stdout.strip())
+    return {"git_sha": sha + ("-dirty" if dirty else ""),
+            "tree_dirty": dirty,
+            "script_sha256": hashlib.sha256(
+                Path(__file__).read_bytes()).hexdigest()[:16]}
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--seed", type=int, default=1, help="analysis RNG; blocks are 1..5")
@@ -358,12 +378,10 @@ def main() -> None:
                            for i, a in enumerate(AXES)},
         }
 
-    sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True,
-                         text=True).stdout.strip()
     (args.out / f"structure_s{args.seed}.json").write_text(json.dumps(result, indent=2))
     (args.out / f"manifest_s{args.seed}.json").write_text(json.dumps({
         "script": "experiments/residue_structure_analyse.py",
-        "git_sha": sha,
+        **_provenance(),
         "parameters": vars(args) | {"work": str(args.work), "out": str(args.out)},
         "inputs": {
             "coverage": str(args.work / "coverage.tsv"),

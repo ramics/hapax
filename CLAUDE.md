@@ -63,8 +63,12 @@ Record them and say so rather than tuning a simulator until it looks good.
   earns the manifest its place**: a fix landing midway through a multi-seed run leaves a
   directory where some seeds are right and some are wrong and nothing visible says which. A
   mixture is not a five-seed result — re-run every seed after a fix, and until they are all
-  re-run, read the per-seed SHA rather than the directory. File timestamps answer the same
-  question only while the container lives, which is not long enough.
+  re-run, read the per-seed manifest rather than the directory. **A `-dirty` SHA is
+  unresolved provenance, not provenance**: it names HEAD, not the code that ran, so two runs
+  can carry the same SHA and different code, which is exactly the case this rule comes from.
+  Every manifest therefore carries a content hash of the script beside the SHA
+  (`script_sha256`), which pins the code whatever the tree looked like. File timestamps
+  answer the same question only while the container lives, which is not long enough.
 - Any reported number is reproducible from a committed script plus a seed.
 - Headline results run across at least 5 seeds, reporting spread. A single-seed conclusion
   from simulated data is noise.
