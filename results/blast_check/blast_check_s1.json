@@ -1,0 +1,641 @@
+{
+  "seed": 1,
+  "pairs_labelled": 20000,
+  "class_sizes_in_block": {
+    "rrna": 7527,
+    "public_nucleotide": 547,
+    "selfasm_identified": 6862,
+    "residue_assembled": 1814,
+    "residue_missing": 3250
+  },
+  "class_fracs_in_block": {
+    "rrna": 0.37635,
+    "public_nucleotide": 0.02735,
+    "selfasm_identified": 0.3431,
+    "residue_assembled": 0.0907,
+    "residue_missing": 0.1625
+  },
+  "tier2_contig_candidates": 1784,
+  "sampled_per_class": {
+    "rrna": 60,
+    "public_nucleotide": 60,
+    "selfasm_identified": 60,
+    "residue_assembled": 60,
+    "residue_missing": 60,
+    "tier2_contigs": 60
+  },
+  "blast": {
+    "blastn": {
+      "database": "nt",
+      "per_class": {
+        "rrna": {
+          "n": 60,
+          "any_hit": 60,
+          "any_hit_frac": 1.0,
+          "any_hit_ci95": [
+            0.9398,
+            1.0
+          ],
+          "pident": {
+            "n": 60,
+            "min": 81.73,
+            "p25": 98.78,
+            "median": 100.0,
+            "p75": 100.0,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 60,
+            "min": 0.7009,
+            "p25": 0.9623,
+            "median": 0.9906,
+            "p75": 1.0,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "uncultured bacterium",
+              10
+            ],
+            [
+              "Acinetobacter calcoaceticus",
+              2
+            ],
+            [
+              "Aliarcobacter cryaerophilus",
+              2
+            ],
+            [
+              "uncultured Tolumonas sp.",
+              2
+            ],
+            [
+              "Acinetobacter sp. PC34",
+              2
+            ],
+            [
+              "Sebaldella termitidis",
+              2
+            ],
+            [
+              "Diaphorobacter ruginosibacter",
+              2
+            ],
+            [
+              "Caraotamonas croatica",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 60,
+            "min": 75,
+            "p25": 102,
+            "median": 106,
+            "p75": 107,
+            "max": 107
+          },
+          "bitscore": {
+            "n": 60,
+            "min": 103.177,
+            "p25": 180.721,
+            "median": 185.23,
+            "p75": 192.443,
+            "max": 194.247
+          },
+          "top_titles": [
+            [
+              "Acinetobacter calcoaceticus strain SDH15 chromosome, complete genome",
+              2
+            ],
+            [
+              "Aliarcobacter cryaerophilus isolate ENC5 genome assembly, chromosome: 1",
+              2
+            ],
+            [
+              "MAG: uncultured Tolumonas sp. isolate 8f464e4a-fedb-41da-893e-74a4d5da0fea genome assembly",
+              2
+            ],
+            [
+              "Acinetobacter sp. PC34 chromosome, complete genome",
+              2
+            ],
+            [
+              "Sebaldella termitidis strain ATCC 33386 23S ribosomal RNA gene, complete sequence",
+              2
+            ],
+            [
+              "Diaphorobacter ruginosibacter strain DSM 27467 chromosome, complete genome",
+              2
+            ]
+          ]
+        },
+        "public_nucleotide": {
+          "n": 60,
+          "any_hit": 60,
+          "any_hit_frac": 1.0,
+          "any_hit_ci95": [
+            0.9398,
+            1.0
+          ],
+          "pident": {
+            "n": 60,
+            "min": 95.24,
+            "p25": 100.0,
+            "median": 100.0,
+            "p75": 100.0,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 60,
+            "min": 0.5794,
+            "p25": 0.972,
+            "median": 0.9906,
+            "p75": 1.0,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "Tomato brown rugose fruit virus",
+              34
+            ],
+            [
+              "Cucumber green mottle mosaic virus",
+              7
+            ],
+            [
+              "uncultured bacterium",
+              6
+            ],
+            [
+              "Acinetobacter sp. CE-15",
+              1
+            ],
+            [
+              "Tobamovirus viridimaculae",
+              1
+            ],
+            [
+              "Salmonella enterica subsp. enterica serovar 1,4,[5],12:i:-",
+              1
+            ],
+            [
+              "Escherichia coli",
+              1
+            ],
+            [
+              "Klebsiella pneumoniae",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 60,
+            "min": 37,
+            "p25": 103,
+            "median": 105,
+            "p75": 107,
+            "max": 107
+          },
+          "bitscore": {
+            "n": 60,
+            "min": 68.0109,
+            "p25": 183.427,
+            "median": 189.738,
+            "p75": 192.443,
+            "max": 194.247
+          },
+          "top_titles": [
+            [
+              "Tomato brown rugose fruit virus isolate S90_ToBRFV, complete genome",
+              16
+            ],
+            [
+              "Tomato brown rugose fruit virus isolate S74_ToBRFV, complete genome",
+              3
+            ],
+            [
+              "Tomato brown rugose fruit virus isolate S84_ToBRFV, complete genome",
+              3
+            ],
+            [
+              "Cucumber green mottle mosaic virus isolate CG25, complete genome",
+              3
+            ],
+            [
+              "Tomato brown rugose fruit virus isolate ToBRFV_C+Italy_TobUni1_2 coat protein gene, comple",
+              2
+            ],
+            [
+              "Tomato brown rugose fruit virus isolate S92_ToBRFV, complete genome",
+              2
+            ]
+          ]
+        },
+        "selfasm_identified": {
+          "n": 60,
+          "any_hit": 53,
+          "any_hit_frac": 0.8833333333333333,
+          "any_hit_ci95": [
+            0.7782,
+            0.9423
+          ],
+          "pident": {
+            "n": 53,
+            "min": 71.26,
+            "p25": 88.0,
+            "median": 91.59,
+            "p75": 99.02,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 53,
+            "min": 0.2243,
+            "p25": 0.3364,
+            "median": 0.6449,
+            "p75": 0.9813,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "Picornavirales sp.",
+              7
+            ],
+            [
+              "Cucumber green mottle mosaic virus",
+              3
+            ],
+            [
+              "Leviviridae sp.",
+              2
+            ],
+            [
+              "Tomato brown rugose fruit virus",
+              2
+            ],
+            [
+              "StochSlu_10 levi-like virus",
+              2
+            ],
+            [
+              "Scomber australasicus",
+              2
+            ],
+            [
+              "Leviviricetes sp. 1",
+              1
+            ],
+            [
+              "ssRNA phage Esthiorhiza.1_1",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 53,
+            "min": 24,
+            "p25": 36,
+            "median": 69,
+            "p75": 105,
+            "max": 108
+          },
+          "bitscore": {
+            "n": 53,
+            "min": 44.5672,
+            "p25": 46.3705,
+            "median": 60.7975,
+            "p75": 177.115,
+            "max": 194.247
+          },
+          "top_titles": [
+            [
+              "MAG: Picornavirales sp. isolate HPLV-59 genomic sequence",
+              3
+            ],
+            [
+              "Cucumber green mottle mosaic virus isolate CG25, complete genome",
+              2
+            ],
+            [
+              "MAG: StochSlu_10 levi-like virus isolate SluRVP22_08, partial genome",
+              2
+            ],
+            [
+              "MAG: Leviviricetes sp. 1 isolate levi_14 genomic sequence",
+              1
+            ],
+            [
+              "SsRNA phage Esthiorhiza.1_1 genomic sequence",
+              1
+            ],
+            [
+              "Kitasatospora sp. NBC_00039 chromosome, complete genome",
+              1
+            ]
+          ]
+        },
+        "residue_assembled": {
+          "n": 60,
+          "any_hit": 49,
+          "any_hit_frac": 0.8166666666666667,
+          "any_hit_ci95": [
+            0.7008,
+            0.8944
+          ],
+          "pident": {
+            "n": 49,
+            "min": 74.77,
+            "p25": 86.36,
+            "median": 90.62,
+            "p75": 93.33,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 49,
+            "min": 0.2308,
+            "p25": 0.2804,
+            "median": 0.3429,
+            "p75": 0.4112,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "Balneola sp.",
+              2
+            ],
+            [
+              "Hepelivirales sp.",
+              2
+            ],
+            [
+              "Naegleria gruberi",
+              2
+            ],
+            [
+              "Acidobacteriota bacterium",
+              2
+            ],
+            [
+              "Chitinophaga sp. XS-30",
+              1
+            ],
+            [
+              "Alphaproteobacteria bacterium",
+              1
+            ],
+            [
+              "Pandoraea sp. NE5",
+              1
+            ],
+            [
+              "Croceicoccus marinus",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 49,
+            "min": 24,
+            "p25": 30,
+            "median": 36,
+            "p75": 45,
+            "max": 107
+          },
+          "bitscore": {
+            "n": 49,
+            "min": 44.5672,
+            "p25": 45.4688,
+            "median": 47.2722,
+            "p75": 48.1739,
+            "max": 189.738
+          },
+          "top_titles": [
+            [
+              "MAG: Balneola sp. isolate e96deac7-8453-4d32-8f01-8d8ded761fbe genome assembly, chromosome",
+              2
+            ],
+            [
+              "Naegleria gruberi uncharacterized protein (NAEGRDRAFT_49783), partial mRNA",
+              2
+            ],
+            [
+              "Chitinophaga sp. XS-30 chromosome, complete genome",
+              1
+            ],
+            [
+              "MAG: Alphaproteobacteria bacterium isolate f39589be-575b-4b6e-84b1-1196dcf6da37 genome ass",
+              1
+            ],
+            [
+              "Pandoraea sp. NE5 DNA, complete genome",
+              1
+            ],
+            [
+              "Croceicoccus marinus strain OT19 chromosome, complete genome",
+              1
+            ]
+          ]
+        },
+        "residue_missing": {
+          "n": 60,
+          "any_hit": 52,
+          "any_hit_frac": 0.8666666666666667,
+          "any_hit_ci95": [
+            0.7583,
+            0.9309
+          ],
+          "pident": {
+            "n": 52,
+            "min": 74.07,
+            "p25": 84.78,
+            "median": 88.89,
+            "p75": 93.55,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 52,
+            "min": 0.2336,
+            "p25": 0.3271,
+            "median": 0.3832,
+            "p75": 0.6092,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "Caudoviricetes sp.",
+              3
+            ],
+            [
+              "Acidobacteriaceae bacterium",
+              3
+            ],
+            [
+              "Leviviricetes",
+              2
+            ],
+            [
+              "Ripamac virus",
+              1
+            ],
+            [
+              "Dendropsophus ebraccatus",
+              1
+            ],
+            [
+              "Paraburkholderia tropica",
+              1
+            ],
+            [
+              "Edaphobacter sp.",
+              1
+            ],
+            [
+              "Myoviridae sp. ctByu2",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 52,
+            "min": 25,
+            "p25": 34,
+            "median": 41,
+            "p75": 62,
+            "max": 108
+          },
+          "bitscore": {
+            "n": 52,
+            "min": 44.5672,
+            "p25": 46.3705,
+            "median": 49.0756,
+            "p75": 58.0924,
+            "max": 194.247
+          },
+          "top_titles": [
+            [
+              "MAG: Ripamac virus isolate KCAP3_k141_247439 genomic sequence",
+              1
+            ],
+            [
+              "PREDICTED: Dendropsophus ebraccatus semaphorin-3F-like (LOC138765975), transcript variant ",
+              1
+            ],
+            [
+              "Paraburkholderia tropica strain FMD144 chromosome 2, complete sequence",
+              1
+            ],
+            [
+              "MAG: Edaphobacter sp. isolate MFD15122.bin.s.2 genome assembly, chromosome: 1",
+              1
+            ],
+            [
+              "MAG TPA_asm: Caudoviricetes sp. isolate ctN5C17, partial genome",
+              1
+            ],
+            [
+              "MAG TPA_asm: Myoviridae sp. ctByu2, partial genome",
+              1
+            ]
+          ]
+        },
+        "tier2_contigs": {
+          "n": 60,
+          "any_hit": 58,
+          "any_hit_frac": 0.9666666666666667,
+          "any_hit_ci95": [
+            0.8864,
+            0.9908
+          ],
+          "pident": {
+            "n": 58,
+            "min": 65.75,
+            "p25": 83.33,
+            "median": 86.67,
+            "p75": 90.24,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 58,
+            "min": 0.0176,
+            "p25": 0.0559,
+            "median": 0.0684,
+            "p75": 0.0904,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "Picornavirales sp.",
+              4
+            ],
+            [
+              "Actinomycetes bacterium",
+              2
+            ],
+            [
+              "Caudoviricetes sp.",
+              2
+            ],
+            [
+              "Acidobacteriaceae bacterium",
+              2
+            ],
+            [
+              "ssRNA phage SRR7976299_5",
+              2
+            ],
+            [
+              "Chthoniobacteraceae bacterium",
+              1
+            ],
+            [
+              "Cylindrospermopsis raciborskii Cr2010",
+              1
+            ],
+            [
+              "Dehalococcoidia bacterium",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 58,
+            "min": 28,
+            "p25": 39,
+            "median": 48,
+            "p75": 75,
+            "max": 1546
+          },
+          "bitscore": {
+            "n": 58,
+            "min": 46.3705,
+            "p25": 49.9773,
+            "median": 52.6823,
+            "p75": 66.2076,
+            "max": 2192.38
+          },
+          "top_titles": [
+            [
+              "SsRNA phage SRR7976299_5 genomic sequence",
+              2
+            ],
+            [
+              "MAG: Chthoniobacteraceae bacterium isolate MFD15007.bin.2.4 genome assembly, chromosome: 1",
+              1
+            ],
+            [
+              "Cylindrospermopsis raciborskii Cr2010 chromosome, complete genome",
+              1
+            ],
+            [
+              "MAG: Dehalococcoidia bacterium isolate ebb30a51-fd80-4f91-a9df-d4bc6488b8f2 genome assembl",
+              1
+            ],
+            [
+              "SsRNA phage Gerhypos.4_51 genomic sequence",
+              1
+            ],
+            [
+              "Cellulophaga lytica strain DSMZ 7489 chromosome, complete genome",
+              1
+            ]
+          ]
+        }
+      }
+    }
+  },
+  "wall_seconds": 1060.5828358089993
+}

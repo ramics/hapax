@@ -44,9 +44,152 @@ measurement's clothes. The operating point used in the cascade is stated with ev
 
 ## 3. Results
 
-See the generated tables below.
+All percentages are of READ PAIRS, which is the occurrence-weighted unit, not an average
+over distinct k-mers. The distinction matters by orders of magnitude for conserved
+sequence - on curated SILVA the mean number of entries reached per distinct peptide 10-mer
+is 3.49 but 388 when weighted by occurrence - and a read sees the occurrence-weighted
+quantity. Nothing in this report averages over distinct k-mers.
+
+### 3.1 The cascade, 5 seeds x 100,000 pairs
+
+Subtrahend defined by IDENTIFICATION, not by assembly: a contig that assembles but cannot
+be identified stays in play, because removing it would swallow tier 2 whole. Operating
+points: SILVA and contig tiers at >=40 matching bases, Kraken2 at confidence 0.1, DIAMOND
+at bitscore >=50.
+
+| tier | index GB | alone | marginal | cumulative | residue |
+|---|---|---|---|---|---|
+| artefact / low complexity | 0.000 | 0.31 | 0.31 | 0.31 | 99.69 |
+| SILVA rRNA | 0.272 | 38.02 | 37.93 | 38.23 | 61.77 |
+| Kraken2 viral | 0.667 | 5.33 | 5.21 | 43.44 | 56.56 |
+| Kraken2 Standard-8 | 8.005 | 7.52 | 0.27 | 43.71 | 56.29 |
+| Kraken2 PlusPF-8 | 8.005 | 6.78 | 0.00 | 43.71 | 56.29 |
+| Kraken2 PlusPF-16 | 16.005 | 21.67 | 0.42 | 44.13 | 55.87 |
+| the sample's own rRNA contigs | 0.001 | 38.85 | 1.00 | 45.13 | 54.87 |
+| the sample's own identified non-rRNA contigs | 0.015 | 67.22 | 30.33 | 75.47 | 24.53 |
+| DIAMOND RefSeq viral proteins | 0.239 | 1.43 | 1.43 | 76.90 | 23.10 |
+| DIAMOND Swiss-Prot | 0.294 | 0.31 | 0.20 | 77.10 | 22.90 |
+
+Union 77.10% (77.02-77.28 across seeds). Full table with per-seed spread and every
+threshold sweep: `results/subtract_recut/TABLES.md`; the earlier wholesale cut, where the
+subtrahend was everything that assembled, is kept at `TABLES_wholesale.md` for comparison
+(it removes 89.18% and swallows tier 2).
+
+Three readings of that table.
+
+**The sample's own assembly is the most efficient index by orders of magnitude.** 1.4 MB
+of ribosomal contigs assembled from this very sample removes 38.85% alone, slightly more
+than all 272 MB of SILVA; 15 MB of its identified non-rRNA contigs adds 30.33 points
+marginally, where 16 GB of Kraken2 adds 0.42. Known-to-a-database and known-here are
+different questions, and the cheap one is the second.
+
+**Thresholds dominate database size.** PlusPF-16 removes 42.82% of the library at
+confidence 0, 21.67% at 0.1 and 3.52% at 0.2 - a factor of twelve inside one database,
+against a factor of 1.01 between 8 GB and 16 GB at a fixed threshold. Any published
+"% unclassified" without a stated threshold is unreadable, which includes some of the
+numbers this project has quoted at itself.
+
+**The 86% unknown of PR #11 was mostly rRNA and index incompleteness.** rRNA alone is
+38.02% of pairs at >=40 matching bases, and no protein index can ever match it. The
+measurement agrees within about two points with the protein thread's 34.5% (36.2%
+sensitivity-corrected) by exact 31-mer sharing, which is a different criterion; the
+matching-base sweep gives 38.0 / 37.3 / 35.7 / 26.4 at 40 / 60 / 80 / 100 bases.
+
+### 3.2 Ordering is a design requirement, not an accident
+
+rRNA must be removed with a NUCLEOTIDE index before any protein index is consulted.
+Against a large protein index ribosomal reads stop looking novel faster than anything
+else, and the explanation that survives is annotation artefacts: public entries annotated
+automatically that are really translated ribosomal sequence. The general mechanism is the
+conservation multiplier measured database-independently by the now-closed protein thread;
+the wastewater-specific confirmation is the wide-insert thread's entry counts, 63 of 4.1
+million entries each reaching 1% or more of ribosomal reads and the top 100 carrying 52.2%
+of all ribosomal read-matches, which is also a practical 63-entry blocklist. Without that
+ordering a third of this library's score measures public annotation quality rather than
+what is in the water. Enforced in `subtract_known.py` by tier order and asserted here
+because it is a trap for anyone reimplementing the cascade.
+
+### 3.3 Contig-level identification reverses the read-level picture
+
+`experiments/classify_contigs.py` over this sample's 82,947 contigs (29.8 Mb), at Kraken2
+confidence 0.1 or DIAMOND bitscore >=50 against Swiss-Prot and 10% of UniRef50:
+
+- 34.78% of contigs identified, 49.13% of bases.
+- Route: protein-only 26.30%, nucleotide-only 5.73%. At read length the nucleotide index
+  does the work; at contig length the protein index does, by a factor of 4.6. That is the
+  measured reason the cascade needs both and the reason tier 2 must be defined by
+  identification.
+- rRNA is only 4.38% of contigs and 3.94% of bases, at median coverage 44.7x against 1.27x
+  overall. So the sample's-own-assembly step is not rRNA leakage wearing a different hat;
+  the ribosomal contigs are reported as their own tier above and remove 38.85% on their
+  own.
+
+**Tier 2 is real but thin.** 46,157 contigs cannot be identified at all, 14.3 Mb, median
+length 254 nt and median coverage 1.12x. Only 3.87% of them - about 1,784 contigs - clear
+both 500 nt and 2x, which is where PR #5 measured that assembly and classification begin
+to work at all. Tier 2 is therefore a small, honest pile rather than the easy win the
+three-tier sketch implies, and its 1,784 members are the right size for the per-contig
+characterisation Imo asked for.
+
+### 3.4 Ground truth: an actual BLAST against NCBI core_nt
+
+`experiments/remote_blast_check.py` draws a stratified sample, 60 mate-1 reads per class,
+labels every class locally with the cascade's own references and thresholds, and submits
+them to NCBI's remote BLAST (blastn against nt, 133 M sequences / 1.1 Tbase - two orders
+of magnitude more sequence than any index that fits here). Seed 1:
+
+| class | % of library | any hit | median identity | median query coverage |
+|---|---|---|---|---|
+| rRNA | 37.6 | 60/60 | 100.0 | 0.99 |
+| public nucleotide (Kraken2) | 2.7 | 60/60 | 100.0 | 0.99 |
+| identified by the sample's own assembly | 34.3 | 53/60 | 91.6 | 0.64 |
+| residue, maps an unidentified contig | 9.1 | 49/60 | 90.6 | 0.34 |
+| residue, maps nothing | 16.3 | 52/60 | 88.9 | 0.38 |
+| tier-2 contigs (>=500 nt, >=2x) | - | 58/60 | 86.7 | 0.07 |
+
+The headline is a correction to our own language. **The residue is not matchless.** Against
+1.1 Tbase, 87% of residue reads hit something - so "matches nothing" was always shorthand
+for "matches nothing in an index that fits on this disk". What separates the classes is not
+whether they hit but how much of the read is covered at what identity: a ribosomal read
+aligns over its whole length at 100%, a residue read aligns over a third of itself at 89%.
+That is precisely the distant-partial-homology signature, and it is why the per-read report
+reports closest relative as a continuous field and never thresholds it.
+
+It is also independent support for the coordinator's point that the index-size curve has
+not flattened: the sequence our indexes miss is findable in a database 70 times larger
+than anything local, so removal is still rising with index size at the largest index
+reachable. Five seeds and a blastx pass against nr on the residue and tier-2 classes are
+running; this table is seed 1 only and is labelled as such.
 
 ## 4. What the residue is, and is not
+
+The 22.90% residue breaks down as follows, measured by mapping it back to assemblies
+rather than to public databases:
+
+- **8.42% abundant-but-unplaceable** (8.33-8.51 across seeds): assembles here, cannot be
+  identified against anything. This is tier 2's read-level population and the pile where
+  longer contigs and better classifiers would help.
+- **9.97% maps a contig from one of the other 115 samples** of the same study
+  (9.86-10.04). Observed, deliberately NOT subtracted: subtracting it would make
+  cross-sample recurrence zero by construction and destroy a field the per-read report
+  needs. The two categories above overlap, so they do not sum.
+- **10.90% genuinely missing** (10.76-11.07): nothing in public databases, nothing in this
+  sample's own assembly, nothing in the other 115 samples' assemblies. Rare AND
+  unsequenced, which is also the description of a novel virus at 1 in a million - so our
+  target sits on the same side of this feature as the irreducible background, and that is
+  a limit of the architecture rather than of the implementation.
+
+Subtracting the sample's OWN data is what turns the residue from "merely undeposited" into
+"genuinely rare". That is the narrower replacement for the claim withdrawn in PR #13
+("absence in wastewater means wastewater"), which failed because the organisms were in the
+sample's own contigs, just not in public databases.
+
+The residue is also, by construction, enriched for artefacts: a pile defined by matching
+nothing collects adapters, primer dimers, chimaeras and low-complexity sequence. The
+cheap artefact tier removes 0.31% of the library before any database is consulted, and
+every residue row carries its own artefact fields plus the mean error probability from its
+quality string, so an unexplainable read can be read as "probably instrument" rather than
+"probably biology".
 
 ## 5. The per-read evidence report
 

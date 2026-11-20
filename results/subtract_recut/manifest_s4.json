@@ -1,0 +1,60 @@
+{
+  "script": "experiments/subtract_known.py",
+  "git_sha": "1278233f7b05bf135200ccb2ddf22e4e95f6d97d",
+  "parameters": {
+    "seed": 4,
+    "pairs": 100000,
+    "block": 1500000,
+    "r1": "/home/user/hapax/data/berlin/SRR23973193_1.fastq.gz",
+    "r2": "/home/user/hapax/data/berlin/SRR23973193_2.fastq.gz",
+    "trim_r2": 14,
+    "k2_dbs": [
+      "/home/user/hapax/data/k2_viral",
+      "/home/user/hapax/data/k2_standard08",
+      "/home/user/hapax/data/k2_pluspf08",
+      "/home/user/hapax/data/k2_pluspf16"
+    ],
+    "classify_bin": "/home/user/tools/k2pkg/root/share/kraken2-2.17.2/libexec/classify",
+    "silva": [
+      "/home/user/hapax/data/silva/SSU.fa.gz",
+      "/home/user/hapax/data/silva/LSU.fa.gz"
+    ],
+    "selfasm": [
+      "data/geo/sample_contigs_rrna.fa",
+      "data/geo/sample_contigs_identified_norrna.fa"
+    ],
+    "observe": [
+      "data/geo/sample_contigs_unidentified.fa",
+      "data/geo/all_contigs_1kb.fa"
+    ],
+    "dmnd": [
+      "/home/user/hapax/data/prot/viral.dmnd",
+      "/home/user/hapax/data/prot/sprot.dmnd"
+    ],
+    "diamond_bin": "/home/user/tools/diamond",
+    "threads": 4,
+    "k2_confidence": [
+      "0.0",
+      "0.05",
+      "0.1",
+      "0.2"
+    ],
+    "k2_operating_confidence": 0.1,
+    "diamond_sensitivity": "--sensitive",
+    "diamond_bitscore": 50.0,
+    "entropy_min": 0.5,
+    "homopolymer_max": 25,
+    "min_mlen": 40,
+    "work": "/tmp/claude-0/wk/recut",
+    "out": "results/subtract_recut",
+    "keep_known": 20000,
+    "rows_out": true
+  },
+  "wall_seconds": 334.3423719020002,
+  "peak_rss_bytes": 2542362624,
+  "python": "3.13.18",
+  "mappy": "2.31",
+  "diamond": "diamond version 2.1.10",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39",
+  "cpu_count": 4
+}
