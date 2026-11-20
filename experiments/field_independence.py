@@ -234,7 +234,21 @@ def main() -> None:
                      f"{s['standardised_difference']:+.2f} |")
     lines += ["", "Independence and usefulness are different properties: a field can be "
               "its own axis and still say nothing about whether a read is interesting, "
-              "and both columns are needed to read the report honestly."]
+              "and both columns are needed to read the report honestly.", "",
+              "Two results from the gate experiment (PR #17) belong beside this table. "
+              "First, the composition and quality fields were tested JOINTLY on residue "
+              "against subtracted reads and reach AUC 0.686, where the full space reaches "
+              "0.905 and the coverage axes alone reach 0.904: the axes PR #8 killed one at "
+              "a time also fail together, so a high participation ratio among them is "
+              "dimensionality without discrimination. Second, the residue is a continuum - "
+              "no cluster count beats k=1 against a covariance-matched reference over five "
+              "seeds - so nothing here should be read as carving groups.", "",
+              "A measured caveat on `library_abundance`: it comes from a count-min sketch "
+              "that only ever overstates and that includes the read's own occurrences, so "
+              "it cannot resolve coverage SHAPE. PR #17's exact 31-mer counter "
+              "(`experiments/kmer_coverage/`, whole library, own occurrences subtracted) "
+              "does, at 0.76-0.78 AUC per shape field. Those fields belong in THIS matrix "
+              "when they are adopted rather than being assumed independent of abundance."]
     args.out.write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
 
