@@ -48,6 +48,14 @@ the mates' unequal length; and a chimaera test that read 100% on both piles beca
 query sat inside the reference it was searched against. The tell in all three was the
 control moving with the test, so read the control first.
 
+**A provenance change forces a re-run, and that is how reproduction gets done here.** The
+convention below gives reproducibility as a property of the design — a committed script plus
+a seed. Having actually re-run a result from clean and got the same numbers is a stronger
+claim, and almost nothing in this repo can make it. Nobody schedules a reproduction
+campaign, so the rule is the cheap version: any change to how provenance is recorded means
+re-running what it describes, and the reproduction falls out free. It is how
+`results/residue_structure/` came to carry one (§6c) — not by intending to.
+
 **Measure chimaeras before claiming contiguity.** Longer contigs that are wrong are worse
 than short contigs that are right. Every contiguity number ships beside a chimaera number
 from the same run — and beside that test's own false-positive rate, which for split-mapping
