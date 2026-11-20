@@ -1,0 +1,231 @@
+{
+  "seeds": 4,
+  "cumulative_bytes": [
+    239074080,
+    533504396,
+    898487729,
+    2721579656
+  ],
+  "per_seed": [
+    {
+      "path": "rows_s1.jsonl",
+      "n": {
+        "residue": 8000,
+        "known": 0
+      },
+      "rungs": [
+        {
+          "rung": "viral",
+          "sets": {
+            "residue": {
+              "any_hit": 0.77175,
+              "bitscore_ge_40": 0.072125,
+              "bitscore_ge_50": 0.0
+            }
+          }
+        },
+        {
+          "rung": "sprot",
+          "sets": {
+            "residue": {
+              "any_hit": 0.926625,
+              "bitscore_ge_40": 0.077625,
+              "bitscore_ge_50": 0.0
+            }
+          }
+        },
+        {
+          "rung": "uniref50_02pct",
+          "sets": {
+            "residue": {
+              "any_hit": 0.981,
+              "bitscore_ge_40": 0.088375,
+              "bitscore_ge_50": 0.004
+            }
+          }
+        },
+        {
+          "rung": "uniref50_10pct",
+          "sets": {
+            "residue": {
+              "any_hit": 0.991625,
+              "bitscore_ge_40": 0.105875,
+              "bitscore_ge_50": 0.013
+            }
+          }
+        }
+      ]
+    },
+    {
+      "path": "rows_s2.jsonl",
+      "n": {
+        "residue": 8000,
+        "known": 0
+      },
+      "rungs": [
+        {
+          "rung": "viral",
+          "sets": {
+            "residue": {
+              "any_hit": 0.773875,
+              "bitscore_ge_40": 0.0755,
+              "bitscore_ge_50": 0.0
+            }
+          }
+        },
+        {
+          "rung": "sprot",
+          "sets": {
+            "residue": {
+              "any_hit": 0.92075,
+              "bitscore_ge_40": 0.08,
+              "bitscore_ge_50": 0.0
+            }
+          }
+        },
+        {
+          "rung": "uniref50_02pct",
+          "sets": {
+            "residue": {
+              "any_hit": 0.973125,
+              "bitscore_ge_40": 0.0875,
+              "bitscore_ge_50": 0.00325
+            }
+          }
+        },
+        {
+          "rung": "uniref50_10pct",
+          "sets": {
+            "residue": {
+              "any_hit": 0.989125,
+              "bitscore_ge_40": 0.104875,
+              "bitscore_ge_50": 0.009625
+            }
+          }
+        }
+      ]
+    },
+    {
+      "path": "rows_s3.jsonl",
+      "n": {
+        "residue": 8000,
+        "known": 8000
+      },
+      "rungs": [
+        {
+          "rung": "viral",
+          "sets": {
+            "residue": {
+              "any_hit": 0.781875,
+              "bitscore_ge_40": 0.07875,
+              "bitscore_ge_50": 0.0
+            },
+            "known": {
+              "not_searched": true
+            }
+          }
+        },
+        {
+          "rung": "sprot",
+          "sets": {
+            "residue": {
+              "any_hit": 0.92225,
+              "bitscore_ge_40": 0.08175,
+              "bitscore_ge_50": 0.0
+            },
+            "known": {
+              "not_searched": true
+            }
+          }
+        },
+        {
+          "rung": "uniref50_02pct",
+          "sets": {
+            "residue": {
+              "any_hit": 0.973625,
+              "bitscore_ge_40": 0.090125,
+              "bitscore_ge_50": 0.0035
+            },
+            "known": {
+              "not_searched": true
+            }
+          }
+        },
+        {
+          "rung": "uniref50_10pct",
+          "sets": {
+            "residue": {
+              "any_hit": 0.988,
+              "bitscore_ge_40": 0.11,
+              "bitscore_ge_50": 0.012125
+            },
+            "known": {
+              "not_searched": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "path": "rows_s4.jsonl",
+      "n": {
+        "residue": 8000,
+        "known": 8000
+      },
+      "rungs": [
+        {
+          "rung": "viral",
+          "sets": {
+            "residue": {
+              "any_hit": 0.782375,
+              "bitscore_ge_40": 0.079,
+              "bitscore_ge_50": 0.0
+            },
+            "known": {
+              "not_searched": true
+            }
+          }
+        },
+        {
+          "rung": "sprot",
+          "sets": {
+            "residue": {
+              "any_hit": 0.927875,
+              "bitscore_ge_40": 0.08525,
+              "bitscore_ge_50": 0.0
+            },
+            "known": {
+              "not_searched": true
+            }
+          }
+        },
+        {
+          "rung": "uniref50_02pct",
+          "sets": {
+            "residue": {
+              "any_hit": 0.976,
+              "bitscore_ge_40": 0.095375,
+              "bitscore_ge_50": 0.0035
+            },
+            "known": {
+              "not_searched": true
+            }
+          }
+        },
+        {
+          "rung": "uniref50_10pct",
+          "sets": {
+            "residue": {
+              "any_hit": 0.98875,
+              "bitscore_ge_40": 0.115125,
+              "bitscore_ge_50": 0.01125
+            },
+            "known": {
+              "not_searched": true
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
