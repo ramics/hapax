@@ -286,11 +286,14 @@ and per-read sensitivity 0.5 on a read that is in novel sequence):
 
 Three conclusions, in order of how much they matter:
 
-1. **The both-mates rule is dead.** Merit (false-flag reduction per unit of sensitivity
+1. **The both-mates rule is dead for organism-level absence, which is what dominates at
+   every threshold measured here.** Merit (false-flag reduction per unit of sensitivity
    given up) is 0.74–1.02, i.e. at or below the break-even of 1.0: at the measured ρ_fp
    it suppresses false flags by only 1.05–1.2× while cutting sensitivity by more. This
    is the §3.1 model evaluated at its measured parameter, and it agrees with NAO having
-   chosen the disjunction empirically.
+   chosen the disjunction empirically. §4.2 gives the measured pair rate and reconciles
+   this with the error-floor result of PR #11, which is about a different term and is
+   not in conflict.
 2. **Either-mate plus a wide insert is the combination that pays.** Pair sensitivity
    rises by a factor of 1.2–1.7 from insert 107 to 500 while pair false flags stay flat
    (10.3 → 11.5 per million), because the gain comes from ρ_true falling, not from the
@@ -302,6 +305,50 @@ Three conclusions, in order of how much they matter:
    specificity.** Reaching 1/M has to come from aggregation across molecules -
    cross-sample recurrence (C3) or grouping (C2) - with the pair as a multiplier on
    that rather than a substitute for it.
+
+### 4.2 Reconciliation with the error floor (PR #11)
+
+The peptide-absence thread measured the *instrument-error* component of a false flag and
+found, correctly, that it has **zero** mate correlation by construction: an error in mate
+1 and an error in mate 2 are separate events, so that component squares exactly under the
+conjunction. At SRR23973193's measured error rate it takes 26 of 26 peptide 10-mers absent
+to hold 1 FP per million on a single read, and 16 of 26 on a pair.
+
+Both results are right and they are about different terms. A background read's absence has
+two causes: **instrument error** (independent between mates, squares) and **organism-level
+absence** - an under-sequenced known strain, a low-complexity or fast-evolving protein, a
+non-coding fragment (shared between mates, does not square). The error term sets a floor;
+the organism term sets the binding constraint, and it is the one measured here.
+
+How binding, measured directly on real Berlin pairs rather than modelled (**measured**,
+5 seeds, viral + Swiss-Prot index):
+
+| flag threshold | per-read rate | **both mates** | if mates were independent | either mate |
+|---|---|---|---|---|
+| every peptide 10-mer absent | 0.863 | **0.813** (813,300/M) | 0.745 | 0.914 |
+| ≥95% absent | 0.885 | 0.844 | 0.784 | 0.923 |
+| ≥90% absent | 0.901 | 0.867 | 0.812 | 0.930 |
+| ≥80% absent | 0.920 | 0.892 | 0.847 | 0.939 |
+
+So at the *strictest* threshold this score can express, the measured pair-level false-flag
+rate on real background is **8.1 × 10^5 per million**, 1.09× the independence prediction.
+The error-floor budget of "16 of 26 absent on a pair" is a more lenient threshold than
+"26 of 26", and real background crosses it in 89% of pairs. Error independence is real and
+cannot rescue this: the conjunction squares a term that is not what produces the false
+flags.
+
+The honest qualification on my side: this measurement is against RefSeq viral + Swiss-Prot
+(221M peptide 10-mers), which is a small fraction of real protein space, so **the organism
+term measured here is inflated by index incompleteness** and a complete index would lower
+it - by how much is unmeasured. The structural point survives that: any index deployable on
+an environmental sample is incomplete for that sample, and incompleteness is shared between
+mates off the same molecule, which is exactly the correlation that defeats the conjunction.
+What would settle the size of the term is the same score against a complete known-protein
+index (UniRef or nr), which neither thread has run.
+
+Agreed wording with PR #11: the conjunction squares the error term and does nothing for
+the organism term; at measured thresholds on real background the organism term dominates,
+so the conjunction does not deliver a usable false-positive reduction.
 
 ---
 
