@@ -39,3 +39,25 @@ download date when a file is fetched.
 ladder (PAIRS in experiments/codon_assembler/experiments/two_lineage_rung.py), fetched from
 NCBI efetch (nuccore, fasta) on 2026-11-20: PZ227608.1, PZ227621.1, PV491557.1, PZ324370.1,
 MG458312.1, PZ227553.1, PZ227534.1, PZ227561.1, AB009663.2, AB044824.1, NC_001542.1.
+
+## Peptide absence noise floor (experiments/peptide_absence_noise.py)
+
+Cached under `data/peptide_noise/`, fetched from NCBI efetch (nuccore, gbwithparts) on
+2026-11-20. Six small genomes with simple CDS annotation, chosen for spread in GC and
+codon usage rather than depth, since the quantity measured is a property of the genetic
+code and the error model rather than of any one organism. 95 usable CDS in total, of
+which lambda contributes 72 — the codon-usage breadth is accordingly narrow and that
+caveat travels with the synonymous-fraction number.
+
+| Accession | Organism | Usable CDS |
+|---|---|---|
+| K03455.1 | HIV-1 HXB2 | 6 |
+| NC_001542.1 | Rabies lyssavirus | 5 |
+| NC_001943.1 | Human astrovirus 1 | 1 |
+| NC_003977.2 | Hepatitis B virus | 4 |
+| NC_001416.1 | Enterobacteria phage lambda | 72 |
+| NC_001422.1 | Escherichia phage phiX174 | 7 |
+
+"Usable" means a simple (non-joined, non-fuzzy) CDS location, in frame, unambiguous, with
+no internal stop — the conditions under which the annotation can be trusted to define a
+true reading frame.
