@@ -508,6 +508,22 @@ that comparison is unaffected because both populations carry the same mate asymm
 the floor should be reported per mate, and a 54:46 split between mates must not be read as
 biology.
 
+The pooled 1.17x turned out to hide something, which the sibling thread measured on the
+k-mer side: **the two halves of that field lean towards opposite mates, and both leans are
+length artefacts.** Asymmetric absence falls on mate 2 (64:36 in identified pairs, 60:40 in
+the residue) because mate 2 has 62 scorable 31-mers against mate 1's 76 after the trim, so
+the shorter mate comes up empty more easily. The single-error signature falls on mate 1
+(58:42 and 55:45) because a 25-40 k-mer zero-run needs a long enough profile to sit in at
+all. A single pooled ratio would have averaged those into something meaningless. The
+equality between populations survives both, since both populations carry both asymmetries.
+
+**What the position-independence result licenses.** The flat body matters for more than
+describing the library: it is what makes a 25-40 k-mer zero-run a clean single-substitution
+signature. If errors clustered at the 3' end, a zero-run of that length would sit against
+the read end and be truncated, and the field would be counting read ends rather than errors.
+Flat at 0.00068 along the body with only the final base elevated is the condition that field
+needs, and it is now measured rather than assumed.
+
 So the report currently has no field that is both strong and pointing at novelty, and the
 strong fields describe a read without saying it is new. Two consequences are carried
 through the rest of this work. Every field in the table is labelled with its polarity, so a
