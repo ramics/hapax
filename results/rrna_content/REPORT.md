@@ -205,22 +205,47 @@ the explanation it should rise toward 0.286, and if it is not it will stay near
 0.125. That test needs the assembly and the annotation, so it belongs to the
 branch that holds them, and it is running there.
 
-## 7. What this costs the thesis
+## 7. What this costs the thesis, after the other branch narrowed it
 
 The deliverable in view is a curve of background reads removed against index size,
 and the cheapest large step on it so far was adding the sample's own predicted
-proteins, which took absence from 86.3% to around 22%. Part of that step is a gene
-caller explaining ribosomal reads with protein that does not exist. Until §6's
-decisive test lands, the size of that part is unknown, and the step cannot be quoted
-as background removed without saying so. The fix is cheap and should be stated as
-method rather than caveat: mask ribosomal sequence before annotating, or count the
-reads that only a self-predicted protein explains as their own category.
+proteins, which took absence from 86.3% to around 22%. §6 raised the worry that part
+of that step was a gene caller explaining ribosomal reads with protein that does not
+exist. **It is not, and the worry is withdrawn at that scale.** The other branch
+labelled the assembly rather than the reads and found ribosomal contigs to be 1.72%
+of assembly bases carrying 388 of 79,667 proteins and 19,137 of 8,042,848 indexed
+residues, 0.24%, stable from a hit-fraction threshold of 0.5 down to 0.05. A quarter
+of one percent of the index cannot move 86% to 22%, so that step stands as background
+removal. Their coding density on those contigs, 0.281, also agrees with the 0.164
+measured here on reference sequence, which is the main reason to trust either.
 
-The other half of the ledger is simply useful. A third of this library is ribosomal
-and a protein index can never match it, so a third of the sequencing is being spent
-on material that the whole approach is structurally blind to. That is an argument
-about library preparation, not about indexing, and it is the first number in this
-project that bears on it.
+What the 0.24% does *not* settle is §5, and the distinction is worth keeping because
+it is easy to apply the number to the wrong question. A read stops being fully absent
+as soon as one of its 10-mers matches anything, so what governs P(absent | ribosomal)
+is not the spurious proteins' share of the index but the chance a ribosomal read
+falls within reach of one of them. That is a coverage quantity: their 0.281 on
+ribosomal contigs, and the 0.416 and 0.131 in §4 weight to about 0.38 of
+mapped ribosomal reads sitting inside a call. Two orders above 0.0024. So the
+mechanism plausibly accounts for roughly a third of the ribosomal reads that have a
+match, and the rest needs another cause.
+
+The discriminating test is theirs and is running: rebuild the index with those 388
+proteins excluded and re-measure. Both threads have put a number on it in advance —
+this one expects P(absent | ribosomal) to move from 0.125 to near 0.4, the other
+to 0.25-0.35 on the grounds that a spurious 71 aa call is matched by other ribosomal
+reads only where the underlying rRNA is conserved, which SILVA's own clustering says
+is patchy. The remaining candidate for whatever is left is that translated ribosomal
+RNA is low-complexity and matches the low-complexity regions of real proteins, which
+is being measured in the same run.
+
+Masking ribosomal sequence before annotating is still worth doing, but as hygiene
+rather than as a correction to the curve.
+
+The other half of the ledger is unaffected and simply useful. A third of this library
+is ribosomal and a protein index can never match it, so a third of the sequencing is
+being spent on material the whole approach is structurally blind to. That is an
+argument about library preparation, not about indexing, and it is the first number in
+this project that bears on it.
 
 ## 8. What this does not establish
 
