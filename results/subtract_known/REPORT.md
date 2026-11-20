@@ -286,6 +286,63 @@ The sketch block is the same 400,000 pairs in every seed by design, since it sta
 "the library", so the seeds vary the spike and not the background: the background number
 is one measurement, not five.
 
+### 3.7 "Half a read matches high, the other half is gibberish" - what is actually going on
+
+Requirement 1.ii, measured by `experiments/partial_alignment_anatomy.py`, which takes
+partially-matching sequence and asks which of four things it is, with the reads the cascade
+*identified* as a control population throughout. The four:
+
+- **A, chimaera**: the unmatched piece aligns to a *different* molecule assembled in this
+  sample. That is the hypothesis Imo named, and it is the only one of the four that is a
+  statement about the library rather than about the database.
+- **B, divergent continuation**: the unmatched piece returns to the *same* subject, more
+  weakly. One molecule, half of it past the search's recognition floor.
+- **C, artefact end**: the unmatched piece is low-entropy, homopolymeric or adapter.
+- **D, short true homology**: nothing fires - the match is simply short.
+
+**At read level this question is unanswerable, and that is the result.** At 107 nt, when a
+read matches over ~74% of itself the unmatched remainder is about 10 aa, below any protein
+search's floor, so the discriminating test returns nothing for 99.6% of reads. The split-
+mapping test fires on 13.4% of partial residue reads but 37.4% of already-identified ones:
+it measures mappability, not chimaerism. Partial alignment is not even enriched in the
+residue (23.8% vs 19.7%) - it is a property of short reads meeting a protein database. What
+separates the two piles is identity, continuously: 51.9% vs 63.2%.
+
+**At contig level it is answerable, and the answer is a negative on chimaerism.** 800
+unidentifiable and 800 identified contigs of >=500 nt, DIAMOND blastp against Swiss-Prot,
+split segments re-queried:
+
+| | unidentifiable | identified (control) |
+|---|---|---|
+| any protein hit | 601/800 | 800/800 |
+| mean aligned fraction of the contig | 0.327 | 0.593 |
+| mean identity | 35.1% | 39.5% |
+| partial hits (15-75% aligned) | 85.4% of hits | 68.4% |
+| A chimaera | **0.0%** | **0.0%** |
+| B divergent continuation | 0.6% | 3.7% |
+| C artefact end | 0.8% | 1.3% |
+| D short true homology | 98.6% | 95.1% |
+
+So: **no evidence that the unmatched part of a partially-matching contig comes from another
+molecule present in this sample.** Zero in both piles, including the control, where a
+mis-assembly would be just as visible. The limit is explicit: this test can only see a
+chimaera whose partner also assembled here, so it cannot exclude a join to something too
+rare to assemble.
+
+B is the instructive one. Divergent continuation fires six times *more often* on already-
+identified contigs than on unidentifiable ones, so it flags familiarity, not novelty: you
+only observe a weak return to the same subject when the subject is well represented to
+begin with. A pipeline that read B as "divergent, therefore interesting" would be reading
+database coverage backwards.
+
+What does separate the piles is simply how much matches at all - a continuous quantity,
+0.327 against 0.593 aligned fraction - and not any categorical verdict about the unmatched
+remainder. This is also the first field measured here that works on contigs and fails on
+reads, which is an argument about where in a production tool this work belongs.
+
+Single seed so far; the 5-seed run is queued. A_chimaera at exactly zero in 1,600 contigs
+needs the other seeds before it is quoted as a rate rather than as "not detectable here".
+
 ## 4. What the residue is, and is not
 
 The 22.90% residue breaks down as follows, measured by mapping it back to assemblies

@@ -76,10 +76,19 @@ def load_reads(path: Path, limit: int, min_len: int = 0, seed: int = 1) -> dict[
     return dict(seqs[:limit])
 
 
-def best_nt(idx, seq: str):
-    """Best nucleotide alignment: (query start, query end, matching bases, ref, ref pos)."""
+def best_nt(idx, seq: str, exclude: str | None = None):
+    """Best nucleotide alignment: (query start, query end, matching bases, ref, ref pos).
+
+    `exclude` drops alignments to the query's own entry. Without it the contig run is
+    meaningless: the contigs ARE the reference, so every unaligned segment aligns
+    perfectly to itself and the chimaera test fires on 100% of both populations - which
+    is exactly what the first run of this script reported, and why it is worth leaving
+    this note here rather than silently fixing it.
+    """
     best = None
     for h in idx.map(seq):
+        if exclude is not None and h.ctg == exclude:
+            continue
         if best is None or h.mlen > best[2]:
             best = (h.q_st, h.q_en, h.mlen, h.ctg, h.r_st)
     return best
@@ -122,7 +131,7 @@ def artefact_end(seg: str) -> dict:
 
 
 def classify(seq: str, span: tuple[int, int], nt_idx, prot_hits: list, seg_hits: list,
-             min_seg: int) -> dict:
+             min_seg: int, exclude: str | None = None) -> dict:
     """Which of A-D fire for one read with a partial alignment."""
     qs, qe = span
     left, right = seq[:qs], seq[qe:]
@@ -132,7 +141,7 @@ def classify(seq: str, span: tuple[int, int], nt_idx, prot_hits: list, seg_hits:
         out["verdict"] = "unaligned part too short to test"
         return out
     # A: the unaligned part aligns somewhere else
-    other = best_nt(nt_idx, seg) if nt_idx else None
+    other = best_nt(nt_idx, seg, exclude) if nt_idx else None
     out["A_chimaera"] = bool(other and other[2] >= min_seg)
     out["A_other_ref"] = other[3] if other else None
     # B: the unaligned part reaches the same protein as the aligned part
@@ -224,7 +233,7 @@ def main() -> None:
             r = rows[name]
             c = classify(reads[name], r["span"], nt_idx,
                          [{"subject": r["subject"]}], seg_hits.get(name, []),
-                         args.min_seg)
+                         args.min_seg, exclude=name.split()[0])
             for k in ("A_chimaera", "B_divergent_continuation", "C_artefact_end",
                       "D_short_true_homology"):
                 if c.get(k):
