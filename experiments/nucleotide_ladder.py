@@ -36,6 +36,7 @@ import argparse
 import json
 import platform
 import sys
+from collections import Counter
 import time
 from pathlib import Path
 
@@ -122,7 +123,17 @@ def main() -> None:
                 "marginal_frac_of_non_rrna": nr_frac - prev_nr,
             })
             prev_all, prev_nr = all_frac, nr_frac
+        # Abundance across reference taxa is heavy-tailed, so a content fraction is a
+        # poor proxy for what a subset buys: whether one dominant taxon falls inside the
+        # subset moves the curve more than hundreds of rare ones. The concentration is
+        # reported so the reader can see that, rather than reading the rungs as if every
+        # taxon carried the same weight.
+        by_taxon = Counter(called.values())
+        ranked = [c for _t, c in by_taxon.most_common()]
+        tot = sum(ranked) or 1
+        concentration = {f"top{k}": sum(ranked[:k]) / tot for k in (1, 10, 100)}
         out_conf[str(conf)] = {
+            "read_concentration_over_taxa": concentration,
             "distinct_reference_taxa_called": len(taxa),
             "classified_frac": len(called) / n,
             "rungs": rungs,

@@ -161,6 +161,47 @@ than anything local, so removal is still rising with index size at the largest i
 reachable. Five seeds and a blastx pass against nr on the residue and tier-2 classes are
 running; this table is seed 1 only and is labelled as such.
 
+### 3.5 Does the removal curve flatten? Not on this evidence
+
+The cascade's three Kraken2 sizes (0.67, 8, 16 GB) gain 0.42 points on the last doubling,
+which reads like exhaustion. The protein thread made exactly that mistake in the other
+direction - two small virus-weighted points read as "protein databases barely help",
+overturned when a tenth of UniRef50 moved the same quantity 23 points - so three points on
+a line are not a curve here either.
+
+`experiments/nucleotide_ladder.py` puts more points on the nucleotide axis without
+building databases this environment cannot build: classify once against the largest
+database available, then ask what removal would have been had only a nested random subset
+of REFERENCE TAXA been present. The axis is reference content, not bytes. Both biases run
+the same way - deleting calls loses the reads a smaller real database would still place on
+a retained relative, and Kraken2's capped hash means bytes grow sublinearly with taxa - so
+each point understates, which makes this a conservative test.
+
+| reference content | taxa | removed, conf 0.0 | marginal | removed, conf 0.1 | marginal |
+|---|---|---|---|---|---|
+| 0.3% | 6 | 0.05 | 0.05 | 0.00 | 0.00 |
+| 1% | 20 | 0.24 | 0.20 | 0.05 | 0.04 |
+| 3% | 57 | 1.00 | 0.75 | 0.15 | 0.11 |
+| 10% | 202 | 3.68 | 2.68 | 1.49 | 1.34 |
+| 30% | 642 | 9.42 | 5.75 | 2.60 | 1.11 |
+| 50% | 1,086 | 16.88 | 7.46 | 6.37 | 3.77 |
+| 100% | 2,155 | 42.82 | 25.94 | 21.67 | 15.30 |
+
+No plateau appears: the last doubling of content still buys 15-26 points. **But the
+instrument is weak and the reason is worth stating.** Reads are heavily concentrated over
+reference taxa - at confidence 0.1 the single top taxon carries 49.0% of classified reads,
+the top ten 86.4% - so most of that last step is one dominant taxon being inside the
+subset rather than outside it. This ladder supports "has not visibly saturated" and does
+not resolve the curve's shape; the per-seed spread (min-max in
+`results/nucleotide_ladder/TABLES.md`) is wide for the same reason and is reported rather
+than averaged away.
+
+The stronger nucleotide evidence is section 3.4's BLAST: against a database two orders of
+magnitude larger than anything local, 87% of residue reads find a partial, distant match.
+Sequence our indexes miss is findable in a database 70 times larger, which is what "the
+curve has not flattened" means operationally. On the protein axis the same question is
+measured directly on this cascade's residue in `results/residue_protladder/`.
+
 ### 3.6 The positive control: how divergent must a virus be to survive the cascade?
 
 `experiments/spike_holdout.py`. Three real genomes - pepper mild mottle virus
@@ -175,11 +216,11 @@ architecture, so this is the number that matters most.
 
 | divergence | spike pairs surviving tier 1 |
 |---|---|
-| 0% | 0.00% |
-| 5% | 0.68% (0.0-2.0 across seeds) |
-| 10% | 12.6% (6.4-19.2) |
-| 20% | 81.6% (73.8-89.8) |
-| 30% | 99.6% (98.4-100) |
+| 0% | 0.0% (0.0-0.0 across seeds) |
+| 5% | 0.6% (0.0-2.0) |
+| 10% | 12.7% (6.4-19.2) |
+| 20% | 82.2% (73.8-89.8) |
+| 30% | 99.5% (98.2-100.0) |
 
 The 0% rung is the control that the cascade works at all: a deposited virus spiked into
 the library is removed completely. Recognition then falls away between 10% and 20%
@@ -190,11 +231,11 @@ and *new*.
 
 | divergence | sample's contigs | Kraken2 viral | Kraken2 PlusPF-16 | viral proteins | Swiss-Prot |
 |---|---|---|---|---|---|
-| 0% | 65.5 | 100.0 | 64.1 | 97.5 | 97.5 |
-| 5% | 50.9 | 85.8 | 6.0 | 94.8 | 94.8 |
-| 10% | 20.8 | 26.8 | 0.5 | 83.5 | 83.6 |
-| 20% | 0.2 | 0.0 | 0.0 | 17.9 | 18.1 |
-| 30% | 0.0 | 0.0 | 0.0 | 0.4 | 0.4 |
+| 0% | 65.5 | 100.0 | 64.0 | 97.5 | 97.5 |
+| 5% | 51.6 | 86.6 | 5.9 | 94.6 | 94.7 |
+| 10% | 21.8 | 28.1 | 0.4 | 82.9 | 83.0 |
+| 20% | 0.2 | 0.0 | 0.0 | 17.4 | 17.6 |
+| 30% | 0.0 | 0.0 | 0.0 | 0.5 | 0.5 |
 
 **The nucleotide side dies first and the protein index is the last thing standing.** By
 10% divergence nucleotide identification has fallen to a quarter while translated search
@@ -222,7 +263,7 @@ relative is.
 
 **At 1 in a million.** A virus at that abundance contributes about 8.7 read pairs in this
 8,731,224-pair run. Per-read survival above says roughly one of them reaches the per-read
-report at 10% divergence and seven at 20%. Per-read behaviour is measured at a spike rate
+report at 10% divergence (8.7 x 0.127 = 1.1 pairs) and seven at 20% (8.7 x 0.822 = 7.2). Per-read behaviour is measured at a spike rate
 high enough to resolve it and the 1-in-a-million statement is arithmetic on top; nothing
 here was measured at that rate directly, because a sample that holds 8.7 pairs cannot
 resolve a rate. That was the error of PR #11, where 1-per-million thresholds came from

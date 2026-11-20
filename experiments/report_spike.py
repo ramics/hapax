@@ -73,13 +73,8 @@ def main() -> None:
               f"{ds[0]['spike_pairs_per_rung']:,} pairs per rung, because a simulation at "
               f"the real rate cannot resolve the quantity; the sentence above is "
               f"arithmetic on top of it.",
-              f"- Library recurrence measured with exactly the number of spike pairs "
-              f"1-in-a-million implies: "
-              f"{ds[0]['abundance_at_real_rate']['spike_pairs_in_sketch']} pairs in "
-              f"{ds[0]['abundance_at_real_rate']['library_pairs_in_sketch']:,}, median "
-              f"31-mer count "
-              f"{(ds[0]['abundance_at_real_rate']['spike_median_31mer_count'] or {}).get('mean')}"
-              f" against a background whose median is reported in the fields run."]
+              f"- Library recurrence is measured separately, with exactly the number of "
+              f"spike pairs 1-in-a-million implies, in results/spike_abundance/."]
 
     args.out.write_text("\n".join(lines) + "\n")
     print("\n".join(lines))

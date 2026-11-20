@@ -1,0 +1,140 @@
+{
+  "seed": 2,
+  "pairs": 100000,
+  "rrna_frac": 0.3813,
+  "db": "/home/user/hapax/data/k2_pluspf16",
+  "db_bytes": 16069287627,
+  "by_confidence": {
+    "0.0": {
+      "distinct_reference_taxa_called": 2094,
+      "classified_frac": 0.42997,
+      "rungs": [
+        {
+          "content_fraction": 0.003,
+          "reference_taxa_retained": 5,
+          "removed_frac_of_library": 0.00045,
+          "marginal_frac_of_library": 0.00045,
+          "removed_frac_of_non_rrna": 3.2325844512687896e-05,
+          "marginal_frac_of_non_rrna": 3.2325844512687896e-05
+        },
+        {
+          "content_fraction": 0.01,
+          "reference_taxa_retained": 19,
+          "removed_frac_of_library": 0.00349,
+          "marginal_frac_of_library": 0.00304,
+          "removed_frac_of_non_rrna": 0.00045256182317763053,
+          "marginal_frac_of_non_rrna": 0.00042023597866494263
+        },
+        {
+          "content_fraction": 0.03,
+          "reference_taxa_retained": 62,
+          "removed_frac_of_library": 0.03089,
+          "marginal_frac_of_library": 0.0274,
+          "removed_frac_of_non_rrna": 0.0010344270244060127,
+          "marginal_frac_of_non_rrna": 0.0005818652012283821
+        },
+        {
+          "content_fraction": 0.1,
+          "reference_taxa_retained": 205,
+          "removed_frac_of_library": 0.05228,
+          "marginal_frac_of_library": 0.02139,
+          "removed_frac_of_non_rrna": 0.004056893486342331,
+          "marginal_frac_of_non_rrna": 0.003022466461936318
+        },
+        {
+          "content_fraction": 0.3,
+          "reference_taxa_retained": 626,
+          "removed_frac_of_library": 0.12344,
+          "marginal_frac_of_library": 0.07116,
+          "removed_frac_of_non_rrna": 0.01764991110392759,
+          "marginal_frac_of_non_rrna": 0.01359301761758526
+        },
+        {
+          "content_fraction": 0.5,
+          "reference_taxa_retained": 1046,
+          "removed_frac_of_library": 0.18037,
+          "marginal_frac_of_library": 0.05693000000000001,
+          "removed_frac_of_non_rrna": 0.028349765637627283,
+          "marginal_frac_of_non_rrna": 0.010699854533699694
+        },
+        {
+          "content_fraction": 1.0,
+          "reference_taxa_retained": 2094,
+          "removed_frac_of_library": 0.42997,
+          "marginal_frac_of_library": 0.24960000000000002,
+          "removed_frac_of_non_rrna": 0.1183125909164377,
+          "marginal_frac_of_non_rrna": 0.08996282527881042
+        }
+      ],
+      "kraken2_wall_seconds": 8.186843080999097
+    },
+    "0.1": {
+      "distinct_reference_taxa_called": 323,
+      "classified_frac": 0.21668,
+      "rungs": [
+        {
+          "content_fraction": 0.003,
+          "reference_taxa_retained": 1,
+          "removed_frac_of_library": 1e-05,
+          "marginal_frac_of_library": 1e-05,
+          "removed_frac_of_non_rrna": 0.0,
+          "marginal_frac_of_non_rrna": 0.0
+        },
+        {
+          "content_fraction": 0.01,
+          "reference_taxa_retained": 3,
+          "removed_frac_of_library": 0.00163,
+          "marginal_frac_of_library": 0.00162,
+          "removed_frac_of_non_rrna": 4.848876676903184e-05,
+          "marginal_frac_of_non_rrna": 4.848876676903184e-05
+        },
+        {
+          "content_fraction": 0.03,
+          "reference_taxa_retained": 12,
+          "removed_frac_of_library": 0.00609,
+          "marginal_frac_of_library": 0.00446,
+          "removed_frac_of_non_rrna": 0.0001777921448197834,
+          "marginal_frac_of_non_rrna": 0.00012930337805075156
+        },
+        {
+          "content_fraction": 0.1,
+          "reference_taxa_retained": 33,
+          "removed_frac_of_library": 0.032,
+          "marginal_frac_of_library": 0.025910000000000002,
+          "removed_frac_of_non_rrna": 0.002424438338451592,
+          "marginal_frac_of_non_rrna": 0.0022466461936318087
+        },
+        {
+          "content_fraction": 0.3,
+          "reference_taxa_retained": 95,
+          "removed_frac_of_library": 0.0519,
+          "marginal_frac_of_library": 0.0199,
+          "removed_frac_of_non_rrna": 0.005657022789720381,
+          "marginal_frac_of_non_rrna": 0.0032325844512687894
+        },
+        {
+          "content_fraction": 0.5,
+          "reference_taxa_retained": 162,
+          "removed_frac_of_library": 0.05899,
+          "marginal_frac_of_library": 0.007089999999999999,
+          "removed_frac_of_non_rrna": 0.008243090350735413,
+          "marginal_frac_of_non_rrna": 0.0025860675610150314
+        },
+        {
+          "content_fraction": 1.0,
+          "reference_taxa_retained": 323,
+          "removed_frac_of_library": 0.21668,
+          "marginal_frac_of_library": 0.15769,
+          "removed_frac_of_non_rrna": 0.042944884435105864,
+          "marginal_frac_of_non_rrna": 0.03470179408437045
+        }
+      ],
+      "kraken2_wall_seconds": 4.617659871999422
+    }
+  },
+  "caveats": [
+    "content axis, not bytes: a real DB of this content would be smaller than db_bytes times the fraction, because minimizers are shared between relatives",
+    "deleting calls understates a smaller DB: reads whose taxon was dropped would often still be classified to a retained relative at a higher rank"
+  ],
+  "wall_seconds": 44.8110538309993
+}

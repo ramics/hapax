@@ -1,0 +1,57 @@
+{
+  "script": "experiments/spike_holdout.py",
+  "git_sha": "77a66b3582e682ee11e1a7311b3ccb8db9ec97b0-dirty",
+  "parameters": {
+    "seed": 1,
+    "genome": [
+      "data/spike/holdout.fa"
+    ],
+    "divergence": [
+      "0.0",
+      "0.05",
+      "0.1",
+      "0.2",
+      "0.3"
+    ],
+    "spike_pairs": 2000,
+    "read_len": 107,
+    "err1": 0.00089,
+    "err2": 0.00117,
+    "background_pairs": 100000,
+    "library_pairs": 400000,
+    "abundance_only": true,
+    "real_rate": 1e-06,
+    "r1": "/home/user/hapax/data/berlin/SRR23973193_1.fastq.gz",
+    "r2": "/home/user/hapax/data/berlin/SRR23973193_2.fastq.gz",
+    "silva": "/home/user/hapax/data/silva/silva_dna.fa",
+    "identified": "/home/user/hapax/data/geo/sample_contigs_identified.fa",
+    "unidentified": "/home/user/hapax/data/geo/sample_contigs_unidentified.fa",
+    "cross_sample_ref": "/home/user/hapax/data/geo/all_contigs_1kb.fa",
+    "k2_dbs": [
+      "/home/user/hapax/data/k2_viral",
+      "/home/user/hapax/data/k2_pluspf16"
+    ],
+    "classify_bin": "/home/user/tools/k2pkg/root/share/kraken2-2.17.2/libexec/classify",
+    "k2_confidence": 0.1,
+    "dmnd": [
+      "/home/user/hapax/data/prot/viral.dmnd",
+      "/home/user/hapax/data/prot/sprot.dmnd"
+    ],
+    "diamond_bin": "/home/user/tools/diamond",
+    "diamond_bitscore": 50.0,
+    "min_mlen": 40,
+    "threads": 4,
+    "work": "/tmp/claude-0/wk/spike",
+    "out": "results/spike_abundance"
+  },
+  "wall_seconds": 99.90243314799955,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39",
+  "index_bytes": {
+    "/home/user/hapax/data/silva/silva_dna.fa": 1120691813,
+    "/home/user/hapax/data/geo/sample_contigs_identified.fa": 16505907,
+    "/home/user/hapax/data/geo/sample_contigs_unidentified.fa": 17291243,
+    "/home/user/hapax/data/prot/viral.dmnd": 239074080,
+    "/home/user/hapax/data/prot/sprot.dmnd": 294430316
+  }
+}

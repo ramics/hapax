@@ -1,0 +1,80 @@
+{
+  "seed": 2,
+  "genomes": {
+    "NC_003630.1": 6357,
+    "NC_001943.1": 6813,
+    "NC_038311.1": 7137
+  },
+  "spike_pairs_per_rung": 2000,
+  "insert_quantiles": [
+    [
+      0.5,
+      194
+    ],
+    [
+      0.75,
+      246
+    ],
+    [
+      0.95,
+      363
+    ],
+    [
+      0.99,
+      485
+    ],
+    [
+      1.0,
+      600
+    ]
+  ],
+  "error_rates": [
+    0.00089,
+    0.00117
+  ],
+  "rungs": [],
+  "background_ladder": null,
+  "abundance_at_real_rate": {
+    "real_rate": 1e-06,
+    "library_pairs_in_sketch": 400000,
+    "spike_pairs_in_sketch": 1,
+    "spike_median_31mer_count_per_genome": {
+      "NC_003630.1": {
+        "mean": 18,
+        "min": 18,
+        "max": 18,
+        "sd": 0.0,
+        "n": 1
+      },
+      "NC_001943.1": {
+        "mean": 1,
+        "min": 1,
+        "max": 1,
+        "sd": 0.0,
+        "n": 1
+      },
+      "NC_038311.1": {
+        "mean": 1,
+        "min": 1,
+        "max": 1,
+        "sd": 0.0,
+        "n": 1
+      }
+    },
+    "background_median_31mer_count": {
+      "mean": 67.5967983991996,
+      "min": 1,
+      "max": 255,
+      "sd": 96.62718210771209,
+      "n": 1999
+    },
+    "sketch_saturation": 5.844235420227051e-05,
+    "note": "the count-min sketch only overstates, so a read it calls rare is rare for certain; a genome already present in the library recurs for a biological reason, which is why all three are reported"
+  },
+  "one_in_a_million_arithmetic": {
+    "run_pairs": 8731224,
+    "expected_spike_pairs_in_run": 8.731224,
+    "note": "per-read survival from the rungs above times this expectation gives the expected number of surviving spike pairs in one run; nothing here was measured at this rate directly"
+  },
+  "wall_seconds": 102.84693887200046
+}
