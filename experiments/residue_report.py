@@ -573,6 +573,18 @@ def main() -> None:
     rows: dict[str, dict] = {}
     for name, (s1, s2) in pairs.items():
         rows[name] = _row(name, s1, s2, rng)
+        rows[name]["set"] = "residue"
+
+    # The same per-read fields on reads the cascade DID identify. Written out beside the
+    # residue rows, tagged by `set`, because every statement of the form "the residue has
+    # property X" needs the contrast population in the same file at the same seed - and
+    # because a sibling thread joins on these rows by read name. The expensive per-read
+    # work (DIAMOND, Rfam, Pfam) stays residue-only; what is written here are the fields
+    # that cost nothing extra once the read is in hand.
+    known_rows: dict[str, dict] = {}
+    for name, (s1, s2) in known.items():
+        known_rows[name] = _row(name, s1, s2, rng)
+        known_rows[name]["set"] = "known"
 
     # ---- closest relative, however far: no bitscore floor
     for db in args.dmnd:
@@ -604,11 +616,16 @@ def main() -> None:
             }
         if known:
             kn = []
-            for s1, s2 in known.values():
+            for kname, (s1, s2) in known.items():
                 cs = sk.counts(s1) + sk.counts(s2)
                 cs.sort()
                 if cs:
                     kn.append(cs[len(cs) // 2])
+                known_rows[kname]["library_abundance"] = {
+                    "median_31mer_count": cs[len(cs) // 2] if cs else None,
+                    "max_31mer_count": cs[-1] if cs else None,
+                    "kmers": len(cs),
+                }
         abund = {
             "library_pairs_counted": args.library_pairs,
             "sketch_bits": args.abundance_bits,
@@ -826,6 +843,8 @@ def main() -> None:
     (args.out / f"calibration_s{args.seed}.json").write_text(json.dumps(calib, indent=2))
     with open(args.out / f"rows_s{args.seed}.jsonl", "w") as h:
         for name, r in rows.items():
+            h.write(json.dumps(r) + "\n")
+        for name, r in known_rows.items():
             h.write(json.dumps(r) + "\n")
 
     (args.out / f"manifest_s{args.seed}.json").write_text(json.dumps({
