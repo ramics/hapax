@@ -668,6 +668,30 @@ ribosomal head alone. And this arm is seed 1 only - the five-seed statement is t
 per-level join table above, and nothing here depends on the one seed beyond the shape of a
 distribution whose head is three orders clear of its control.
 
+**Confirmed independently, from a curated reference with no wastewater in it.** The sibling
+thread measured the multiplier directly rather than inferring it from our matches: six-frame
+translations of SILVA SSU sequences (5 seeds, 8,000 sequences each, 82 phyla), counting how
+many distinct sequences each peptide 10-mer reaches, against a composition-shuffled control.
+Conservation multiplier **388 ± 6**, with the shuffled control at exactly 1.00 and a
+singleton fraction of 1.0000 - so conservation is not part of the effect, it is all of it.
+And the distribution is as skewed as the amplification story requires: mean reach per
+*distinct* 10-mer is 3.49, occurrence-weighted reach is 388, and occurrence-weighted
+percentiles run p50 0.3%, p90 13.6%, p99 55.7% of the tree.
+
+Three numbers then meet ours without either side fitting to the other:
+
+| from their curated reference | from our wastewater library |
+|---|---|
+| 0.465% of distinct 10-mers reach ≥1% of sequences | 63 entries of 4.1 M reach ≥1% of ribosomal reads |
+| occurrence-weighted p90 reach 13.6% of the tree | largest single entry matches 9.8% of ribosomal reads |
+| ≥1%-reach 10-mers carry 38.4% of all occurrences | 52.7% of ribosomal reads match something at the UniRef50 10% level |
+
+The third pair has the right inequality for the right reason: theirs should be lower, since
+reads also match through lower-reach k-mers, and it is, by 14 points. This is
+order-of-magnitude agreement rather than a fitted match, and neither measurement is
+calibrated on the other, which is what makes it worth recording: the mechanism now has a
+reason behind it and not only a measurement.
+
 **Why this matters beyond a curiosity.** A third of this library is ribosomal, and against a
 large public protein index a third of the library stops looking novel for a reason that has
 nothing to do with biology. Any absence-based score calibrated on a big protein database is
