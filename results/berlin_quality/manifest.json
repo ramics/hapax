@@ -1,0 +1,15 @@
+{
+  "script": "experiments/berlin_quality_profile.py",
+  "accession": "SRR23973193",
+  "source": "ENA fastq over HTTP",
+  "parameters": {
+    "seed": 1,
+    "max_reads": 400000,
+    "data": "/home/user/hapax/data/berlin",
+    "out": "/home/user/hapax/results/berlin_quality"
+  },
+  "git_sha": "a1484188ccd0a5482ac0a78f96af7a3401aa2e6b",
+  "wall_seconds": 15.321915151999974,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}
