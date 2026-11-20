@@ -4,5 +4,3 @@ __pycache__/
 *.pyc
 .venv/
 target/
-results/**/work/
-results/abundance_sweep/contigs/

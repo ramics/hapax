@@ -32,3 +32,10 @@ download date when a file is fetched.
 | background NC_001422.1 | Escherichia phage phiX174, complete genome | 2026-11-19 | 5386 nt |
 | background K03455.1 | Human immunodeficiency virus type 1 (HXB2), complete genome; | 2026-11-19 | 9719 nt |
 
+
+## Labeller audit (experiments/labeller_audit.py)
+
+`data/labeller_audit/rabies_pairs.fa`: the 11 rabies genomes of the archived two-lineage
+ladder (PAIRS in experiments/codon_assembler/experiments/two_lineage_rung.py), fetched from
+NCBI efetch (nuccore, fasta) on 2026-11-20: PZ227608.1, PZ227621.1, PV491557.1, PZ324370.1,
+MG458312.1, PZ227553.1, PZ227534.1, PZ227561.1, AB009663.2, AB044824.1, NC_001542.1.

@@ -1,0 +1,3 @@
+target/
+results/**/work/
+results/abundance_sweep/contigs/

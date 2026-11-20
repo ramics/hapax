@@ -1,0 +1,11 @@
+{
+  "script": "experiments/select_pairs.py",
+  "git_sha": "f12ceef5619fd736c341fb7352ec32c93720b3e3",
+  "genomes": 200,
+  "missing": [],
+  "pairs": 19900,
+  "per_rung": 3,
+  "tol": 0.003,
+  "seconds": 5.0,
+  "fasta": "/home/user/hapax/data/pairs/rabies_200.fa"
+}

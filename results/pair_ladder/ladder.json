@@ -1,0 +1,226 @@
+[
+  {
+    "tag": "div02",
+    "target": 0.0198,
+    "n_candidates_in_tol": 696,
+    "short": false,
+    "pairs": [
+      {
+        "tag": "div02",
+        "a": "PZ227608.1",
+        "b": "PZ227621.1",
+        "divergence": 0.0198,
+        "archived": true,
+        "reuses_genome": false
+      },
+      {
+        "tag": "div02",
+        "a": "PZ227541.1",
+        "b": "PZ227618.1",
+        "divergence": 0.0198,
+        "archived": false,
+        "reuses_genome": false
+      },
+      {
+        "tag": "div02",
+        "a": "PZ227542.1",
+        "b": "PZ227583.1",
+        "divergence": 0.0198,
+        "archived": false,
+        "reuses_genome": false
+      }
+    ]
+  },
+  {
+    "tag": "div04",
+    "target": 0.0381,
+    "n_candidates_in_tol": 106,
+    "short": false,
+    "pairs": [
+      {
+        "tag": "div04",
+        "a": "PV491557.1",
+        "b": "PZ324370.1",
+        "divergence": 0.0381,
+        "archived": true,
+        "reuses_genome": false
+      },
+      {
+        "tag": "div04",
+        "a": "PV641715.1",
+        "b": "PZ324373.1",
+        "divergence": 0.038,
+        "archived": false,
+        "reuses_genome": false
+      },
+      {
+        "tag": "div04",
+        "a": "PV641716.1",
+        "b": "PX896057.1",
+        "divergence": 0.0378,
+        "archived": false,
+        "reuses_genome": false
+      }
+    ]
+  },
+  {
+    "tag": "div045",
+    "target": 0.045,
+    "n_candidates_in_tol": 83,
+    "short": false,
+    "pairs": [
+      {
+        "tag": "div045",
+        "a": "MG458312.1",
+        "b": "PZ227553.1",
+        "divergence": 0.045,
+        "archived": true,
+        "reuses_genome": false
+      },
+      {
+        "tag": "div045",
+        "a": "PX896059.1",
+        "b": "PZ673884.1",
+        "divergence": 0.0452,
+        "archived": false,
+        "reuses_genome": false
+      },
+      {
+        "tag": "div045",
+        "a": "PZ324371.1",
+        "b": "PZ334451.1",
+        "divergence": 0.0443,
+        "archived": false,
+        "reuses_genome": false
+      }
+    ]
+  },
+  {
+    "tag": "div055",
+    "target": 0.055,
+    "n_candidates_in_tol": 60,
+    "short": false,
+    "pairs": [
+      {
+        "tag": "div055",
+        "a": "PZ227534.1",
+        "b": "PZ227561.1",
+        "divergence": 0.055,
+        "archived": true,
+        "reuses_genome": false
+      },
+      {
+        "tag": "div055",
+        "a": "MG458311.1",
+        "b": "OZ470011.1",
+        "divergence": 0.0524,
+        "archived": false,
+        "reuses_genome": false
+      },
+      {
+        "tag": "div055",
+        "a": "MG458312.1",
+        "b": "PZ227621.1",
+        "divergence": 0.0557,
+        "archived": false,
+        "reuses_genome": true
+      }
+    ]
+  },
+  {
+    "tag": "div065",
+    "target": 0.0652,
+    "n_candidates_in_tol": 55,
+    "short": false,
+    "pairs": [
+      {
+        "tag": "div065",
+        "a": "AB009663.2",
+        "b": "PZ227534.1",
+        "divergence": 0.0652,
+        "archived": true,
+        "reuses_genome": false
+      },
+      {
+        "tag": "div065",
+        "a": "MG458318.1",
+        "b": "PZ227540.1",
+        "divergence": 0.0657,
+        "archived": false,
+        "reuses_genome": false
+      },
+      {
+        "tag": "div065",
+        "a": "PV855410.1",
+        "b": "PZ227619.1",
+        "divergence": 0.068,
+        "archived": false,
+        "reuses_genome": false
+      }
+    ]
+  },
+  {
+    "tag": "div07",
+    "target": 0.0729,
+    "n_candidates_in_tol": 1066,
+    "short": false,
+    "pairs": [
+      {
+        "tag": "div07",
+        "a": "PZ227608.1",
+        "b": "AB044824.1",
+        "divergence": 0.0729,
+        "archived": true,
+        "reuses_genome": false
+      },
+      {
+        "tag": "div07",
+        "a": "PV855409.1",
+        "b": "PZ227613.1",
+        "divergence": 0.0729,
+        "archived": false,
+        "reuses_genome": false
+      },
+      {
+        "tag": "div07",
+        "a": "PV855397.1",
+        "b": "PZ227539.1",
+        "divergence": 0.0729,
+        "archived": false,
+        "reuses_genome": false
+      }
+    ]
+  },
+  {
+    "tag": "div10",
+    "target": 0.0965,
+    "n_candidates_in_tol": 134,
+    "short": false,
+    "pairs": [
+      {
+        "tag": "div10",
+        "a": "NC_001542.1",
+        "b": "AB009663.2",
+        "divergence": 0.0965,
+        "archived": true,
+        "reuses_genome": false
+      },
+      {
+        "tag": "div10",
+        "a": "PV591864.1",
+        "b": "PZ227564.1",
+        "divergence": 0.0965,
+        "archived": false,
+        "reuses_genome": false
+      },
+      {
+        "tag": "div10",
+        "a": "MG458315.1",
+        "b": "PV855393.1",
+        "divergence": 0.0972,
+        "archived": false,
+        "reuses_genome": false
+      }
+    ]
+  }
+]

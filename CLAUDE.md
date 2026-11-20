@@ -1,10 +1,18 @@
 # Operating brief
 
-Read `METHOD.md` first. This file covers how to work in the repo.
+This file covers how to work in the repo.
 
-## What this is
+**Current direction (Imo, 2026-11-20): separating closely related strains during
+assembly.** The codon-aware assembler that came first is archived, verbatim and still
+runnable, under `experiments/codon_assembler/` (its spec is
+`experiments/codon_assembler/METHOD.md`, its findings
+`experiments/codon_assembler/results/`). Read those before starting anything new: they
+record what has been measured and what was killed by measurement. A spec for the new
+direction has not been written yet.
 
-A codon-aware assembler for viral populations. Overlaps are detected in codon space
+## What this was
+
+The archived first design: a codon-aware assembler for viral populations. Overlaps are detected in codon space
 so synonymous variation collapses; nucleotides are kept throughout so linkage and
 gene order survive.
 
@@ -22,11 +30,11 @@ overlap criterion is a chimaera generator.
 worse than short contigs that are right. Every contiguity number ships beside a
 chimaera number from the same run.
 
-**Negative results ship.** The kill criteria in METHOD.md §5 are real. If the
+**Negative results ship.** The kill criteria in the archived METHOD.md §5 are real. If the
 synonymous collapse buys nothing over MEGAHIT at realistic diversity, record it and
 say so rather than tuning the simulator until it looks good.
 
-## Order of work
+## Order of work (the archived codon-assembler plan)
 
 1. **Pairwise overlap scoring.** The core primitive: two reads, three candidate
    offsets, best score wins. No global frame is elected — viral genomes read in
@@ -44,8 +52,8 @@ say so rather than tuning the simulator until it looks good.
 ## Language
 
 **Rust for the core, Python for experiments.** This is an assembler; the hot path
-compiles. `Cargo.toml` is scaffolded with rayon and a release profile; `src/` is
-yours to create. Add PyO3 bindings when there is something worth binding, not before.
+compiles. The archived crate (`experiments/codon_assembler/Cargo.toml`) has rayon and a release
+profile; new core code may start a fresh crate or lift modules out of it. Add PyO3 bindings when there is something worth binding, not before.
 
 **The bigger lever is indexing, not the language.** All-against-all overlap is
 quadratic in any language. minimap2 is fast because of minimizer indexing, not
@@ -56,22 +64,20 @@ is still a quadratic assembler.
 ## Repo layout
 
 ```
-METHOD.md            build spec; source of truth for intent
 CLAUDE.md            this file
-Cargo.toml           scaffolded; src/ to be created
-src/                 Rust core: index, overlap, codon scoring, layout
-python/
-  simulate.py        sequence evolution + surrogates  [seeded, repurpose]
+data/MANIFEST.md     accessions and download dates (data/ itself is gitignored)
 experiments/
-results/             committed: tables, figures, run manifests
-tests/
+  codon_assembler/   the first assembler and every experiment run on it, moved here
+                     unchanged with its results so provenance survives. Run its
+                     scripts from this directory: it is laid out as the repo root was
+                     (Cargo.toml, src/, tests/, python/, experiments/, results/), and
+                     its data/ is a symlink to the top-level data/.
 ```
 
-`simulate.py` is a working generator for coding sequences under substitution and
-indel pressure, with reading frames preserved. It was written for a different
-experiment; repurpose it to simulate within-population swarms rather than separate
-families. Its Markov surrogate sampler is the fiddly part and it works — keep it
-under test if you refactor. It stays Python; it is nowhere near the hot loop.
+`simulate.py` (now `experiments/codon_assembler/python/simulate.py`) is a working
+generator for coding sequences under substitution and indel pressure, with reading
+frames preserved. Its Markov surrogate sampler is the fiddly part and it works — keep
+it under test if you refactor or lift it out. It stays Python.
 
 ## Conventions
 
