@@ -1,0 +1,30 @@
+{
+  "script": "experiments/pair_ladder.py",
+  "argv": [
+    "--seed",
+    "1",
+    "--n-seeds",
+    "5",
+    "--jobs",
+    "3",
+    "--threads",
+    "2"
+  ],
+  "git_sha": "d4a694953719a0165a1f50ee9a599fbf1c28575a",
+  "read_len": 150,
+  "insert": 400,
+  "insert_sd": 40,
+  "art_profile": "HS25",
+  "min_contig": 500,
+  "window": 300,
+  "versions": {
+    "python": "3.13.18",
+    "megahit": "MEGAHIT v1.2.9",
+    "spades": "SPAdes genome assembler v4.3.0",
+    "penguin": "5.cf8933-MPI",
+    "minimap2": "2.31-r1302",
+    "art": "====================ART===================="
+  },
+  "started": "2026-11-20T11:12:54Z",
+  "jobs": 2205
+}
