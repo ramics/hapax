@@ -59,7 +59,12 @@ Record them and say so rather than tuning a simulator until it looks good.
 ## Conventions
 
 - Every experiment is a script in `experiments/`, takes `--seed`, and writes a run manifest
-  (seed, git SHA, parameters, timings) beside its results.
+  (seed, git SHA, parameters, timings) beside its results. **The git SHA is the field that
+  earns the manifest its place**: a fix landing midway through a multi-seed run leaves a
+  directory where some seeds are right and some are wrong and nothing visible says which. A
+  mixture is not a five-seed result — re-run every seed after a fix, and until they are all
+  re-run, read the per-seed SHA rather than the directory. File timestamps answer the same
+  question only while the container lives, which is not long enough.
 - Any reported number is reproducible from a committed script plus a seed.
 - Headline results run across at least 5 seeds, reporting spread. A single-seed conclusion
   from simulated data is noise.
