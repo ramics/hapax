@@ -1,0 +1,11 @@
+{
+  "script": "experiments/residue_structure_points.py",
+  "git_sha": "626dc132876cdd43c5dcfe3527c3f9772d68432c",
+  "parameters": {
+    "seed": "1",
+    "block": "1",
+    "work": "/home/user/hapax/data/residue_structure",
+    "out": "/home/user/hapax/results/residue_structure",
+    "per_population": "3000"
+  }
+}

@@ -119,3 +119,16 @@ same ENA path, 2026-11-20, extending the 400,000-pair prefix above so the five r
 used by `experiments/absence_residual.py` on branch `claude/project-thread-clcuow` are all
 available. The R1 stream closed early twice and was retried until the full line count
 landed; a truncated prefix is detectable because every block is addressed by line offset.
+
+## Residue structure (experiments/residue_structure.py, experiments/kmer_coverage/)
+
+| Purpose | Source | Downloaded | Notes |
+|---|---|---|---|
+| Berlin wastewater reads, complete run | SRR23973193 via ENA fastq (`ftp.sra.ebi.ac.uk/vol1/fastq/SRR239/093/`) | 2026-11-20 | both mates complete, 8,731,224 pairs each, line counts verified against the manifest of PR #16's cascade. The whole run is needed because this experiment counts every query k-mer across the entire library rather than a prefix |
+| planted-control genome | Human rhinovirus A1B, D00239, ENA fasta | 2026-11-20 | 7,152 nt. The clean holdout of the spike ladder: absent from this sample's own assembly, unlike the other two genomes used there |
+
+Intermediates written to the gitignored `data/residue_structure/`: `coverage.tsv` and
+`composition.tsv` (568,500 pairs, 24 MB each), `spike.tsv`, `null.tsv`, and the residue
+read names taken from `results/subtract_recut/residue_rows_s{1..5}.jsonl`. The points the
+figure plots are committed to `results/residue_structure/joint_points_s1.json` so the figure
+has provenance without the intermediates.
