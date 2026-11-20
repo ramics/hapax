@@ -343,6 +343,11 @@ def main() -> None:
                          "is recurrence within a sample of the library, not a genome "
                          "coverage depth")
     ap.add_argument("--abundance-bits", type=int, default=28)
+    ap.add_argument("--cross-sample-ref", type=Path,
+                    default=ROOT / "data/geo/all_contigs_1kb.fa",
+                    help="per-sample assemblies of all 116 samples, for cross-sample "
+                         "recurrence")
+    ap.add_argument("--cross-min-mlen", type=int, default=50)
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--work", type=Path, default=Path("/tmp/claude-0/wk/residue"))
     ap.add_argument("--out", type=Path, default=ROOT / "results/residue_report")
@@ -413,6 +418,56 @@ def main() -> None:
             "wall_seconds": time.perf_counter() - t0,
         }
 
+    # ---- recurrence ACROSS samples: the one field no database can be incomplete about
+    cross = None
+    if args.cross_sample_ref.exists() and not args.skip_fields:
+        # Everything else in this report is bounded by what some catalogue contains. This
+        # field is not: it asks whether the same sequence turns up in OTHER wastewater
+        # samples from the same works, which is answered by the samples themselves. A rare
+        # but real organism should recur across samples or time points; a library
+        # artefact, a chimaera or an error-made-unique read should not. That makes it the
+        # only tier-3 field immune to the database-incompleteness problem that sank the
+        # earlier absence features.
+        #
+        # The reference is the study authors' own per-sample assemblies for all 116
+        # samples, so "recurs" means "assembles in another sample", which is a conjunction
+        # of present AND abundant enough there to assemble: a one-sided measure again, and
+        # it undercounts recurrence for anything rare everywhere.
+        t0 = time.perf_counter()
+        idx = _mm_index(args.cross_sample_ref,
+                        args.work / f"{args.cross_sample_ref.stem}.mmi", args.threads)
+        counts = []
+        for name, (s1, s2) in pairs.items():
+            samples = set()
+            for s in (s1, s2):
+                for a in idx.map(s):
+                    if a.mlen >= args.cross_min_mlen:
+                        samples.add(_sample_of(a.ctg))
+            rows[name]["cross_sample"] = {"distinct_samples": len(samples),
+                                          "samples": sorted(samples)[:5]}
+            counts.append(len(samples))
+        kn_counts = []
+        if known:
+            for s1, s2 in known.values():
+                samples = set()
+                for s in (s1, s2):
+                    for a in idx.map(s):
+                        if a.mlen >= args.cross_min_mlen:
+                            samples.add(_sample_of(a.ctg))
+                kn_counts.append(len(samples))
+        cross = {
+            "reference": str(args.cross_sample_ref),
+            "min_matching_bases": args.cross_min_mlen,
+            "residue_distinct_samples": spread(counts),
+            "subtracted_distinct_samples": spread(kn_counts) if kn_counts else None,
+            "residue_sweep": {str(c): sum(1 for x in counts if x >= c) / len(counts)
+                              for c in (1, 2, 3, 5, 10)},
+            "subtracted_sweep": ({str(c): sum(1 for x in kn_counts if x >= c) / len(kn_counts)
+                                  for c in (1, 2, 3, 5, 10)} if kn_counts else None),
+            "wall_seconds": time.perf_counter() - t0,
+        }
+        del idx
+
     # ---- motifs
     pf = {}
     if args.pfam.exists() and not args.skip_fields:
@@ -465,6 +520,7 @@ def main() -> None:
         },
         "motif_rate": len(pf) / len(rows) if pf else 0.0,
         "library_abundance": abund,
+        "cross_sample_recurrence": cross,
         "chimaera_split_rate": (sum(1 for r in rows.values()
                                     if r.get("chimaera", {}).get("split_disagree")) / len(rows)),
         "chimaera_split_rate_on_subtracted_reads": chim_fp,
@@ -524,6 +580,11 @@ def _row(name: str, s1: str, s2: str, rng: random.Random) -> dict:
         "repetitive": repetitiveness(s1, s2),
         "repetitive_shuffled": repetitiveness(sh1, sh2),
     }
+
+
+def _sample_of(ctg: str) -> str:
+    """Sample id from a SPAdes contig name: WW_211013_20-22hmix_S5_L001_NODE_1_length_..."""
+    return ctg.split("_NODE_")[0]
 
 
 def _load_fasta_pairs(path: Path | None, limit: int) -> dict[str, tuple[str, str]]:

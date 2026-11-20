@@ -497,10 +497,20 @@ def main() -> None:
     if args.rows_out:
         resid = args.out / f"residue_rows_s{args.seed}.jsonl"
         with open(resid, "w") as h:
-            for name, s1, s2, _q1, _q2 in rows:
+            for name, s1, s2, q1, q2 in rows:
                 if name in seen:
                     continue
-                row = {"name": name, "len1": len(s1), "len2": len(s2), **art[name]}
+                # Base quality travels with the row because a read can be unique to this
+                # library for two quite different reasons - a rare organism, or errors -
+                # and the abundance field alone cannot tell them apart. Mean error
+                # probability rather than mean Phred: averaging Phred scores averages
+                # logarithms and understates the error rate.
+                errs = [10 ** (-(ord(c) - 33) / 10) for c in (q1 + q2)]
+                row = {"name": name, "len1": len(s1), "len2": len(s2), **art[name],
+                       "mean_error_prob": round(sum(errs) / len(errs), 6) if errs else None,
+                       "frac_bases_under_q20": round(
+                           sum(1 for c in (q1 + q2) if ord(c) - 33 < 20) / len(q1 + q2), 4)
+                       if (q1 + q2) else None}
                 for tier, best in prot_rows.items():
                     if name in best:
                         bits, sid, pid, length, ev = best[name]
