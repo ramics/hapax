@@ -1,0 +1,30 @@
+{
+  "script": "experiments/partial_alignment_anatomy.py",
+  "git_sha": "2cc058917d9e5b4718c3e5ea836d5d6a5305e84f-dirty",
+  "parameters": {
+    "seed": 1,
+    "residue": "/tmp/claude-0/wk/recut/residue_s1.fa",
+    "known": "/tmp/claude-0/wk/recut/subtracted_s1.fa",
+    "max_reads": 1500,
+    "refs": [
+      "/home/user/hapax/data/geo/sample_contigs.fa",
+      "/home/user/hapax/data/geo/all_contigs_1kb.fa"
+    ],
+    "dmnd": "/home/user/hapax/data/prot/uniref50_10pct.dmnd",
+    "diamond_bin": "/home/user/tools/diamond",
+    "evalue": 10.0,
+    "seg_evalue": 1000.0,
+    "partial_lo": 0.15,
+    "partial_hi": 0.75,
+    "min_seg": 30,
+    "threads": 2,
+    "work": "/tmp/claude-0/wk/anatomy",
+    "out": "/home/user/hapax/results/partial_alignment"
+  },
+  "index_bytes": {
+    "/home/user/hapax/data/prot/uniref50_10pct.dmnd": 1823091927
+  },
+  "wall_seconds": 520.3369335810003,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}

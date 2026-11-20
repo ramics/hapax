@@ -95,6 +95,12 @@ AA = {
     "GAT": "D", "GAC": "D", "GAA": "E", "GAG": "E", "TGT": "C", "TGC": "C", "TGG": "W",
     "CGT": "R", "CGC": "R", "CGA": "R", "CGG": "R", "AGT": "S", "AGC": "S", "AGA": "R",
     "AGG": "R", "GGT": "G", "GGC": "G", "GGA": "G", "GGG": "G",
+    # The three stops. Their absence here was a real bug, caught on 2026-11-20 by a
+    # calibration reading that could not be true: longest_orf_aa equalled the read length
+    # for every read and stop_free_frames was 6 for random sequence. Without them
+    # translate() mapped TAA/TAG/TGA to "X", no frame ever contained a stop, and every
+    # coding field silently reported "this read is one long open reading frame".
+    "TAA": "*", "TAG": "*", "TGA": "*",
 }
 
 

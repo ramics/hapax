@@ -351,7 +351,11 @@ def main() -> None:
             "spike_median_31mer_count_per_genome": per_genome,
             "background_median_31mer_count": spread(bg_counts) if bg_counts else None,
             "sketch_saturation": sk.saturation(),
-            "note": "the count-min sketch only overstates, so a read it calls rare is "
+            "note": "the sketch block is the SAME 400,000 pairs for every seed by "
+                    "design - it stands for 'the library' - so seeds vary the spike "
+                    "reads and not the background, and the background number here is "
+                    "one measurement rather than five. "
+                    "the count-min sketch only overstates, so a read it calls rare is "
                     "rare for certain; a genome already present in the library recurs "
                     "for a biological reason, which is why all three are reported",
         },

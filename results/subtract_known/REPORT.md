@@ -269,7 +269,22 @@ here was measured at that rate directly, because a sample that holds 8.7 pairs c
 resolve a rate. That was the error of PR #11, where 1-per-million thresholds came from
 zero counts in a 20,000-read run, and it is not repeated here. The one field whose value
 really does depend on abundance - library recurrence - is measured with exactly the number
-of spike pairs 1-in-a-million implies, reported in `results/spike_abundance/`.
+of spike pairs 1-in-a-million implies:
+
+| | median 31-mer count in 400,000 pairs |
+|---|---|
+| pepper mild mottle virus (abundant here) | 10, 18, 23, 18, 7 across seeds |
+| human astrovirus | 1 in every seed |
+| human rhinovirus 1 (the clean holdout) | 1 in every seed |
+| a typical background read | 67.6 |
+
+So a virus at 1 in a million reads as a singleton against a background whose typical read
+recurs about 68 times, and the field does separate the two. PMMoV does not, because it is
+genuinely abundant in sewage - which is the field working, not failing. The count-min
+sketch only overstates (saturation 0.006%), so a read it calls rare is rare for certain.
+The sketch block is the same 400,000 pairs in every seed by design, since it stands for
+"the library", so the seeds vary the spike and not the background: the background number
+is one measurement, not five.
 
 ## 4. What the residue is, and is not
 
