@@ -36,7 +36,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from subtract_known import git_sha
+from subtract_known import provenance
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -149,7 +149,7 @@ def main() -> None:
            "wall_seconds": time.perf_counter() - t0}
     (args.out / f"scaling_s{args.seed}.json").write_text(json.dumps(out, indent=2))
     (args.out / f"manifest_s{args.seed}.json").write_text(json.dumps({
-        "script": "experiments/diamond_scaling.py", "git_sha": git_sha(),
+        "script": "experiments/diamond_scaling.py", **provenance(__file__),
         "parameters": {k: (str(v) if isinstance(v, Path) else
                            [str(x) for x in v] if isinstance(v, list) and v
                            and isinstance(v[0], Path) else v)

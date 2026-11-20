@@ -50,7 +50,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from cov_step_join import fisher_ci, read_fasta_mates, spearman
-from subtract_known import git_sha
+from subtract_known import provenance
 
 ROOT = Path(__file__).resolve().parents[1]
 COV = re.compile(r"_cov_([0-9.]+)")
@@ -198,7 +198,7 @@ def main() -> None:
     }
     (args.out / f"conservation_s{args.seed}.json").write_text(json.dumps(out, indent=2))
     (args.out / f"manifest_s{args.seed}.json").write_text(json.dumps({
-        "script": "experiments/cov_step_conservation.py", "git_sha": git_sha(),
+        "script": "experiments/cov_step_conservation.py", **provenance(__file__),
         "axes_source": str(args.axes),
         "parameters": {k: (str(v) if isinstance(v, Path) else v)
                        for k, v in vars(args).items()},

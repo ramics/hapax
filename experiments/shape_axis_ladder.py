@@ -45,7 +45,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from berlin_io import read_pairs
 from cov_step_join import rank
-from subtract_known import _mm_index, git_sha, map_filter
+from subtract_known import _mm_index, provenance, map_filter
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -186,7 +186,7 @@ def main() -> None:
     }
     (args.out / f"shape_ladder_s{args.seed}.json").write_text(json.dumps(out, indent=2))
     (args.out / f"manifest_s{args.seed}.json").write_text(json.dumps({
-        "script": "experiments/shape_axis_ladder.py", "git_sha": git_sha(),
+        "script": "experiments/shape_axis_ladder.py", **provenance(__file__),
         "parameters": {k: (str(v) if isinstance(v, Path) else v)
                        for k, v in vars(args).items()},
         "wall_seconds": time.perf_counter() - t0,

@@ -233,6 +233,25 @@ def git_sha() -> str:
         return "unknown"
 
 
+def tree_dirty() -> bool:
+    try:
+        return subprocess.call(["git", "diff", "--quiet", "HEAD"], cwd=ROOT) != 0
+    except Exception:
+        return True
+
+
+def provenance(script) -> dict:
+    """The three facts a manifest needs to identify the code that produced it.
+
+    `git_sha()` alone is not enough and a bare HEAD SHA is worse than not enough: it looks
+    resolved while the tree was dirty. So the flag is explicit rather than hidden in a
+    suffix, and the script's own content hash is carried beside it, which is the only one
+    of the three that pins the code when the tree was not clean.
+    """
+    return {"git_sha": git_sha(), "tree_dirty": tree_dirty(),
+            "script_sha256": script_sha256(script)}
+
+
 def script_sha256(path) -> str:
     """Content hash of the script that wrote a result.
 
