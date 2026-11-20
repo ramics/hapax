@@ -272,6 +272,19 @@ between mates, organism-level absence is shared. So `mate_disagree` belongs in t
 a per-sample error-floor estimator, which is novelty-neutral, and not in the coverage-shape
 family, which is familiarity-signed.
 
+**And it calibrates against a known floor rather than against the shuffled null**, which is
+the right comparison for a floor estimator and is available here without new work. Taking
+the clean single-substitution signature — a zero-run of 25–40 k-mers in exactly one mate
+while the other has none — it reads **2.33% of subtracted (known) pairs and 2.46% of residue
+pairs**: the same number, as a database-independent error floor must be. The *absence* half
+does not behave that way at all: exactly one mate entirely unwitnessed is 2.99% of known
+pairs against 6.97% of residue pairs. One population has more missing molecules; neither has
+more errors. That split, measured on one block of one library, is what the axis is for.
+(For scale, this library's measured rates imply 9.1% of R1 and 11.8% of R2 reads carry at
+least one error, so the clean signature is a lower bound on error-bearing reads — an error
+near a read end leaves a shorter run, and an error inside unwitnessed sequence leaves no
+mark at all.)
+
 ## 7. Limitations
 
 - One sample, one city, one preparation, as everything in this repo is.
