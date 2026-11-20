@@ -308,40 +308,46 @@ it measures mappability, not chimaerism. Partial alignment is not even enriched 
 residue (23.8% vs 19.7%) - it is a property of short reads meeting a protein database. What
 separates the two piles is identity, continuously: 51.9% vs 63.2%.
 
-**At contig level it is answerable, and the answer is a negative on chimaerism.** 800
-unidentifiable and 800 identified contigs of >=500 nt, DIAMOND blastp against Swiss-Prot,
-split segments re-queried:
+**At contig level it is answerable, and the answer is a negative on chimaerism.** Five
+seeds, each 800 unidentifiable and 800 identified contigs of >=500 nt sampled at random,
+DIAMOND blastp against Swiss-Prot, split segments re-queried. Spread across seeds in
+brackets:
 
 | | unidentifiable | identified (control) |
 |---|---|---|
-| any protein hit | 601/800 | 800/800 |
-| mean aligned fraction of the contig | 0.327 | 0.593 |
-| mean identity | 35.1% | 39.5% |
-| partial hits (15-75% aligned) | 85.4% of hits | 68.4% |
-| A chimaera | **0.0%** | **0.0%** |
-| B divergent continuation | 0.6% | 3.7% |
-| C artefact end | 0.8% | 1.3% |
-| D short true homology | 98.6% | 95.1% |
+| any protein hit | 595/800 | 797/800 |
+| mean aligned fraction of the contig | 0.315 (0.304-0.327) | 0.567 (0.546-0.593) |
+| mean identity | 35.0% (34.5-35.4) | 40.6% (39.5-41.5) |
+| partial hits (15-75% aligned) | 85% of hits | 69% |
+| A chimaera | **0.04% (0.00-0.20)** | **0.15% (0.00-0.19)** |
+| B divergent continuation | 0.39% (0.20-0.59) | 3.12% (2.45-4.09) |
+| C artefact end | 0.59% (0.39-0.79) | 1.27% (0.75-1.78) |
+| D short true homology | 98.98% | 95.50% |
 
 So: **no evidence that the unmatched part of a partially-matching contig comes from another
-molecule present in this sample.** Zero in both piles, including the control, where a
-mis-assembly would be just as visible. The limit is explicit: this test can only see a
-chimaera whose partner also assembled here, so it cannot exclude a join to something too
-rare to assemble.
+molecule present in this sample.** The chimaera category fires on 0.04% of unidentifiable
+contigs and 0.15% of identified ones - indistinguishable at these counts, and if anything
+higher in the control, where a mis-assembly would be just as visible. The limit is
+explicit: this test can only see a chimaera whose partner also assembled here, so it cannot
+exclude a join to something too rare to assemble.
 
-B is the instructive one. Divergent continuation fires six times *more often* on already-
-identified contigs than on unidentifiable ones, so it flags familiarity, not novelty: you
-only observe a weak return to the same subject when the subject is well represented to
-begin with. A pipeline that read B as "divergent, therefore interesting" would be reading
-database coverage backwards.
+B is the instructive one. Divergent continuation fires eight times *more often* on
+already-identified contigs than on unidentifiable ones (3.12% against 0.39%, no overlap
+between the seed ranges), so it flags familiarity, not novelty: you only observe a weak
+return to the same subject when the subject is well represented to begin with. A pipeline
+that read B as "divergent, therefore interesting" would be reading database coverage
+backwards. The same inversion appears in the coverage-shape fields of section 5.2, measured
+by a different instrument on different data.
 
 What does separate the piles is simply how much matches at all - a continuous quantity,
 0.327 against 0.593 aligned fraction - and not any categorical verdict about the unmatched
 remainder. This is also the first field measured here that works on contigs and fails on
 reads, which is an argument about where in a production tool this work belongs.
 
-Single seed so far; the 5-seed run is queued. A_chimaera at exactly zero in 1,600 contigs
-needs the other seeds before it is quoted as a rate rather than as "not detectable here".
+Five seeds, 8,000 contigs in total. The chimaera rate is quoted as "indistinguishable
+between the piles at a few parts in a thousand" rather than as zero, because one seed in
+five found two instances in each pile: a rate that low cannot be separated from the
+segment-matching threshold's own false-positive rate.
 
 ## 4. What the residue is, and is not
 
