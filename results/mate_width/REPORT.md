@@ -647,9 +647,46 @@ Prodigal makes on our contigs - at a scale of millions of entries rather than 38
 them: every entry containing a ribosomal read's peptide 10-mer is recorded with its
 description, with the non-ribosomal reads carried through the same pass as a control.
 
+**The entries, named** (`results/rrna_match_source/`, seed 1, the whole 4,124,353-entry
+UniRef50 10% subsample streamed once, non-ribosomal reads as a control in the same pass).
+The sibling thread sharpened the prediction before the run: a uniform sprinkling of bad
+automatic annotations cannot produce the *differential* in the table above, but conservation
+can - rRNA is the most conserved sequence there is, so one spurious entry from a single
+organism's ribosomal locus matches ribosomal reads across the whole tree, while a spurious
+entry elsewhere matches only its own neighbourhood. That predicts a heavily concentrated
+match distribution. It is:
+
+| | ribosomal reads (13,580) | other reads (26,380) |
+|---|---|---|
+| entries matched | 4,209 | 36,218 |
+| read-matches held by the top 1 entry | 2.97% | 0.11% |
+| by the top 10 | 14.3% | 0.44% |
+| **by the top 100** | **52.2%** | **1.62%** |
+| by the top 1,000 | 79.5% | 10.9% |
+| entries each matching ≥1% of the group's reads | 63 | 1 |
+| most reads matched by one entry | 1,330 | 283 |
+| description uninformative (uncharacterised/hypothetical/ORF/DUF) | 66.0% | 46.7% |
+
+**Amplification confirmed, and the head is tiny.** Sixty-three entries out of four million
+reach one percent or more of the ribosomal reads each, and a hundred entries carry over half
+of all ribosomal read-matches, against 1.6% for the control. Both my advance prediction
+(top-100 above half for ribosomal, under a tenth for the control) and the sibling thread's
+conservation mechanism are confirmed on the same table. The annotation signal is there too -
+66.0% of ribosomal-matching entries are uncharacterised against 46.7% of control entries -
+but it is the weaker readout, exactly as predicted, because a spurious ORF can inherit a
+plausible name: the single largest offender is "Cell wall-associated hydrolase" at 1,330
+ribosomal reads.
+
+Two caveats. The control is not matched for abundance, so some of its concentration is the
+library rather than the database; the ratio between the two heads is the signal, not the
+ribosomal head alone. And this arm is seed 1 only - the five-seed statement is the
+per-level join table above, and nothing here depends on the one seed beyond the shape of a
+distribution whose head is three orders clear of its control.
+
 **Why this matters beyond a curiosity.** A third of this library is ribosomal, and against a
 large public protein index a third of the library stops looking novel for a reason that has
 nothing to do with biology. Any absence-based score calibrated on a big protein database is
 partly measuring annotation artefacts, and the fix is not a better threshold: it is to
 subtract rRNA explicitly, with a nucleotide index, before a protein index is consulted at
-all.
+all. The cheaper mitigation, if a protein index must carry it, is a blocklist: sixty-three
+entries explain most of it.

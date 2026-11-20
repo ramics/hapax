@@ -96,7 +96,9 @@ def main() -> None:
     skip = (args.seed - 1) * args.block
     qs: list[np.ndarray] = []
     grp: list[np.ndarray] = []           # 1 = ribosomal read, 0 = not
+    rid: list[np.ndarray] = []           # which read each query k-mer came from
     n = {0: 0, 1: 0}
+    n_reads = 0
     for name, a, b in read_pairs(args.r1, args.r2, args.pairs, args.trim_r2, skip):
         for mate, read in ((1, a), (2, b)):
             g = rrna.get((name, mate))
@@ -107,22 +109,42 @@ def main() -> None:
                 continue
             qs.append(h)
             grp.append(np.full(h.size, g, dtype=np.uint8))
+            rid.append(np.full(h.size, n_reads, dtype=np.int32))
+            n_reads += 1
             n[g] += 1
     q = np.concatenate(qs)
     g = np.concatenate(grp)
     order = np.argsort(q, kind="stable")
     q_sorted, g_sorted = q[order], g[order]
+    r_sorted = np.concatenate(rid)[order]
+    read_is_r = np.zeros(n_reads, dtype=bool)
     uq, first = np.unique(q_sorted, return_index=True)
     # a unique k-mer is attributed to ribosomal reads if any ribosomal read has it
     bounds = np.append(first, uq.size and q_sorted.size)
     is_r = np.zeros(uq.size, dtype=bool)
     for i in range(uq.size):
-        is_r[i] = bool(g_sorted[bounds[i]:bounds[i + 1]].any())
+        sl = slice(bounds[i], bounds[i + 1])
+        is_r[i] = bool(g_sorted[sl].any())
+    read_is_r[r_sorted[g_sorted == 1]] = True
     print(f"queries {q.size} unique {uq.size} ribosomal-reads {n[1]} other {n[0]}",
           flush=True)
 
     desc_r: Counter = Counter()
     desc_o: Counter = Counter()
+    # Why reads-per-entry is recorded as well as the description. The sibling
+    # thread's sharpening: a uniform sprinkling of bad automatic annotations
+    # cannot produce the differential (1% to 10% of UniRef50 moves non-ribosomal
+    # absence 0.798 to 0.720 but ribosomal 0.810 to 0.473). Conservation can: rRNA
+    # is the most conserved sequence there is, so one spurious entry from a single
+    # organism's ribosomal locus matches ribosomal reads across the whole tree,
+    # while a spurious entry elsewhere matches only its own neighbourhood. That
+    # predicts a heavily concentrated match distribution - a few entries
+    # accounting for most ribosomal reads - against a flat one for the control.
+    # Concentration discriminates where annotation status only correlates, and it
+    # is free in the same pass.
+    per_entry_r: list[int] = []
+    per_entry_o: list[int] = []
+    top_entries: list[tuple[int, str]] = []
     hits_r = hits_o = entries = 0
     name = ""
     seq: list[str] = []
@@ -141,8 +163,17 @@ def main() -> None:
         m = uq[pos] == h
         if not m.any():
             return
-        hit_r = bool(is_r[pos[m]].any())
-        hit_o = bool((~is_r[pos[m]]).any())
+        reads = np.unique(np.concatenate(
+            [r_sorted[bounds[i]:bounds[i + 1]] for i in np.unique(pos[m])]))
+        nr = int(read_is_r[reads].sum())
+        no = int(reads.size - nr)
+        hit_r, hit_o = nr > 0, no > 0
+        if nr:
+            per_entry_r.append(nr)
+            if nr >= 50:
+                top_entries.append((nr, name[:160]))
+        if no:
+            per_entry_o.append(no)
         # description: UniRef headers are "ID description n=.. Tax=.."
         d = name.split(" ", 1)[1] if " " in name else ""
         d = d.split(" n=")[0].strip()
@@ -165,12 +196,24 @@ def main() -> None:
                 seq.append(line.strip())
     handle()
 
-    def profile(c: Counter) -> dict:
+    def profile(c: Counter, per_entry: list[int], reads_total: int) -> dict:
         tot = sum(c.values())
         unin = sum(v for d, v in c.items() if UNINFORMATIVE.search(d))
-        return {"entries_matched": tot,
-                "uninformative_frac": round(unin / tot, 4) if tot else None,
-                "top": c.most_common(args.top)}
+        a = np.sort(np.array(per_entry, dtype=np.int64))[::-1] if per_entry else np.zeros(0)
+        tot_reads_matched = int(a.sum())
+        out = {"entries_matched": tot,
+               "uninformative_frac": round(unin / tot, 4) if tot else None,
+               "reads_matched_sum_over_entries": tot_reads_matched,
+               "reads_matched_per_entry_median": int(np.median(a)) if a.size else None,
+               "reads_matched_per_entry_max": int(a[0]) if a.size else None,
+               "top": c.most_common(args.top)}
+        for nn in (1, 10, 100, 1000):
+            out[f"share_of_read_matches_in_top{nn}_entries"] = (
+                round(float(a[:nn].sum()) / tot_reads_matched, 4)
+                if tot_reads_matched else None)
+        out["entries_matching_ge_1pct_of_reads"] = int(
+            (a >= max(1, int(0.01 * reads_total))).sum()) if a.size else 0
+        return out
 
     sha = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True,
                          text=True).stdout.strip()
@@ -178,7 +221,9 @@ def main() -> None:
            "db_entries": entries,
            "reads_ribosomal": n[1], "reads_other": n[0],
            "query_kmers_unique": int(uq.size),
-           "ribosomal": profile(desc_r), "other": profile(desc_o),
+           "ribosomal": profile(desc_r, per_entry_r, n[1]),
+           "other": profile(desc_o, per_entry_o, n[0]),
+           "top_entries_ge50_ribosomal_reads": sorted(top_entries, reverse=True)[:40],
            "seconds": round(time.perf_counter() - t0, 1)}
     (args.out / f"rrna_match_source_s{args.seed}.json").write_text(json.dumps(res, indent=2))
     print(json.dumps({k: v for k, v in res.items()
