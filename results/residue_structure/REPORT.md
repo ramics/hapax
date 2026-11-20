@@ -280,10 +280,23 @@ pairs**: the same number, as a database-independent error floor must be. The *ab
 does not behave that way at all: exactly one mate entirely unwitnessed is 2.99% of known
 pairs against 6.97% of residue pairs. One population has more missing molecules; neither has
 more errors. That split, measured on one block of one library, is what the axis is for.
-(For scale, this library's measured rates imply 9.1% of R1 and 11.8% of R2 reads carry at
-least one error, so the clean signature is a lower bound on error-bearing reads — an error
-near a read end leaves a shorter run, and an error inside unwitnessed sequence leaves no
-mark at all.)
+(For scale, the quality-derived rates imply 9.1% of R1 and 11.8% of R2 reads carry at least
+one error, so the clean signature is a lower bound — an error near a read end leaves a
+shorter run, and an error inside unwitnessed sequence leaves no mark at all. Those rates are
+themselves upper bounds: the `subtract the known` thread's reference-free check, using the
+pairs that overlap their own mate, measures 0.000796 combined against 0.00206 implied by the
+quality strings, so the fraction of error-bearing reads this signature catches is nearer a
+half than a quarter.)
+
+**Per mate, because the two are not interchangeable and this field treats them as if they
+were.** R2 is 93 nt after the 14 nt trim against R1's 107, which is 62 scorable 31-mers
+against 76, and both halves of the measurement feel it in opposite directions. Asymmetric
+absence falls on R2 more often (64:36 in known pairs, 60:40 in residue), because a shorter
+mate is likelier to come up empty; the single-error signature falls on R1 more often
+(58:42 known, 55:45 residue), because a 25–40 k-mer zero-run needs a long enough profile to
+sit in. Both are length artefacts and neither is biology. The equality across populations —
+the actual readout — survives both, because both populations carry the same asymmetry, but a
+per-mate floor is the honest form and a pooled one invites exactly the misreading.
 
 ## 7. Limitations
 
