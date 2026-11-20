@@ -206,6 +206,21 @@ Single-lineage controls at half budget behave identically at every divergence
 (41–47% breadth, longest 725–963, and **zero** mass over 1,500 nt in all 12
 runs), so the comparison is clean.
 
+**Why the controls sit above §1's curve, and why it does not matter here.** The
+controls run at 3.77×, where §1's curve interpolates to about 35% breadth, and
+they give 40.6%. Two candidate explanations, separated by scoring the same
+control contigs both ways (`--cross-score`, `two_lineage_controls_rescored.jsonl`):
+§5 aligns to both lineages at `asm20` and 85% identity, §1 to one reference at
+`asm10` and 90%, which is necessarily more permissive. Measured over 8 runs, the
+looser scoring accounts for 1.5 ± 0.8 points — real but small. The rest is
+between-genome variation: these are eight different deposited rabies genomes and
+their individual control breadths run from 31.8% to 48.3%, a spread that
+contains §1's interpolated 35% comfortably, while §1's curve is one genome
+(NC_001542) at two seeds. So the two measurements agree within the variation
+either can resolve. It matters only that the controls and the mixtures in this
+section are scored identically to each other, which they are; the comparison
+with §1 is a sanity check, not a term in the result.
+
 **Pooling is real and it converts coverage into length.** At 2.0% the mixture's
 longest contig is 1,971 nt against 725–771 for either lineage alone, and only the
 mixture ever crosses 1,500 nt. Five of about twelve contigs carry windows from
