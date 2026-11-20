@@ -27,8 +27,15 @@ S3_ENDPOINT = "https://s3.us-east-1.amazonaws.com"
 #: keys a run will write are fixed before launch (guide, "The shared bucket").
 BUCKET = "amazebio-corpora-897641797669"
 
-#: Our prefix inside it. `corpora/` belongs to amazebio and is left alone.
-PREFIX = "projects/hapax"
+#: Our prefix inside it. The guide's layout is `projects/<project>/`, and that is what this
+#: was - but measured on 2026-11-20 the container's principal `user/claude` can READ the
+#: whole bucket and WRITE only under `corpora/*`, so a `projects/hapax/` key is refused with
+#: a verbose AccessDenied naming the ARN (the verbose form is the tell that the request WAS
+#: signed and the policy refused, as opposed to the unsigned-endpoint trap). Imo chose this
+#: route over an IAM change on 2026-11-20, so everything hapax writes goes under one
+#: hapax-named prefix inside `corpora/results/`: nothing of amazebio's is read, touched or
+#: overwritten, and the bucket has no delete, so these keys are permanent by design.
+PREFIX = "corpora/results/hapax-bigindex"
 
 #: What the account's policy permits, measured by dry run in the reference project on
 #: 2026-10-20: the ceiling is eight vCPU, and every `4xlarge` and larger came back
