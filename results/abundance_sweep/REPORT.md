@@ -310,12 +310,26 @@ are 81–201 nt. Conserved windows long enough to join reads outright are real �
 two HBV genomes from different hosts share 709 exact 150-mers — but they are not
 what is operating here. One mechanism, isolated 21-mer bridges, at every rung.
 
-**Caveat that limits the mosaic numbers, not the length numbers.** Control runs
-contain a single lineage, so a mosaic there is impossible by construction, yet 13
-of 42 controls report one and the control mean is 0.33 (max 2). The per-window
-lineage call therefore has a false-mosaic rate, presumably where a 300 nt window
-genuinely matches both genomes or sits at a contig end. Mixture runs average 3.19
-with a minimum of 1, so the signal is well clear of that floor, but a mosaic
-count here should be read as "about three above a baseline of a third" rather
-than as an exact count. The 1,500 nt crossing rate is unaffected: controls never
-cross it.
+**No detectable dependence on divergence.** Pooling the seven rungs gives 10 of
+21 mixtures crossing 1,500 nt, a rate of 0.48 with a Wilson 95% interval of 0.28
+to 0.68. An exact permutation test on the trend statistic Σ kᵢdᵢ, enumerating all
+352,716 arrangements of 10 crossings over 21 runs conditional on the margins,
+gives a two-sided P of 0.159 (one-sided 0.080). So the rung-to-rung differences
+are not distinguishable from a constant rate across 2.0–9.7%. Three seeds a rung
+has little power, so this is "consistent with constant" rather than "constant",
+and a 15-seed run at the two extreme rungs is under way to give the comparison
+real power. But the weaker claim already matters: the apparent dip at 6.5–7.3%
+was not evidence of anything.
+
+**A limit on the lineage caller, not on the mixtures.** Control runs contain a
+single lineage, so a mosaic there is impossible by construction, yet 13 of 42
+controls report one and the control mean is 0.33 (max 2). That is a measured
+false-positive rate for the per-window lineage call itself — presumably where a
+300 nt window genuinely matches both genomes or sits at a contig end — and it
+means the mosaic *label* is noisy, not merely the count. Mixture runs average
+3.19 with a minimum of 1, so the signal clears the floor, but two consequences
+follow. A mosaic count here reads as "about three above a baseline of a third"
+rather than as an exact count. And a collapse flag must be trained on the 1,500 nt
+crossing event or on a label derived from alignment to the known truth, never on
+this caller's mosaic count, with the control runs serving as the caller's measured
+error rate. The crossing rate itself is unaffected: no control ever crossed.
