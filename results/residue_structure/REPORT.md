@@ -174,7 +174,9 @@ caught.
   drawing, but not as a clustering: the residue is one continuum, and the deliverable view
   of §8.3 should present it as a density with reference clouds, which is what it is, rather
   than as groups with labels.
-- **The axis worth adding to the per-read report is coverage shape**, not more composition.
+- **The axis worth adding to the per-read report is coverage shape**, not more composition —
+  but with the polarity of §6b attached: these fields describe a read, and they point
+  towards *familiarity*, not novelty.
   `cov_step`, `mate_disagree` and `cov_spread` are cheap (one exact counting pass over this
   library, a few minutes of a single core), carry 0.76–0.78 AUC each, and describe failure
   modes the report has no field for. `cov_step` is a candidate for the junction the
@@ -218,12 +220,27 @@ dropping unwitnessed k-mers. For the 4,290 residue pairs of block 1 with `cov_st
   contribute a real minority and not the bulk.
 
 `cov_step` is therefore mostly a genuine change of depth *within one 107 nt read*, and it is
-not the contig-level abundance boundary I guessed. The remaining explanation worth testing —
-not tested here — is sequence shared with other molecules: a conserved or repeated segment
-inside a read has more witnesses than its neighbours without the molecule changing. That
-would make `cov_step` a conservation detector rather than a junction detector, which is a
-different and less useful thing, and it should be called one or the other only after that
-test.
+not the contig-level abundance boundary I guessed. The remaining explanation was sequence
+shared with other molecules — a segment inside a read having more witnesses than its
+neighbours without the molecule changing — and **the `subtract the known` thread has now
+tested it and it holds** (`results/cov_step_conservation/`, same 22,839 pairs). Counting
+distinct contigs of the sample's own assembly a read aligns to at 30 matching bases,
+`cov_step` correlates +0.577, and it survives the obvious confound: within quartiles of
+`log_cov` it is +0.447, +0.389, +0.392, +0.242, so it is not abundance wearing a hat.
+High-step pairs align to 2.23 distinct contigs on average against 0.65, and 24.1% have a
+real alignment to a *second* contig against 4.1%. The ribosomal version of the hypothesis
+fails: weak SILVA similarity correlates +0.030 pooled and dies inside `log_cov` quartiles,
+so the 388-fold conservation multiplier of `results/rrna_content/` is not the mechanism.
+
+**That settles the polarity, and the polarity is bad news for the field.** A measurement
+that fires on sequence shared between molecules is a *familiarity* field, not a novelty one —
+the same inversion this project has met before, where score tracks database proximity rather
+than newness. `cov_step` still separates residue from subtracted at 0.780 AUC, so it carries
+something; it simply does not carry "this is new". The same holds for `cov_spread` (+0.580)
+and `mate_disagree` (+0.564), whose pooled correlations are the same size, so this is a
+property of the coverage-shape family rather than of `cov_step` alone. Read §6's
+recommendation with that attached: these axes belong in the report as description, and not
+as anything that points towards novelty.
 
 The prediction is kept in this report rather than quietly replaced, because the project's
 record of what it predicted wrongly is the part that makes the rest readable.
