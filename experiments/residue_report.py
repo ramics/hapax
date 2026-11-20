@@ -103,6 +103,36 @@ AA = {
     "TAA": "*", "TAG": "*", "TGA": "*",
 }
 
+# One source of truth for the stops, taken from the script whose frame work is already
+# under test (PR #8, experiments/readlevel_features.py). A second private copy of a codon
+# table is how the bug above happened, so this import plus the assertion below is the
+# structural fix rather than the patch: if the two ever disagree, the import fails loudly
+# at start-up instead of producing plausible numbers.
+def _reference_stops() -> set[str]:
+    """The stops as PR #8's tested frame code defines them.
+
+    Imported through importlib with that script's own dependency directory on the path,
+    because readlevel_features.py lives beside this file but imports a `common` module
+    from the archived assembler's tree. A hard import at module scope would therefore
+    couple this script's start-up to that layout; this reads the one constant and fails
+    loudly if it cannot.
+    """
+    import importlib.util
+    here = Path(__file__).resolve().parent
+    sys.path.insert(0, str(here / "codon_assembler" / "experiments"))
+    try:
+        spec = importlib.util.spec_from_file_location(
+            "_readlevel_features", here / "readlevel_features.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return set(mod.STOPS)
+    finally:
+        sys.path.pop(0)
+
+
+assert {c for c, a in AA.items() if a == "*"} == _reference_stops(), (
+    "codon table disagrees with readlevel_features.STOPS")
+
 
 def translate(seq: str) -> str:
     return "".join(AA.get(seq[i:i + 3], "X") for i in range(0, len(seq) - 2, 3))
