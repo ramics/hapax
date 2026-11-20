@@ -1,0 +1,560 @@
+{"seed": 1, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 60}
+{"seed": 1, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 60}
+{"seed": 1, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 52}
+{"seed": 1, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 68, "join_err_median": 150}
+{"seed": 1, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 61}
+{"seed": 1, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 60}
+{"seed": 1, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 58}
+{"seed": 1, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 81, "join_err_median": 150}
+{"seed": 1, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 99, "join_err_median": 150}
+{"seed": 1, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 67}
+{"seed": 1, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 74}
+{"seed": 1, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 75}
+{"seed": 1, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 76, "join_err_median": 150}
+{"seed": 1, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 64}
+{"seed": 1, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 71}
+{"seed": 1, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 78}
+{"seed": 1, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 81, "join_err_median": 150}
+{"seed": 1, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 70}
+{"seed": 1, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 67}
+{"seed": 1, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 60}
+{"seed": 1, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 80, "join_err_median": 150}
+{"seed": 1, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 70}
+{"seed": 1, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 66}
+{"seed": 1, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 71}
+{"seed": 1, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 83, "join_err_median": 150}
+{"seed": 1, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 65}
+{"seed": 1, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 62}
+{"seed": 1, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 69}
+{"seed": 1, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 1, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 1, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 84, "join_err_median": 150}
+{"seed": 1, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 2, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 53}
+{"seed": 2, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 62}
+{"seed": 2, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 65}
+{"seed": 2, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 99, "join_err_median": 150}
+{"seed": 2, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 99, "join_err_median": 150}
+{"seed": 2, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 69, "join_err_median": 150}
+{"seed": 2, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 2, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 58}
+{"seed": 2, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 63}
+{"seed": 2, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 62}
+{"seed": 2, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 99, "join_err_median": 150}
+{"seed": 2, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 99, "join_err_median": 150}
+{"seed": 2, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 80, "join_err_median": 150}
+{"seed": 2, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 2, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 62}
+{"seed": 2, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 67}
+{"seed": 2, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 65}
+{"seed": 2, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 2, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 2, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 81, "join_err_median": 150}
+{"seed": 2, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 2, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 77}
+{"seed": 2, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 67}
+{"seed": 2, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 64}
+{"seed": 2, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 2, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 2, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 74, "join_err_median": 150}
+{"seed": 2, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 2, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 75}
+{"seed": 2, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 69}
+{"seed": 2, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 62}
+{"seed": 2, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 2, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 2, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 80, "join_err_median": 150}
+{"seed": 2, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 2, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 72}
+{"seed": 2, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 71}
+{"seed": 2, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 69}
+{"seed": 2, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 2, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 2, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 76, "join_err_median": 150}
+{"seed": 2, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 2, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 69}
+{"seed": 2, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 64}
+{"seed": 2, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 73}
+{"seed": 2, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 2, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 2, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 2, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 71, "join_err_median": 150}
+{"seed": 2, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 60}
+{"seed": 3, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 59}
+{"seed": 3, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 55}
+{"seed": 3, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 70, "join_err_median": 150}
+{"seed": 3, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 54}
+{"seed": 3, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 65}
+{"seed": 3, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 62}
+{"seed": 3, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 74, "join_err_median": 150}
+{"seed": 3, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 74}
+{"seed": 3, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 58}
+{"seed": 3, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 62}
+{"seed": 3, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 76, "join_err_median": 150}
+{"seed": 3, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 62}
+{"seed": 3, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 65}
+{"seed": 3, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 75}
+{"seed": 3, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 75, "join_err_median": 150}
+{"seed": 3, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 62}
+{"seed": 3, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 62}
+{"seed": 3, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 61}
+{"seed": 3, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 79, "join_err_median": 150}
+{"seed": 3, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 64}
+{"seed": 3, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 69}
+{"seed": 3, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 60}
+{"seed": 3, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 77, "join_err_median": 150}
+{"seed": 3, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 69}
+{"seed": 3, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 75}
+{"seed": 3, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 77}
+{"seed": 3, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 3, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 3, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 78, "join_err_median": 150}
+{"seed": 3, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 64}
+{"seed": 4, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 57}
+{"seed": 4, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 55}
+{"seed": 4, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 98, "join_err_median": 150}
+{"seed": 4, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 98, "join_err_median": 150}
+{"seed": 4, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 69, "join_err_median": 150}
+{"seed": 4, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 64}
+{"seed": 4, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 65}
+{"seed": 4, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 62}
+{"seed": 4, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 71, "join_err_median": 150}
+{"seed": 4, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 72}
+{"seed": 4, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 61}
+{"seed": 4, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 69}
+{"seed": 4, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 77, "join_err_median": 150}
+{"seed": 4, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 71}
+{"seed": 4, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 64}
+{"seed": 4, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 77}
+{"seed": 4, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 83, "join_err_median": 150}
+{"seed": 4, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 66}
+{"seed": 4, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 68}
+{"seed": 4, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 65}
+{"seed": 4, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 87, "join_err_median": 150}
+{"seed": 4, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 60}
+{"seed": 4, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 72}
+{"seed": 4, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 64}
+{"seed": 4, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 85, "join_err_median": 150}
+{"seed": 4, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 71}
+{"seed": 4, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 63}
+{"seed": 4, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 75}
+{"seed": 4, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 4, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 4, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 85, "join_err_median": 150}
+{"seed": 4, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 52}
+{"seed": 5, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 56}
+{"seed": 5, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 63}
+{"seed": 5, "pair": "div02", "divergence": 0.0198, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 1}
+{"seed": 5, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 74, "join_err_median": 150}
+{"seed": 5, "pair": "div02", "divergence": 0.0198, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 62}
+{"seed": 5, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 52}
+{"seed": 5, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 60}
+{"seed": 5, "pair": "div04", "divergence": 0.0381, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 80, "join_err_median": 150}
+{"seed": 5, "pair": "div04", "divergence": 0.0381, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 68}
+{"seed": 5, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 58}
+{"seed": 5, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 67}
+{"seed": 5, "pair": "div045", "divergence": 0.045, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 71, "join_err_median": 150}
+{"seed": 5, "pair": "div045", "divergence": 0.045, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 72}
+{"seed": 5, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 70}
+{"seed": 5, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 69}
+{"seed": 5, "pair": "div055", "divergence": 0.055, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 78, "join_err_median": 150}
+{"seed": 5, "pair": "div055", "divergence": 0.055, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 62}
+{"seed": 5, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 63}
+{"seed": 5, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 71}
+{"seed": 5, "pair": "div065", "divergence": 0.0652, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 77, "join_err_median": 150}
+{"seed": 5, "pair": "div065", "divergence": 0.0652, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 77}
+{"seed": 5, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 68}
+{"seed": 5, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 70}
+{"seed": 5, "pair": "div07", "divergence": 0.0729, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 74, "join_err_median": 150}
+{"seed": 5, "pair": "div07", "divergence": 0.0729, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "fwd", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 75}
+{"seed": 5, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "archived", "n": 100, "called_mosaic": 78}
+{"seed": 5, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.005, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "archived", "n": 100, "called_mosaic": 76}
+{"seed": 5, "pair": "div10", "divergence": 0.0965, "kind": "pure", "strand": "rev", "error": 0.01, "labeller": "stranded", "n": 100, "called_mosaic": 0}
+{"seed": 5, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "fwd", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
+{"seed": 5, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "archived", "n": 100, "called_mosaic": 78, "join_err_median": 150}
+{"seed": 5, "pair": "div10", "divergence": 0.0965, "kind": "mosaic", "strand": "rev", "error": 0.0, "labeller": "stranded", "n": 100, "called_mosaic": 100, "join_err_median": 150}
