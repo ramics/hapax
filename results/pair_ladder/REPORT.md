@@ -68,13 +68,38 @@ spread of its 15x counterpart (`summary.md`). At 5x nobody separates fully: MEGA
    direction: 2-4.5% divergence at 15x or more per lineage, where every incumbent returns a
    mosaic and the right pieces demonstrably exist.
 
+## Real-background parity (MEGAHIT, 2.0% and 4.5%, 15x)
+
+Does the spike-only shortcut change the answer? The same 30 MEGAHIT mixture runs (6 pairs × 5
+seeds, byte-identical spike reads) were repeated with 1,000,000 real read pairs from the Berlin
+wastewater run SRR23973193 added, the first million in file order, with the ~14 nt non-viral
+mate-2 prefix trimmed (PR #4). Before labelling, contigs that do not align to either lineage over
+≥80% of their length are dropped, so background contigs cannot pick up an arbitrary lineage call.
+Rows: `rows_background.jsonl`, manifest `manifest_rows_background.json`. The manifest's git SHA is
+the commit before the `--background` code was committed; the code is in this PR. 0 tool errors.
+
+| rung | separated breadth, spike only | with Berlin background | mosaic mass, spike / bg | switches per 10 kb, spike / bg |
+|---|---|---|---|---|
+| 2.0% | 0.00 [0.00-0.00] | 0.00 [0.00-0.00] | 0.98 / 0.98 | 12.9 / 12.5 |
+| 4.5% | 0.52 [0.23-0.95] | 0.44 [0.23-0.79] | 0.34 / 0.38 | 2.6 / 2.6 |
+
+**The background does not change the conclusion.** At 2.0% both conditions collapse completely.
+At 4.5%, 9 of 15 runs give separated breadth within 0.01 of each other with and without the
+background, 4 lose some and 2 gain some (mean change −0.08, SD 0.24). Nearly all of the drop is
+one run: pair MG458312.1/PZ227553.1, seed 1, went from 0.96 to 0.05. That is not a collapse. Both
+lineages are still assembled end to end, but each long contig has picked up one 300 nt window of
+the other lineage at its end, and the strict all-windows-pure rule then counts the whole 8 kb as
+mosaic. Switch density, which does not have that cliff, is identical (2.6 per 10 kb in both
+conditions). So the background moves where MEGAHIT ends its contigs, and that matters only for
+the strict readout. It does not move where the lineages collapse.
+
 ## Not established, and what would change it
 
 - **Haploflow is not judged here.** At defaults it is mostly mosaic at every rung, including
   9.7%, and returns nothing at 5x. That is more likely a configuration problem than a verdict,
   and its `--strict` and `--error-rate` options were never swept. Do not quote it.
-- **Spike only.** A real background was not added, and its effect on separation is untested.
-  The planned parity check is one rung on the Berlin wastewater background.
+- **Spike only, checked on two rungs.** The real-background parity check below covers 2.0% and
+  4.5% for MEGAHIT at 15x only. Other tools and rungs are untested with a background.
 - **Equal abundance only.** A minor lineage at 1:4 or 1:10 is the case the stress test found
   hardest, and it is not covered.
 - **One virus family**, 21 pairs, simulated reads with a single error profile. HS25 was chosen
