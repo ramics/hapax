@@ -37,6 +37,17 @@ sequence carrying no information; a known-positive comparison against subtracted
 whether it carries anything about the residue. A field that reads the same on both is
 reported with that fact, not hidden.
 
+**A null is not a bias statement, and a number needs both.** A null says what a field reads
+on meaningless input. A bias statement says what it reads on *real* input for the wrong
+reason — and only the second can be removed by a control. So every number ships with the
+direction of its bias and the control that removes it, or, where no control exists, with the
+direction alone. Three measurements on one day were publishable-looking and wrong until
+their bias was named: a nearest-neighbour test whose ties were broken by array order
+inflated its own control; a pair-symmetric field that averaged two opposite leans caused by
+the mates' unequal length; and a chimaera test that read 100% on both piles because each
+query sat inside the reference it was searched against. The tell in all three was the
+control moving with the test, so read the control first.
+
 **Measure chimaeras before claiming contiguity.** Longer contigs that are wrong are worse
 than short contigs that are right. Every contiguity number ships beside a chimaera number
 from the same run — and beside that test's own false-positive rate, which for split-mapping
