@@ -199,6 +199,89 @@ def chimaera_evidence(idx, s1: str, s2: str, half_min: int = 30) -> dict:
     return out
 
 
+class LibraryAbundance:
+    """How often does the rest of this library contain the same exact sequence?
+
+    This field exists because of a correction the protein thread made on 2026-11-20 (PR
+    #13). "Absence means the public databases are incomplete" is true but not sharp
+    enough: what stays absent even after indexing the sample's OWN assembly is sequence
+    from organisms that are neither in public databases NOR abundant enough to assemble
+    here - rare AND unsequenced. That is also the description of a novel virus at one in a
+    million, so the honest way to describe the residue is by abundance, not only by
+    database status.
+
+    So each surviving pair gets a measured abundance in its own library: the median
+    multiplicity of its canonical 31-mers across a large sample of the run. A read from an
+    abundant-but-unsequenced organism recurs many times; a read from something genuinely
+    rare recurs about once, which is itself the evidence that it cannot be assembled here
+    and therefore cannot be subtracted by the sample's own assembly.
+
+    Counting is a 2-hash count-min sketch over uint8 counters rather than a dictionary:
+    2M pairs carry ~300M distinct 31-mers, which no Python dict will hold in this
+    container. A sketch only ever OVERSTATES a count, so a read called rare by the sketch
+    is rare for certain, and the direction of the error is the safe one for this claim.
+    Counters saturate at 255, which is fine: everything above that is "abundant" for the
+    purpose at hand. The saturation fraction and an empty-query control are reported so
+    the collision rate is visible rather than assumed.
+    """
+
+    def __init__(self, bits: int = 28, k: int = 31):
+        import numpy as np
+        self.k = k
+        self.size = 1 << bits
+        self.mask = self.size - 1
+        self.a = np.zeros(self.size, dtype="uint8")
+        self.b = np.zeros(self.size, dtype="uint8")
+        self.added = 0
+
+    @staticmethod
+    def _canon(km: str) -> str:
+        rc = revcomp(km)
+        return km if km <= rc else rc
+
+    # Deterministic mixing, not Python's hash(): str hashing is salted per process, so a
+    # sketch built with hash() would give different counts on a re-run and the repo rule
+    # that every number is reproducible from a script plus a seed would not hold.
+    _PACK = str.maketrans("ACGT", "0123")
+    _M1 = 0x9E3779B97F4A7C15
+    _M2 = 0xC2B2AE3D27D4EB4F
+    _U64 = (1 << 64) - 1
+
+    def _h(self, km: str):
+        v = int(km.translate(self._PACK), 4)
+        h1 = (v * self._M1) & self._U64
+        h2 = ((v ^ 0xD6E8FEB86659FD93) * self._M2) & self._U64
+        return (h1 >> 13) & self.mask, (h2 >> 29) & self.mask
+
+    def add_seq(self, seq: str) -> None:
+        k = self.k
+        for i in range(len(seq) - k + 1):
+            km = self._canon(seq[i:i + k])
+            if "N" in km:
+                continue
+            i1, i2 = self._h(km)
+            if self.a[i1] < 255:
+                self.a[i1] += 1
+            if self.b[i2] < 255:
+                self.b[i2] += 1
+            self.added += 1
+
+    def counts(self, seq: str) -> list[int]:
+        k = self.k
+        out = []
+        for i in range(len(seq) - k + 1):
+            km = self._canon(seq[i:i + k])
+            if "N" in km:
+                continue
+            i1, i2 = self._h(km)
+            out.append(int(min(self.a[i1], self.b[i2])))
+        return out
+
+    def saturation(self) -> float:
+        import numpy as np
+        return float(np.mean(self.a == 255))
+
+
 def pfam_hits(prot_seqs: dict[str, str], hmm_path: Path, evalue: float, threads: int):
     """Six-frame Pfam-A search. A profile can reach a family a single sequence cannot."""
     import pyhmmer
@@ -208,14 +291,18 @@ def pfam_hits(prot_seqs: dict[str, str], hmm_path: Path, evalue: float, threads:
     out: dict[str, list] = {}
     if not seqs:
         return out
+    # pyhmmer >= 0.11 returns str names, earlier versions bytes; accept either so the
+    # script does not break silently on a different environment.
+    def _s(x):
+        return x.decode() if isinstance(x, bytes) else str(x)
+
     with pyhmmer.plan7.HMMFile(hmm_path) as hf:
         for hits in pyhmmer.hmmsearch(hf, seqs, cpus=threads, E=evalue):
             for hit in hits:
                 if hit.evalue > evalue:
                     continue
-                name = hit.name.decode()
-                out.setdefault(name, []).append({
-                    "profile": hits.query.name.decode(),
+                out.setdefault(_s(hit.name), []).append({
+                    "profile": _s(hits.query.name),
                     "evalue": hit.evalue, "score": hit.score})
     return out
 
@@ -237,7 +324,25 @@ def main() -> None:
     ap.add_argument("--chimaera-ref", type=Path,
                     default=ROOT / "data/geo/sample_contigs.fa")
     ap.add_argument("--pfam-evalue", type=float, default=1e-3)
+    ap.add_argument("--diamond-mode", default="--very-sensitive",
+                    help="--very-sensitive for the closest-relative field, where the "
+                         "point is to find the faintest hit; --sensitive when the run is "
+                         "a sweep over several index sizes and the comparison between "
+                         "sizes, not the absolute hit rate, is what is being measured")
+    ap.add_argument("--skip-fields", action="store_true",
+                    help="only the DIAMOND index-size sweep: skip motifs, chimaera and "
+                         "the per-read fields, which do not depend on the protein index")
     ap.add_argument("--max-pairs", type=int, default=20_000)
+    ap.add_argument("--library-r1", type=Path,
+                    default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
+    ap.add_argument("--library-r2", type=Path,
+                    default=ROOT / "data/berlin/SRR23973193_2.fastq.gz")
+    ap.add_argument("--library-pairs", type=int, default=400_000,
+                    help="pairs of the run counted into the abundance sketch. The "
+                         "measured abundance is relative to this many pairs, so the unit "
+                         "is recurrence within a sample of the library, not a genome "
+                         "coverage depth")
+    ap.add_argument("--abundance-bits", type=int, default=28)
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--work", type=Path, default=Path("/tmp/claude-0/wk/residue"))
     ap.add_argument("--out", type=Path, default=ROOT / "results/residue_report")
@@ -263,13 +368,54 @@ def main() -> None:
             continue
         tag = f"closest_{db.stem}"
         best = _diamond_best(args.diamond_bin, db, pairs, args.work / f"{tag}_s{args.seed}.fa",
-                             args.threads, "--very-sensitive")
+                             args.threads, args.diamond_mode)
         for name, v in best.items():
             rows[name][tag] = v
 
+    # ---- abundance in the library itself: rare-and-unknown vs abundant-and-unsequenced
+    abund = None
+    if args.library_r1.exists() and not args.skip_fields:
+        from berlin_io import read_pairs as _rp
+        t0 = time.perf_counter()
+        sk = LibraryAbundance(bits=args.abundance_bits)
+        for _nm, a, b, _q1, _q2 in _rp(args.library_r1, args.library_r2,
+                                       args.library_pairs, 14, 0):
+            sk.add_seq(a)
+            sk.add_seq(b)
+        for name, (s1, s2) in pairs.items():
+            cs = sk.counts(s1) + sk.counts(s2)
+            cs.sort()
+            rows[name]["library_abundance"] = {
+                "median_31mer_count": cs[len(cs) // 2] if cs else None,
+                "max_31mer_count": cs[-1] if cs else None,
+                "kmers": len(cs),
+            }
+        if known:
+            kn = []
+            for s1, s2 in known.values():
+                cs = sk.counts(s1) + sk.counts(s2)
+                cs.sort()
+                if cs:
+                    kn.append(cs[len(cs) // 2])
+        abund = {
+            "library_pairs_counted": args.library_pairs,
+            "sketch_bits": args.abundance_bits,
+            "kmers_added": sk.added,
+            "counter_saturation_frac": sk.saturation(),
+            "residue_median_count": spread(
+                r["library_abundance"]["median_31mer_count"] for r in rows.values()
+                if r["library_abundance"]["median_31mer_count"] is not None),
+            "subtracted_median_count": spread(kn) if known and kn else None,
+            "residue_recurrence_sweep": {
+                str(c): sum(1 for r in rows.values()
+                            if (r["library_abundance"]["median_31mer_count"] or 0) >= c) / len(rows)
+                for c in (1, 2, 3, 5, 10, 20, 50)},
+            "wall_seconds": time.perf_counter() - t0,
+        }
+
     # ---- motifs
     pf = {}
-    if args.pfam.exists():
+    if args.pfam.exists() and not args.skip_fields:
         prot = {}
         for name, (s1, s2) in pairs.items():
             for i, (strand, off, s) in enumerate(six_frames(s1 + "NN" + s2)):
@@ -282,7 +428,7 @@ def main() -> None:
 
     # ---- chimaera evidence, and its own false-positive rate on subtracted reads
     chim_fp = None
-    if args.chimaera_ref.exists():
+    if args.chimaera_ref.exists() and not args.skip_fields:
         idx = _mm_index(args.chimaera_ref, args.work / f"{args.chimaera_ref.stem}.mmi",
                         args.threads)
         for name, (s1, s2) in pairs.items():
@@ -318,6 +464,7 @@ def main() -> None:
             "low_entropy_0.5": sum(1 for r in rows.values() if r["entropy3"] < 0.5) / len(rows),
         },
         "motif_rate": len(pf) / len(rows) if pf else 0.0,
+        "library_abundance": abund,
         "chimaera_split_rate": (sum(1 for r in rows.values()
                                     if r.get("chimaera", {}).get("split_disagree")) / len(rows)),
         "chimaera_split_rate_on_subtracted_reads": chim_fp,
@@ -337,7 +484,7 @@ def main() -> None:
         if known:
             kb = _diamond_best(args.diamond_bin, db, known,
                                args.work / f"{tag}_known_s{args.seed}.fa",
-                               args.threads, "--very-sensitive")
+                               args.threads, args.diamond_mode)
             calib["fields"][tag]["subtracted_reads_any_hit_frac"] = len(kb) / len(known)
             calib["fields"][tag]["subtracted_reads_bitscore"] = (
                 spread(v["bitscore"] for v in kb.values()) if kb else None)
