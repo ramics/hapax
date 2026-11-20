@@ -245,6 +245,13 @@ as anything that points towards novelty.
 The prediction is kept in this report rather than quietly replaced, because the project's
 record of what it predicted wrongly is the part that makes the rest readable.
 
+**The mechanism check this invites**, proposed by the cascade thread and not yet run: if
+coverage shape measures witnesses, its AUC should *fall* as the subtrahend grows, because a
+bigger index removes the witnessed material first. `coverage_axes_allpairs_s1.tsv.gz` holds
+the five coverage axes for every pair of block 1 with its residue flag, so residue can be
+redefined at any rung of the index-size ladder and joined on read name without re-running
+the counting pass.
+
 ## 7. Limitations
 
 - One sample, one city, one preparation, as everything in this repo is.
