@@ -1,0 +1,48 @@
+{
+  "git_sha": "d4c5e81e222934525a5832bdc0a614b9ecc07d9e",
+  "params": {
+    "seed": "1",
+    "n_seeds": "3",
+    "bg1": "/home/user/sweepdata/bg/SRR23973193_1.fastq.gz",
+    "bg2": "/home/user/sweepdata/bg/SRR23973193_2.fastq.gz",
+    "bg_pairs": "1000000",
+    "pool_fa": "/home/user/sweepdata/ref/rabies_pool.fa",
+    "extra_fa": "/home/user/sweepdata/ref/NC_001542.1.fa",
+    "total_pairs": "450",
+    "read_len": "107",
+    "r2_trim_start": "15",
+    "threads": "4",
+    "controls": "True",
+    "only": "div04,div07,div10",
+    "work": "/home/user/sweepdata/twolin",
+    "out": "results/abundance_sweep"
+  },
+  "pairs": [
+    [
+      "div02",
+      "PZ227608.1",
+      "PZ227621.1",
+      0.0198
+    ],
+    [
+      "div04",
+      "PV491557.1",
+      "PZ324370.1",
+      0.0381
+    ],
+    [
+      "div07",
+      "PZ227608.1",
+      "AB044824.1",
+      0.0729
+    ],
+    [
+      "div10",
+      "NC_001542.1",
+      "AB009663.2",
+      0.0965
+    ]
+  ],
+  "window": 300,
+  "wall_total": 4143.5
+}

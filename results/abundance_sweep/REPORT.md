@@ -178,3 +178,59 @@ background rate, reached from the other side.
 - The spike is divergent (nearest retained relative 35% aa identity on L). A
   target with a 70%-identity relative in the database would make the read-level
   arm look far better and is the obvious next rung.
+
+## 5. Two related lineages at fixed total coverage
+
+Proposed by the sister thread as the rung that unifies this curve with the
+stress test: if an assembler will join reads across a small difference, then two
+lineages at 3.75× each are one genome at 7.5× to it, and 7.5× is where length
+arrives. The stress test's "collapse" and this sweep's "length" would then be the
+same event scored oppositely.
+
+Four pairs of complete rabies genomes, divergence measured with edlib rather than
+simulated, 3 seeds, same fixed background, same total budget of 450 read pairs
+(≈7.5× of one genome) either split between two lineages or spent on one.
+Lineage is called per 300 nt window, so a contig that switches is counted as the
+mosaic it is. `two_lineage_rows.jsonl`.
+
+| Divergence | Mode | Breadth A | Breadth B | Longest | Mass ≥1500 | Mosaic contigs |
+|---|---|---|---|---|---|---|
+| 2.0% | A alone, 3.8× | 41.9 ± 4.4% | — | 725 ± 189 | 0 | 0 |
+| 2.0% | B alone, 3.8× | — | 41.9 ± 4.5% | 771 ± 152 | 0 | 0 |
+| 2.0% | both, 3.8× each | 51.0 ± 11.5% | 41.1 ± 11.1% | 1,971 ± 239 | 3,605 ± 1,377 | 5 ± 2 |
+| 3.8% | both | 52.9 ± 16.7% | 39.9 ± 11.6% | 2,143 ± 1,046 | 2,323 ± 2,708 | 3 |
+| 7.3% | both | 35.3 ± 5.2% | 45.2 ± 10.4% | 1,053 ± 126 | 0 | 2 ± 1 |
+| 9.7% | both | 43.2 ± 12.0% | 33.1 ± 3.6% | 1,652 ± 289 | 1,180 ± 1,042 | 3 ± 1 |
+
+Single-lineage controls at half budget behave identically at every divergence
+(41–47% breadth, longest 725–963, and **zero** mass over 1,500 nt in all 12
+runs), so the comparison is clean.
+
+**Pooling is real and it converts coverage into length.** At 2.0% the mixture's
+longest contig is 1,971 nt against 725–771 for either lineage alone, and only the
+mixture ever crosses 1,500 nt. Five of about twelve contigs carry windows from
+both lineages, so the length is bought with mosaicism — an assembly that scores
+better on every contiguity metric while being a chimaera of two real things.
+
+**The strong form of the prediction is falsified.** Tolerant assembly was
+predicted to return ~91% breadth of a mosaic, matching the one-lineage 7.54×
+rung. It does not: per-lineage breadth in the mixture is 33–53%, barely above the
+half-budget controls, and far from 91%. MEGAHIT pools enough to lengthen contigs
+and fabricate mosaics, not enough to reconstruct a genome. So the two phenomena
+are related but not identical: collapse is partial, and it costs lineage identity
+without buying back the coverage it appeared to merge.
+
+**The benefit is not monotone in divergence.** It is strongest at 2.0%, erratic
+at 3.8% (one seed of three crossed 1,500 nt, hence the ± larger than the mean),
+absent at 7.3%, and partially back at 9.7%. The 9.7% rung still produces three
+mosaic contigs, which points at joins through conserved windows rather than
+genome-wide pooling — the mechanism this project already measured when two HBV
+hosts shared 709 exact 150-mers.
+
+**Why this matters for what gets built.** Below about 4% an assembler silently
+trades lineage identity for contig length, and nothing in its output says which
+trade it made. That is a gain when a classifier needs length and a disaster when
+the lineages are the answer. The same event cannot be prevented without losing
+the length, which argues for labelling it: a per-contig flag saying "this contig
+is supported by reads that disagree with each other in a structured way", which
+is the one thing no assembler emits.
