@@ -407,6 +407,49 @@ structured:
   where divergent continuation fires six times more often on already-identified contigs
   than on unidentifiable ones.
 
+### 5.2 Which coverage axes enter the report, and in what role
+
+Settled jointly with the thread that measured them, on evidence from both sides rather than
+by preference. `experiments/shape_axis_ladder.py` ran the mechanism test over all 99,745
+scorable pairs of block 1, with a `log_cov` band fixed once at rung zero and reused at
+every rung, because a falling AUC would otherwise be indistinguishable from a bigger index
+simply removing abundant reads:
+
+| cumulative subtrahend | `cov_step` overall | `cov_step` inside the fixed band |
+|---|---|---|
+| SILVA, 1.12 GB | 0.248 | 0.317 (0.309-0.324) |
+| + the sample's own rRNA contigs | 0.244 | 0.320 (0.312-0.327) |
+| + its own identified contigs | 0.213 | **0.494 (0.480-0.509)** |
+| + all 116 samples' 1 kb contigs | 0.117 | 0.467 (0.431-0.504) |
+
+AUC is oriented so that "not identified scores higher", so below 0.5 is the familiarity
+polarity. Overall separation strengthens as the subtrahend grows while separation inside
+the band goes to chance, and `log_cov`'s own overall AUC strengthens over the same rungs
+(0.141 to 0.061). That is the signature of a confound plus a real effect: the overall gain
+is abundance, and the shape axes' own power leaves with the witnessed material, which is
+what "they are measuring witnesses" predicts. The in-band unidentified arm falls to 1,592
+pairs at the own-contigs rung and 237 at the last, so the claim rests on the own-contigs
+rung and the last rung is quoted as a direction; Hanley-McNeil intervals are in the JSON
+for every cell.
+
+`mate_disagree` behaved differently in that test (-0.200 overall but +0.013 inside the
+band), and the sibling thread's follow-up explains it: 38.2% of pairs with
+`mate_disagree >= 2` have exactly one mate entirely unwitnessed against 7.0% of residue
+pairs generally, which is the error-versus-absence distinction this project already relies
+on - instrument error is independent between mates, organism-level absence is shared. That
+is why subtraction does not remove it.
+
+So the three roles are:
+
+- **`mate_disagree`: the per-sample error-floor estimator**, SPEC section 4.2's fourth
+  axis. Novelty-neutral, and it earns its place by measuring the floor rather than the
+  signal.
+- **`cov_step` and `cov_spread`: description, labelled familiarity.** They are strong and
+  they point the wrong way, so they describe a read and must never be read as evidence
+  that it is new.
+- **`log_cov`: not in any score.** It is partly definitional with respect to what an index
+  removes, and it dominates every pooled number it is allowed into.
+
 So the report currently has no field that is both strong and pointing at novelty, and the
 strong fields describe a read without saying it is new. Two consequences are carried
 through the rest of this work. Every field in the table is labelled with its polarity, so a
