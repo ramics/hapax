@@ -11,7 +11,7 @@
       "path": "rows_s1.jsonl",
       "n": {
         "residue": 8000,
-        "known": 0
+        "known": 8000
       },
       "rungs": [
         {
@@ -21,6 +21,9 @@
               "any_hit": 0.77175,
               "bitscore_ge_40": 0.072125,
               "bitscore_ge_50": 0.0
+            },
+            "known": {
+              "not_searched": true
             }
           }
         },
@@ -31,6 +34,9 @@
               "any_hit": 0.926625,
               "bitscore_ge_40": 0.077625,
               "bitscore_ge_50": 0.0
+            },
+            "known": {
+              "not_searched": true
             }
           }
         },
@@ -41,6 +47,9 @@
               "any_hit": 0.981,
               "bitscore_ge_40": 0.088375,
               "bitscore_ge_50": 0.004
+            },
+            "known": {
+              "not_searched": true
             }
           }
         },
@@ -51,6 +60,9 @@
               "any_hit": 0.991625,
               "bitscore_ge_40": 0.105875,
               "bitscore_ge_50": 0.013
+            },
+            "known": {
+              "not_searched": true
             }
           }
         }

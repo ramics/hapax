@@ -1,6 +1,8 @@
 # Protein index-size ladder on the residue
 
-4 seeds; 8000 residue pairs per seed, 4000 identified pairs as the control. Cumulative, smallest index first. DIAMOND blastx, --sensitive.
+**1 seed(s) excluded as incomplete** (rows_s5.jsonl): the run was killed mid-write and the file ends in a partial record. Excluded rather than averaged in short, and queued to re-run - the repo rule is five seeds and this table does not pretend to have them.
+
+4 seeds; 8000 residue pairs per seed, 6000 identified pairs as the control. Cumulative, smallest index first. DIAMOND blastx, --sensitive.
 
 | cumulative index | GB | residue any hit | marginal | residue bitscore >=50 | identified any hit |
 |---|---|---|---|---|---|

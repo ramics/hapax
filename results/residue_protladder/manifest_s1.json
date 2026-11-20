@@ -1,6 +1,7 @@
 {
   "script": "experiments/residue_report.py",
-  "git_sha": "2cc058917d9e5b4718c3e5ea836d5d6a5305e84f-dirty",
+  "git_sha": "e3d675779799b1c4a2c43e4c0d3438284633f4bc-dirty",
+  "script_sha256": "fe2295f27b013a41",
   "parameters": {
     "seed": 1,
     "residue": "results/subtract_recut/residue_rows_s1.jsonl",
@@ -30,10 +31,10 @@
     "rfam_evalue": 0.001,
     "spacers": "/home/user/hapax/data/crispr/all_arrays_spacers.fa",
     "threads": 4,
-    "work": "/tmp/claude-0/wk/protladder",
+    "work": "/tmp/claude-0/wk/pl1",
     "out": "results/residue_protladder"
   },
-  "wall_seconds": 1831.754980011001,
+  "wall_seconds": 2391.449665829001,
   "python": "3.13.18",
   "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39",
   "cpu_count": 4,

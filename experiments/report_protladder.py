@@ -55,13 +55,24 @@ def main() -> None:
     if not paths:
         raise SystemExit(f"no rows in {args.rows}")
 
-    per_seed = []
+    per_seed, incomplete = [], []
     for p in paths:
         rows = {"residue": [], "known": []}
+        truncated = False
         with open(p) as h:
             for line in h:
-                r = json.loads(line)
+                try:
+                    r = json.loads(line)
+                except json.JSONDecodeError:
+                    # A half-written final line means the run died, not that the data is
+                    # odd: this happened when the session disk filled mid-run. The seed is
+                    # excluded and named rather than silently averaged in short.
+                    truncated = True
+                    break
                 rows["known" if r.get("set") == "known" else "residue"].append(r)
+        if truncated:
+            incomplete.append(Path(p).name)
+            continue
         d = {"path": Path(p).name,
              "n": {k: len(v) for k, v in rows.items()}, "rungs": []}
         for i in range(len(ORDER)):
@@ -108,7 +119,16 @@ def main() -> None:
         cum += f.stat().st_size if f.exists() else 0
         sizes.append(cum)
 
-    lines = [f"# Protein index-size ladder on the residue", "",
+    if not per_seed:
+        raise SystemExit(f"every rows file is incomplete: {incomplete}")
+    lines = [f"# Protein index-size ladder on the residue", "",]
+    if incomplete:
+        lines += [f"**{len(incomplete)} seed(s) excluded as incomplete** "
+                  f"({', '.join(incomplete)}): the run was killed mid-write and the file "
+                  f"ends in a partial record. Excluded rather than averaged in short, and "
+                  f"queued to re-run - the repo rule is five seeds and this table does not "
+                  f"pretend to have them.", ""]
+    lines += [
              f"{len(per_seed)} seeds; "
              f"{st.mean([d['n']['residue'] for d in per_seed]):.0f} residue pairs per seed, "
              f"{st.mean([d['n']['known'] for d in per_seed]):.0f} identified pairs as the "
