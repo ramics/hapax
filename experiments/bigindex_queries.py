@@ -95,6 +95,19 @@ def main() -> None:
                          "and the question it answers is a comparison of identity "
                          "distributions - which a few thousand per pile settles at the "
                          "percentage resolution this project reports anyway")
+    ap.add_argument("--per-block-sample", type=int, default=0,
+                    help="sequences per pile per block, 0 for all of them. The first "
+                         "launch asked for all 429,004 and the pilot measured a sensitive "
+                         "blastn against core_nt at roughly a second per read on eight "
+                         "cores, which is days. A right-sized sample is not a compromise "
+                         "here: every proportion in this project is already quoted with an "
+                         "interval, and a few thousand reads per pile per block resolves a "
+                         "distribution to the percentage level the report uses")
+    ap.add_argument("--mate1-only", action="store_true",
+                    help="halves the cost. Legitimate for a DISTRIBUTION and wrong for a "
+                         "survival set: a pair survives a rung only if neither mate is "
+                         "identified, so a name list built from mate 1 alone invents "
+                         "residue. Use it for identity distributions, not for the lists")
     ap.add_argument("--out", type=Path, default=Path("/tmp/claude-0/wk/bigindex_queries"))
     ap.add_argument("--manifest-out", type=Path,
                     default=ROOT / "results/subtract_known")
@@ -115,6 +128,17 @@ def main() -> None:
                 raise SystemExit(f"{p} is missing; the cascade's work dir is the input")
         residue = [(f"residue|{n}", s) for n, s in read_fasta(res)]
         control = [(f"identified|{n}", s) for n, s in read_fasta(ctl)]
+        if args.mate1_only:
+            residue, control = mate1(residue), mate1(control)
+        if args.per_block_sample:
+            # Sampled at random rather than taken as a prefix: the cascade writes its
+            # residue in the library's own read order, and while that is flow-cell order
+            # rather than anything biological, a prefix of it is one region of one lane.
+            rb = random.Random(args.seed * 1000 + b)
+            rb.shuffle(residue)
+            rb.shuffle(control)
+            residue = residue[:args.per_block_sample]
+            control = control[:args.per_block_sample]
         out = args.out / f"block_s{b}.fa"
         # Interleaved rather than concatenated: a search killed part way through then has a
         # usable sample of BOTH piles instead of all of one and none of the other, and on a
