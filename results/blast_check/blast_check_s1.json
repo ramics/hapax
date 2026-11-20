@@ -25,6 +25,9 @@
     "tier2_contigs": 60
   },
   "blast": {
+    "errors": [
+      "blastn batch 8: JSONDecodeError: Expecting property name enclosed in double quotes: line 2 column 9 (char 10)"
+    ],
     "blastn": {
       "database": "nt",
       "per_class": {
@@ -127,7 +130,16 @@
               "Diaphorobacter ruginosibacter strain DSM 27467 chromosome, complete genome",
               2
             ]
-          ]
+          ],
+          "strong_hit_frac": 0.8833333333333333,
+          "pident_x_qcov": {
+            "n": 60,
+            "min": 0.65414997,
+            "p25": 0.9528694600000001,
+            "median": 0.9811,
+            "p75": 1.0,
+            "max": 1.0
+          }
         },
         "public_nucleotide": {
           "n": 60,
@@ -228,44 +240,45 @@
               "Tomato brown rugose fruit virus isolate S92_ToBRFV, complete genome",
               2
             ]
-          ]
+          ],
+          "strong_hit_frac": 0.9333333333333333,
+          "pident_x_qcov": {
+            "n": 60,
+            "min": 0.5794,
+            "p25": 0.9626,
+            "median": 0.9813,
+            "p75": 1.0,
+            "max": 1.0
+          }
         },
         "selfasm_identified": {
           "n": 60,
-          "any_hit": 53,
-          "any_hit_frac": 0.8833333333333333,
+          "any_hit": 40,
+          "any_hit_frac": 0.6666666666666666,
           "any_hit_ci95": [
-            0.7782,
-            0.9423
+            0.5406,
+            0.7727
           ],
           "pident": {
-            "n": 53,
+            "n": 40,
             "min": 71.26,
-            "p25": 88.0,
-            "median": 91.59,
-            "p75": 99.02,
+            "p25": 88.89,
+            "median": 96.19,
+            "p75": 99.07,
             "max": 100.0
           },
           "query_cov": {
-            "n": 53,
+            "n": 40,
             "min": 0.2243,
-            "p25": 0.3364,
-            "median": 0.6449,
-            "p75": 0.9813,
+            "p25": 0.3645,
+            "median": 0.9533,
+            "p75": 1.0,
             "max": 1.0
           },
           "top_names": [
             [
               "Picornavirales sp.",
               7
-            ],
-            [
-              "Cucumber green mottle mosaic virus",
-              3
-            ],
-            [
-              "Leviviridae sp.",
-              2
             ],
             [
               "Tomato brown rugose fruit virus",
@@ -276,32 +289,40 @@
               2
             ],
             [
+              "Cucumber green mottle mosaic virus",
+              2
+            ],
+            [
               "Scomber australasicus",
               2
             ],
             [
-              "Leviviricetes sp. 1",
+              "Planctomycetota bacterium",
               1
             ],
             [
-              "ssRNA phage Esthiorhiza.1_1",
+              "Myoviridae sp. ctXho31",
+              1
+            ],
+            [
+              "Dryas octopetala",
               1
             ]
           ],
           "aln_len": {
-            "n": 53,
+            "n": 40,
             "min": 24,
-            "p25": 36,
-            "median": 69,
-            "p75": 105,
+            "p25": 39,
+            "median": 102,
+            "p75": 106,
             "max": 108
           },
           "bitscore": {
-            "n": 53,
+            "n": 40,
             "min": 44.5672,
-            "p25": 46.3705,
-            "median": 60.7975,
-            "p75": 177.115,
+            "p25": 47.2722,
+            "median": 118.505,
+            "p75": 186.132,
             "max": 194.247
           },
           "top_titles": [
@@ -310,26 +331,35 @@
               3
             ],
             [
-              "Cucumber green mottle mosaic virus isolate CG25, complete genome",
-              2
-            ],
-            [
               "MAG: StochSlu_10 levi-like virus isolate SluRVP22_08, partial genome",
               2
             ],
             [
-              "MAG: Leviviricetes sp. 1 isolate levi_14 genomic sequence",
+              "MAG: Planctomycetota bacterium isolate MFD15108.bin.c.40 genome assembly, chromosome: 1",
               1
             ],
             [
-              "SsRNA phage Esthiorhiza.1_1 genomic sequence",
+              "MAG TPA_asm: Myoviridae sp. ctXho31, partial genome",
               1
             ],
             [
-              "Kitasatospora sp. NBC_00039 chromosome, complete genome",
+              "PREDICTED: Dryas octopetala NC domain-containing protein-like protein (LOC147286000), mRNA",
+              1
+            ],
+            [
+              "Tomato brown rugose fruit virus isolate S90_ToBRFV, complete genome",
               1
             ]
-          ]
+          ],
+          "strong_hit_frac": 0.26666666666666666,
+          "pident_x_qcov": {
+            "n": 40,
+            "min": 0.2243,
+            "p25": 0.32074994999999995,
+            "median": 0.7476624,
+            "p75": 0.9811,
+            "max": 1.0
+          }
         },
         "residue_assembled": {
           "n": 60,
@@ -430,7 +460,16 @@
               "Croceicoccus marinus strain OT19 chromosome, complete genome",
               1
             ]
-          ]
+          ],
+          "strong_hit_frac": 0.05,
+          "pident_x_qcov": {
+            "n": 49,
+            "min": 0.2308,
+            "p25": 0.26169732,
+            "median": 0.30480381,
+            "p75": 0.35511232000000004,
+            "max": 0.9906999999999999
+          }
         },
         "residue_missing": {
           "n": 60,
@@ -531,7 +570,16 @@
               "MAG TPA_asm: Myoviridae sp. ctByu2, partial genome",
               1
             ]
-          ]
+          ],
+          "strong_hit_frac": 0.05,
+          "pident_x_qcov": {
+            "n": 52,
+            "min": 0.2336,
+            "p25": 0.29075919,
+            "median": 0.33642000000000005,
+            "p75": 0.51628347,
+            "max": 1.0
+          }
         },
         "tier2_contigs": {
           "n": 60,
@@ -632,10 +680,19 @@
               "Cellulophaga lytica strain DSMZ 7489 chromosome, complete genome",
               1
             ]
-          ]
+          ],
+          "strong_hit_frac": 0.08333333333333333,
+          "pident_x_qcov": {
+            "n": 58,
+            "min": 0.0159632,
+            "p25": 0.048299999999999996,
+            "median": 0.06092906999999999,
+            "p75": 0.07372608,
+            "max": 1.0
+          }
         }
       }
     }
   },
-  "wall_seconds": 1060.5828358089993
+  "wall_seconds": 2385.1666057799994
 }

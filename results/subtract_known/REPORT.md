@@ -161,6 +161,75 @@ than anything local, so removal is still rising with index size at the largest i
 reachable. Five seeds and a blastx pass against nr on the residue and tier-2 classes are
 running; this table is seed 1 only and is labelled as such.
 
+### 3.6 The positive control: how divergent must a virus be to survive the cascade?
+
+`experiments/spike_holdout.py`. Three real genomes - pepper mild mottle virus
+(NC_003630.1), human astrovirus (NC_001943.1) and human rhinovirus 1 (NC_038311.1) - are
+simulated into this library's own measured insert distribution (median 194, p95 363) and
+its own measured error rates (0.00089 on R1, 0.00117 on R2), then walked away from
+themselves by uniform substitution and pushed through every index the cascade subtracts.
+2,000 pairs per genome per rung, 5 seeds.
+
+A spike removed at tier 1 by a public database is a false negative of the whole
+architecture, so this is the number that matters most.
+
+| divergence | spike pairs surviving tier 1 |
+|---|---|
+| 0% | 0.00% |
+| 5% | 0.68% (0.0-2.0 across seeds) |
+| 10% | 12.6% (6.4-19.2) |
+| 20% | 81.6% (73.8-89.8) |
+| 30% | 99.6% (98.4-100) |
+
+The 0% rung is the control that the cascade works at all: a deposited virus spiked into
+the library is removed completely. Recognition then falls away between 10% and 20%
+nucleotide divergence, which is this pipeline's measured boundary between *already known*
+and *new*.
+
+**Which tier does the recognising** (mean % of spike pairs removed by each index alone):
+
+| divergence | sample's contigs | Kraken2 viral | Kraken2 PlusPF-16 | viral proteins | Swiss-Prot |
+|---|---|---|---|---|---|
+| 0% | 65.5 | 100.0 | 64.1 | 97.5 | 97.5 |
+| 5% | 50.9 | 85.8 | 6.0 | 94.8 | 94.8 |
+| 10% | 20.8 | 26.8 | 0.5 | 83.5 | 83.6 |
+| 20% | 0.2 | 0.0 | 0.0 | 17.9 | 18.1 |
+| 30% | 0.0 | 0.0 | 0.0 | 0.4 | 0.4 |
+
+**The nucleotide side dies first and the protein index is the last thing standing.** By
+10% divergence nucleotide identification has fallen to a quarter while translated search
+still removes 84%; by 20% nucleotide is at zero and only the protein index holds anything
+at all. That is the same asymmetry section 3.3 found at contig level, now measured as a
+function of distance rather than of length, and it is the argument for keeping a protein
+tier in a cascade whose cheapest and most effective tiers are nucleotide.
+
+**Two of the three genomes turned out to be in this sample already.** Pepper mild mottle
+virus assembles here at 285x coverage and human astrovirus as a 6,823 nt contig at 11.7x;
+human rhinovirus 1 does not appear in this sample's assembly at all. That was discovered
+while checking an abundance reading that looked like a sketch artefact and was not: a
+PMMoV read recurs in the library because PMMoV is genuinely abundant in sewage. It is
+reported here rather than quietly fixed because it changes how the 0% rung reads - part of
+that removal is the sample recognising itself - and because rhinovirus is therefore the
+clean holdout of the three. The survival ladder is unaffected in shape: the per-tier table
+above separates the sample's own contigs from the public indexes, and the two columns fall
+away together.
+
+**Limits of this control.** Uniform substitution is a crude model of real divergence -
+selection shapes it, codon structure constrains it, synonymous sites carry most of it - so
+the percentages are ordinal, not family distances. No indels are applied, deliberately: a
+frameshift would collapse the coding fields for reasons unrelated to how far away a
+relative is.
+
+**At 1 in a million.** A virus at that abundance contributes about 8.7 read pairs in this
+8,731,224-pair run. Per-read survival above says roughly one of them reaches the per-read
+report at 10% divergence and seven at 20%. Per-read behaviour is measured at a spike rate
+high enough to resolve it and the 1-in-a-million statement is arithmetic on top; nothing
+here was measured at that rate directly, because a sample that holds 8.7 pairs cannot
+resolve a rate. That was the error of PR #11, where 1-per-million thresholds came from
+zero counts in a 20,000-read run, and it is not repeated here. The one field whose value
+really does depend on abundance - library recurrence - is measured with exactly the number
+of spike pairs 1-in-a-million implies, reported in `results/spike_abundance/`.
+
 ## 4. What the residue is, and is not
 
 The 22.90% residue breaks down as follows, measured by mapping it back to assemblies
@@ -208,7 +277,15 @@ Stated up front because every number here is one-sided.
   full UniRef50 is ~30 GB against ~15 GB of writable disk left after the nucleotide
   indexes, so UniRef50 enters as streamed nested 2% and 10% subsets. The shape of removal
   against index size is measured; the value at 100% is an extrapolation and is labelled as
-  one.
+  one. A run against full UniRef50 or nr needs roughly 160 GB of disk and is the piece of
+  this curve nobody has; the streaming recipe in `experiments/subsample_uniref.py` already
+  does the hard part, so only the disk is missing. It is not reachable in this
+  environment.
+- **The curve has not flattened.** The protein side's absence-versus-index-size curve was
+  still buying about 20 points per tenfold step at the largest index reachable (PR #10
+  sections 4.6-4.7), so "removal per gigabyte and where it flattens" currently has no
+  flattening point and this report does not invent one. The nucleotide analogue is
+  measured in section 3.5 rather than assumed from three Kraken2 points.
 - **The all-sample assembly tier is a lower bound**: the GEO file truncates mid-stream at
   sample S65 of 116 (recorded in `data/MANIFEST.md`), so that tier subtracts less than a
   complete file would.

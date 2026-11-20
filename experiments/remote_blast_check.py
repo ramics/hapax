@@ -268,6 +268,10 @@ def main() -> None:
     for program in args.programs:
         db = "nt" if program == "blastn" else "nr"
         got: dict[str, dict] = {}
+        # Queries whose batch failed at NCBI are DROPPED, not counted as misses: a parse
+        # error on the server's reply says nothing about whether the read has a relative,
+        # and counting it as "no hit" would bias every class towards looking novel.
+        failed: set[str] = set()
         queued: list[tuple[str, str]] = []
         for cls, d in sample.items():
             if args.only_classes and cls not in args.only_classes:
@@ -281,6 +285,7 @@ def main() -> None:
                 text = blast_fetch(rid, args.poll, args.max_wait)
                 got.update(parse_json2(text))
             except Exception as e:  # a failed batch is recorded, not fatal
+                failed |= set(chunk)
                 results.setdefault("errors", []).append(
                     f"{program} batch {i // args.batch}: {type(e).__name__}: {e}")
             time.sleep(args.between_batches)
@@ -288,11 +293,13 @@ def main() -> None:
         for cls, d in sample.items():
             if args.only_classes and cls not in args.only_classes:
                 continue
-            n = len(d)
-            hits = [got[k] for k in d if k in got]
+            usable = [k for k in d if k not in failed]
+            n = len(usable)
+            hits = [got[k] for k in usable if k in got]
             lo, hi = wilson(len(hits), n)
             per_class[cls] = {
                 "n": n,
+                "dropped_failed_batch": len(d) - n,
                 "any_hit": len(hits),
                 "any_hit_frac": len(hits) / n if n else None,
                 "any_hit_ci95": [round(lo, 4), round(hi, 4)],
@@ -313,10 +320,14 @@ def main() -> None:
                     1 for h in hits
                     if (h["pident"] or 0) >= args.strong_pident
                     and (h["query_cov"] or 0) >= args.strong_qcov) / n) if n else None,
+                "strong_hit_ci95": [round(v, 4) for v in wilson(sum(
+                    1 for h in hits
+                    if (h["pident"] or 0) >= args.strong_pident
+                    and (h["query_cov"] or 0) >= args.strong_qcov), n)] if n else None,
                 "pident_x_qcov": _dist((h["pident"] or 0) / 100 * (h["query_cov"] or 0)
                                        for h in hits),
             }
-            for k in d:
+            for k in usable:
                 h = got.get(k, {})
                 query_rows.append({
                     "program": program, "class": cls, "query": k.split("|", 1)[1],

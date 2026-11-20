@@ -477,7 +477,17 @@ def main() -> None:
             tsv.unlink(missing_ok=True)
 
     # ---- cumulative curve in cheapest-first order
+    #
+    # rRNA FIRST, with a NUCLEOTIDE index, is a design requirement and not an artefact of
+    # sorting by price. Against a large protein index ribosomal reads stop looking novel
+    # faster than anything else, because public databases carry automatically annotated
+    # entries that are really translated ribosomal sequence (the conservation multiplier
+    # measured database-independently by the protein thread; the wastewater entry counts
+    # that confirm it, 63 entries each reaching >=1% of ribosomal reads, from PR #10). In
+    # a total-RNA library that is a third of the reads, so a cascade that consults a
+    # protein index first measures public annotation quality rather than the sample.
     order = [t for t in ["artefact", "rrna"] if t in removed]
+    assert not any(t.startswith("prot_") for t in order), "rRNA must precede the proteins"
     order += [d.name for d in args.k2_dbs if d.name in removed]
     order += [t for t in removed if t.startswith("selfasm_")]
     order += [t for t in removed if t.startswith("prot_")]
