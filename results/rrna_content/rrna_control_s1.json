@@ -1,0 +1,115 @@
+{
+  "seed": 1,
+  "holdout_every": 50,
+  "sequences_in_index": 593678,
+  "sequences_held_out": 12116,
+  "kmers_in_holdout_index": 15599118,
+  "read_length": 107,
+  "error_rate": 0.001,
+  "negatives": [
+    "K03455.1.gb",
+    "NC_001416.1.gb",
+    "NC_001422.1.gb",
+    "NC_001542.1.gb",
+    "NC_001943.1.gb",
+    "NC_003977.2.gb"
+  ],
+  "thresholds": [
+    {
+      "min_hits": 1,
+      "sensitivity_heldout_rrna": 0.9812,
+      "false_flag_rate_non_rrna": 0.00145,
+      "positive_detail": {
+        "reads": 20000,
+        "flag_rate": 0.9812,
+        "mean_hits": 8.5625,
+        "median_hits": 9.0,
+        "zero_hit_fraction": 0.0188
+      },
+      "negative_detail": {
+        "reads": 20000,
+        "flag_rate": 0.00145,
+        "mean_hits": 0.00675,
+        "median_hits": 0.0,
+        "zero_hit_fraction": 0.99855
+      }
+    },
+    {
+      "min_hits": 2,
+      "sensitivity_heldout_rrna": 0.96965,
+      "false_flag_rate_non_rrna": 0.0012,
+      "positive_detail": {
+        "reads": 20000,
+        "flag_rate": 0.96965,
+        "mean_hits": 8.5625,
+        "median_hits": 9.0,
+        "zero_hit_fraction": 0.0188
+      },
+      "negative_detail": {
+        "reads": 20000,
+        "flag_rate": 0.0012,
+        "mean_hits": 0.00675,
+        "median_hits": 0.0,
+        "zero_hit_fraction": 0.99855
+      }
+    },
+    {
+      "min_hits": 3,
+      "sensitivity_heldout_rrna": 0.953,
+      "false_flag_rate_non_rrna": 0.001,
+      "positive_detail": {
+        "reads": 20000,
+        "flag_rate": 0.953,
+        "mean_hits": 8.5625,
+        "median_hits": 9.0,
+        "zero_hit_fraction": 0.0188
+      },
+      "negative_detail": {
+        "reads": 20000,
+        "flag_rate": 0.001,
+        "mean_hits": 0.00675,
+        "median_hits": 0.0,
+        "zero_hit_fraction": 0.99855
+      }
+    },
+    {
+      "min_hits": 5,
+      "sensitivity_heldout_rrna": 0.8837,
+      "false_flag_rate_non_rrna": 0.0007,
+      "positive_detail": {
+        "reads": 20000,
+        "flag_rate": 0.8837,
+        "mean_hits": 8.5625,
+        "median_hits": 9.0,
+        "zero_hit_fraction": 0.0188
+      },
+      "negative_detail": {
+        "reads": 20000,
+        "flag_rate": 0.0007,
+        "mean_hits": 0.00675,
+        "median_hits": 0.0,
+        "zero_hit_fraction": 0.99855
+      }
+    },
+    {
+      "min_hits": 8,
+      "sensitivity_heldout_rrna": 0.6303,
+      "false_flag_rate_non_rrna": 0.00025,
+      "positive_detail": {
+        "reads": 20000,
+        "flag_rate": 0.6303,
+        "mean_hits": 8.5625,
+        "median_hits": 9.0,
+        "zero_hit_fraction": 0.0188
+      },
+      "negative_detail": {
+        "reads": 20000,
+        "flag_rate": 0.00025,
+        "mean_hits": 0.00675,
+        "median_hits": 0.0,
+        "zero_hit_fraction": 0.99855
+      }
+    }
+  ],
+  "note": "sensitivity here is against a 99%-clustered reference with the read's own sequence removed, which is the situation a real environmental read is in; it is the correction factor for the headline, not a tuning knob"
+}
