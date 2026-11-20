@@ -103,6 +103,26 @@ def simulate(genome: Path, out: Path, pairs_wanted: int, read_len: int, seed: in
     return p1, p2
 
 
+def orient(contig: str, a: str, b: str) -> str:
+    """Return the contig in the orientation that matches the references.
+
+    MEGAHIT emits contigs on either strand, and edlib HW in one orientation
+    against a reverse-strand contig gives two near-random edit distances, so the
+    per-window lineage call becomes a coin flip. Measured on exact lineage-A
+    substrings, 200 per rung: forward orientation gives 0.0% false mosaics at
+    every rung, reverse-complemented gives 45.5-67.5%. Every mosaic count,
+    lineage-switch count and join observable recorded before this function
+    existed is contaminated for about half of contigs; the lengths, mass and
+    breadth are not, because they come from minimap2, which is orientation-aware.
+    """
+    fwd = min(edlib.align(contig, a, mode="HW", task="distance")["editDistance"],
+              edlib.align(contig, b, mode="HW", task="distance")["editDistance"])
+    rc = contig.translate(COMP)[::-1]
+    rev = min(edlib.align(rc, a, mode="HW", task="distance")["editDistance"],
+              edlib.align(rc, b, mode="HW", task="distance")["editDistance"])
+    return contig if fwd <= rev else rc
+
+
 def lineage_windows(contig: str, a: str, b: str) -> tuple[int, int, int, list[str]]:
     """Per-window lineage call: (windows_a, windows_b, switches, calls).
 
@@ -114,6 +134,7 @@ def lineage_windows(contig: str, a: str, b: str) -> tuple[int, int, int, list[st
     count transitions along the contig, so a clean contig of either lineage has
     zero and a mosaic has at least one.
     """
+    contig = orient(contig, a, b)
     calls = []
     for i in range(0, len(contig) - WINDOW + 1, WINDOW):
         w = contig[i:i + WINDOW]
@@ -261,9 +282,10 @@ def score(contigs: Path, ref2: Path, a: str, b: str,
         if wa and wb and min(wa, wb) >= 1 and sw:
             mosaic += 1
             joins = [(i + 1) * WINDOW for i, (x, y) in enumerate(zip(calls, calls[1:])) if x != y]
+            oriented = orient(seqs[q], sa, sb)
             if paf:
                 depths[q] = depth_from_paf(paf, q, qlen[q])
-            for j in join_observables(seqs[q], q, joins, sa, sb,
+            for j in join_observables(oriented, q, joins, sa, sb,
                                       depths.get(q, [0] * qlen[q])):
                 join_rows.append({"contig": q, "contig_len": qlen[q], **j})
         switches += sw

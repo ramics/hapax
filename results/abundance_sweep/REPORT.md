@@ -346,7 +346,7 @@ But the balanced estimate cannot exclude no effect, and the rung means are not
 monotone anyway: 9.7% (1,652 nt) exceeds 6.5% (1,055 nt). What is solid is the
 comparison this section was built for — mixtures reach lengths that single
 lineages at the same total coverage never reach, 0 of 42 controls crossing
-1,500 nt — and that mosaics form in every mixture run.
+1,500 nt. The mosaic counts are **withdrawn**: see §5.2.
 
 **The confound that would have to be broken.** Each rung is one genome pair, so
 divergence and pair identity are perfectly collinear across the ladder, and a
@@ -387,3 +387,40 @@ impossible is a ceiling on the flag, not a detail of this section. Replacing it 
 base-resolution lineage assignment from the persisted alignments, scored against
 single-lineage controls as the error rate — is unbudgeted work that comes before
 any flag, and is listed here so it is not discovered later.
+
+
+### 5.2 Withdrawn: every mosaic and join number in this report
+
+The strain-separation thread found the cause of the false mosaics in
+single-lineage controls, and it is worse than a noisy label.
+`lineage_windows()` aligned each 300 nt window to both lineages with edlib in
+the **forward orientation only**. MEGAHIT emits contigs on either strand, so for
+a reverse-strand contig both edit distances are near random and the lineage call
+is a coin flip.
+
+Verified here independently, on exact substrings of one lineage's own genome,
+200 per rung at 700–1,500 nt: the forward orientation gives **0.0%** false
+mosaics at every rung, and the reverse complement gives **45.5–67.5%**. That
+accounts for 13 of 42 controls without any appeal to genuine ambiguity.
+
+So these columns are contaminated in every row of this report, for roughly the
+half of contigs that came out reverse-stranded: `mosaic_contigs`,
+`lineage_switches`, and every per-join observable. Any statement resting on them
+is withdrawn, including "mosaics form in every mixture run", the control
+false-mosaic rate of 0.33 per run, and the bridge-density and shared-stretch
+figures at join points.
+
+These columns are unaffected, because they come from the minimap2 PAF, which is
+orientation-aware: `longest`, `mass_over_1500`, `spike_mass`, `breadth_a`,
+`breadth_b`, and the 1,500 nt crossing event. Every load-bearing claim in §5 and
+§5.1 rests only on those — the 0-of-42 controls result, the length-trend fits,
+and the rate analysis — so the headline survives intact. What is lost is the
+mosaic evidence, which was the direct evidence that the extra length is
+chimaeric rather than real.
+
+`orient()` now fixes the call by scoring both orientations and keeping the
+better; after the fix both orientations give 0.0% false mosaics over 700 trials.
+Rescoring the existing rows needs re-assembly, about 90 runs, because the
+persisted contigs that would have made it a lookup do not exist: the 15-seed
+study was launched without `--join-observables` and the ladder runs predate the
+flag. Noted so the next thread budgets the re-run rather than the lookup.
