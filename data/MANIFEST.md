@@ -39,3 +39,10 @@ download date when a file is fetched.
 ladder (PAIRS in experiments/codon_assembler/experiments/two_lineage_rung.py), fetched from
 NCBI efetch (nuccore, fasta) on 2026-11-20: PZ227608.1, PZ227621.1, PV491557.1, PZ324370.1,
 MG458312.1, PZ227553.1, PZ227534.1, PZ227561.1, AB009663.2, AB044824.1, NC_001542.1.
+
+## Pair-ladder background (experiments/pair_ladder.py --background)
+
+`data/berlin/SRR23973193_{1,2}.fastq.gz`: Berlin wastewater RNA virome (PRJNA948850), from ENA
+(ftp.sra.ebi.ac.uk/vol1/fastq/SRR239/093/SRR23973193/) on 2026-11-20; 404,863,127 and
+419,810,100 bytes. `bg_1.fq`/`bg_2.fq` are the first 1,000,000 pairs (`seqkit head`), mate 2
+trimmed with `seqkit subseq -r 15:-1`.
