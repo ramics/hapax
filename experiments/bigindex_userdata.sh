@@ -212,8 +212,41 @@ if stage_on nr; then
   test -f /opt/hapax/db/nr.pal || die "nr staged without its alias file"
   du -sh /opt/hapax/db >> /opt/hapax/log-db.txt
   test -f /opt/hapax/queries/nr_sample.fa || die "no nr_sample.fa in the query sets"
-  search nr_sample blastx /opt/hapax/db/nr "@@NCBI_PREFIX@@" \
-    /opt/hapax/queries/nr_sample.fa
+  # In chunks, gated the same way the blocks are. There is no measured blastx-against-nr
+  # rate anywhere in this project, and the plausible range spans two orders of magnitude
+  # per read, so a single call either finishes or leaves nothing. The first chunk measures
+  # the rate; the rest are added while they fit. Chunks are interleaved residue and
+  # control (bigindex_queries.py shuffles the two piles together), so a short run is a
+  # smaller sample of both rather than all of one.
+  mkdir -p /opt/hapax/queries/nrchunks
+  "$PYBIN" - <<'SPLIT'
+from pathlib import Path
+src = Path("/opt/hapax/queries/nr_sample.fa").read_text().split(">")
+recs = [r for r in src if r.strip()]
+size = @@NR_CHUNK@@
+for i in range(0, len(recs), size):
+    out = Path(f"/opt/hapax/queries/nrchunks/nr_{i // size:03d}.fa")
+    out.write_text("".join(">" + r for r in recs[i:i + size]))
+print(f"=== {len(recs)} nr queries in {(len(recs) + size - 1) // size} chunk(s) ===")
+SPLIT
+  NRBUDGET=@@NR_BUDGET_HOURS@@
+  NRSTART=$SECONDS
+  first=1
+  for q in /opt/hapax/queries/nrchunks/nr_*.fa; do
+    label="nr_$(basename "$q" .fa)"
+    n=$(grep -c '^>' "$q" || echo 0)
+    if [ "$first" -eq 0 ]; then
+      left=$("$PYBIN" -c "import sys;print(max(0.0,float(sys.argv[1])-float(sys.argv[2])/3600))" \
+        "$NRBUDGET" "$((SECONDS - NRSTART))")
+      if ! fits nr_nr_000 "$n" "$left"; then
+        echo "=== stopping nr before $label: ${left}h left ==="
+        echo "nr stopped before $label with ${left}h left" >> /opt/hapax/log-scope.txt
+        break
+      fi
+    fi
+    search "$label" blastx /opt/hapax/db/nr "@@NCBI_PREFIX@@" "$q"
+    first=0
+  done
 fi
 
 echo "=== hapax big-index run finished $(date -Is) ==="

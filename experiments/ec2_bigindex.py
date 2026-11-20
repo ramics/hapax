@@ -194,6 +194,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--volume-throughput", type=int, default=DEFAULT_VOLUME_THROUGHPUT)
     ap.add_argument("--volume-iops", type=int, default=DEFAULT_VOLUME_IOPS)
     ap.add_argument("--hard-stop-minutes", type=int, default=DEFAULT_HARD_STOP_MINUTES)
+    ap.add_argument("--nr-chunk", type=int, default=500,
+                    help="queries per blastx-against-nr chunk. Small, because nothing in "
+                         "this project has ever measured that rate and the first chunk is "
+                         "what measures it")
+    ap.add_argument("--nr-budget-hours", type=float, default=8.0)
     ap.add_argument("--full-budget-hours", type=float, default=20.0,
                     help="the wall clock the full core_nt pass is allowed to project to "
                          "before the run refuses it and stops at the pilot")
@@ -242,6 +247,7 @@ def main(argv: list[str] | None = None) -> int:
         QUERY_SET=args.query_set, THREADS=args.threads,
         NCBI_BUCKET=NCBI_BUCKET, NCBI_PREFIX=NCBI_PREFIX,
         FULL_QUERIES=full_queries, FULL_BUDGET_HOURS=args.full_budget_hours,
+        NR_CHUNK=args.nr_chunk, NR_BUDGET_HOURS=args.nr_budget_hours,
     )
     script = render_user_data(**tokens)
 
