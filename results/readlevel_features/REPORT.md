@@ -309,6 +309,13 @@ identity retained gives `rho_fp` directly; the existing read-level arm scored re
 unpaired pool and discarded it. Same for an absence-based score once A12 exists. This is
 the single highest value-per-hour experiment in this document. See `PRIOR_ART.md` §1.3.
 
+**Measure it against insert size, not as one number.** Wider templates make the mates more
+independent, which lowers `rho_fp` (good: merit rises from 1.9 to 9.3 as `rho_fp` falls from
+0.5 to 0.1) and lowers `rho_true` as well (bad: the pair-sensitivity factor falls from 0.93x
+at `rho_true` 0.9 to 0.65x at 0.5). Both move together with insert width, so there is an
+optimum, and a single `rho_fp` would hide it. See `HANDOFF.md` for the derivation and for
+the coding-density ceiling that bounds the related wide-template argument.
+
 ### 3.2 The one-sided anchor
 
 A pair where one mate places confidently against known sequence and the other is
