@@ -40,6 +40,8 @@ def main() -> None:
                          "--seed as the repo requires; the 5 input seeds are read in full")
     ap.add_argument("--scores", type=Path, required=True,
                     help="directory holding pair_scores_s1..s5.npz from PR #10")
+    ap.add_argument("--label", default="unlabelled",
+                    help="which index arm these scores came from, recorded in the output")
     ap.add_argument("--k-aa", type=int, default=10)
     ap.add_argument("--kmers-per-read", type=int, default=26,
                     help="26 peptide 10-mers in a 107 nt read at frame offset 1 or 2")
@@ -67,7 +69,7 @@ def main() -> None:
         "source": str(args.scores),
         "source_branch": "claude/project-thread-clcuow (PR #10)",
         "source_files": [f.name for f in files],
-        "index": "viral + Swiss-Prot, 221M peptide 10-mers",
+        "index_arm": args.label,
         "pairs_per_seed": int(np.load(files[0])["score1"].shape[0]),
         "seeds": len(files),
         "background_fully_absent_single_read": _sp(sat_single),
@@ -92,12 +94,15 @@ def main() -> None:
             "single_read_rate_per_million": s_mean * 1e6,
             "both_mates_rate_per_million": b_mean * 1e6,
             "independence_would_give_per_million": (s_mean ** 2) * 1e6,
-            "conjunction_gain_vs_independence": (b_mean / (s_mean ** 2)) if s_mean else None,
+            # NOT a gain: >1 means the observed both-mates rate EXCEEDS what independent
+            # mates would give, i.e. correlation working against the conjunction.
+            "excess_over_independence": (b_mean / (s_mean ** 2)) if s_mean else None,
             "over_budget_factor_vs_1_per_million": b_mean * 1e6,
         })
 
-    (args.out / "absence_threshold_check.json").write_text(json.dumps(out, indent=2))
-    (args.out / "absence_threshold_check_manifest.json").write_text(json.dumps({
+    (args.out / f"absence_threshold_check_{args.label}.json").write_text(
+        json.dumps(out, indent=2))
+    (args.out / f"absence_threshold_check_{args.label}_manifest.json").write_text(json.dumps({
         "script": "experiments/absence_threshold_check.py",
         "git_sha": _git_sha(),
         "parameters": {k: (str(v) if isinstance(v, Path) else v)
@@ -115,7 +120,7 @@ def main() -> None:
         print(f"T>={t['threshold_kmers']:>2}: single {t['single_read_rate_per_million']:>12,.0f}/M  "
               f"both mates {t['both_mates_rate_per_million']:>12,.0f}/M  "
               f"(independence {t['independence_would_give_per_million']:>12,.0f}/M, "
-              f"conjunction gain {t['conjunction_gain_vs_independence']:.2f}x)")
+              f"excess {t['excess_over_independence']:.2f}x)")
 
 
 def _sp(xs: list[float]) -> dict:
