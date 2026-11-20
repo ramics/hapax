@@ -1,0 +1,210 @@
+{
+  "seed": 2,
+  "accession": "K03455.1",
+  "genome_length": 9719,
+  "exclude_family": "Retroviridae",
+  "evalue": 0.001,
+  "proteins_removed_from_db": 484,
+  "coding_fraction": 0.8321,
+  "novel_fraction_of_genome": 0.6981,
+  "novel_fraction_of_coding": 0.839,
+  "per_protein": [
+    {
+      "product": "?",
+      "residues": 500,
+      "fraction_residues_with_homolog": 0.0,
+      "n_hits": 0,
+      "best_hit": null,
+      "best_bitscore": null,
+      "best_evalue": null
+    },
+    {
+      "product": "?",
+      "residues": 912,
+      "fraction_residues_with_homolog": 0.4759,
+      "n_hits": 36,
+      "best_hit": "NP_056848.1",
+      "best_bitscore": 56.67013931274414,
+      "best_evalue": 4.780016650615683e-14
+    },
+    {
+      "product": "?",
+      "residues": 192,
+      "fraction_residues_with_homolog": 0.0,
+      "n_hits": 0,
+      "best_hit": null,
+      "best_bitscore": null,
+      "best_evalue": null
+    },
+    {
+      "product": "?",
+      "residues": 78,
+      "fraction_residues_with_homolog": 0.0,
+      "n_hits": 0,
+      "best_hit": null,
+      "best_bitscore": null,
+      "best_evalue": null
+    },
+    {
+      "product": "?",
+      "residues": 86,
+      "fraction_residues_with_homolog": 0.0,
+      "n_hits": 0,
+      "best_hit": null,
+      "best_bitscore": null,
+      "best_evalue": null
+    },
+    {
+      "product": "?",
+      "residues": 116,
+      "fraction_residues_with_homolog": 0.0,
+      "n_hits": 0,
+      "best_hit": null,
+      "best_bitscore": null,
+      "best_evalue": null
+    },
+    {
+      "product": "?",
+      "residues": 856,
+      "fraction_residues_with_homolog": 0.0,
+      "n_hits": 0,
+      "best_hit": null,
+      "best_bitscore": null,
+      "best_evalue": null
+    },
+    {
+      "product": "?",
+      "residues": 123,
+      "fraction_residues_with_homolog": 0.0,
+      "n_hits": 0,
+      "best_hit": null,
+      "best_bitscore": null,
+      "best_evalue": null
+    }
+  ],
+  "novel_block_lengths_nt": [
+    1500,
+    207,
+    360,
+    1566,
+    215,
+    2568,
+    369
+  ],
+  "known_block_lengths_nt": [
+    942,
+    360
+  ],
+  "novel_block_summary": {
+    "n": 7,
+    "median": 369,
+    "max": 2568,
+    "mean": 969.3
+  },
+  "sweep": {
+    "107": {
+      "p_mate1_novel": 0.7045,
+      "p_mate2_novel": 0.6896,
+      "p_either_novel": 0.7045,
+      "p_both_novel": 0.6896,
+      "p_both_if_independent": 0.4859,
+      "rho_novelty": 0.9654
+    },
+    "150": {
+      "p_mate1_novel": 0.7078,
+      "p_mate2_novel": 0.6928,
+      "p_either_novel": 0.73,
+      "p_both_novel": 0.6705,
+      "p_both_if_independent": 0.4904,
+      "rho_novelty": 0.8588
+    },
+    "200": {
+      "p_mate1_novel": 0.7146,
+      "p_mate2_novel": 0.6969,
+      "p_either_novel": 0.7605,
+      "p_both_novel": 0.651,
+      "p_both_if_independent": 0.498,
+      "rho_novelty": 0.7371
+    },
+    "250": {
+      "p_mate1_novel": 0.7208,
+      "p_mate2_novel": 0.7025,
+      "p_either_novel": 0.7886,
+      "p_both_novel": 0.6347,
+      "p_both_if_independent": 0.5064,
+      "rho_novelty": 0.6258
+    },
+    "300": {
+      "p_mate1_novel": 0.7225,
+      "p_mate2_novel": 0.7066,
+      "p_either_novel": 0.8077,
+      "p_both_novel": 0.6213,
+      "p_both_if_independent": 0.5105,
+      "rho_novelty": 0.5435
+    },
+    "400": {
+      "p_mate1_novel": 0.7269,
+      "p_mate2_novel": 0.7087,
+      "p_either_novel": 0.8405,
+      "p_both_novel": 0.5952,
+      "p_both_if_independent": 0.5152,
+      "rho_novelty": 0.3953
+    },
+    "500": {
+      "p_mate1_novel": 0.736,
+      "p_mate2_novel": 0.7208,
+      "p_either_novel": 0.8768,
+      "p_both_novel": 0.58,
+      "p_both_if_independent": 0.5305,
+      "rho_novelty": 0.2505
+    },
+    "700": {
+      "p_mate1_novel": 0.7395,
+      "p_mate2_novel": 0.7345,
+      "p_either_novel": 0.9052,
+      "p_both_novel": 0.5688,
+      "p_both_if_independent": 0.5432,
+      "rho_novelty": 0.1323
+    },
+    "1000": {
+      "p_mate1_novel": 0.7311,
+      "p_mate2_novel": 0.745,
+      "p_either_novel": 0.9405,
+      "p_both_novel": 0.5355,
+      "p_both_if_independent": 0.5446,
+      "rho_novelty": -0.047
+    },
+    "1500": {
+      "p_mate1_novel": 0.7155,
+      "p_mate2_novel": 0.7268,
+      "p_either_novel": 0.9652,
+      "p_both_novel": 0.477,
+      "p_both_if_independent": 0.52,
+      "rho_novelty": -0.2136
+    },
+    "2000": {
+      "p_mate1_novel": 0.7015,
+      "p_mate2_novel": 0.7097,
+      "p_either_novel": 0.9416,
+      "p_both_novel": 0.4695,
+      "p_both_if_independent": 0.4978,
+      "rho_novelty": -0.1363
+    },
+    "3000": {
+      "p_mate1_novel": 0.6594,
+      "p_mate2_novel": 0.744,
+      "p_either_novel": 0.8822,
+      "p_both_novel": 0.5212,
+      "p_both_if_independent": 0.4906,
+      "rho_novelty": 0.1477
+    },
+    "5000": {
+      "p_mate1_novel": 0.5335,
+      "p_mate2_novel": 0.8333,
+      "p_either_novel": 1.0,
+      "p_both_novel": 0.3668,
+      "p_both_if_independent": 0.4446,
+      "rho_novelty": -0.4183
+    }
+  }
+}

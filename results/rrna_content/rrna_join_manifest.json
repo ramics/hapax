@@ -1,13 +1,13 @@
 {
   "script": "experiments/rrna_join.py",
-  "git_sha": "56607c1105acbaee7e98a59b44b252f12d9a000d-dirty",
+  "git_sha": "e019f251e11f975f63df82386216367a6d923ceb-dirty",
   "parameters": {
     "seed": 0,
     "rrna": "/home/user/hapax/results/rrna_content",
-    "residual": "/tmp/claude-0/-home-user/a867eaf3-6d43-5b13-b359-2c9d7eee65d8/scratchpad/sibling",
+    "residual": "/home/user/hapax/results/absence_residual",
     "out": "/home/user/hapax/results/rrna_content"
   },
-  "wall_seconds": 1.4486693790001937,
+  "wall_seconds": 1.562890472999996,
   "python": "3.13.18",
   "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
 }

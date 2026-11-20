@@ -105,8 +105,15 @@ def assemble(tool: str, r1: Path, r2: Path, out: Path, threads: int) -> Path:
     raise ValueError(tool)
 
 
-def score(contigs: Path, names: tuple[str, str], seqs: tuple[str, str], work: Path) -> tuple[dict, list]:
-    """Per-contig lineage labels and per-lineage breadth, separated and total."""
+def score(contigs: Path, names: tuple[str, str], seqs: tuple[str, str], work: Path,
+          spike_only_filter: bool = False) -> tuple[dict, list]:
+    """Per-contig lineage labels and per-lineage breadth, separated and total.
+
+    With a background, contigs that do not align to either lineage over >=80% of their
+    length are dropped before labelling (the archived sweep's spike rule): a background
+    contig scored against two rabies genomes gets an arbitrary nearest call, which would
+    count as a lineage label it never earned.
+    """
     cs = {k: v for k, v in read_fasta(contigs).items() if len(v) >= MIN_CONTIG} if contigs.exists() else {}
     if not cs:
         z = {"contigs": 0, "mass": 0}
@@ -118,6 +125,15 @@ def score(contigs: Path, names: tuple[str, str], seqs: tuple[str, str], work: Pa
     q = work / "q.fa"
     q.write_text("".join(f">{k}\n{v}\n" for k, v in cs.items()))
     paf = sh(["minimap2", "-x", "asm20", "-c", "--secondary=no", ref, q]).stdout
+    if spike_only_filter:
+        aligned: dict[str, int] = {}
+        for line in paf.splitlines():
+            f = line.split("\t")
+            if int(f[10]) and int(f[9]) / int(f[10]) >= 0.85:
+                aligned[f[0]] = aligned.get(f[0], 0) + int(f[3]) - int(f[2])
+        cs = {k: v for k, v in cs.items() if aligned.get(k, 0) >= 0.8 * len(v)}
+        if not cs:
+            return score(work / "none.fa", names, seqs, work)
     per = []
     labels = {}
     for k, v in cs.items():
@@ -155,7 +171,8 @@ def score(contigs: Path, names: tuple[str, str], seqs: tuple[str, str], work: Pa
     return row, per
 
 
-def one_job(job: dict, genomes: dict[str, str], work_root: Path, keep_root: Path, threads: int) -> dict:
+def one_job(job: dict, genomes: dict[str, str], work_root: Path, keep_root: Path, threads: int,
+            background: tuple[Path, Path] | None = None) -> dict:
     pair, mode, cov, seed, tool = job["pair"], job["mode"], job["cov"], job["seed"], job["tool"]
     a, b = pair["a"], pair["b"]
     tag = f"{pair['tag']}_{a}_{b}_{mode}_c{cov}_s{seed}"
@@ -167,6 +184,8 @@ def one_job(job: dict, genomes: dict[str, str], work_root: Path, keep_root: Path
     ra = simulate(a, genomes[a], cov, seed, work / "ra") if mode in ("mix", "a_alone") else None
     rb = simulate(b, genomes[b], cov, seed + 1000, work / "rb") if mode in ("mix", "b_alone") else None
     parts = [r for r in (ra, rb) if r]
+    if background:
+        parts.append(background)
     r1 = cat([p[0] for p in parts], work / "r1.fq") if not (work / "r1.fq").exists() else work / "r1.fq"
     r2 = cat([p[1] for p in parts], work / "r2.fq") if not (work / "r2.fq").exists() else work / "r2.fq"
     t0 = time.perf_counter()
@@ -176,10 +195,17 @@ def one_job(job: dict, genomes: dict[str, str], work_root: Path, keep_root: Path
     except subprocess.CalledProcessError as e:
         contigs, err = work / "none.fa", (e.stderr or "")[-400:]
     secs = time.perf_counter() - t0
-    row, per = score(contigs, (a, b), (genomes[a], genomes[b]), work)
+    row, per = score(contigs, (a, b), (genomes[a], genomes[b]), work, spike_only_filter=bool(background))
     keep = keep_root / tag
     keep.mkdir(parents=True, exist_ok=True)
-    if contigs.exists():
+    if contigs.exists() and background:
+        # a background assembly is ~60k contigs; keep only the spike contigs that were scored
+        mine = {p["contig"] for p in per}
+        with gzip.open(keep / f"{tool}.contigs.fa.gz", "wt") as fo:
+            for k, v in read_fasta(contigs).items():
+                if k in mine:
+                    fo.write(f">{k}\n{v}\n")
+    elif contigs.exists():
         with open(contigs, "rb") as fi, gzip.open(keep / f"{tool}.contigs.fa.gz", "wb") as fo:
             shutil.copyfileobj(fi, fo)
     # Per-contig labels go beside the kept contigs, not into the committed rows:
@@ -220,6 +246,8 @@ def main() -> None:
     ap.add_argument("--keep", type=Path, default=Path("/mnt/project-files/strain_ladder/contigs"))
     ap.add_argument("--out", type=Path, default=ROOT / "results" / "pair_ladder")
     ap.add_argument("--rows-name", default="rows.jsonl")
+    ap.add_argument("--background", default="",
+                    help="r1.fq,r2.fq of a fixed real background added to every run (uncompressed)")
     args = ap.parse_args()
 
     genomes = {}
@@ -257,8 +285,9 @@ def main() -> None:
         "min_contig": MIN_CONTIG, "window": WINDOW, "versions": versions(),
         "started": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "jobs": len(jobs),
     }, indent=2))
+    bg = tuple(Path(x) for x in args.background.split(",")) if args.background else None
     with ProcessPoolExecutor(args.jobs) as ex, rows_path.open("a") as fh:
-        futs = [ex.submit(one_job, j, genomes, args.work, args.keep, args.threads) for j in todo]
+        futs = [ex.submit(one_job, j, genomes, args.work, args.keep, args.threads, bg) for j in todo]
         for n, f in enumerate(as_completed(futs), 1):
             try:
                 r = f.result()

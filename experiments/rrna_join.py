@@ -81,8 +81,11 @@ def main() -> None:
                     help="0 joins all five seeds; the inputs are fixed files, so the flag "
                          "selects which rather than randomising anything")
     ap.add_argument("--rrna", type=Path, default=ROOT / "results" / "rrna_content")
-    ap.add_argument("--residual", type=Path, required=True,
-                    help="directory holding reads_s1..s5.tsv from commit 9e63679")
+    ap.add_argument("--residual", type=Path,
+                    default=ROOT / "results" / "absence_residual",
+                    help="directory holding reads_s1..s5.tsv; these were produced on branch "
+                         "claude/project-thread-clcuow at commit 9e63679 and have since "
+                         "merged to main, so the default is now the in-repo path")
     ap.add_argument("--out", type=Path, default=ROOT / "results" / "rrna_content")
     args = ap.parse_args()
 

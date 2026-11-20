@@ -1,0 +1,521 @@
+{
+  "seed": 1,
+  "git_sha": "1d31d740e20fe21ba15b41bdf3162953c8e14af3",
+  "db": "data/prot/uniref50_every10.fasta.gz",
+  "k": 10,
+  "db_entries": 4124353,
+  "reads_ribosomal": 13580,
+  "reads_other": 26380,
+  "query_kmers_unique": 1755055,
+  "ribosomal": {
+    "entries_matched": 4209,
+    "uninformative_frac": 0.6595,
+    "reads_matched_sum_over_entries": 44817,
+    "reads_matched_per_entry_median": 4,
+    "reads_matched_per_entry_max": 1330,
+    "top": [
+      [
+        "Uncharacterized protein",
+        2418
+      ],
+      [
+        "Uncharacterized protein (Fragment)",
+        237
+      ],
+      [
+        "ART2/RRT15-like domain-containing protein",
+        42
+      ],
+      [
+        "Mitochondrial protein TAR1 domain-containing protein",
+        34
+      ],
+      [
+        "F-BAR domain-containing protein",
+        25
+      ],
+      [
+        "Reverse transcriptase domain-containing protein",
+        17
+      ],
+      [
+        "Senescence-associated protein",
+        17
+      ],
+      [
+        "Secreted protein",
+        17
+      ],
+      [
+        "hypothetical protein",
+        16
+      ],
+      [
+        "Uncharacterized protein ycf68",
+        14
+      ],
+      [
+        "Transmembrane protein",
+        13
+      ],
+      [
+        "Protein TAR1",
+        12
+      ],
+      [
+        "C2H2-type domain-containing protein",
+        11
+      ],
+      [
+        "CCHC-type domain-containing protein",
+        11
+      ],
+      [
+        "Regulator of rDNA transcription protein 15",
+        10
+      ],
+      [
+        "non-specific serine/threonine protein kinase",
+        10
+      ],
+      [
+        "F-BAR domain-containing protein (Fragment)",
+        10
+      ],
+      [
+        "Ig-like domain-containing protein",
+        8
+      ],
+      [
+        "G-protein coupled receptors family 1 profile domain-containing protein",
+        8
+      ],
+      [
+        "ART2/RRT15-like domain-containing protein (Fragment)",
+        8
+      ],
+      [
+        "ABC transmembrane type-1 domain-containing protein",
+        7
+      ],
+      [
+        "Protein kinase domain-containing protein",
+        7
+      ],
+      [
+        "uncharacterized protein",
+        7
+      ],
+      [
+        "RRM domain-containing protein",
+        7
+      ],
+      [
+        "Histone H5",
+        7
+      ],
+      [
+        "Predicted protein",
+        6
+      ],
+      [
+        "rRNA intron-encoded homing endonuclease",
+        6
+      ],
+      [
+        "uncharacterized protein isoform X1",
+        5
+      ],
+      [
+        "ubiquitinyl hydrolase 1",
+        5
+      ],
+      [
+        "Heme-copper oxidase subunit III family profile domain-containing protein",
+        5
+      ],
+      [
+        "RNA helicase",
+        5
+      ],
+      [
+        "RING-type E3 ubiquitin transferase",
+        5
+      ],
+      [
+        "(raccoon dog) hypothetical protein",
+        5
+      ],
+      [
+        "Involucrin repeat protein",
+        4
+      ],
+      [
+        "histidine kinase",
+        4
+      ],
+      [
+        "Cytochrome oxidase subunit I profile domain-containing protein",
+        4
+      ],
+      [
+        "RNA-directed DNA polymerase",
+        4
+      ],
+      [
+        "RING-type domain-containing protein",
+        4
+      ],
+      [
+        "Endonuclease/exonuclease/phosphatase domain-containing protein",
+        4
+      ],
+      [
+        "Major facilitator superfamily (MFS) profile domain-containing protein",
+        4
+      ]
+    ],
+    "share_of_read_matches_in_top1_entries": 0.0297,
+    "share_of_read_matches_in_top10_entries": 0.1433,
+    "share_of_read_matches_in_top100_entries": 0.522,
+    "share_of_read_matches_in_top1000_entries": 0.7953,
+    "entries_matching_ge_1pct_of_reads": 63
+  },
+  "other": {
+    "entries_matched": 36218,
+    "uninformative_frac": 0.4672,
+    "reads_matched_sum_over_entries": 248199,
+    "reads_matched_per_entry_median": 2,
+    "reads_matched_per_entry_max": 283,
+    "top": [
+      [
+        "Uncharacterized protein",
+        13917
+      ],
+      [
+        "Uncharacterized protein (Fragment)",
+        1245
+      ],
+      [
+        "ABC transmembrane type-1 domain-containing protein",
+        317
+      ],
+      [
+        "hypothetical protein",
+        252
+      ],
+      [
+        "RRM domain-containing protein",
+        250
+      ],
+      [
+        "Protein kinase domain-containing protein",
+        209
+      ],
+      [
+        "C2H2-type domain-containing protein",
+        181
+      ],
+      [
+        "non-specific serine/threonine protein kinase",
+        167
+      ],
+      [
+        "REJ domain-containing protein",
+        116
+      ],
+      [
+        "RING-type domain-containing protein",
+        101
+      ],
+      [
+        "Secreted protein",
+        95
+      ],
+      [
+        "F-box domain-containing protein",
+        91
+      ],
+      [
+        "CCHC-type domain-containing protein",
+        88
+      ],
+      [
+        "uncharacterized protein",
+        82
+      ],
+      [
+        "WH2 domain-containing protein",
+        78
+      ],
+      [
+        "Predicted protein",
+        76
+      ],
+      [
+        "Peptidyl-prolyl cis-trans isomerase",
+        76
+      ],
+      [
+        "Transmembrane protein",
+        74
+      ],
+      [
+        "FH2 domain-containing protein",
+        72
+      ],
+      [
+        "Ig-like domain-containing protein",
+        71
+      ],
+      [
+        "Zn(2)-C6 fungal-type domain-containing protein",
+        71
+      ],
+      [
+        "RING-type E3 ubiquitin transferase",
+        66
+      ],
+      [
+        "C3H1-type domain-containing protein",
+        63
+      ],
+      [
+        "RNA helicase",
+        58
+      ],
+      [
+        "J domain-containing protein",
+        57
+      ],
+      [
+        "peptidylprolyl isomerase",
+        57
+      ],
+      [
+        "Homeobox domain-containing protein",
+        57
+      ],
+      [
+        "EF-hand domain-containing protein",
+        55
+      ],
+      [
+        "histidine kinase",
+        54
+      ],
+      [
+        "UPF0764 protein C16orf89",
+        54
+      ],
+      [
+        "RNA-directed RNA polymerase",
+        52
+      ],
+      [
+        "Reverse transcriptase domain-containing protein",
+        50
+      ],
+      [
+        "AP2/ERF domain-containing protein",
+        48
+      ],
+      [
+        "G-protein coupled receptors family 1 profile domain-containing protein",
+        48
+      ],
+      [
+        "Guanylate cyclase domain-containing protein",
+        47
+      ],
+      [
+        "Zinc finger protein",
+        47
+      ],
+      [
+        "Glycine-rich protein",
+        47
+      ],
+      [
+        "Formin-like protein",
+        45
+      ],
+      [
+        "BTB domain-containing protein",
+        45
+      ],
+      [
+        "Protein GVQW1",
+        43
+      ]
+    ],
+    "share_of_read_matches_in_top1_entries": 0.0011,
+    "share_of_read_matches_in_top10_entries": 0.0044,
+    "share_of_read_matches_in_top100_entries": 0.0162,
+    "share_of_read_matches_in_top1000_entries": 0.1091,
+    "entries_matching_ge_1pct_of_reads": 1
+  },
+  "top_entries_ge50_ribosomal_reads": [
+    [
+      1330,
+      "UniRef50_A0ABC8QJE8 Cell wall-associated hydrolase n=15 Tax=cellular organisms TaxID=131567 RepID=A0ABC8QJE8_9RALS"
+    ],
+    [
+      734,
+      "UniRef50_UPI0017566BD4 Uncharacterized protein n=2 Tax=Bacillati TaxID=1783272 RepID=UPI0017566BD4"
+    ],
+    [
+      642,
+      "UniRef50_C7H9G6 Uncharacterized protein (Fragment) n=3 Tax=cellular organisms TaxID=131567 RepID=C7H9G6_FAEDU"
+    ],
+    [
+      632,
+      "UniRef50_A0A917HAK0 Uncharacterized protein n=3 Tax=Bacteria TaxID=2 RepID=A0A917HAK0_9MICC"
+    ],
+    [
+      618,
+      "UniRef50_A0A0K0FWX9 Uncharacterized protein n=1 Tax=Strongyloides venezuelensis TaxID=75913 RepID=A0A0K0FWX9_STRVS"
+    ],
+    [
+      598,
+      "UniRef50_A0A812DB97 Uncharacterized protein n=1 Tax=Acanthosepion pharaonis TaxID=158019 RepID=A0A812DB97_ACAPH"
+    ],
+    [
+      590,
+      "UniRef50_A0AAQ3ME84 Uncharacterized protein n=3 Tax=50 kb inversion clade TaxID=2231393 RepID=A0AAQ3ME84_VIGMU"
+    ],
+    [
+      490,
+      "UniRef50_K8E2V0 Cell wall-associated hydrolase n=5 Tax=cellular organisms TaxID=131567 RepID=K8E2V0_CARML"
+    ],
+    [
+      409,
+      "UniRef50_A0ABR2AFM4 Uncharacterized protein n=4 Tax=Hibiscus sabdariffa TaxID=183260 RepID=A0ABR2AFM4_9ROSI"
+    ],
+    [
+      381,
+      "UniRef50_A0A9N8YL17 11510_t:CDS:1 (Fragment) n=1 Tax=Ambispora leptoticha TaxID=144679 RepID=A0A9N8YL17_9GLOM"
+    ],
+    [
+      380,
+      "UniRef50_A0A2K4YF44 Uncharacterized protein (Fragment) n=3 Tax=cellular organisms TaxID=131567 RepID=A0A2K4YF44_9MYCO"
+    ],
+    [
+      361,
+      "UniRef50_B5CLP6 Uncharacterized protein n=3 Tax=cellular organisms TaxID=131567 RepID=B5CLP6_9FIRM"
+    ],
+    [
+      360,
+      "UniRef50_A0A077ZLM0 Uncharacterized protein (Fragment) n=12 Tax=cellular organisms TaxID=131567 RepID=A0A077ZLM0_TRITR"
+    ],
+    [
+      356,
+      "UniRef50_A0ACS1RMH4 Ribosomal protein L10 n=2 Tax=Cucumis melo var. makuwa TaxID=1194695 RepID=A0ACS1RMH4_CUCMM"
+    ],
+    [
+      355,
+      "UniRef50_A0A6D2JYG3 Uncharacterized protein n=1 Tax=Microthlaspi erraticum TaxID=1685480 RepID=A0A6D2JYG3_9BRAS"
+    ],
+    [
+      353,
+      "UniRef50_UPI001E85F26C Uncharacterized protein n=1 Tax=Solanum tuberosum TaxID=4113 RepID=UPI001E85F26C"
+    ],
+    [
+      346,
+      "UniRef50_A0ABQ5ELY8 Uncharacterized protein n=1 Tax=Tanacetum coccineum TaxID=301880 RepID=A0ABQ5ELY8_9ASTR"
+    ],
+    [
+      314,
+      "UniRef50_A0A371IGX7 Uncharacterized protein ycf68 (Fragment) n=1 Tax=Mucuna pruriens TaxID=157652 RepID=A0A371IGX7_MUCPR"
+    ],
+    [
+      290,
+      "UniRef50_A0AAV7GM83 Uncharacterized protein n=1 Tax=Dendrobium chrysotoxum TaxID=161865 RepID=A0AAV7GM83_DENCH"
+    ],
+    [
+      286,
+      "UniRef50_A0ACB9KL28 Uncharacterized protein n=1 Tax=Bauhinia variegata TaxID=167791 RepID=A0ACB9KL28_BAUVA"
+    ],
+    [
+      286,
+      "UniRef50_A0ABR0NCL6 Uncharacterized protein n=1 Tax=Gossypium arboreum TaxID=29729 RepID=A0ABR0NCL6_GOSAR"
+    ],
+    [
+      286,
+      "UniRef50_A0A5N6N1R8 Uncharacterized protein n=4 Tax=Asteraceae TaxID=4210 RepID=A0A5N6N1R8_9ASTR"
+    ],
+    [
+      285,
+      "UniRef50_A0AAN9JHP4 Uncharacterized protein n=2 Tax=Phaseoleae TaxID=163735 RepID=A0AAN9JHP4_CANGL"
+    ],
+    [
+      285,
+      "UniRef50_A0A200PW81 Uncharacterized protein n=7 Tax=Mesangiospermae TaxID=1437183 RepID=A0A200PW81_MACCD"
+    ],
+    [
+      283,
+      "UniRef50_A0ABD1M4C4 Uncharacterized protein n=1 Tax=Flemingia macrophylla TaxID=520843 RepID=A0ABD1M4C4_9FABA"
+    ],
+    [
+      282,
+      "UniRef50_A0AAV3Q8D0 Uncharacterized protein n=1 Tax=Lithospermum erythrorhizon TaxID=34254 RepID=A0AAV3Q8D0_LITER"
+    ],
+    [
+      280,
+      "UniRef50_UPI0007F46905 Uncharacterized protein n=2 Tax=Plasmodium TaxID=418103 RepID=UPI0007F46905"
+    ],
+    [
+      280,
+      "UniRef50_A0ABD0TTH0 NADH:quinone oxidoreductase/Mrp antiporter transmembrane domain-containing protein n=2 Tax=Dendrobium thyrsiflorum TaxID=117978 RepID=A0ABD0"
+    ],
+    [
+      278,
+      "UniRef50_A0A8J5CE99 Uncharacterized protein n=1 Tax=Zingiber officinale TaxID=94328 RepID=A0A8J5CE99_ZINOF"
+    ],
+    [
+      278,
+      "UniRef50_A0A5C7HJ31 Uncharacterized protein n=1 Tax=Acer yangbiense TaxID=1000413 RepID=A0A5C7HJ31_9ROSI"
+    ],
+    [
+      277,
+      "UniRef50_G7L489 Cell wall-associated hydrolase, putative n=1 Tax=Medicago truncatula TaxID=3880 RepID=G7L489_MEDTR"
+    ],
+    [
+      277,
+      "UniRef50_A0ACH3S1C9 Uncharacterized protein n=9 Tax=Mesangiospermae TaxID=1437183 RepID=A0ACH3S1C9_ARAHY"
+    ],
+    [
+      277,
+      "UniRef50_A0AAN9N2G9 Cell wall-associated hydrolase n=3 Tax=fabids TaxID=91835 RepID=A0AAN9N2G9_PSOTE"
+    ],
+    [
+      269,
+      "UniRef50_A0ABN7EA82 Uncharacterized protein n=1 Tax=Spirodela intermedia TaxID=51605 RepID=A0ABN7EA82_SPIIN"
+    ],
+    [
+      265,
+      "UniRef50_A0A0K0FWX8 Ycf68 n=1 Tax=Strongyloides venezuelensis TaxID=75913 RepID=A0A0K0FWX8_STRVS"
+    ],
+    [
+      261,
+      "UniRef50_A0ACS8HUD6 Uncharacterized protein (Fragment) n=1 Tax=Gossypium turneri TaxID=34284 RepID=A0ACS8HUD6_GOSTU"
+    ],
+    [
+      259,
+      "UniRef50_A0ABR0QTU6 Uncharacterized protein n=20 Tax=Pentapetalae TaxID=1437201 RepID=A0ABR0QTU6_GOSAR"
+    ],
+    [
+      254,
+      "UniRef50_K3XCV6 Uncharacterized protein n=3 Tax=Globisporangium ultimum (strain ATCC 200006 / CBS 805.95 / DAOM BR144) TaxID=431595 RepID=K3XCV6_GLOUD"
+    ],
+    [
+      248,
+      "UniRef50_H6SIC9 Uncharacterized protein (Fragment) n=1 Tax=Pararhodospirillum photometricum DSM 122 TaxID=1150469 RepID=H6SIC9_PARPM"
+    ],
+    [
+      243,
+      "UniRef50_A0A5N6PW31 Uncharacterized protein n=4 Tax=Pentapetalae TaxID=1437201 RepID=A0A5N6PW31_9ASTR"
+    ]
+  ],
+  "seconds": 343.4
+}

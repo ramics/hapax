@@ -1,0 +1,14 @@
+{
+  "script": "experiments/insert_profile.py",
+  "git_sha": "8dad837c1462d241e049ab118d44684a153fc308",
+  "seed": 4,
+  "params": {
+    "pairs": 200000,
+    "trim_r2": 14,
+    "skip_pairs": 6000000,
+    "r1": "data/ww_berlin/SRR23973193_1.fastq.gz",
+    "r2": "data/ww_berlin/SRR23973193_2.fastq.gz",
+    "ref": "data/ww_berlin/spades_sample_2kb.fa"
+  },
+  "wall_s": 39.2
+}
