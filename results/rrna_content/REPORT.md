@@ -23,13 +23,31 @@ not edit the tables by hand.
    10-mer absent than anything else**, 0.125 against 0.286. Ribosomal RNA has
    no true peptide, so an index of real proteins cannot explain this and chance
    cannot either (§5). Something in the index is matching them.
-6. A gene caller handed nothing but curated ribosomal RNA calls genes on
-   93.2% of sequences at a coding density of 0.164, which is real
-   spurious protein entering any sample-self index — but a composition-shuffled
-   control gives 0.179, *higher*, so this is generic short-ORF calling and
-   not something ribosomal sequence specifically provokes. It is also too small to
-   account for §5 on its own. **The mechanism is therefore established as a real
-   contaminant of the index and NOT established as the explanation of §5.** §6.
+6. **The cause is located, and it is not ours.** Against a viral-only index
+   P(absent | ribosomal) is 0.998, exactly what a molecule encoding no protein must
+   give. The inversion appears between the 1% and 10% UniRef50 subsamples, which
+   include automatically annotated TrEMBL entries — an automated gene caller making
+   on ribosomal loci the mistake §6 measures pyrodigal making on our contigs, four
+   orders of index size from where we were looking. A prediction of this report's was
+   scored and failed in the process, and a low-complexity explanation it offered is
+   dead outright. §7, measured on the other branch.
+7. **Why a handful of bad entries suffices: a conservation multiplier of
+   388 +/- 6**, against a composition-shuffled control of
+   exactly 1.00. Ribosomal RNA is conserved enough that one spurious entry from a
+   single organism's locus carries peptides matching reads from across the tree.
+   0.465% of distinct peptide 10-mers reach at least 1% of sequences and
+   carry 38.4% of all occurrences. That predicts the other branch's
+   finding that 63 entries out of four million account for most of the matching, from
+   a curated reference with no wastewater in it. §8.
+8. **The general lesson:** mean reach per distinct 10-mer is 3.49; per
+   occurrence it is 388. Absence is scored per occurrence, so a read sees
+   the second number. Reasoning about the distinct k-mers in a database answers a
+   different question from the one a read asks. §8.
+9. The practical consequence belongs in the method, not the caveats: subtract
+   ribosomal RNA with a nucleotide index before consulting a protein index, which is
+   the right instrument and costs 127 MB here. The earlier claim that this
+   compromised the cheap step on the background-removal curve is **withdrawn**: that
+   step is background removal. §9.
 
 ## 2. The measurement
 
@@ -199,55 +217,172 @@ another cause, the obvious candidate being that translated ribosomal RNA is
 low-complexity and matches the low-complexity regions of real proteins.
 
 **So §6 establishes that this contaminates the index and does not establish that it
-explains §5.** The decisive test is to rebuild the index with proteins from
-ribosomal contigs excluded and re-measure P(absent | ribosomal): if the mechanism is
-the explanation it should rise toward 0.286, and if it is not it will stay near
-0.125. That test needs the assembly and the annotation, so it belongs to the
-branch that holds them, and it is running there.
+explains §5.** Both guesses it offered for the remainder have since been tested and
+both were wrong: see §7. What survives from this section is the general measurement —
+a gene caller invents short protein on ribosomal RNA, at a rate set by composition
+rather than by anything ribosomal — and that turns out to be the right mechanism in
+the wrong place.
 
-## 7. What this costs the thesis, after the other branch narrowed it
+## 7. Where the matching actually comes from
 
-The deliverable in view is a curve of background reads removed against index size,
-and the cheapest large step on it so far was adding the sample's own predicted
-proteins, which took absence from 86.3% to around 22%. §6 raised the worry that part
-of that step was a gene caller explaining ribosomal reads with protein that does not
-exist. **It is not, and the worry is withdrawn at that scale.** The other branch
-labelled the assembly rather than the reads and found ribosomal contigs to be 1.72%
-of assembly bases carrying 388 of 79,667 proteins and 19,137 of 8,042,848 indexed
-residues, 0.24%, stable from a hit-fraction threshold of 0.5 down to 0.05. A quarter
-of one percent of the index cannot move 86% to 22%, so that step stands as background
-removal. Their coding density on those contigs, 0.281, also agrees with the 0.164
-measured here on reference sequence, which is the main reason to trust either.
+Measured on branch `claude/project-thread-clcuow` rather than here, by rebuilding the
+index level by level and re-measuring on the same reads. Every figure in this section
+is theirs; the ribosomal calls being conditioned on are ours.
 
-What the 0.24% does *not* settle is §5, and the distinction is worth keeping because
-it is easy to apply the number to the wrong question. A read stops being fully absent
-as soon as one of its 10-mers matches anything, so what governs P(absent | ribosomal)
-is not the spurious proteins' share of the index but the chance a ribosomal read
-falls within reach of one of them. That is a coverage quantity: their 0.281 on
-ribosomal contigs, and the 0.416 and 0.131 in §4 weight to about 0.38 of
-mapped ribosomal reads sitting inside a call. Two orders above 0.0024. So the
-mechanism plausibly accounts for roughly a third of the ribosomal reads that have a
-match, and the rest needs another cause.
+| cumulative index | P(absent \| ribosomal) | P(absent \| not ribosomal) |
+| --- | --- | --- |
+| viral only | 0.998 | 0.823 |
+| + Swiss-Prot | 0.960 | 0.811 |
+| + UniRef50 1% (0.50 G k-mers) | 0.810 | 0.798 |
+| + UniRef50 10% (1.73 G k-mers) | 0.473 | 0.720 |
+| + sample proteins, ribosomal contigs excluded | 0.143 | 0.252 |
+| + the 388 ribosomal-contig proteins | 0.107 | 0.251 |
 
-The discriminating test is theirs and is running: rebuild the index with those 388
-proteins excluded and re-measure. Both threads have put a number on it in advance —
-this one expects P(absent | ribosomal) to move from 0.125 to near 0.4, the other
-to 0.25-0.35 on the grounds that a spurious 71 aa call is matched by other ribosomal
-reads only where the underlying rRNA is conserved, which SILVA's own clustering says
-is patchy. The remaining candidate for whatever is left is that translated ribosomal
-RNA is low-complexity and matches the low-complexity regions of real proteins, which
-is being measured in the same run.
+**Against an index of real proteins ribosomal RNA behaves exactly as it must:** 0.998
+absent at viral only, because it encodes no protein. The inversion is not made by our
+assembly and not made by our annotation. It is made by UniRef50, between the 1% and
+10% subsamples, where ribosomal reads cross from 0.810 to 0.473 while everything else
+moves only 0.798 to 0.720.
 
-Masking ribosomal sequence before annotating is still worth doing, but as hygiene
-rather than as a correction to the curve.
+Two candidate explanations died here, and one of them was this report's.
 
-The other half of the ledger is unaffected and simply useful. A third of this library
-is ribosomal and a protein index can never match it, so a third of the sequencing is
-being spent on material the whole approach is structurally blind to. That is an
-argument about library preparation, not about indexing, and it is the first number in
-this project that bears on it.
+**My prediction was scored and wrong.** §6 argued that spurious gene calls on
+ribosomal contigs put ribosomal reads within reach of a peptide, and I predicted that
+removing those 388 proteins would move P(absent \| ribosomal) from 0.125 to near
+0.4. It moves to 0.143. The other branch predicted 0.25-0.35 and is wrong in the same
+direction, so the index-share argument §6 corrects was not what misled either of us:
+we both overestimated how much matching a few hundred spurious calls supply. The
+mechanism is real, measured, and four orders of index size away from where it matters.
 
-## 8. What this does not establish
+**The low-complexity candidate is dead outright.** §6 offered translated ribosomal
+RNA matching the low-complexity regions of real proteins as the remaining cause.
+Restricting to peptide 10-mers with at least 5 of 10 distinct residues gives
+0.144 against 0.143 for ribosomal reads and 0.261 against
+0.252 for the rest: no effect anywhere on the curve.
+
+What survives is the same mechanism at database scale. UniRef50 includes TrEMBL,
+which is automatically annotated, and an automated gene caller over a genome assembly
+makes on ribosomal loci the mistake §6 measures pyrodigal making on contigs. The
+differential is what points there: a uniform sprinkling of badly annotated entries
+cannot hurt ribosomal reads several times as much as everything else.
+
+**Attribution, streamed over the whole subsample** of
+4,124,353 entries, with non-ribosomal reads as a control in the same
+pass. Share of each group's read-matches:
+
+| | ribosomal | control |
+| --- | --- | --- |
+| top 1 | 3.0% | 0.11% |
+| top 10 | 14.3% | 0.44% |
+| top 100 | 52.2% | 1.62% |
+| top 1,000 | 79.5% | 10.90% |
+| entries reaching >= 1% of the group's reads | 63 | 1 |
+| largest single entry, reads matched | 1,330 | 283 |
+| entries matched at all | 4,209 | 36,218 |
+| uninformative description | 66.0% | 46.7% |
+
+**63 entries out of four million account for most of it**,
+and a hundred carry over half. The control is not abundance-matched — non-ribosomal
+reads come from thousands of organisms at wildly different coverage, so some
+concentration there is the library rather than the database — so the ratio of the two
+heads is the signal rather than the ribosomal head alone. It is about thirty-fold.
+
+Annotation status is the weaker readout, as §6's shuffled control already implied:
+the single largest offender is named "Cell wall-associated hydrolase" and matched
+1,330 ribosomal reads. Nothing in that name would have caught it.
+A spurious open reading frame can inherit a plausible description by homology to
+another spurious one, which is why naming the entries beats classifying them.
+
+## 8. Why a handful of entries is enough: the conservation multiplier
+
+`experiments/rrna_peptide_reach.py`, and this one needs no protein database at all,
+which is why it belongs here. Six-frame translate curated ribosomal RNA and ask, for
+each stop-free peptide 10-mer, how many distinct sequences and phyla it occurs in.
+That is exactly the number of lineages one spurious entry derived from a single
+organism's ribosomal locus would match reads from. The control shuffles each sequence,
+preserving composition and destroying conservation. 8,000
+SILVA SSU sequences per seed, five seeds.
+
+**Conservation multiplier 388 +/- 6.** The shuffled control
+gives 1.00 with a singleton fraction of 1.0000, so conservation is not
+part of this effect, it is the whole of it.
+
+The distribution is the finding, not the mean. Mean reach per distinct 10-mer is only
+3.49 +/- 0.01; weighted by occurrence, which is the reach of a peptide a
+read actually draws, it is 388. That hundredfold gap *is* the skew. Phylum
+reach is 6.86 of 82.
+
+| occurrence-weighted reach | p50 | p75 | p90 | p99 |
+| --- | --- | --- | --- | --- |
+| sequences | 25 | 275 | 1,091 | 4,454 |
+| share of the tree | 0.3% | 3.4% | 13.6% | 55.7% |
+
+**0.465% +/- 0.003% of distinct 10-mers reach at least 1% of
+sequences, and they carry 38.4% +/- 0.2% of all occurrences.**
+Those reaching 10% or more carry 12.2%.
+
+Three agreements with §7, from a curated reference with no wastewater in it:
+
+1. Their largest entry matched 1,330 of 13,580
+   ribosomal reads, 9.8%. An entry
+   spans most of a locus, so its reach as a share of the tree should sit a little
+   above that: p90 here is 13.6%. Their biggest offenders sit between
+   this measurement's p90 and p99, which is where the few high-reach 10-mers live.
+2. Their 63 entries at >= 1% of reads against
+   0.465% of 10-mers at >= 1% of sequences: both say the head is a few tens
+   of objects out of millions, not thousands.
+3. Their 52.7% of ribosomal reads matching something at the 10% UniRef50 level
+   against 38.4% of occurrences carried by >= 1%-reach 10-mers here. Ours
+   should be the lower of the two, because reads also match through lower-reach
+   10-mers, and it is, by fourteen points.
+
+None of that is a fitted match and it should not be read as better than agreement in
+magnitude and direction. What it does establish independently is the qualitative
+claim: a vanishing fraction of ribosomal peptide 10-mers carries most of the matching
+mass, so a few bad entries are sufficient and the number of them barely matters.
+
+**The one way the two measurements are not strangers**, raised by the other branch and
+worth stating: wherever a genome project deposited both, their UniRef50 subsample and
+this SILVA reference draw on the same underlying ribosomal loci. That cannot
+manufacture the agreement, since their side is read-weighted on a wastewater library
+and this one is sequence-weighted on curated SSU, but the two are not fully
+independent and should not be presented as though they were.
+
+**The general lesson, which outlives the ribosomal case.** 3.49 against
+388 is not a quirk of this measurement; it is the difference between
+averaging over distinct k-mers and averaging over occurrences, and for anything
+conserved the two differ by two orders of magnitude. Absence scoring is computed per
+occurrence in a read, so a read sees the larger number. Any index-size or absence
+calculation that reasons about the distinct k-mers in a database is answering a
+different question from the one a read asks.
+
+## 9. What this leaves the thesis
+
+The deliverable in view is a curve of background reads removed against index size.
+Two things fall out of the above, and the second is usable rather than cautionary.
+
+**The cheap step on the curve stands.** An earlier draft of this report said part of
+the 86.3% to ~22% absence step was a gene caller explaining ribosomal reads with
+protein that does not exist. The other branch bounded that at 0.24% of indexed
+residues and the per-level curve settles it: removing those proteins moves absence
+among ribosomal reads by 0.036 and the step is background removal. **The claim is
+withdrawn.**
+
+**A protein index is the wrong instrument for a third of this library, and it fails
+in the dangerous direction.** Ribosomal reads do not merely fail to match, which would
+be harmless; they match spurious entries and so look *known*. The fix is cheap and
+belongs in the method rather than the caveats: subtract ribosomal RNA with a
+nucleotide index before consulting a protein index at all, which is the right
+instrument for it and costs 127 MB at the sampling used here. Where a protein index
+must carry it anyway, the other branch's 63-entry blocklist
+covers most of the damage, and §8 is the reason it can be that short.
+
+Separately: a third of this library is material no protein index can legitimately
+match, so a third of the sequencing is spent on sequence the approach is structurally
+blind to. That is an argument about library preparation rather than indexing, and it
+is the first number in this project that bears on it.
+
+## 10. What this does not establish
 
 - Sensitivity is measured against a 99%-clustered reference, so it speaks for
   represented taxa only (§3). A divergent environmental lineage is still missed and
@@ -263,7 +398,15 @@ this project that bears on it.
   ribodepleted library would not look like this, and the third is a property of this
   protocol rather than of wastewater.
 - §6 runs one gene caller in one mode. It says what pyrodigal meta does, not what
-  every annotation pipeline does.
+  every annotation pipeline does, and the TrEMBL entries §7 implicates were annotated
+  by pipelines not examined here.
+- §8's reach is measured on SSU only, on 8,000 sequences per seed, for stop-free
+  peptide 10-mers. Reach within the index this project actually uses would also
+  depend on which loci were deposited, which is the one route by which §8 and §7 are
+  not independent.
+- §7's attribution is one seed on one UniRef50 subsample, and its control is not
+  abundance-matched, so the ratio of the two heads carries the claim rather than the
+  ribosomal head alone.
 - Nothing here touches sensitivity or the false-positive rate of a novelty call. It
   explains the composition of a background, which is a different question from
   whether a read can be scored.
