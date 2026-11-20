@@ -154,3 +154,44 @@ ElasticBLAST was considered and rejected: its IAM policy needs `iam:CreateRole`,
 `iam:CreateInstanceProfile` and `iam:PassRole` plus CloudFormation and AWS Batch, all denied
 here, and it defaults to a 32 vCPU machine against an 8 vCPU ceiling. It exists to fan one
 search across many nodes; this is one box and a sample.
+
+## 7. What actually happened at launch (2026-11-20)
+
+Recorded here because three of the four surprises are facts about the account rather than
+about this run, and the next launcher will meet them again.
+
+**The S3 layout in section 6 was wrong, and the failure named itself.** The guide says to
+write under `projects/<project>/`, and the container's principal cannot: measured with a
+signed regional client, `user/claude` READS the whole bucket and WRITES only under
+`corpora/*`, so `projects/hapax/code/...` came back "not authorized to perform:
+s3:PutObject ... because no identity-based policy allows" with the ARN named. The verbose
+form is the diagnostic - an unsigned request to the global endpoint returns a bare
+`AccessDenied` with no principal, so the two failures that look alike are told apart by how
+much the message says. `projects/` was empty, i.e. no project had ever written there.
+Offered to Imo as either an IAM change or a different prefix; he chose the prefix, so
+everything this run writes lives under `corpora/results/hapax-bigindex/`.
+
+**Spot had no capacity for the memory instance.** `r6i.2xlarge` was refused twice and
+`m6i.2xlarge` once, each `InsufficientInstanceCapacity` with nothing launched and nothing
+billed. The run is on `c6i.2xlarge` instead: $0.13/h against the $0.29 approved, and 16 GB
+of RAM against 64. That is sound for these stages because BLAST memory-maps its volumes,
+and it is NOT sound for the UniRef100 DIAMOND build, which is why that stage is not in this
+launch and needs the bigger machine.
+
+**The launch is i-0cb5f61d5cc746979, commit 06e344d, 1,700 GB gp3, 48-hour dead man's
+switch, terminate on shutdown.** All in about $0.37/h, under the $0.49 quoted.
+
+**Clean-tree enforcement had to be made precise rather than dropped.** Five-seed jobs write
+into `results/` continuously here, so the tree is almost never clean, and refusing on that
+would have meant either waiting hours or committing half-finished result files to pass a
+check. What is enforced is what the instance runs - the payload, the launcher, the template
+and the query builder, by `git status` over those paths - and the wider tree's state is
+recorded beside it in `bigindex_launch.json` as `wider_tree_dirty` rather than enforced.
+The claim the run can make is therefore the exact one: the code that produced its numbers
+is at a resolved SHA, byte for byte.
+
+**One free check came out of building the query sets.** Block 1's query set holds 22,975
+residue pairs; the structure thread's committed coverage table holds 22,839, with 136 in the
+queries and absent from the table and none the other way. The lists nest, which is what the
+plan's rung-zero cross-check exists to confirm, and the 136 are consistent with that
+thread's own scorable-k-mer filter rather than with the blocks having drifted.
