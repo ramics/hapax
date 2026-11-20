@@ -20,6 +20,13 @@ recommendation with a measured effect size, not as a way to re-use public data. 
 Imo's operating point of 1 false flag per million, no pair rule gets there at any insert
 length (§4.1): the pair buys sensitivity, not orders of magnitude of specificity.
 
+Chasing (4) opened a second half of the report that was not in the plan, and it is the
+half with the more portable findings. §4.4–§4.7: what the still-unmatched reads actually
+are; the absence curve against real UniRef50 indexes up to 1.73 G peptide 10-mers, which
+**has not flattened**; and the discovery that a third of this library is ribosomal RNA
+which a large public protein index scores as *less* novel than everything else, because
+about 63 misannotated public entries match ribosomal reads across the whole tree.
+
 Reproduce with (all five seeds each):
 
 ```
@@ -28,13 +35,19 @@ python3 experiments/mate_separation.py --seed S --contigs data/ww_berlin/spades_
 python3 experiments/peptide_absence.py --seed S --k 10 [--exclude-family F] --genomes …
 python3 experiments/novelty_blocks.py  --seed S --accession A --exclude-family F
 python3 experiments/mate_rho.py        --seed S --r1 … --r2 … --ref … --faa … --pairs 40000
+python3 experiments/subsample_uniref.py --every 10 100        # streams, never stores
+python3 experiments/absence_residual.py --seed S
+python3 experiments/rrna_contigs.py                           # labels the assembly
+python3 experiments/absence_curve.py   --seed S
+python3 experiments/rrna_match_source.py --seed 1 --rrna-tsv …/rrna_s1.tsv
 ```
 
 Every number is marked **measured** (a script here, 5 seeds unless stated), **prior
 run** (committed elsewhere in this repo), **literature** (cited), or **model**
 (closed-form arithmetic). Data: SRR23973193 (Wyler et al. 2024, Berlin wastewater,
 PRJNA948850/GSE228220) and the authors' own SPAdes contigs for that sample; RefSeq
-viral proteins and Swiss-Prot for the protein index; GenBank reference genomes.
+viral proteins, Swiss-Prot and streamed UniRef50 subsamples for the protein index;
+SILVA 138.1 SSU+LSU NR99 for ribosomal labelling; GenBank reference genomes.
 
 ---
 
@@ -425,37 +438,9 @@ fit, so the largest point here is a tenth of UniRef50 rather than all of it.
 
 ---
 
-## 5. What follows
-
-**The recommendation.** If a library is being designed, target the widest insert the
-chemistry and the flowcell allow (400–550 nt), and do not expect it from a random-primed
-total-RNA kit. The measured payoff is a 7–50% relative rise in the chance a pair
-contains novel sequence, and a fall in the mates' novelty correlation from ~0.98 to
-0.25–0.68, which is what makes two mates two observations rather than one. Do **not**
-try to get this by filtering wide pairs out of existing runs: that costs 1–2 orders of
-magnitude of molecules (§1) to buy a factor of 1.1–1.5.
-
-**What would kill the recommendation.** Three things, none of them tested here:
-
-1. The disjunction's measured gain (§4.1, 1.2–1.7× pair sensitivity from insert 107 to
-   500) failing to survive a real per-read score with a real operating point. §4.1
-   assumes per-read sensitivity 0.5 on a novel read, which nothing here measures.
-2. The protected (less fragmented) fraction of sewage viral RNA turning out not to
-   support 500 nt inserts in practice; §1.1 found no one has measured it.
-3. Clustering bias eating the gain: Illumina's own documentation says long fragments
-   cluster worse, so a library built at median 500 may sequence at median 350.
-
-**Not established here.** No detection method is demonstrated; §3 measures the novelty
-structure a method would exploit, not a method. The novelty track depends on the
-database and on phmmer's sensitivity at E ≤ 1e-3 - a more sensitive search would shrink
-the novel fraction and could lengthen or shorten blocks. Four genomes is four, not a
-survey, and all four are human-associated RNA viruses with annotated CDS. The insert
-distribution is one run from one plant with one kit.
-
-
 ---
 
-## 4.4 What the residue is, once the index stops being the explanation
+### 4.4 What the residue is, once the index stops being the explanation
 
 §4.3 left 23.0% ± 0.4% of background reads with no known peptide 10-mer, and that residue
 is what an absence-based detector would actually flag, so it is worth knowing what it is.
@@ -690,3 +675,54 @@ partly measuring annotation artefacts, and the fix is not a better threshold: it
 subtract rRNA explicitly, with a nucleotide index, before a protein index is consulted at
 all. The cheaper mitigation, if a protein index must carry it, is a blocklist: sixty-three
 entries explain most of it.
+
+---
+
+## 5. What follows
+
+**The recommendation.** If a library is being designed, target the widest insert the
+chemistry and the flowcell allow (400–550 nt), and do not expect it from a random-primed
+total-RNA kit. The measured payoff is a 7–50% relative rise in the chance a pair
+contains novel sequence, and a fall in the mates' novelty correlation from ~0.98 to
+0.25–0.68, which is what makes two mates two observations rather than one. Do **not**
+try to get this by filtering wide pairs out of existing runs: that costs 1–2 orders of
+magnitude of molecules (§1) to buy a factor of 1.1–1.5.
+
+**What would kill the recommendation.** Three things, none of them tested here:
+
+1. The disjunction's measured gain (§4.1, 1.2–1.7× pair sensitivity from insert 107 to
+   500) failing to survive a real per-read score with a real operating point. §4.1
+   assumes per-read sensitivity 0.5 on a novel read, which nothing here measures.
+2. The protected (less fragmented) fraction of sewage viral RNA turning out not to
+   support 500 nt inserts in practice; §1.1 found no one has measured it.
+3. Clustering bias eating the gain: Illumina's own documentation says long fragments
+   cluster worse, so a library built at median 500 may sequence at median 350.
+
+**Not established here.** No detection method is demonstrated; §3 measures the novelty
+structure a method would exploit, not a method. The novelty track depends on the
+database and on phmmer's sensitivity at E ≤ 1e-3 - a more sensitive search would shrink
+the novel fraction and could lengthen or shorten blocks. Four genomes is four, not a
+survey, and all four are human-associated RNA viruses with annotated CDS. The insert
+distribution is one run from one plant with one kit.
+
+**What the later arms add.** §4.6 and §4.7 were run after the above and change two of its
+framings:
+
+4. **Public protein databases are not a dead end, and the curve has not flattened.** A tenth
+   of UniRef50 takes the fully-absent background rate from 0.862 to 0.635, where Swiss-Prot
+   moved it 0.021. Anything stated here about what "unknown" means in this library is a
+   statement at the index size reached, not a limit of the approach - and the biggest step
+   is still the sample's own 8 Maa, which is a fact about deposition rather than novelty.
+5. **A third of this library cannot be scored by a protein index at all, and scoring it
+   anyway measures annotation quality.** rRNA reads are 0.998 absent against real proteins
+   and 0.473 against a tenth of UniRef50, because ~63 misannotated public entries reach
+   ribosomal reads across the whole tree. Any pipeline built on the features in this report
+   should subtract rRNA with a nucleotide index first. This was not in the plan for this
+   thread and is the most portable thing in it.
+
+**The residue, for whoever builds the detector.** Of the 23% that still matches nothing with
+the best index reachable here, 61% is not in the sample's own assembly and its mate agrees -
+material too rare or too divergent to assemble - and 39% maps to abundant contigs outside
+any gene call. The first is where the target lives; it is also where the irreducible false
+positives live, which is §4.4's uncomfortable point and unchanged by anything since.
+
