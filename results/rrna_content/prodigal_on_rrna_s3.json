@@ -1,0 +1,30 @@
+{
+  "seed": 3,
+  "pyrodigal": "3.7.1",
+  "mode": "meta",
+  "reference": "SILVA 138.1 SSURef_NR99 + LSURef_NR99",
+  "real_rrna": {
+    "sequences": 3000,
+    "total_bp": 5129995,
+    "fraction_with_any_call": 0.9333333333333333,
+    "coding_density": 0.16579957680270643,
+    "median_per_sequence_density": 0.13722072096456334,
+    "genes_called": 3970,
+    "amino_acids_called": 283517,
+    "mean_gene_aa": 71.41486146095718
+  },
+  "composition_shuffled_control": {
+    "sequences": 3000,
+    "total_bp": 5129995,
+    "fraction_with_any_call": 0.9153333333333333,
+    "coding_density": 0.1783340919435594,
+    "median_per_sequence_density": 0.14368791128270886,
+    "genes_called": 4016,
+    "amino_acids_called": 304951,
+    "mean_gene_aa": 75.93401394422311
+  },
+  "comparison": {
+    "berlin_assembly_coding_density": 0.92,
+    "note": "0.92 is the other branch's figure over the whole Berlin assembly, quoted for scale only; it was measured elsewhere, not here"
+  }
+}

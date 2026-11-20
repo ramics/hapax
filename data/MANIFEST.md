@@ -97,3 +97,25 @@ NovaSeq 6000, modal read length 107 nt.
 | ribosomal reference | SILVA 138.1 SSURef_NR99 + LSURef_NR99 (arb-silva.de Exports) | 2026-11-20 | 197 MB + 67 MB gzipped, 605,794 sequences; used to label assembly contigs as ribosomal by exact 31-mer containment |
 | sample-self protein index | Prodigal (pyrodigal, meta) over the GSE228220 contigs for this sample | 2026-11-20 | 79,667 proteins / 8.04 Maa, split into `berlin_sample_proteins_{nonrrna,rrnacontigs}.faa` by the SILVA contig label |
 
+## Ribosomal content of the library (experiments/rrna_content.py, rrna_control.py,
+## prodigal_on_rrna.py, rrna_peptide_reach.py)
+
+The SILVA download is the same one the section above records; it serves both threads, which
+label different things with it — contigs there, reads here.
+
+`data/silva/SSURef_NR99.fasta.gz` and `data/silva/LSURef_NR99.fasta.gz`: SILVA release
+138.1 small- and large-subunit ribosomal RNA references, NR99 (clustered at 99% identity),
+downloaded from `ftp.arb-silva.de/release_138_1/Exports/` on 2026-11-20. 197,133,995 and
+67,498,420 bytes; 510,508 and 95,286 sequences; 747,391,099 and 279,545,413 bases. Release
+138.2 is not present at that path and returns 404. Used by
+`experiments/rrna_content.py` to identify ribosomal reads positively rather than by the
+absence of a gene call. The derived index (`data/silva/index_k31.npy`, 15,821,248 canonical
+31-mer codes, 1-in-8 hash subsample) is a cache and is rebuilt by the script if deleted;
+the retained count is far below an eighth of the 1.027 Gbp of positions because ribosomal
+RNA is conserved enough to be highly redundant at k = 31.
+
+`data/berlin/prefix_R{1,2}.fastq`: the first 1,620,000 read pairs of SRR23973193 from the
+same ENA path, 2026-11-20, extending the 400,000-pair prefix above so the five read blocks
+used by `experiments/absence_residual.py` on branch `claude/project-thread-clcuow` are all
+available. The R1 stream closed early twice and was retried until the full line count
+landed; a truncated prefix is detectable because every block is addressed by line offset.

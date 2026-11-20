@@ -1,0 +1,18 @@
+{
+  "script": "experiments/rrna_sampler_check.py",
+  "git_sha": "1b099c8920248098943682977283bed9a67dddb7-dirty",
+  "parameters": {
+    "seed": 1,
+    "subsample_log2": 3,
+    "min_hits": 3,
+    "silva_sequences": 2000,
+    "reads": 20000,
+    "silva": "/home/user/hapax/data/silva/SSURef_NR99.fasta.gz",
+    "fastq": "/home/user/hapax/data/berlin/prefix_R1.fastq",
+    "out": "/home/user/hapax/results/rrna_content"
+  },
+  "wall_seconds": 8.545478814999797,
+  "python": "3.13.18",
+  "numpy": "2.5.3",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}

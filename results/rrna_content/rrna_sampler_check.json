@@ -1,0 +1,21 @@
+{
+  "target_rate": 0.125,
+  "reference": {
+    "distinct_kmers": 1080785,
+    "retained": 135490,
+    "realised_rate": 0.1253625836776047
+  },
+  "reads": {
+    "distinct_kmers": 850134,
+    "retained": 106151,
+    "realised_rate": 0.12486384499384803
+  },
+  "retained_kmers_per_read": {
+    "mean": 9.37785,
+    "median": 9.0,
+    "min": 0,
+    "expected": 9.5
+  },
+  "uncallable_read_fraction": 0.0051,
+  "note": "uncallable reads carry fewer than min_hits retained k-mers, so they can never be called ribosomal whatever the threshold; it is a ceiling on sensitivity, not a tuning parameter"
+}
