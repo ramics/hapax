@@ -192,7 +192,7 @@ def join_observables(contig: str, name: str, joins: list[int], sa: str, sb: str,
 
 
 def score(contigs: Path, ref2: Path, a: str, b: str,
-          spike_reads: list[Path] | None = None) -> dict:
+          spike_reads: list[Path] | None = None, keep: Path | None = None) -> dict:
     """Spike-derived contigs, per-lineage breadth, and mosaicism.
 
     Breadth is computed per lineage from the alignments to that lineage, so two
@@ -200,6 +200,14 @@ def score(contigs: Path, ref2: Path, a: str, b: str,
     here, which is the distinction the whole rung exists to make.
     """
     paf = sh(["minimap2", "-x", "asm20", "-c", "--secondary=no", str(ref2), str(contigs)]).stdout
+    if keep is not None:
+        # The derived columns are one reading of these alignments. Keeping the
+        # alignments themselves makes a better reading a post-hoc derivation
+        # rather than a re-run: per-lineage depth at a join and a base-resolution
+        # join position both come from this PAF and the read PAF below. A few MB
+        # per run against three hours of compute.
+        keep.mkdir(parents=True, exist_ok=True)
+        (keep / "contigs_vs_ref.paf").write_text(paf)
     aligned: dict[str, int] = {}
     qlen: dict[str, int] = {}
     covered = {"a": set(), "b": set()}
@@ -219,6 +227,12 @@ def score(contigs: Path, ref2: Path, a: str, b: str,
         covered[side].update(range(ts, te))
         names[q] = side
     spike = [q for q in aligned if aligned[q] >= 0.8 * qlen[q]]
+    if keep is not None and spike:
+        # the contig sequences too, so a refined join position can be recomputed
+        # later without the assembly, which the caller deletes
+        (keep / "spike.names").write_text("\n".join(spike) + "\n")
+        sh(["seqkit", "grep", "-f", str(keep / "spike.names"),
+            "-o", str(keep / "spike_contigs.fa"), str(contigs)])
     seqs = read_fasta(contigs)
     refs = read_fasta(ref2)
     sa = next(v for k, v in refs.items() if k.startswith(a.split(".")[0]))
@@ -226,11 +240,16 @@ def score(contigs: Path, ref2: Path, a: str, b: str,
     lens = sorted((qlen[q] for q in spike), reverse=True)
     mosaic, switches, join_rows = 0, 0, []
     depths: dict[str, list[int]] = {}
+    read_paf = ""
     if spike_reads:
-        paf = sh(["minimap2", "-x", "sr", "--secondary=no", str(contigs)]
-                 + [str(p) for p in spike_reads]).stdout
-    else:
-        paf = ""
+        read_paf = sh(["minimap2", "-x", "sr", "--secondary=no", str(contigs)]
+                      + [str(p) for p in spike_reads]).stdout
+        if keep is not None:
+            # Read names carry their source accession (ART names reads after the
+            # fasta header), so the per-read lineage assignment is recoverable
+            # from this file alone and is not stored separately.
+            (keep / "spike_reads_vs_contigs.paf").write_text(read_paf)
+    paf = read_paf
     for q in spike:
         if qlen[q] < 2 * WINDOW:
             continue
@@ -352,7 +371,8 @@ def main() -> None:
                     print(f"[{tag} {mode} s{seed}] megahit failed: {e.stderr[-300:]}", flush=True)
                     continue
                 reads = [p for pr in parts for p in pr[:2]] if args.join_observables else None
-                sc = score(asm / "final.contigs.fa", ref2, acc_a, acc_b, reads)
+                keep = (args.out / "joins" / f"{tag}_{mode}_s{seed}") if args.join_observables else None
+                sc = score(asm / "final.contigs.fa", ref2, acc_a, acc_b, reads, keep)
                 cross = {}
                 if args.cross_score and mode in ("a_alone", "b_alone"):
                     # Section 1 scored one lineage against one reference at asm10
