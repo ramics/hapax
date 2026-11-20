@@ -66,8 +66,17 @@ With ~20 true reads available, here is what a per-read false-positive rate costs
 
 A usable method needs roughly **≤1 false flag per million reads**. The best non-zero
 operating point translated search reached was 1,489/M at 0% sensitivity (**prior run**).
-That is the gap, stated in the units that matter, and it is why published
-false-positive rates in percent are four orders of magnitude from relevance.
+
+The gap must be stated carefully, and narrower than this project has been stating it.
+PACIFIC (*Sci Rep* 2021) already reports false positives in this unit: its Table 2 columns
+are headed `FP/1 M reads (Balanced)` and `FP/1 M reads (Unbalanced)`, giving 81.6 and 66.6
+per million for Coronaviridae, 2 and 1 for SARS-CoV-2. So "nobody expresses false positives
+per million reads" is false. What survives checking its full text is that sensitivity
+(Table 1) and false positives (Table 2) come from different experiments at one fixed
+threshold, with no curve from which sensitivity could be read off at a chosen per-million
+rate, and that both FP tables are ART-simulated, with no real-background FP rate computed.
+**Safe claim: no published read-level detector reports sensitivity at a fixed false-positive
+rate per million background reads, measured on real background.** See `PRIOR_ART.md` §1.1.
 
 ### The polarity problem
 
@@ -199,9 +208,9 @@ gets fooled: a quality-collapsed tail is maximally novel to any database.
 | # | Feature | Measures | Verdict |
 |---|---|---|---|
 | B1 | Mate conjunction of any per-read score | FP suppression | **open** — hinges on one unmeasured number |
-| B2 | One-sided anchor (one mate known, one unplaceable) | Novelty adjacent to known | **open** — correct polarity, cheap |
+| B2 | One-sided anchor (one mate known, one unplaceable) | Novelty adjacent to known | **demoted** — occupied since 2010, chimaera-dominated |
 | B3 | Pooled composition across both mates | Doubles observation count | **open**, weak |
-| B4 | Mate overlap / merging (short inserts) | Effective read length | **open** — protocol lever |
+| B4 | Mate overlap / merging (short inserts) | Effective read length | **dead** — no headroom (§3.3) |
 | B5 | Insert-size discordance | Structural variation | **dead** here (needs a reference) |
 | B6 | Cross-mate frame continuity | — | **dead** (frames are unlinked without the insert) |
 | B7 | Mate-pair graph connectivity among unplaceable reads | Grouping | **needs scale** |
@@ -281,10 +290,24 @@ materially lower for absence-based scores (A11/A12), where low-complexity and er
 absence is mate-specific. If that is right, the conjunction is nearly worthless for A1
 and valuable for A12, which is a testable prediction and not a convenient one.
 
+**This has been tried, informally, and the other way won.** The Nucleic Acid Observatory's
+open lab notebook implements both rules on real wastewater across thresholds 15-45 and
+**chooses the disjunction** - pass a pair if *either* mate scores at least 20 - with its
+whole false-positive reduction trajectory computed under that rule. It plots the two mates'
+scores against each other and never computes a correlation. Unpublished, and the most
+likely thing to be raised as prior art against this section.
+
+That sharpens the experiment rather than killing it. If the conjunction's value swings four
+orders of magnitude on `rho_fp`, a group finding the disjunction better on their data is a
+data point about their `rho_fp`, not a refutation. The claim that survives is narrower:
+**the mate-score correlation has never been measured**, taxMaps shows mate concordance
+tracks precision at rho = 0.994 without explaining why, and this model predicts both why
+the disjunction won there and when a conjunction would win instead.
+
 **The measurement is cheap and has not been done.** One translated-search run with mate
 identity retained gives `rho_fp` directly; the existing read-level arm scored reads as an
 unpaired pool and discarded it. Same for an absence-based score once A12 exists. This is
-the single highest value-per-hour experiment in this document.
+the single highest value-per-hour experiment in this document. See `PRIOR_ART.md` §1.3.
 
 ### 3.2 The one-sided anchor
 
@@ -294,13 +317,21 @@ sequence *next to* something identifiable. It has the right polarity, it needs n
 assembly, and it works at exactly one pair. It is how an integrated element, a
 reassortant segment, or a divergent gene beside a conserved one would present.
 
-The catch is that it is also how a chimeric library molecule presents, and chimaera rates
-in amplified wastewater libraries are not small. The discriminating test is whether the
-two mates' placements are *consistent* — same organism, plausible insert — across
-several independent pairs.
-*Killed by:* one-sided-anchor pairs in a spike-free background occurring at a rate that
-swamps the target's, or the rate tracking library chimaera rate (testable by comparing
-amplified and amplification-free libraries).
+**Demoted after the prior-art review.** The mechanism is not new: "one-end-anchored" (OEA)
+pairs are a named primitive since NovelSeq (*Bioinformatics* 2010) and standard in insertion
+discovery, and ViFi (*NAR* 2018) already does the divergence-tolerant version - keep a pair
+if one end maps to human and the other maps to a virus **or scores well against viral-family
+profile HMMs**. Applying it to free-living novel viruses in a metagenome is not published,
+but it is a re-application rather than a new mechanism.
+
+The confound is also worse than I assumed. A dengue/mosquito Nextera study found most, if
+not all, detected host-virus chimaeras were artificial, with unrelated control RNA showing
+about the same rate, via template switching during PCR. No shotgun-specific chimaera rate is
+published; amplicon figures reach **>70% for less abundant species**, and our target is by
+construction the rarest thing in the library. Worse, chimaeras form reproducibly across
+independent amplifications, so replicate agreement will not filter them.
+*Killed by:* the above, largely. If kept, the chimaera rate is the first experiment and not a
+caveat to add later. See `PRIOR_ART.md` §3.
 
 ### 3.3 Merged mates: the protocol lever
 
@@ -322,13 +353,17 @@ reads, which is minutes of work. A library targeting ~180 nt inserts at 2x107 wo
 roughly double effective read length, moving frame identifiability from ~0.53 toward
 ~0.85 and cutting random-sequence stop-free rates several-fold.
 
-Worth stating plainly: **this is a recommendation about how to sequence, not a new
-method**, and it would improve every existing tool's input at the same time. That makes
-it honest advice and a poor claim of novelty. It belongs in a benchmark's
-recommendations section.
-*Killed by:* measured merge rates in real wastewater libraries being low because the
-fragment distribution is too wide to target, or by merged reads showing elevated error at
-the junction that eats the gain. Both are measurable on public data with `bbmerge`.
+**Killed by the prior-art review — drop this mechanism.** Two findings, either sufficient.
+The NAO's own read-length analysis argues on cost-per-informative-base grounds that a
+positive gap beats any overlap and that more overlap is worse, since a 2x150 run on an 80 bp
+fragment yields only 80 bp of unique sequence and short inserts read through into adapters.
+And wastewater RNA at 2x150 **already mostly overlaps**: NAO reports viral read pairs not
+collapsed at 42% (Yang 2020) and 24% (Spurbeck 2023), so roughly 58-76% merge already and
+there is no design headroom to capture. The paragraph above assumed room that does not
+exist. See `PRIOR_ART.md` §1.2.
+
+This also supersedes the insert-size caveat I flagged: the mechanism fails whatever
+SRR23973193's inserts turn out to be, so measuring them is no longer on the path.
 
 ### 3.4 What paired-end does not give
 
@@ -376,11 +411,23 @@ In order, cheapest discriminating experiment first:
 2. **Build A12, six-frame peptide k-mer absence**, and curve it against the 1,489/M floor.
    This is the only single-read feature with the right polarity and divergence tolerance.
    If it cannot beat translated search at a fixed per-million rate, the single-read
-   direction is finished and that is a publishable negative.
-3. **One-sided anchor rate** (§3.2), spike versus spike-free background, amplified versus
-   amplification-free if both exist for the sample.
+   direction is finished and that is a publishable negative. **Build it from existing
+   parts**: the rarity index (*NAR Genom Bioinform* 2024) already publishes a graded
+   per-k-mer absence score over 45,785 genomes and 21,871 proteomes, MetaProFi
+   (*Bioinformatics* 2023) is an amino-acid k-mer Bloom index with a zero false-negative
+   rate, and k_aa = 10 is the specificity floor (k = 7 is shared across phyla for >80% of
+   k-mers). Quantify peptide-k-mer error amplification first - one substitution corrupts
+   every peptide k-mer overlapping its codon, roughly k consecutive, and that is unmeasured
+   in the literature.
+3. **Read the Viromancer / Lyra-Virus OpenReview paper** (NeurIPS 2026 workshop, Sabeti lab)
+   before claiming per-read novelty scoring is unoccupied. It scores individual reads under
+   family-level holdout across six viral realms; whether it has pair aggregation or any
+   calibration is unknown from the abstract.
 4. **LSA as the grouping baseline** (C2) before anything is built on grouping, per the
    prior-art check.
+
+Demoted: the one-sided anchor (§3.2), which needs a chimaera-rate measurement first.
+Dropped: merged mates (§3.3).
 
 Not recommended: anything codon-level at 107 nt (A5, A9, and the codon HMM) until
 effective read length is addressed; A13 before A12.
@@ -397,8 +444,13 @@ effective read length is addressed; A13 before A12.
 - `rho_fp` is a model parameter here, not a measurement. Every statement about the value
   of the mate conjunction is conditional on it, including my own estimate that it differs
   between homology and absence scores.
-- The merged-mate argument (§3.3) assumes merge rates that have not been measured on
-  wastewater libraries, and SRR23973193's own insert distribution is unverified: the
-  ~250 nt figure is the sweep's simulation parameter, not a property of the library.
+- The merged-mate mechanism (§3.3) is withdrawn: the prior-art review found both that
+  wastewater RNA at 2x150 already mostly overlaps and that the one group to analyse insert
+  length argued the opposite. SRR23973193's insert distribution remains unverified but no
+  longer matters, since the mechanism fails either way.
+- `PRIOR_ART.md` records what the review cost us: the per-million claim narrowed (PACIFIC
+  already publishes the unit), the mate conjunction shown to have been tried informally and
+  rejected in favour of the disjunction, and one-sided anchoring found to be a 2010
+  primitive whose confound dominated real signal in the one controlled study.
 - Cross-sample recurrence (C3) is the strongest aggregation idea in the catalogue and
   cannot be tested on the data the project holds.
