@@ -390,10 +390,25 @@ Stated up front because every number here is one-sided.
   full UniRef50 is ~30 GB against ~15 GB of writable disk left after the nucleotide
   indexes, so UniRef50 enters as streamed nested 2% and 10% subsets. The shape of removal
   against index size is measured; the value at 100% is an extrapolation and is labelled as
-  one. A run against full UniRef50 or nr needs roughly 160 GB of disk and is the piece of
-  this curve nobody has; the streaming recipe in `experiments/subsample_uniref.py` already
-  does the hard part, so only the disk is missing. It is not reachable in this
-  environment.
+  one. A run against the far end needs disk this
+  container does not have; the streaming recipe in `experiments/subsample_uniref.py`
+  already does the hard part. Hardware for it has been offered (us-east-1, spot, up to
+  2 TB of EBS, 8 vCPU and about 64 GB of RAM), so the far end is now a decision rather
+  than a wall - see the next point.
+- **Which database the far end should be, and why it is not nr.** Scaling from the built
+  10% subset (1.82 GB of DIAMOND database for 4.12 M records), UniRef50 is ~18 GB,
+  UniRef90 ~56 GB and UniRef100 ~100 GB; a DIAMOND nr database is a few hundred. With the
+  disk ceiling at 2 TB all four fit, so nr is affordable and the question is whether it is
+  worth it. **The plan is UniRef100, not nr, and this is a claim about content rather than
+  about cost:** TrEMBL is translated GenBank/EMBL/DDBJ CDS, so nr's protein content is
+  largely UniProt's, clustered differently; what nr adds over UniRef100 is redundancy,
+  PDB and RefSeq model proteins. That is an argument, not a measurement, so it gets a
+  measurement: the remote NCBI translated pass runs the same sampled reads against the
+  real nr, and if its identity distribution matches UniRef100's on those reads, nr buys
+  nothing here and the cheaper index is the right one. If the distributions differ, nr
+  goes on the disk that is now available. Either way the report will say which, and the
+  binding constraint is no longer disk but RAM at ~64 GB and search time, which section
+  3.8's scaling measurement prices.
 - **The curve has not flattened.** The protein side's absence-versus-index-size curve was
   still buying about 20 points per tenfold step at the largest index reachable (PR #10
   sections 4.6-4.7), so "removal per gigabyte and where it flattens" currently has no
