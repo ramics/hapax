@@ -174,7 +174,9 @@ caught.
   drawing, but not as a clustering: the residue is one continuum, and the deliverable view
   of §8.3 should present it as a density with reference clouds, which is what it is, rather
   than as groups with labels.
-- **The axis worth adding to the per-read report is coverage shape**, not more composition.
+- **The axis worth adding to the per-read report is coverage shape**, not more composition —
+  but with the polarity of §6b attached: these fields describe a read, and they point
+  towards *familiarity*, not novelty.
   `cov_step`, `mate_disagree` and `cov_spread` are cheap (one exact counting pass over this
   library, a few minutes of a single core), carry 0.76–0.78 AUC each, and describe failure
   modes the report has no field for. `cov_step` is a candidate for the junction the
@@ -193,6 +195,62 @@ caught.
   nothing and only the read itself does.
 - **Nothing here moves the two existing walls.** It was not able to, and §7 should not be
   edited.
+
+## 6b. What `cov_step` is, after a prediction of mine failed
+
+The report above offered `cov_step` as a candidate junction detector and guessed that it
+marks a molecule spanning an abundant and a rare region. **That prediction was tested by the
+`subtract the known` thread and it failed.** Joining this experiment's
+`coverage_axes_s1.tsv` to that thread's per-read contig depths
+(`results/cov_step_join/` on `claude/project-thread-eswrkj`): among the 938 residue pairs
+whose two mates map to *different* contigs, `cov_step` against the absolute log2 ratio of
+the two contigs' depths is **+0.011 (CI −0.054 to +0.075)**. Flat. The pooled correlation
+over all 6,834 mapped pairs is +0.160, but `cov_spread` (+0.159) and `mate_disagree`
+(+0.128) are the same size, so that number is the mixture talking rather than the axis.
+
+So what is it? Two more columns from the same exact counting pass answer most of it: the
+longest run of consecutive unwitnessed 31-mers in each mate, and the step recomputed after
+dropping unwitnessed k-mers. For the 4,290 residue pairs of block 1 with `cov_step` ≥ 2:
+
+- **45% have no unwitnessed k-mer at all**, so their step cannot be a gap of any kind;
+- **72% keep a step ≥1 after every unwitnessed k-mer is dropped**, so the step is a change
+  of depth among k-mers that are all present elsewhere;
+- **20.4% carry a zero-run of 25–40 k-mers**, the signature of a single substitution error
+  destroying the k-mers that span it, against 7.1% of residue pairs generally. So errors
+  contribute a real minority and not the bulk.
+
+`cov_step` is therefore mostly a genuine change of depth *within one 107 nt read*, and it is
+not the contig-level abundance boundary I guessed. The remaining explanation was sequence
+shared with other molecules — a segment inside a read having more witnesses than its
+neighbours without the molecule changing — and **the `subtract the known` thread has now
+tested it and it holds** (`results/cov_step_conservation/`, same 22,839 pairs). Counting
+distinct contigs of the sample's own assembly a read aligns to at 30 matching bases,
+`cov_step` correlates +0.577, and it survives the obvious confound: within quartiles of
+`log_cov` it is +0.447, +0.389, +0.392, +0.242, so it is not abundance wearing a hat.
+High-step pairs align to 2.23 distinct contigs on average against 0.65, and 24.1% have a
+real alignment to a *second* contig against 4.1%. The ribosomal version of the hypothesis
+fails: weak SILVA similarity correlates +0.030 pooled and dies inside `log_cov` quartiles,
+so the 388-fold conservation multiplier of `results/rrna_content/` is not the mechanism.
+
+**That settles the polarity, and the polarity is bad news for the field.** A measurement
+that fires on sequence shared between molecules is a *familiarity* field, not a novelty one —
+the same inversion this project has met before, where score tracks database proximity rather
+than newness. `cov_step` still separates residue from subtracted at 0.780 AUC, so it carries
+something; it simply does not carry "this is new". The same holds for `cov_spread` (+0.580)
+and `mate_disagree` (+0.564), whose pooled correlations are the same size, so this is a
+property of the coverage-shape family rather than of `cov_step` alone. Read §6's
+recommendation with that attached: these axes belong in the report as description, and not
+as anything that points towards novelty.
+
+The prediction is kept in this report rather than quietly replaced, because the project's
+record of what it predicted wrongly is the part that makes the rest readable.
+
+**The mechanism check this invites**, proposed by the cascade thread and not yet run: if
+coverage shape measures witnesses, its AUC should *fall* as the subtrahend grows, because a
+bigger index removes the witnessed material first. `coverage_axes_allpairs_s1.tsv.gz` holds
+the five coverage axes for every pair of block 1 with its residue flag, so residue can be
+redefined at any rung of the index-size ladder and joined on read name without re-running
+the counting pass.
 
 ## 7. Limitations
 

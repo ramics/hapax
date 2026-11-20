@@ -117,6 +117,23 @@ fn step(v: &[u32]) -> f64 {
     best
 }
 
+/// Longest run of consecutive k-mers with no witness anywhere else.
+///
+/// One substitution error destroys the (up to) 31 k-mers spanning it, so a zero-run near 31
+/// in an otherwise covered read is the signature of an error rather than of a rare molecule,
+/// which is unwitnessed end to end. This is what separates the two explanations of a
+/// coverage step.
+fn zero_run(v: &[u32]) -> usize {
+    let (mut best, mut cur) = (0usize, 0usize);
+    for &c in v {
+        cur = if c == 0 { cur + 1 } else { 0 };
+        if cur > best {
+            best = cur;
+        }
+    }
+    best
+}
+
 fn main() {
     let a: Vec<String> = std::env::args().collect();
     let (r1, r2) = (&a[1], &a[2]);
@@ -207,7 +224,7 @@ fn main() {
 
     let out = std::io::stdout();
     let mut o = std::io::BufWriter::new(out.lock());
-    writeln!(o, "block\tname\tn1\tn2\tmed1\tmed2\tq10_1\tq90_1\tq10_2\tq90_2\tzero1\tzero2\tstep1\tstep2\tlibrary_pairs").unwrap();
+    writeln!(o, "block\tname\tn1\tn2\tmed1\tmed2\tq10_1\tq90_1\tq10_2\tq90_2\tzero1\tzero2\tstep1\tstep2\tzrun1\tzrun2\tstepnz1\tstepnz2\tlibrary_pairs").unwrap();
     for (b, name, k1, k2) in &q_pairs {
         let mut own: FxHashMap<u64, u32> = FxHashMap::default();
         for k in k1.iter().chain(k2.iter()).flatten() {
@@ -218,11 +235,16 @@ fn main() {
         };
         let (e1, e2) = (ext(k1), ext(k2));
         let z = |e: &Vec<u32>| if e.is_empty() { f64::NAN } else { e.iter().filter(|&&c| c == 0).count() as f64 / e.len() as f64 };
+        // step on the non-zero k-mers only: if the step survives dropping them it is a
+        // real change of depth, and if it collapses it was unwitnessed sequence.
+        let nz1: Vec<u32> = e1.iter().copied().filter(|&c| c > 0).collect();
+        let nz2: Vec<u32> = e2.iter().copied().filter(|&c| c > 0).collect();
         writeln!(
             o,
-            "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{:.4}\t{:.4}\t{:.3}\t{:.3}\t{}",
+            "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{:.4}\t{:.4}\t{:.3}\t{:.3}\t{}\t{}\t{:.3}\t{:.3}\t{}",
             b, name, e1.len(), e2.len(), q(&e1, 0.5), q(&e2, 0.5), q(&e1, 0.1), q(&e1, 0.9),
-            q(&e2, 0.1), q(&e2, 0.9), z(&e1), z(&e2), step(&e1), step(&e2), n
+            q(&e2, 0.1), q(&e2, 0.9), z(&e1), z(&e2), step(&e1), step(&e2),
+            zero_run(&e1), zero_run(&e2), step(&nz1), step(&nz2), n
         )
         .unwrap();
     }

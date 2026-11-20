@@ -27,6 +27,11 @@ def main() -> None:
     ap.add_argument("--work", type=Path, default=ROOT / "data/residue_structure")
     ap.add_argument("--out", type=Path, default=ROOT / "results/residue_structure")
     ap.add_argument("--per-population", type=int, default=3000)
+    ap.add_argument("--all-pairs", action="store_true",
+                    help="write the coverage axes for EVERY pair of the block, not only "
+                         "the residue ones, gzipped. The subtrahend-ladder check needs "
+                         "residue defined at several rungs, and each rung is a different "
+                         "subset of the same block")
     ap.add_argument("--join-table", action="store_true",
                     help="also write every residue pair of this block with its coverage "
                          "axes, keyed by read name, so another experiment can join on it")
@@ -67,6 +72,15 @@ def main() -> None:
             for r in rows:
                 if r["block"] == args.block and r["name"] in names:
                     h.write(r["name"] + "\t"
+                            + "\t".join(f"{r[c]:.4f}" for c in cols) + "\n")
+    if args.all_pairs:
+        import gzip as _gz
+        cols = ["log_cov", "cov_spread", "zero_frac", "mate_disagree", "cov_step"]
+        with _gz.open(args.out / f"coverage_axes_allpairs_s{args.block}.tsv.gz", "wt") as h:
+            h.write("name\tresidue\t" + "\t".join(cols) + "\n")
+            for r in rows:
+                if r["block"] == args.block:
+                    h.write(f"{r['name']}\t{int(r['name'] in names)}\t"
                             + "\t".join(f"{r[c]:.4f}" for c in cols) + "\n")
     (args.out / f"points_manifest_s{args.block}.json").write_text(json.dumps({
         "script": "experiments/residue_structure_points.py",
