@@ -39,3 +39,14 @@ download date when a file is fetched.
 ladder (PAIRS in experiments/codon_assembler/experiments/two_lineage_rung.py), fetched from
 NCBI efetch (nuccore, fasta) on 2026-11-20: PZ227608.1, PZ227621.1, PV491557.1, PZ324370.1,
 MG458312.1, PZ227553.1, PZ227534.1, PZ227561.1, AB009663.2, AB044824.1, NC_001542.1.
+
+## Mate-width thread (experiments/insert_profile.py, mate_separation.py,
+## peptide_absence.py, novelty_blocks.py, mate_rho.py)
+
+| Purpose | Accession / source | Downloaded | Notes |
+|---|---|---|---|
+| Berlin wastewater reads | SRR23973193 (PRJNA948850) via ENA fastq | 2026-11-20 | 8,731,224 pairs; 2x107 before trimming mate 2's 14 nt non-template prefix |
+| the authors' own assembly | GSE228220_Spades_RNA_all.fa.gz (GEO) | 2026-11-20 | sample WW_211013_20-22hmix_S5_L001: 82,947 contigs, 29.8 Mb; subsets >=1 kb (3,530) and >=2 kb (1,416) used as insert-size references |
+| protein index | RefSeq release viral.1.protein.faa.gz + .gpff.gz | 2026-11-20 | 722,823 proteins / 175.8 Maa; the gpff supplies taxonomy for family holdout |
+| protein index (background range) | UniProt Swiss-Prot uniprot_sprot.fasta.gz (current release) | 2026-11-20 | added because 88% of Berlin reads score 1.0 against a viral-only index |
+| annotated genomes | NC_001542.1, NC_001943.1, NC_045512.2, K03455.1, NC_001422.1, NC_000913.3 (efetch gbwithparts) | 2026-11-20 | CDS annotation for the coding and novelty tracks |
