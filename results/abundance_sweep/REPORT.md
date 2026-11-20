@@ -310,16 +310,38 @@ are 81–201 nt. Conserved windows long enough to join reads outright are real �
 two HBV genomes from different hosts share 709 exact 150-mers — but they are not
 what is operating here. One mechanism, isolated 21-mer bridges, at every rung.
 
-**No detectable dependence on divergence.** Pooling the seven rungs gives 10 of
-21 mixtures crossing 1,500 nt, a rate of 0.48 with a Wilson 95% interval of 0.28
-to 0.68. An exact permutation test on the trend statistic Σ kᵢdᵢ, enumerating all
-352,716 arrangements of 10 crossings over 21 runs conditional on the margins,
-gives a two-sided P of 0.159 (one-sided 0.080). So the rung-to-rung differences
-are not distinguishable from a constant rate across 2.0–9.7%. Three seeds a rung
-has little power, so this is "consistent with constant" rather than "constant",
-and a 15-seed run at the two extreme rungs is under way to give the comparison
-real power. But the weaker claim already matters: the apparent dip at 6.5–7.3%
-was not evidence of anything.
+**The binary readout says no dependence on divergence. The continuous one says
+there is.** Pooling the seven rungs gives 10 of 21 mixtures crossing 1,500 nt, a
+rate of 0.48 with a Wilson 95% interval of 0.28 to 0.68. An exact permutation
+test on the trend statistic Σ kᵢdᵢ, enumerating all 352,716 arrangements of 10
+crossings over 21 runs conditional on the margins, gives a two-sided P of 0.159.
+On that evidence the rate looks constant across 2.0–9.7%, and the apparent dip at
+6.5–7.3% is not evidence of anything.
+
+But "did any contig cross 1,500 nt" throws away most of each run. Regressing log
+longest-contig-length on divergence instead (`length_trend.py`) finds a clear
+effect: over 46 mixture runs the slope is −0.0745 per percentage point of
+divergence, 95% interval −0.119 to −0.030, permutation P = 0.0018. The longest
+contig therefore shrinks by about 7% per point, roughly halving between 2% and
+10%. Mass over 1,500 nt declines the same way (−0.74 per point, P = 0.011). The
+42 single-lineage controls are the null anchor — divergence between two lineages
+cannot affect a run containing one of them — and their slope is flat, +0.013
+(−0.019 to +0.045), P = 0.42, so this is not a confound from different genomes
+sitting at different rungs.
+
+Two honest limits. The significant fit leans on the unbalanced rate study, which
+contributes 18 runs at 4.5% and 13 at 7.3%; the balanced seven-rung ladder alone
+gives the same direction and magnitude but does not reach significance (−0.056,
+−0.117 to +0.004, P = 0.066). And the relationship is not clean: mean longest
+contig at 9.7% (1,652 nt) exceeds 6.5% (1,055 nt), so a monotone slope is a
+summary rather than a description.
+
+So the earlier framing in this section was wrong in both directions. Collapse is
+not a window that closes at 4%, and it is not a rate independent of divergence
+either. Length declines steadily with divergence while the probability of
+crossing any particular length threshold stays too noisy to order the rungs — a
+threshold on divergence is still unquotable, but because the outcome is
+continuous and the variance is large, not because divergence does not matter.
 
 **A limit on the lineage caller, not on the mixtures.** Control runs contain a
 single lineage, so a mosaic there is impossible by construction, yet 13 of 42
@@ -333,3 +355,11 @@ rather than as an exact count. And a collapse flag must be trained on the 1,500 
 crossing event or on a label derived from alignment to the known truth, never on
 this caller's mosaic count, with the control runs serving as the caller's measured
 error rate. The crossing rate itself is unaffected: no control ever crossed.
+
+**This is a dependency on the deliverable, not a footnote.** A per-contig collapse
+flag cannot be calibrated more accurately than the labels it is trained against,
+so a caller that invents a mosaic in 31% of runs where one is structurally
+impossible is a ceiling on the flag, not a detail of this section. Replacing it —
+base-resolution lineage assignment from the persisted alignments, scored against
+single-lineage controls as the error rate — is unbudgeted work that comes before
+any flag, and is listed here so it is not discovered later.
