@@ -28,12 +28,14 @@ because a failure here would kill the direction at zero data cost.
 5. **Berlin is measured, not assumed, onto the 0.001 row** (§8): SRR23973193's own quality
    strings give a mean error probability of 0.00089 on R1 and 0.00117 on R2, at a modal
    read length of 107. So point 3 applies to the real data rather than to a hypothetical.
-6. **The mate pair recovers the one-per-million target** (§9). Sequencing errors in two
-   mates are independent events, so requiring both mates to clear the threshold squares
-   the error-induced rate: at Berlin's error rate the budget moves from an impossible
-   T ≥ 26 of 26 on a single read to **T ≥ 16 of 26 on a pair, with 10 k-mers of
-   headroom**. This bounds the error term only; organism-level absence does not square,
-   and measuring it is step two.
+6. **The mate pair relaxes the error term and does NOT rescue the target** (§9). Errors in
+   two mates are independent, so that component squares: on error alone the budget moves
+   from an impossible T ≥ 26 of 26 on a single read to T ≥ 16 of 26 on a pair. **But the
+   error term is not what sets the floor.** PR #10 measured the total mate correlation of
+   false flags on real Berlin pairs at ρ_fp = 0.77–0.98, with a 0.00 shuffled control, and
+   found the both-mates rule at or below break-even. Their reading is the operative one:
+   at one per million, no pair rule gets there. The 16-of-26 figure below is an
+   error-only bound, not an achievable operating point.
 
 ## 2. Synonymous shielding
 
@@ -216,8 +218,12 @@ Threshold needed to hold error-induced false flags at one per million, 26 k-mers
 | 0.01 | not reachable | **T ≥ 26, headroom 0** | 818/M |
 
 At Berlin's measured error rate the budget moves from **impossible on a single read** to
-**T ≥ 16 of 26 on a pair, leaving 10 k-mers of headroom**, with each mate individually
-allowed a rate near 900 per million.
+T ≥ 16 of 26 on a pair, leaving 10 k-mers of headroom, with each mate individually allowed
+a rate near 900 per million.
+
+**Read that as an error-only bound, not an operating point.** See the reconciliation
+immediately below: the organism term, which this calculation excludes, has since been
+measured and it dominates.
 
 **What this does not cover, and it is the whole of step two.** Squaring applies to absence
 caused by error. Absence caused by the organism — an undersequenced known strain, a
@@ -232,3 +238,54 @@ that analysis predicted the mate conjunction would be near-worthless for homolog
 and valuable for absence scores, because error-driven absence is mate-specific. The error
 component of rho_fp for peptide absence is not merely low, it is zero. What remains to
 measure there is the organism-driven component, which is the same quantity step two needs.
+
+
+## 10. Reconciliation with PR #10, which measured the total correlation
+
+§9 was written before `results/mate_width/REPORT.md` (PR #10, the mate-separation thread)
+landed its ρ_fp measurement. That measurement supersedes the practical conclusion here, and
+this section is the agreed joint reading rather than a competing one.
+
+**What they measured.** Six-frame peptide 10-mer absence, best-frame statistic, scored on
+real SRR23973193 pairs with mate identity kept. Every read in that run is background, so
+every flag is a false flag and the correlation between real mates is ρ_fp directly. They
+get **0.85–0.98 across insert bins**, against **0.00** from a shuffled-pairing control. Aware
+that 88.3% of background reads saturate at a score of 1.0 against a viral-only index, they
+repeated it on the pairs where the score has genuine range: **0.770 ± 0.009** with at least
+one mate non-saturated, 0.773 ± 0.006 with both, each against a shuffled control at
+−0.004 ± 0.012. So the correlation is a property of the flags, not of the ceiling. Their
+pair-rule arithmetic puts the both-mates merit at 0.80–1.02, at or below break-even, and
+their headline is that at one false flag per million no pair rule gets there at any insert.
+
+**Why both results are right.** They decompose the same quantity. A false flag's absence
+has an instrument component and an organism component. The instrument component is
+independent between mates — that is §9, and it is exact. The organism component is a
+property of the molecule: both mates come off the same fragment of the same
+under-sequenced organism, so both are equally unknown to the index, and it does not square
+at all. Their measurement is of the **total**, which is what merit depends on, and it says
+the organism component dominates. §9 therefore bounds a term that turns out to be the
+smaller one.
+
+**The correction to this report.** The 16-of-26 pair threshold is an error-only bound. It
+is not an achievable operating point and should not be quoted as one. The honest statement
+is: sequencing error stops being the binding constraint once mates are used, and the
+binding constraint is organism-level absence, which the pair rule does not help with.
+
+**What is still open, and it is their open question too.** The index used was viral-only,
+and no index available in this sandbox covers environmental protein space — which is why
+88.3% of background saturates. Two things follow. The 0.770 subset is conditioned on the
+score being non-saturated, and conditioning on an outcome can bias a correlation in either
+direction, so it is a different estimand from the unconditional one rather than a cleaner
+version of it. And the saturation itself is a property of index coverage, not of the
+feature: against a comprehensive index, background reads from known organisms should match,
+and both the absence rate and its mate correlation could move substantially. PR #10 has a
+Swiss-Prot arm running for exactly this reason and labels the "conjunction is dead" reading
+provisional until it lands. That arm, not a new experiment here, is the next thing that
+moves this question.
+
+**One more of their results lands on this feature directly.** They measured six-frame
+peptide 10-mer absence under a family holdout and found it **saturates**: 94.6% of windows
+fully absent at k = 10. Novel reads being maximally absent is good for detection and bad
+for grading — a plain absence count cannot rank degrees of novelty at the divergence that
+matters. Any design built on this feature has to be a detector with a calibrated threshold,
+not a novelty score, or has to find a statistic with range where the count has none.
