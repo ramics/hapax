@@ -298,6 +298,21 @@ sit in. Both are length artefacts and neither is biology. The equality across po
 the actual readout — survives both, because both populations carry the same asymmetry, but a
 per-mate floor is the honest form and a pooled one invites exactly the misreading.
 
+## 6c. Reproduced, not merely reproducible
+
+The repo rule is that any reported number is reproducible from a committed script plus a
+seed. That is a claim about the design, and it is not the same as having done it. These
+results have been re-run end to end from the committed scripts after the scripts changed to
+record their own content hash: **every reported number came back identical**, with the only
+differences anywhere in the last digits of the gap statistic's bootstrap spreads
+(`ref_log_W` 12.024153186943222 against 12.02415318694322, and similar at the 15th decimal).
+The clustering, the separability, the planted-arm purities and the axis means are unchanged.
+
+Said plainly because it is unusual: this is a demonstrated reproduction rather than a
+reproducible design, and the manifests now carry `git_sha`, an explicit `tree_dirty` flag
+and `script_sha256`, so a later re-run can tell whether it is running the same code rather
+than the same commit.
+
 ## 7. Limitations
 
 - One sample, one city, one preparation, as everything in this repo is.
