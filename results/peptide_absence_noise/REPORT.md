@@ -33,9 +33,14 @@ because a failure here would kill the direction at zero data cost.
    from an impossible T ≥ 26 of 26 on a single read to T ≥ 16 of 26 on a pair. **But the
    error term is not what sets the floor.** PR #10 measured the total mate correlation of
    false flags on real Berlin pairs at ρ_fp = 0.77–0.98, with a 0.00 shuffled control, and
-   found the both-mates rule at or below break-even. Their reading is the operative one:
-   at one per million, no pair rule gets there. The 16-of-26 figure below is an
-   error-only bound, not an achievable operating point.
+   found the both-mates rule at or below break-even. Measured against real Berlin
+   background with a viral + Swiss-Prot index, **§9's own T ≥ 16 threshold is crossed by
+   925,036 pairs per million against a target of 1** (§10). The 16-of-26 figure is an
+   error-only bound and is not an operating point.
+7. **So peptide 10-mer absence does not reach one per million on wastewater, and is not
+   close** (§10). 86% of background reads have no known peptide 10-mer at all: absence
+   there means "wastewater", not "novel virus". This is the ORF-likeness polarity failure
+   one level up — the background has the property we were treating as the signal.
 
 ## 2. Synonymous shielding
 
@@ -271,17 +276,60 @@ is not an achievable operating point and should not be quoted as one. The honest
 is: sequencing error stops being the binding constraint once mates are used, and the
 binding constraint is organism-level absence, which the pair rule does not help with.
 
-**What is still open, and it is their open question too.** The index used was viral-only,
+**The Swiss-Prot arm landed, and it settles it.** PR #10 has since run the same measurement
+against a viral + Swiss-Prot index of 221M peptide 10-mers, 2.5x the viral-only one. I
+re-derived the numbers from their per-pair scores with
+`experiments/absence_threshold_check.py` (5 seeds, 40,000 real Berlin pairs per seed, every
+read background, so every flag false):
+
+| | measured |
+|---|---|
+| background reads fully absent, single read | **86.35%** (88.3% against viral-only) |
+| background pairs with both mates fully absent | 81.33% |
+| mate correlation, unconditional, no subsetting | 0.860 |
+
+And applying §9's own threshold to that background:
+
+| threshold | single read | both mates | if independent | conjunction gain |
+|---|---|---|---|---|
+| T ≥ 16 of 26 (§9's pair threshold) | 938,046/M | **925,036/M** | 879,930/M | 1.05x |
+| T ≥ 21 of 26 | 919,490/M | 891,205/M | 845,462/M | 1.05x |
+| T ≥ 26 of 26 (every k-mer absent) | 862,891/M | 813,300/M | 744,581/M | 1.09x |
+
+**The §9 threshold is exceeded by real background in 925,036 pairs per million against a
+target of 1.** That is not erosion at the margin, it is six orders of magnitude, and the
+conjunction buys a factor of 1.05 rather than the squaring the error term promised. The
+honest verdict is that **peptide 10-mer absence as a thresholded detector on wastewater
+background does not reach one per million, and is not close.**
+
+**The mechanism, and why it is familiar.** 86% of Berlin background reads have no known
+peptide 10-mer at all. Absence does not mean "novel virus" there, it means "wastewater":
+the background is itself largely unknown to protein databases. That is the same polarity
+failure that killed ORF-likeness in `results/readlevel_features/REPORT.md` — the background
+has the property we were treating as the signal — arriving one level up. It also predicts,
+from our side, the transfer problem recorded for Lyra-Virus in
+`results/readlevel_features/VIROMANCER_REVIEW.md`: a clinical respiratory background is
+human plus known pathogens, where "unknown" is informative; an environmental virome is not.
+
+**What remains open is how much of that 86% is index incompleteness.** Expanding the index
+2.5x moved absence by 2 points and the tightest-bin correlation from 0.975 to 0.964, so the
+returns look flat, but two points do not make a curve. A complete index is not feasible in
+this sandbox — UniRef50 is ~2e10 peptide 10-mers, roughly 160 GB of sorted hashes against
+54 GB free, and a usable Bloom filter needs more RAM than the box has. PR #10 is therefore
+building an index-size scaling curve with deterministic UniRef50 subsamples, and the
+extrapolation decides whether any achievable index changes this. My own expectation, stated
+in advance so it can be scored: closing six orders of magnitude needs essentially every
+background read to match, and nothing in the first two points suggests that, so I expect
+the curve to confirm the kill rather than overturn it.
+
+**Previously open, now closed.** The index used was viral-only,
 and no index available in this sandbox covers environmental protein space — which is why
 88.3% of background saturates. Two things follow. The 0.770 subset is conditioned on the
 score being non-saturated, and conditioning on an outcome can bias a correlation in either
 direction, so it is a different estimand from the unconditional one rather than a cleaner
 version of it. And the saturation itself is a property of index coverage, not of the
 feature: against a comprehensive index, background reads from known organisms should match,
-and both the absence rate and its mate correlation could move substantially. PR #10 has a
-Swiss-Prot arm running for exactly this reason and labels the "conjunction is dead" reading
-provisional until it lands. That arm, not a new experiment here, is the next thing that
-moves this question.
+and both the absence rate and its mate correlation could move substantially. That arm has now landed and is reported above.
 
 **One more of their results lands on this feature directly.** They measured six-frame
 peptide 10-mer absence under a family holdout and found it **saturates**: 94.6% of windows
