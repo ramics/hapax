@@ -1,0 +1,16 @@
+{
+  "script": "experiments/absence_threshold_check.py",
+  "git_sha": "28221b9df2c5adfc8514c363e9f0a4782d67261c",
+  "parameters": {
+    "seed": 1,
+    "scores": "/tmp/claude-0/-home-user/a867eaf3-6d43-5b13-b359-2c9d7eee65d8/scratchpad/mr",
+    "k_aa": 10,
+    "kmers_per_read": 26,
+    "thresholds": "16,21,26",
+    "out": "/home/user/hapax/results/peptide_absence_noise"
+  },
+  "wall_seconds": 0.035964414999853034,
+  "python": "3.13.18",
+  "numpy": "2.5.3",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}

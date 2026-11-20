@@ -1,0 +1,4274 @@
+{
+  "parameters": {
+    "seed": 1,
+    "n_seeds": 5,
+    "read_len": 107,
+    "k_aa": 10,
+    "n_reads": 20000,
+    "error_rates": "0.0005,0.001,0.002,0.005,0.01",
+    "indel_rates": "0,1e-5,1e-4,1e-3,0.01,0.05",
+    "budgets": "93478,1489,100,1",
+    "tail_samples": 10000000,
+    "data": "/home/user/hapax/data/peptide_noise",
+    "out": "/home/user/hapax/results/peptide_absence_noise"
+  },
+  "genomes": {
+    "hiv1_hxb2": {
+      "accession": "K03455.1",
+      "n_cds_usable": 6,
+      "total_cds_nt": 8001
+    },
+    "rabies": {
+      "accession": "NC_001542.1",
+      "n_cds_usable": 5,
+      "total_cds_nt": 10860
+    },
+    "astrovirus": {
+      "accession": "NC_001943.1",
+      "n_cds_usable": 1,
+      "total_cds_nt": 2361
+    },
+    "hbv": {
+      "accession": "NC_003977.2",
+      "n_cds_usable": 4,
+      "total_cds_nt": 2337
+    },
+    "lambda": {
+      "accession": "NC_001416.1",
+      "n_cds_usable": 72,
+      "total_cds_nt": 44730
+    },
+    "phix174": {
+      "accession": "NC_001422.1",
+      "n_cds_usable": 7,
+      "total_cds_nt": 3966
+    }
+  },
+  "n_cds": 95,
+  "cds_invariant": {
+    "reads_checked": 2000,
+    "stop_in_true_frame": 0,
+    "passed": true
+  },
+  "aggregate": {
+    "synonymous_fraction": {
+      "mean": 0.226892,
+      "min": 0.226075,
+      "max": 0.228005
+    },
+    "corruption": [
+      {
+        "error_rate": 0.0005,
+        "profile": "flat",
+        "peptide_corrupted_fraction": {
+          "mean": 0.011606923076923077,
+          "min": 0.011167307692307693,
+          "max": 0.012096153846153847
+        },
+        "nucleotide_corrupted_fraction": {
+          "mean": 0.01489423076923077,
+          "min": 0.014453205128205129,
+          "max": 0.015311538461538462
+        },
+        "peptide_minus_nucleotide": {
+          "mean": -0.0032873076923076922,
+          "min": -0.0037480769230769234,
+          "max": -0.003094871794871794
+        },
+        "reads_with_zero_corrupted": {
+          "mean": 0.9599500000000001,
+          "min": 0.95835,
+          "max": 0.9618
+        }
+      },
+      {
+        "error_rate": 0.0005,
+        "profile": "ramped",
+        "peptide_corrupted_fraction": {
+          "mean": 0.011473076923076923,
+          "min": 0.010944230769230769,
+          "max": 0.011948076923076924
+        },
+        "nucleotide_corrupted_fraction": {
+          "mean": 0.015132948717948718,
+          "min": 0.014789743589743592,
+          "max": 0.015434615384615383
+        },
+        "peptide_minus_nucleotide": {
+          "mean": -0.0036598717948717954,
+          "min": -0.003944230769230769,
+          "max": -0.0032852564102564107
+        },
+        "reads_with_zero_corrupted": {
+          "mean": 0.9604099999999999,
+          "min": 0.9589,
+          "max": 0.96265
+        }
+      },
+      {
+        "error_rate": 0.001,
+        "profile": "flat",
+        "peptide_corrupted_fraction": {
+          "mean": 0.023092692307692307,
+          "min": 0.022692307692307692,
+          "max": 0.023746153846153847
+        },
+        "nucleotide_corrupted_fraction": {
+          "mean": 0.02989794871794872,
+          "min": 0.0290974358974359,
+          "max": 0.030487179487179487
+        },
+        "peptide_minus_nucleotide": {
+          "mean": -0.00680525641025641,
+          "min": -0.007317948717948716,
+          "max": -0.006405128205128209
+        },
+        "reads_with_zero_corrupted": {
+          "mean": 0.92193,
+          "min": 0.92075,
+          "max": 0.92335
+        }
+      },
+      {
+        "error_rate": 0.001,
+        "profile": "ramped",
+        "peptide_corrupted_fraction": {
+          "mean": 0.022928076923076923,
+          "min": 0.022180769230769233,
+          "max": 0.023990384615384615
+        },
+        "nucleotide_corrupted_fraction": {
+          "mean": 0.029938589743589743,
+          "min": 0.028962179487179485,
+          "max": 0.030968589743589747
+        },
+        "peptide_minus_nucleotide": {
+          "mean": -0.007010512820512823,
+          "min": -0.0074858974358974414,
+          "max": -0.006781410256410252
+        },
+        "reads_with_zero_corrupted": {
+          "mean": 0.92189,
+          "min": 0.92005,
+          "max": 0.92435
+        }
+      },
+      {
+        "error_rate": 0.002,
+        "profile": "flat",
+        "peptide_corrupted_fraction": {
+          "mean": 0.044837692307692315,
+          "min": 0.04337884615384616,
+          "max": 0.04555576923076923
+        },
+        "nucleotide_corrupted_fraction": {
+          "mean": 0.057848333333333335,
+          "min": 0.05661474358974359,
+          "max": 0.05838205128205128
+        },
+        "peptide_minus_nucleotide": {
+          "mean": -0.013010641025641024,
+          "min": -0.013353846153846154,
+          "max": -0.012687820512820504
+        },
+        "reads_with_zero_corrupted": {
+          "mean": 0.85266,
+          "min": 0.8492,
+          "max": 0.8571
+        }
+      },
+      {
+        "error_rate": 0.002,
+        "profile": "ramped",
+        "peptide_corrupted_fraction": {
+          "mean": 0.044831923076923075,
+          "min": 0.043701923076923076,
+          "max": 0.0451923076923077
+        },
+        "nucleotide_corrupted_fraction": {
+          "mean": 0.05800884615384615,
+          "min": 0.05731730769230769,
+          "max": 0.05876410256410256
+        },
+        "peptide_minus_nucleotide": {
+          "mean": -0.013176923076923076,
+          "min": -0.013737179487179486,
+          "max": -0.012382692307692303
+        },
+        "reads_with_zero_corrupted": {
+          "mean": 0.85071,
+          "min": 0.8483,
+          "max": 0.854
+        }
+      },
+      {
+        "error_rate": 0.005,
+        "profile": "flat",
+        "peptide_corrupted_fraction": {
+          "mean": 0.1090023076923077,
+          "min": 0.10759423076923076,
+          "max": 0.1106576923076923
+        },
+        "nucleotide_corrupted_fraction": {
+          "mean": 0.13940910256410258,
+          "min": 0.13793589743589743,
+          "max": 0.14155576923076924
+        },
+        "peptide_minus_nucleotide": {
+          "mean": -0.030406794871794873,
+          "min": -0.03089807692307693,
+          "max": -0.029398076923076916
+        },
+        "reads_with_zero_corrupted": {
+          "mean": 0.6674100000000001,
+          "min": 0.66255,
+          "max": 0.6724
+        }
+      },
+      {
+        "error_rate": 0.005,
+        "profile": "ramped",
+        "peptide_corrupted_fraction": {
+          "mean": 0.10831576923076924,
+          "min": 0.10570384615384616,
+          "max": 0.10950576923076924
+        },
+        "nucleotide_corrupted_fraction": {
+          "mean": 0.1382524358974359,
+          "min": 0.13619807692307692,
+          "max": 0.1394224358974359
+        },
+        "peptide_minus_nucleotide": {
+          "mean": -0.029936666666666657,
+          "min": -0.030722435897435882,
+          "max": -0.028551923076923058
+        },
+        "reads_with_zero_corrupted": {
+          "mean": 0.6680200000000001,
+          "min": 0.6651,
+          "max": 0.67165
+        }
+      },
+      {
+        "error_rate": 0.01,
+        "profile": "flat",
+        "peptide_corrupted_fraction": {
+          "mean": 0.20746615384615383,
+          "min": 0.20615961538461539,
+          "max": 0.20886346153846153
+        },
+        "nucleotide_corrupted_fraction": {
+          "mean": 0.2603924358974359,
+          "min": 0.25956474358974363,
+          "max": 0.261549358974359
+        },
+        "peptide_minus_nucleotide": {
+          "mean": -0.052926282051282046,
+          "min": -0.054223076923076874,
+          "max": -0.05165512820512816
+        },
+        "reads_with_zero_corrupted": {
+          "mean": 0.44530000000000003,
+          "min": 0.4416,
+          "max": 0.4478
+        }
+      },
+      {
+        "error_rate": 0.01,
+        "profile": "ramped",
+        "peptide_corrupted_fraction": {
+          "mean": 0.2042023076923077,
+          "min": 0.20256923076923078,
+          "max": 0.20564615384615387
+        },
+        "nucleotide_corrupted_fraction": {
+          "mean": 0.2566370512820513,
+          "min": 0.25485769230769234,
+          "max": 0.2578679487179487
+        },
+        "peptide_minus_nucleotide": {
+          "mean": -0.05243474358974359,
+          "min": -0.053620512820512806,
+          "max": -0.05140256410256411
+        },
+        "reads_with_zero_corrupted": {
+          "mean": 0.44469000000000003,
+          "min": 0.4409,
+          "max": 0.4491
+        }
+      }
+    ],
+    "indels": [
+      {
+        "indel_rate": 0.0,
+        "peptide_corrupted_fraction": {
+          "mean": 0.02349576923076923,
+          "min": 0.02293653846153846,
+          "max": 0.024628846153846154
+        },
+        "nucleotide_corrupted_fraction": {
+          "mean": 0.02999923076923077,
+          "min": 0.029280128205128205,
+          "max": 0.03085192307692308
+        }
+      },
+      {
+        "indel_rate": 1e-05,
+        "peptide_corrupted_fraction": {
+          "mean": 0.023151538461538463,
+          "min": 0.022434615384615386,
+          "max": 0.023784615384615387
+        },
+        "nucleotide_corrupted_fraction": {
+          "mean": 0.029858589743589743,
+          "min": 0.028980128205128203,
+          "max": 0.030651923076923077
+        }
+      },
+      {
+        "indel_rate": 0.0001,
+        "peptide_corrupted_fraction": {
+          "mean": 0.029511923076923074,
+          "min": 0.028778846153846155,
+          "max": 0.03022692307692308
+        },
+        "nucleotide_corrupted_fraction": {
+          "mean": 0.03663974358974359,
+          "min": 0.03567435897435898,
+          "max": 0.03749679487179487
+        }
+      },
+      {
+        "indel_rate": 0.001,
+        "peptide_corrupted_fraction": {
+          "mean": 0.08696692307692308,
+          "min": 0.08606346153846153,
+          "max": 0.0885826923076923
+        },
+        "nucleotide_corrupted_fraction": {
+          "mean": 0.09395256410256411,
+          "min": 0.09321602564102564,
+          "max": 0.0955224358974359
+        }
+      },
+      {
+        "indel_rate": 0.01,
+        "peptide_corrupted_fraction": {
+          "mean": 0.4695965384615384,
+          "min": 0.45874423076923077,
+          "max": 0.47613076923076925
+        },
+        "nucleotide_corrupted_fraction": {
+          "mean": 0.4770142307692307,
+          "min": 0.4668467948717948,
+          "max": 0.48328205128205126
+        }
+      },
+      {
+        "indel_rate": 0.05,
+        "peptide_corrupted_fraction": {
+          "mean": 0.9103119230769231,
+          "min": 0.9088634615384615,
+          "max": 0.9122365384615385
+        },
+        "nucleotide_corrupted_fraction": {
+          "mean": 0.9150192307692308,
+          "min": 0.9137858974358974,
+          "max": 0.916751282051282
+        }
+      }
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 1,
+      "synonymous": {
+        "n_substitutions": 200000,
+        "synonymous_fraction": 0.226075,
+        "synonymous_fraction_by_codon_position": {
+          "0": 0.03222006858506039,
+          "1": 0.0021446997420361148,
+          "2": 0.6476741026956863
+        }
+      },
+      "corruption": [
+        {
+          "error_rate": 0.0005,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.05345,
+          "peptide_corrupted_fraction": 0.011823076923076924,
+          "nucleotide_corrupted_fraction": 0.015023076923076922,
+          "peptide_minus_nucleotide": -0.003199999999999998,
+          "peptide_corrupted_count_mean": 0.3074,
+          "reads_with_zero_corrupted": 0.9596,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.0005,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.0514,
+          "peptide_corrupted_fraction": 0.010944230769230769,
+          "nucleotide_corrupted_fraction": 0.014789743589743592,
+          "peptide_minus_nucleotide": -0.003845512820512823,
+          "peptide_corrupted_count_mean": 0.28455,
+          "reads_with_zero_corrupted": 0.96265,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.10905,
+          "peptide_corrupted_fraction": 0.023003846153846156,
+          "nucleotide_corrupted_fraction": 0.03032179487179487,
+          "peptide_minus_nucleotide": -0.007317948717948716,
+          "peptide_corrupted_count_mean": 0.5981,
+          "reads_with_zero_corrupted": 0.92125,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.10865,
+          "peptide_corrupted_fraction": 0.02221153846153846,
+          "nucleotide_corrupted_fraction": 0.0296974358974359,
+          "peptide_minus_nucleotide": -0.0074858974358974414,
+          "peptide_corrupted_count_mean": 0.5775,
+          "reads_with_zero_corrupted": 0.9226,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.20585,
+          "peptide_corrupted_fraction": 0.04337884615384616,
+          "nucleotide_corrupted_fraction": 0.05661474358974359,
+          "peptide_minus_nucleotide": -0.013235897435897433,
+          "peptide_corrupted_count_mean": 1.12785,
+          "reads_with_zero_corrupted": 0.8571,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.2164,
+          "peptide_corrupted_fraction": 0.045151923076923076,
+          "nucleotide_corrupted_fraction": 0.058205769230769235,
+          "peptide_minus_nucleotide": -0.013053846153846159,
+          "peptide_corrupted_count_mean": 1.17395,
+          "reads_with_zero_corrupted": 0.8483,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.52605,
+          "peptide_corrupted_fraction": 0.10759423076923076,
+          "nucleotide_corrupted_fraction": 0.13793589743589743,
+          "peptide_minus_nucleotide": -0.03034166666666667,
+          "peptide_corrupted_count_mean": 2.79745,
+          "reads_with_zero_corrupted": 0.6724,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.52845,
+          "peptide_corrupted_fraction": 0.10887307692307693,
+          "nucleotide_corrupted_fraction": 0.137425,
+          "peptide_minus_nucleotide": -0.028551923076923058,
+          "peptide_corrupted_count_mean": 2.8307,
+          "reads_with_zero_corrupted": 0.66925,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 1.0811,
+          "peptide_corrupted_fraction": 0.20886346153846153,
+          "nucleotide_corrupted_fraction": 0.261549358974359,
+          "peptide_minus_nucleotide": -0.052685897435897466,
+          "peptide_corrupted_count_mean": 5.43045,
+          "reads_with_zero_corrupted": 0.44275,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 1.06975,
+          "peptide_corrupted_fraction": 0.20349615384615385,
+          "nucleotide_corrupted_fraction": 0.25711666666666666,
+          "peptide_minus_nucleotide": -0.053620512820512806,
+          "peptide_corrupted_count_mean": 5.2909,
+          "reads_with_zero_corrupted": 0.4491,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        }
+      ],
+      "indels": [
+        {
+          "indel_rate": 0.0,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.0,
+          "reads_with_an_indel": 0.0,
+          "peptide_corrupted_fraction": 0.0234,
+          "nucleotide_corrupted_fraction": 0.029684615384615386
+        },
+        {
+          "indel_rate": 1e-05,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.001,
+          "reads_with_an_indel": 0.001,
+          "peptide_corrupted_fraction": 0.022434615384615386,
+          "nucleotide_corrupted_fraction": 0.028980128205128203
+        },
+        {
+          "indel_rate": 0.0001,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.0106,
+          "reads_with_an_indel": 0.01055,
+          "peptide_corrupted_fraction": 0.02938269230769231,
+          "nucleotide_corrupted_fraction": 0.03567435897435898
+        },
+        {
+          "indel_rate": 0.001,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.10645,
+          "reads_with_an_indel": 0.1011,
+          "peptide_corrupted_fraction": 0.08661730769230769,
+          "nucleotide_corrupted_fraction": 0.09321602564102564
+        },
+        {
+          "indel_rate": 0.01,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 1.07315,
+          "reads_with_an_indel": 0.6644,
+          "peptide_corrupted_fraction": 0.4723365384615385,
+          "nucleotide_corrupted_fraction": 0.4799153846153846
+        },
+        {
+          "indel_rate": 0.05,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 5.3839,
+          "reads_with_an_indel": 0.99635,
+          "peptide_corrupted_fraction": 0.9122365384615385,
+          "nucleotide_corrupted_fraction": 0.916751282051282
+        }
+      ],
+      "headroom": [
+        {
+          "error_rate": 0.0005,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "100.0": {
+              "min_threshold": 18,
+              "headroom_kmers": 8
+            },
+            "1.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            }
+          }
+        },
+        {
+          "error_rate": 0.0005,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "100.0": {
+              "min_threshold": 17,
+              "headroom_kmers": 9
+            },
+            "1.0": {
+              "min_threshold": 20,
+              "headroom_kmers": 6
+            }
+          }
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 13,
+              "headroom_kmers": 13
+            },
+            "100.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            },
+            "1.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            }
+          }
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 13,
+              "headroom_kmers": 13
+            },
+            "100.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            },
+            "1.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            }
+          }
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 8,
+              "headroom_kmers": 18
+            },
+            "1489.0": {
+              "min_threshold": 18,
+              "headroom_kmers": 8
+            },
+            "100.0": {
+              "min_threshold": 22,
+              "headroom_kmers": 4
+            },
+            "1.0": {
+              "min_threshold": 24,
+              "headroom_kmers": 2
+            }
+          }
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 9,
+              "headroom_kmers": 17
+            },
+            "1489.0": {
+              "min_threshold": 18,
+              "headroom_kmers": 8
+            },
+            "100.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            },
+            "1.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            }
+          }
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "1489.0": {
+              "min_threshold": 22,
+              "headroom_kmers": 4
+            },
+            "100.0": {
+              "min_threshold": 26,
+              "headroom_kmers": 0
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "1489.0": {
+              "min_threshold": 22,
+              "headroom_kmers": 4
+            },
+            "100.0": {
+              "min_threshold": 25,
+              "headroom_kmers": 1
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 15,
+              "headroom_kmers": 11
+            },
+            "1489.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            },
+            "100.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 15,
+              "headroom_kmers": 11
+            },
+            "1489.0": {
+              "min_threshold": 25,
+              "headroom_kmers": 1
+            },
+            "100.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        }
+      ],
+      "tail": {
+        "rows": [
+          {
+            "error_rate": 0.0005,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.011769357692307691,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million": 40583.6,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million": 621.1,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million": 74.9,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million": 0.7999999999999999,
+                "resolved": true
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 1647.0285889599998,
+                "per_read_rate_per_million": 40583.6
+              },
+              "1489.0": {
+                "min_threshold": 2,
+                "headroom_kmers": 24,
+                "achieved_fp_per_million_pairs": 1468.269124,
+                "per_read_rate_per_million": 38318.0
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.38576520999999997,
+                "per_read_rate_per_million": 621.1
+              },
+              "1.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.38576520999999997,
+                "per_read_rate_per_million": 621.1
+              }
+            }
+          },
+          {
+            "error_rate": 0.001,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.023415996153846156,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million": 79568.5,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 14,
+                "headroom_kmers": 12,
+                "achieved_fp_per_million": 1409.4,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 21,
+                "headroom_kmers": 5,
+                "achieved_fp_per_million": 18.6,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million": 0.5,
+                "resolved": true
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 6331.14619225,
+                "per_read_rate_per_million": 79568.5
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 5.97558025,
+                "per_read_rate_per_million": 2444.5
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 5.97558025,
+                "per_read_rate_per_million": 2444.5
+              },
+              "1.0": {
+                "min_threshold": 16,
+                "headroom_kmers": 10,
+                "achieved_fp_per_million_pairs": 0.7707084100000001,
+                "per_read_rate_per_million": 877.9000000000001
+              }
+            }
+          },
+          {
+            "error_rate": 0.002,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.04620818461538462,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 9,
+                "headroom_kmers": 17,
+                "achieved_fp_per_million": 86636.7,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million": 1224.8,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million": 84.8,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 23295.306384000003,
+                "per_read_rate_per_million": 152628.0
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 87.13102336,
+                "per_read_rate_per_million": 9334.4
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 87.13102336,
+                "per_read_rate_per_million": 9334.4
+              },
+              "1.0": {
+                "min_threshold": 20,
+                "headroom_kmers": 6,
+                "achieved_fp_per_million_pairs": 0.51969681,
+                "per_read_rate_per_million": 720.9
+              }
+            }
+          },
+          {
+            "error_rate": 0.005,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.11162253846153847,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million": 50515.5,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million": 1260.4,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million": 87.10000000000001,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 4,
+                "headroom_kmers": 22,
+                "achieved_fp_per_million_pairs": 84775.77610384,
+                "per_read_rate_per_million": 291162.8
+              },
+              "1489.0": {
+                "min_threshold": 13,
+                "headroom_kmers": 13,
+                "achieved_fp_per_million_pairs": 1370.99132361,
+                "per_read_rate_per_million": 37026.9
+              },
+              "100.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 65.59218120999999,
+                "per_read_rate_per_million": 8098.899999999999
+              },
+              "1.0": {
+                "min_threshold": 23,
+                "headroom_kmers": 3,
+                "achieved_fp_per_million_pairs": 0.63584676,
+                "per_read_rate_per_million": 797.4
+              }
+            }
+          },
+          {
+            "error_rate": 0.01,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.21064336153846155,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 15,
+                "headroom_kmers": 11,
+                "achieved_fp_per_million": 88352.79999999999,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million": 815.3000000000001,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              },
+              "1.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 25636.653110249998,
+                "per_read_rate_per_million": 160114.5
+              },
+              "1489.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 1128.9599999999998,
+                "per_read_rate_per_million": 33600.0
+              },
+              "100.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million_pairs": 75.89371689,
+                "per_read_rate_per_million": 8711.699999999999
+              },
+              "1.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million_pairs": 0.66471409,
+                "per_read_rate_per_million": 815.3000000000001
+              }
+            }
+          }
+        ],
+        "validation_against_direct_simulation": [
+          {
+            "error_rate": 0.0005,
+            "direct_mean_fraction": 0.011823076923076924,
+            "sampler_mean_fraction": 0.011769357692307691
+          },
+          {
+            "error_rate": 0.001,
+            "direct_mean_fraction": 0.023003846153846156,
+            "sampler_mean_fraction": 0.023415996153846156
+          },
+          {
+            "error_rate": 0.002,
+            "direct_mean_fraction": 0.04337884615384616,
+            "sampler_mean_fraction": 0.04620818461538462
+          },
+          {
+            "error_rate": 0.005,
+            "direct_mean_fraction": 0.10759423076923076,
+            "sampler_mean_fraction": 0.11162253846153847
+          },
+          {
+            "error_rate": 0.01,
+            "direct_mean_fraction": 0.20886346153846153,
+            "sampler_mean_fraction": 0.21064336153846155
+          }
+        ]
+      }
+    },
+    {
+      "seed": 2,
+      "synonymous": {
+        "n_substitutions": 200000,
+        "synonymous_fraction": 0.227155,
+        "synonymous_fraction_by_codon_position": {
+          "0": 0.03258168014822179,
+          "1": 0.0021825574789966213,
+          "2": 0.6463226367301668
+        }
+      },
+      "corruption": [
+        {
+          "error_rate": 0.0005,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.05615,
+          "peptide_corrupted_fraction": 0.011563461538461538,
+          "nucleotide_corrupted_fraction": 0.015311538461538462,
+          "peptide_minus_nucleotide": -0.0037480769230769234,
+          "peptide_corrupted_count_mean": 0.30065,
+          "reads_with_zero_corrupted": 0.9594,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.0005,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.05525,
+          "peptide_corrupted_fraction": 0.011638461538461538,
+          "nucleotide_corrupted_fraction": 0.015376282051282053,
+          "peptide_minus_nucleotide": -0.0037378205128205146,
+          "peptide_corrupted_count_mean": 0.3026,
+          "reads_with_zero_corrupted": 0.95895,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.10705,
+          "peptide_corrupted_fraction": 0.023151923076923077,
+          "nucleotide_corrupted_fraction": 0.029984615384615387,
+          "peptide_minus_nucleotide": -0.0068326923076923105,
+          "peptide_corrupted_count_mean": 0.60195,
+          "reads_with_zero_corrupted": 0.9231,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.10565,
+          "peptide_corrupted_fraction": 0.022180769230769233,
+          "nucleotide_corrupted_fraction": 0.028962179487179485,
+          "peptide_minus_nucleotide": -0.006781410256410252,
+          "peptide_corrupted_count_mean": 0.5767,
+          "reads_with_zero_corrupted": 0.92435,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.21155,
+          "peptide_corrupted_fraction": 0.045263461538461544,
+          "nucleotide_corrupted_fraction": 0.05821282051282052,
+          "peptide_minus_nucleotide": -0.012949358974358977,
+          "peptide_corrupted_count_mean": 1.17685,
+          "reads_with_zero_corrupted": 0.8534,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.213,
+          "peptide_corrupted_fraction": 0.043701923076923076,
+          "nucleotide_corrupted_fraction": 0.05743910256410256,
+          "peptide_minus_nucleotide": -0.013737179487179486,
+          "peptide_corrupted_count_mean": 1.13625,
+          "reads_with_zero_corrupted": 0.854,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.53855,
+          "peptide_corrupted_fraction": 0.108575,
+          "nucleotide_corrupted_fraction": 0.13916089743589743,
+          "peptide_minus_nucleotide": -0.03058589743589743,
+          "peptide_corrupted_count_mean": 2.82295,
+          "reads_with_zero_corrupted": 0.66675,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.53705,
+          "peptide_corrupted_fraction": 0.10950576923076924,
+          "nucleotide_corrupted_fraction": 0.1391301282051282,
+          "peptide_minus_nucleotide": -0.029624358974358972,
+          "peptide_corrupted_count_mean": 2.84715,
+          "reads_with_zero_corrupted": 0.6651,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 1.07225,
+          "peptide_corrupted_fraction": 0.20674038461538463,
+          "nucleotide_corrupted_fraction": 0.2609634615384615,
+          "peptide_minus_nucleotide": -0.054223076923076874,
+          "peptide_corrupted_count_mean": 5.37525,
+          "reads_with_zero_corrupted": 0.4478,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 1.06685,
+          "peptide_corrupted_fraction": 0.20430192307692308,
+          "nucleotide_corrupted_fraction": 0.2557044871794872,
+          "peptide_minus_nucleotide": -0.05140256410256411,
+          "peptide_corrupted_count_mean": 5.31185,
+          "reads_with_zero_corrupted": 0.4427,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        }
+      ],
+      "indels": [
+        {
+          "indel_rate": 0.0,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.0,
+          "reads_with_an_indel": 0.0,
+          "peptide_corrupted_fraction": 0.023367307692307694,
+          "nucleotide_corrupted_fraction": 0.03075769230769231
+        },
+        {
+          "indel_rate": 1e-05,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.00095,
+          "reads_with_an_indel": 0.00095,
+          "peptide_corrupted_fraction": 0.02271923076923077,
+          "nucleotide_corrupted_fraction": 0.02911025641025641
+        },
+        {
+          "indel_rate": 0.0001,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.00905,
+          "reads_with_an_indel": 0.009,
+          "peptide_corrupted_fraction": 0.028778846153846155,
+          "nucleotide_corrupted_fraction": 0.03594358974358974
+        },
+        {
+          "indel_rate": 0.001,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.11005,
+          "reads_with_an_indel": 0.10465,
+          "peptide_corrupted_fraction": 0.0885826923076923,
+          "nucleotide_corrupted_fraction": 0.0955224358974359
+        },
+        {
+          "indel_rate": 0.01,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 1.07255,
+          "reads_with_an_indel": 0.66005,
+          "peptide_corrupted_fraction": 0.4732384615384615,
+          "nucleotide_corrupted_fraction": 0.4804198717948718
+        },
+        {
+          "indel_rate": 0.05,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 5.33745,
+          "reads_with_an_indel": 0.9967,
+          "peptide_corrupted_fraction": 0.9088634615384615,
+          "nucleotide_corrupted_fraction": 0.9137858974358974
+        }
+      ],
+      "headroom": [
+        {
+          "error_rate": 0.0005,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "100.0": {
+              "min_threshold": 18,
+              "headroom_kmers": 8
+            },
+            "1.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            }
+          }
+        },
+        {
+          "error_rate": 0.0005,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "100.0": {
+              "min_threshold": 18,
+              "headroom_kmers": 8
+            },
+            "1.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            }
+          }
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 15,
+              "headroom_kmers": 11
+            },
+            "100.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            },
+            "1.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            }
+          }
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 13,
+              "headroom_kmers": 13
+            },
+            "100.0": {
+              "min_threshold": 19,
+              "headroom_kmers": 7
+            },
+            "1.0": {
+              "min_threshold": 20,
+              "headroom_kmers": 6
+            }
+          }
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 9,
+              "headroom_kmers": 17
+            },
+            "1489.0": {
+              "min_threshold": 20,
+              "headroom_kmers": 6
+            },
+            "100.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            },
+            "1.0": {
+              "min_threshold": 25,
+              "headroom_kmers": 1
+            }
+          }
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 8,
+              "headroom_kmers": 18
+            },
+            "1489.0": {
+              "min_threshold": 18,
+              "headroom_kmers": 8
+            },
+            "100.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "1489.0": {
+              "min_threshold": 22,
+              "headroom_kmers": 4
+            },
+            "100.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "1489.0": {
+              "min_threshold": 22,
+              "headroom_kmers": 4
+            },
+            "100.0": {
+              "min_threshold": 26,
+              "headroom_kmers": 0
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 15,
+              "headroom_kmers": 11
+            },
+            "1489.0": {
+              "min_threshold": 26,
+              "headroom_kmers": 0
+            },
+            "100.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 15,
+              "headroom_kmers": 11
+            },
+            "1489.0": {
+              "min_threshold": 25,
+              "headroom_kmers": 1
+            },
+            "100.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        }
+      ],
+      "tail": {
+        "rows": [
+          {
+            "error_rate": 0.0005,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.011767511538461539,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million": 40570.4,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million": 644.0,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million": 77.5,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 23,
+                "headroom_kmers": 3,
+                "achieved_fp_per_million": 1.0,
+                "resolved": true
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 1645.95735616,
+                "per_read_rate_per_million": 40570.4
+              },
+              "1489.0": {
+                "min_threshold": 2,
+                "headroom_kmers": 24,
+                "achieved_fp_per_million_pairs": 1467.12746961,
+                "per_read_rate_per_million": 38303.1
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.41473600000000005,
+                "per_read_rate_per_million": 644.0
+              },
+              "1.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.41473600000000005,
+                "per_read_rate_per_million": 644.0
+              }
+            }
+          },
+          {
+            "error_rate": 0.001,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.02335638076923077,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million": 79340.5,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 14,
+                "headroom_kmers": 12,
+                "achieved_fp_per_million": 1415.9,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 21,
+                "headroom_kmers": 5,
+                "achieved_fp_per_million": 17.900000000000002,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million": 0.6,
+                "resolved": true
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 6294.914940249999,
+                "per_read_rate_per_million": 79340.5
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 6.010832889999999,
+                "per_read_rate_per_million": 2451.7
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 6.010832889999999,
+                "per_read_rate_per_million": 2451.7
+              },
+              "1.0": {
+                "min_threshold": 16,
+                "headroom_kmers": 10,
+                "achieved_fp_per_million_pairs": 0.777924,
+                "per_read_rate_per_million": 882.0
+              }
+            }
+          },
+          {
+            "error_rate": 0.002,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.04612092307692308,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 9,
+                "headroom_kmers": 17,
+                "achieved_fp_per_million": 86513.3,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million": 1232.9,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million": 84.2,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 23211.58896225,
+                "per_read_rate_per_million": 152353.5
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 86.68913449,
+                "per_read_rate_per_million": 9310.7
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 86.68913449,
+                "per_read_rate_per_million": 9310.7
+              },
+              "1.0": {
+                "min_threshold": 20,
+                "headroom_kmers": 6,
+                "achieved_fp_per_million_pairs": 0.51883209,
+                "per_read_rate_per_million": 720.3
+              }
+            }
+          },
+          {
+            "error_rate": 0.005,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.11143084615384614,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million": 50418.8,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million": 1227.1999999999998,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million": 82.89999999999999,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 4,
+                "headroom_kmers": 22,
+                "achieved_fp_per_million_pairs": 84468.29633649,
+                "per_read_rate_per_million": 290634.3
+              },
+              "1489.0": {
+                "min_threshold": 13,
+                "headroom_kmers": 13,
+                "achieved_fp_per_million_pairs": 1368.4524547600001,
+                "per_read_rate_per_million": 36992.6
+              },
+              "100.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 64.26427224999999,
+                "per_read_rate_per_million": 8016.499999999999
+              },
+              "1.0": {
+                "min_threshold": 23,
+                "headroom_kmers": 3,
+                "achieved_fp_per_million_pairs": 0.5933620900000001,
+                "per_read_rate_per_million": 770.3000000000001
+              }
+            }
+          },
+          {
+            "error_rate": 0.01,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.21041185384615385,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 15,
+                "headroom_kmers": 11,
+                "achieved_fp_per_million": 88104.5,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million": 807.6999999999999,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              },
+              "1.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 25532.58843664,
+                "per_read_rate_per_million": 159789.19999999998
+              },
+              "1489.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 1119.48460569,
+                "per_read_rate_per_million": 33458.700000000004
+              },
+              "100.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million_pairs": 75.78921249,
+                "per_read_rate_per_million": 8705.7
+              },
+              "1.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million_pairs": 0.65237929,
+                "per_read_rate_per_million": 807.6999999999999
+              }
+            }
+          }
+        ],
+        "validation_against_direct_simulation": [
+          {
+            "error_rate": 0.0005,
+            "direct_mean_fraction": 0.011563461538461538,
+            "sampler_mean_fraction": 0.011767511538461539
+          },
+          {
+            "error_rate": 0.001,
+            "direct_mean_fraction": 0.023151923076923077,
+            "sampler_mean_fraction": 0.02335638076923077
+          },
+          {
+            "error_rate": 0.002,
+            "direct_mean_fraction": 0.045263461538461544,
+            "sampler_mean_fraction": 0.04612092307692308
+          },
+          {
+            "error_rate": 0.005,
+            "direct_mean_fraction": 0.108575,
+            "sampler_mean_fraction": 0.11143084615384614
+          },
+          {
+            "error_rate": 0.01,
+            "direct_mean_fraction": 0.20674038461538463,
+            "sampler_mean_fraction": 0.21041185384615385
+          }
+        ]
+      }
+    },
+    {
+      "seed": 3,
+      "synonymous": {
+        "n_substitutions": 200000,
+        "synonymous_fraction": 0.228005,
+        "synonymous_fraction_by_codon_position": {
+          "0": 0.031412029688751834,
+          "1": 0.0021993147713161476,
+          "2": 0.6473256924546322
+        }
+      },
+      "corruption": [
+        {
+          "error_rate": 0.0005,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.0515,
+          "peptide_corrupted_fraction": 0.011167307692307693,
+          "nucleotide_corrupted_fraction": 0.014453205128205129,
+          "peptide_minus_nucleotide": -0.0032858974358974356,
+          "peptide_corrupted_count_mean": 0.29035,
+          "reads_with_zero_corrupted": 0.9618,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.0005,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.05535,
+          "peptide_corrupted_fraction": 0.011323076923076924,
+          "nucleotide_corrupted_fraction": 0.015267307692307693,
+          "peptide_minus_nucleotide": -0.003944230769230769,
+          "peptide_corrupted_count_mean": 0.2944,
+          "reads_with_zero_corrupted": 0.96085,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.108,
+          "peptide_corrupted_fraction": 0.023746153846153847,
+          "nucleotide_corrupted_fraction": 0.030487179487179487,
+          "peptide_minus_nucleotide": -0.00674102564102564,
+          "peptide_corrupted_count_mean": 0.6174,
+          "reads_with_zero_corrupted": 0.92075,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.10795,
+          "peptide_corrupted_fraction": 0.023478846153846156,
+          "nucleotide_corrupted_fraction": 0.030308333333333336,
+          "peptide_minus_nucleotide": -0.006829487179487181,
+          "peptide_corrupted_count_mean": 0.61045,
+          "reads_with_zero_corrupted": 0.9201,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.21355,
+          "peptide_corrupted_fraction": 0.04555576923076923,
+          "nucleotide_corrupted_fraction": 0.05838205128205128,
+          "peptide_minus_nucleotide": -0.01282628205128205,
+          "peptide_corrupted_count_mean": 1.18445,
+          "reads_with_zero_corrupted": 0.8492,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.2122,
+          "peptide_corrupted_fraction": 0.044934615384615385,
+          "nucleotide_corrupted_fraction": 0.05731730769230769,
+          "peptide_minus_nucleotide": -0.012382692307692303,
+          "peptide_corrupted_count_mean": 1.1683,
+          "reads_with_zero_corrupted": 0.8509,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.5361,
+          "peptide_corrupted_fraction": 0.10851153846153848,
+          "nucleotide_corrupted_fraction": 0.13932179487179489,
+          "peptide_minus_nucleotide": -0.030810256410256406,
+          "peptide_corrupted_count_mean": 2.8213,
+          "reads_with_zero_corrupted": 0.6685,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.5258,
+          "peptide_corrupted_fraction": 0.10570384615384616,
+          "nucleotide_corrupted_fraction": 0.13619807692307692,
+          "peptide_minus_nucleotide": -0.03049423076923076,
+          "peptide_corrupted_count_mean": 2.7483,
+          "reads_with_zero_corrupted": 0.67165,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 1.06985,
+          "peptide_corrupted_fraction": 0.2081115384615385,
+          "nucleotide_corrupted_fraction": 0.25976666666666665,
+          "peptide_minus_nucleotide": -0.05165512820512816,
+          "peptide_corrupted_count_mean": 5.4109,
+          "reads_with_zero_corrupted": 0.4416,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 1.0691,
+          "peptide_corrupted_fraction": 0.20564615384615387,
+          "nucleotide_corrupted_fraction": 0.2578679487179487,
+          "peptide_minus_nucleotide": -0.05222179487179485,
+          "peptide_corrupted_count_mean": 5.3468,
+          "reads_with_zero_corrupted": 0.44235,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        }
+      ],
+      "indels": [
+        {
+          "indel_rate": 0.0,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.0,
+          "reads_with_an_indel": 0.0,
+          "peptide_corrupted_fraction": 0.024628846153846154,
+          "nucleotide_corrupted_fraction": 0.03085192307692308
+        },
+        {
+          "indel_rate": 1e-05,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.0008,
+          "reads_with_an_indel": 0.0008,
+          "peptide_corrupted_fraction": 0.023492307692307694,
+          "nucleotide_corrupted_fraction": 0.03021730769230769
+        },
+        {
+          "indel_rate": 0.0001,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.01065,
+          "reads_with_an_indel": 0.01055,
+          "peptide_corrupted_fraction": 0.029651923076923076,
+          "nucleotide_corrupted_fraction": 0.03689615384615384
+        },
+        {
+          "indel_rate": 0.001,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.108,
+          "reads_with_an_indel": 0.102,
+          "peptide_corrupted_fraction": 0.08690192307692308,
+          "nucleotide_corrupted_fraction": 0.09393589743589743
+        },
+        {
+          "indel_rate": 0.01,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 1.0764,
+          "reads_with_an_indel": 0.66305,
+          "peptide_corrupted_fraction": 0.47613076923076925,
+          "nucleotide_corrupted_fraction": 0.48328205128205126
+        },
+        {
+          "indel_rate": 0.05,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 5.3576,
+          "reads_with_an_indel": 0.9954,
+          "peptide_corrupted_fraction": 0.9110519230769231,
+          "nucleotide_corrupted_fraction": 0.915676282051282
+        }
+      ],
+      "headroom": [
+        {
+          "error_rate": 0.0005,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "100.0": {
+              "min_threshold": 17,
+              "headroom_kmers": 9
+            },
+            "1.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            }
+          }
+        },
+        {
+          "error_rate": 0.0005,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "100.0": {
+              "min_threshold": 18,
+              "headroom_kmers": 8
+            },
+            "1.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            }
+          }
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 14,
+              "headroom_kmers": 12
+            },
+            "100.0": {
+              "min_threshold": 20,
+              "headroom_kmers": 6
+            },
+            "1.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            }
+          }
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 12,
+              "headroom_kmers": 14
+            },
+            "100.0": {
+              "min_threshold": 19,
+              "headroom_kmers": 7
+            },
+            "1.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            }
+          }
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 9,
+              "headroom_kmers": 17
+            },
+            "1489.0": {
+              "min_threshold": 20,
+              "headroom_kmers": 6
+            },
+            "100.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            },
+            "1.0": {
+              "min_threshold": 25,
+              "headroom_kmers": 1
+            }
+          }
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 8,
+              "headroom_kmers": 18
+            },
+            "1489.0": {
+              "min_threshold": 19,
+              "headroom_kmers": 7
+            },
+            "100.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            },
+            "1.0": {
+              "min_threshold": 24,
+              "headroom_kmers": 2
+            }
+          }
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "1489.0": {
+              "min_threshold": 22,
+              "headroom_kmers": 4
+            },
+            "100.0": {
+              "min_threshold": 26,
+              "headroom_kmers": 0
+            },
+            "1.0": {
+              "min_threshold": 26,
+              "headroom_kmers": 0
+            }
+          }
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "1489.0": {
+              "min_threshold": 22,
+              "headroom_kmers": 4
+            },
+            "100.0": {
+              "min_threshold": 25,
+              "headroom_kmers": 1
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 15,
+              "headroom_kmers": 11
+            },
+            "1489.0": {
+              "min_threshold": 25,
+              "headroom_kmers": 1
+            },
+            "100.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 15,
+              "headroom_kmers": 11
+            },
+            "1489.0": {
+              "min_threshold": 26,
+              "headroom_kmers": 0
+            },
+            "100.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        }
+      ],
+      "tail": {
+        "rows": [
+          {
+            "error_rate": 0.0005,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.011732903846153846,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million": 40454.0,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million": 618.4,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million": 74.9,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 23,
+                "headroom_kmers": 3,
+                "achieved_fp_per_million": 0.8999999999999999,
+                "resolved": true
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 1636.5261159999998,
+                "per_read_rate_per_million": 40454.0
+              },
+              "1489.0": {
+                "min_threshold": 2,
+                "headroom_kmers": 24,
+                "achieved_fp_per_million_pairs": 1461.31117441,
+                "per_read_rate_per_million": 38227.1
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.38241855999999996,
+                "per_read_rate_per_million": 618.4
+              },
+              "1.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.38241855999999996,
+                "per_read_rate_per_million": 618.4
+              }
+            }
+          },
+          {
+            "error_rate": 0.001,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.023302576923076926,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million": 79184.5,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 14,
+                "headroom_kmers": 12,
+                "achieved_fp_per_million": 1404.1,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 21,
+                "headroom_kmers": 5,
+                "achieved_fp_per_million": 18.8,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million": 0.8999999999999999,
+                "resolved": true
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 6270.18504025,
+                "per_read_rate_per_million": 79184.5
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 5.881595040000001,
+                "per_read_rate_per_million": 2425.2000000000003
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 5.881595040000001,
+                "per_read_rate_per_million": 2425.2000000000003
+              },
+              "1.0": {
+                "min_threshold": 16,
+                "headroom_kmers": 10,
+                "achieved_fp_per_million_pairs": 0.75951225,
+                "per_read_rate_per_million": 871.5
+              }
+            }
+          },
+          {
+            "error_rate": 0.002,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.04606952692307693,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 9,
+                "headroom_kmers": 17,
+                "achieved_fp_per_million": 86461.3,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million": 1237.3,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million": 95.1,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 23140.281432490003,
+                "per_read_rate_per_million": 152119.30000000002
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 86.66679025,
+                "per_read_rate_per_million": 9309.5
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 86.66679025,
+                "per_read_rate_per_million": 9309.5
+              },
+              "1.0": {
+                "min_threshold": 20,
+                "headroom_kmers": 6,
+                "achieved_fp_per_million_pairs": 0.515524,
+                "per_read_rate_per_million": 718.0
+              }
+            }
+          },
+          {
+            "error_rate": 0.005,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.1111810923076923,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million": 50164.2,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million": 1233.8,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million": 79.6,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 4,
+                "headroom_kmers": 22,
+                "achieved_fp_per_million_pairs": 84174.19835841001,
+                "per_read_rate_per_million": 290127.89999999997
+              },
+              "1489.0": {
+                "min_threshold": 13,
+                "headroom_kmers": 13,
+                "achieved_fp_per_million_pairs": 1353.3127987599999,
+                "per_read_rate_per_million": 36787.4
+              },
+              "100.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 64.48411203999999,
+                "per_read_rate_per_million": 8030.2
+              },
+              "1.0": {
+                "min_threshold": 23,
+                "headroom_kmers": 3,
+                "achieved_fp_per_million_pairs": 0.591361,
+                "per_read_rate_per_million": 769.0
+              }
+            }
+          },
+          {
+            "error_rate": 0.01,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.2101842576923077,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 15,
+                "headroom_kmers": 11,
+                "achieved_fp_per_million": 87906.5,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million": 811.3000000000001,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              },
+              "1.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 25431.191206559997,
+                "per_read_rate_per_million": 159471.59999999998
+              },
+              "1489.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 1113.08309641,
+                "per_read_rate_per_million": 33362.9
+              },
+              "100.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million_pairs": 75.00426024999999,
+                "per_read_rate_per_million": 8660.5
+              },
+              "1.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million_pairs": 0.65820769,
+                "per_read_rate_per_million": 811.3000000000001
+              }
+            }
+          }
+        ],
+        "validation_against_direct_simulation": [
+          {
+            "error_rate": 0.0005,
+            "direct_mean_fraction": 0.011167307692307693,
+            "sampler_mean_fraction": 0.011732903846153846
+          },
+          {
+            "error_rate": 0.001,
+            "direct_mean_fraction": 0.023746153846153847,
+            "sampler_mean_fraction": 0.023302576923076926
+          },
+          {
+            "error_rate": 0.002,
+            "direct_mean_fraction": 0.04555576923076923,
+            "sampler_mean_fraction": 0.04606952692307693
+          },
+          {
+            "error_rate": 0.005,
+            "direct_mean_fraction": 0.10851153846153848,
+            "sampler_mean_fraction": 0.1111810923076923
+          },
+          {
+            "error_rate": 0.01,
+            "direct_mean_fraction": 0.2081115384615385,
+            "sampler_mean_fraction": 0.2101842576923077
+          }
+        ]
+      }
+    },
+    {
+      "seed": 4,
+      "synonymous": {
+        "n_substitutions": 200000,
+        "synonymous_fraction": 0.226415,
+        "synonymous_fraction_by_codon_position": {
+          "0": 0.03218845531379248,
+          "1": 0.00199000508723105,
+          "2": 0.6472890387452208
+        }
+      },
+      "corruption": [
+        {
+          "error_rate": 0.0005,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.0552,
+          "peptide_corrupted_fraction": 0.012096153846153847,
+          "nucleotide_corrupted_fraction": 0.015203846153846155,
+          "peptide_minus_nucleotide": -0.003107692307692308,
+          "peptide_corrupted_count_mean": 0.3145,
+          "reads_with_zero_corrupted": 0.95835,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.0005,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.0554,
+          "peptide_corrupted_fraction": 0.011948076923076924,
+          "nucleotide_corrupted_fraction": 0.015434615384615383,
+          "peptide_minus_nucleotide": -0.0034865384615384593,
+          "peptide_corrupted_count_mean": 0.31065,
+          "reads_with_zero_corrupted": 0.9589,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.10565,
+          "peptide_corrupted_fraction": 0.022692307692307692,
+          "nucleotide_corrupted_fraction": 0.0290974358974359,
+          "peptide_minus_nucleotide": -0.006405128205128209,
+          "peptide_corrupted_count_mean": 0.59,
+          "reads_with_zero_corrupted": 0.92335,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.1105,
+          "peptide_corrupted_fraction": 0.023990384615384615,
+          "nucleotide_corrupted_fraction": 0.030968589743589747,
+          "peptide_minus_nucleotide": -0.006978205128205132,
+          "peptide_corrupted_count_mean": 0.62375,
+          "reads_with_zero_corrupted": 0.92005,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.21175,
+          "peptide_corrupted_fraction": 0.04501923076923078,
+          "nucleotide_corrupted_fraction": 0.05770705128205128,
+          "peptide_minus_nucleotide": -0.012687820512820504,
+          "peptide_corrupted_count_mean": 1.1705,
+          "reads_with_zero_corrupted": 0.8512,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.2171,
+          "peptide_corrupted_fraction": 0.04517884615384615,
+          "nucleotide_corrupted_fraction": 0.05876410256410256,
+          "peptide_minus_nucleotide": -0.013585256410256409,
+          "peptide_corrupted_count_mean": 1.17465,
+          "reads_with_zero_corrupted": 0.85015,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.5377,
+          "peptide_corrupted_fraction": 0.10967307692307693,
+          "nucleotide_corrupted_fraction": 0.13907115384615384,
+          "peptide_minus_nucleotide": -0.029398076923076916,
+          "peptide_corrupted_count_mean": 2.8515,
+          "reads_with_zero_corrupted": 0.66685,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.53745,
+          "peptide_corrupted_fraction": 0.10879615384615386,
+          "nucleotide_corrupted_fraction": 0.13908653846153848,
+          "peptide_minus_nucleotide": -0.030290384615384622,
+          "peptide_corrupted_count_mean": 2.8287,
+          "reads_with_zero_corrupted": 0.66775,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 1.06745,
+          "peptide_corrupted_fraction": 0.20745576923076925,
+          "nucleotide_corrupted_fraction": 0.26011794871794874,
+          "peptide_minus_nucleotide": -0.052662179487179495,
+          "peptide_corrupted_count_mean": 5.39385,
+          "reads_with_zero_corrupted": 0.44685,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 1.0772,
+          "peptide_corrupted_fraction": 0.2049980769230769,
+          "nucleotide_corrupted_fraction": 0.25763846153846154,
+          "peptide_minus_nucleotide": -0.052640384615384644,
+          "peptide_corrupted_count_mean": 5.32995,
+          "reads_with_zero_corrupted": 0.4409,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        }
+      ],
+      "indels": [
+        {
+          "indel_rate": 0.0,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.0,
+          "reads_with_an_indel": 0.0,
+          "peptide_corrupted_fraction": 0.02293653846153846,
+          "nucleotide_corrupted_fraction": 0.029280128205128205
+        },
+        {
+          "indel_rate": 1e-05,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.0009,
+          "reads_with_an_indel": 0.0009,
+          "peptide_corrupted_fraction": 0.023784615384615387,
+          "nucleotide_corrupted_fraction": 0.030651923076923077
+        },
+        {
+          "indel_rate": 0.0001,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.01135,
+          "reads_with_an_indel": 0.0113,
+          "peptide_corrupted_fraction": 0.03022692307692308,
+          "nucleotide_corrupted_fraction": 0.03749679487179487
+        },
+        {
+          "indel_rate": 0.001,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.10685,
+          "reads_with_an_indel": 0.1017,
+          "peptide_corrupted_fraction": 0.08606346153846153,
+          "nucleotide_corrupted_fraction": 0.09365641025641025
+        },
+        {
+          "indel_rate": 0.01,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 1.0526,
+          "reads_with_an_indel": 0.64965,
+          "peptide_corrupted_fraction": 0.45874423076923077,
+          "nucleotide_corrupted_fraction": 0.4668467948717948
+        },
+        {
+          "indel_rate": 0.05,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 5.3611,
+          "reads_with_an_indel": 0.9957,
+          "peptide_corrupted_fraction": 0.9091807692307692,
+          "nucleotide_corrupted_fraction": 0.9140012820512821
+        }
+      ],
+      "headroom": [
+        {
+          "error_rate": 0.0005,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "100.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            },
+            "1.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            }
+          }
+        },
+        {
+          "error_rate": 0.0005,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "100.0": {
+              "min_threshold": 19,
+              "headroom_kmers": 7
+            },
+            "1.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            }
+          }
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 14,
+              "headroom_kmers": 12
+            },
+            "100.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            },
+            "1.0": {
+              "min_threshold": 26,
+              "headroom_kmers": 0
+            }
+          }
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 16,
+              "headroom_kmers": 10
+            },
+            "100.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            },
+            "1.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            }
+          }
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 8,
+              "headroom_kmers": 18
+            },
+            "1489.0": {
+              "min_threshold": 19,
+              "headroom_kmers": 7
+            },
+            "100.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 8,
+              "headroom_kmers": 18
+            },
+            "1489.0": {
+              "min_threshold": 18,
+              "headroom_kmers": 8
+            },
+            "100.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            },
+            "1.0": {
+              "min_threshold": 23,
+              "headroom_kmers": 3
+            }
+          }
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "1489.0": {
+              "min_threshold": 22,
+              "headroom_kmers": 4
+            },
+            "100.0": {
+              "min_threshold": 25,
+              "headroom_kmers": 1
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "1489.0": {
+              "min_threshold": 22,
+              "headroom_kmers": 4
+            },
+            "100.0": {
+              "min_threshold": 26,
+              "headroom_kmers": 0
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 15,
+              "headroom_kmers": 11
+            },
+            "1489.0": {
+              "min_threshold": 26,
+              "headroom_kmers": 0
+            },
+            "100.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 15,
+              "headroom_kmers": 11
+            },
+            "1489.0": {
+              "min_threshold": 25,
+              "headroom_kmers": 1
+            },
+            "100.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        }
+      ],
+      "tail": {
+        "rows": [
+          {
+            "error_rate": 0.0005,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.011753515384615384,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million": 40496.0,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million": 644.7,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million": 72.60000000000001,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 24,
+                "headroom_kmers": 2,
+                "achieved_fp_per_million": 0.5,
+                "resolved": true
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 1639.926016,
+                "per_read_rate_per_million": 40496.0
+              },
+              "1489.0": {
+                "min_threshold": 2,
+                "headroom_kmers": 24,
+                "achieved_fp_per_million_pairs": 1460.31743881,
+                "per_read_rate_per_million": 38214.1
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.41563809,
+                "per_read_rate_per_million": 644.7
+              },
+              "1.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.41563809,
+                "per_read_rate_per_million": 644.7
+              }
+            }
+          },
+          {
+            "error_rate": 0.001,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.02335331153846154,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million": 79386.6,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 14,
+                "headroom_kmers": 12,
+                "achieved_fp_per_million": 1417.8999999999999,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 21,
+                "headroom_kmers": 5,
+                "achieved_fp_per_million": 15.2,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million": 0.3,
+                "resolved": true
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 6302.23225956,
+                "per_read_rate_per_million": 79386.6
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 5.964340839999999,
+                "per_read_rate_per_million": 2442.2
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 5.964340839999999,
+                "per_read_rate_per_million": 2442.2
+              },
+              "1.0": {
+                "min_threshold": 16,
+                "headroom_kmers": 10,
+                "achieved_fp_per_million_pairs": 0.76370121,
+                "per_read_rate_per_million": 873.9000000000001
+              }
+            }
+          },
+          {
+            "error_rate": 0.002,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.04619170384615385,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 9,
+                "headroom_kmers": 17,
+                "achieved_fp_per_million": 86600.7,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million": 1224.6,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million": 86.4,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 23277.910041000003,
+                "per_read_rate_per_million": 152571.0
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 87.49170369,
+                "per_read_rate_per_million": 9353.699999999999
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 87.49170369,
+                "per_read_rate_per_million": 9353.699999999999
+              },
+              "1.0": {
+                "min_threshold": 20,
+                "headroom_kmers": 6,
+                "achieved_fp_per_million_pairs": 0.5033902499999999,
+                "per_read_rate_per_million": 709.5
+              }
+            }
+          },
+          {
+            "error_rate": 0.005,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.11152962307692307,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million": 50497.8,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million": 1266.0,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million": 85.3,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 4,
+                "headroom_kmers": 22,
+                "achieved_fp_per_million_pairs": 84597.61993489001,
+                "per_read_rate_per_million": 290856.7
+              },
+              "1489.0": {
+                "min_threshold": 13,
+                "headroom_kmers": 13,
+                "achieved_fp_per_million_pairs": 1368.2305081599998,
+                "per_read_rate_per_million": 36989.6
+              },
+              "100.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 65.63754289,
+                "per_read_rate_per_million": 8101.7
+              },
+              "1.0": {
+                "min_threshold": 23,
+                "headroom_kmers": 3,
+                "achieved_fp_per_million_pairs": 0.6275808399999999,
+                "per_read_rate_per_million": 792.1999999999999
+              }
+            }
+          },
+          {
+            "error_rate": 0.01,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.2105952423076923,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 15,
+                "headroom_kmers": 11,
+                "achieved_fp_per_million": 88258.0,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million": 812.6999999999999,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              },
+              "1.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 25597.632054760004,
+                "per_read_rate_per_million": 159992.6
+              },
+              "1489.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 1122.94020609,
+                "per_read_rate_per_million": 33510.3
+              },
+              "100.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million_pairs": 76.01921721000001,
+                "per_read_rate_per_million": 8718.9
+              },
+              "1.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million_pairs": 0.66048129,
+                "per_read_rate_per_million": 812.6999999999999
+              }
+            }
+          }
+        ],
+        "validation_against_direct_simulation": [
+          {
+            "error_rate": 0.0005,
+            "direct_mean_fraction": 0.012096153846153847,
+            "sampler_mean_fraction": 0.011753515384615384
+          },
+          {
+            "error_rate": 0.001,
+            "direct_mean_fraction": 0.022692307692307692,
+            "sampler_mean_fraction": 0.02335331153846154
+          },
+          {
+            "error_rate": 0.002,
+            "direct_mean_fraction": 0.04501923076923078,
+            "sampler_mean_fraction": 0.04619170384615385
+          },
+          {
+            "error_rate": 0.005,
+            "direct_mean_fraction": 0.10967307692307693,
+            "sampler_mean_fraction": 0.11152962307692307
+          },
+          {
+            "error_rate": 0.01,
+            "direct_mean_fraction": 0.20745576923076925,
+            "sampler_mean_fraction": 0.2105952423076923
+          }
+        ]
+      }
+    },
+    {
+      "seed": 5,
+      "synonymous": {
+        "n_substitutions": 200000,
+        "synonymous_fraction": 0.22681,
+        "synonymous_fraction_by_codon_position": {
+          "0": 0.03211057468152627,
+          "1": 0.0020649717936823834,
+          "2": 0.6461863771332593
+        }
+      },
+      "corruption": [
+        {
+          "error_rate": 0.0005,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.05165,
+          "peptide_corrupted_fraction": 0.011384615384615385,
+          "nucleotide_corrupted_fraction": 0.01447948717948718,
+          "peptide_minus_nucleotide": -0.003094871794871794,
+          "peptide_corrupted_count_mean": 0.296,
+          "reads_with_zero_corrupted": 0.9606,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.0005,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.05305,
+          "peptide_corrupted_fraction": 0.011511538461538462,
+          "nucleotide_corrupted_fraction": 0.014796794871794873,
+          "peptide_minus_nucleotide": -0.0032852564102564107,
+          "peptide_corrupted_count_mean": 0.2993,
+          "reads_with_zero_corrupted": 0.9607,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.10765,
+          "peptide_corrupted_fraction": 0.02286923076923077,
+          "nucleotide_corrupted_fraction": 0.02959871794871795,
+          "peptide_minus_nucleotide": -0.006729487179487181,
+          "peptide_corrupted_count_mean": 0.5946,
+          "reads_with_zero_corrupted": 0.9212,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.10725,
+          "peptide_corrupted_fraction": 0.022778846153846153,
+          "nucleotide_corrupted_fraction": 0.029756410256410258,
+          "peptide_minus_nucleotide": -0.006977564102564105,
+          "peptide_corrupted_count_mean": 0.59225,
+          "reads_with_zero_corrupted": 0.92235,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.21255,
+          "peptide_corrupted_fraction": 0.04497115384615385,
+          "nucleotide_corrupted_fraction": 0.058325,
+          "peptide_minus_nucleotide": -0.013353846153846154,
+          "peptide_corrupted_count_mean": 1.16925,
+          "reads_with_zero_corrupted": 0.8524,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.2136,
+          "peptide_corrupted_fraction": 0.0451923076923077,
+          "nucleotide_corrupted_fraction": 0.058317948717948716,
+          "peptide_minus_nucleotide": -0.013125641025641017,
+          "peptide_corrupted_count_mean": 1.175,
+          "reads_with_zero_corrupted": 0.8502,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.54075,
+          "peptide_corrupted_fraction": 0.1106576923076923,
+          "nucleotide_corrupted_fraction": 0.14155576923076924,
+          "peptide_minus_nucleotide": -0.03089807692307693,
+          "peptide_corrupted_count_mean": 2.8771,
+          "reads_with_zero_corrupted": 0.66255,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 0.5424,
+          "peptide_corrupted_fraction": 0.1087,
+          "nucleotide_corrupted_fraction": 0.1394224358974359,
+          "peptide_minus_nucleotide": -0.030722435897435882,
+          "peptide_corrupted_count_mean": 2.8262,
+          "reads_with_zero_corrupted": 0.66635,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "flat",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 1.0673,
+          "peptide_corrupted_fraction": 0.20615961538461539,
+          "nucleotide_corrupted_fraction": 0.25956474358974363,
+          "peptide_minus_nucleotide": -0.053405128205128244,
+          "peptide_corrupted_count_mean": 5.36015,
+          "reads_with_zero_corrupted": 0.4475,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "ramped",
+          "read_len": 107,
+          "k_aa": 10,
+          "n_reads": 20000,
+          "mean_substitutions_per_read": 1.0646,
+          "peptide_corrupted_fraction": 0.20256923076923078,
+          "nucleotide_corrupted_fraction": 0.25485769230769234,
+          "peptide_minus_nucleotide": -0.05228846153846156,
+          "peptide_corrupted_count_mean": 5.2668,
+          "reads_with_zero_corrupted": 0.4484,
+          "kmers_per_read_mean": 26.0,
+          "kmers_per_read_min": 26
+        }
+      ],
+      "indels": [
+        {
+          "indel_rate": 0.0,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.0,
+          "reads_with_an_indel": 0.0,
+          "peptide_corrupted_fraction": 0.023146153846153848,
+          "nucleotide_corrupted_fraction": 0.029421794871794874
+        },
+        {
+          "indel_rate": 1e-05,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.00135,
+          "reads_with_an_indel": 0.00135,
+          "peptide_corrupted_fraction": 0.02332692307692308,
+          "nucleotide_corrupted_fraction": 0.03033333333333333
+        },
+        {
+          "indel_rate": 0.0001,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.00905,
+          "reads_with_an_indel": 0.00895,
+          "peptide_corrupted_fraction": 0.029519230769230766,
+          "nucleotide_corrupted_fraction": 0.03718782051282051
+        },
+        {
+          "indel_rate": 0.001,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 0.1085,
+          "reads_with_an_indel": 0.10265,
+          "peptide_corrupted_fraction": 0.08666923076923078,
+          "nucleotide_corrupted_fraction": 0.09343205128205129
+        },
+        {
+          "indel_rate": 0.01,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 1.063,
+          "reads_with_an_indel": 0.6553,
+          "peptide_corrupted_fraction": 0.4675326923076923,
+          "nucleotide_corrupted_fraction": 0.4746070512820513
+        },
+        {
+          "indel_rate": 0.05,
+          "sub_rate": 0.001,
+          "n_reads": 20000,
+          "mean_indels_per_read": 5.36445,
+          "reads_with_an_indel": 0.9955,
+          "peptide_corrupted_fraction": 0.9102269230769231,
+          "nucleotide_corrupted_fraction": 0.9148814102564103
+        }
+      ],
+      "headroom": [
+        {
+          "error_rate": 0.0005,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "100.0": {
+              "min_threshold": 19,
+              "headroom_kmers": 7
+            },
+            "1.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            }
+          }
+        },
+        {
+          "error_rate": 0.0005,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "100.0": {
+              "min_threshold": 19,
+              "headroom_kmers": 7
+            },
+            "1.0": {
+              "min_threshold": 19,
+              "headroom_kmers": 7
+            }
+          }
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 14,
+              "headroom_kmers": 12
+            },
+            "100.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            },
+            "1.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            }
+          }
+        },
+        {
+          "error_rate": 0.001,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 1,
+              "headroom_kmers": 25
+            },
+            "1489.0": {
+              "min_threshold": 14,
+              "headroom_kmers": 12
+            },
+            "100.0": {
+              "min_threshold": 20,
+              "headroom_kmers": 6
+            },
+            "1.0": {
+              "min_threshold": 25,
+              "headroom_kmers": 1
+            }
+          }
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 8,
+              "headroom_kmers": 18
+            },
+            "1489.0": {
+              "min_threshold": 18,
+              "headroom_kmers": 8
+            },
+            "100.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            },
+            "1.0": {
+              "min_threshold": 24,
+              "headroom_kmers": 2
+            }
+          }
+        },
+        {
+          "error_rate": 0.002,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 9,
+              "headroom_kmers": 17
+            },
+            "1489.0": {
+              "min_threshold": 18,
+              "headroom_kmers": 8
+            },
+            "100.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            },
+            "1.0": {
+              "min_threshold": 22,
+              "headroom_kmers": 4
+            }
+          }
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "1489.0": {
+              "min_threshold": 22,
+              "headroom_kmers": 4
+            },
+            "100.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        },
+        {
+          "error_rate": 0.005,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 11,
+              "headroom_kmers": 15
+            },
+            "1489.0": {
+              "min_threshold": 21,
+              "headroom_kmers": 5
+            },
+            "100.0": {
+              "min_threshold": 26,
+              "headroom_kmers": 0
+            },
+            "1.0": {
+              "min_threshold": 26,
+              "headroom_kmers": 0
+            }
+          }
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "flat",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 15,
+              "headroom_kmers": 11
+            },
+            "1489.0": {
+              "min_threshold": 26,
+              "headroom_kmers": 0
+            },
+            "100.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        },
+        {
+          "error_rate": 0.01,
+          "profile": "ramped",
+          "kmers_per_read": 26,
+          "thresholds": {
+            "93478.0": {
+              "min_threshold": 15,
+              "headroom_kmers": 11
+            },
+            "1489.0": {
+              "min_threshold": 26,
+              "headroom_kmers": 0
+            },
+            "100.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            },
+            "1.0": {
+              "min_threshold": 27,
+              "headroom_kmers": -1
+            }
+          }
+        }
+      ],
+      "tail": {
+        "rows": [
+          {
+            "error_rate": 0.0005,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.011747288461538462,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million": 40492.5,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million": 625.0999999999999,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million": 74.6,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 23,
+                "headroom_kmers": 3,
+                "achieved_fp_per_million": 0.7,
+                "resolved": true
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 1639.64255625,
+                "per_read_rate_per_million": 40492.5
+              },
+              "1489.0": {
+                "min_threshold": 2,
+                "headroom_kmers": 24,
+                "achieved_fp_per_million_pairs": 1461.10475536,
+                "per_read_rate_per_million": 38224.4
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.39075001,
+                "per_read_rate_per_million": 625.0999999999999
+              },
+              "1.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.39075001,
+                "per_read_rate_per_million": 625.0999999999999
+              }
+            }
+          },
+          {
+            "error_rate": 0.001,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.02335879230769231,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million": 79377.4,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 14,
+                "headroom_kmers": 12,
+                "achieved_fp_per_million": 1415.1000000000001,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 21,
+                "headroom_kmers": 5,
+                "achieved_fp_per_million": 15.7,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million": 0.39999999999999997,
+                "resolved": true
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 6300.77163076,
+                "per_read_rate_per_million": 79377.4
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 5.99172484,
+                "per_read_rate_per_million": 2447.8
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 5.99172484,
+                "per_read_rate_per_million": 2447.8
+              },
+              "1.0": {
+                "min_threshold": 16,
+                "headroom_kmers": 10,
+                "achieved_fp_per_million_pairs": 0.7630022500000001,
+                "per_read_rate_per_million": 873.5
+              }
+            }
+          },
+          {
+            "error_rate": 0.002,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.04621486923076923,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 9,
+                "headroom_kmers": 17,
+                "achieved_fp_per_million": 86754.9,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million": 1225.6000000000001,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million": 93.2,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 23278.581358239997,
+                "per_read_rate_per_million": 152573.19999999998
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 88.20778561,
+                "per_read_rate_per_million": 9391.9
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 88.20778561,
+                "per_read_rate_per_million": 9391.9
+              },
+              "1.0": {
+                "min_threshold": 20,
+                "headroom_kmers": 6,
+                "achieved_fp_per_million_pairs": 0.514089,
+                "per_read_rate_per_million": 717.0
+              }
+            }
+          },
+          {
+            "error_rate": 0.005,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.11145675384615385,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million": 50497.100000000006,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million": 1264.9,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million": 86.60000000000001,
+                "resolved": true
+              },
+              "1.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 4,
+                "headroom_kmers": 22,
+                "achieved_fp_per_million_pairs": 84484.68890625,
+                "per_read_rate_per_million": 290662.5
+              },
+              "1489.0": {
+                "min_threshold": 13,
+                "headroom_kmers": 13,
+                "achieved_fp_per_million_pairs": 1375.0747239999996,
+                "per_read_rate_per_million": 37082.0
+              },
+              "100.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 65.44971800999998,
+                "per_read_rate_per_million": 8090.099999999999
+              },
+              "1.0": {
+                "min_threshold": 23,
+                "headroom_kmers": 3,
+                "achieved_fp_per_million_pairs": 0.63504961,
+                "per_read_rate_per_million": 796.9
+              }
+            }
+          },
+          {
+            "error_rate": 0.01,
+            "kmers_per_read": 26,
+            "n_samples": 10000000,
+            "resolution_per_million": 0.1,
+            "mean_corrupted_fraction": 0.21057314615384615,
+            "thresholds": {
+              "93478.0": {
+                "min_threshold": 15,
+                "headroom_kmers": 11,
+                "achieved_fp_per_million": 88271.8,
+                "resolved": true
+              },
+              "1489.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million": 818.4000000000001,
+                "resolved": true
+              },
+              "100.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              },
+              "1.0": {
+                "min_threshold": 27,
+                "headroom_kmers": -1,
+                "achieved_fp_per_million": 0.0,
+                "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 25607.808595360002,
+                "per_read_rate_per_million": 160024.40000000002
+              },
+              "1489.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 1123.8250522499998,
+                "per_read_rate_per_million": 33523.5
+              },
+              "100.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million_pairs": 76.84801569,
+                "per_read_rate_per_million": 8766.3
+              },
+              "1.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million_pairs": 0.66977856,
+                "per_read_rate_per_million": 818.4000000000001
+              }
+            }
+          }
+        ],
+        "validation_against_direct_simulation": [
+          {
+            "error_rate": 0.0005,
+            "direct_mean_fraction": 0.011384615384615385,
+            "sampler_mean_fraction": 0.011747288461538462
+          },
+          {
+            "error_rate": 0.001,
+            "direct_mean_fraction": 0.02286923076923077,
+            "sampler_mean_fraction": 0.02335879230769231
+          },
+          {
+            "error_rate": 0.002,
+            "direct_mean_fraction": 0.04497115384615385,
+            "sampler_mean_fraction": 0.04621486923076923
+          },
+          {
+            "error_rate": 0.005,
+            "direct_mean_fraction": 0.1106576923076923,
+            "sampler_mean_fraction": 0.11145675384615385
+          },
+          {
+            "error_rate": 0.01,
+            "direct_mean_fraction": 0.20615961538461539,
+            "sampler_mean_fraction": 0.21057314615384615
+          }
+        ]
+      }
+    }
+  ]
+}
