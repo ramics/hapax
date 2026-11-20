@@ -1,0 +1,89 @@
+{
+  "k": 21,
+  "rows": [
+    {
+      "pair": "div02",
+      "a": "PZ227608.1",
+      "b": "PZ227621.1",
+      "divergence": 0.0198,
+      "k": 21,
+      "kmers_smaller": 11846,
+      "shared_kmers": 8602,
+      "shared_fraction": 0.7262,
+      "longest_identical": 407,
+      "expected_if_uniform": 0.6571
+    },
+    {
+      "pair": "div04",
+      "a": "PV491557.1",
+      "b": "PZ324370.1",
+      "divergence": 0.0381,
+      "k": 21,
+      "kmers_smaller": 11769,
+      "shared_kmers": 6569,
+      "shared_fraction": 0.5582,
+      "longest_identical": 388,
+      "expected_if_uniform": 0.442
+    },
+    {
+      "pair": "div045",
+      "a": "MG458312.1",
+      "b": "PZ227553.1",
+      "divergence": 0.045,
+      "k": 21,
+      "kmers_smaller": 11903,
+      "shared_kmers": 4576,
+      "shared_fraction": 0.3844,
+      "longest_identical": 111,
+      "expected_if_uniform": 0.3799
+    },
+    {
+      "pair": "div055",
+      "a": "PZ227534.1",
+      "b": "PZ227561.1",
+      "divergence": 0.055,
+      "k": 21,
+      "kmers_smaller": 11903,
+      "shared_kmers": 3783,
+      "shared_fraction": 0.3178,
+      "longest_identical": 110,
+      "expected_if_uniform": 0.3048
+    },
+    {
+      "pair": "div065",
+      "a": "AB009663.2",
+      "b": "PZ227534.1",
+      "divergence": 0.0652,
+      "k": 21,
+      "kmers_smaller": 11906,
+      "shared_kmers": 2980,
+      "shared_fraction": 0.2503,
+      "longest_identical": 85,
+      "expected_if_uniform": 0.243
+    },
+    {
+      "pair": "div07",
+      "a": "PZ227608.1",
+      "b": "AB044824.1",
+      "divergence": 0.0729,
+      "k": 21,
+      "kmers_smaller": 11902,
+      "shared_kmers": 2369,
+      "shared_fraction": 0.199,
+      "longest_identical": 99,
+      "expected_if_uniform": 0.2042
+    },
+    {
+      "pair": "div10",
+      "a": "NC_001542.1",
+      "b": "AB009663.2",
+      "divergence": 0.0965,
+      "k": 21,
+      "kmers_smaller": 11906,
+      "shared_kmers": 1596,
+      "shared_fraction": 0.1341,
+      "longest_identical": 80,
+      "expected_if_uniform": 0.1186
+    }
+  ]
+}
