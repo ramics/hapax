@@ -1,0 +1,46 @@
+{
+  "script": "experiments/residue_report.py",
+  "git_sha": "5d3a61514d9efa4e88be5944548537abff46f30b",
+  "script_sha256": "fe2295f27b013a41",
+  "parameters": {
+    "seed": 2,
+    "residue": "results/subtract_recut/residue_rows_s2.jsonl",
+    "reads": "/tmp/claude-0/wk/recut/residue_s2.fa",
+    "subtracted_reads": "/tmp/claude-0/wk/recut/subtracted_s2.fa",
+    "dmnd": [
+      "data/prot/viral.dmnd",
+      "data/prot/sprot.dmnd",
+      "data/prot/uniref50_10pct.dmnd"
+    ],
+    "diamond_bin": "/home/user/tools/diamond",
+    "pfam": "/home/user/hapax/data/pfam/Pfam-A.hmm",
+    "chimaera_ref": "/home/user/hapax/data/geo/sample_contigs.fa",
+    "pfam_evalue": 0.001,
+    "diamond_mode": "--sensitive",
+    "skip_fields": false,
+    "max_pairs": 6000,
+    "library_r1": "/home/user/hapax/data/berlin/SRR23973193_1.fastq.gz",
+    "library_r2": "/home/user/hapax/data/berlin/SRR23973193_2.fastq.gz",
+    "library_pairs": 400000,
+    "abundance_bits": 28,
+    "cross_sample_ref": "/home/user/hapax/data/geo/all_contigs_1kb.fa",
+    "cross_min_mlen": 50,
+    "rfam": "/home/user/hapax/data/rfam/Rfam.cm",
+    "cmscan_bin": "/home/user/tools/inf/bin/cmscan",
+    "rfam_evalue": 0.001,
+    "spacers": "/home/user/hapax/data/crispr/all_arrays_spacers.fa",
+    "threads": 4,
+    "work": "/tmp/claude-0/wk/f2",
+    "out": "results/residue_fields"
+  },
+  "wall_seconds": 3273.9189649460022,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39",
+  "cpu_count": 4,
+  "index_bytes": {
+    "data/prot/viral.dmnd": 239074080,
+    "data/prot/sprot.dmnd": 294430316,
+    "data/prot/uniref50_10pct.dmnd": 1823091927,
+    "/home/user/hapax/data/pfam/Pfam-A.hmm": 3647010479
+  }
+}
