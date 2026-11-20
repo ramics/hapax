@@ -1,0 +1,894 @@
+{
+  "seed": 1,
+  "len1": 107,
+  "len2": 93,
+  "min_coding": 60,
+  "n_starts": 20000,
+  "references": {
+    "NC_001943.1": {
+      "label": "Human astrovirus 1 (the Berlin probe's target family)",
+      "length": 6813,
+      "n_cds_spans": 3,
+      "coding_density": 0.9758,
+      "sweep": {
+        "107": {
+          "p_mate1_coding": 0.9895,
+          "p_mate2_coding": 0.987,
+          "p_either_coding": 0.9895,
+          "p_both_coding": 0.987,
+          "phi_codingness": 0.9015
+        },
+        "150": {
+          "p_mate1_coding": 0.993,
+          "p_mate2_coding": 0.9938,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9868,
+          "phi_codingness": -0.0066
+        },
+        "200": {
+          "p_mate1_coding": 0.9941,
+          "p_mate2_coding": 0.9938,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9879,
+          "phi_codingness": -0.0061
+        },
+        "250": {
+          "p_mate1_coding": 0.994,
+          "p_mate2_coding": 0.9929,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9869,
+          "phi_codingness": -0.0065
+        },
+        "300": {
+          "p_mate1_coding": 0.9939,
+          "p_mate2_coding": 0.9921,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.986,
+          "phi_codingness": -0.007
+        },
+        "400": {
+          "p_mate1_coding": 0.9953,
+          "p_mate2_coding": 0.993,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9883,
+          "phi_codingness": -0.0057
+        },
+        "500": {
+          "p_mate1_coding": 0.9943,
+          "p_mate2_coding": 0.9926,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9869,
+          "phi_codingness": -0.0065
+        },
+        "700": {
+          "p_mate1_coding": 0.994,
+          "p_mate2_coding": 0.9925,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9866,
+          "phi_codingness": -0.0067
+        },
+        "1000": {
+          "p_mate1_coding": 0.9929,
+          "p_mate2_coding": 0.9928,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9857,
+          "phi_codingness": -0.0072
+        },
+        "1500": {
+          "p_mate1_coding": 0.9929,
+          "p_mate2_coding": 0.9909,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9838,
+          "phi_codingness": -0.0081
+        },
+        "2000": {
+          "p_mate1_coding": 0.9915,
+          "p_mate2_coding": 0.9909,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9825,
+          "phi_codingness": -0.0088
+        },
+        "3000": {
+          "p_mate1_coding": 0.9895,
+          "p_mate2_coding": 0.9877,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9771,
+          "phi_codingness": -0.0115
+        }
+      }
+    },
+    "NC_001542.1": {
+      "label": "Rabies lyssavirus (the abundance sweep's held-out spike)",
+      "length": 11932,
+      "n_cds_spans": 5,
+      "coding_density": 0.9102,
+      "sweep": {
+        "107": {
+          "p_mate1_coding": 0.9126,
+          "p_mate2_coding": 0.9067,
+          "p_either_coding": 0.9126,
+          "p_both_coding": 0.9067,
+          "phi_codingness": 0.9644
+        },
+        "150": {
+          "p_mate1_coding": 0.9143,
+          "p_mate2_coding": 0.9073,
+          "p_either_coding": 0.9311,
+          "p_both_coding": 0.8905,
+          "phi_codingness": 0.7511
+        },
+        "200": {
+          "p_mate1_coding": 0.9156,
+          "p_mate2_coding": 0.907,
+          "p_either_coding": 0.9492,
+          "p_both_coding": 0.8734,
+          "phi_codingness": 0.5324
+        },
+        "250": {
+          "p_mate1_coding": 0.9133,
+          "p_mate2_coding": 0.9075,
+          "p_either_coding": 0.9578,
+          "p_both_coding": 0.863,
+          "phi_codingness": 0.4189
+        },
+        "300": {
+          "p_mate1_coding": 0.9129,
+          "p_mate2_coding": 0.9064,
+          "p_either_coding": 0.9653,
+          "p_both_coding": 0.854,
+          "phi_codingness": 0.3232
+        },
+        "400": {
+          "p_mate1_coding": 0.9152,
+          "p_mate2_coding": 0.9073,
+          "p_either_coding": 0.9792,
+          "p_both_coding": 0.8433,
+          "phi_codingness": 0.1596
+        },
+        "500": {
+          "p_mate1_coding": 0.9127,
+          "p_mate2_coding": 0.9026,
+          "p_either_coding": 0.9868,
+          "p_both_coding": 0.8286,
+          "phi_codingness": 0.0562
+        },
+        "700": {
+          "p_mate1_coding": 0.9094,
+          "p_mate2_coding": 0.9016,
+          "p_either_coding": 0.9993,
+          "p_both_coding": 0.8117,
+          "phi_codingness": -0.0966
+        },
+        "1000": {
+          "p_mate1_coding": 0.9112,
+          "p_mate2_coding": 0.9023,
+          "p_either_coding": 0.9951,
+          "p_both_coding": 0.8185,
+          "phi_codingness": -0.0447
+        },
+        "1500": {
+          "p_mate1_coding": 0.9042,
+          "p_mate2_coding": 0.9018,
+          "p_either_coding": 0.9982,
+          "p_both_coding": 0.8078,
+          "phi_codingness": -0.0868
+        },
+        "2000": {
+          "p_mate1_coding": 0.8993,
+          "p_mate2_coding": 0.9003,
+          "p_either_coding": 0.975,
+          "p_both_coding": 0.8246,
+          "phi_codingness": 0.166
+        },
+        "3000": {
+          "p_mate1_coding": 0.888,
+          "p_mate2_coding": 0.9089,
+          "p_either_coding": 0.9897,
+          "p_both_coding": 0.8072,
+          "phi_codingness": 0.0016
+        }
+      }
+    },
+    "K03455.1": {
+      "label": "HIV-1 HXB2 (dual-coding stress case)",
+      "length": 9719,
+      "n_cds_spans": 10,
+      "coding_density": 0.8333,
+      "sweep": {
+        "107": {
+          "p_mate1_coding": 0.8434,
+          "p_mate2_coding": 0.8321,
+          "p_either_coding": 0.8434,
+          "p_both_coding": 0.8321,
+          "phi_codingness": 0.9594
+        },
+        "150": {
+          "p_mate1_coding": 0.8442,
+          "p_mate2_coding": 0.8306,
+          "p_either_coding": 0.8568,
+          "p_both_coding": 0.8179,
+          "phi_codingness": 0.8585
+        },
+        "200": {
+          "p_mate1_coding": 0.8533,
+          "p_mate2_coding": 0.8423,
+          "p_either_coding": 0.8806,
+          "p_both_coding": 0.815,
+          "phi_codingness": 0.7468
+        },
+        "250": {
+          "p_mate1_coding": 0.8551,
+          "p_mate2_coding": 0.8434,
+          "p_either_coding": 0.893,
+          "p_both_coding": 0.8055,
+          "phi_codingness": 0.6595
+        },
+        "300": {
+          "p_mate1_coding": 0.8586,
+          "p_mate2_coding": 0.845,
+          "p_either_coding": 0.9056,
+          "p_both_coding": 0.798,
+          "phi_codingness": 0.5744
+        },
+        "400": {
+          "p_mate1_coding": 0.8707,
+          "p_mate2_coding": 0.8569,
+          "p_either_coding": 0.9293,
+          "p_both_coding": 0.7983,
+          "phi_codingness": 0.4444
+        },
+        "500": {
+          "p_mate1_coding": 0.8791,
+          "p_mate2_coding": 0.8704,
+          "p_either_coding": 0.9516,
+          "p_both_coding": 0.798,
+          "phi_codingness": 0.2987
+        },
+        "700": {
+          "p_mate1_coding": 0.8897,
+          "p_mate2_coding": 0.885,
+          "p_either_coding": 0.9831,
+          "p_both_coding": 0.7915,
+          "phi_codingness": 0.0421
+        },
+        "1000": {
+          "p_mate1_coding": 0.8879,
+          "p_mate2_coding": 0.8965,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.7843,
+          "phi_codingness": -0.1208
+        },
+        "1500": {
+          "p_mate1_coding": 0.8796,
+          "p_mate2_coding": 0.8947,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.7743,
+          "phi_codingness": -0.1269
+        },
+        "2000": {
+          "p_mate1_coding": 0.8663,
+          "p_mate2_coding": 0.8862,
+          "p_either_coding": 0.9872,
+          "p_both_coding": 0.7653,
+          "phi_codingness": -0.0223
+        },
+        "3000": {
+          "p_mate1_coding": 0.8492,
+          "p_mate2_coding": 0.8796,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.7288,
+          "phi_codingness": -0.1559
+        }
+      }
+    },
+    "NC_045512.2": {
+      "label": "SARS-CoV-2 (dense, long ORF1ab)",
+      "length": 29903,
+      "n_cds_spans": 13,
+      "coding_density": 0.9785,
+      "sweep": {
+        "107": {
+          "p_mate1_coding": 0.9842,
+          "p_mate2_coding": 0.983,
+          "p_either_coding": 0.9842,
+          "p_both_coding": 0.983,
+          "phi_codingness": 0.9635
+        },
+        "150": {
+          "p_mate1_coding": 0.9846,
+          "p_mate2_coding": 0.9845,
+          "p_either_coding": 0.988,
+          "p_both_coding": 0.9811,
+          "phi_codingness": 0.7732
+        },
+        "200": {
+          "p_mate1_coding": 0.9865,
+          "p_mate2_coding": 0.9862,
+          "p_either_coding": 0.9921,
+          "p_both_coding": 0.9806,
+          "phi_codingness": 0.5719
+        },
+        "250": {
+          "p_mate1_coding": 0.9901,
+          "p_mate2_coding": 0.9893,
+          "p_either_coding": 0.9965,
+          "p_both_coding": 0.9829,
+          "phi_codingness": 0.3341
+        },
+        "300": {
+          "p_mate1_coding": 0.9911,
+          "p_mate2_coding": 0.9908,
+          "p_either_coding": 0.9996,
+          "p_both_coding": 0.9823,
+          "phi_codingness": 0.0411
+        },
+        "400": {
+          "p_mate1_coding": 0.9892,
+          "p_mate2_coding": 0.9901,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9794,
+          "phi_codingness": -0.0104
+        },
+        "500": {
+          "p_mate1_coding": 0.9908,
+          "p_mate2_coding": 0.99,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9808,
+          "phi_codingness": -0.0097
+        },
+        "700": {
+          "p_mate1_coding": 0.99,
+          "p_mate2_coding": 0.992,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.982,
+          "phi_codingness": -0.009
+        },
+        "1000": {
+          "p_mate1_coding": 0.9901,
+          "p_mate2_coding": 0.9907,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9808,
+          "phi_codingness": -0.0097
+        },
+        "1500": {
+          "p_mate1_coding": 0.9901,
+          "p_mate2_coding": 0.9887,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9788,
+          "phi_codingness": -0.0107
+        },
+        "2000": {
+          "p_mate1_coding": 0.9898,
+          "p_mate2_coding": 0.9893,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9791,
+          "phi_codingness": -0.0105
+        },
+        "3000": {
+          "p_mate1_coding": 0.9899,
+          "p_mate2_coding": 0.9899,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9798,
+          "phi_codingness": -0.0102
+        }
+      }
+    },
+    "NC_001422.1": {
+      "label": "phiX174 (overlapping genes, spike-in control)",
+      "length": 5386,
+      "n_cds_spans": 14,
+      "coding_density": 0.9597,
+      "sweep": {
+        "107": {
+          "p_mate1_coding": 0.963,
+          "p_mate2_coding": 0.9469,
+          "p_either_coding": 0.963,
+          "p_both_coding": 0.9469,
+          "phi_codingness": 0.8281
+        },
+        "150": {
+          "p_mate1_coding": 0.9603,
+          "p_mate2_coding": 0.9424,
+          "p_either_coding": 0.9773,
+          "p_both_coding": 0.9254,
+          "phi_codingness": 0.4484
+        },
+        "200": {
+          "p_mate1_coding": 0.9631,
+          "p_mate2_coding": 0.9453,
+          "p_either_coding": 0.995,
+          "p_both_coding": 0.9134,
+          "phi_codingness": 0.0707
+        },
+        "250": {
+          "p_mate1_coding": 0.962,
+          "p_mate2_coding": 0.9435,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9055,
+          "phi_codingness": -0.0486
+        },
+        "300": {
+          "p_mate1_coding": 0.962,
+          "p_mate2_coding": 0.9463,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9083,
+          "phi_codingness": -0.0473
+        },
+        "400": {
+          "p_mate1_coding": 0.9601,
+          "p_mate2_coding": 0.9427,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9029,
+          "phi_codingness": -0.0502
+        },
+        "500": {
+          "p_mate1_coding": 0.9578,
+          "p_mate2_coding": 0.9389,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.8968,
+          "phi_codingness": -0.0535
+        },
+        "700": {
+          "p_mate1_coding": 0.9609,
+          "p_mate2_coding": 0.94,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9009,
+          "phi_codingness": -0.051
+        },
+        "1000": {
+          "p_mate1_coding": 0.9563,
+          "p_mate2_coding": 0.9322,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.8884,
+          "phi_codingness": -0.0577
+        },
+        "1500": {
+          "p_mate1_coding": 0.9617,
+          "p_mate2_coding": 0.9406,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9023,
+          "phi_codingness": -0.0501
+        },
+        "2000": {
+          "p_mate1_coding": 0.9648,
+          "p_mate2_coding": 0.9325,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.8972,
+          "phi_codingness": -0.0514
+        },
+        "3000": {
+          "p_mate1_coding": 0.9493,
+          "p_mate2_coding": 0.9618,
+          "p_either_coding": 1.0,
+          "p_both_coding": 0.9111,
+          "phi_codingness": -0.046
+        }
+      }
+    },
+    "NC_000913.3": {
+      "label": "E. coli K-12 MG1655 (high-density bacterial background)",
+      "length": 4641652,
+      "n_cds_spans": 4340,
+      "coding_density": 0.8626,
+      "sweep": {
+        "107": {
+          "p_mate1_coding": 0.8623,
+          "p_mate2_coding": 0.8515,
+          "p_either_coding": 0.8623,
+          "p_both_coding": 0.8515,
+          "phi_codingness": 0.9567
+        },
+        "150": {
+          "p_mate1_coding": 0.8584,
+          "p_mate2_coding": 0.848,
+          "p_either_coding": 0.8808,
+          "p_both_coding": 0.8256,
+          "phi_codingness": 0.7808
+        },
+        "200": {
+          "p_mate1_coding": 0.8559,
+          "p_mate2_coding": 0.8462,
+          "p_either_coding": 0.9048,
+          "p_both_coding": 0.7974,
+          "phi_codingness": 0.577
+        },
+        "250": {
+          "p_mate1_coding": 0.8567,
+          "p_mate2_coding": 0.85,
+          "p_either_coding": 0.9234,
+          "p_both_coding": 0.7832,
+          "phi_codingness": 0.4399
+        },
+        "300": {
+          "p_mate1_coding": 0.8634,
+          "p_mate2_coding": 0.8488,
+          "p_either_coding": 0.9403,
+          "p_both_coding": 0.7719,
+          "phi_codingness": 0.3177
+        },
+        "400": {
+          "p_mate1_coding": 0.8645,
+          "p_mate2_coding": 0.8519,
+          "p_either_coding": 0.9523,
+          "p_both_coding": 0.7641,
+          "phi_codingness": 0.2277
+        },
+        "500": {
+          "p_mate1_coding": 0.8587,
+          "p_mate2_coding": 0.8495,
+          "p_either_coding": 0.959,
+          "p_both_coding": 0.7491,
+          "phi_codingness": 0.158
+        },
+        "700": {
+          "p_mate1_coding": 0.8579,
+          "p_mate2_coding": 0.8498,
+          "p_either_coding": 0.9647,
+          "p_both_coding": 0.7431,
+          "phi_codingness": 0.112
+        },
+        "1000": {
+          "p_mate1_coding": 0.8566,
+          "p_mate2_coding": 0.8522,
+          "p_either_coding": 0.9652,
+          "p_both_coding": 0.7436,
+          "phi_codingness": 0.1094
+        },
+        "1500": {
+          "p_mate1_coding": 0.8644,
+          "p_mate2_coding": 0.8498,
+          "p_either_coding": 0.97,
+          "p_both_coding": 0.7442,
+          "phi_codingness": 0.0788
+        },
+        "2000": {
+          "p_mate1_coding": 0.8625,
+          "p_mate2_coding": 0.8478,
+          "p_either_coding": 0.9709,
+          "p_both_coding": 0.7392,
+          "phi_codingness": 0.0655
+        },
+        "3000": {
+          "p_mate1_coding": 0.8618,
+          "p_mate2_coding": 0.8527,
+          "p_either_coding": 0.9759,
+          "p_both_coding": 0.7385,
+          "phi_codingness": 0.0305
+        }
+      }
+    }
+  },
+  "contigs": {
+    "source": "data/ww_berlin/spades_sample.fa",
+    "n_contigs": 300,
+    "min_len": 3000,
+    "coding_density_pooled": 0.9256,
+    "coding_density_median_per_contig": 0.9333,
+    "sweep_pooled": {
+      "107": {
+        "p_mate1_coding": 0.9446,
+        "p_either_coding": 0.9446,
+        "p_both_coding": 0.9344,
+        "phi_codingness": 0.8899
+      },
+      "150": {
+        "p_mate1_coding": 0.9492,
+        "p_either_coding": 0.9641,
+        "p_both_coding": 0.924,
+        "phi_codingness": 0.5197
+      },
+      "200": {
+        "p_mate1_coding": 0.9523,
+        "p_either_coding": 0.9781,
+        "p_both_coding": 0.9143,
+        "phi_codingness": 0.2179
+      },
+      "250": {
+        "p_mate1_coding": 0.9521,
+        "p_either_coding": 0.9856,
+        "p_both_coding": 0.9088,
+        "phi_codingness": 0.0846
+      },
+      "300": {
+        "p_mate1_coding": 0.9537,
+        "p_either_coding": 0.9893,
+        "p_both_coding": 0.9062,
+        "phi_codingness": 0.0302
+      },
+      "400": {
+        "p_mate1_coding": 0.9552,
+        "p_either_coding": 0.9923,
+        "p_both_coding": 0.9028,
+        "phi_codingness": -0.01
+      },
+      "500": {
+        "p_mate1_coding": 0.9556,
+        "p_either_coding": 0.9929,
+        "p_both_coding": 0.9028,
+        "phi_codingness": -0.0013
+      },
+      "700": {
+        "p_mate1_coding": 0.954,
+        "p_either_coding": 0.9948,
+        "p_both_coding": 0.899,
+        "phi_codingness": -0.0306
+      },
+      "1000": {
+        "p_mate1_coding": 0.9507,
+        "p_either_coding": 0.9957,
+        "p_both_coding": 0.8904,
+        "phi_codingness": -0.0439
+      },
+      "1500": {
+        "p_mate1_coding": 0.9465,
+        "p_either_coding": 0.9949,
+        "p_both_coding": 0.8784,
+        "phi_codingness": -0.0325
+      },
+      "2000": {
+        "p_mate1_coding": 0.9529,
+        "p_either_coding": 0.9937,
+        "p_both_coding": 0.8914,
+        "phi_codingness": 0.0543
+      },
+      "3000": {
+        "p_mate1_coding": 0.9312,
+        "p_either_coding": 0.9967,
+        "p_both_coding": 0.832,
+        "phi_codingness": -0.0691
+      }
+    },
+    "per_contig": [
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_580_length_3551_cov_14.979119",
+        "length": 3551,
+        "coding_density": 0.9327
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_322_length_3821_cov_12.363781",
+        "length": 3821,
+        "coding_density": 0.9246
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_816_length_3095_cov_8.888487",
+        "length": 3095,
+        "coding_density": 0.4633
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_547_length_3588_cov_6.284461",
+        "length": 3588,
+        "coding_density": 0.9696
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_482_length_3656_cov_7.585948",
+        "length": 3656,
+        "coding_density": 0.9885
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_662_length_3422_cov_16.933472",
+        "length": 3422,
+        "coding_density": 0.9556
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_95_length_4740_cov_10.196585",
+        "length": 4740,
+        "coding_density": 0.9753
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_398_length_3741_cov_19.461747",
+        "length": 3741,
+        "coding_density": 0.9556
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_217_length_4014_cov_17.860066",
+        "length": 4014,
+        "coding_density": 0.9051
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_243_length_3933_cov_9.807117",
+        "length": 3933,
+        "coding_density": 0.8703
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_591_length_3534_cov_17.590112",
+        "length": 3534,
+        "coding_density": 0.9346
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_321_length_3822_cov_6.632864",
+        "length": 3822,
+        "coding_density": 0.9082
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_24_length_7889_cov_701.884989",
+        "length": 7889,
+        "coding_density": 0.891
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_490_length_3646_cov_25.483709",
+        "length": 3646,
+        "coding_density": 0.9306
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_435_length_3702_cov_4.906773",
+        "length": 3702,
+        "coding_density": 0.9541
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_328_length_3817_cov_29.542265",
+        "length": 3817,
+        "coding_density": 0.9447
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_672_length_3416_cov_3.540613",
+        "length": 3416,
+        "coding_density": 0.9461
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_632_length_3472_cov_8.099502",
+        "length": 3472,
+        "coding_density": 0.9384
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_679_length_3408_cov_15.602744",
+        "length": 3408,
+        "coding_density": 0.9322
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_633_length_3471_cov_5.203162",
+        "length": 3471,
+        "coding_density": 0.9793
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_56_length_5874_cov_8.849115",
+        "length": 5874,
+        "coding_density": 0.8708
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_252_length_3923_cov_16.087642",
+        "length": 3923,
+        "coding_density": 0.949
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_310_length_3834_cov_13.702831",
+        "length": 3834,
+        "coding_density": 0.9304
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_738_length_3295_cov_6.073148",
+        "length": 3295,
+        "coding_density": 0.8813
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_300_length_3850_cov_16.207115",
+        "length": 3850,
+        "coding_density": 0.9327
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_817_length_3095_cov_4.362171",
+        "length": 3095,
+        "coding_density": 0.9945
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_101_length_4633_cov_8.269113",
+        "length": 4633,
+        "coding_density": 0.9601
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_622_length_3486_cov_24.955407",
+        "length": 3486,
+        "coding_density": 0.9303
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_479_length_3659_cov_26.850444",
+        "length": 3659,
+        "coding_density": 0.9699
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_813_length_3099_cov_4.628121",
+        "length": 3099,
+        "coding_density": 0.9787
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_401_length_3739_cov_16.524701",
+        "length": 3739,
+        "coding_density": 0.9604
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_155_length_4210_cov_419.667389",
+        "length": 4210,
+        "coding_density": 0.8929
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_312_length_3833_cov_16.220487",
+        "length": 3833,
+        "coding_density": 0.9181
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_411_length_3731_cov_16.401523",
+        "length": 3731,
+        "coding_density": 0.9662
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_5_length_9212_cov_6.052419",
+        "length": 9212,
+        "coding_density": 0.9467
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_159_length_4196_cov_25.880705",
+        "length": 4196,
+        "coding_density": 0.9898
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_145_length_4251_cov_2.593422",
+        "length": 4251,
+        "coding_density": 0.88
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_551_length_3580_cov_4.664113",
+        "length": 3580,
+        "coding_density": 0.8598
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_594_length_3529_cov_4.496834",
+        "length": 3529,
+        "coding_density": 0.947
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_811_length_3112_cov_11.978737",
+        "length": 3112,
+        "coding_density": 0.9013
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_821_length_3083_cov_18.764531",
+        "length": 3083,
+        "coding_density": 0.9906
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_268_length_3894_cov_18.807241",
+        "length": 3894,
+        "coding_density": 0.9091
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_319_length_3823_cov_19.860934",
+        "length": 3823,
+        "coding_density": 0.9236
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_305_length_3844_cov_135.929005",
+        "length": 3844,
+        "coding_density": 0.9324
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_16_length_8290_cov_5.858166",
+        "length": 8290,
+        "coding_density": 0.9366
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_50_length_6348_cov_7.781344",
+        "length": 6348,
+        "coding_density": 0.8864
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_550_length_3582_cov_5.935923",
+        "length": 3582,
+        "coding_density": 0.9631
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_809_length_3118_cov_6.085537",
+        "length": 3118,
+        "coding_density": 0.9862
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_69_length_5417_cov_40.333458",
+        "length": 5417,
+        "coding_density": 0.9219
+      },
+      {
+        "contig": "WW_211013_20-22hmix_S5_L001_NODE_382_length_3756_cov_19.605242",
+        "length": 3756,
+        "coding_density": 0.9329
+      }
+    ]
+  }
+}

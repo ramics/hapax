@@ -1,0 +1,508 @@
+{
+  "seed": 2,
+  "k": 10,
+  "index_kmers": 221081573,
+  "pairs": {
+    "pairs": 40000,
+    "insert_measured": 14078,
+    "unscorable": 81
+  },
+  "score_distribution": {
+    "mate1": {
+      "mean": 0.9353,
+      "median": 1.0,
+      "p90": 1.0,
+      "p99": 1.0,
+      "fraction_1_0": 0.8615
+    },
+    "mate2": {
+      "mean": 0.9295,
+      "median": 1.0,
+      "p90": 1.0,
+      "p99": 1.0,
+      "fraction_1_0": 0.8631
+    }
+  },
+  "separations": {
+    "gap_0_halves_of_mate1": {
+      "n": 39870,
+      "note": "two 53 nt halves of the same read: adjacent sequence, rho ceiling",
+      "r_continuous": 0.7883,
+      "flags": {
+        "q0.9": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.90967,
+          "rho_flags": 0.6185,
+          "p_both": 0.878304,
+          "p_both_if_independent": 0.827498,
+          "both_excess_x": 1.06,
+          "p_either": 0.94103
+        },
+        "q0.99": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.90967,
+          "rho_flags": 0.6185,
+          "p_both": 0.878304,
+          "p_both_if_independent": 0.827498,
+          "both_excess_x": 1.06,
+          "p_either": 0.94103
+        },
+        "q0.999": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.90967,
+          "rho_flags": 0.6185,
+          "p_both": 0.878304,
+          "p_both_if_independent": 0.827498,
+          "both_excess_x": 1.06,
+          "p_either": 0.94103
+        }
+      }
+    },
+    "insert_107_150": {
+      "n": 2464,
+      "mean_insert": 130.0,
+      "mean_gap_between_mates": -70.0,
+      "r_continuous": 0.9666,
+      "flags": {
+        "q0.9": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.83157,
+          "rho_flags": 0.8788,
+          "p_both": 0.814529,
+          "p_both_if_independent": 0.691516,
+          "both_excess_x": 1.18,
+          "p_either": 0.84862
+        },
+        "q0.99": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.83157,
+          "rho_flags": 0.8788,
+          "p_both": 0.814529,
+          "p_both_if_independent": 0.691516,
+          "both_excess_x": 1.18,
+          "p_either": 0.84862
+        },
+        "q0.999": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.83157,
+          "rho_flags": 0.8788,
+          "p_both": 0.814529,
+          "p_both_if_independent": 0.691516,
+          "both_excess_x": 1.18,
+          "p_either": 0.84862
+        }
+      }
+    },
+    "insert_150_200": {
+      "n": 4071,
+      "mean_insert": 174.1,
+      "mean_gap_between_mates": -25.9,
+      "r_continuous": 0.909,
+      "flags": {
+        "q0.9": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.78322,
+          "rho_flags": 0.6753,
+          "p_both": 0.728077,
+          "p_both_if_independent": 0.613438,
+          "both_excess_x": 1.19,
+          "p_either": 0.83837
+        },
+        "q0.99": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.78322,
+          "rho_flags": 0.6753,
+          "p_both": 0.728077,
+          "p_both_if_independent": 0.613438,
+          "both_excess_x": 1.19,
+          "p_either": 0.83837
+        },
+        "q0.999": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.78322,
+          "rho_flags": 0.6753,
+          "p_both": 0.728077,
+          "p_both_if_independent": 0.613438,
+          "both_excess_x": 1.19,
+          "p_either": 0.83837
+        }
+      }
+    },
+    "insert_200_250": {
+      "n": 3425,
+      "mean_insert": 223.6,
+      "mean_gap_between_mates": 23.6,
+      "r_continuous": 0.9028,
+      "flags": {
+        "q0.9": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.78234,
+          "rho_flags": 0.6427,
+          "p_both": 0.72146,
+          "p_both_if_independent": 0.612049,
+          "both_excess_x": 1.18,
+          "p_either": 0.84321
+        },
+        "q0.99": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.78234,
+          "rho_flags": 0.6427,
+          "p_both": 0.72146,
+          "p_both_if_independent": 0.612049,
+          "both_excess_x": 1.18,
+          "p_either": 0.84321
+        },
+        "q0.999": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.78234,
+          "rho_flags": 0.6427,
+          "p_both": 0.72146,
+          "p_both_if_independent": 0.612049,
+          "both_excess_x": 1.18,
+          "p_either": 0.84321
+        }
+      }
+    },
+    "insert_250_300": {
+      "n": 1933,
+      "mean_insert": 271.2,
+      "mean_gap_between_mates": 71.2,
+      "r_continuous": 0.9088,
+      "flags": {
+        "q0.9": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.76125,
+          "rho_flags": 0.6311,
+          "p_both": 0.69374,
+          "p_both_if_independent": 0.579505,
+          "both_excess_x": 1.2,
+          "p_either": 0.82876
+        },
+        "q0.99": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.76125,
+          "rho_flags": 0.6311,
+          "p_both": 0.69374,
+          "p_both_if_independent": 0.579505,
+          "both_excess_x": 1.2,
+          "p_either": 0.82876
+        },
+        "q0.999": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.76125,
+          "rho_flags": 0.6311,
+          "p_both": 0.69374,
+          "p_both_if_independent": 0.579505,
+          "both_excess_x": 1.2,
+          "p_either": 0.82876
+        }
+      }
+    },
+    "insert_300_400": {
+      "n": 1432,
+      "mean_insert": 337.6,
+      "mean_gap_between_mates": 137.6,
+      "r_continuous": 0.867,
+      "flags": {
+        "q0.9": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.77339,
+          "rho_flags": 0.6287,
+          "p_both": 0.708101,
+          "p_both_if_independent": 0.598138,
+          "both_excess_x": 1.18,
+          "p_either": 0.83869
+        },
+        "q0.99": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.77339,
+          "rho_flags": 0.6287,
+          "p_both": 0.708101,
+          "p_both_if_independent": 0.598138,
+          "both_excess_x": 1.18,
+          "p_either": 0.83869
+        },
+        "q0.999": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.77339,
+          "rho_flags": 0.6287,
+          "p_both": 0.708101,
+          "p_both_if_independent": 0.598138,
+          "both_excess_x": 1.18,
+          "p_either": 0.83869
+        }
+      }
+    },
+    "insert_400_600": {
+      "n": 488,
+      "mean_insert": 463.4,
+      "mean_gap_between_mates": 263.4,
+      "r_continuous": 0.8493,
+      "flags": {
+        "q0.9": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.78381,
+          "rho_flags": 0.5858,
+          "p_both": 0.713115,
+          "p_both_if_independent": 0.61436,
+          "both_excess_x": 1.16,
+          "p_either": 0.85451
+        },
+        "q0.99": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.78381,
+          "rho_flags": 0.5858,
+          "p_both": 0.713115,
+          "p_both_if_independent": 0.61436,
+          "both_excess_x": 1.16,
+          "p_either": 0.85451
+        },
+        "q0.999": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.78381,
+          "rho_flags": 0.5858,
+          "p_both": 0.713115,
+          "p_both_if_independent": 0.61436,
+          "both_excess_x": 1.16,
+          "p_either": 0.85451
+        }
+      }
+    },
+    "all_insert_measured": {
+      "n": 14078,
+      "r_continuous": 0.9101,
+      "flags": {
+        "q0.9": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.78893,
+          "rho_flags": 0.6867,
+          "p_both": 0.736681,
+          "p_both_if_independent": 0.622404,
+          "both_excess_x": 1.18,
+          "p_either": 0.84117
+        },
+        "q0.99": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.78893,
+          "rho_flags": 0.6867,
+          "p_both": 0.736681,
+          "p_both_if_independent": 0.622404,
+          "both_excess_x": 1.18,
+          "p_either": 0.84117
+        },
+        "q0.999": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.78893,
+          "rho_flags": 0.6867,
+          "p_both": 0.736681,
+          "p_both_if_independent": 0.622404,
+          "both_excess_x": 1.18,
+          "p_either": 0.84117
+        }
+      }
+    },
+    "all_pairs": {
+      "n": 39919,
+      "r_continuous": 0.8662,
+      "flags": {
+        "q0.9": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.86233,
+          "rho_flags": 0.5789,
+          "p_both": 0.812345,
+          "p_both_if_independent": 0.743619,
+          "both_excess_x": 1.09,
+          "p_either": 0.91232
+        },
+        "q0.99": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.86233,
+          "rho_flags": 0.5789,
+          "p_both": 0.812345,
+          "p_both_if_independent": 0.743619,
+          "both_excess_x": 1.09,
+          "p_either": 0.91232
+        },
+        "q0.999": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.86233,
+          "rho_flags": 0.5789,
+          "p_both": 0.812345,
+          "p_both_if_independent": 0.743619,
+          "both_excess_x": 1.09,
+          "p_either": 0.91232
+        }
+      }
+    },
+    "nonsaturated_either_mate": {
+      "n": 7491,
+      "note": "pairs where the absence score is below 1.0, so it has range",
+      "r_continuous": 0.7767,
+      "flags": {
+        "q0.9": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.26639,
+          "rho_flags": -0.3631,
+          "p_both": 0.0,
+          "p_both_if_independent": 0.070962,
+          "both_excess_x": 0.0,
+          "p_either": 0.53277
+        },
+        "q0.99": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.26639,
+          "rho_flags": -0.3631,
+          "p_both": 0.0,
+          "p_both_if_independent": 0.070962,
+          "both_excess_x": 0.0,
+          "p_either": 0.53277
+        },
+        "q0.999": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.26639,
+          "rho_flags": -0.3631,
+          "p_both": 0.0,
+          "p_both_if_independent": 0.070962,
+          "both_excess_x": 0.0,
+          "p_either": 0.53277
+        }
+      }
+    },
+    "nonsaturated_either_mate_shuffled": {
+      "n": 7491,
+      "note": "same subset, mates re-paired at random: the floor for it",
+      "r_continuous": 0.0126,
+      "flags": {
+        "q0.9": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.26639,
+          "rho_flags": -0.0024,
+          "p_both": 0.070485,
+          "p_both_if_independent": 0.070962,
+          "both_excess_x": 0.99,
+          "p_either": 0.46229
+        },
+        "q0.99": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.26639,
+          "rho_flags": -0.0024,
+          "p_both": 0.070485,
+          "p_both_if_independent": 0.070962,
+          "both_excess_x": 0.99,
+          "p_either": 0.46229
+        },
+        "q0.999": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.26639,
+          "rho_flags": -0.0024,
+          "p_both": 0.070485,
+          "p_both_if_independent": 0.070962,
+          "both_excess_x": 0.99,
+          "p_either": 0.46229
+        }
+      }
+    },
+    "nonsaturated_both_mates": {
+      "n": 3500,
+      "note": "pairs where the absence score is below 1.0, so it has range",
+      "r_continuous": 0.7706,
+      "flags": {
+        "q0.9": {
+          "threshold": 0.9091,
+          "marginal_flag_rate": 0.10429,
+          "rho_flags": 0.4394,
+          "p_both": 0.050571,
+          "p_both_if_independent": 0.010876,
+          "both_excess_x": 4.65,
+          "p_either": 0.158
+        },
+        "q0.99": {
+          "threshold": 0.9615,
+          "marginal_flag_rate": 0.02614,
+          "rho_flags": null,
+          "p_both": 0.0,
+          "p_both_if_independent": 0.000683,
+          "both_excess_x": 0.0,
+          "p_either": 0.05229
+        },
+        "q0.999": {
+          "threshold": 0.9615,
+          "marginal_flag_rate": 0.02614,
+          "rho_flags": null,
+          "p_both": 0.0,
+          "p_both_if_independent": 0.000683,
+          "both_excess_x": 0.0,
+          "p_either": 0.05229
+        }
+      }
+    },
+    "nonsaturated_both_mates_shuffled": {
+      "n": 3500,
+      "note": "same subset, mates re-paired at random: the floor for it",
+      "r_continuous": -0.0207,
+      "flags": {
+        "q0.9": {
+          "threshold": 0.9091,
+          "marginal_flag_rate": 0.10429,
+          "rho_flags": -0.0171,
+          "p_both": 0.008857,
+          "p_both_if_independent": 0.010876,
+          "both_excess_x": 0.81,
+          "p_either": 0.19971
+        },
+        "q0.99": {
+          "threshold": 0.9615,
+          "marginal_flag_rate": 0.02614,
+          "rho_flags": null,
+          "p_both": 0.0,
+          "p_both_if_independent": 0.000683,
+          "both_excess_x": 0.0,
+          "p_either": 0.05229
+        },
+        "q0.999": {
+          "threshold": 0.9615,
+          "marginal_flag_rate": 0.02614,
+          "rho_flags": null,
+          "p_both": 0.0,
+          "p_both_if_independent": 0.000683,
+          "both_excess_x": 0.0,
+          "p_either": 0.05229
+        }
+      }
+    },
+    "gap_infinity_shuffled_pairing": {
+      "n": 39919,
+      "note": "different molecules, different organisms: the rho = 0 floor",
+      "r_continuous": -0.0042,
+      "flags": {
+        "q0.9": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.86233,
+          "rho_flags": 0.0009,
+          "p_both": 0.743731,
+          "p_both_if_independent": 0.743619,
+          "both_excess_x": 1.0,
+          "p_either": 0.98094
+        },
+        "q0.99": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.86233,
+          "rho_flags": 0.0009,
+          "p_both": 0.743731,
+          "p_both_if_independent": 0.743619,
+          "both_excess_x": 1.0,
+          "p_either": 0.98094
+        },
+        "q0.999": {
+          "threshold": 1.0,
+          "marginal_flag_rate": 0.86233,
+          "rho_flags": 0.0009,
+          "p_both": 0.743731,
+          "p_both_if_independent": 0.743619,
+          "both_excess_x": 1.0,
+          "p_either": 0.98094
+        }
+      }
+    }
+  }
+}

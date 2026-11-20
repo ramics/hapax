@@ -1,0 +1,47 @@
+{
+  "seed": 3,
+  "git_sha": "3484498252d2023e767e9723831010a9380f285a",
+  "reads_scored": 39834,
+  "index_faa": [
+    "data/prot/viral.1.protein.faa.gz",
+    "data/prot/uniprot_sprot.fasta.gz",
+    "data/prot/berlin_sample_proteins.faa"
+  ],
+  "k": 10,
+  "absent_frac_of_reads": 0.2311,
+  "absent": {
+    "n": 9206,
+    "mapped_frac": 0.3899,
+    "cov_median": 110.08,
+    "cov_p10": 3.7,
+    "cov_p90": 2462.0,
+    "cov_lt_2_frac": 0.0535,
+    "in_cds_frac_of_mapped": 0.1783,
+    "entropy_mean": 3.8055,
+    "entropy_p10": 3.6572,
+    "homopolymer_mean": 4.1,
+    "homopolymer_ge10_frac": 0.0016,
+    "adapter_frac": 0.0001,
+    "mate_mapped_frac": 0.4388,
+    "unmapped_but_mate_mapped_frac": 0.0729,
+    "mate_cov_median_where_self_unmapped": 6.2
+  },
+  "rest": {
+    "n": 30628,
+    "mapped_frac": 0.9257,
+    "cov_median": 142.54,
+    "cov_p10": 3.17,
+    "cov_p90": 2849.06,
+    "cov_lt_2_frac": 0.0667,
+    "in_cds_frac_of_mapped": 0.727,
+    "entropy_mean": 3.8393,
+    "entropy_p10": 3.735,
+    "homopolymer_mean": 4.07,
+    "homopolymer_ge10_frac": 0.0014,
+    "adapter_frac": 0.0001,
+    "mate_mapped_frac": 0.9102,
+    "unmapped_but_mate_mapped_frac": 0.03,
+    "mate_cov_median_where_self_unmapped": 6.62
+  },
+  "seconds": 49.0
+}

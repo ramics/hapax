@@ -40,6 +40,17 @@ ladder (PAIRS in experiments/codon_assembler/experiments/two_lineage_rung.py), f
 NCBI efetch (nuccore, fasta) on 2026-11-20: PZ227608.1, PZ227621.1, PV491557.1, PZ324370.1,
 MG458312.1, PZ227553.1, PZ227534.1, PZ227561.1, AB009663.2, AB044824.1, NC_001542.1.
 
+## Mate-width thread (experiments/insert_profile.py, mate_separation.py,
+## peptide_absence.py, novelty_blocks.py, mate_rho.py)
+
+| Purpose | Accession / source | Downloaded | Notes |
+|---|---|---|---|
+| Berlin wastewater reads | SRR23973193 (PRJNA948850) via ENA fastq | 2026-11-20 | 8,731,224 pairs; 2x107 before trimming mate 2's 14 nt non-template prefix |
+| the authors' own assembly | GSE228220_Spades_RNA_all.fa.gz (GEO) | 2026-11-20 | sample WW_211013_20-22hmix_S5_L001: 82,947 contigs, 29.8 Mb; subsets >=1 kb (3,530) and >=2 kb (1,416) used as insert-size references |
+| protein index | RefSeq release viral.1.protein.faa.gz + .gpff.gz | 2026-11-20 | 722,823 proteins / 175.8 Maa; the gpff supplies taxonomy for family holdout |
+| protein index (background range) | UniProt Swiss-Prot uniprot_sprot.fasta.gz (current release) | 2026-11-20 | added because 88% of Berlin reads score 1.0 against a viral-only index |
+| annotated genomes | NC_001542.1, NC_001943.1, NC_045512.2, K03455.1, NC_001422.1, NC_000913.3 (efetch gbwithparts) | 2026-11-20 | CDS annotation for the coding and novelty tracks |
+
 ## Pair-ladder background (experiments/pair_ladder.py --background)
 
 `data/berlin/SRR23973193_{1,2}.fastq.gz`: Berlin wastewater RNA virome (PRJNA948850), from ENA
@@ -76,3 +87,13 @@ from ENA over HTTP (`ftp.sra.ebi.ac.uk/vol1/fastq/SRR239/093/SRR23973193/`) on 2
 No SRA toolkit is installed in this sandbox and none is needed for a prefix. Run metadata
 from the ENA portal API the same day: 8,731,224 pairs, 1,852,591,930 bases, Illumina
 NovaSeq 6000, modal read length 107 nt.
+
+## Mate-width thread, later arms (absence_curve.py, rrna_contigs.py, rrna_match_source.py,
+## subsample_uniref.py, absence_residual.py)
+
+| Purpose | Accession / source | Downloaded | Notes |
+|---|---|---|---|
+| public protein index, large | UniRef50 (uniref50.fasta.gz, current release) | 2026-11-20 | **streamed, never stored**: nested every-10th and every-100th subsamples kept (4,124,353 and 412,436 records; 1.27 and 0.127 Gaa). Completeness checked against UniProt REST `x-total-results` for `query=identity:0.5` = 41,243,524 clusters, which the stream reaches exactly |
+| ribosomal reference | SILVA 138.1 SSURef_NR99 + LSURef_NR99 (arb-silva.de Exports) | 2026-11-20 | 197 MB + 67 MB gzipped, 605,794 sequences; used to label assembly contigs as ribosomal by exact 31-mer containment |
+| sample-self protein index | Prodigal (pyrodigal, meta) over the GSE228220 contigs for this sample | 2026-11-20 | 79,667 proteins / 8.04 Maa, split into `berlin_sample_proteins_{nonrrna,rrnacontigs}.faa` by the SILVA contig label |
+

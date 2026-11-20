@@ -1,0 +1,185 @@
+{
+  "seed": 4,
+  "accession": "NC_001542.1",
+  "genome_length": 11932,
+  "exclude_family": "Rhabdoviridae",
+  "evalue": 0.001,
+  "proteins_removed_from_db": 2493,
+  "coding_fraction": 0.9089,
+  "novel_fraction_of_genome": 0.2509,
+  "novel_fraction_of_coding": 0.2761,
+  "per_protein": [
+    {
+      "product": "nucleoprotein N",
+      "residues": 450,
+      "fraction_residues_with_homolog": 0.7267,
+      "n_hits": 3,
+      "best_hit": "YP_009337067.1",
+      "best_bitscore": 87.6634292602539,
+      "best_evalue": 2.648719184237072e-23
+    },
+    {
+      "product": "phosphoprotein M1",
+      "residues": 297,
+      "fraction_residues_with_homolog": 0.0,
+      "n_hits": 0,
+      "best_hit": null,
+      "best_bitscore": null,
+      "best_evalue": null
+    },
+    {
+      "product": "M2 protein",
+      "residues": 202,
+      "fraction_residues_with_homolog": 0.0,
+      "n_hits": 0,
+      "best_hit": null,
+      "best_bitscore": null,
+      "best_evalue": null
+    },
+    {
+      "product": "transmembrane glycoprotein G",
+      "residues": 524,
+      "fraction_residues_with_homolog": 0.584,
+      "n_hits": 1,
+      "best_hit": "YP_009344981.1",
+      "best_bitscore": 28.33906364440918,
+      "best_evalue": 2.1304264307760507e-05
+    },
+    {
+      "product": "L protein",
+      "residues": 2142,
+      "fraction_residues_with_homolog": 0.9262,
+      "n_hits": 361,
+      "best_hit": "YP_009344982.1",
+      "best_bitscore": 1336.703369140625,
+      "best_evalue": 0.0
+    }
+  ],
+  "novel_block_lengths_nt": [
+    18,
+    351,
+    891,
+    606,
+    87,
+    567,
+    411,
+    63
+  ],
+  "known_block_lengths_nt": [
+    981,
+    918,
+    5952
+  ],
+  "novel_block_summary": {
+    "n": 8,
+    "median": 381.0,
+    "max": 891,
+    "mean": 374.2
+  },
+  "sweep": {
+    "107": {
+      "p_mate1_novel": 0.2459,
+      "p_mate2_novel": 0.2371,
+      "p_either_novel": 0.2459,
+      "p_both_novel": 0.2371,
+      "p_both_if_independent": 0.0583,
+      "rho_novelty": 0.9763
+    },
+    "150": {
+      "p_mate1_novel": 0.2424,
+      "p_mate2_novel": 0.2324,
+      "p_either_novel": 0.266,
+      "p_both_novel": 0.2088,
+      "p_both_if_independent": 0.0563,
+      "rho_novelty": 0.8424
+    },
+    "200": {
+      "p_mate1_novel": 0.2408,
+      "p_mate2_novel": 0.2381,
+      "p_either_novel": 0.2906,
+      "p_both_novel": 0.1883,
+      "p_both_if_independent": 0.0573,
+      "rho_novelty": 0.7192
+    },
+    "250": {
+      "p_mate1_novel": 0.247,
+      "p_mate2_novel": 0.24,
+      "p_either_novel": 0.3099,
+      "p_both_novel": 0.1771,
+      "p_both_if_independent": 0.0593,
+      "rho_novelty": 0.6395
+    },
+    "300": {
+      "p_mate1_novel": 0.2477,
+      "p_mate2_novel": 0.2417,
+      "p_either_novel": 0.3206,
+      "p_both_novel": 0.1687,
+      "p_both_if_independent": 0.0599,
+      "rho_novelty": 0.589
+    },
+    "400": {
+      "p_mate1_novel": 0.2514,
+      "p_mate2_novel": 0.2452,
+      "p_either_novel": 0.3521,
+      "p_both_novel": 0.1445,
+      "p_both_if_independent": 0.0616,
+      "rho_novelty": 0.444
+    },
+    "500": {
+      "p_mate1_novel": 0.2427,
+      "p_mate2_novel": 0.2405,
+      "p_either_novel": 0.3597,
+      "p_both_novel": 0.1235,
+      "p_both_if_independent": 0.0584,
+      "rho_novelty": 0.3555
+    },
+    "700": {
+      "p_mate1_novel": 0.2472,
+      "p_mate2_novel": 0.2517,
+      "p_either_novel": 0.391,
+      "p_both_novel": 0.108,
+      "p_both_if_independent": 0.0622,
+      "rho_novelty": 0.2444
+    },
+    "1000": {
+      "p_mate1_novel": 0.2643,
+      "p_mate2_novel": 0.2597,
+      "p_either_novel": 0.4027,
+      "p_both_novel": 0.1212,
+      "p_both_if_independent": 0.0686,
+      "rho_novelty": 0.2721
+    },
+    "1500": {
+      "p_mate1_novel": 0.2726,
+      "p_mate2_novel": 0.2375,
+      "p_either_novel": 0.4291,
+      "p_both_novel": 0.0809,
+      "p_both_if_independent": 0.0647,
+      "rho_novelty": 0.0855
+    },
+    "2000": {
+      "p_mate1_novel": 0.2869,
+      "p_mate2_novel": 0.2087,
+      "p_either_novel": 0.4366,
+      "p_both_novel": 0.059,
+      "p_both_if_independent": 0.0599,
+      "rho_novelty": -0.0046
+    },
+    "3000": {
+      "p_mate1_novel": 0.3197,
+      "p_mate2_novel": 0.127,
+      "p_either_novel": 0.3536,
+      "p_both_novel": 0.0931,
+      "p_both_if_independent": 0.0406,
+      "rho_novelty": 0.3382
+    },
+    "5000": {
+      "p_mate1_novel": 0.4113,
+      "p_mate2_novel": 0.0576,
+      "p_either_novel": 0.4689,
+      "p_both_novel": 0.0,
+      "p_both_if_independent": 0.0237,
+      "rho_novelty": -0.2067
+    }
+  }
+}

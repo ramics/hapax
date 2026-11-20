@@ -1,0 +1,152 @@
+{
+  "seed": 1,
+  "accession": "NC_001943.1",
+  "genome_length": 6813,
+  "exclude_family": "Astroviridae",
+  "evalue": 0.001,
+  "proteins_removed_from_db": 165,
+  "coding_fraction": 0.9753,
+  "novel_fraction_of_genome": 0.6196,
+  "novel_fraction_of_coding": 0.6352,
+  "per_protein": [
+    {
+      "product": "Non-structural protein",
+      "residues": 1431,
+      "fraction_residues_with_homolog": 0.3291,
+      "n_hits": 311,
+      "best_hit": "YP_009333212.1",
+      "best_bitscore": 200.7712860107422,
+      "best_evalue": 8.072237662222064e-58
+    },
+    {
+      "product": "capsid precursor protein",
+      "residues": 786,
+      "fraction_residues_with_homolog": 0.4288,
+      "n_hits": 2,
+      "best_hit": "YP_009480672.1",
+      "best_bitscore": 90.38512420654297,
+      "best_evalue": 3.348423104442787e-24
+    }
+  ],
+  "novel_block_lengths_nt": [
+    2864,
+    160,
+    1197
+  ],
+  "known_block_lengths_nt": [
+    1413,
+    1011
+  ],
+  "novel_block_summary": {
+    "n": 3,
+    "median": 1197,
+    "max": 2864,
+    "mean": 1407.0
+  },
+  "sweep": {
+    "107": {
+      "p_mate1_novel": 0.6245,
+      "p_mate2_novel": 0.6172,
+      "p_either_novel": 0.6245,
+      "p_both_novel": 0.6172,
+      "p_both_if_independent": 0.3855,
+      "rho_novelty": 0.9847
+    },
+    "150": {
+      "p_mate1_novel": 0.6219,
+      "p_mate2_novel": 0.618,
+      "p_either_novel": 0.6414,
+      "p_both_novel": 0.5985,
+      "p_both_if_independent": 0.3843,
+      "rho_novelty": 0.9088
+    },
+    "200": {
+      "p_mate1_novel": 0.6203,
+      "p_mate2_novel": 0.6135,
+      "p_either_novel": 0.6537,
+      "p_both_novel": 0.5801,
+      "p_both_if_independent": 0.3806,
+      "rho_novelty": 0.8444
+    },
+    "250": {
+      "p_mate1_novel": 0.622,
+      "p_mate2_novel": 0.6159,
+      "p_either_novel": 0.6688,
+      "p_both_novel": 0.5689,
+      "p_both_if_independent": 0.383,
+      "rho_novelty": 0.7883
+    },
+    "300": {
+      "p_mate1_novel": 0.6112,
+      "p_mate2_novel": 0.605,
+      "p_either_novel": 0.6675,
+      "p_both_novel": 0.5488,
+      "p_both_if_independent": 0.3698,
+      "rho_novelty": 0.751
+    },
+    "400": {
+      "p_mate1_novel": 0.6169,
+      "p_mate2_novel": 0.6082,
+      "p_either_novel": 0.6855,
+      "p_both_novel": 0.5396,
+      "p_both_if_independent": 0.3752,
+      "rho_novelty": 0.6927
+    },
+    "500": {
+      "p_mate1_novel": 0.6062,
+      "p_mate2_novel": 0.5966,
+      "p_either_novel": 0.6937,
+      "p_both_novel": 0.5091,
+      "p_both_if_independent": 0.3617,
+      "rho_novelty": 0.6149
+    },
+    "700": {
+      "p_mate1_novel": 0.6001,
+      "p_mate2_novel": 0.591,
+      "p_either_novel": 0.7202,
+      "p_both_novel": 0.4709,
+      "p_both_if_independent": 0.3547,
+      "rho_novelty": 0.4827
+    },
+    "1000": {
+      "p_mate1_novel": 0.5703,
+      "p_mate2_novel": 0.5677,
+      "p_either_novel": 0.7516,
+      "p_both_novel": 0.3864,
+      "p_both_if_independent": 0.3238,
+      "rho_novelty": 0.2554
+    },
+    "1500": {
+      "p_mate1_novel": 0.5621,
+      "p_mate2_novel": 0.5259,
+      "p_either_novel": 0.7881,
+      "p_both_novel": 0.2999,
+      "p_both_if_independent": 0.2956,
+      "rho_novelty": 0.0172
+    },
+    "2000": {
+      "p_mate1_novel": 0.6252,
+      "p_mate2_novel": 0.4824,
+      "p_either_novel": 0.8498,
+      "p_both_novel": 0.2578,
+      "p_both_if_independent": 0.3016,
+      "rho_novelty": -0.1812
+    },
+    "3000": {
+      "p_mate1_novel": 0.7459,
+      "p_mate2_novel": 0.3458,
+      "p_either_novel": 0.9764,
+      "p_both_novel": 0.1153,
+      "p_both_if_independent": 0.2579,
+      "rho_novelty": -0.6889
+    },
+    "5000": {
+      "p_mate1_novel": 0.98,
+      "p_mate2_novel": 0.6458,
+      "p_either_novel": 0.98,
+      "p_both_novel": 0.6458,
+      "p_both_if_independent": 0.6329,
+      "rho_novelty": 0.1929
+    }
+  }
+}

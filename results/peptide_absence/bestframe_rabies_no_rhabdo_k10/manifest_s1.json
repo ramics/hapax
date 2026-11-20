@@ -1,0 +1,19 @@
+{
+  "script": "experiments/peptide_absence.py",
+  "git_sha": "8dad837c1462d241e049ab118d44684a153fc308",
+  "seed": 1,
+  "params": {
+    "seed": "1",
+    "faa": "data/prot/viral.1.protein.faa.gz",
+    "gpff": "data/prot/viral.1.protein.gpff.gz",
+    "k": "10",
+    "cache": "data/pepidx",
+    "genomes": "[PosixPath('data/genomes/NC_001542.1.fa')]",
+    "exclude_family": "Rhabdoviridae",
+    "win": "107",
+    "step": "10",
+    "lags": "[10, 20, 50, 100, 150, 200, 250, 300, 400, 500, 700, 1000, 1500, 2000, 3000]",
+    "out": "results/peptide_absence/bestframe_rabies_no_rhabdo_k10"
+  },
+  "wall_s": 1.3
+}

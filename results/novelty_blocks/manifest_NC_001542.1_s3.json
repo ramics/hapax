@@ -1,0 +1,22 @@
+{
+  "script": "experiments/novelty_blocks.py",
+  "git_sha": "8dad837c1462d241e049ab118d44684a153fc308",
+  "seed": 3,
+  "params": {
+    "seed": "3",
+    "accession": "NC_001542.1",
+    "exclude_family": "Rhabdoviridae",
+    "faa": "data/prot/viral.1.protein.faa.gz",
+    "gpff": "data/prot/viral.1.protein.gpff.gz",
+    "evalue": "0.001",
+    "threads": "4",
+    "len1": "107",
+    "len2": "93",
+    "min_nt": "60",
+    "inserts": "[107, 150, 200, 250, 300, 400, 500, 700, 1000, 1500, 2000, 3000, 5000]",
+    "n_starts": "20000",
+    "cache": "data/novelty_blocks",
+    "out": "results/novelty_blocks"
+  },
+  "wall_s": 10.8
+}
