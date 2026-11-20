@@ -37,6 +37,25 @@ sequence carrying no information; a known-positive comparison against subtracted
 whether it carries anything about the residue. A field that reads the same on both is
 reported with that fact, not hidden.
 
+**A null is not a bias statement, and a number needs both.** A null says what a field reads
+on meaningless input. A bias statement says what it reads on *real* input for the wrong
+reason — and only the second can be removed by a control. So every number ships with the
+direction of its bias and the control that removes it, or, where no control exists, with the
+direction alone. Three measurements on one day were publishable-looking and wrong until
+their bias was named: a nearest-neighbour test whose ties were broken by array order
+inflated its own control; a pair-symmetric field that averaged two opposite leans caused by
+the mates' unequal length; and a chimaera test that read 100% on both piles because each
+query sat inside the reference it was searched against. The tell in all three was the
+control moving with the test, so read the control first.
+
+**A provenance change forces a re-run, and that is how reproduction gets done here.** The
+convention below gives reproducibility as a property of the design — a committed script plus
+a seed. Having actually re-run a result from clean and got the same numbers is a stronger
+claim, and almost nothing in this repo can make it. Nobody schedules a reproduction
+campaign, so the rule is the cheap version: any change to how provenance is recorded means
+re-running what it describes, and the reproduction falls out free. It is how
+`results/residue_structure/` came to carry one (§6c) — not by intending to.
+
 **Measure chimaeras before claiming contiguity.** Longer contigs that are wrong are worse
 than short contigs that are right. Every contiguity number ships beside a chimaera number
 from the same run — and beside that test's own false-positive rate, which for split-mapping
@@ -48,10 +67,28 @@ Record them and say so rather than tuning a simulator until it looks good.
 ## Conventions
 
 - Every experiment is a script in `experiments/`, takes `--seed`, and writes a run manifest
-  (seed, git SHA, parameters, timings) beside its results.
+  (seed, git SHA, parameters, timings) beside its results. **The git SHA is the field that
+  earns the manifest its place**: a fix landing midway through a multi-seed run leaves a
+  directory where some seeds are right and some are wrong and nothing visible says which. A
+  mixture is not a five-seed result — re-run every seed after a fix, and until they are all
+  re-run, read the per-seed manifest rather than the directory. **A `-dirty` SHA is
+  unresolved provenance, not provenance**: it names HEAD, not the code that ran, so two runs
+  can carry the same SHA and different code, which is exactly the case this rule comes from.
+  Every manifest therefore carries a content hash of the script beside the SHA
+  (`script_sha256`), which pins the code whatever the tree looked like. File timestamps
+  answer the same question only while the container lives, which is not long enough.
 - Any reported number is reproducible from a committed script plus a seed.
 - Headline results run across at least 5 seeds, reporting spread. A single-seed conclusion
   from simulated data is noise.
+- **The two mates are not interchangeable, and any field computed symmetrically over a pair
+  inherits that.** Mate 2 of SRR23973193 carries ~14 nt of non-template 5' sequence which
+  every experiment trims, so R2 is 93 nt against R1's 107 — 62 scorable 31-mers against 76 —
+  and it maps at a different rate. Measured consequences so far: asymmetric absence leans to
+  R2 (64:36) while a fixed-width error signature leans to R1 (58:42), opposite directions
+  from one cause (`results/residue_structure/REPORT.md` §6b); mate novelty and mapping rates
+  differ likewise (`results/residue_structure/`, `results/subtract_known/`). Report a
+  pair-symmetric field per mate, or show the length-matched control. A pooled number here
+  averages two biases that point opposite ways and cannot be unpicked afterwards.
 - Percentages of a library are of read pairs, the occurrence-weighted unit. Never average
   over distinct k-mers: for conserved sequence the two differ by two orders of magnitude, and
   a read sees the occurrence-weighted one.

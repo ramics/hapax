@@ -1,6 +1,8 @@
 {
   "script": "experiments/residue_structure_points.py",
-  "git_sha": "5b91508b25e510d1a59c130c105b47a2f2b4edf2",
+  "git_sha": "f8170f33dfab8aee835b291182bfa2265eb55a73-dirty",
+  "tree_dirty": true,
+  "script_sha256": "f988407c1d3e007b",
   "parameters": {
     "seed": "1",
     "block": "1",
@@ -8,6 +10,6 @@
     "out": "/home/user/hapax/results/residue_structure",
     "per_population": "3000",
     "all_pairs": "True",
-    "join_table": "False"
+    "join_table": "True"
   }
 }

@@ -174,9 +174,12 @@ caught.
   drawing, but not as a clustering: the residue is one continuum, and the deliverable view
   of §8.3 should present it as a density with reference clouds, which is what it is, rather
   than as groups with labels.
-- **The axis worth adding to the per-read report is coverage shape**, not more composition —
-  but with the polarity of §6b attached: these fields describe a read, and they point
-  towards *familiarity*, not novelty.
+- **Of the five coverage axes, the one worth adding to the per-read report is
+  `mate_disagree`**, as the error-floor estimator of §4.2's fourth axis. `cov_step` and
+  `cov_spread` are strong (0.78, 0.77 AUC) but familiarity-signed and their power vanishes
+  once the sample's own contigs are subtracted (§6b), so they describe a read without
+  pointing anywhere useful. That is a sharper recommendation than this report first made,
+  and it is the sibling thread's ladder that sharpened it.
   `cov_step`, `mate_disagree` and `cov_spread` are cheap (one exact counting pass over this
   library, a few minutes of a single core), carry 0.76–0.78 AUC each, and describe failure
   modes the report has no field for. `cov_step` is a candidate for the junction the
@@ -245,12 +248,70 @@ as anything that points towards novelty.
 The prediction is kept in this report rather than quietly replaced, because the project's
 record of what it predicted wrongly is the part that makes the rest readable.
 
-**The mechanism check this invites**, proposed by the cascade thread and not yet run: if
-coverage shape measures witnesses, its AUC should *fall* as the subtrahend grows, because a
-bigger index removes the witnessed material first. `coverage_axes_allpairs_s1.tsv.gz` holds
-the five coverage axes for every pair of block 1 with its residue flag, so residue can be
-redefined at any rung of the index-size ladder and joined on read name without re-running
-the counting pass.
+**The mechanism check, run and passed.** If coverage shape measures witnesses, its power
+should *fall* as the subtrahend grows, because a bigger index removes the witnessed material
+first — and it must be checked inside a fixed coverage band, because the overall number
+would fall for the trivial reason that a bigger index removes high-coverage reads. The
+cascade thread ran exactly that (`results/shape_axis_ladder/`, joining
+`coverage_axes_allpairs_s1.tsv.gz` on 99,745 of 100,000 pairs). Inside a band fixed once at
+rung zero (log_cov 3.95–6.50), `cov_step` goes from 0.317 [0.309–0.324] against SILVA alone
+to **0.494 [0.480–0.509] — chance** once the sample's own identified contigs are subtracted,
+and `cov_spread` from 0.201 to 0.458. Meanwhile the *overall* AUC of both strengthens, which
+is the `log_cov` confound behaving exactly as predicted. The shape axes' power lives in the
+witnessed material and leaves with it. (The in-band unidentified arm falls to 1,592 pairs at
+that rung, so the claim rests on it and the rung beyond is a direction only.)
+
+**`mate_disagree` is a different animal, and it is the one axis of mine worth keeping.** It
+barely moves inside the band (+0.013 against −0.200 overall), so subtraction does not take
+its signal away. Measured here on block 1: it is not read-length asymmetry (ρ = 0.114 with
+|n₁−n₂|) and not zero-runs (ρ = −0.043 with the longest run). What it mostly is, is
+**asymmetric absence** — 38.2% of pairs with `mate_disagree` ≥ 2 have exactly one mate
+entirely unwitnessed while the other is witnessed, against 7.0% of residue pairs generally.
+That is the signature §4.2's fourth axis already wants: instrument error is independent
+between mates, organism-level absence is shared. So `mate_disagree` belongs in the report as
+a per-sample error-floor estimator, which is novelty-neutral, and not in the coverage-shape
+family, which is familiarity-signed.
+
+**And it calibrates against a known floor rather than against the shuffled null**, which is
+the right comparison for a floor estimator and is available here without new work. Taking
+the clean single-substitution signature — a zero-run of 25–40 k-mers in exactly one mate
+while the other has none — it reads **2.33% of subtracted (known) pairs and 2.46% of residue
+pairs**: the same number, as a database-independent error floor must be. The *absence* half
+does not behave that way at all: exactly one mate entirely unwitnessed is 2.99% of known
+pairs against 6.97% of residue pairs. One population has more missing molecules; neither has
+more errors. That split, measured on one block of one library, is what the axis is for.
+(For scale, the quality-derived rates imply 9.1% of R1 and 11.8% of R2 reads carry at least
+one error, so the clean signature is a lower bound — an error near a read end leaves a
+shorter run, and an error inside unwitnessed sequence leaves no mark at all. Those rates are
+themselves upper bounds: the `subtract the known` thread's reference-free check, using the
+pairs that overlap their own mate, measures 0.000796 combined against 0.00206 implied by the
+quality strings, so the fraction of error-bearing reads this signature catches is nearer a
+half than a quarter.)
+
+**Per mate, because the two are not interchangeable and this field treats them as if they
+were.** R2 is 93 nt after the 14 nt trim against R1's 107, which is 62 scorable 31-mers
+against 76, and both halves of the measurement feel it in opposite directions. Asymmetric
+absence falls on R2 more often (64:36 in known pairs, 60:40 in residue), because a shorter
+mate is likelier to come up empty; the single-error signature falls on R1 more often
+(58:42 known, 55:45 residue), because a 25–40 k-mer zero-run needs a long enough profile to
+sit in. Both are length artefacts and neither is biology. The equality across populations —
+the actual readout — survives both, because both populations carry the same asymmetry, but a
+per-mate floor is the honest form and a pooled one invites exactly the misreading.
+
+## 6c. Reproduced, not merely reproducible
+
+The repo rule is that any reported number is reproducible from a committed script plus a
+seed. That is a claim about the design, and it is not the same as having done it. These
+results have been re-run end to end from the committed scripts after the scripts changed to
+record their own content hash: **every reported number came back identical**, with the only
+differences anywhere in the last digits of the gap statistic's bootstrap spreads
+(`ref_log_W` 12.024153186943222 against 12.02415318694322, and similar at the 15th decimal).
+The clustering, the separability, the planted-arm purities and the axis means are unchanged.
+
+Said plainly because it is unusual: this is a demonstrated reproduction rather than a
+reproducible design, and the manifests now carry `git_sha`, an explicit `tree_dirty` flag
+and `script_sha256`, so a later re-run can tell whether it is running the same code rather
+than the same commit.
 
 ## 7. Limitations
 
