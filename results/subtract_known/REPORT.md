@@ -349,6 +349,53 @@ between the piles at a few parts in a thousand" rather than as zero, because one
 five found two instances in each pile: a rate that low cannot be separated from the
 segment-matching threshold's own false-positive rate.
 
+### 3.8 What a bigger index would cost to search, and the one number we cannot measure here
+
+`experiments/diamond_scaling.py`, because a cost estimate for a bigger index has to rest on
+a throughput measurement and the obvious one is the wrong one. The protein ladder's runs put
+8,000 pairs against four databases in about half an hour, and multiplying that up to a
+sample's ~2 million residue pairs would have overstated the cost enormously: at 8,000
+queries a DIAMOND run is almost entirely the one-off database scan.
+
+Measured on two database sizes and two modes, three query counts each, four threads:
+
+| database | mode | fixed scan | marginal per read | 2,000 reads | 32,000 reads |
+|---|---|---|---|---|---|
+| 0.36 GB | default | 12.3 s | 0.00002 s | 12.3 s | 13.0 s |
+| 0.36 GB | --sensitive | 66.1 s | 0.00022 s | 66.5 s | 73.1 s |
+| 1.82 GB | default | 8.7 s | 0.00026 s | 10.1 s | 17.3 s |
+| 1.82 GB | --sensitive | 64.3 s | 0.00309 s | 68.7 s | 162.7 s |
+
+The fits are clean - residuals of a second or two on runs of one to three minutes - and two
+things follow immediately. **The ladder's runs were database-bound**: 16x the queries cost
+6% more time on the small database, so per-read cost at ladder scale says nothing about
+per-read cost at production scale. And **`--sensitive` costs 10 to 14x default**, which is
+a real design choice rather than a free switch.
+
+**The scaling in database size is superlinear and that is where the honesty has to go.** A
+5x larger database multiplies the marginal cost per read by 14.2 in sensitive mode and 13.2
+in default - an exponent of about 1.65, and the two modes agreeing on it is more than a
+coincidence would give. But it is still two points. Taking UniRef100 at ~100 GB, 55x the
+larger database measured here, the two candidate laws disagree by a factor of 15:
+
+- linear in bytes: 0.17 s per read sensitive, so about 94 hours for 2 M pairs on four
+  threads; default mode about 8 hours.
+- exponent 1.65: 2.5 s per read sensitive, which is 1,400 hours and not a plan; default
+  mode about 117 hours.
+
+So the far-end search cost is NOT quoted here, and the ladder's lesson is the reason: this
+project has already read two points as a curve once. What resolves it is a third point on
+real hardware, which is why the big-index run's first act is a timed pilot against the real
+UniRef50 at 18 GB - a database five times larger than anything measurable in this
+container, and the point that separates the two laws. The pilot costs minutes and the guide
+requires a measured baseline check anyway.
+
+One design consequence either way. The deliverable here is identity to the closest
+relative, including distant relatives, which is exactly what sensitivity buys - so
+`--sensitive` cannot simply be dropped to make the cost fit. The split that follows from
+these numbers is default mode for the subtraction pass over every read, and sensitive mode
+on the sampled population where the identity DISTRIBUTION is the product.
+
 ## 4. What the residue is, and is not
 
 The 22.90% residue breaks down as follows, measured by mapping it back to assemblies

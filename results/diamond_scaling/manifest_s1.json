@@ -1,0 +1,31 @@
+{
+  "script": "experiments/diamond_scaling.py",
+  "git_sha": "1178d553b875493e7b2cb7d7d44e0b90f94e493b",
+  "tree_dirty": false,
+  "script_sha256": "0a66eef12bd1ca2f",
+  "parameters": {
+    "seed": 1,
+    "reads": "/tmp/claude-0/wk/recut/residue_s1.fa",
+    "query_ladder": [
+      2000,
+      8000,
+      32000
+    ],
+    "dbs": [
+      "/home/user/hapax/data/prot/uniref50_02pct.dmnd",
+      "/home/user/hapax/data/prot/uniref50_10pct.dmnd"
+    ],
+    "modes": [
+      "",
+      "--sensitive"
+    ],
+    "diamond_bin": "/home/user/tools/diamond",
+    "threads": 4,
+    "target_pairs": 2000000,
+    "work": "/tmp/claude-0/wk/dscale",
+    "out": "/home/user/hapax/results/diamond_scaling"
+  },
+  "wall_seconds": 604.9770598050018,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}

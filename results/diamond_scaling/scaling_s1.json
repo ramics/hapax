@@ -1,0 +1,159 @@
+{
+  "seed": 1,
+  "threads": 4,
+  "results": [
+    {
+      "db": "uniref50_02pct.dmnd",
+      "db_bytes": 364983333,
+      "mode": "default",
+      "queries": 2000,
+      "seconds": 12.333399538998492,
+      "seconds_per_1k_reads": 6.166699769499246
+    },
+    {
+      "db": "uniref50_02pct.dmnd",
+      "db_bytes": 364983333,
+      "mode": "default",
+      "queries": 8000,
+      "seconds": 12.545781202999933,
+      "seconds_per_1k_reads": 1.5682226503749916
+    },
+    {
+      "db": "uniref50_02pct.dmnd",
+      "db_bytes": 364983333,
+      "mode": "default",
+      "queries": 32000,
+      "seconds": 12.97523359600018,
+      "seconds_per_1k_reads": 0.40547604987500563
+    },
+    {
+      "db": "uniref50_02pct.dmnd",
+      "db_bytes": 364983333,
+      "mode": "--sensitive",
+      "queries": 2000,
+      "seconds": 66.52896468999825,
+      "seconds_per_1k_reads": 33.264482344999124
+    },
+    {
+      "db": "uniref50_02pct.dmnd",
+      "db_bytes": 364983333,
+      "mode": "--sensitive",
+      "queries": 8000,
+      "seconds": 67.79792583100061,
+      "seconds_per_1k_reads": 8.474740728875076
+    },
+    {
+      "db": "uniref50_02pct.dmnd",
+      "db_bytes": 364983333,
+      "mode": "--sensitive",
+      "queries": 32000,
+      "seconds": 73.06339615600155,
+      "seconds_per_1k_reads": 2.2832311298750483
+    },
+    {
+      "db": "uniref50_10pct.dmnd",
+      "db_bytes": 1823091927,
+      "mode": "default",
+      "queries": 2000,
+      "seconds": 10.075236644999677,
+      "seconds_per_1k_reads": 5.0376183224998385
+    },
+    {
+      "db": "uniref50_10pct.dmnd",
+      "db_bytes": 1823091927,
+      "mode": "default",
+      "queries": 8000,
+      "seconds": 9.668560031001107,
+      "seconds_per_1k_reads": 1.2085700038751384
+    },
+    {
+      "db": "uniref50_10pct.dmnd",
+      "db_bytes": 1823091927,
+      "mode": "default",
+      "queries": 32000,
+      "seconds": 17.298034617000667,
+      "seconds_per_1k_reads": 0.5405635817812708
+    },
+    {
+      "db": "uniref50_10pct.dmnd",
+      "db_bytes": 1823091927,
+      "mode": "--sensitive",
+      "queries": 2000,
+      "seconds": 68.67492872799994,
+      "seconds_per_1k_reads": 34.33746436399997
+    },
+    {
+      "db": "uniref50_10pct.dmnd",
+      "db_bytes": 1823091927,
+      "mode": "--sensitive",
+      "queries": 8000,
+      "seconds": 91.2707997280013,
+      "seconds_per_1k_reads": 11.408849966000162
+    },
+    {
+      "db": "uniref50_10pct.dmnd",
+      "db_bytes": 1823091927,
+      "mode": "--sensitive",
+      "queries": 32000,
+      "seconds": 162.72381106800094,
+      "seconds_per_1k_reads": 5.085119095875029
+    }
+  ],
+  "fits": {
+    "uniref50_02pct.dmnd|default": {
+      "marginal_seconds_per_read": 2.0394291750043132e-05,
+      "fixed_seconds_db_scan": 12.332618028165598,
+      "residuals": [
+        -0.04000707266719239,
+        0.05000884083399093,
+        -0.010001768166798541
+      ],
+      "extrapolated_hours_for_target": 0.014755889313403294,
+      "largest_measured_queries": 32000,
+      "extrapolation_factor": 62.5
+    },
+    "uniref50_02pct.dmnd|--sensitive": {
+      "marginal_seconds_per_read": 0.0002182658721072325,
+      "fixed_seconds_db_scan": 66.07437334949888,
+      "residuals": [
+        0.018059596284899726,
+        -0.02257449535613887,
+        0.0045148990712249315
+      ],
+      "extrapolated_hours_for_target": 0.1396128104344344,
+      "largest_measured_queries": 32000,
+      "extrapolation_factor": 62.5
+    },
+    "uniref50_10pct.dmnd|default": {
+      "marginal_seconds_per_read": 0.0002627984586904945,
+      "fixed_seconds_db_scan": 8.668098676000227,
+      "residuals": [
+        0.881541051618461,
+        -1.1019263145230767,
+        0.2203852629046139
+      ],
+      "extrapolated_hours_for_target": 0.14840694890471923,
+      "largest_measured_queries": 32000,
+      "extrapolation_factor": 62.5
+    },
+    "uniref50_10pct.dmnd|--sensitive": {
+      "marginal_seconds_per_read": 0.0030898901907143055,
+      "fixed_seconds_db_scan": 64.29805050466712,
+      "residuals": [
+        -1.8029021580957902,
+        2.2536276976197342,
+        -0.450725539523944
+      ],
+      "extrapolated_hours_for_target": 1.7344662310925771,
+      "largest_measured_queries": 32000,
+      "extrapolation_factor": 62.5
+    }
+  },
+  "target_pairs": 2000000,
+  "caveats": [
+    "the target line is a LINEAR EXTRAPOLATION far past the largest measured query count; it is a planning number, not a measurement",
+    "a database subset is not the same shape as the full database: more distinct seeds per byte would make the full index slower per byte than these subsets",
+    "wall time on a shared 4-core container; an 8 vCPU instance is not simply twice as fast"
+  ],
+  "wall_seconds": 604.9689481890018
+}
