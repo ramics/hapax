@@ -192,7 +192,7 @@ def join_observables(contig: str, name: str, joins: list[int], sa: str, sb: str,
 
 
 def score(contigs: Path, ref2: Path, a: str, b: str,
-          spike_reads: list[Path] | None = None, keep: Path | None = None) -> dict:
+          spike_reads: tuple[Path, Path] | None = None, keep: Path | None = None) -> dict:
     """Spike-derived contigs, per-lineage breadth, and mosaicism.
 
     Breadth is computed per lineage from the alignments to that lineage, so two
@@ -242,8 +242,12 @@ def score(contigs: Path, ref2: Path, a: str, b: str,
     depths: dict[str, list[int]] = {}
     read_paf = ""
     if spike_reads:
-        read_paf = sh(["minimap2", "-x", "sr", "--secondary=no", str(contigs)]
-                      + [str(p) for p in spike_reads]).stdout
+        # One paired call: minimap2's sr mode refuses more than two query files,
+        # and these are the exact reads the mixture used - both lineages' prefixes
+        # with mate 2 trimmed - rather than the surplus ART pool, so depth here
+        # is the depth the assembler saw.
+        read_paf = sh(["minimap2", "-x", "sr", "--secondary=no", str(contigs),
+                       str(spike_reads[0]), str(spike_reads[1])]).stdout
         if keep is not None:
             # Read names carry their source accession (ART names reads after the
             # fasta header), so the per-read lineage assignment is recoverable
@@ -352,15 +356,22 @@ def main() -> None:
                     continue
                 m1 = args.work / f"mix_{tag}_{mode}_s{seed}_1.fq.gz"
                 m2 = args.work / f"mix_{tag}_{mode}_s{seed}_2.fq.gz"
-                for mix, bg, idx in ((m1, bg1, 0), (m2, bg2, 1)):
-                    cmd = f"cat {bg}"
+                s1 = args.work / f"spk_{tag}_{mode}_s{seed}_1.fq.gz"
+                s2 = args.work / f"spk_{tag}_{mode}_s{seed}_2.fq.gz"
+                for mix, spk, bg, idx in ((m1, s1, bg1, 0), (m2, s2, bg2, 1)):
+                    spike_only = ""
                     for p, n in [((p1, p2)[idx], n) for p1, p2, n in parts]:
                         cut = f"seqkit head -n {n} {p}"
                         if idx == 1:
                             cut += f" | seqkit subseq -r 1:{r2_len}"
-                        cmd += f" <({cut} | gzip -c)"
+                        spike_only += f" <({cut} | gzip -c)"
                     with open(mix, "wb") as fh:
-                        subprocess.run(["bash", "-c", cmd], stdout=fh, check=True)
+                        subprocess.run(["bash", "-c", f"cat {bg}{spike_only}"],
+                                       stdout=fh, check=True)
+                    # the same spike reads on their own, for mapping back
+                    with open(spk, "wb") as fh:
+                        subprocess.run(["bash", "-c", f"cat{spike_only}"],
+                                       stdout=fh, check=True)
                 asm = args.work / f"asm_{tag}_{mode}_s{seed}"
                 if asm.exists():
                     subprocess.run(["rm", "-rf", str(asm)], check=True)
@@ -370,7 +381,7 @@ def main() -> None:
                 except subprocess.CalledProcessError as e:
                     print(f"[{tag} {mode} s{seed}] megahit failed: {e.stderr[-300:]}", flush=True)
                     continue
-                reads = [p for pr in parts for p in pr[:2]] if args.join_observables else None
+                reads = (s1, s2) if args.join_observables else None
                 keep = (args.out / "joins" / f"{tag}_{mode}_s{seed}") if args.join_observables else None
                 sc = score(asm / "final.contigs.fa", ref2, acc_a, acc_b, reads, keep)
                 cross = {}
@@ -398,6 +409,8 @@ def main() -> None:
                 subprocess.run(["rm", "-rf", str(asm)], check=True)
                 m1.unlink(missing_ok=True)
                 m2.unlink(missing_ok=True)
+                s1.unlink(missing_ok=True)
+                s2.unlink(missing_ok=True)
 
     (args.out / "two_lineage_manifest.json").write_text(json.dumps({
         "git_sha": git_sha(),
