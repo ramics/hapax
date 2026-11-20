@@ -443,7 +443,18 @@ So the three roles are:
 
 - **`mate_disagree`: the per-sample error-floor estimator**, SPEC section 4.2's fourth
   axis. Novelty-neutral, and it earns its place by measuring the floor rather than the
-  signal.
+  signal. Its calibration has been run and it PASSES, which no other field here can say:
+  the clean single-substitution signature - a 25-40 k-mer zero-run in exactly one mate
+  while the other has none - reads 2.33% of the reads the cascade identified and 2.46% of
+  the residue, the same number in both, which is what a database-independent error floor
+  must look like. The absence half of the same measurement behaves oppositely, 2.99%
+  against 6.97%, so one population has more missing molecules and neither has more errors:
+  the error-versus-organism split measured rather than argued from mate independence. The
+  caveat ships with it - this library's rates imply 9.1% of R1 and 11.8% of R2 reads carry
+  at least one error, so the clean signature catches about a quarter of them, and the
+  equality between populations is the readout rather than the level. It is also the only
+  one of the five axes whose mechanism does not depend on what is in a database, which
+  makes it the only one that can be expected to mean the same thing in a second city.
 - **`cov_step` and `cov_spread`: description, labelled familiarity.** They are strong and
   they point the wrong way, so they describe a read and must never be read as evidence
   that it is new.
