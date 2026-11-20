@@ -174,9 +174,12 @@ caught.
   drawing, but not as a clustering: the residue is one continuum, and the deliverable view
   of §8.3 should present it as a density with reference clouds, which is what it is, rather
   than as groups with labels.
-- **The axis worth adding to the per-read report is coverage shape**, not more composition —
-  but with the polarity of §6b attached: these fields describe a read, and they point
-  towards *familiarity*, not novelty.
+- **Of the five coverage axes, the one worth adding to the per-read report is
+  `mate_disagree`**, as the error-floor estimator of §4.2's fourth axis. `cov_step` and
+  `cov_spread` are strong (0.78, 0.77 AUC) but familiarity-signed and their power vanishes
+  once the sample's own contigs are subtracted (§6b), so they describe a read without
+  pointing anywhere useful. That is a sharper recommendation than this report first made,
+  and it is the sibling thread's ladder that sharpened it.
   `cov_step`, `mate_disagree` and `cov_spread` are cheap (one exact counting pass over this
   library, a few minutes of a single core), carry 0.76–0.78 AUC each, and describe failure
   modes the report has no field for. `cov_step` is a candidate for the junction the
@@ -245,12 +248,29 @@ as anything that points towards novelty.
 The prediction is kept in this report rather than quietly replaced, because the project's
 record of what it predicted wrongly is the part that makes the rest readable.
 
-**The mechanism check this invites**, proposed by the cascade thread and not yet run: if
-coverage shape measures witnesses, its AUC should *fall* as the subtrahend grows, because a
-bigger index removes the witnessed material first. `coverage_axes_allpairs_s1.tsv.gz` holds
-the five coverage axes for every pair of block 1 with its residue flag, so residue can be
-redefined at any rung of the index-size ladder and joined on read name without re-running
-the counting pass.
+**The mechanism check, run and passed.** If coverage shape measures witnesses, its power
+should *fall* as the subtrahend grows, because a bigger index removes the witnessed material
+first — and it must be checked inside a fixed coverage band, because the overall number
+would fall for the trivial reason that a bigger index removes high-coverage reads. The
+cascade thread ran exactly that (`results/shape_axis_ladder/`, joining
+`coverage_axes_allpairs_s1.tsv.gz` on 99,745 of 100,000 pairs). Inside a band fixed once at
+rung zero (log_cov 3.95–6.50), `cov_step` goes from 0.317 [0.309–0.324] against SILVA alone
+to **0.494 [0.480–0.509] — chance** once the sample's own identified contigs are subtracted,
+and `cov_spread` from 0.201 to 0.458. Meanwhile the *overall* AUC of both strengthens, which
+is the `log_cov` confound behaving exactly as predicted. The shape axes' power lives in the
+witnessed material and leaves with it. (The in-band unidentified arm falls to 1,592 pairs at
+that rung, so the claim rests on it and the rung beyond is a direction only.)
+
+**`mate_disagree` is a different animal, and it is the one axis of mine worth keeping.** It
+barely moves inside the band (+0.013 against −0.200 overall), so subtraction does not take
+its signal away. Measured here on block 1: it is not read-length asymmetry (ρ = 0.114 with
+|n₁−n₂|) and not zero-runs (ρ = −0.043 with the longest run). What it mostly is, is
+**asymmetric absence** — 38.2% of pairs with `mate_disagree` ≥ 2 have exactly one mate
+entirely unwitnessed while the other is witnessed, against 7.0% of residue pairs generally.
+That is the signature §4.2's fourth axis already wants: instrument error is independent
+between mates, organism-level absence is shared. So `mate_disagree` belongs in the report as
+a per-sample error-floor estimator, which is novelty-neutral, and not in the coverage-shape
+family, which is familiarity-signed.
 
 ## 7. Limitations
 
