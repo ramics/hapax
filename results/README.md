@@ -18,6 +18,7 @@ their results directory.
 | directory | what it measured | status |
 |---|---|---|
 | [`readlevel_features/`](readlevel_features/REPORT.md) | Ceilings on single-read features — ORF-likeness, k-mer composition, codon usage, GC. None has novelty polarity, because a wastewater background is coding too. Includes the prior-art review and the Viromancer/Lyra-Virus review. | live; the reason no axis is thresholded |
+| [`residue_structure/`](residue_structure/REPORT.md) | SPEC.md §4.2's gate experiment: is the residue structured or diffuse in the joint space? **No clusters beyond its own covariance (k=1, 5/5 seeds), the joint space beats the best single axis by 0.013 AUC, but a planted genome's reads find each other by neighbourhood down to about 1 in 100,000 and not below.** Adds exact whole-library 31-mer coverage shape as an axis set. | live; the gate is answered |
 | [`peptide_absence/`](peptide_absence/) | Peptide k-mer absence under family holdout. Saturates at k=10; graded at k=6. | live |
 | [`peptide_absence_noise/`](peptide_absence_noise/REPORT.md) | The instrument error floor under peptide absence. Peptide beats nucleotide (synonymous substitutions), but one 107 nt read cannot carry a one-in-a-million call. | live |
 | [`berlin_quality/`](berlin_quality/) | This library's actual error rates: 0.00089 on R1, 0.00117 on R2, modal length 107, flat profile. Every simulation uses these. | live |
