@@ -67,6 +67,35 @@ and after both, one name per line, same format as the existing `residue_names` f
 cascade computes those sets anyway, so emitting them is a file write; all five blocks cost
 the same as one.
 
+### 4.1 The exact specification, fixed before launch
+
+Fixed once by the thread that will consume them, because changing the format after the box
+has shut down means another launch and another approval:
+
+- **No scorable-pairs filter.** Survivors out of the full 100,000, not out of its 99,745.
+  The 255 pairs it drops for having under 40 scorable k-mers are its own to drop, and a
+  pre-filtered list makes a pair dropped for that reason indistinguishable from one a rung
+  removed. It filters after joining.
+- **Cumulative, not deltas**, and each file states what it contains: the pairs still
+  unidentified after the existing tier-1 cascade PLUS that rung. Deltas are derivable from
+  cumulative sets; the reverse needs an anchor, and the anchor is what drifts.
+- **Fifteen files**, one per block per rung: `residue_names_<rung>_s<block>.txt`, rung in
+  `{core_nt, nr, core_nt_nr}`. One name per line exactly as the FASTQ carries it
+  (`SRR23973193.<n>`), no mate suffix, no header, LF, deduplicated, order irrelevant.
+- **Plus the rung-zero list** - current cascade, no big index - from the same run, even
+  though it already exists. If it differs from the committed `residue_names_s*.txt` by even
+  a few names, the blocks drifted, and that is better found in a file than in a result.
+- **A JSON beside each file with the operating point**, which a name list cannot carry:
+  identity or bitscore threshold, aligner and mode, database version and date, and the
+  count. Names without a threshold are as unreadable as a percentage without one.
+- **A sixteenth file if it is free**: block 1 at a MID threshold as well as the strict one.
+  Every ladder in this project has shown thresholds dominating database size, and one
+  operating point on the biggest index is where that measurement would stop.
+- **Confirmed convention**: the big run reads the library through
+  `berlin_io.read_pairs` - skip (seed-1) x 1,500,000, 100,000 pairs, mate 2 trimmed 14 nt -
+  so the names join its coverage table. If throughput ever forces a different reader the
+  names stay correct but the joined set changes, and the rung-zero list is what exposes it.
+
 Two measurements turn on it, both currently conditional on a database known to be
 incomplete:
 
