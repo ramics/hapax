@@ -1,0 +1,69 @@
+{
+  "git_sha": "034d60ecb7129a59a8c6bc9c00ff63aa5234f2af-dirty",
+  "params": {
+    "seed": "1",
+    "n_seeds": "3",
+    "bg1": "/home/user/sweepdata/bg/SRR23973193_1.fastq.gz",
+    "bg2": "/home/user/sweepdata/bg/SRR23973193_2.fastq.gz",
+    "bg_pairs": "1000000",
+    "pool_fa": "/home/user/sweepdata/ref/rabies_wide.fa",
+    "extra_fa": "/home/user/sweepdata/ref/rabies_pool.fa",
+    "total_pairs": "450",
+    "read_len": "107",
+    "r2_trim_start": "15",
+    "threads": "4",
+    "controls": "True",
+    "modes": "",
+    "cross_score": "False",
+    "rows_name": "two_lineage_rows_band.jsonl",
+    "only": "div045,div055,div065",
+    "work": "/home/user/sweepdata/twolin",
+    "out": "results/abundance_sweep"
+  },
+  "pairs": [
+    [
+      "div02",
+      "PZ227608.1",
+      "PZ227621.1",
+      0.0198
+    ],
+    [
+      "div04",
+      "PV491557.1",
+      "PZ324370.1",
+      0.0381
+    ],
+    [
+      "div045",
+      "MG458312.1",
+      "PZ227553.1",
+      0.045
+    ],
+    [
+      "div055",
+      "PZ227534.1",
+      "PZ227561.1",
+      0.055
+    ],
+    [
+      "div065",
+      "AB009663.2",
+      "PZ227534.1",
+      0.0652
+    ],
+    [
+      "div07",
+      "PZ227608.1",
+      "AB044824.1",
+      0.0729
+    ],
+    [
+      "div10",
+      "NC_001542.1",
+      "AB009663.2",
+      0.0965
+    ]
+  ],
+  "window": 300,
+  "wall_total": 4535.2
+}

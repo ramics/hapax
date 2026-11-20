@@ -1,0 +1,431 @@
+{
+  "seed": 1,
+  "background_reads": 2000000,
+  "background_with_hit": 216272,
+  "pool_reads_with_hit": 2613,
+  "pool_reads": 22200,
+  "sensitivity_setting": "very-sensitive",
+  "wall": 600.0,
+  "rows": [
+    {
+      "seed": 1,
+      "spike_pairs": 10,
+      "spike_reads": 20,
+      "bitscore": 40,
+      "spike_flagged": 1,
+      "sensitivity": 0.05,
+      "background_flagged": 187587,
+      "background_per_million": 93793.5
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 10,
+      "spike_reads": 20,
+      "bitscore": 50,
+      "spike_flagged": 1,
+      "sensitivity": 0.05,
+      "background_flagged": 117875,
+      "background_per_million": 58937.5
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 10,
+      "spike_reads": 20,
+      "bitscore": 60,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 72631,
+      "background_per_million": 36315.5
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 10,
+      "spike_reads": 20,
+      "bitscore": 80,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 2978,
+      "background_per_million": 1489.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 10,
+      "spike_reads": 20,
+      "bitscore": 100,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 0,
+      "background_per_million": 0.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 10,
+      "spike_reads": 20,
+      "bitscore": 150,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 0,
+      "background_per_million": 0.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 10,
+      "spike_reads": 20,
+      "bitscore": 200,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 0,
+      "background_per_million": 0.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 30,
+      "spike_reads": 60,
+      "bitscore": 40,
+      "spike_flagged": 6,
+      "sensitivity": 0.1,
+      "background_flagged": 187587,
+      "background_per_million": 93793.5
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 30,
+      "spike_reads": 60,
+      "bitscore": 50,
+      "spike_flagged": 2,
+      "sensitivity": 0.0333,
+      "background_flagged": 117875,
+      "background_per_million": 58937.5
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 30,
+      "spike_reads": 60,
+      "bitscore": 60,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 72631,
+      "background_per_million": 36315.5
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 30,
+      "spike_reads": 60,
+      "bitscore": 80,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 2978,
+      "background_per_million": 1489.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 30,
+      "spike_reads": 60,
+      "bitscore": 100,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 0,
+      "background_per_million": 0.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 30,
+      "spike_reads": 60,
+      "bitscore": 150,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 0,
+      "background_per_million": 0.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 30,
+      "spike_reads": 60,
+      "bitscore": 200,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 0,
+      "background_per_million": 0.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 100,
+      "spike_reads": 200,
+      "bitscore": 40,
+      "spike_flagged": 20,
+      "sensitivity": 0.1,
+      "background_flagged": 187587,
+      "background_per_million": 93793.5
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 100,
+      "spike_reads": 200,
+      "bitscore": 50,
+      "spike_flagged": 6,
+      "sensitivity": 0.03,
+      "background_flagged": 117875,
+      "background_per_million": 58937.5
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 100,
+      "spike_reads": 200,
+      "bitscore": 60,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 72631,
+      "background_per_million": 36315.5
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 100,
+      "spike_reads": 200,
+      "bitscore": 80,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 2978,
+      "background_per_million": 1489.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 100,
+      "spike_reads": 200,
+      "bitscore": 100,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 0,
+      "background_per_million": 0.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 100,
+      "spike_reads": 200,
+      "bitscore": 150,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 0,
+      "background_per_million": 0.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 100,
+      "spike_reads": 200,
+      "bitscore": 200,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 0,
+      "background_per_million": 0.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 300,
+      "spike_reads": 600,
+      "bitscore": 40,
+      "spike_flagged": 54,
+      "sensitivity": 0.09,
+      "background_flagged": 187587,
+      "background_per_million": 93793.5
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 300,
+      "spike_reads": 600,
+      "bitscore": 50,
+      "spike_flagged": 12,
+      "sensitivity": 0.02,
+      "background_flagged": 117875,
+      "background_per_million": 58937.5
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 300,
+      "spike_reads": 600,
+      "bitscore": 60,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 72631,
+      "background_per_million": 36315.5
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 300,
+      "spike_reads": 600,
+      "bitscore": 80,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 2978,
+      "background_per_million": 1489.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 300,
+      "spike_reads": 600,
+      "bitscore": 100,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 0,
+      "background_per_million": 0.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 300,
+      "spike_reads": 600,
+      "bitscore": 150,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 0,
+      "background_per_million": 0.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 300,
+      "spike_reads": 600,
+      "bitscore": 200,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 0,
+      "background_per_million": 0.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 1000,
+      "spike_reads": 2000,
+      "bitscore": 40,
+      "spike_flagged": 179,
+      "sensitivity": 0.0895,
+      "background_flagged": 187587,
+      "background_per_million": 93793.5
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 1000,
+      "spike_reads": 2000,
+      "bitscore": 50,
+      "spike_flagged": 48,
+      "sensitivity": 0.024,
+      "background_flagged": 117875,
+      "background_per_million": 58937.5
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 1000,
+      "spike_reads": 2000,
+      "bitscore": 60,
+      "spike_flagged": 1,
+      "sensitivity": 0.0005,
+      "background_flagged": 72631,
+      "background_per_million": 36315.5
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 1000,
+      "spike_reads": 2000,
+      "bitscore": 80,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 2978,
+      "background_per_million": 1489.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 1000,
+      "spike_reads": 2000,
+      "bitscore": 100,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 0,
+      "background_per_million": 0.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 1000,
+      "spike_reads": 2000,
+      "bitscore": 150,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 0,
+      "background_per_million": 0.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 1000,
+      "spike_reads": 2000,
+      "bitscore": 200,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 0,
+      "background_per_million": 0.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 3000,
+      "spike_reads": 6000,
+      "bitscore": 40,
+      "spike_flagged": 511,
+      "sensitivity": 0.0852,
+      "background_flagged": 187587,
+      "background_per_million": 93793.5
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 3000,
+      "spike_reads": 6000,
+      "bitscore": 50,
+      "spike_flagged": 133,
+      "sensitivity": 0.0222,
+      "background_flagged": 117875,
+      "background_per_million": 58937.5
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 3000,
+      "spike_reads": 6000,
+      "bitscore": 60,
+      "spike_flagged": 4,
+      "sensitivity": 0.0007,
+      "background_flagged": 72631,
+      "background_per_million": 36315.5
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 3000,
+      "spike_reads": 6000,
+      "bitscore": 80,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 2978,
+      "background_per_million": 1489.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 3000,
+      "spike_reads": 6000,
+      "bitscore": 100,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 0,
+      "background_per_million": 0.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 3000,
+      "spike_reads": 6000,
+      "bitscore": 150,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 0,
+      "background_per_million": 0.0
+    },
+    {
+      "seed": 1,
+      "spike_pairs": 3000,
+      "spike_reads": 6000,
+      "bitscore": 200,
+      "spike_flagged": 0,
+      "sensitivity": 0.0,
+      "background_flagged": 0,
+      "background_per_million": 0.0
+    }
+  ]
+}
