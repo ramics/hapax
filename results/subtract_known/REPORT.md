@@ -461,6 +461,53 @@ So the three roles are:
 - **`log_cov`: not in any score.** It is partly definitional with respect to what an index
   removes, and it dominates every pooled number it is allowed into.
 
+### 5.3 Does this library get grittier towards one end? Measured twice, and the ramp is small
+
+Illumina reads usually degrade towards the 3' end, and a reader will assume it. This library
+was measured once as flat, which is a thin basis for a fact every quality-trusting field
+rests on, so `experiments/quality_profile.py` re-measures it across five flow-cell blocks
+and measures it a second way that does not trust the quality strings at all - necessary
+because NovaSeq bins quality, so a flat Q profile is not by itself evidence of a flat error
+rate.
+
+**The quality profile: a decline, but a small one.** Mean Q runs 36.4 to 36.7 along mate 1
+with a last-quarter-minus-first-quarter change of -0.14 Q (-0.22 to -0.09 across seeds),
+and 36.7 down to 36.3 along mate 2, change -0.31 Q (-0.44 to -0.23). So the ramp is real,
+reproducible, and worth about 0.3 of a Q unit out of 36.5. It shows up more clearly in the
+tail of the distribution than in the mean: the fraction of bases below Q20 rises from 0.5%
+to about 1.3% along mate 2 (+0.0063) and by +0.0026 along mate 1.
+
+**The reference-free instrument agrees.** 26-27% of pairs overlap their own mate, so every
+base in the overlap is observed twice and a mismatch means one observation is wrong. The
+combined mismatch rate is 0.000796 (0.000678-0.000885 over five seeds), flat along the body
+of the read at 0.00068, rising to 0.0019 at the final base - a factor of about three, on an
+absolute scale of a tenth of a percent.
+
+Two things that measurement also says. The apparent 2% mismatch rate at mate 1's first six
+positions is an artefact of which molecules can reach them: a pair only overlaps at position
+0 when its insert is under about 93 nt, so those positions rest on 464-646 observations from
+the shortest inserts alone, against 3,000-5,000 elsewhere. And the Q strings imply a
+combined error rate of 0.00206 where the overlap instrument measures 0.000796, so the quality
+scores here are conservative by about 2.6x - or the overlapping short-insert subset is
+cleaner than the library, and this test cannot separate those two. Either way the project's
+quoted rates of 0.00089 (R1) and 0.00117 (R2) are Q-derived and should be read as an upper
+bound.
+
+**The asymmetry that matters is between mates, and most of it was length.** Among pairs
+where exactly one mate maps to the sample's own assembly, 62.1% have mate 2 as the unmapped
+one - but mate 2 is 93 nt against mate 1's 107 after the non-template prefix trim, and a
+shorter read maps less often for reasons unrelated to quality. Truncating mate 1 to the same
+length puts it at 53.9% (52.3-55.4 across seeds). So the real mate asymmetry is about 1.17x,
+not the 1.5x the raw number suggests.
+
+That has a direct consequence for section 5.2's error-floor field, which counts pairs where
+exactly one mate is unwitnessed and treats the two mates as interchangeable: it will fire
+about 1.17x more often on mate 2 than on mate 1. The field is still usable - the calibration
+that matters is the equality of the floor between the residue and the identified reads, and
+that comparison is unaffected because both populations carry the same mate asymmetry - but
+the floor should be reported per mate, and a 54:46 split between mates must not be read as
+biology.
+
 So the report currently has no field that is both strong and pointing at novelty, and the
 strong fields describe a read without saying it is new. Two consequences are carried
 through the rest of this work. Every field in the table is labelled with its polarity, so a
