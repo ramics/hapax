@@ -156,6 +156,8 @@ def main() -> None:
     ap.add_argument("--batch", type=int, default=15, help="sequences per BLAST job")
     ap.add_argument("--poll", type=int, default=20)
     ap.add_argument("--max-wait", type=int, default=1200)
+    ap.add_argument("--batch-attempts", type=int, default=2,
+                    help="submissions per batch before its queries are dropped")
     ap.add_argument("--between-batches", type=int, default=10)
     ap.add_argument("--programs", nargs="+", default=["blastn", "blastx"])
     ap.add_argument("--megablast", choices=["on", "off"], default="off",
@@ -279,15 +281,27 @@ def main() -> None:
             queued += list(d.items())
         for i in range(0, len(queued), args.batch):
             chunk = dict(queued[i:i + args.batch])
-            try:
-                rid = blast_submit(chunk, program, db,
-                                   {"megablast": args.megablast == "on"})
-                text = blast_fetch(rid, args.poll, args.max_wait)
-                got.update(parse_json2(text))
-            except Exception as e:  # a failed batch is recorded, not fatal
+            # One retry before dropping. A malformed reply from NCBI is transient - the
+            # same chunk resubmitted usually parses - and dropping costs real n, which
+            # matters here because n is 60 per class by design.
+            last = None
+            for attempt in range(args.batch_attempts):
+                try:
+                    rid = blast_submit(chunk, program, db,
+                                       {"megablast": args.megablast == "on"})
+                    text = blast_fetch(rid, args.poll, args.max_wait)
+                    got.update(parse_json2(text))
+                    last = None
+                    break
+                except Exception as e:
+                    last = e
+                    if attempt + 1 < args.batch_attempts:
+                        time.sleep(args.between_batches)
+            if last is not None:  # a failed batch is dropped, not fatal, not a miss
                 failed |= set(chunk)
                 results.setdefault("errors", []).append(
-                    f"{program} batch {i // args.batch}: {type(e).__name__}: {e}")
+                    f"{program} batch {i // args.batch}: "
+                    f"{type(last).__name__}: {last}")
             time.sleep(args.between_batches)
         per_class = {}
         for cls, d in sample.items():
