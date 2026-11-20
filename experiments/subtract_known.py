@@ -1,0 +1,582 @@
+"""How much of a real wastewater library can be subtracted as already known, per gigabyte
+of index, and what survives.
+
+THE QUESTION. The project's thesis, as Imo put it on 2026-11-20: find the most efficient
+way to extract the known, then score the unknown. "Efficient" has two readings and this
+script measures both at once - cheapest (bytes of index, seconds of wall time) and most
+complete (fraction of the library actually removed). The headline is the curve between
+them, and the residue at the far end.
+
+WHY THE POLARITY MATTERS. Every earlier read-level feature in this project failed as a
+novelty score for the same reason: a wastewater background is coding too, so "looks like a
+gene" cannot separate novel-coding from known-coding
+(results/readlevel_features/REPORT.md, PR #8). Subtraction does not have that problem,
+because the question asked of the index is "is this read already known", which is what an
+index can answer. The failure mode moves somewhere else, and this script is built to
+expose it: an incomplete index makes ordinary sewage look novel. PR #11 measured 86% of
+Berlin reads with no known peptide 10-mer against a viral + Swiss-Prot index, which is a
+statement about the index, not about the sewage. So nothing here reports an absence rate
+without the index that produced it, in bytes.
+
+WHAT IS MEASURED. Each tier is run INDEPENDENTLY over the same reads, not cascaded, so
+the output supports three different readings:
+
+  - per-tier removal: what this index alone would remove, order-free;
+  - union removal: what all tiers together remove, which is the honest "known" fraction;
+  - marginal removal in a stated order, which is what a pipeline builder actually buys by
+    adding the next tier.
+
+Only the protein tier is run on the survivors of the nucleotide tiers, because DIAMOND on
+the full set costs more than the rest of the cascade together; that conditioning is
+recorded in the output rather than smoothed over.
+
+THE TIERS, cheapest first.
+
+  artefact   ~0 bytes. Adapter and primer-dimer sequence, low-complexity and
+             homopolymer runs, N-rich reads. Load-bearing rather than a footnote: a
+             residue defined by matching nothing is enriched for exactly these, and a
+             dengue/Nextera study found most or all host-virus chimaeras were artificial
+             (Haas 2011 reports amplicon chimaera rates above 70% for the rarest taxa,
+             which is our target by construction).
+  rRNA       SILVA SSU+LSU NR99. SRR23973193 is library_selection=cDNA with no rRNA
+             depletion recorded in ENA, so ribosomal RNA is expected to be a large
+             fraction - and it is invisible to a protein index by construction, which is
+             the first candidate explanation for the 86% figure.
+  k2_*       Kraken2 at four index sizes (viral 0.6 GB, standard-8, PlusPF-8,
+             PlusPF-16). Four points on the size axis with the same algorithm, which is
+             what makes the removal-per-GB curve a curve rather than a pair of anecdotes.
+             Confidence is swept rather than fixed, because the classified fraction of a
+             wastewater library is known to depend on it strongly, and a single number
+             would be a choice disguised as a measurement.
+  selfasm    The study authors' own SPAdes contigs for this sample, and for all 116
+             samples. Not a public catalogue at all: it is the same environment's own
+             assembled sequence, and it tests whether the residue is unknown to
+             databases or merely unassembled here.
+  protein    DIAMOND blastx against RefSeq viral proteins + Swiss-Prot, with the bitscore
+             threshold swept. Nucleotide identity decays with divergence faster than
+             peptide identity, so this tier is the one that can reach a relative the
+             nucleotide tiers cannot see.
+
+CALIBRATION, stated up front because every number here is one-sided. Removal measured
+against an index is a lower bound on what is known: it cannot distinguish sequence that is
+genuinely unrepresented from sequence whose relative exists but is below the threshold.
+The script therefore reports, for every tier, the removal rate as a continuous function of
+its threshold, never a single yes/no count, and the residue is reported as a function of
+bytes subtracted so that the extrapolation to a comprehensive index is visible as an
+extrapolation.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import math
+import os
+import platform
+import resource
+import shutil
+import statistics as st
+import subprocess
+import sys
+import time
+from collections import Counter
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir
+
+from berlin_io import read_pairs, revcomp
+
+ROOT = Path(__file__).resolve().parents[1]
+
+# Illumina adapter and primer-dimer seeds. 20 nt prefixes are used as literal seeds: a
+# read that begins its adapter anywhere carries the first 20 nt of it unless the insert
+# ends mid-adapter, and a 20-mer is long enough that a chance hit in 107 nt of sewage is
+# ~1e-7 per read per adapter.
+ADAPTERS = {
+    "truseq_r1": "AGATCGGAAGAGCACACGTC",
+    "truseq_r2": "AGATCGGAAGAGCGTCGTGT",
+    "nextera": "CTGTCTCTTATACACATCT",
+    "smallrna_3p": "TGGAATTCTCGGGTGCCAAGG",
+    "polyA": "A" * 20,
+    "polyG": "G" * 20,
+}
+
+
+# ---------------------------------------------------------------------------- artefacts
+
+def shannon_entropy(seq: str, k: int = 3) -> float:
+    """Entropy of k-mer usage, in bits per k-mer, normalised to [0, 1].
+
+    DUST-style triplet counting rather than per-base entropy: per-base entropy misses
+    tandem repeats, which are the dominant low-complexity class in environmental reads and
+    the class most likely to produce a spurious "no known relative" verdict.
+    """
+    if len(seq) < k:
+        return 1.0
+    counts = Counter(seq[i:i + k] for i in range(len(seq) - k + 1))
+    n = sum(counts.values())
+    h = -sum((c / n) * math.log2(c / n) for c in counts.values())
+    hmax = math.log2(min(n, 4 ** k))
+    return h / hmax if hmax > 0 else 1.0
+
+
+def longest_homopolymer(seq: str) -> int:
+    best = run = 1
+    for a, b in zip(seq, seq[1:]):
+        run = run + 1 if a == b else 1
+        best = max(best, run)
+    return best
+
+
+def artefact_fields(s1: str, s2: str) -> dict:
+    """Per-pair artefact evidence. Continuous where possible, so thresholds stay external."""
+    out = {}
+    hit = None
+    for name, seed in ADAPTERS.items():
+        if seed in s1 or seed in s2 or revcomp(seed) in s1 or revcomp(seed) in s2:
+            hit = name
+            break
+    out["adapter"] = hit
+    # A primer dimer is an adapter-only molecule: the adapter starts at or very near the
+    # read start, leaving no insert to speak of.
+    dimer = False
+    for seed in ADAPTERS.values():
+        for s in (s1, s2):
+            p = s.find(seed[:15])
+            if 0 <= p <= 5:
+                dimer = True
+    out["primer_dimer"] = dimer
+    out["entropy3"] = round(min(shannon_entropy(s1), shannon_entropy(s2)), 4)
+    out["homopolymer"] = max(longest_homopolymer(s1), longest_homopolymer(s2))
+    out["n_frac"] = round(max(s1.count("N") / max(len(s1), 1),
+                              s2.count("N") / max(len(s2), 1)), 4)
+    out["gc"] = round((s1 + s2).count("G") / max(len(s1) + len(s2), 1)
+                      + (s1 + s2).count("C") / max(len(s1) + len(s2), 1), 4)
+    return out
+
+
+def artefact_flag(f: dict, entropy_min: float, homopolymer_max: int) -> bool:
+    return bool(f["primer_dimer"] or f["adapter"] or f["n_frac"] > 0.1
+                or f["entropy3"] < entropy_min or f["homopolymer"] > homopolymer_max)
+
+
+# ------------------------------------------------------------------------------ kraken2
+
+def kraken2(db: Path, fq1: Path, fq2: Path, classify_bin: Path, threads: int,
+            out: Path, confidence: float = 0.0) -> tuple[dict[str, int], float, int]:
+    """Classify a pair file at one confidence threshold; return {read name: taxid}.
+
+    The threshold is passed to Kraken2 rather than reconstructed afterwards. Kraken2's
+    confidence is the fraction of a read's minimizers that fall in the called taxon's
+    CLADE, which needs the taxonomy tree to evaluate; a hits-string approximation
+    computed here would be a different quantity wearing the same name. The sweep is
+    therefore several runs of the classifier, which on a memory-mapped database is cheap
+    relative to getting the definition wrong.
+
+    Per-read output rather than Kraken2's own report, because this experiment has to
+    intersect tiers read by read.
+    """
+    t0 = time.perf_counter()
+    cmd = [str(classify_bin), "-H", str(db / "hash.k2d"), "-t", str(db / "taxo.k2d"),
+           "-o", str(db / "opts.k2d"), "-M", "-p", str(threads), "-P",
+           "-T", str(confidence), "-O", str(out), str(fq1), str(fq2)]
+    subprocess.run(cmd, check=True, capture_output=True)
+    wall = time.perf_counter() - t0
+    calls: dict[str, int] = {}
+    with open(out) as h:
+        for line in h:
+            _st, name, taxid, _len, _hits = line.rstrip("\n").split("\t")
+            calls[name] = int(taxid)
+    return calls, wall, _peak_rss()
+
+
+# ------------------------------------------------------------------------------- mappy
+
+def map_filter(ref_index, seqs: dict[str, tuple[str, str]], min_mlen: int):
+    """Best nucleotide alignment per pair against a mappy index.
+
+    Returns {name: (max matching bases over the two mates, reference hit)}. The matching
+    base count is kept rather than a boolean, because it is the continuous readout: a read
+    sharing 30 of 107 bases with a reference is a different statement from one sharing
+    100, and a threshold applied inside this function would throw that away.
+    """
+    out = {}
+    for name, (s1, s2) in seqs.items():
+        best, which = 0, None
+        for s in (s1, s2):
+            for h in ref_index.map(s):
+                if h.mlen > best:
+                    best, which = h.mlen, h.ctg
+        if best >= min_mlen:
+            out[name] = (best, which)
+    return out
+
+
+# ------------------------------------------------------------------------------ helpers
+
+def _peak_rss() -> int:
+    return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024
+
+
+def dir_bytes(p: Path) -> int:
+    if p.is_file():
+        return p.stat().st_size
+    return sum(f.stat().st_size for f in p.rglob("*") if f.is_file())
+
+
+def git_sha() -> str:
+    try:
+        sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+        dirty = subprocess.call(["git", "diff", "--quiet", "HEAD"], cwd=ROOT) != 0
+        return sha + ("-dirty" if dirty else "")
+    except Exception:
+        return "unknown"
+
+
+def spread(xs) -> dict:
+    xs = list(xs)
+    return {"mean": st.mean(xs), "min": min(xs), "max": max(xs),
+            "sd": st.stdev(xs) if len(xs) > 1 else 0.0, "n": len(xs)}
+
+
+def write_fastq(path: Path, rows, mate: int) -> None:
+    with open(path, "w") as h:
+        for name, s1, s2, q1, q2 in rows:
+            s, q = (s1, q1) if mate == 1 else (s2, q2)
+            h.write(f"@{name}\n{s}\n+\n{q}\n")
+
+
+def write_fasta(path: Path, rows) -> None:
+    with open(path, "w") as h:
+        for name, s1, s2, _q1, _q2 in rows:
+            h.write(f">{name}/1\n{s1}\n>{name}/2\n{s2}\n")
+
+
+# --------------------------------------------------------------------------------- main
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--seed", type=int, default=1)
+    ap.add_argument("--pairs", type=int, default=200_000)
+    ap.add_argument("--block", type=int, default=1_500_000,
+                    help="pairs skipped per seed: distinct regions of the flow cell")
+    ap.add_argument("--r1", type=Path, default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
+    ap.add_argument("--r2", type=Path, default=ROOT / "data/berlin/SRR23973193_2.fastq.gz")
+    ap.add_argument("--trim-r2", type=int, default=14)
+    ap.add_argument("--k2-dbs", type=Path, nargs="+",
+                    default=[ROOT / "data/k2_viral", ROOT / "data/k2_standard08",
+                             ROOT / "data/k2_pluspf08", ROOT / "data/k2_pluspf16"])
+    ap.add_argument("--classify-bin", type=Path,
+                    default=Path("/home/user/tools/k2pkg/root/share/kraken2-2.17.2/libexec/classify"))
+    ap.add_argument("--silva", type=Path, nargs="*",
+                    default=[ROOT / "data/silva/SSU.fa.gz", ROOT / "data/silva/LSU.fa.gz"])
+    ap.add_argument("--selfasm", type=Path, nargs="*",
+                    default=[ROOT / "data/geo/sample_contigs.fa"])
+    ap.add_argument("--dmnd", type=Path, nargs="*",
+                    default=[ROOT / "data/prot/viral.dmnd", ROOT / "data/prot/sprot.dmnd"])
+    ap.add_argument("--diamond-bin", type=Path, default=Path("/home/user/tools/diamond"))
+    ap.add_argument("--threads", type=int, default=4)
+    ap.add_argument("--k2-confidence", type=float, nargs="+",
+                    default=[0.0, 0.05, 0.1, 0.2],
+                    help="Kraken2 confidence thresholds to sweep; each is a separate run")
+    ap.add_argument("--k2-operating-confidence", type=float, default=0.1,
+                    help="the threshold whose removals enter the cascade. 0.0 accepts a "
+                         "single matching minimizer, which on a wastewater library is "
+                         "mostly noise; 0.1 is the lowest value in the sweep at which the "
+                         "classified fraction stops being dominated by one-minimizer calls")
+    ap.add_argument("--diamond-sensitivity", default="--sensitive",
+                    help="DIAMOND mode for the subtraction tier. --very-sensitive is kept "
+                         "for the residue report, where the query set is 10x smaller")
+    ap.add_argument("--diamond-bitscore", type=float, default=50.0,
+                    help="bitscore at which a protein hit counts as subtracted; swept in output")
+    ap.add_argument("--entropy-min", type=float, default=0.5)
+    ap.add_argument("--homopolymer-max", type=int, default=25)
+    ap.add_argument("--min-mlen", type=int, default=40,
+                    help="matching bases needed to call a nucleotide hit; swept in output")
+    ap.add_argument("--work", type=Path, default=Path("/tmp/claude-0/wk/subtract"))
+    ap.add_argument("--out", type=Path, default=ROOT / "results/subtract_known")
+    ap.add_argument("--keep-known", type=int, default=20_000,
+                    help="subtracted pairs kept as the known-positive comparison set")
+    ap.add_argument("--rows-out", action="store_true",
+                    help="write the per-pair evidence table for the residue")
+    args = ap.parse_args()
+
+    args.out.mkdir(parents=True, exist_ok=True)
+    args.work.mkdir(parents=True, exist_ok=True)
+    t_start = time.perf_counter()
+    timings: dict[str, float] = {}
+    index_bytes: dict[str, int] = {}
+
+    # ---- read a block
+    t0 = time.perf_counter()
+    rows = list(read_pairs(args.r1, args.r2, args.pairs, args.trim_r2,
+                           (args.seed - 1) * args.block))
+    timings["read_block"] = time.perf_counter() - t0
+    names = [r[0] for r in rows]
+    seqs = {r[0]: (r[1], r[2]) for r in rows}
+    n = len(rows)
+    if n == 0:
+        raise SystemExit("no pairs read")
+
+    fq1, fq2 = args.work / f"s{args.seed}_1.fq", args.work / f"s{args.seed}_2.fq"
+    write_fastq(fq1, rows, 1)
+    write_fastq(fq2, rows, 2)
+
+    removed: dict[str, set[str]] = {}
+    tier_meta: dict[str, dict] = {}
+
+    # ---- tier: artefact
+    t0 = time.perf_counter()
+    art = {r[0]: artefact_fields(r[1], r[2]) for r in rows}
+    removed["artefact"] = {k for k, f in art.items()
+                           if artefact_flag(f, args.entropy_min, args.homopolymer_max)}
+    timings["artefact"] = time.perf_counter() - t0
+    index_bytes["artefact"] = sum(len(s) for s in ADAPTERS.values())
+    tier_meta["artefact"] = {
+        "adapter_any": sum(1 for f in art.values() if f["adapter"]) / n,
+        "primer_dimer": sum(1 for f in art.values() if f["primer_dimer"]) / n,
+        "low_entropy": sum(1 for f in art.values() if f["entropy3"] < args.entropy_min) / n,
+        "homopolymer": sum(1 for f in art.values() if f["homopolymer"] > args.homopolymer_max) / n,
+        "n_rich": sum(1 for f in art.values() if f["n_frac"] > 0.1) / n,
+        "entropy_sweep": {f"{thr:.2f}": sum(1 for f in art.values() if f["entropy3"] < thr) / n
+                          for thr in (0.3, 0.4, 0.5, 0.6, 0.7, 0.8)},
+    }
+
+    # ---- tier: rRNA (SILVA), nucleotide
+    import mappy
+
+    rrna_hits = {}
+    if args.silva:
+        silva_fa = args.work / "silva.fa"
+        if not silva_fa.exists():
+            t0 = time.perf_counter()
+            _silva_to_dna(args.silva, silva_fa)
+            timings["silva_prepare"] = time.perf_counter() - t0
+        t0 = time.perf_counter()
+        idx = _mm_index(silva_fa, args.work / "silva.mmi", args.threads)
+        timings["silva_index"] = time.perf_counter() - t0
+        t0 = time.perf_counter()
+        rrna_hits = map_filter(idx, seqs, args.min_mlen)
+        timings["rrna"] = time.perf_counter() - t0
+        index_bytes["rrna"] = sum(dir_bytes(p) for p in args.silva)
+        removed["rrna"] = set(rrna_hits)
+        tier_meta["rrna"] = {"mlen_sweep": _mlen_sweep(rrna_hits, n)}
+        del idx
+
+    # ---- tiers: kraken2 at several index sizes
+    for db in args.k2_dbs:
+        if not (db / "hash.k2d").exists():
+            continue
+        tier = db.name
+        out = args.work / f"{tier}_s{args.seed}.k2"
+        sweep, taxa, wall_total = {}, None, 0.0
+        for conf in args.k2_confidence:
+            calls, wall, rss = kraken2(db, fq1, fq2, args.classify_bin, args.threads,
+                                       out, conf)
+            hit = {k for k, tx in calls.items() if tx != 0}
+            sweep[f"{conf:.2f}"] = len(hit) / n
+            wall_total += wall
+            if conf == args.k2_operating_confidence:
+                removed[tier] = hit
+                taxa = Counter(tx for tx in calls.values() if tx != 0).most_common(15)
+            out.unlink(missing_ok=True)
+        timings[tier] = wall_total
+        index_bytes[tier] = dir_bytes(db / "hash.k2d") + dir_bytes(db / "taxo.k2d")
+        removed.setdefault(tier, set())
+        tier_meta[tier] = {
+            "peak_rss_bytes": rss,
+            "wall_seconds_per_run": wall_total / max(len(args.k2_confidence), 1),
+            "operating_confidence": args.k2_operating_confidence,
+            "confidence_sweep": sweep,
+            "top_taxa": taxa,
+        }
+
+    # ---- tier: the environment's own assembled sequence
+    for asm in args.selfasm:
+        if not asm.exists():
+            continue
+        tier = f"selfasm_{asm.stem}"
+        t0 = time.perf_counter()
+        idx = _mm_index(asm, args.work / f"{asm.stem}.mmi", args.threads)
+        timings[f"{tier}_index"] = time.perf_counter() - t0
+        t0 = time.perf_counter()
+        hits = map_filter(idx, seqs, args.min_mlen)
+        timings[tier] = time.perf_counter() - t0
+        index_bytes[tier] = dir_bytes(asm)
+        removed[tier] = set(hits)
+        tier_meta[tier] = {"mlen_sweep": _mlen_sweep(hits, n)}
+        del idx
+
+    # ---- tier: protein, on the survivors of everything above
+    nucleotide_union = set().union(*removed.values()) if removed else set()
+    survivors = [r for r in rows if r[0] not in nucleotide_union]
+    prot_rows = {}
+    if args.dmnd and survivors:
+        fa = args.work / f"residue_s{args.seed}.fa"
+        write_fasta(fa, survivors)
+        for db in args.dmnd:
+            if not db.exists():
+                continue
+            tier = f"prot_{db.stem}"
+            t0 = time.perf_counter()
+            tsv = args.work / f"{tier}_s{args.seed}.tsv"
+            subprocess.run([str(args.diamond_bin), "blastx", "--db", str(db), "--query", str(fa),
+                            "--out", str(tsv), "--threads", str(args.threads),
+                            "--outfmt", "6", "qseqid", "sseqid", "pident", "length",
+                            "evalue", "bitscore", "--max-target-seqs", "1",
+                            "--evalue", "10", args.diamond_sensitivity, "--quiet"],
+                           check=True)
+            timings[tier] = time.perf_counter() - t0
+            index_bytes[tier] = dir_bytes(db)
+            best = {}
+            with open(tsv) as h:
+                for line in h:
+                    q, s, pid, length, ev, bits = line.split("\t")
+                    name = q.rsplit("/", 1)[0]
+                    bits = float(bits)
+                    if bits > best.get(name, (0.0,))[0]:
+                        best[name] = (bits, s, float(pid), int(length), float(ev))
+            prot_rows[tier] = best
+            removed[tier] = {k for k, v in best.items() if v[0] >= args.diamond_bitscore}
+            tier_meta[tier] = {
+                "conditioned_on": "survivors of all nucleotide tiers",
+                "survivors_in": len(survivors),
+                "bitscore_sweep": {str(b): sum(1 for v in best.values() if v[0] >= b) / len(survivors)
+                                   for b in (30, 40, 50, 60, 80, 100)},
+                "bitscore_sweep_of_library": {str(b): sum(1 for v in best.values() if v[0] >= b) / n
+                                              for b in (30, 40, 50, 60, 80, 100)},
+            }
+            tsv.unlink(missing_ok=True)
+
+    # ---- cumulative curve in cheapest-first order
+    order = [t for t in ["artefact", "rrna"] if t in removed]
+    order += [d.name for d in args.k2_dbs if d.name in removed]
+    order += [t for t in removed if t.startswith("selfasm_")]
+    order += [t for t in removed if t.startswith("prot_")]
+    seen: set[str] = set()
+    curve = []
+    cum_bytes = 0
+    for tier in order:
+        before = len(seen)
+        seen |= removed[tier]
+        cum_bytes += index_bytes.get(tier, 0)
+        curve.append({
+            "tier": tier,
+            "index_bytes": index_bytes.get(tier, 0),
+            "cumulative_index_bytes": cum_bytes,
+            "tier_alone_removed": len(removed[tier]) / n,
+            "marginal_removed": (len(seen) - before) / n,
+            "cumulative_removed": len(seen) / n,
+            "residue": 1 - len(seen) / n,
+            "wall_seconds": timings.get(tier),
+        })
+
+    result = {
+        "seed": args.seed,
+        "pairs": n,
+        "block_skipped": (args.seed - 1) * args.block,
+        "curve": curve,
+        "tiers": tier_meta,
+        "union_removed": len(seen) / n,
+        "residue_pairs": n - len(seen),
+        "timings_seconds": timings,
+        "index_bytes": index_bytes,
+    }
+    (args.out / f"subtract_s{args.seed}.json").write_text(json.dumps(result, indent=2))
+
+    # The residue and a matched sample of SUBTRACTED pairs are both kept, because every
+    # field in the residue report is calibrated against the subtracted reads: a field that
+    # reads the same on both carries no information about the residue.
+    write_fasta(args.work / f"residue_s{args.seed}.fa",
+                [r for r in rows if r[0] not in seen])
+    import random as _random
+    known_pairs = [r for r in rows if r[0] in seen]
+    _random.Random(args.seed).shuffle(known_pairs)
+    write_fasta(args.work / f"subtracted_s{args.seed}.fa", known_pairs[:args.keep_known])
+
+    if args.rows_out:
+        resid = args.out / f"residue_rows_s{args.seed}.jsonl"
+        with open(resid, "w") as h:
+            for name, s1, s2, _q1, _q2 in rows:
+                if name in seen:
+                    continue
+                row = {"name": name, "len1": len(s1), "len2": len(s2), **art[name]}
+                for tier, best in prot_rows.items():
+                    if name in best:
+                        bits, sid, pid, length, ev = best[name]
+                        row[tier] = {"subject": sid, "bitscore": bits, "pident": pid,
+                                     "aln_len": length, "evalue": ev}
+                if name in rrna_hits:
+                    row["rrna_mlen"] = rrna_hits[name][0]
+                h.write(json.dumps(row) + "\n")
+
+    (args.out / f"manifest_s{args.seed}.json").write_text(json.dumps({
+        "script": "experiments/subtract_known.py",
+        "git_sha": git_sha(),
+        "parameters": {k: (str(v) if isinstance(v, (Path,)) else
+                           [str(x) for x in v] if isinstance(v, list) else v)
+                       for k, v in vars(args).items()},
+        "wall_seconds": time.perf_counter() - t_start,
+        "peak_rss_bytes": _peak_rss(),
+        "python": platform.python_version(),
+        "mappy": mappy.__version__,
+        "diamond": _version([str(args.diamond_bin), "version"]),
+        "platform": platform.platform(),
+        "cpu_count": os.cpu_count(),
+    }, indent=2))
+
+    for c in curve:
+        print(f"{c['tier']:>18}  {c['index_bytes'] / 1e9:7.3f} GB  alone "
+              f"{c['tier_alone_removed'] * 100:6.2f}%  marginal {c['marginal_removed'] * 100:6.2f}%  "
+              f"cumulative {c['cumulative_removed'] * 100:6.2f}%  residue {c['residue'] * 100:6.2f}%")
+    print(f"union removed {len(seen) / n * 100:.2f}%, residue {n - len(seen)} of {n} pairs")
+
+    for f in (fq1, fq2):
+        f.unlink(missing_ok=True)
+
+
+def _silva_to_dna(paths, out: Path) -> None:
+    """SILVA ships RNA with U, and mappy wants DNA. Also drops the long taxonomy string
+    from the header, which otherwise appears in every hit record."""
+    import gzip
+    with open(out, "w") as h:
+        for p in paths:
+            op = gzip.open if str(p).endswith(".gz") else open
+            with op(p, "rt") as g:
+                for line in g:
+                    if line.startswith(">"):
+                        h.write(">" + line[1:].split()[0] + "\n")
+                    else:
+                        h.write(line.strip().replace("U", "T").upper() + "\n")
+
+
+def _mm_index(fa: Path, mmi: Path, threads: int):
+    """Build a minimap2 index once and reuse it across seeds.
+
+    The index is a function of the reference alone, so rebuilding it per seed would put
+    tens of seconds of constant cost into every tier's wall time and make the
+    cost-per-tier comparison - the point of the experiment - read wrong.
+    """
+    import mappy
+    if mmi.exists():
+        return mappy.Aligner(str(mmi), preset="sr", n_threads=threads)
+    a = mappy.Aligner(str(fa), preset="sr", n_threads=threads, fn_idx_out=str(mmi))
+    if not a:
+        raise SystemExit(f"could not index {fa}")
+    return a
+
+
+def _mlen_sweep(hits: dict, n: int) -> dict:
+    return {str(m): sum(1 for v in hits.values() if v[0] >= m) / n
+            for m in (30, 40, 50, 60, 80, 100)}
+
+
+def _version(cmd) -> str:
+    try:
+        return subprocess.check_output(cmd, text=True, stderr=subprocess.STDOUT).strip().splitlines()[0]
+    except Exception:
+        return "unknown"
+
+
+if __name__ == "__main__":
+    main()
