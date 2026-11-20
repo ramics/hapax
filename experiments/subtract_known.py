@@ -233,6 +233,23 @@ def git_sha() -> str:
         return "unknown"
 
 
+def script_sha256(path) -> str:
+    """Content hash of the script that wrote a result.
+
+    `git_sha()` returns HEAD plus "-dirty", and "-dirty" is where provenance ends: a run
+    made halfway through an editing session records a SHA that does not describe the code
+    that produced it. That is not hypothetical here - a codon-table fix landed between two
+    seeds of the same multi-seed run, leaving one results directory with some seeds right
+    and some wrong, both tagged with a dirty SHA. Hashing the file itself pins the code
+    whatever the working tree looked like, and makes two runs comparable by inspection.
+    """
+    import hashlib
+    try:
+        return hashlib.sha256(Path(path).read_bytes()).hexdigest()[:16]
+    except Exception:
+        return "unknown"
+
+
 def spread(xs) -> dict:
     xs = list(xs)
     return {"mean": st.mean(xs), "min": min(xs), "max": max(xs),

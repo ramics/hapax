@@ -80,7 +80,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from berlin_io import revcomp
 from subtract_known import (artefact_fields, dir_bytes, git_sha, shannon_entropy,
-                            spread, _mm_index)
+                            spread, _mm_index, script_sha256)
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -850,6 +850,7 @@ def main() -> None:
     (args.out / f"manifest_s{args.seed}.json").write_text(json.dumps({
         "script": "experiments/residue_report.py",
         "git_sha": git_sha(),
+        "script_sha256": script_sha256(__file__),
         "parameters": {k: (str(v) if isinstance(v, Path) else
                            [str(x) for x in v] if isinstance(v, list) else v)
                        for k, v in vars(args).items()},
