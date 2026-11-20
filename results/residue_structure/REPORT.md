@@ -194,6 +194,40 @@ caught.
 - **Nothing here moves the two existing walls.** It was not able to, and §7 should not be
   edited.
 
+## 6b. What `cov_step` is, after a prediction of mine failed
+
+The report above offered `cov_step` as a candidate junction detector and guessed that it
+marks a molecule spanning an abundant and a rare region. **That prediction was tested by the
+`subtract the known` thread and it failed.** Joining this experiment's
+`coverage_axes_s1.tsv` to that thread's per-read contig depths
+(`results/cov_step_join/` on `claude/project-thread-eswrkj`): among the 938 residue pairs
+whose two mates map to *different* contigs, `cov_step` against the absolute log2 ratio of
+the two contigs' depths is **+0.011 (CI −0.054 to +0.075)**. Flat. The pooled correlation
+over all 6,834 mapped pairs is +0.160, but `cov_spread` (+0.159) and `mate_disagree`
+(+0.128) are the same size, so that number is the mixture talking rather than the axis.
+
+So what is it? Two more columns from the same exact counting pass answer most of it: the
+longest run of consecutive unwitnessed 31-mers in each mate, and the step recomputed after
+dropping unwitnessed k-mers. For the 4,290 residue pairs of block 1 with `cov_step` ≥ 2:
+
+- **45% have no unwitnessed k-mer at all**, so their step cannot be a gap of any kind;
+- **72% keep a step ≥1 after every unwitnessed k-mer is dropped**, so the step is a change
+  of depth among k-mers that are all present elsewhere;
+- **20.4% carry a zero-run of 25–40 k-mers**, the signature of a single substitution error
+  destroying the k-mers that span it, against 7.1% of residue pairs generally. So errors
+  contribute a real minority and not the bulk.
+
+`cov_step` is therefore mostly a genuine change of depth *within one 107 nt read*, and it is
+not the contig-level abundance boundary I guessed. The remaining explanation worth testing —
+not tested here — is sequence shared with other molecules: a conserved or repeated segment
+inside a read has more witnesses than its neighbours without the molecule changing. That
+would make `cov_step` a conservation detector rather than a junction detector, which is a
+different and less useful thing, and it should be called one or the other only after that
+test.
+
+The prediction is kept in this report rather than quietly replaced, because the project's
+record of what it predicted wrongly is the part that makes the rest readable.
+
 ## 7. Limitations
 
 - One sample, one city, one preparation, as everything in this repo is.

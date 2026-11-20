@@ -55,3 +55,16 @@ Tibshirani rule: k = 1 in all five seeds. s_k ≈ 0.0025 throughout.
 
 The control column is the same-sized random residue subset in the matching space
 (`all_but_quality`); per-space control values are in the JSON.
+
+## What cov_step is: block 1 residue pairs with cov_step >= 2 (n = 4,290 of 22,975)
+
+| readout | value | same readout, all residue pairs |
+|---|---|---|
+| no unwitnessed 31-mer at all | 45.0% | — |
+| step survives dropping unwitnessed k-mers (>=1) | 72.0% | — |
+| longest zero-run 25–40 k-mers (one-error signature) | 20.4% | 7.1% |
+| mean longest zero-run | 16.3 | 21.8 |
+
+Rank correlations over all block-1 residue pairs: cov_step with the same step computed on
+witnessed k-mers only 0.804, with longest zero-run −0.128, with zero_frac −0.029, with
+log_cov 0.592.
