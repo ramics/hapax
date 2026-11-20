@@ -1,0 +1,55 @@
+{
+ "summary": {
+  "lineage_attribution": {
+   "hapax_base_from_other_lineage": 81,
+   "hapax_base_unexplained": 8,
+   "hapax_base_is_target_lineage_majority": 14,
+   "no_target_lineage_reads": 31
+  },
+  "aligned_cols": 6972,
+  "disagreements": {
+   "sub": 134,
+   "del": 6,
+   "ins": 2
+  },
+  "disagreement_bases": 173,
+  "verdicts": {
+   "hapax_not_majority": 30,
+   "hapax_majority_target_majority_differ": 54,
+   "indel": 8,
+   "polymorphic_hapax_took_other": 40,
+   "target_minor_allele": 10
+  },
+  "sub_within_100_of_end": 16,
+  "indel_lengths": {
+   "3": 1,
+   "2": 3,
+   "1": 2,
+   "15": 1,
+   "13": 1
+  },
+  "indel_len_mod3": {
+   "0": 2,
+   "2": 3,
+   "1": 3
+  },
+  "whole_contig": {
+   "covered": 10818,
+   "hapax_not_majority": 54,
+   "no_reads": 41,
+   "majority_insertion_missing": 2
+  },
+  "seconds": 0.7
+ },
+ "args": {
+  "contigs": "hx_raw/contigs.fa",
+  "target": "node37.fa",
+  "reads": "astro_reads.fa",
+  "out": "/home/user/hapax/results/ww_berlin_consensus/diag_raw",
+  "threads": 4,
+  "labels": "read2bait.tsv",
+  "target_lineage": "NODE_37",
+  "seed": 0
+ },
+ "git_sha": "c4167e1e980b83b4e75a49030e9ca0931b89622a"
+}

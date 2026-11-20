@@ -1,0 +1,60 @@
+{
+ "experiment": "experiments/ww_berlin_consensus.sh (after experiments/ww_berlin.sh)",
+ "date": "2026-11-19",
+ "git_sha_base": "c4167e1e980b83b4e75a49030e9ca0931b89622a",
+ "run": "SRR23973193",
+ "geo": "GSE228220",
+ "bioproject": "PRJNA948850",
+ "target": "authors' SPAdes NODE_37, 6823 bp",
+ "reads_recruited": 5171,
+ "target_lineage_reads": 2979,
+ "mate2_prefix": {
+  "reads": 2572,
+  "softclipped_ge10": 2455,
+  "mode_bp": 14,
+  "trimmed_bp": 14
+ },
+ "hapax_params": "defaults (--mode codon --seed contiguous -k 15 -w 5 --tau 0.8 --min-ident 0.70) plus the per-row overrides in table.md; --min-contig 300",
+ "ladder_check": {
+  "runs": 80,
+  "configs": [
+   "codon",
+   "nucleotide"
+  ],
+  "taus": [
+   0.9,
+   1.0
+  ],
+  "seeds": "1-5",
+  "diversities": [
+   0.05,
+   0.1,
+   0.15,
+   0.2
+  ],
+  "vs": "results/ladder_v2",
+  "contigs_chimaeras_missed_changed": 0,
+  "recovery_higher": 12,
+  "recovery_lower": 0,
+  "mean_recovered": [
+   0.9792,
+   0.9802
+  ]
+ },
+ "tools": {
+  "minimap2": "2.31-r1302",
+  "samtools": "1.25",
+  "seqkit": "v2.14.0",
+  "megahit": "v1.2.9"
+ },
+ "notes": "Deterministic; no seed. Lineage labels are each read's best bait contig in astro.bam.",
+ "megahit_trimmed": {
+  "cmd": "megahit -1 R1 -2 R2(first 14 bp removed, seqkit subseq -r 15:-1) -t 4 --min-contig-len 300 -m 0.7",
+  "contigs_touching": 2,
+  "longest_block": 3737,
+  "covered": 6741,
+  "identity_pct": 98.92,
+  "misjoins": 0,
+  "seconds": 1456
+ }
+}

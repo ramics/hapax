@@ -48,6 +48,9 @@ CONFIGS = {
     "codon-spaced-cap": ["--mode", "codon", "--seed", "spaced", "-k", "16", "--lazy-t2", "0"],
     "codon-spaced-t1groups": ["--mode", "codon", "--seed", "spaced", "-k", "16", "--stage1", "tier1"],
     "nucleotide-spaced-t1groups": ["--mode", "nucleotide", "--seed", "spaced", "-k", "16", "--stage1", "tier1"],
+    # lineage split on linked sites (src/lineage.rs): checks it leaves one swarm whole
+    "codon-lineage": ["--mode", "codon", "--seed", "contiguous", "--split-lineage", "1"],
+    "nucleotide-lineage": ["--mode", "nucleotide", "--seed", "contiguous", "--split-lineage", "1"],
     "nucleotide-spaced-v0": ["--mode", "nucleotide", "--seed", "spaced", "-k", "16", "--bucket-cap", "0", "--lazy-t2", "0"],
 }
 DEFAULT_CONFIGS = ["codon", "nucleotide", "codon-spaced", "nucleotide-spaced"]
@@ -85,6 +88,7 @@ def main():
     ap.add_argument("--external", nargs="*", default=[], help="megahit metaspades penguin")
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("--extra", action="append", default=[], help="one extra hapax argument appended to every config; repeat, e.g. --extra=--lineage-split-div --extra=0.075")
     a = ap.parse_args()
 
     ensure_release_build()
@@ -105,7 +109,7 @@ def main():
             for cfg in a.configs:
                 for tau in a.taus:
                     adir = wdir / f"{cfg}_tau{tau}"
-                    st = run_hapax(wdir / "reads.fa", adir, CONFIGS[cfg] + ["--tau", str(tau), "-t", str(a.threads)])
+                    st = run_hapax(wdir / "reads.fa", adir, CONFIGS[cfg] + a.extra + ["--tau", str(tau), "-t", str(a.threads)])
                     ev = evaluate.membership(wdir, adir)
                     rows.append(
                         {

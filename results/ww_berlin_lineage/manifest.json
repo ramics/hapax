@@ -1,0 +1,5 @@
+{"script": "experiments/ww_berlin_lineage.sh", "git_sha": "52c31dc9cddf811fdb2af066c4fadf2985710701",
+ "input": "data/ww_berlin/astro_reads_trim.fa (SRR23973193 recruited astrovirus reads, mate 2 trimmed 14 bp)",
+ "comparators": "authors' SPAdes astrovirus contigs (bait_astro.fa), target NODE_37",
+ "seed": null, "threads": 2,
+ "wall_s": {"split_div0.06": 3.558719844, "split_div0.09": 3.611911488, "split_nt": 3.550926430, "split": 3.604069048, "default": 2.097575863}}

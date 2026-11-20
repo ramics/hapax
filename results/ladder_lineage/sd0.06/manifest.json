@@ -1,0 +1,153 @@
+{
+  "seed": {
+    "first": 1,
+    "n": 5
+  },
+  "git_sha": "52c31dc9cddf811fdb2af066c4fadf2985710701",
+  "params": {
+    "seed": 1,
+    "n_seeds": 5,
+    "diversities": [
+      0.05,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "taus": [
+      0.9
+    ],
+    "configs": [
+      "codon-lineage",
+      "nucleotide-lineage"
+    ],
+    "sister_div": 0.3,
+    "coverage": 50.0,
+    "external": [],
+    "threads": 4,
+    "out": "/tmp/claude-0/-home-user/edf21df7-6bc8-5f89-bedf-886864abacc1/scratchpad/lad_sd0.06",
+    "extra": [
+      "--lineage-split-div",
+      "0.06"
+    ]
+  },
+  "timings_s": {
+    "total": 154.4302485319995,
+    "simulation": 18.51911932799794
+  },
+  "tools": {
+    "python": "3.13.18",
+    "platform": "Linux-6.18.44-fc-v653-x86_64-with-glibc2.39",
+    "rustc": "rustc 1.97.0 (2d8144b78 2026-07-07)",
+    "megahit": "not installed",
+    "metaspades.py": "not installed",
+    "spades.py": "not installed",
+    "haploflow": "not installed",
+    "art_illumina": "not installed",
+    "minimap2": "not installed",
+    "samtools": "not installed",
+    "plass": "not installed",
+    "penguin": "not installed"
+  },
+  "command": "diversity_ladder.py --seed 1 --n-seeds 5 --taus 0.9 --configs codon-lineage nucleotide-lineage --threads 4 --extra=--lineage-split-div --extra=0.06 --out /tmp/claude-0/-home-user/edf21df7-6bc8-5f89-bedf-886864abacc1/scratchpad/lad_sd0.06",
+  "date": "2026-11-19T22:31:23Z",
+  "configs": {
+    "codon": [
+      "--mode",
+      "codon",
+      "--seed",
+      "contiguous"
+    ],
+    "nucleotide": [
+      "--mode",
+      "nucleotide",
+      "--seed",
+      "contiguous"
+    ],
+    "codon-spaced": [
+      "--mode",
+      "codon",
+      "--seed",
+      "spaced",
+      "-k",
+      "16"
+    ],
+    "nucleotide-spaced": [
+      "--mode",
+      "nucleotide",
+      "--seed",
+      "spaced",
+      "-k",
+      "16"
+    ],
+    "codon-spaced-v0": [
+      "--mode",
+      "codon",
+      "--seed",
+      "spaced",
+      "-k",
+      "16",
+      "--bucket-cap",
+      "0",
+      "--lazy-t2",
+      "0"
+    ],
+    "codon-spaced-cap": [
+      "--mode",
+      "codon",
+      "--seed",
+      "spaced",
+      "-k",
+      "16",
+      "--lazy-t2",
+      "0"
+    ],
+    "codon-spaced-t1groups": [
+      "--mode",
+      "codon",
+      "--seed",
+      "spaced",
+      "-k",
+      "16",
+      "--stage1",
+      "tier1"
+    ],
+    "nucleotide-spaced-t1groups": [
+      "--mode",
+      "nucleotide",
+      "--seed",
+      "spaced",
+      "-k",
+      "16",
+      "--stage1",
+      "tier1"
+    ],
+    "codon-lineage": [
+      "--mode",
+      "codon",
+      "--seed",
+      "contiguous",
+      "--split-lineage",
+      "1"
+    ],
+    "nucleotide-lineage": [
+      "--mode",
+      "nucleotide",
+      "--seed",
+      "contiguous",
+      "--split-lineage",
+      "1"
+    ],
+    "nucleotide-spaced-v0": [
+      "--mode",
+      "nucleotide",
+      "--seed",
+      "spaced",
+      "-k",
+      "16",
+      "--bucket-cap",
+      "0",
+      "--lazy-t2",
+      "0"
+    ]
+  }
+}

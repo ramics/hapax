@@ -1,0 +1,47 @@
+{
+ "summary": {
+  "lineage_attribution": {
+   "hapax_base_is_target_lineage_majority": 13,
+   "hapax_base_from_other_lineage": 107,
+   "no_target_lineage_reads": 21,
+   "hapax_base_unexplained": 10
+  },
+  "aligned_cols": 6799,
+  "disagreements": {
+   "sub": 151,
+   "del": 1
+  },
+  "disagreement_bases": 196,
+  "verdicts": {
+   "polymorphic_hapax_took_other": 40,
+   "target_minor_allele": 12,
+   "hapax_majority_target_majority_differ": 64,
+   "hapax_not_majority": 35,
+   "indel": 1
+  },
+  "sub_within_100_of_end": 16,
+  "indel_lengths": {
+   "45": 1
+  },
+  "indel_len_mod3": {
+   "0": 1
+  },
+  "whole_contig": {
+   "covered": 10158,
+   "hapax_not_majority": 56,
+   "no_reads": 23
+  },
+  "seconds": 0.8
+ },
+ "args": {
+  "contigs": "hx_trim/contigs.fa",
+  "target": "node37.fa",
+  "reads": "astro_reads_trim.fa",
+  "out": "/home/user/hapax/results/ww_berlin_consensus/diag_trim",
+  "threads": 4,
+  "labels": "read2bait.tsv",
+  "target_lineage": "NODE_37",
+  "seed": 0
+ },
+ "git_sha": "c4167e1e980b83b4e75a49030e9ca0931b89622a"
+}

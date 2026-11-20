@@ -25,6 +25,21 @@
 //!   --min-bridge INT           edges needed to merge two clusters [5]
 //!   --bridge-frac FLOAT        ...and as a fraction of the smaller cluster [0.1]
 //!   --dump-edges 0|1           write edges.tsv for calibration [0]
+//!   --split-cut FLOAT          split a read group at a cut whose crossing overlaps
+//!                              are below this fraction of the smaller side's own
+//!                              overlaps (0 = off) [0]; two swarms of one virus are
+//!                              two dense clusters joined by a thin cut
+//!   --split-cut-depth INT      how many times a group may be cut [1]
+//!   --split-phase 0|1          split a contig into two populations when a
+//!                              two-component fit over its variant sites separates
+//!                              them: two swarms of the same virus join through
+//!                              conserved windows and no per-pair score can refuse
+//!                              those joins (src/phase.rs) [0]
+//!   --split-sep FLOAT          |p0-p1| for a site to discriminate two populations [0.8]
+//!   --split-min-af FLOAT       minor-allele frequency a site needs to carry phase [0.10]
+//!   --split-sites INT          sites the chain needs [20]
+//!   --split-span FLOAT         fraction of the contig the chain must span [0.5]
+//!   --split-depth INT          how many times a contig may be split [2]
 //!   -t INT                     threads [all]
 
 use hapax::consensus::{self, ConsensusParams, Region};
@@ -32,9 +47,64 @@ use hapax::index::{Index, SeedParams, SeedShape};
 use hapax::layout;
 use hapax::model::{ModelParams, Scorer};
 use hapax::overlap::{self, DispatchStats, Mode, OverlapParams};
+use hapax::phase::{self, PhaseParams};
+use hapax::lineage::{self, LineageParams};
 use hapax::seq;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
+
+/// A contig whose variants form one linked chain across it holds two
+/// populations that overlap scoring cannot separate (see src/phase.rs); rebuild
+/// each side as its own contig, and try again on each side up to `max_depth`.
+fn split_recursive(
+    c: consensus::Contig,
+    reads: &[Vec<u8>],
+    cp: &ConsensusParams,
+    pp: &PhaseParams,
+    depth: usize,
+    counter: &std::sync::atomic::AtomicUsize,
+) -> Vec<consensus::Contig> {
+    if depth >= pp.max_depth {
+        return vec![c];
+    }
+    match phase::find_split(&c, pp) {
+        None => vec![c],
+        Some(s) => {
+            let (a, b) = phase::split_placements(&c, &s);
+            if a.len() < 2 || b.len() < 2 {
+                return vec![c];
+            }
+            counter.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            let ca = consensus::build(reads, &a, cp);
+            let cb = consensus::build(reads, &b, cp);
+            let mut out = split_recursive(ca, reads, cp, pp, depth + 1, counter);
+            out.extend(split_recursive(cb, reads, cp, pp, depth + 1, counter));
+            out
+        }
+    }
+}
+
+/// Split a contig into lineages (src/lineage.rs) and rebuild each; repeat on each
+/// piece, since a rebuilt consensus is cleaner and can expose a lineage the
+/// mixed one hid.
+fn split_lineages(
+    c: consensus::Contig,
+    reads: &[Vec<u8>],
+    cp: &ConsensusParams,
+    lp: &LineageParams,
+    depth: usize,
+    counter: &std::sync::atomic::AtomicUsize,
+) -> Vec<consensus::Contig> {
+    if depth >= lp.max_depth {
+        return vec![c];
+    }
+    let sets = lineage::split(&c, lp);
+    if sets.is_empty() {
+        return vec![c];
+    }
+    counter.fetch_add(sets.len() - 1, std::sync::atomic::Ordering::Relaxed);
+    sets.iter().flat_map(|s| split_lineages(consensus::build(reads, s, cp), reads, cp, lp, depth + 1, counter)).collect()
+}
 
 fn usage() -> ! {
     eprintln!("usage: hapax assemble -i reads.fa -o outdir [options]  (see src/main.rs header)");
@@ -58,6 +128,12 @@ fn main() {
     let mut min_contig = 300usize;
     let mut threads = 0usize;
     let mut dump_edges = false;
+    let mut split_phase = false;
+    let mut split_lineage = false;
+    let mut lp = LineageParams::default();
+    let mut split_cut = 0.0f32;
+    let mut split_cut_depth = 1usize;
+    let mut pp = PhaseParams::default();
     let mut best_k = 6usize;
     let mut min_bridge = 5usize;
     let mut stage1_tier1 = false;
@@ -84,6 +160,7 @@ fn main() {
             "--bucket-cap" => op.bucket_cap = v().parse().unwrap(),
             "--orf-caller" => cp.orf_caller = parse_caller(&v()),
             "--min-orf" => cp.min_orf = v().parse().unwrap(),
+            "--rounds" => cp.rounds = v().parse().unwrap(),
             "--min-contig" => min_contig = v().parse().unwrap(),
             "-t" => threads = v().parse().unwrap(),
             "--best-k" => best_k = v().parse().unwrap(),
@@ -92,6 +169,20 @@ fn main() {
             "--min-bridge" => min_bridge = v().parse().unwrap(),
             "--bridge-frac" => bridge_frac = v().parse().unwrap(),
             "--dump-edges" => dump_edges = v() == "1",
+            "--split-cut" => split_cut = v().parse().unwrap(),
+            "--split-cut-depth" => split_cut_depth = v().parse().unwrap(),
+            "--split-phase" => split_phase = v() == "1",
+            "--split-lineage" => split_lineage = v() == "1",
+            "--lineage-div" => lp.max_div = v().parse().unwrap(),
+            "--lineage-min-reads" => lp.min_lineage_reads = v().parse().unwrap(),
+            "--lineage-depth" => lp.max_depth = v().parse().unwrap(),
+            "--lineage-split-div" => lp.min_split_div = v().parse().unwrap(),
+            "--lineage-conflict-frac" => lp.max_conflict_frac = v().parse().unwrap(),
+            "--split-sep" => pp.min_sep = v().parse().unwrap(),
+            "--split-min-af" => pp.min_af = v().parse().unwrap(),
+            "--split-sites" => pp.min_sites = v().parse().unwrap(),
+            "--split-span" => pp.span_frac = v().parse().unwrap(),
+            "--split-depth" => pp.max_depth = v().parse().unwrap(),
             _ => usage(),
         }
         i += 2;
@@ -132,20 +223,35 @@ fn main() {
     let t = Instant::now();
     let lens: Vec<usize> = reads.iter().map(|r| r.len()).collect();
     let stage1 = if stage1_tier1 { Some(&disp.tier1_comp[..]) } else { None };
-    let groups = layout::group(reads.len(), &edges, best_k, min_bridge, bridge_frac, stage1);
+    let mut groups = layout::group(reads.len(), &edges, best_k, min_bridge, bridge_frac, stage1);
+    if split_cut > 0.0 {
+        groups = layout::split_sparse(reads.len(), &groups, &edges, split_cut, 0.15, split_cut_depth, 50);
+    }
     let comps = layout::layout(&lens, &edges, Some(&groups));
     let n_groups = { let mut g = groups.clone(); g.sort(); g.dedup(); g.len() };
     let t_layout = t.elapsed().as_secs_f64();
 
     let t = Instant::now();
     use rayon::prelude::*;
+    let splits = std::sync::atomic::AtomicUsize::new(0);
     let contigs: Vec<consensus::Contig> = comps
         .par_iter()
         .filter(|c| c.len() >= 2)
-        .map(|c| consensus::build(&reads, c, &cp))
+        .flat_map(|c| {
+            let built = consensus::build(&reads, c, &cp);
+            if split_lineage {
+                return split_lineages(built, &reads, &cp, &lp, 0, &splits);
+            }
+            if split_phase {
+                split_recursive(built, &reads, &cp, &pp, 0, &splits)
+            } else {
+                vec![built]
+            }
+        })
         .filter(|c| c.seq.len() >= min_contig)
         .collect();
     let t_cons = t.elapsed().as_secs_f64();
+    let n_splits = splits.load(std::sync::atomic::Ordering::Relaxed);
 
     // ---- outputs
     let mut fa = BufWriter::new(std::fs::File::create(format!("{}/contigs.fa", out)).unwrap());
@@ -214,7 +320,7 @@ fn main() {
             "  \"candidates\": {},\n  \"tier1_accept\": {},\n  \"tier1_reject\": {},\n  \"tier2\": {},\n  \"tier2_accept\": {},\n",
             "  \"tier2_dual_fallback\": {},\n  \"tier2_skipped_same_cluster\": {},\n  \"hmm_fraction\": {:.4},\n  \"tier2_codon_scored_nt\": {},\n  \"tier2_nucleotide_scored_nt\": {},\n",
             "  \"tier2_syn_mismatch\": {},\n  \"tier2_nonsyn_mismatch\": {},\n  \"phase_wins\": [{}, {}, {}],\n  \"edges\": {},\n  \"read_groups\": {},\n",
-            "  \"components\": {},\n  \"contigs\": {},\n  \"contig_bases\": {},\n  \"placed_reads\": {},\n  \"variants\": {},\n",
+            "  \"components\": {},\n  \"phase_splits\": {},\n  \"contigs\": {},\n  \"contig_bases\": {},\n  \"placed_reads\": {},\n  \"variants\": {},\n",
             "  \"seconds\": {{\"read\": {:.3}, \"index\": {:.3}, \"candidates\": {:.3}, \"overlap\": {:.3}, \"layout\": {:.3}, \"consensus\": {:.3}, \"total\": {:.3}}}\n}}\n"
         ),
         reads.len(),
@@ -241,6 +347,7 @@ fn main() {
         edges.len(),
         n_groups,
         comps.len(),
+        n_splits,
         contigs.len(),
         total_len,
         placed,

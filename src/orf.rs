@@ -199,6 +199,12 @@ pub fn scored_orfs(seq: &[u8], min_len: usize, min_llr: f64) -> Vec<Orf> {
 }
 
 pub fn call_orfs(seq: &[u8], min_len: usize, caller: OrfCaller) -> Vec<Orf> {
+    // A component whose reads all fail to realign leaves an empty draft; the frame
+    // arithmetic below assumes at least one codon, so a tighter overlap floor that
+    // strands a few reads would otherwise panic the whole run.
+    if seq.len() < 3 || seq.len() < min_len {
+        return Vec::new();
+    }
     match caller {
         OrfCaller::Union => union_orfs(seq, min_len),
         OrfCaller::Atg => candidates(seq, min_len),
