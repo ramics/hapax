@@ -131,6 +131,170 @@ def frame_evidence(seq: str) -> dict:
             "frame_identifiable": len(stop_free) == 1}
 
 
+DINUCS = [a + b for a in "ACGT" for b in "ACGT"]
+
+
+def dinucleotide_bias(seq: str) -> dict:
+    """Observed-over-expected dinucleotide ratios, with CpG and UpA called out.
+
+    Valid at 107 nt, which is why it is here: a read carries ~106 dinucleotides, so the
+    16 ratios are estimated from enough observations to mean something, unlike codon usage
+    (61 categories from ~35 observations). CpG and UpA depression is the classic
+    host-adaptation signal in RNA viruses - vertebrate-infecting viruses track their
+    host's suppression - so it carries information about WHERE a sequence has been
+    replicating rather than about whether it is novel. It is reported for that reason, not
+    as a novelty score: a bacteriophage and a vertebrate virus differ here, and both are
+    equally unknown to a database.
+    """
+    n = len(seq)
+    comp = {b: seq.count(b) / n for b in "ACGT"}
+    obs = {d: 0 for d in DINUCS}
+    tot = 0
+    for i in range(n - 1):
+        d = seq[i:i + 2]
+        if d in obs:
+            obs[d] += 1
+            tot += 1
+    out = {}
+    for d in DINUCS:
+        exp = comp[d[0]] * comp[d[1]]
+        out[d] = round((obs[d] / tot) / exp, 4) if tot and exp > 0 else None
+    return {"oe": out, "CpG_oe": out["CG"], "UpA_oe": out["TA"]}
+
+
+def folding(seq: str, rng: random.Random, shuffles: int = 20) -> dict:
+    """Minimum free energy of the RNA fold, against a dinucleotide-preserving control.
+
+    The raw energy is almost useless on its own: it tracks GC content and length, so a
+    GC-rich read folds "well" with no structure worth the name. What carries information
+    is the z-score against sequences with the same dinucleotide composition, which is the
+    standard control for structured RNA and needs NO database - the reason this field is
+    worth having at all, given that database incompleteness has defeated nearly every
+    other feature in this project.
+
+    The control is a first-order Markov resample, which preserves dinucleotide frequencies
+    in expectation rather than exactly. That is weaker than an Altschul-Erikson shuffle
+    and is stated rather than glossed: it makes the z-score slightly optimistic, so a
+    small positive result here should not be believed without the stronger control.
+    """
+    import RNA
+    _, mfe = RNA.fold(seq.replace("T", "U"))
+    nulls = []
+    trans: dict[str, list[str]] = {}
+    for i in range(len(seq) - 1):
+        trans.setdefault(seq[i], []).append(seq[i + 1])
+    for _ in range(shuffles):
+        if not trans:
+            break
+        cur = seq[0]
+        out = [cur]
+        for _i in range(len(seq) - 1):
+            nxt = rng.choice(trans.get(cur) or list(trans))
+            out.append(nxt)
+            cur = nxt
+        _, m = RNA.fold("".join(out).replace("T", "U"))
+        nulls.append(m)
+    if len(nulls) < 2:
+        return {"mfe": round(mfe, 2), "z": None}
+    mu = sum(nulls) / len(nulls)
+    sd = (sum((x - mu) ** 2 for x in nulls) / (len(nulls) - 1)) ** 0.5
+    return {"mfe": round(mfe, 2), "null_mfe_mean": round(mu, 2),
+            "z": round((mfe - mu) / sd, 3) if sd > 0 else None}
+
+
+class SpacerIndex:
+    """CRISPR spacers from this environment's own assembled bacteria.
+
+    The best field in the non-coding ladder, because it carries POSITIVE identity with no
+    database in it: a bacterium records the mobile elements that infected it, so a
+    residual read matching a spacer found in this sewer's own assembled bacterial contigs
+    is host-recorded evidence that the read is a phage or other mobile element, even when
+    no catalogue anywhere holds a relative.
+
+    Matching is by exact shared 20-mer in either orientation. Spacers are 26-50 nt, so a
+    20-mer is most of one, and an exact 20-mer match between a 107 nt read and a spacer
+    set this small is not a chance event: with S spacers of length L the expected number
+    of chance matches per read is about 2 * S * (L - 19) * 88 / 4^20, which the report
+    states numerically for the actual S rather than calling it negligible.
+    """
+
+    def __init__(self, fasta: Path, k: int = 20):
+        self.k = k
+        self.map: dict[str, str] = {}
+        self.spacers = 0
+        self.bases = 0
+        name = None
+        buf: list[str] = []
+        with open(fasta) as h:
+            for line in h:
+                if line.startswith(">"):
+                    if name:
+                        self._add(name, "".join(buf))
+                    name, buf = line[1:].strip(), []
+                else:
+                    buf.append(line.strip())
+        if name:
+            self._add(name, "".join(buf))
+
+    def _add(self, name: str, seq: str) -> None:
+        self.spacers += 1
+        self.bases += len(seq)
+        for s in (seq, revcomp(seq)):
+            for i in range(len(s) - self.k + 1):
+                self.map.setdefault(s[i:i + self.k], name)
+
+    def chance_per_read(self, read_len: int = 107) -> float:
+        kmers = max(read_len - self.k + 1, 0)
+        return len(self.map) * kmers / (4 ** self.k)
+
+    def match(self, s1: str, s2: str):
+        for s in (s1, s2):
+            for i in range(len(s) - self.k + 1):
+                hit = self.map.get(s[i:i + self.k])
+                if hit:
+                    return hit
+        return None
+
+
+def rfam_scan(seqs: dict[str, str], cm: Path, cmscan: Path, threads: int, work: Path,
+              evalue: float) -> dict[str, dict]:
+    """Infernal structure search against Rfam, per sequence.
+
+    Worth doing at read length, which was not obvious: Rfam's 4,227 covariance models have
+    a median length of 88 and 66% are 107 nt or shorter, so most families CAN match a read
+    from this library. Structure is conserved long after sequence is not, so a covariance
+    model reaches relatives that neither a nucleotide nor a protein search can - and for
+    the non-coding half of the residue it is the only homology route there is.
+
+    Run at a stated E-value rather than Rfam's curated GA cutoffs, because GA thresholds
+    are tuned for full-length sequence and a 107 nt fragment rarely clears them; the price
+    is false positives, which is why the same scan is run on composition-matched shuffled
+    reads to measure them directly instead of trusting the E-value.
+    """
+    fa = work / "rfam_query.fa"
+    with open(fa, "w") as h:
+        for k, v in seqs.items():
+            h.write(f">{k}\n{v}\n")
+    tbl = work / "rfam.tbl"
+    subprocess.run([str(cmscan), "--rfam", "--noali", "--cpu", str(threads),
+                    "-E", str(evalue), "--tblout", str(tbl), str(cm), str(fa)],
+                   check=True, stdout=subprocess.DEVNULL)
+    best: dict[str, dict] = {}
+    with open(tbl) as h:
+        for line in h:
+            if line.startswith("#"):
+                continue
+            f = line.split()
+            if len(f) < 17:
+                continue
+            model, query, ev = f[0], f[2], float(f[15])
+            if query not in best or ev < best[query]["evalue"]:
+                best[query] = {"model": model, "evalue": ev, "score": float(f[14])}
+    fa.unlink(missing_ok=True)
+    tbl.unlink(missing_ok=True)
+    return best
+
+
 def repetitiveness(s1: str, s2: str, k: int = 16) -> dict:
     """Does the pair carry information, or the same few bases many times over?
 
@@ -348,6 +512,13 @@ def main() -> None:
                     help="per-sample assemblies of all 116 samples, for cross-sample "
                          "recurrence")
     ap.add_argument("--cross-min-mlen", type=int, default=50)
+    ap.add_argument("--rfam", type=Path, default=ROOT / "data/rfam/Rfam.cm")
+    ap.add_argument("--cmscan-bin", type=Path,
+                    default=Path("/home/user/tools/inf/bin/cmscan"))
+    ap.add_argument("--rfam-evalue", type=float, default=1e-3)
+    ap.add_argument("--spacers", type=Path,
+                    default=ROOT / "data/crispr/all_arrays_spacers.fa",
+                    help="CRISPR spacers extracted from the assemblies by minced")
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--work", type=Path, default=Path("/tmp/claude-0/wk/residue"))
     ap.add_argument("--out", type=Path, default=ROOT / "results/residue_report")
@@ -468,6 +639,62 @@ def main() -> None:
         }
         del idx
 
+    # ---- Rfam structure search, with a shuffled control for its false-positive rate
+    rfam = None
+    if args.rfam.exists() and not args.skip_fields:
+        t0 = time.perf_counter()
+        q = {}
+        for name, (s1, s2) in pairs.items():
+            q[f"{name}/1"] = s1
+            q[f"{name}/2"] = s2
+        hits = rfam_scan(q, args.rfam, args.cmscan_bin, args.threads, args.work,
+                         args.rfam_evalue)
+        per_pair = {}
+        for key, v in hits.items():
+            nm = key.rsplit("/", 1)[0]
+            if nm not in per_pair or v["evalue"] < per_pair[nm]["evalue"]:
+                per_pair[nm] = v
+        for nm, v in per_pair.items():
+            rows[nm]["rfam"] = v
+        null_q = {f"{nm}/1": shuffled(s1, rng) for nm, (s1, _s2) in pairs.items()}
+        null_hits = rfam_scan(null_q, args.rfam, args.cmscan_bin, args.threads, args.work,
+                              args.rfam_evalue)
+        kn_hits = {}
+        if known:
+            kq = {f"{nm}/1": a for nm, (a, _b) in known.items()}
+            kn_hits = rfam_scan(kq, args.rfam, args.cmscan_bin, args.threads, args.work,
+                                args.rfam_evalue)
+        rfam = {
+            "evalue": args.rfam_evalue,
+            "models": _cm_count(args.rfam),
+            "residue_hit_frac": len(per_pair) / len(pairs),
+            "shuffled_control_hit_frac": len(null_hits) / len(pairs),
+            "subtracted_hit_frac": (len(kn_hits) / len(known)) if known else None,
+            "top_models": Counter(v["model"] for v in per_pair.values()).most_common(10),
+            "wall_seconds": time.perf_counter() - t0,
+        }
+
+    # ---- CRISPR spacers: positive identity with no database in it
+    crispr = None
+    if args.spacers.exists() and not args.skip_fields:
+        si = SpacerIndex(args.spacers)
+        hits = 0
+        for name, (s1, s2) in pairs.items():
+            m = si.match(s1, s2)
+            if m:
+                rows[name]["crispr_spacer"] = m
+                hits += 1
+        kn_hits = sum(1 for a, b in known.values() if si.match(a, b)) if known else None
+        crispr = {
+            "spacer_file": str(args.spacers),
+            "spacers": si.spacers,
+            "spacer_bases": si.bases,
+            "distinct_20mers": len(si.map),
+            "expected_chance_matches_per_read": si.chance_per_read(),
+            "residue_hit_frac": hits / len(pairs),
+            "subtracted_hit_frac": (kn_hits / len(known)) if known else None,
+        }
+
     # ---- motifs
     pf = {}
     if args.pfam.exists() and not args.skip_fields:
@@ -520,6 +747,21 @@ def main() -> None:
         },
         "motif_rate": len(pf) / len(rows) if pf else 0.0,
         "library_abundance": abund,
+        "crispr": crispr,
+        "rfam": rfam,
+        "dinucleotide": {
+            "CpG_oe_residue": spread(r["dinuc"]["CpG_oe"] for r in rows.values()
+                                     if r["dinuc"]["CpG_oe"] is not None),
+            "UpA_oe_residue": spread(r["dinuc"]["UpA_oe"] for r in rows.values()
+                                     if r["dinuc"]["UpA_oe"] is not None),
+        },
+        "folding": {
+            "mfe_residue": spread(r["fold"]["mfe"] for r in rows.values()),
+            "z_residue": spread(r["fold"]["z"] for r in rows.values()
+                                if r["fold"]["z"] is not None),
+            "frac_z_under_minus2": (sum(1 for r in rows.values()
+                                        if (r["fold"]["z"] or 0) <= -2) / len(rows)),
+        },
         "cross_sample_recurrence": cross,
         "chimaera_split_rate": (sum(1 for r in rows.values()
                                     if r.get("chimaera", {}).get("split_disagree")) / len(rows)),
@@ -579,7 +821,16 @@ def _row(name: str, s1: str, s2: str, rng: random.Random) -> dict:
         "frame_shuffled": frame_evidence(sh1 + "NN" + sh2),
         "repetitive": repetitiveness(s1, s2),
         "repetitive_shuffled": repetitiveness(sh1, sh2),
+        "dinuc": dinucleotide_bias(s1 + s2),
+        "fold": folding(s1, rng),
     }
+
+
+def _cm_count(cm: Path) -> int:
+    try:
+        return sum(1 for line in open(cm) if line.startswith("CLEN"))
+    except Exception:
+        return -1
 
 
 def _sample_of(ctg: str) -> str:

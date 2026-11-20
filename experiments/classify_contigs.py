@@ -87,6 +87,14 @@ def main() -> None:
     ap.add_argument("--k2-confidence", type=float, nargs="+", default=[0.0, 0.05, 0.1, 0.2])
     ap.add_argument("--operating-confidence", type=float, default=0.1)
     ap.add_argument("--operating-bitscore", type=float, default=50.0)
+    ap.add_argument("--silva-mmi", type=Path,
+                    default=Path("/tmp/claude-0/wk/subtract/silva.mmi"),
+                    help="minimap2 index of SILVA SSU+LSU built by subtract_known.py")
+    ap.add_argument("--rrna-min-mlen", type=int, default=100,
+                    help="matching bases against SILVA for a CONTIG to count as "
+                         "ribosomal. Stricter than the read-level floor because a contig "
+                         "is long: a 40 nt match inside a 3 kb contig is a shared motif, "
+                         "not a ribosomal contig")
     ap.add_argument("--min-len", type=int, default=200,
                     help="contigs shorter than this are not routed to tier 2: no "
                          "classifier in the 2024 benchmark operates there, so calling "
@@ -108,13 +116,38 @@ def main() -> None:
         if m:
             cov[k] = float(m.group(2))
 
+    # ---- ribosomal identification, kept separate from everything else
+    #
+    # Why its own route. The biggest step on the subtraction curve is this sample's own
+    # assembly, and PR #14 found evidence that ribosomal sequence is leaking into the
+    # protein side of the same trick (ribosomal reads came out LESS peptide-absent than
+    # other reads, which cannot happen against an index of real proteins). On the
+    # nucleotide side the equivalent worry is that the assembly's big step is partly
+    # ribosomal RNA that SILVA missed - legitimate removal, but it belongs to the rRNA
+    # tier, not to "sequence unknown to databases". Splitting the contigs this way lets
+    # the self-assembly step be reported with ribosomal contigs excluded as well as
+    # included, which is the check that decides whether that step survives.
+    timings: dict[str, float] = {}
+    rrna_hit: set[str] = set()
+    if args.silva_mmi and Path(args.silva_mmi).exists():
+        import mappy
+        t0 = time.perf_counter()
+        sidx = mappy.Aligner(str(args.silva_mmi), preset="sr", n_threads=args.threads)
+        for k, v in contigs.items():
+            best = 0
+            for a in sidx.map(v):
+                best = max(best, a.mlen)
+            if best >= args.rrna_min_mlen:
+                rrna_hit.add(k)
+        timings["silva_contigs"] = time.perf_counter() - t0
+        del sidx
+
     # ---- nucleotide identification
     fa = args.work / "contigs.fa"
     with open(fa, "w") as h:
         for k, v in contigs.items():
             h.write(f">{k}\n{v}\n")
     k2_sweep, k2_hit = {}, set()
-    timings = {}
     for conf in args.k2_confidence:
         out = args.work / f"k2_{conf}.out"
         t0 = time.perf_counter()
@@ -161,13 +194,23 @@ def main() -> None:
     identified = set(k2_hit)
     for s in prot_hit.values():
         identified |= s
+    identified |= rrna_hit
+    identified_norrna = identified - rrna_hit
     unidentified = [k for k in contigs if k not in identified]
     tier2 = [k for k in unidentified if lens[k] >= args.min_len]
 
     id_fa = args.contigs.with_name(args.contigs.stem + "_identified.fa")
+    idnr_fa = args.contigs.with_name(args.contigs.stem + "_identified_norrna.fa")
+    rr_fa = args.contigs.with_name(args.contigs.stem + "_rrna.fa")
     un_fa = args.contigs.with_name(args.contigs.stem + "_unidentified.fa")
     with open(id_fa, "w") as h:
         for k in identified:
+            h.write(f">{k}\n{contigs[k]}\n")
+    with open(idnr_fa, "w") as h:
+        for k in identified_norrna:
+            h.write(f">{k}\n{contigs[k]}\n")
+    with open(rr_fa, "w") as h:
+        for k in rrna_hit:
             h.write(f">{k}\n{contigs[k]}\n")
     with open(un_fa, "w") as h:
         for k in tier2:
@@ -208,10 +251,18 @@ def main() -> None:
                                if prot_hit else None),
         "all": desc(list(contigs)),
         "identified": desc(list(identified)),
+        "rrna_contigs": desc(list(rrna_hit)),
+        "rrna_contig_frac": len(rrna_hit) / len(contigs),
+        "rrna_bases_frac": (sum(lens[k] for k in rrna_hit) / sum(lens.values())
+                            if rrna_hit else 0.0),
+        "identified_excluding_rrna": desc(list(identified_norrna)),
         "unidentified": desc(unidentified),
         "tier2_population": desc(tier2),
         "tier2_min_len": args.min_len,
-        "files": {"identified": str(id_fa), "unidentified_tier2": str(un_fa)},
+        "files": {"identified": str(id_fa),
+                  "identified_excluding_rrna": str(idnr_fa),
+                  "rrna_contigs": str(rr_fa),
+                  "unidentified_tier2": str(un_fa)},
         "index_bytes": {"kraken2": dir_bytes(args.k2_db / "hash.k2d"),
                         **{d.stem: dir_bytes(d) for d in args.dmnd if d.exists()}},
         "timings_seconds": timings,

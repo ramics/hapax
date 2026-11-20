@@ -272,6 +272,10 @@ def main() -> None:
                     default=[ROOT / "data/silva/SSU.fa.gz", ROOT / "data/silva/LSU.fa.gz"])
     ap.add_argument("--selfasm", type=Path, nargs="*",
                     default=[ROOT / "data/geo/sample_contigs.fa"])
+    ap.add_argument("--observe", type=Path, nargs="*", default=[],
+                    help="references mapped and reported but NOT subtracted: the "
+                         "sample's own contigs that nothing identified, which are tier "
+                         "2's population rather than background")
     ap.add_argument("--dmnd", type=Path, nargs="*",
                     default=[ROOT / "data/prot/viral.dmnd", ROOT / "data/prot/sprot.dmnd"])
     ap.add_argument("--diamond-bin", type=Path, default=Path("/home/user/tools/diamond"))
@@ -407,6 +411,30 @@ def main() -> None:
         tier_meta[tier] = {"mlen_sweep": _mlen_sweep(hits, n)}
         del idx
 
+    # ---- observed but NOT subtracted: the sample's own contigs that nothing identified
+    #
+    # Imo's three-tier architecture (2026-11-20): tier 1 removes what we can identify,
+    # tier 2 is what assembled but could not be identified, tier 3 is the residual reads.
+    # Subtracting the assembly wholesale - what the first cut of this script did - deletes
+    # tier 2 before anyone looks at it, because a novel virus abundant enough to assemble
+    # would be removed as background. So these references are mapped and reported, and
+    # deliberately left out of the subtracted union: reads that are explained ONLY by an
+    # unidentifiable contig are tier 2's read-level population, not residue.
+    observed: dict[str, set[str]] = {}
+    for ref in args.observe:
+        if not ref.exists():
+            continue
+        tier = f"observe_{ref.stem}"
+        t0 = time.perf_counter()
+        idx = _mm_index(ref, args.work / f"{ref.stem}.mmi", args.threads)
+        hits = map_filter(idx, seqs, args.min_mlen)
+        timings[tier] = time.perf_counter() - t0
+        observed[tier] = set(hits)
+        index_bytes[tier] = dir_bytes(ref)
+        tier_meta[tier] = {"subtracted": False, "mlen_sweep": _mlen_sweep(hits, n),
+                           "tier_alone": len(hits) / n}
+        del idx
+
     # ---- tier: protein, on the survivors of everything above
     nucleotide_union = set().union(*removed.values()) if removed else set()
     survivors = [r for r in rows if r[0] not in nucleotide_union]
@@ -479,6 +507,18 @@ def main() -> None:
         "tiers": tier_meta,
         "union_removed": len(seen) / n,
         "residue_pairs": n - len(seen),
+        # The residue, split the way Imo's architecture asks for rather than reported as
+        # one number. "tier2_reads" are residual pairs that DO map to one of this
+        # sample's own contigs that nothing could identify: present and often abundant
+        # here, but unplaceable - the read-level population of tier 2. The rest is the
+        # tier-3 population, which is by construction neither in the catalogues nor
+        # assembled here, i.e. rare AND unsequenced.
+        "residue_composition": {
+            tier: len({x for x in hits if x not in seen}) / n
+            for tier, hits in observed.items()
+        },
+        "tier3_pairs": (n - len(seen) - len({x for s in observed.values() for x in s
+                                             if x not in seen})) if observed else None,
         "timings_seconds": timings,
         "index_bytes": index_bytes,
     }
