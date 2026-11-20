@@ -2,7 +2,7 @@
   "script": "experiments/peptide_absence_noise.py",
   "seed": 1,
   "n_seeds": 5,
-  "git_sha": "83eeeeb11975c7e7bede5ec69c9a7205a7be4ad4-dirty",
+  "git_sha": "a1484188ccd0a5482ac0a78f96af7a3401aa2e6b-dirty",
   "parameters": {
     "seed": 1,
     "n_seeds": 5,
@@ -16,7 +16,7 @@
     "data": "/home/user/hapax/data/peptide_noise",
     "out": "/home/user/hapax/results/peptide_absence_noise"
   },
-  "wall_seconds": 967.3639567380001,
+  "wall_seconds": 1333.9738068909999,
   "python": "3.13.18",
   "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
 }

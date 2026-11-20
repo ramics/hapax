@@ -61,3 +61,11 @@ caveat travels with the synonymous-fraction number.
 "Usable" means a simple (non-joined, non-fuzzy) CDS location, in frame, unambiguous, with
 no internal stop — the conditions under which the annotation can be trusted to define a
 true reading frame.
+
+## Berlin quality profile (experiments/berlin_quality_profile.py)
+
+`data/berlin/sample_R{1,2}.fastq`: the first 400,000 read pairs of SRR23973193, streamed
+from ENA over HTTP (`ftp.sra.ebi.ac.uk/vol1/fastq/SRR239/093/SRR23973193/`) on 2026-11-20.
+No SRA toolkit is installed in this sandbox and none is needed for a prefix. Run metadata
+from the ENA portal API the same day: 8,731,224 pairs, 1,852,591,930 bases, Illumina
+NovaSeq 6000, modal read length 107 nt.

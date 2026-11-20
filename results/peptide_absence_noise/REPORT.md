@@ -24,7 +24,16 @@ because a failure here would kill the direction at zero data cost.
    At Q30 the one-per-million budget requires every k-mer in the read to be absent — zero
    headroom. Aggregation is forced, not optional.
 4. At the thousand-per-million budget that translated search already set, there is real
-   headroom: 12 of 26 k-mers. That is the regime worth building for.
+   headroom: 12 of 26 k-mers.
+5. **Berlin is measured, not assumed, onto the 0.001 row** (§8): SRR23973193's own quality
+   strings give a mean error probability of 0.00089 on R1 and 0.00117 on R2, at a modal
+   read length of 107. So point 3 applies to the real data rather than to a hypothetical.
+6. **The mate pair recovers the one-per-million target** (§9). Sequencing errors in two
+   mates are independent events, so requiring both mates to clear the threshold squares
+   the error-induced rate: at Berlin's error rate the budget moves from an impossible
+   T ≥ 26 of 26 on a single read to **T ≥ 16 of 26 on a pair, with 10 k-mers of
+   headroom**. This bounds the error term only; organism-level absence does not square,
+   and measuring it is step two.
 
 ## 2. Synonymous shielding
 
@@ -161,3 +170,65 @@ it is cheap once the run is fetched and should happen before step two is costed.
 codon-usage breadth behind §2 is thin. The measured 22.7% sits close to the uniform-codon
 expectation, so it is unlikely to move much, but it has not been shown across a wide range
 of codon usage and should not be quoted as if it had.
+
+## 8. Which row Berlin is actually on
+
+§7 recorded that the error rate was swept rather than measured, and that which row applies
+to SRR23973193 was unknown. `experiments/berlin_quality_profile.py` closes that, reading
+the run's own quality strings from ENA over HTTP (no SRA toolkit needed), 400,000 reads per
+mate:
+
+| | reads | modal length | mean error probability | first position → last |
+|---|---|---|---|---|
+| R1 | 400,000 | 107 | **0.00089** | 0.00175 → 0.00092 |
+| R2 | 400,000 | 107 | **0.00117** | 0.00120 → 0.00136 |
+
+**Berlin sits on the 0.001 row**, so §5's conclusion applies to the real data: at a
+one-per-million budget a single read must have every one of its 26 peptide 10-mers absent.
+
+Two things worth noting in the shape. The profile is close to flat rather than ramped —
+R1's error probability actually *falls* across the read — which is what NovaSeq's binned
+quality scores produce, and it means the flat model used in §3 is the right one here rather
+than merely the pessimistic one. And these are Phred scores, the instrument's estimate of
+its own error rate, which is usually optimistic; the true rate is at or above this, and the
+headroom table gets worse as the rate rises.
+
+## 9. What a mate pair buys
+
+A sequencing error in one mate and a sequencing error in the other are separate events, so
+for the error component of a false flag the mate correlation is zero by construction. This
+is the one component of the absence score whose correlation does not have to be measured.
+Requiring both mates to clear the threshold therefore squares the error-induced rate.
+
+It also happens to be the only aggregation guaranteed to exist at the target abundance. At
+one in a million a rare organism contributes about one fragment, so there is nothing to
+group read-to-read (`results/readlevel_features/REPORT.md`); the two mates of a single
+fragment are always both there.
+
+Threshold needed to hold error-induced false flags at one per million, 26 k-mers per read:
+
+| substitution rate | single read | mate pair | per-read rate the pair needs |
+|---|---|---|---|
+| 0.0005 | T ≥ 24, headroom 2 | **T ≥ 11, headroom 15** | 645/M |
+| 0.001 | T ≥ 26, headroom 0 | **T ≥ 16, headroom 10** | 882/M |
+| 0.002 | not reachable | **T ≥ 20, headroom 6** | 721/M |
+| 0.005 | not reachable | **T ≥ 23, headroom 3** | 797/M |
+| 0.01 | not reachable | **T ≥ 26, headroom 0** | 818/M |
+
+At Berlin's measured error rate the budget moves from **impossible on a single read** to
+**T ≥ 16 of 26 on a pair, leaving 10 k-mers of headroom**, with each mate individually
+allowed a rate near 900 per million.
+
+**What this does not cover, and it is the whole of step two.** Squaring applies to absence
+caused by error. Absence caused by the organism — an undersequenced known strain, a
+low-complexity protein, a fragment of non-coding sequence — is a property of the molecule
+and appears in both mates together, so it does not square at all. That correlated term is
+unmeasured, it is what will actually set the floor, and it can only be seen on real
+background with a real index. This result therefore says the error floor is not the binding
+constraint once mates are used; it does not say the budget is met.
+
+It also sharpens the conjecture in the sibling thread's `rho_fp` work from the other side:
+that analysis predicted the mate conjunction would be near-worthless for homology scores
+and valuable for absence scores, because error-driven absence is mate-specific. The error
+component of rho_fp for peptide absence is not merely low, it is zero. What remains to
+measure there is the organism-driven component, which is the same quantity step two needs.

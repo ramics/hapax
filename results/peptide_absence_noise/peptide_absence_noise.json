@@ -864,6 +864,32 @@
                 "achieved_fp_per_million": 0.7999999999999999,
                 "resolved": true
               }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 1647.0285889599998,
+                "per_read_rate_per_million": 40583.6
+              },
+              "1489.0": {
+                "min_threshold": 2,
+                "headroom_kmers": 24,
+                "achieved_fp_per_million_pairs": 1468.269124,
+                "per_read_rate_per_million": 38318.0
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.38576520999999997,
+                "per_read_rate_per_million": 621.1
+              },
+              "1.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.38576520999999997,
+                "per_read_rate_per_million": 621.1
+              }
             }
           },
           {
@@ -896,6 +922,32 @@
                 "headroom_kmers": 0,
                 "achieved_fp_per_million": 0.5,
                 "resolved": true
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 6331.14619225,
+                "per_read_rate_per_million": 79568.5
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 5.97558025,
+                "per_read_rate_per_million": 2444.5
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 5.97558025,
+                "per_read_rate_per_million": 2444.5
+              },
+              "1.0": {
+                "min_threshold": 16,
+                "headroom_kmers": 10,
+                "achieved_fp_per_million_pairs": 0.7707084100000001,
+                "per_read_rate_per_million": 877.9000000000001
               }
             }
           },
@@ -930,6 +982,32 @@
                 "achieved_fp_per_million": 0.0,
                 "resolved": false
               }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 23295.306384000003,
+                "per_read_rate_per_million": 152628.0
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 87.13102336,
+                "per_read_rate_per_million": 9334.4
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 87.13102336,
+                "per_read_rate_per_million": 9334.4
+              },
+              "1.0": {
+                "min_threshold": 20,
+                "headroom_kmers": 6,
+                "achieved_fp_per_million_pairs": 0.51969681,
+                "per_read_rate_per_million": 720.9
+              }
             }
           },
           {
@@ -963,6 +1041,32 @@
                 "achieved_fp_per_million": 0.0,
                 "resolved": false
               }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 4,
+                "headroom_kmers": 22,
+                "achieved_fp_per_million_pairs": 84775.77610384,
+                "per_read_rate_per_million": 291162.8
+              },
+              "1489.0": {
+                "min_threshold": 13,
+                "headroom_kmers": 13,
+                "achieved_fp_per_million_pairs": 1370.99132361,
+                "per_read_rate_per_million": 37026.9
+              },
+              "100.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 65.59218120999999,
+                "per_read_rate_per_million": 8098.899999999999
+              },
+              "1.0": {
+                "min_threshold": 23,
+                "headroom_kmers": 3,
+                "achieved_fp_per_million_pairs": 0.63584676,
+                "per_read_rate_per_million": 797.4
+              }
             }
           },
           {
@@ -995,6 +1099,32 @@
                 "headroom_kmers": -1,
                 "achieved_fp_per_million": 0.0,
                 "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 25636.653110249998,
+                "per_read_rate_per_million": 160114.5
+              },
+              "1489.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 1128.9599999999998,
+                "per_read_rate_per_million": 33600.0
+              },
+              "100.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million_pairs": 75.89371689,
+                "per_read_rate_per_million": 8711.699999999999
+              },
+              "1.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million_pairs": 0.66471409,
+                "per_read_rate_per_million": 815.3000000000001
               }
             }
           }
@@ -1512,6 +1642,32 @@
                 "achieved_fp_per_million": 1.0,
                 "resolved": true
               }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 1645.95735616,
+                "per_read_rate_per_million": 40570.4
+              },
+              "1489.0": {
+                "min_threshold": 2,
+                "headroom_kmers": 24,
+                "achieved_fp_per_million_pairs": 1467.12746961,
+                "per_read_rate_per_million": 38303.1
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.41473600000000005,
+                "per_read_rate_per_million": 644.0
+              },
+              "1.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.41473600000000005,
+                "per_read_rate_per_million": 644.0
+              }
             }
           },
           {
@@ -1544,6 +1700,32 @@
                 "headroom_kmers": 0,
                 "achieved_fp_per_million": 0.6,
                 "resolved": true
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 6294.914940249999,
+                "per_read_rate_per_million": 79340.5
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 6.010832889999999,
+                "per_read_rate_per_million": 2451.7
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 6.010832889999999,
+                "per_read_rate_per_million": 2451.7
+              },
+              "1.0": {
+                "min_threshold": 16,
+                "headroom_kmers": 10,
+                "achieved_fp_per_million_pairs": 0.777924,
+                "per_read_rate_per_million": 882.0
               }
             }
           },
@@ -1578,6 +1760,32 @@
                 "achieved_fp_per_million": 0.0,
                 "resolved": false
               }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 23211.58896225,
+                "per_read_rate_per_million": 152353.5
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 86.68913449,
+                "per_read_rate_per_million": 9310.7
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 86.68913449,
+                "per_read_rate_per_million": 9310.7
+              },
+              "1.0": {
+                "min_threshold": 20,
+                "headroom_kmers": 6,
+                "achieved_fp_per_million_pairs": 0.51883209,
+                "per_read_rate_per_million": 720.3
+              }
             }
           },
           {
@@ -1611,6 +1819,32 @@
                 "achieved_fp_per_million": 0.0,
                 "resolved": false
               }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 4,
+                "headroom_kmers": 22,
+                "achieved_fp_per_million_pairs": 84468.29633649,
+                "per_read_rate_per_million": 290634.3
+              },
+              "1489.0": {
+                "min_threshold": 13,
+                "headroom_kmers": 13,
+                "achieved_fp_per_million_pairs": 1368.4524547600001,
+                "per_read_rate_per_million": 36992.6
+              },
+              "100.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 64.26427224999999,
+                "per_read_rate_per_million": 8016.499999999999
+              },
+              "1.0": {
+                "min_threshold": 23,
+                "headroom_kmers": 3,
+                "achieved_fp_per_million_pairs": 0.5933620900000001,
+                "per_read_rate_per_million": 770.3000000000001
+              }
             }
           },
           {
@@ -1643,6 +1877,32 @@
                 "headroom_kmers": -1,
                 "achieved_fp_per_million": 0.0,
                 "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 25532.58843664,
+                "per_read_rate_per_million": 159789.19999999998
+              },
+              "1489.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 1119.48460569,
+                "per_read_rate_per_million": 33458.700000000004
+              },
+              "100.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million_pairs": 75.78921249,
+                "per_read_rate_per_million": 8705.7
+              },
+              "1.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million_pairs": 0.65237929,
+                "per_read_rate_per_million": 807.6999999999999
               }
             }
           }
@@ -2160,6 +2420,32 @@
                 "achieved_fp_per_million": 0.8999999999999999,
                 "resolved": true
               }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 1636.5261159999998,
+                "per_read_rate_per_million": 40454.0
+              },
+              "1489.0": {
+                "min_threshold": 2,
+                "headroom_kmers": 24,
+                "achieved_fp_per_million_pairs": 1461.31117441,
+                "per_read_rate_per_million": 38227.1
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.38241855999999996,
+                "per_read_rate_per_million": 618.4
+              },
+              "1.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.38241855999999996,
+                "per_read_rate_per_million": 618.4
+              }
             }
           },
           {
@@ -2192,6 +2478,32 @@
                 "headroom_kmers": 0,
                 "achieved_fp_per_million": 0.8999999999999999,
                 "resolved": true
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 6270.18504025,
+                "per_read_rate_per_million": 79184.5
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 5.881595040000001,
+                "per_read_rate_per_million": 2425.2000000000003
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 5.881595040000001,
+                "per_read_rate_per_million": 2425.2000000000003
+              },
+              "1.0": {
+                "min_threshold": 16,
+                "headroom_kmers": 10,
+                "achieved_fp_per_million_pairs": 0.75951225,
+                "per_read_rate_per_million": 871.5
               }
             }
           },
@@ -2226,6 +2538,32 @@
                 "achieved_fp_per_million": 0.0,
                 "resolved": false
               }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 23140.281432490003,
+                "per_read_rate_per_million": 152119.30000000002
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 86.66679025,
+                "per_read_rate_per_million": 9309.5
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 86.66679025,
+                "per_read_rate_per_million": 9309.5
+              },
+              "1.0": {
+                "min_threshold": 20,
+                "headroom_kmers": 6,
+                "achieved_fp_per_million_pairs": 0.515524,
+                "per_read_rate_per_million": 718.0
+              }
             }
           },
           {
@@ -2259,6 +2597,32 @@
                 "achieved_fp_per_million": 0.0,
                 "resolved": false
               }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 4,
+                "headroom_kmers": 22,
+                "achieved_fp_per_million_pairs": 84174.19835841001,
+                "per_read_rate_per_million": 290127.89999999997
+              },
+              "1489.0": {
+                "min_threshold": 13,
+                "headroom_kmers": 13,
+                "achieved_fp_per_million_pairs": 1353.3127987599999,
+                "per_read_rate_per_million": 36787.4
+              },
+              "100.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 64.48411203999999,
+                "per_read_rate_per_million": 8030.2
+              },
+              "1.0": {
+                "min_threshold": 23,
+                "headroom_kmers": 3,
+                "achieved_fp_per_million_pairs": 0.591361,
+                "per_read_rate_per_million": 769.0
+              }
             }
           },
           {
@@ -2291,6 +2655,32 @@
                 "headroom_kmers": -1,
                 "achieved_fp_per_million": 0.0,
                 "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 25431.191206559997,
+                "per_read_rate_per_million": 159471.59999999998
+              },
+              "1489.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 1113.08309641,
+                "per_read_rate_per_million": 33362.9
+              },
+              "100.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million_pairs": 75.00426024999999,
+                "per_read_rate_per_million": 8660.5
+              },
+              "1.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million_pairs": 0.65820769,
+                "per_read_rate_per_million": 811.3000000000001
               }
             }
           }
@@ -2808,6 +3198,32 @@
                 "achieved_fp_per_million": 0.5,
                 "resolved": true
               }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 1639.926016,
+                "per_read_rate_per_million": 40496.0
+              },
+              "1489.0": {
+                "min_threshold": 2,
+                "headroom_kmers": 24,
+                "achieved_fp_per_million_pairs": 1460.31743881,
+                "per_read_rate_per_million": 38214.1
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.41563809,
+                "per_read_rate_per_million": 644.7
+              },
+              "1.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.41563809,
+                "per_read_rate_per_million": 644.7
+              }
             }
           },
           {
@@ -2840,6 +3256,32 @@
                 "headroom_kmers": 0,
                 "achieved_fp_per_million": 0.3,
                 "resolved": true
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 6302.23225956,
+                "per_read_rate_per_million": 79386.6
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 5.964340839999999,
+                "per_read_rate_per_million": 2442.2
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 5.964340839999999,
+                "per_read_rate_per_million": 2442.2
+              },
+              "1.0": {
+                "min_threshold": 16,
+                "headroom_kmers": 10,
+                "achieved_fp_per_million_pairs": 0.76370121,
+                "per_read_rate_per_million": 873.9000000000001
               }
             }
           },
@@ -2874,6 +3316,32 @@
                 "achieved_fp_per_million": 0.0,
                 "resolved": false
               }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 23277.910041000003,
+                "per_read_rate_per_million": 152571.0
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 87.49170369,
+                "per_read_rate_per_million": 9353.699999999999
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 87.49170369,
+                "per_read_rate_per_million": 9353.699999999999
+              },
+              "1.0": {
+                "min_threshold": 20,
+                "headroom_kmers": 6,
+                "achieved_fp_per_million_pairs": 0.5033902499999999,
+                "per_read_rate_per_million": 709.5
+              }
             }
           },
           {
@@ -2907,6 +3375,32 @@
                 "achieved_fp_per_million": 0.0,
                 "resolved": false
               }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 4,
+                "headroom_kmers": 22,
+                "achieved_fp_per_million_pairs": 84597.61993489001,
+                "per_read_rate_per_million": 290856.7
+              },
+              "1489.0": {
+                "min_threshold": 13,
+                "headroom_kmers": 13,
+                "achieved_fp_per_million_pairs": 1368.2305081599998,
+                "per_read_rate_per_million": 36989.6
+              },
+              "100.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 65.63754289,
+                "per_read_rate_per_million": 8101.7
+              },
+              "1.0": {
+                "min_threshold": 23,
+                "headroom_kmers": 3,
+                "achieved_fp_per_million_pairs": 0.6275808399999999,
+                "per_read_rate_per_million": 792.1999999999999
+              }
             }
           },
           {
@@ -2939,6 +3433,32 @@
                 "headroom_kmers": -1,
                 "achieved_fp_per_million": 0.0,
                 "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 25597.632054760004,
+                "per_read_rate_per_million": 159992.6
+              },
+              "1489.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 1122.94020609,
+                "per_read_rate_per_million": 33510.3
+              },
+              "100.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million_pairs": 76.01921721000001,
+                "per_read_rate_per_million": 8718.9
+              },
+              "1.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million_pairs": 0.66048129,
+                "per_read_rate_per_million": 812.6999999999999
               }
             }
           }
@@ -3456,6 +3976,32 @@
                 "achieved_fp_per_million": 0.7,
                 "resolved": true
               }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 1639.64255625,
+                "per_read_rate_per_million": 40492.5
+              },
+              "1489.0": {
+                "min_threshold": 2,
+                "headroom_kmers": 24,
+                "achieved_fp_per_million_pairs": 1461.10475536,
+                "per_read_rate_per_million": 38224.4
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.39075001,
+                "per_read_rate_per_million": 625.0999999999999
+              },
+              "1.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 0.39075001,
+                "per_read_rate_per_million": 625.0999999999999
+              }
             }
           },
           {
@@ -3488,6 +4034,32 @@
                 "headroom_kmers": 0,
                 "achieved_fp_per_million": 0.39999999999999997,
                 "resolved": true
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 6300.77163076,
+                "per_read_rate_per_million": 79377.4
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 5.99172484,
+                "per_read_rate_per_million": 2447.8
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 5.99172484,
+                "per_read_rate_per_million": 2447.8
+              },
+              "1.0": {
+                "min_threshold": 16,
+                "headroom_kmers": 10,
+                "achieved_fp_per_million_pairs": 0.7630022500000001,
+                "per_read_rate_per_million": 873.5
               }
             }
           },
@@ -3522,6 +4094,32 @@
                 "achieved_fp_per_million": 0.0,
                 "resolved": false
               }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 1,
+                "headroom_kmers": 25,
+                "achieved_fp_per_million_pairs": 23278.581358239997,
+                "per_read_rate_per_million": 152573.19999999998
+              },
+              "1489.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 88.20778561,
+                "per_read_rate_per_million": 9391.9
+              },
+              "100.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 88.20778561,
+                "per_read_rate_per_million": 9391.9
+              },
+              "1.0": {
+                "min_threshold": 20,
+                "headroom_kmers": 6,
+                "achieved_fp_per_million_pairs": 0.514089,
+                "per_read_rate_per_million": 717.0
+              }
             }
           },
           {
@@ -3555,6 +4153,32 @@
                 "achieved_fp_per_million": 0.0,
                 "resolved": false
               }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 4,
+                "headroom_kmers": 22,
+                "achieved_fp_per_million_pairs": 84484.68890625,
+                "per_read_rate_per_million": 290662.5
+              },
+              "1489.0": {
+                "min_threshold": 13,
+                "headroom_kmers": 13,
+                "achieved_fp_per_million_pairs": 1375.0747239999996,
+                "per_read_rate_per_million": 37082.0
+              },
+              "100.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 65.44971800999998,
+                "per_read_rate_per_million": 8090.099999999999
+              },
+              "1.0": {
+                "min_threshold": 23,
+                "headroom_kmers": 3,
+                "achieved_fp_per_million_pairs": 0.63504961,
+                "per_read_rate_per_million": 796.9
+              }
             }
           },
           {
@@ -3587,6 +4211,32 @@
                 "headroom_kmers": -1,
                 "achieved_fp_per_million": 0.0,
                 "resolved": false
+              }
+            },
+            "mate_conjunction": {
+              "93478.0": {
+                "min_threshold": 11,
+                "headroom_kmers": 15,
+                "achieved_fp_per_million_pairs": 25607.808595360002,
+                "per_read_rate_per_million": 160024.40000000002
+              },
+              "1489.0": {
+                "min_threshold": 19,
+                "headroom_kmers": 7,
+                "achieved_fp_per_million_pairs": 1123.8250522499998,
+                "per_read_rate_per_million": 33523.5
+              },
+              "100.0": {
+                "min_threshold": 22,
+                "headroom_kmers": 4,
+                "achieved_fp_per_million_pairs": 76.84801569,
+                "per_read_rate_per_million": 8766.3
+              },
+              "1.0": {
+                "min_threshold": 26,
+                "headroom_kmers": 0,
+                "achieved_fp_per_million_pairs": 0.66977856,
+                "per_read_rate_per_million": 818.4000000000001
               }
             }
           }

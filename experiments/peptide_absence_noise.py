@@ -445,6 +445,36 @@ def section_tail(read_len: int, k_aa: int, rates: list[float], p_nonsyn: float,
                 "achieved_fp_per_million": fp_at_t,
                 "resolved": (fp_at_t is not None and fp_at_t > 0),
             }
+        # What a mate pair buys. Sequencing errors in two mates are separate events on
+        # separate molecules of the library, so for the ERROR component of a false flag
+        # the mate correlation rho_fp is zero by construction — the one component of the
+        # absence score whose correlation we do not have to measure. Requiring both mates
+        # to clear the threshold therefore squares the error-induced rate. This is the
+        # only aggregation guaranteed to be available at one-in-a-million abundance, where
+        # a rare organism contributes about one fragment and read-to-read grouping has
+        # nothing to group (results/readlevel_features/REPORT.md).
+        #
+        # It bounds the error term alone. Absence that is a property of the ORGANISM — an
+        # undersequenced known strain, a low-complexity protein, a non-coding fragment —
+        # appears in both mates together and does not square. That correlated term is
+        # unmeasured and is what step two has to find on real background.
+        entry["mate_conjunction"] = {}
+        for budget in budgets:
+            t_needed, achieved = None, None
+            for T in range(0, n_pep + 2):
+                fp = sum(1 for c in counts if c >= T) / n
+                if (fp ** 2) * 1e6 <= budget:
+                    t_needed, achieved = T, (fp ** 2) * 1e6
+                    break
+            entry["mate_conjunction"][str(budget)] = {
+                "min_threshold": t_needed,
+                "headroom_kmers": (n_pep - t_needed) if t_needed is not None else None,
+                "achieved_fp_per_million_pairs": achieved,
+                "per_read_rate_per_million": (
+                    (sum(1 for c in counts if c >= t_needed) / n) * 1e6
+                    if t_needed is not None else None),
+            }
+
         rows.append(entry)
         # validation: the fast sampler must reproduce the mean the direct simulation saw
         for d in direct:
