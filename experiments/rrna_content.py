@@ -195,8 +195,8 @@ def hits(seq: str, idx: np.ndarray, rate_log2: int) -> tuple[int, int]:
     """(retained K-mers queried, how many were in the index) for one read."""
     bases = _MAP[np.frombuffer(seq.encode(), dtype=np.uint8)]
     q = keep(codes_from_bases(bases), rate_log2)
-    if q.size == 0:
-        return 0, 0
+    if q.size == 0 or idx.size == 0:
+        return int(q.size), 0
     pos = np.searchsorted(idx, q)
     pos[pos >= idx.size] = 0
     return int(q.size), int(np.count_nonzero(idx[pos] == q))

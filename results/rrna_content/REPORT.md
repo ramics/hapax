@@ -46,6 +46,16 @@ not edit the tables by hand.
 - A read is called ribosomal at >= 3 retained hits out of the ~9.6 a 107 nt read
   contributes at this sampling rate.
 
+The sampler is checked rather than trusted (`experiments/rrna_sampler_check.py`),
+because the other branch hit a real bug of exactly this kind: masking the low bits of
+an FNV-style hash over a four-letter alphabet retained 1 k-mer in 65 rather than 1 in
+8, which is invisible in a headline because the same sampling applies to reference and
+query alike. Masking the low bits of a splitmix64 finalizer instead gives a realised
+rate of 0.12536 on reference sequence and
+0.12486 on reads against a target of
+0.12500, and 9.38 retained
+k-mers per read against 9.50 expected.
+
 Per seed:
 
 | seed | pairs | rRNA, mate 1 | rRNA, mate 2 | rRNA, all reads |
@@ -220,6 +230,10 @@ project that bears on it.
 - Ribosomal status is called per read. A read on a contig that is partly ribosomal
   and partly not is called ribosomal, which is one reason the in_cds figures here and
   a contig-level labelling need not agree.
+- 0.51% of reads carry fewer than 3 retained
+  k-mers, from ambiguous bases or length, so they can never be called ribosomal at
+  any threshold. That is a ceiling on sensitivity rather than a tuning choice, and it
+  is small enough not to matter at this effect size.
 - One library, one sample. Berlin is a total-RNA preparation; a poly-A or
   ribodepleted library would not look like this, and the third is a property of this
   protocol rather than of wastewater.
