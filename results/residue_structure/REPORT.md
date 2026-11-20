@@ -180,7 +180,12 @@ caught.
   modes the report has no field for. `cov_step` is a candidate for the junction the
   split-mapping chimaera field of §4.1 tries to see at a 26% false-positive rate, and needs
   no database — but it has not been calibrated against known chimaeras here, so it is a
-  candidate and not a replacement.
+  candidate and not a replacement. It should also not be read as implying there are
+  chimaeras to find: the `subtract the known` thread's contig-level test, which is the
+  answerable form of the question, fires on 0% of unidentifiable and 0% of identified
+  contigs ≥500 nt once the query's own entry is excluded. On this library the junction
+  `cov_step` would be looking for appears to be rare, and the axis earns its 0.780 AUC some
+  other way — most likely coverage that is genuinely uneven along a read.
 - **A third wall, measured.** Recognition stops between 10% and 20% divergence; detection is
   not available below about one in a million; and *grouping a genome by its joint-space
   neighbourhood* stops by one in 100,000. The last of those is new, and it sits an order of
