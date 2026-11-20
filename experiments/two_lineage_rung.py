@@ -39,15 +39,24 @@ import edlib
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from abundance_sweep import make_background, sh  # noqa: E402
+from abundance_sweep import score as sweep_score  # noqa: E402
 from common import git_sha  # noqa: E402
 
-# Real pairs, divergence measured with edlib over the whole genome. No pair sits
-# at 5%: the deposited rabies genomes cluster, so the ladder is 2.0, 3.8, 7.3,
-# 9.7% rather than the 2/5/10 asked for, and the gap is reported rather than
-# filled by mutating a genome to order.
+# Real pairs, divergence measured with edlib over the whole genome, never
+# simulated. The first four were all the first 40 deposited rabies genomes
+# offered, which left 4-7% empty; that band was an artefact of the download, not
+# of the data. find_divergence_pairs.py computes the full pairwise matrix over a
+# wider sample (~200 genomes, 19,900 pairs) and the band is well populated, so
+# the ladder is filled with real pairs rather than by mutating a genome to the
+# wanted divergence - which CLAUDE.md forbids, and which would in any case make
+# the rung circular: the substitution process that built it is the same process
+# the assembler's k-mer matching is being tested on.
 PAIRS = [
     ("div02", "PZ227608.1", "PZ227621.1", 0.0198),
     ("div04", "PV491557.1", "PZ324370.1", 0.0381),
+    ("div045", "MG458312.1", "PZ227553.1", 0.0450),
+    ("div055", "PZ227534.1", "PZ227561.1", 0.0550),
+    ("div065", "AB009663.2", "PZ227534.1", 0.0652),
     ("div07", "PZ227608.1", "AB044824.1", 0.0729),
     ("div10", "NC_001542.1", "AB009663.2", 0.0965),
 ]
@@ -183,6 +192,16 @@ def main() -> None:
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--controls", action="store_true",
                     help="also run each lineage alone at half the budget")
+    ap.add_argument("--modes", default="",
+                    help="comma-separated modes to run (both, a_alone, b_alone); the rest are "
+                         "skipped. Used to re-run only the controls.")
+    ap.add_argument("--cross-score", action="store_true",
+                    help="for control modes, also score with the abundance sweep's own "
+                         "settings (minimap2 asm10, identity 0.90, single reference) so the "
+                         "controls can be read directly against section 1's curve")
+    ap.add_argument("--rows-name", default="two_lineage_rows.jsonl",
+                    help="output file; a re-run writes elsewhere rather than appending to the "
+                         "headline rows")
     ap.add_argument("--only", default="",
                     help="comma-separated pair tags to run; the rest are skipped, so a run "
                          "interrupted partway can resume without duplicating rows")
@@ -222,7 +241,10 @@ def main() -> None:
             modes = [("both", [(a1, a2, half), (b1, b2, half)])]
             if args.controls:
                 modes += [("a_alone", [(a1, a2, half)]), ("b_alone", [(b1, b2, half)])]
+            want = {m for m in args.modes.split(",") if m}
             for mode, parts in modes:
+                if want and mode not in want:
+                    continue
                 m1 = args.work / f"mix_{tag}_{mode}_s{seed}_1.fq.gz"
                 m2 = args.work / f"mix_{tag}_{mode}_s{seed}_2.fq.gz"
                 for mix, bg, idx in ((m1, bg1, 0), (m2, bg2, 1)):
@@ -244,15 +266,28 @@ def main() -> None:
                     print(f"[{tag} {mode} s{seed}] megahit failed: {e.stderr[-300:]}", flush=True)
                     continue
                 sc = score(asm / "final.contigs.fa", ref2, acc_a, acc_b)
+                cross = {}
+                if args.cross_score and mode in ("a_alone", "b_alone"):
+                    # Section 1 scored one lineage against one reference at asm10
+                    # and 90% identity; section 5 scores against both lineages at
+                    # asm20 and 85%, which is necessarily more permissive. Scoring
+                    # the same contigs both ways separates "the controls sit above
+                    # the curve because the scoring is looser" from "because these
+                    # are different genomes".
+                    one = fa_a if mode == "a_alone" else fa_b
+                    s1 = sweep_score(asm / "final.contigs.fa", one)
+                    s1.pop("spike_names", None)
+                    s1.pop("lengths", None)
+                    cross = {"sweep_" + k: v for k, v in s1.items()}
                 total = sum(n for _, _, n in parts)
                 row = {"pair": tag, "lineage_a": acc_a, "lineage_b": acc_b,
                        "divergence": round(div_measured, 4), "mode": mode, "seed": seed,
                        "spike_pairs_total": total,
                        "coverage_total": round(total * (args.read_len + r2_len) / len(sa), 2),
-                       **sc}
+                       **sc, **cross}
                 rows.append(row)
                 print(json.dumps(row), flush=True)
-                (args.out / "two_lineage_rows.jsonl").open("a").write(json.dumps(row) + "\n")
+                (args.out / args.rows_name).open("a").write(json.dumps(row) + "\n")
                 subprocess.run(["rm", "-rf", str(asm)], check=True)
                 m1.unlink(missing_ok=True)
                 m2.unlink(missing_ok=True)

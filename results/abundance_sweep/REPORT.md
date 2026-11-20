@@ -222,10 +222,25 @@ without buying back the coverage it appeared to merge.
 
 **The benefit is not monotone in divergence.** It is strongest at 2.0%, erratic
 at 3.8% (one seed of three crossed 1,500 nt, hence the ± larger than the mean),
-absent at 7.3%, and partially back at 9.7%. The 9.7% rung still produces three
-mosaic contigs, which points at joins through conserved windows rather than
-genome-wide pooling — the mechanism this project already measured when two HBV
-hosts shared 709 exact 150-mers.
+absent at 7.3%, and partially back at 9.7%.
+
+Read as noise, that is a wobble on a declining curve. Read as mechanism, it is
+two processes with different ranges, and the 9.7% rung separates them. Pooling
+that works genome-wide needs exact k-mer sharing along the genome, which falls
+away by about 4%: this is the process that produces the length gain at 2.0% and
+is gone by 7.3%. Joins through individual conserved windows need sharing only in
+one place, so they happen at any divergence: this is what still makes three
+mosaic contigs at 9.7% while contributing no breadth, and it is the mechanism
+this project already measured directly when two HBV genomes from different hosts
+shared 709 exact 150-mers. Only the second survives into the divergence range
+where real surveillance samples sit, and only the first looks like an
+improvement on a contiguity table.
+
+The practical consequence is that a single threshold cannot be quoted. Pooling
+is strong at 2.0%, already erratic at 3.8% where one seed of three crossed
+1,500 nt and two did not, and absent at 7.3%, so "safe above 4%" is a claim
+about a transition this ladder only brackets. The three added rungs in §5.1 are
+there to say where inside the bracket it actually goes.
 
 **Why this matters for what gets built.** Below about 4% an assembler silently
 trades lineage identity for contig length, and nothing in its output says which
