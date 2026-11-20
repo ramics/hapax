@@ -27,6 +27,9 @@ def main() -> None:
     ap.add_argument("--work", type=Path, default=ROOT / "data/residue_structure")
     ap.add_argument("--out", type=Path, default=ROOT / "results/residue_structure")
     ap.add_argument("--per-population", type=int, default=3000)
+    ap.add_argument("--join-table", action="store_true",
+                    help="also write every residue pair of this block with its coverage "
+                         "axes, keyed by read name, so another experiment can join on it")
     args = ap.parse_args()
     rng = random.Random(args.seed)
 
@@ -53,6 +56,18 @@ def main() -> None:
         }
     (args.out).mkdir(parents=True, exist_ok=True)
     (args.out / f"joint_points_s{args.block}.json").write_text(json.dumps(out))
+    if args.join_table:
+        # Per-read coverage axes for the whole residue population, not a subsample: the
+        # cascade thread holds per-read contig depth from its mapping step, and the
+        # prediction to test is that a high cov_step read has a mate on a contig of very
+        # different depth - uneven coverage along a molecule rather than a junction.
+        cols = ["log_cov", "cov_spread", "zero_frac", "mate_disagree", "cov_step"]
+        with open(args.out / f"coverage_axes_s{args.block}.tsv", "w") as h:
+            h.write("name\t" + "\t".join(cols) + "\n")
+            for r in rows:
+                if r["block"] == args.block and r["name"] in names:
+                    h.write(r["name"] + "\t"
+                            + "\t".join(f"{r[c]:.4f}" for c in cols) + "\n")
     (args.out / f"points_manifest_s{args.block}.json").write_text(json.dumps({
         "script": "experiments/residue_structure_points.py",
         "git_sha": subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT,
