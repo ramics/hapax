@@ -530,7 +530,18 @@ threshold):
 | predicted proteins on them | 388 of 79,667 |
 | **indexed residues on them** | **19,137 of 8,042,848 = 0.24%** |
 
-So the mechanism is real and small. Spurious gene calls on ribosomal contigs do enter the
+**What 0.24% does and does not settle.** It is a share of the *index*, so it answers
+"could spurious ribosomal calls have moved 86% to 22%" - clearly not. It does not by itself
+settle P(absent | rRNA) = 0.125, because a read needs exactly one matching 10-mer, so the
+quantity that matters there is the chance an rRNA read falls within reach of a spurious
+call. That is the coding density on ribosomal contigs, 0.281, two orders of magnitude
+larger than the index share, and it agrees with the sibling thread's read-level figure of
+about 0.38 for mapped rRNA reads inside a call. The gap's direction is the expected one:
+partly-ribosomal contigs carry real genes beside ribosomal stretches, so read-level sits
+above contig-level - which also means 1.72% of bases is a floor twice over, once for
+divergent lineages and once for mixed contigs.
+
+So the mechanism is real and small *as a share of the index*. Spurious gene calls on ribosomal contigs do enter the
 index, their coding density is a third of the rest of the assembly's, and they are a
 quarter of one percent of the residues that moved the absence rate from 86% to 22%. The
 conclusion does not depend on the threshold: loosening it to 0.3, 0.2, 0.1 and an absurd
@@ -559,3 +570,86 @@ own, and 40.5% on top of 0.7 GB of Kraken2 viral plus 16 GB of PlusPF
 different alphabets: the sample's own contigs are worth more than any public database we
 can reach, which is a statement about what has been deposited rather than about what is
 novel.
+
+
+### 4.6 The curve, against real public indexes
+
+`experiments/absence_curve.py`, 5 seeds, 20,000 pairs per seed, cumulative levels so each
+is a superset of the last. No index is built: the reads' peptide k-mers are hashed once and
+each proteome is streamed past them, so memory is set by the reads rather than the database
+and nothing of UniRef50 is stored.
+
+| level | cumulative db 10-mers | fully absent | mean absence | both mates absent | r (mates) | excess over independence |
+|---|---|---|---|---|---|---|
+| RefSeq viral | 0.169 G | 0.8834 (0.0009) | 0.9386 | 0.8478 | 0.884 | 1.087 |
+| + Swiss-Prot | 0.373 G | 0.8625 (0.0011) | 0.9341 | 0.8119 | 0.867 | 1.091 |
+| + UniRef50, 1% | 0.496 G | 0.8019 (0.0021) | 0.9211 | 0.7160 | 0.815 | 1.113 |
+| + UniRef50, 10% | 1.731 G | 0.6346 (0.0022) | 0.8716 | 0.4992 | 0.678 | 1.240 |
+| + the sample's own proteins, ribosomal contigs excluded | 1.738 G | 0.2148 (0.0025) | 0.4887 | 0.1317 | 0.654 | 2.854 |
+| + the 388 ribosomal-contig proteins | 1.738 G | 0.2016 (0.0030) | 0.4663 | 0.1238 | 0.639 | 3.045 |
+
+**This revises the framing of §4.3, though not its arithmetic.** I wrote that 8 Maa from the
+sample "did roughly forty times what 200 Maa of Swiss-Prot did". Per residue that is still
+true and now understated. But the implied reading - that public databases are a dead end
+for this subtraction - is wrong: a tenth of UniRef50 moves the fully-absent rate 22.8 points
+(0.8625 → 0.6346), where Swiss-Prot moved 2.1. The earlier curve looked flat because both
+its points were small and viral-weighted, which is exactly the mistake the process notes in
+this project warn about: two points are not a curve.
+
+**The curve has not flattened where we must stop.** Each tenfold step in index size is still
+buying ~20 points at the largest size reachable here, so the far end - full UniRef50, or nr
+- is not an extrapolation anyone should make from these three public points. That is the
+headline deliverable the project's thesis asks for (background removed per GB of index, and
+where it flattens), and the honest version of it is: *it has not flattened yet*.
+
+**The sample's own assembly remains the largest single step**, and it is 8 Maa against
+1,270. Both facts stand together, and together they say the same thing: absence in
+wastewater is a statement about what has been deposited, not about what is novel.
+
+**The mate correlation tracks index coverage, not the reads.** r falls 0.884 → 0.639 as
+coverage grows, while the ratio excess over independence rises 1.087 → 3.045. Those move in
+opposite directions because they are different quantities: saturation was suppressing the
+correlation's *visibility* while inflating r. The pair-rule merit in §4.1 should therefore
+be read off the best-covered index available, not the cheapest.
+
+### 4.7 The ribosomal inversion, and where it actually comes from
+
+Joining the sibling thread's SILVA calls onto the per-level dumps (40,000 rows per seed,
+100% matched on read_id + mate) gives the sharpest diagnostic in this thread:
+
+| level | P(absent \| rRNA) | P(absent \| not rRNA) |
+|---|---|---|
+| RefSeq viral | 0.998 (0.000) | 0.823 (0.002) |
+| + Swiss-Prot | 0.960 (0.002) | 0.811 (0.002) |
+| + UniRef50, 1% | 0.810 (0.003) | 0.798 (0.002) |
+| + UniRef50, 10% | 0.473 (0.003) | 0.720 (0.002) |
+| + sample, ribosomal contigs excluded | 0.143 (0.003) | 0.252 (0.003) |
+| + the 388 ribosomal-contig proteins | 0.107 (0.004) | 0.251 (0.003) |
+
+At a viral-only index ribosomal reads behave exactly as sequence with no protein product
+should: 0.998 fully absent, the highest figure anywhere in this report. The inversion -
+ribosomal reads being *less* absent than other reads - is created between the 1% and 10%
+UniRef50 subsamples, not by our assembly. And it is not explained by either candidate:
+
+- **spurious calls on our own ribosomal contigs**: removing all 388 of them moves the figure
+  from 0.107 to 0.143. The sibling thread predicted 0.4 in advance and I predicted 0.25-0.35;
+  both are wrong, and wrong the same way, so the error was not the index-share reasoning I
+  had already conceded.
+- **low complexity**: restricting to k-mers with at least 5 of 10 distinct residues changes
+  nothing at any level - 0.144 against 0.143 for ribosomal reads, 0.261 against 0.252 for
+  the rest.
+
+What is left is the public database itself, and the mechanism the sibling thread proposed is
+the right one in the wrong place: UniRef50 includes TrEMBL, which is automatically annotated,
+and a gene caller run over a genome assembly makes the same mistake on ribosomal loci that
+Prodigal makes on our contigs - at a scale of millions of entries rather than 388.
+`experiments/rrna_match_source.py` tests that by naming the entries instead of inferring
+them: every entry containing a ribosomal read's peptide 10-mer is recorded with its
+description, with the non-ribosomal reads carried through the same pass as a control.
+
+**Why this matters beyond a curiosity.** A third of this library is ribosomal, and against a
+large public protein index a third of the library stops looking novel for a reason that has
+nothing to do with biology. Any absence-based score calibrated on a big protein database is
+partly measuring annotation artefacts, and the fix is not a better threshold: it is to
+subtract rRNA explicitly, with a nucleotide index, before a protein index is consulted at
+all.

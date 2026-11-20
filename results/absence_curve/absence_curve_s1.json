@@ -1,6 +1,6 @@
 {
   "seed": 1,
-  "git_sha": "9e63679b83cad3c15ba253571b30276cd0207462",
+  "git_sha": "ed380e8a12afde412b385e379200c72d058362af",
   "k": 10,
   "pairs": 20000,
   "query_kmers": 3628070,
@@ -15,7 +15,9 @@
       "either_mate_fully_absent": 0.9189,
       "excess_over_independence": 1.087,
       "r_mates_continuous": 0.8771,
-      "seconds": 53.1
+      "fully_absent_complex_kmers_only": 0.8867,
+      "mean_absence_complex_kmers_only": 0.9389,
+      "seconds": 59.4
     },
     {
       "level": "+sprot",
@@ -26,7 +28,9 @@
       "either_mate_fully_absent": 0.9125,
       "excess_over_independence": 1.092,
       "r_mates_continuous": 0.8593,
-      "seconds": 96.4
+      "fully_absent_complex_kmers_only": 0.866,
+      "mean_absence_complex_kmers_only": 0.9342,
+      "seconds": 101.7
     },
     {
       "level": "+uniref50_1pct",
@@ -37,7 +41,9 @@
       "either_mate_fully_absent": 0.8893,
       "excess_over_independence": 1.112,
       "r_mates_continuous": 0.8114,
-      "seconds": 127.5
+      "fully_absent_complex_kmers_only": 0.8104,
+      "mean_absence_complex_kmers_only": 0.9225,
+      "seconds": 130.1
     },
     {
       "level": "+uniref50_10pct",
@@ -48,10 +54,25 @@
       "either_mate_fully_absent": 0.7711,
       "excess_over_independence": 1.241,
       "r_mates_continuous": 0.677,
-      "seconds": 397.2
+      "fully_absent_complex_kmers_only": 0.6484,
+      "mean_absence_complex_kmers_only": 0.8736,
+      "seconds": 409.7
     },
     {
-      "level": "+sample_assembly",
+      "level": "+sample_nonrrna",
+      "db_kmers_cumulative": 1738300922,
+      "fully_absent_single_read": 0.219,
+      "mean_absence": 0.4914,
+      "both_mates_fully_absent": 0.137,
+      "either_mate_fully_absent": 0.301,
+      "excess_over_independence": 2.856,
+      "r_mates_continuous": 0.6559,
+      "fully_absent_complex_kmers_only": 0.225,
+      "mean_absence_complex_kmers_only": 0.4931,
+      "seconds": 413.0
+    },
+    {
+      "level": "+sample_rrna_contigs",
       "db_kmers_cumulative": 1738316554,
       "fully_absent_single_read": 0.2065,
       "mean_absence": 0.469,
@@ -59,8 +80,10 @@
       "either_mate_fully_absent": 0.2836,
       "excess_over_independence": 3.036,
       "r_mates_continuous": 0.642,
-      "seconds": 399.7
+      "fully_absent_complex_kmers_only": 0.2125,
+      "mean_absence_complex_kmers_only": 0.4707,
+      "seconds": 414.8
     }
   ],
-  "seconds": 399.7
+  "seconds": 414.9
 }
