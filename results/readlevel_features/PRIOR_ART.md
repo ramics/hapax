@@ -233,14 +233,36 @@ classifier scores are not probabilities because they ignore sample composition, 
 recalibrates against the sample's empirical composition to give probabilities and FDRs.
 Sequence-level, no pair layer. A reviewer will ask why we did not build on it.
 
-**One live threat to track.** *Viromancer* / *Lyra-Virus* (Feldman, Arze & Sabeti, NeurIPS
-2026 **workshop** oral, "Agentic AI for Biological Discovery"): a state-space model that
-"scores individual reads", evaluated under **strict family-level holdout**, recognising
-unseen viral families across six viral realms. Abstract-only; the page has no methods, and
-I have not read the OpenReview entry. **Unknown whether it has any paired-end aggregation,
-and it states no calibration method, no FP rate and no units.** It is the closest thing to a
-per-read novelty score from a serious lab. Read the OpenReview paper before claiming the
-per-read novelty slot is open.
+**The live threat, now read in full — see `VIROMANCER_REVIEW.md`.** *Viromancer* /
+*Lyra-Virus* (Feldman, Arze & Sabeti, NeurIPS 2026 **workshop** oral, "Agentic AI for
+Biological Discovery"). The complete paper and its methods appendix have now been read, so
+the "unknown calibration, unknown pair aggregation" caveat above this line is retired.
+
+Verdict in short. Lyra-Virus is a 2.1 M-parameter **nucleotide** S4D state-space model that
+scores single reads for **viral vs non-viral** — never new vs known — at AUROC 0.88 under
+genuine family-level holdout, trained in under two hours on two consumer GPUs. It takes two
+things from us: **per-read scoring under family holdout is now theirs to cite**, and our
+"nobody combines a per-read score with grouping into one call" must narrow, because they do
+combine them (group by BLAST accession or species taxid, gate by an RPM threshold) — what
+they lack is *calibration*, those thresholds being hand-set and asymmetric by a curated
+pathogen list.
+
+What survives. Polarity: viral-vs-not is the axis our own geNomad reframe found
+uninformative in a virome, and their background is clinical respiratory, where it is a real
+contrast. Operating point: everything in the paper sits at 1–10% false positives (10⁴–10⁵
+per million; their training criterion is literally TPR@FPR10), so §1.1's narrowed claim
+stands and sharpens. Representation: nucleotide throughout, no protein space, no absence
+scoring — and they confine Foldseek to contigs because *"a 150-bp read can encode at most
+approximately 50 amino acids, too little information for reliable protein-level
+comparison"*, which is an objection to homology comparison, not to an index lookup for
+absence. Paired reads: they have them and never use the pairing. Environmental background:
+absent.
+
+The new obligation: Lyra-Virus is the baseline any per-read score must now beat, and it is
+cheap enough that refusing to run it will not pass. No weights are released. One prediction
+worth measuring rather than asserting: ~29% of its score variance is reconstructible from
+trinucleotide frequencies, so much of its signal is compositional and may not transfer to a
+virome background that is itself viral.
 
 ---
 
@@ -262,7 +284,10 @@ Changed:
 4. **Build A12 on existing parts**: rarity index for the score, MetaProFi for the index,
    k_aa ≈ 10 as the floor, and quantify peptide-k-mer error amplification before anything
    else, since it is unmeasured and structurally worse than the nucleotide case.
-5. **Read the Viromancer OpenReview paper** before claiming per-read novelty is unoccupied.
+5. ~~**Read the Viromancer OpenReview paper** before claiming per-read novelty is
+   unoccupied.~~ **Done, 2026-11-20** — full paper in `VIROMANCER_REVIEW.md`. Per-read
+   *scoring* is occupied and must be cited; per-read *novelty* is not. Any build proposal
+   now has to name Lyra-Virus as its baseline.
 
 Nothing found makes the peptide-absence direction redundant. The honest statement of the
 contribution is that the components are published and the composition is not — with the
@@ -274,8 +299,9 @@ been measured.
 This review was conducted by literature search with primary-source verification on the two
 claims that cost us something: PACIFIC's Table 2 and threshold rule were read in the PMC
 full text, and the SecureBio engineered-virus post was read directly. Items not verified at
-source, and flagged accordingly: the Viromancer workshop abstract (page read, paper not);
-AGNOSTOS's internally inconsistent unknown-fraction percentages; "kmdiff" could not be
+source, and flagged accordingly: AGNOSTOS's internally inconsistent unknown-fraction
+percentages (the Viromancer paper has since been read in full, see `VIROMANCER_REVIEW.md`);
+"kmdiff" could not be
 confirmed as a real tool name. Several cited 2026 items are at or past the current date, so
 treat their publication status as provisional. The SecureBio figure sometimes quoted as
 "~0.4 alerts per billion read pairs" is arithmetic on 14 flags / 35 billion read pairs, is
