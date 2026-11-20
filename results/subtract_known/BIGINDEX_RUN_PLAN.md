@@ -135,7 +135,16 @@ factor beside it.
 - Writes go only under `projects/hapax/{results,logs,scratch}/`. **The bucket has no
   delete**, so the keys are fixed before launch and no probe writes under `results/`.
 - S3 clients pass `endpoint_url="https://s3.us-east-1.amazonaws.com"`.
-- Code is pulled from S3 at a pinned commit from a clean tree.
+- Code is pulled from S3 at a pinned commit from a clean tree. **This is a property of
+  the run, not an implementation detail**: because the tree is clean, every manifest the
+  run writes carries a resolved SHA rather than a dirty one, so its numbers are
+  reproducible from the start instead of being retrofitted later. That matters because
+  almost nothing else in this project can currently make that claim - the repo rule gives
+  reproducibility as a design property (a committed script plus a seed), which is weaker
+  than having re-run from clean and got the same numbers. The sibling thread has done the
+  latter once, by accident, when a provenance fix forced a re-run. The run plan therefore
+  pins a commit rather than rsyncing the working tree, even though the working tree is
+  what is in hand.
 - Copy `tools/ec2_detect_census.py` and `src/amazebio/ec2.py` from `ramics/evo-training-check`
   rather than writing the launcher fresh.
 - First chunk of work is checked against a measured baseline in the S3 log before the run is
