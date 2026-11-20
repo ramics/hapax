@@ -201,6 +201,66 @@ LIMITS = [
 ]
 
 
+def anatomy_data(results: Path):
+    """The five-seed contig anatomy. Reported as the four categories plus the two
+    continuous quantities, because the categorical answer is a negative and the continuous
+    one is the result."""
+    files = sorted(glob.glob(str(results / "anatomy_s*.json")))
+    if not files:
+        return None
+    ds = [json.load(open(f)) for f in files]
+    def v(cat, which):
+        return mean_min_max([d["verdict"][cat][which] for d in ds])
+    def q(setname, key):
+        return mean_min_max([d["by_set"][setname][key]["mean"] for d in ds])
+    cats = ["A_chimaera", "B_divergent_continuation", "C_artefact_end",
+            "D_short_true_homology"]
+    return {
+        "seeds": len(ds),
+        "contigs": sum(d["by_set"]["residue"]["reads"] for d in ds),
+        "categories": [{"name": c.split("_", 1)[1].replace("_", " "),
+                        "residue": v(c, "residue")["mean"] * 100,
+                        "known": v(c, "known_control")["mean"] * 100} for c in cats],
+        "alnfrac": {"residue": q("residue", "aligned_fraction")["mean"],
+                    "known": q("known", "aligned_fraction")["mean"]},
+        "pident": {"residue": q("residue", "pident")["mean"],
+                   "known": q("known", "pident")["mean"]},
+    }
+
+
+def indexcost_data(ladder: Path, scaling: Path):
+    """What a bigger protein index buys, and what searching it costs. Both halves are
+    needed on one page: the buying is nearly nothing at an identification-grade threshold,
+    and the cost is the reason the far end has not simply been run."""
+    out = {}
+    s = ladder / "ladder_summary.json"
+    if s.exists():
+        d = json.load(open(s))
+        rungs = []
+        for i, name in enumerate(["viral", "sprot", "uniref50 2%", "uniref50 10%"]):
+            anyh, b50 = [], []
+            for seed in d["per_seed"]:
+                st_ = seed["rungs"][i]["sets"].get("residue")
+                if st_ and not st_.get("not_searched"):
+                    anyh.append(st_["any_hit"])
+                    b50.append(st_["bitscore_ge_50"])
+            if anyh:
+                rungs.append({"name": name, "gb": d["cumulative_bytes"][i] / 1e9,
+                              "any": mean_min_max(anyh)["mean"] * 100,
+                              "strong": mean_min_max(b50)["mean"] * 100})
+        out["ladder"] = {"rungs": rungs, "seeds": len(d["per_seed"])}
+    f = scaling / "scaling_s1.json"
+    if f.exists():
+        d = json.load(open(f))
+        out["scaling"] = [
+            {"db": k.split("|")[0].replace(".dmnd", "").replace("uniref50_", ""),
+             "mode": k.split("|")[1],
+             "fixed": v["fixed_seconds_db_scan"],
+             "marginal_per_1k": v["marginal_seconds_per_read"] * 1000}
+            for k, v in d["fits"].items()]
+    return out or None
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--cascade", type=Path, default=ROOT / "results/subtract_recut")
@@ -208,6 +268,10 @@ def main() -> None:
                     default=ROOT / "results/subtract_known/contig_identification.json")
     ap.add_argument("--blast", type=Path, default=ROOT / "results/blast_check")
     ap.add_argument("--spike", type=Path, default=ROOT / "results/spike_holdout")
+    ap.add_argument("--anatomy", type=Path,
+                    default=ROOT / "results/partial_alignment_contigs")
+    ap.add_argument("--ladder", type=Path, default=ROOT / "results/residue_protladder")
+    ap.add_argument("--scaling", type=Path, default=ROOT / "results/diamond_scaling")
     ap.add_argument("--template", type=Path,
                     default=ROOT / "experiments/infographic_template.html")
     ap.add_argument("--out", type=Path,
@@ -226,6 +290,8 @@ def main() -> None:
         "contigs": contig_data(args.contigs),
         "blast": blast_data(args.blast),
         "spike": spike_data(args.spike),
+        "anatomy": anatomy_data(args.anatomy),
+        "indexcost": indexcost_data(args.ladder, args.scaling),
         "fields": FIELDS,
         "limits": LIMITS,
     }
@@ -242,7 +308,9 @@ def main() -> None:
     args.out.write_text(html)
     print(f"wrote {args.out} ({len(html):,} bytes); spike "
           f"{'included' if data['spike'] else 'not yet run'}, blast "
-          f"{len(data['blast'] or [])} classes")
+          f"{len(data['blast'] or [])} classes, anatomy "
+          f"{'included' if data['anatomy'] else 'not yet run'}, index cost "
+          f"{'included' if data['indexcost'] else 'not yet run'}")
 
 
 if __name__ == "__main__":

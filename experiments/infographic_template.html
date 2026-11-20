@@ -255,6 +255,69 @@ function spike() {
   </section>`;
 }
 
+function anatomy() {
+  if (!D.anatomy) return "";
+  const a = D.anatomy;
+  const bar = (v, max, color) => {
+    const w = Math.max(1, (v / max) * 100);
+    return `<div style="height:10px;border-radius:5px;background:${color};width:${w}%"></div>`;
+  };
+  const max = Math.max(...a.categories.map(c => Math.max(c.residue, c.known)));
+  const rows = a.categories.map(c => `<tr>
+    <td>${c.name}</td>
+    <td class="mono">${c.residue.toFixed(2)}%</td>
+    <td style="min-width:90px">${bar(c.residue, max, "var(--residue)")}</td>
+    <td class="mono">${c.known.toFixed(2)}%</td>
+    <td style="min-width:90px">${bar(c.known, max, "var(--known)")}</td>
+  </tr>`).join("");
+  return `<section>
+    <p class="eyebrow">07 · half a match</p>
+    <h2>When part of a sequence matches well and the rest does not</h2>
+    <p><span class="kicker">It is not a chimaera.</span> ${a.seeds} seeds, ${a.contigs.toLocaleString()} unidentifiable contigs of 500 nt and up with the same number of <em>identified</em> contigs as a control. The test that would show a chimaera — does the unmatched piece align to a different molecule assembled in this very sample — fires on a few parts in a thousand of both piles, and if anything more often in the control, where a mis-assembly would be just as visible.</p>
+    <div class="scroller"><table>
+      <thead><tr><th>what the unmatched piece is</th><th colspan="2">unidentifiable</th><th colspan="2">identified (control)</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+    <div class="cards">
+      <div class="card"><h3>The inverted field</h3><p class="note">“Divergent continuation” — the unmatched piece returning weakly to the same protein — fires ${a.categories[1].known.toFixed(1)}% on already-identified contigs against ${a.categories[1].residue.toFixed(1)}% on unidentifiable ones. You only see a weak continuation when the subject is well represented, so it reports <em>familiarity</em>. Read as “divergent, therefore interesting” its sign is backwards.</p></div>
+      <div class="card"><h3>What does separate them</h3><p class="note">How much matches at all, continuously: unidentifiable contigs align over ${(a.alnfrac.residue * 100).toFixed(0)}% of their length at ${a.pident.residue.toFixed(1)}% identity, identified ones over ${(a.alnfrac.known * 100).toFixed(0)}% at ${a.pident.known.toFixed(1)}%. No categorical verdict carries information; the quantity does.</p></div>
+      <div class="card"><h3>And at read level, nothing</h3><p class="note">At 107 nt, once a read matches ~74% of itself the remainder is about 10 amino acids — below any protein search's floor. The discriminating test returns nothing for 99.6% of reads. This is the first field here that works on contigs and fails on reads, which is an argument about where in a pipeline the work belongs.</p></div>
+    </div>
+  </section>`;
+}
+
+function indexcost() {
+  if (!D.indexcost) return "";
+  const L = D.indexcost.ladder, S = D.indexcost.scaling;
+  const rows = L ? L.rungs.map(r => `<tr>
+    <td>+ ${r.name}</td>
+    <td class="mono">${r.gb.toFixed(2)} GB</td>
+    <td class="mono">${r.any.toFixed(1)}%</td>
+    <td class="mono">${r.strong.toFixed(2)}%</td>
+  </tr>`).join("") : "";
+  const srows = S ? S.map(s => `<tr>
+    <td>${s.db}</td><td>${s.mode}</td>
+    <td class="mono">${s.fixed.toFixed(0)} s</td>
+    <td class="mono">${s.marginal_per_1k.toFixed(2)} s</td>
+  </tr>`).join("") : "";
+  return `<section>
+    <p class="eyebrow">08 · what a bigger index buys</p>
+    <h2>Database size buys weak hits, not identifications</h2>
+    <p>The residue against four cumulative protein indexes${L ? `, ${L.seeds} seeds` : ""}. The left column is the one that looks like progress; the right column is the one that would let you say a read has been identified.</p>
+    <div class="scroller"><table>
+      <thead><tr><th>cumulative index</th><th>size</th><th>finds any hit</th><th>bitscore ≥ 50</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+    <p class="note">Any-hit flattens because it is pressed against a ceiling of 100%, which is the uninformative way to flatten. The identification-grade column is still tripling at the last rung — and still almost nothing.</p>
+    ${S ? `<h3 style="margin-top:28px">And what it would cost to search</h3>
+    <div class="scroller"><table>
+      <thead><tr><th>database</th><th>mode</th><th>fixed scan</th><th>per 1,000 reads</th></tr></thead>
+      <tbody>${srows}</tbody>
+    </table></div>
+    <p class="note">A five-fold larger database multiplies the per-read cost about fourteen-fold, in both modes. That is an exponent near 1.65 from two points, and at UniRef100's ~100 GB the linear and 1.65 laws disagree by a factor of fifteen — so no far-end figure is quoted here. A third point on real hardware is what settles it.</p>` : ""}
+  </section>`;
+}
+
 function fields() {
   const rows = D.fields.map(f => `<tr>
     <td>${f.name}</td>
@@ -263,7 +326,7 @@ function fields() {
     <td class="note" style="white-space:normal;min-width:18ch">${f.calibration}</td>
   </tr>`).join("");
   return `<section>
-    <p class="eyebrow">07 · the per-read report</p>
+    <p class="eyebrow">09 · the per-read report</p>
     <h2>What each surviving read is scored on</h2>
     <p>Not another classifier. Every field is reported separately against its own null, and <em>cannot discriminate here</em> is a legitimate row. Two fields have already been killed by their own calibration and are kept in the table because a negative result is information.</p>
     <div class="scroller"><table>
@@ -275,7 +338,7 @@ function fields() {
 
 function limits() {
   return `<section style="border-bottom:none">
-    <p class="eyebrow">08 · limits</p>
+    <p class="eyebrow">10 · limits</p>
     <h2>Where this is one-sided</h2>
     <ul>
       ${D.limits.map(l => `<li>${l}</li>`).join("")}
@@ -285,6 +348,6 @@ function limits() {
 }
 
 document.getElementById("app").append(el(
-  cascade() + efficiency() + contigs() + residue() + blast() + spike() + fields() + limits()
+  cascade() + efficiency() + contigs() + residue() + blast() + spike() + anatomy() + indexcost() + fields() + limits()
 ));
 </script>
