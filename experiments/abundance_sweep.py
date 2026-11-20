@@ -71,21 +71,30 @@ def fastq_pair_count(path: Path) -> int:
     return int(out.split("\t")[3])
 
 
-def make_background(r1: Path, r2: Path, pairs: int, out: Path, seed: int) -> tuple[Path, Path]:
+def make_background(r1: Path, r2: Path, pairs: int, out: Path, seed: int,
+                    r2_from: int, r2_to: int) -> tuple[Path, Path]:
     """A fixed background subsample, identical across every rung and arm.
 
     Held fixed on purpose: if the background moved between rungs, a difference
     in contig length could come from the background rather than from the spike.
+
+    Mate 2 is trimmed from r2_from because this library carries about 14 bp of
+    non-template 5' sequence on mate 2 at full base quality: an earlier thread
+    measured 2,455 of 2,572 reads soft-clipped with mode 14, and leaving it on
+    cost MEGAHIT ten contigs on the same sample. Untrimmed, this sweep would be
+    measuring a library artefact rather than coverage.
     """
     out.mkdir(parents=True, exist_ok=True)
     b1, b2 = out / "bg_1.fq.gz", out / "bg_2.fq.gz"
     if b1.exists() and b2.exists():
         return b1, b2
-    for src, dst in ((r1, b1), (r2, b2)):
-        # head, not random sampling: mates must stay in register, and seqkit
-        # sample with the same seed on each mate is not guaranteed to agree
-        # across files of unequal record order.
-        sh(["seqkit", "head", "-n", str(pairs), "-o", str(dst), str(src)])
+    # head, not random sampling: mates must stay in register, and seqkit sample
+    # with the same seed on each mate is not guaranteed to agree across files.
+    sh(["seqkit", "head", "-n", str(pairs), "-o", str(b1), str(r1)])
+    subprocess.run(
+        ["bash", "-c",
+         f"seqkit head -n {pairs} {r2} | seqkit subseq -r {r2_from}:{r2_to} -o {b2}"],
+        check=True, capture_output=True, text=True)
     return b1, b2
 
 
@@ -108,10 +117,14 @@ def simulate_spike_pool(genome: Path, out: Path, read_len: int, coverage: int, s
     return p1, p2
 
 
-def take_pairs(p1: Path, p2: Path, n: int, out: Path, tag: str) -> tuple[Path, Path]:
+def take_pairs(p1: Path, p2: Path, n: int, out: Path, tag: str, r2_len: int) -> tuple[Path, Path]:
+    """Nested subsample of the spike pool, mate 2 truncated to the background's
+    trimmed length so that every mate 2 in the mixture is the same length."""
     a, b = out / f"{tag}_1.fq", out / f"{tag}_2.fq"
     sh(["seqkit", "head", "-n", str(n), "-o", str(a), str(p1)])
-    sh(["seqkit", "head", "-n", str(n), "-o", str(b), str(p2)])
+    subprocess.run(
+        ["bash", "-c", f"seqkit head -n {n} {p2} | seqkit subseq -r 1:{r2_len} -o {b}"],
+        check=True, capture_output=True, text=True)
     return a, b
 
 
@@ -164,9 +177,11 @@ def score(contigs: Path, genome: Path, min_ident: float = 0.90) -> dict:
             spike.append(rec["qlen"])
         elif rec["aligned"] >= 500 and rec["qlen"] - rec["aligned"] >= 500:
             chimaera += 1
+    spike_names = [n for n, r in by_contig.items() if r["aligned"] >= 0.8 * r["qlen"]]
     spike.sort(reverse=True)
     total = sum(spike)
     return {
+        "spike_names": spike_names,
         "spike_contigs": len(spike),
         "spike_mass": total,
         "longest": spike[0] if spike else 0,
@@ -191,6 +206,9 @@ def main() -> None:
     ap.add_argument("--bg-pairs", type=int, default=1_000_000)
     ap.add_argument("--genome", type=Path, required=True)
     ap.add_argument("--read-len", type=int, default=107, help="matches SRR23973193")
+    ap.add_argument("--r2-trim-start", type=int, default=15,
+                    help="1-based first kept base of mate 2; 15 drops this library's "
+                         "~14 bp non-template prefix")
     ap.add_argument("--arms", default="megahit,megahit-lowk,megahit-highk")
     ap.add_argument("--spikes", default=",".join(str(s) for s in SPIKES))
     ap.add_argument("--threads", type=int, default=4)
@@ -203,7 +221,9 @@ def main() -> None:
     spikes = [int(s) for s in args.spikes.split(",")]
     arms = args.arms.split(",")
 
-    bg1, bg2 = make_background(args.bg1, args.bg2, args.bg_pairs, args.work / "bg", args.seed)
+    r2_len = args.read_len - args.r2_trim_start + 1
+    bg1, bg2 = make_background(args.bg1, args.bg2, args.bg_pairs, args.work / "bg",
+                               args.seed, args.r2_trim_start, args.read_len)
     rows, timings = [], {}
     t0 = time.perf_counter()
 
@@ -213,7 +233,7 @@ def main() -> None:
             args.genome, args.work / f"pool_s{seed}", args.read_len, coverage=200, seed=seed
         )
         for n in spikes:
-            s1, s2 = take_pairs(pool1, pool2, n, args.work, f"spk_s{seed}_n{n}")
+            s1, s2 = take_pairs(pool1, pool2, n, args.work, f"spk_s{seed}_n{n}", r2_len)
             m1 = args.work / f"mix_s{seed}_n{n}_1.fq.gz"
             m2 = args.work / f"mix_s{seed}_n{n}_2.fq.gz"
             for mix, bg, spk in ((m1, bg1, s1), (m2, bg2, s2)):
@@ -231,7 +251,25 @@ def main() -> None:
                     print(f"[{tag}] no contigs", flush=True)
                     continue
                 sc = score(contigs, args.genome)
-                cov = n * 2 * args.read_len / sc["genome_len"]
+                # Keep the spike-derived contigs, and a capped sample of
+                # background contigs, so the classifier phase runs once over
+                # everything instead of re-assembling. The assemblies themselves
+                # are deleted; 54 of them do not fit the disk.
+                keep = args.out / "contigs"
+                keep.mkdir(exist_ok=True)
+                names = keep / f"{tag}.names"
+                names.write_text("\n".join(sc.pop("spike_names")) + "\n")
+                if names.stat().st_size > 1:
+                    sh(["seqkit", "grep", "-f", str(names), "-o",
+                        str(keep / f"{tag}.spike.fa"), str(contigs)])
+                subprocess.run(
+                    ["bash", "-c",
+                     f"seqkit grep -v -f {names} {contigs} | seqkit seq -m 300 | "
+                     f"seqkit head -n 2000 -o {keep / (tag + '.bg.fa')}"],
+                    check=True, capture_output=True, text=True)
+                names.unlink()
+                # mate 1 is full length, mate 2 is trimmed, so not 2 x read_len
+                cov = n * (args.read_len + r2_len) / sc["genome_len"]
                 row = {"seed": seed, "spike_pairs": n, "arm": arm,
                        "coverage": round(cov, 2),
                        "rel_abundance": n / args.bg_pairs,
