@@ -1,0 +1,367 @@
+{
+  "contigs": 62365,
+  "genomad_min_score": 0.7,
+  "wall": 1094.9,
+  "recall_by_length": [
+    {
+      "kind": "bg",
+      "len_from": 300,
+      "len_to": 500,
+      "contigs": 33096,
+      "called_virus": 5600,
+      "rate": 0.169
+    },
+    {
+      "kind": "bg",
+      "len_from": 500,
+      "len_to": 1000,
+      "contigs": 21173,
+      "called_virus": 6697,
+      "rate": 0.316
+    },
+    {
+      "kind": "bg",
+      "len_from": 1000,
+      "len_to": 1500,
+      "contigs": 4092,
+      "called_virus": 1973,
+      "rate": 0.482
+    },
+    {
+      "kind": "bg",
+      "len_from": 1500,
+      "len_to": 3000,
+      "contigs": 2297,
+      "called_virus": 1467,
+      "rate": 0.639
+    },
+    {
+      "kind": "bg",
+      "len_from": 3000,
+      "len_to": 1000000000,
+      "contigs": 1622,
+      "called_virus": 1594,
+      "rate": 0.983
+    },
+    {
+      "kind": "spike",
+      "len_from": 0,
+      "len_to": 300,
+      "contigs": 7,
+      "called_virus": 1,
+      "rate": 0.143
+    },
+    {
+      "kind": "spike",
+      "len_from": 300,
+      "len_to": 500,
+      "contigs": 32,
+      "called_virus": 10,
+      "rate": 0.312
+    },
+    {
+      "kind": "spike",
+      "len_from": 500,
+      "len_to": 1000,
+      "contigs": 35,
+      "called_virus": 7,
+      "rate": 0.2
+    },
+    {
+      "kind": "spike",
+      "len_from": 1000,
+      "len_to": 1500,
+      "contigs": 1,
+      "called_virus": 0,
+      "rate": 0.0
+    },
+    {
+      "kind": "spike",
+      "len_from": 1500,
+      "len_to": 3000,
+      "contigs": 2,
+      "called_virus": 0,
+      "rate": 0.0
+    },
+    {
+      "kind": "spike",
+      "len_from": 3000,
+      "len_to": 1000000000,
+      "contigs": 8,
+      "called_virus": 8,
+      "rate": 1.0
+    }
+  ],
+  "by_rung": [
+    {
+      "kind": "bg",
+      "arm": "megahit",
+      "spike_pairs": 10,
+      "n": 4000,
+      "called": 1159,
+      "mass": 2773852,
+      "called_mass": 1256388,
+      "rate": 0.29
+    },
+    {
+      "kind": "bg",
+      "arm": "megahit",
+      "spike_pairs": 30,
+      "n": 4000,
+      "called": 1150,
+      "mass": 2671634,
+      "called_mass": 1169276,
+      "rate": 0.287
+    },
+    {
+      "kind": "bg",
+      "arm": "megahit",
+      "spike_pairs": 100,
+      "n": 4000,
+      "called": 1185,
+      "mass": 2713419,
+      "called_mass": 1216632,
+      "rate": 0.296
+    },
+    {
+      "kind": "bg",
+      "arm": "megahit",
+      "spike_pairs": 300,
+      "n": 4000,
+      "called": 1175,
+      "mass": 2711894,
+      "called_mass": 1219711,
+      "rate": 0.294
+    },
+    {
+      "kind": "bg",
+      "arm": "megahit",
+      "spike_pairs": 1000,
+      "n": 4000,
+      "called": 1170,
+      "mass": 2738157,
+      "called_mass": 1228839,
+      "rate": 0.292
+    },
+    {
+      "kind": "bg",
+      "arm": "megahit",
+      "spike_pairs": 3000,
+      "n": 4000,
+      "called": 1168,
+      "mass": 2727683,
+      "called_mass": 1218371,
+      "rate": 0.292
+    },
+    {
+      "kind": "bg",
+      "arm": "megahit-highk",
+      "spike_pairs": 10,
+      "n": 2380,
+      "called": 470,
+      "mass": 1995050,
+      "called_mass": 736954,
+      "rate": 0.197
+    },
+    {
+      "kind": "bg",
+      "arm": "megahit-highk",
+      "spike_pairs": 30,
+      "n": 2380,
+      "called": 470,
+      "mass": 1995050,
+      "called_mass": 736954,
+      "rate": 0.197
+    },
+    {
+      "kind": "bg",
+      "arm": "megahit-highk",
+      "spike_pairs": 100,
+      "n": 2380,
+      "called": 470,
+      "mass": 1995050,
+      "called_mass": 736954,
+      "rate": 0.197
+    },
+    {
+      "kind": "bg",
+      "arm": "megahit-highk",
+      "spike_pairs": 300,
+      "n": 2380,
+      "called": 470,
+      "mass": 1995050,
+      "called_mass": 736954,
+      "rate": 0.197
+    },
+    {
+      "kind": "bg",
+      "arm": "megahit-highk",
+      "spike_pairs": 1000,
+      "n": 2380,
+      "called": 470,
+      "mass": 1995050,
+      "called_mass": 736954,
+      "rate": 0.197
+    },
+    {
+      "kind": "bg",
+      "arm": "megahit-highk",
+      "spike_pairs": 3000,
+      "n": 2380,
+      "called": 470,
+      "mass": 1995050,
+      "called_mass": 736954,
+      "rate": 0.197
+    },
+    {
+      "kind": "bg",
+      "arm": "megahit-lowk",
+      "spike_pairs": 10,
+      "n": 4000,
+      "called": 1227,
+      "mass": 2548749,
+      "called_mass": 1245044,
+      "rate": 0.307
+    },
+    {
+      "kind": "bg",
+      "arm": "megahit-lowk",
+      "spike_pairs": 30,
+      "n": 4000,
+      "called": 1254,
+      "mass": 2546542,
+      "called_mass": 1254978,
+      "rate": 0.314
+    },
+    {
+      "kind": "bg",
+      "arm": "megahit-lowk",
+      "spike_pairs": 100,
+      "n": 4000,
+      "called": 1260,
+      "mass": 2566842,
+      "called_mass": 1276427,
+      "rate": 0.315
+    },
+    {
+      "kind": "bg",
+      "arm": "megahit-lowk",
+      "spike_pairs": 300,
+      "n": 4000,
+      "called": 1261,
+      "mass": 2554284,
+      "called_mass": 1263673,
+      "rate": 0.315
+    },
+    {
+      "kind": "bg",
+      "arm": "megahit-lowk",
+      "spike_pairs": 1000,
+      "n": 4000,
+      "called": 1252,
+      "mass": 2555232,
+      "called_mass": 1257337,
+      "rate": 0.313
+    },
+    {
+      "kind": "bg",
+      "arm": "megahit-lowk",
+      "spike_pairs": 3000,
+      "n": 4000,
+      "called": 1250,
+      "mass": 2562575,
+      "called_mass": 1261561,
+      "rate": 0.312
+    },
+    {
+      "kind": "spike",
+      "arm": "megahit",
+      "spike_pairs": 100,
+      "n": 2,
+      "called": 0,
+      "mass": 1018,
+      "called_mass": 0,
+      "rate": 0.0
+    },
+    {
+      "kind": "spike",
+      "arm": "megahit",
+      "spike_pairs": 300,
+      "n": 30,
+      "called": 8,
+      "mass": 16224,
+      "called_mass": 3556,
+      "rate": 0.267
+    },
+    {
+      "kind": "spike",
+      "arm": "megahit",
+      "spike_pairs": 1000,
+      "n": 2,
+      "called": 2,
+      "mass": 23693,
+      "called_mass": 23693,
+      "rate": 1.0
+    },
+    {
+      "kind": "spike",
+      "arm": "megahit",
+      "spike_pairs": 3000,
+      "n": 2,
+      "called": 2,
+      "mass": 23819,
+      "called_mass": 23819,
+      "rate": 1.0
+    },
+    {
+      "kind": "spike",
+      "arm": "megahit-highk",
+      "spike_pairs": 3000,
+      "n": 8,
+      "called": 1,
+      "mass": 7422,
+      "called_mass": 987,
+      "rate": 0.125
+    },
+    {
+      "kind": "spike",
+      "arm": "megahit-lowk",
+      "spike_pairs": 100,
+      "n": 4,
+      "called": 0,
+      "mass": 1356,
+      "called_mass": 0,
+      "rate": 0.0
+    },
+    {
+      "kind": "spike",
+      "arm": "megahit-lowk",
+      "spike_pairs": 300,
+      "n": 33,
+      "called": 9,
+      "mass": 16046,
+      "called_mass": 3911,
+      "rate": 0.273
+    },
+    {
+      "kind": "spike",
+      "arm": "megahit-lowk",
+      "spike_pairs": 1000,
+      "n": 2,
+      "called": 2,
+      "mass": 23693,
+      "called_mass": 23693,
+      "rate": 1.0
+    },
+    {
+      "kind": "spike",
+      "arm": "megahit-lowk",
+      "spike_pairs": 3000,
+      "n": 2,
+      "called": 2,
+      "mass": 23819,
+      "called_mass": 23819,
+      "rate": 1.0
+    }
+  ]
+}

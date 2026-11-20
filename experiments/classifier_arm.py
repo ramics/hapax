@@ -63,10 +63,19 @@ def pool(contig_dir: Path, out: Path) -> tuple[Path, dict[str, dict]]:
     return out, meta
 
 
-def run_genomad(fasta: Path, db: Path, out: Path, threads: int, min_score: float) -> Path:
+def run_genomad(fasta: Path, db: Path, out: Path, threads: int, min_score: float,
+                splits: int) -> Path:
+    """geNomad end-to-end over the pooled contigs.
+
+    --splits is not optional here. With it at 0 (geNomad's default, meaning
+    let mmseqs2 decide), the prefilter over 62,365 contigs against the 1.4 GB
+    database was killed on a 15 GB box. Splitting the search trades wall clock
+    for a working run.
+    """
     res = out / f"{fasta.stem}_summary" / f"{fasta.stem}_virus_summary.tsv"
     if not res.exists():
         subprocess.run(["genomad", "end-to-end", "--cleanup", "--threads", str(threads),
+                        "--splits", str(splits),
                         "--min-score", str(min_score), str(fasta), str(out), str(db)],
                        check=True)
     return res
@@ -78,6 +87,8 @@ def main() -> None:
     ap.add_argument("--db", type=Path, required=True, help="geNomad database directory")
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--min-score", type=float, default=0.7, help="geNomad default")
+    ap.add_argument("--splits", type=int, default=8,
+                    help="mmseqs2 search splits; 0 was killed at 15 GB on 62k contigs")
     ap.add_argument("--work", type=Path, default=Path("/home/user/sweepdata/clf"))
     ap.add_argument("--out", type=Path, default=Path("results/abundance_sweep"))
     args = ap.parse_args()
@@ -87,7 +98,7 @@ def main() -> None:
     fasta, meta = pool(args.contigs, args.work / "pooled.fna")
     print(f"pooled {len(meta)} contigs", flush=True)
 
-    summary = run_genomad(fasta, args.db, args.work / "genomad", args.threads, args.min_score)
+    summary = run_genomad(fasta, args.db, args.work / "genomad", args.threads, args.min_score, args.splits)
     called: dict[str, float] = {}
     with summary.open() as fh:
         for row in csv.DictReader(fh, delimiter="\t"):
