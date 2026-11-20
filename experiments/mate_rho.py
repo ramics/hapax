@@ -159,7 +159,7 @@ def main() -> None:
     res = {
         "seed": args.seed,
         "k": args.k,
-        "index_kmers": int(np.asarray(idx).size),
+        "index_kmers": scorer.n_kmers,
         "pairs": dict(disp),
         "score_distribution": {
             "mate1": {"mean": round(float(S1.mean()), 4), "median": round(float(np.median(S1)), 4),
@@ -220,6 +220,37 @@ def main() -> None:
             "flags": flag_stats(a, b, args.quantiles),
         }
 
+    # The score saturates: against RefSeq viral + Swiss-Prot, 86% of background
+    # reads have EVERY peptide 10-mer absent, because environmental protein space
+    # is barely covered by any index available here. A correlation computed over a
+    # saturated score is partly the correlation of "neither mate matches
+    # anything", so the same statistics are repeated on the subset of pairs where
+    # at least one mate is below 1.0, i.e. where the score has range. If rho stays
+    # high there, the high rho is a property of the flags and not of the ceiling.
+    unsat = [r for r in rows if r[1] < 0.999 or r[2] < 0.999]
+    both_unsat = [r for r in rows if r[1] < 0.999 and r[2] < 0.999]
+    for label, sel in (("nonsaturated_either_mate", unsat),
+                       ("nonsaturated_both_mates", both_unsat)):
+        if len(sel) < 200:
+            continue
+        a = np.array([r[1] for r in sel])
+        b = np.array([r[2] for r in sel])
+        res["separations"][label] = {
+            "n": int(a.size),
+            "note": "pairs where the absence score is below 1.0, so it has range",
+            "r_continuous": round(pearson(a, b), 4) if pearson(a, b) is not None else None,
+            "flags": flag_stats(a, b, args.quantiles),
+        }
+        perm_s = list(range(len(sel)))
+        rng.shuffle(perm_s)
+        bb = np.array([sel[perm_s[i]][2] for i in range(len(sel))])
+        res["separations"][label + "_shuffled"] = {
+            "n": int(a.size),
+            "note": "same subset, mates re-paired at random: the floor for it",
+            "r_continuous": round(pearson(a, bb), 4) if pearson(a, bb) is not None else None,
+            "flags": flag_stats(a, bb, args.quantiles),
+        }
+
     # gap infinity: mate 1 of one pair against mate 2 of another
     perm = list(range(len(rows)))
     rng.shuffle(perm)
@@ -232,6 +263,12 @@ def main() -> None:
         "flags": flag_stats(a, b, args.quantiles),
     }
 
+    # keep the raw per-pair scores so later questions need no re-run
+    np.savez_compressed(
+        args.out / f"pair_scores_s{args.seed}.npz",
+        insert=np.array([-1 if r[0] is None else r[0] for r in rows], dtype=np.int32),
+        score1=np.array([r[1] for r in rows], dtype=np.float32),
+        score2=np.array([r[2] for r in rows], dtype=np.float32))
     (args.out / f"mate_rho_s{args.seed}.json").write_text(json.dumps(res, indent=2))
     sha = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
     (args.out / f"manifest_s{args.seed}.json").write_text(json.dumps({

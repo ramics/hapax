@@ -101,18 +101,25 @@ def hash_kmers(codes: np.ndarray, k: int) -> np.ndarray:
     return h[ok]
 
 
-def proteome_codes(faas: list[Path], exclude_accessions: set[str] | None = None,
-                   exclude_names: tuple[str, ...] = ()) -> np.ndarray:
-    """Concatenate the kept proteins into one code array, 0 between proteins.
+def proteome_chunks(faas: list[Path], exclude_accessions: set[str] | None = None,
+                    exclude_names: tuple[str, ...] = (),
+                    chunk_residues: int = 40_000_000):
+    """Yield code arrays of about `chunk_residues` residues, 0 between proteins.
+
+    Chunked because the whole thing does not fit: hashing a 375 Maa concatenation
+    at once needs ~3 GB for the hash array alone, and the sort inside np.unique
+    needs another copy, which was enough to get the process OOM-killed on the
+    first attempt at viral + Swiss-Prot. Chunking keeps the peak to one chunk's
+    hashes plus the running union.
 
     Several FASTA files are accepted so the index can span more than RefSeq
     viral. That matters for anything measured on real background: wastewater is
     mostly bacterial, so against a viral-only index almost every background read
     is fully absent and the score saturates (measured: 88% of Berlin reads score
-    exactly 1.0 - results/mate_rho/, viral-only arm). Adding Swiss-Prot gives the
-    score range on real background without pretending to be a complete index.
+    exactly 1.0 - results/mate_rho/, viral-only arm).
     """
     chunks: list[np.ndarray] = []
+    size = 0
     kept = dropped = 0
     keep = True
     for faa in faas:
@@ -128,12 +135,17 @@ def proteome_codes(faas: list[Path], exclude_accessions: set[str] | None = None,
                     dropped += not keep
                     if keep:
                         chunks.append(np.zeros(1, dtype=np.uint8))
+                        size += 1
                 elif keep:
-                    chunks.append(np.frombuffer(line.strip().upper().encode(), dtype=np.uint8))
-    arr = np.concatenate(chunks)
-    out = AA_CODE[arr]
-    print(f"[index] proteins kept {kept}, dropped {dropped}, residues {out.size}")
-    return out
+                    b = np.frombuffer(line.strip().upper().encode(), dtype=np.uint8)
+                    chunks.append(b)
+                    size += b.size
+                    if size >= chunk_residues:
+                        yield AA_CODE[np.concatenate(chunks)]
+                        chunks, size = [], 0
+    if chunks:
+        yield AA_CODE[np.concatenate(chunks)]
+    print(f"[index] proteins kept {kept}, dropped {dropped}")
 
 
 def lineage_accessions(gpff: Path, family: str) -> set[str]:
@@ -172,8 +184,11 @@ def build_index(faa: Path | list[Path], k: int, cache: Path, exclude_family: str
     src = "+".join(f.name.split(".")[0] for f in faas)
     tag = f"k{k}_{src}" + (f"_no_{exclude_family.lower()}" if exclude_family else "_all")
     path = cache / f"pepidx_{tag}.npy"
-    if path.exists():
-        return np.load(path, mmap_mode="r")
+    manifest = path.with_suffix(".shards.json")
+    if manifest.exists():
+        return [np.load(s, mmap_mode="r") for s in json.loads(manifest.read_text())]
+    if path.exists():  # single-array indexes built before sharding
+        return [np.load(path, mmap_mode="r")]
     cache.mkdir(parents=True, exist_ok=True)
     excl: set[str] = set()
     if exclude_family:
@@ -181,19 +196,34 @@ def build_index(faa: Path | list[Path], k: int, cache: Path, exclude_family: str
             raise SystemExit("--exclude-family needs --gpff for taxonomy")
         excl = lineage_accessions(gpff, exclude_family)
         print(f"[index] {len(excl)} proteins in {exclude_family} held out")
-    codes = proteome_codes(faas, exclude_accessions=excl)
-    h = hash_kmers(codes, k)
-    del codes
-    h = np.unique(h)
-    np.save(path, h)
-    print(f"[index] {h.size} distinct {k}-mers -> {path}")
-    return np.load(path, mmap_mode="r")
+    # Sharded on purpose: merging the chunks into one sorted array with
+    # np.union1d is what ran the machine out of memory on viral + Swiss-Prot, and
+    # the merge buys nothing - membership in the union is membership in any shard,
+    # so a query does one searchsorted per shard instead of one overall. A k-mer
+    # spanning a chunk boundary is lost; at 4e7 residues per chunk that is under
+    # 10 of ~3.8e8 k-mers.
+    shards = []
+    for i, codes in enumerate(proteome_chunks(faas, exclude_accessions=excl)):
+        part = np.unique(hash_kmers(codes, k))
+        del codes
+        sp = cache / f"pepidx_{tag}.shard{i:03d}.npy"
+        np.save(sp, part)
+        shards.append(sp)
+        print(f"[index] shard {i}: {part.size} distinct {k}-mers")
+        del part
+    path.with_suffix(".shards.json").write_text(json.dumps([str(s) for s in shards]))
+    return [np.load(s, mmap_mode="r") for s in shards]
 
 
 class Scorer:
-    def __init__(self, index: np.ndarray, k: int):
-        self.index = np.asarray(index)
+    def __init__(self, index, k: int):
+        self.shards = [np.asarray(s) for s in
+                       (index if isinstance(index, list) else [index])]
         self.k = k
+
+    @property
+    def n_kmers(self) -> int:
+        return int(sum(s.size for s in self.shards))
 
     def _absent_fraction(self, peptides: list[str]) -> tuple[float, int, int]:
         hs: list[np.ndarray] = []
@@ -207,9 +237,11 @@ class Scorer:
         q = np.concatenate(hs)
         if q.size == 0:
             return float("nan"), 0, 0
-        pos = np.searchsorted(self.index, q)
-        pos[pos >= self.index.size] = self.index.size - 1
-        present = self.index[pos] == q
+        present = np.zeros(q.size, dtype=bool)
+        for idx in self.shards:
+            pos = np.searchsorted(idx, q)
+            pos[pos >= idx.size] = idx.size - 1
+            present |= idx[pos] == q
         return float(1.0 - present.mean()), int(q.size), int(present.sum())
 
     def score_nt(self, nt: str) -> tuple[float, int, int]:
@@ -325,7 +357,7 @@ def main() -> None:
 
     idx = build_index(args.faa, args.k, args.cache, args.exclude_family, args.gpff)
     scorer = Scorer(idx, args.k)
-    res = {"seed": args.seed, "k": args.k, "index_kmers": int(np.asarray(idx).size),
+    res = {"seed": args.seed, "k": args.k, "index_kmers": scorer.n_kmers,
            "exclude_family": args.exclude_family, "win": args.win, "step": args.step,
            "genomes": {}}
 

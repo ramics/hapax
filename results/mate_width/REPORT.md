@@ -13,9 +13,11 @@ be true for it to be worth doing:
 4. what that buys survives the mate correlation of **false** flags (§4).
 
 Headline: **(2) is false, (3) is true and measured, (1) is capped by the library kit
-rather than by the sewage, and (4) is bad news for the conjunction rule.** The idea
-survives as a library-design recommendation with a measured effect size, not as a way
-to re-use public data.
+rather than by the sewage, and (4) kills the both-mates rule while leaving the
+either-mate rule the beneficiary of width.** The idea survives as a library-design
+recommendation with a measured effect size, not as a way to re-use public data. And at
+Imo's operating point of 1 false flag per million, no pair rule gets there at any insert
+length (§4.1): the pair buys sensitivity, not orders of magnitude of specificity.
 
 Reproduce with (all five seeds each):
 
@@ -223,33 +225,83 @@ divergent". That is a real constraint on shortlist item 2, and it says any usabl
 version of A12 needs either a smaller k, graded/inexact matching, or the published
 rarity-index weighting rather than a plain absence count.
 
-ρ_fp on real pairs, viral-only index, 40,000 pairs (**measured**, seed 1):
+ρ_fp on real pairs with mate identity kept, 40,000 pairs per seed. Two indexes: RefSeq
+viral alone (87.6M peptide 10-mers) and RefSeq viral + Swiss-Prot (221.1M), the second
+run because of the saturation noted below. Pearson r on the continuous score
+(**measured**, 5 seeds for the combined index, mean ± sd):
 
-| separation | n | r (continuous score) |
-|---|---|---|
-| gap 0 (two halves of one mate) | 39,885 | 0.793 |
-| insert 107–150 | 2,558 | 0.975 |
-| insert 150–200 | 3,996 | 0.904 |
-| insert 200–250 | 3,283 | 0.910 |
-| insert 250–300 | 1,939 | 0.874 |
-| insert 300–400 | 1,456 | 0.883 |
-| insert 400–600 | 479 | 0.855 |
-| gap ∞ (shuffled pairing) | 39,928 | −0.006 |
+| separation | n | r, viral+Swiss-Prot | r, viral only (seed 1) |
+|---|---|---|---|
+| gap 0 (two halves of one mate) | 39,879 | 0.783 ± 0.004 | 0.793 |
+| insert 107–150 | 2,531 | 0.964 ± 0.007 | 0.975 |
+| insert 150–200 | 4,043 | 0.908 ± 0.009 | 0.904 |
+| insert 200–250 | 3,381 | 0.898 ± 0.007 | 0.910 |
+| insert 250–300 | 1,962 | 0.885 ± 0.014 | 0.874 |
+| insert 300–400 | 1,416 | 0.872 ± 0.014 | 0.883 |
+| insert 400–600 | 478 | 0.848 ± 0.018 | 0.855 |
+| **gap ∞ (shuffled pairing)** | 39,923 | **0.001 ± 0.005** | −0.006 |
 
 **This contradicts my own prediction.** The feature map estimated that absence-based
 scores would have materially *lower* ρ_fp than homology scores, because error- and
-low-complexity-driven absence is mate-specific. Measured, ρ_fp is 0.85–0.98 and barely
-moves with separation, which puts the conjunction's merit at ≈1.0 - i.e. pointless - on
-the model's own table. Withdraw that estimate.
+low-complexity-driven absence is mate-specific. Measured, ρ_fp is 0.85–0.96 and falls
+only slowly with separation. Withdraw that estimate.
 
-One limitation keeps this from being the final word, and it is the reason for the
-second arm: against a viral-only index **88% of background reads score exactly 1.0**
-(**measured**), because wastewater is mostly bacterial and nothing matches whatever the
-read is. A saturated score can look correlated for the wrong reason, and the thresholded
-ρ is degenerate (every percentile lands on the same threshold of 1.0). The arm under
-`results/mate_rho/viral_sprot/` repeats this with Swiss-Prot added to the index so the
-score has range on real background; §4.1 reports it, and until it is in, the
-"conjunction is dead" reading is provisional.
+**The saturation objection, and its answer.** Against viral+Swiss-Prot, **86.3% of
+background reads still have every peptide 10-mer absent** (88.3% viral-only,
+**measured**), because no index available here covers environmental protein space. A
+correlation over a saturated score could just be the correlation of "neither mate
+matches anything", and the thresholded ρ is degenerate (every percentile lands on a
+threshold of 1.0). So the same statistics were repeated on the pairs where the score is
+below 1.0 and has range (**measured**, 5 seeds):
+
+| subset | n | r | same subset, mates re-paired |
+|---|---|---|---|
+| at least one mate non-saturated | 7,453 | **0.770 ± 0.009** | −0.004 ± 0.012 |
+| both mates non-saturated | 3,447 | **0.773 ± 0.006** | −0.009 ± 0.013 |
+
+The correlation survives at 0.77 against a 0.00 floor from its own shuffled control, so
+the high ρ_fp is a property of the flags, not of the ceiling. And the mechanism is the
+one the feature map named: **these false flags are organism-level, not read-level.** Both
+mates come off the same molecule of the same under-sequenced organism, so both are
+equally unknown to the index. Accidents would have been independent; organisms are not.
+
+Raw per-pair scores are kept in `pair_scores_s*.npz` beside each result so further
+questions need no re-run.
+
+### 4.1 What this does to the pair rules at 1 false positive per million
+
+Imo fixed the operating point at **1 false flag per million reads** (2026-11-20).
+Feeding the measured ρ_true (§3) and ρ_fp (above) into the two rules gives
+(`experiments/pair_rule_merit.py`, computation over measured inputs, per-read FP 1e-5
+and per-read sensitivity 0.5 on a read that is in novel sequence):
+
+| genome | insert | ρ_true | ρ_fp | either-mate: sens / FP per M | both-mates: sens / FP per M | both-mates merit |
+|---|---|---|---|---|---|---|
+| rabies | 107 | 0.977 | 0.974 | 0.123 / 10.3 | 0.121 / 9.7 | 1.02 |
+| rabies | 300 | 0.578 | 0.884 | 0.193 / 11.2 | 0.126 / 8.8 | 0.89 |
+| rabies | 500 | 0.348 | 0.848 | **0.243** / 11.5 | 0.124 / 8.5 | 0.80 |
+| HIV-1 | 500 | 0.252 | 0.848 | 0.601 / 11.5 | 0.274 / 8.5 | 0.74 |
+| astrovirus | 500 | 0.610 | 0.848 | 0.416 / 11.5 | 0.280 / 8.5 | 0.95 |
+| SARS-CoV-2 | 500 | 0.680 | 0.848 | 0.475 / 11.5 | 0.344 / 8.5 | 0.99 |
+
+Three conclusions, in order of how much they matter:
+
+1. **The both-mates rule is dead.** Merit (false-flag reduction per unit of sensitivity
+   given up) is 0.74–1.02, i.e. at or below the break-even of 1.0: at the measured ρ_fp
+   it suppresses false flags by only 1.05–1.2× while cutting sensitivity by more. This
+   is the §3.1 model evaluated at its measured parameter, and it agrees with NAO having
+   chosen the disjunction empirically.
+2. **Either-mate plus a wide insert is the combination that pays.** Pair sensitivity
+   rises by a factor of 1.2–1.7 from insert 107 to 500 while pair false flags stay flat
+   (10.3 → 11.5 per million), because the gain comes from ρ_true falling, not from the
+   threshold moving.
+3. **Neither rule reaches 1 per million, and no insert length changes that.** Under an
+   either-mate rule the pair false-flag rate is roughly twice the per-read rate, so the
+   pair level hits 1/M only if the per-read rate is already ~5e-7. **The mate pair buys
+   sensitivity at a fixed operating point; it does not buy orders of magnitude of
+   specificity.** Reaching 1/M has to come from aggregation across molecules -
+   cross-sample recurrence (C3) or grouping (C2) - with the pair as a multiplier on
+   that rather than a substitute for it.
 
 ---
 
@@ -265,9 +317,9 @@ magnitude of molecules (§1) to buy a factor of 1.1–1.5.
 
 **What would kill the recommendation.** Three things, none of them tested here:
 
-1. ρ_fp staying near 0.9 after §4.1's index fix *and* the disjunction rule gaining
-   nothing from decorrelation either - at that point width improves only the single-read
-   hit rate, not the pair logic, and a 1.1–1.5× factor does not justify a bespoke prep.
+1. The disjunction's measured gain (§4.1, 1.2–1.7× pair sensitivity from insert 107 to
+   500) failing to survive a real per-read score with a real operating point. §4.1
+   assumes per-read sensitivity 0.5 on a novel read, which nothing here measures.
 2. The protected (less fragmented) fraction of sewage viral RNA turning out not to
    support 500 nt inserts in practice; §1.1 found no one has measured it.
 3. Clustering bias eating the gain: Illumina's own documentation says long fragments
