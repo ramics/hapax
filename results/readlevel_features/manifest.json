@@ -1,0 +1,45 @@
+{
+  "seed": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "git_sha": "50573917771c06f7cde1f47a92707dd39d5ef5bc",
+  "params": {
+    "seed": 1,
+    "n_seeds": 5,
+    "n_reads": 4000,
+    "read_lens": "75,107,150,250",
+    "community": "/mnt/project-files/stress/community",
+    "hiv_gb": "/mnt/project-files/ref/K03455.gb",
+    "out": "results/readlevel_features"
+  },
+  "timings_s": {
+    "orf_likeness": 95.6,
+    "frame_identifiability": 1.5,
+    "total": 97.4
+  },
+  "tools": {
+    "python": "3.13.18",
+    "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39",
+    "rustc": "rustc 1.97.0 (2d8144b78 2026-07-07)",
+    "megahit": "not installed",
+    "spades.py": "not installed",
+    "plass": "not installed",
+    "penguin": "not installed"
+  },
+  "command": "experiments/readlevel_features.py --n-reads 4000 --n-seeds 5",
+  "date": "2026-11-20T08:46:56Z",
+  "genomes": {
+    "E_coli_NC_000913.3": "/mnt/project-files/stress/community/NC_000913.3.fa",
+    "S_aureus_NC_007795.1": "/mnt/project-files/stress/community/NC_007795.1.fa",
+    "phage_lambda_NC_001416.1": "/mnt/project-files/stress/community/NC_001416.1.fa",
+    "phiX174_NC_001422.1": "/mnt/project-files/stress/community/NC_001422.1.fa",
+    "SARS2_NC_045512.2": "/mnt/project-files/stress/community/NC_045512.2.fa",
+    "HIV1_NC_001802.1": "/mnt/project-files/stress/community/NC_001802.1.fa",
+    "rabies_NC_001542.1": "/mnt/project-files/stress/community/NC_001542.1.fa",
+    "HBV_NC_003977.2": "/mnt/project-files/stress/community/NC_003977.2.fa"
+  }
+}
