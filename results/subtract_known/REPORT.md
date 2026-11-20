@@ -375,6 +375,46 @@ quality string, so an unexplainable read can be read as "probably instrument" ra
 
 ## 5. The per-read evidence report
 
+The third tier. Every read the cascade could not identify gets a row of evidence rather
+than a verdict: closest relative as a number per index, whether it looks coding, GC,
+repetitiveness, dinucleotide bias, folding energy against a dinucleotide-preserving
+shuffle, library abundance, recurrence across the other samples, and the mate's agreement.
+"Cannot discriminate here" is a legitimate value in every column, and a shuffled null sits
+beside each field so a reader can see what the field does on sequence that cannot be
+interesting. `experiments/field_independence.py` reports how many independent measurements
+the table really contains, and how much each field separates the residue from the reads the
+cascade identified, because independence and usefulness are different properties.
+
+### 5.1 The two families pull opposite ways, and neither is both strong and correctly signed
+
+Stated here as a structural property of the report rather than being rediscovered field by
+field, which is how it was found. Jointly with the thread measuring whether the residue is
+structured:
+
+- The **absence family** - peptide absence, `zero_frac`, "no hit in any index" - has the
+  right polarity. Absence is what a genuinely new molecule produces. It is also weak:
+  peptide absence dies at 1 per million (160,774 false flags per million at the strictest
+  expressible threshold, PR #11 and #13), and `zero_frac` is the weakest of the five
+  coverage axes at 0.617 AUC.
+- The **coverage-shape family** - within-read coverage spread, the largest within-read
+  step, mate disagreement - is strong, 0.76 to 0.78 AUC each, and has the WRONG polarity.
+  Measured in `results/cov_step_conservation/`: the step tracks how many distinct contigs
+  of the sample's own assembly a read shares sequence with (+0.577, surviving inside
+  `log_cov` quartiles at +0.447, +0.389, +0.392, +0.242), and high-step reads align to 2.23
+  distinct contigs against 0.65. It is measuring witnesses, so it fires on sequence shared
+  between molecules. That is a familiarity statement.
+- The same inversion appears independently in the partial-match anatomy of section 3.7,
+  where divergent continuation fires six times more often on already-identified contigs
+  than on unidentifiable ones.
+
+So the report currently has no field that is both strong and pointing at novelty, and the
+strong fields describe a read without saying it is new. Two consequences are carried
+through the rest of this work. Every field in the table is labelled with its polarity, so a
+reader cannot mistake a strong familiarity field for evidence of novelty. And the
+load-bearing quantity is the one that does carry novelty polarity continuously - identity
+to the closest relative, which separates every population measured here (section 3.4) and
+which section 3.7 found to be the only separator that survives at contig level.
+
 ## 6. Calibration and limits
 
 Stated up front because every number here is one-sided.
