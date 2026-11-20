@@ -318,30 +318,54 @@ crossings over 21 runs conditional on the margins, gives a two-sided P of 0.159.
 On that evidence the rate looks constant across 2.0–9.7%, and the apparent dip at
 6.5–7.3% is not evidence of anything.
 
-But "did any contig cross 1,500 nt" throws away most of each run. Regressing log
-longest-contig-length on divergence instead (`length_trend.py`) finds a clear
-effect: over 46 mixture runs the slope is −0.0745 per percentage point of
-divergence, 95% interval −0.119 to −0.030, permutation P = 0.0018. The longest
-contig therefore shrinks by about 7% per point, roughly halving between 2% and
-10%. Mass over 1,500 nt declines the same way (−0.74 per point, P = 0.011). The
-42 single-lineage controls are the null anchor — divergence between two lineages
-cannot affect a run containing one of them — and their slope is flat, +0.013
-(−0.019 to +0.045), P = 0.42, so this is not a confound from different genomes
-sitting at different rungs.
+But "did any contig cross 1,500 nt" throws away most of each run, so the
+continuous outcome is worth fitting (`length_trend.py`). Three fits of log
+longest-contig-length on divergence, which disagree in a way that decides what
+can be claimed:
 
-Two honest limits. The significant fit leans on the unbalanced rate study, which
-contributes 18 runs at 4.5% and 13 at 7.3%; the balanced seven-rung ladder alone
-gives the same direction and magnitude but does not reach significance (−0.056,
-−0.117 to +0.004, P = 0.066). And the relationship is not clean: mean longest
-contig at 9.7% (1,652 nt) exceeds 6.5% (1,055 nt), so a monotone slope is a
-summary rather than a description.
+| Fit | Slope per 1% divergence | 95% interval |
+|---|---|---|
+| pooled over 46 mixture runs | −0.0745 | −0.119 to −0.030 (perm P = 0.0018) |
+| 7 rung means, inverse-variance weights | −0.0745 | −0.122 to −0.027 |
+| 7 rung means, equal weights | −0.0545 | −0.159 to **+0.050** |
+| 42 single-lineage controls (null anchor) | +0.0129 | −0.019 to +0.045 (P = 0.42) |
 
-So the earlier framing in this section was wrong in both directions. Collapse is
-not a window that closes at 4%, and it is not a rate independent of divergence
-either. Length declines steadily with divergence while the probability of
-crossing any particular length threshold stays too noisy to order the rungs — a
-threshold on divergence is still unquotable, but because the outcome is
-continuous and the variance is large, not because divergence does not matter.
+The first two are the same estimator: weighting a rung mean by its inverse
+variance gives a weight proportional to that rung's n, which reproduces pooled
+OLS exactly. So the significant result is the unbalanced one, and the unbalance is
+large — the rate study contributes 18 runs at 4.5% and 13 at 7.3%, so much of
+that slope is one contrast between two adjacent rungs. Giving every rung equal
+say costs efficiency but balances the design, and there the interval contains
+zero.
+
+**So a divergence effect on length is not established.** The direction is
+consistent across every fit, the magnitude is around −0.05 to −0.07 per point,
+which would roughly halve the longest contig between 2% and 10%, and the control
+anchor is flat so it is not simply that the genomes at high rungs assemble worse.
+But the balanced estimate cannot exclude no effect, and the rung means are not
+monotone anyway: 9.7% (1,652 nt) exceeds 6.5% (1,055 nt). What is solid is the
+comparison this section was built for — mixtures reach lengths that single
+lineages at the same total coverage never reach, 0 of 42 controls crossing
+1,500 nt — and that mosaics form in every mixture run.
+
+**The confound that would have to be broken.** Each rung is one genome pair, so
+divergence and pair identity are perfectly collinear across the ladder, and a
+reviewer should ask whether the slope is divergence or just which pairs happened
+to sit where. Two existing results argue it is not pair identity: the control
+anchor shows single-lineage assemblability does not trend across rungs, and
+`kmer_survival.json` shows every pair's 21-mer survival sits within a few points
+of the uniform expectation, so the pairs do not differ in how their differences
+are spaced. That is an argument, not a design. The fix is two or three *distinct*
+pairs at each of a few rungs, which the 19,900-pair matrix makes nearly free to
+select, and it is what would turn "length declines across our ladder" into
+"length declines with divergence". Not run here.
+
+So the earlier framing in this section was wrong in both directions, and the
+corrected version is weaker than either. Collapse is not a window that closes at
+4%; neither is it established as a rate independent of divergence. A threshold on
+divergence is unquotable because the outcome is continuous with large
+run-to-run variance — and, on present evidence, because the dependence on
+divergence itself is not pinned down.
 
 **A limit on the lineage caller, not on the mixtures.** Control runs contain a
 single lineage, so a mosaic there is impossible by construction, yet 13 of 42
