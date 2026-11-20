@@ -103,8 +103,11 @@ def simulate(genome: Path, out: Path, pairs_wanted: int, read_len: int, seed: in
     return p1, p2
 
 
-def lineage_windows(contig: str, a: str, b: str) -> tuple[int, int, int]:
-    """Per-window lineage call: (windows_a, windows_b, switches).
+def lineage_windows(contig: str, a: str, b: str) -> tuple[int, int, int, list[str]]:
+    """Per-window lineage call: (windows_a, windows_b, switches, calls).
+
+    The call list is returned as well so a caller can locate the joins, which is
+    where the collapse-flag observables are measured.
 
     Each window is aligned to both lineages in infix mode and assigned to the
     closer one; ties and windows that match neither are not counted. Switches
@@ -121,10 +124,75 @@ def lineage_windows(contig: str, a: str, b: str) -> tuple[int, int, int]:
         elif db < da:
             calls.append("b")
     switches = sum(1 for x, y in zip(calls, calls[1:]) if x != y)
-    return calls.count("a"), calls.count("b"), switches
+    return calls.count("a"), calls.count("b"), switches, calls
 
 
-def score(contigs: Path, ref2: Path, a: str, b: str) -> dict:
+COMP = str.maketrans("ACGT", "TGCA")
+
+
+def canon(w: str) -> str:
+    rc = w.translate(COMP)[::-1]
+    return min(w, rc)
+
+
+def kmer_set(s: str, k: int = 21) -> set[str]:
+    return {canon(s[i:i + k]) for i in range(len(s) - k + 1)}
+
+
+def depth_from_paf(paf: str, name: str, length: int) -> list[int]:
+    """Per-base depth on one contig from the spike reads alone.
+
+    The spike reads are what the join is made of; mapping the whole mixture back
+    would cost a hundred times more and add only background depth, which is not
+    what the bridge model is about.
+    """
+    d = [0] * length
+    for line in paf.splitlines():
+        f = line.split("\t")
+        if len(f) < 12 or f[5] != name:
+            continue
+        for i in range(int(f[7]), min(int(f[8]), length)):
+            d[i] += 1
+    return d
+
+
+def join_observables(contig: str, name: str, joins: list[int], sa: str, sb: str,
+                     depth: list[int], k: int = 21, flank: int = 150) -> list[dict]:
+    """The per-contig quantities a transferable collapse flag would be built on.
+
+    A flag calibrated against divergence is a lookup table for one virus. These
+    three are measurable on any contig without knowing its divergence from
+    anything, which is what a de novo flag needs: how many of the local k-mers
+    are shared by both lineages (bridge density), how deep the reads are where
+    the join happens (whether a bridge can be used), and how long a locally
+    identical stretch runs (whether a read pair could span it).
+    """
+    ka, kb = kmer_set(sa, k), kmer_set(sb, k)
+    both = ka & kb
+    out = []
+    for pos in joins:
+        lo, hi = max(0, pos - flank), min(len(contig), pos + flank)
+        win = contig[lo:hi]
+        marks = [canon(win[i:i + k]) in both for i in range(max(0, len(win) - k + 1))]
+        run = best = 0
+        for m in marks:
+            run = run + 1 if m else 0
+            best = max(best, run)
+        seg = depth[lo:hi] or [0]
+        out.append({
+            "pos": pos,
+            "bridge_density": round(sum(marks) / len(marks), 4) if marks else None,
+            "shared_kmers_in_window": sum(marks),
+            "longest_shared_stretch": best + k - 1 if best else 0,
+            "depth_at_join": depth[pos] if pos < len(depth) else None,
+            "depth_mean_window": round(sum(seg) / len(seg), 2),
+            "depth_min_window": min(seg),
+        })
+    return out
+
+
+def score(contigs: Path, ref2: Path, a: str, b: str,
+          spike_reads: list[Path] | None = None) -> dict:
     """Spike-derived contigs, per-lineage breadth, and mosaicism.
 
     Breadth is computed per lineage from the alignments to that lineage, so two
@@ -156,13 +224,25 @@ def score(contigs: Path, ref2: Path, a: str, b: str) -> dict:
     sa = next(v for k, v in refs.items() if k.startswith(a.split(".")[0]))
     sb = next(v for k, v in refs.items() if k.startswith(b.split(".")[0]))
     lens = sorted((qlen[q] for q in spike), reverse=True)
-    mosaic, switches = 0, 0
+    mosaic, switches, join_rows = 0, 0, []
+    depths: dict[str, list[int]] = {}
+    if spike_reads:
+        paf = sh(["minimap2", "-x", "sr", "--secondary=no", str(contigs)]
+                 + [str(p) for p in spike_reads]).stdout
+    else:
+        paf = ""
     for q in spike:
         if qlen[q] < 2 * WINDOW:
             continue
-        wa, wb, sw = lineage_windows(seqs[q], sa, sb)
+        wa, wb, sw, calls = lineage_windows(seqs[q], sa, sb)
         if wa and wb and min(wa, wb) >= 1 and sw:
             mosaic += 1
+            joins = [(i + 1) * WINDOW for i, (x, y) in enumerate(zip(calls, calls[1:])) if x != y]
+            if paf:
+                depths[q] = depth_from_paf(paf, q, qlen[q])
+            for j in join_observables(seqs[q], q, joins, sa, sb,
+                                      depths.get(q, [0] * qlen[q])):
+                join_rows.append({"contig": q, "contig_len": qlen[q], **j})
         switches += sw
     return {
         "spike_contigs": len(spike),
@@ -173,6 +253,7 @@ def score(contigs: Path, ref2: Path, a: str, b: str) -> dict:
         "breadth_b": round(len(covered["b"]) / len(sb), 4),
         "mosaic_contigs": mosaic,
         "lineage_switches": switches,
+        "joins": join_rows,
     }
 
 
@@ -202,6 +283,11 @@ def main() -> None:
     ap.add_argument("--rows-name", default="two_lineage_rows.jsonl",
                     help="output file; a re-run writes elsewhere rather than appending to the "
                          "headline rows")
+    ap.add_argument("--join-observables", action="store_true",
+                    help="for every mosaic contig, log bridge density, local depth and local "
+                         "shared-stretch length at each join: the candidate features for a "
+                         "collapse flag that could transfer between virus families, where a "
+                         "rate calibrated against divergence could not")
     ap.add_argument("--only", default="",
                     help="comma-separated pair tags to run; the rest are skipped, so a run "
                          "interrupted partway can resume without duplicating rows")
@@ -265,7 +351,8 @@ def main() -> None:
                 except subprocess.CalledProcessError as e:
                     print(f"[{tag} {mode} s{seed}] megahit failed: {e.stderr[-300:]}", flush=True)
                     continue
-                sc = score(asm / "final.contigs.fa", ref2, acc_a, acc_b)
+                reads = [p for pr in parts for p in pr[:2]] if args.join_observables else None
+                sc = score(asm / "final.contigs.fa", ref2, acc_a, acc_b, reads)
                 cross = {}
                 if args.cross_score and mode in ("a_alone", "b_alone"):
                     # Section 1 scored one lineage against one reference at asm10
