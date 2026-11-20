@@ -116,6 +116,7 @@ PRECHECK
 
 search() {  # label program db db_version query extra...
   local label="$1" program="$2" db="$3" ver="$4" query="$5"; shift 5
+  echo "=== search $label starting $(date -Is) ==="
   "$PYBIN" experiments/bigindex_search.py --program "$program" --db "$db" \
     --db-version "$ver" --query "$query" --label "$label" --threads @@THREADS@@ \
     "$@" > "/opt/hapax/log-$label.txt" 2>&1 \
@@ -195,6 +196,29 @@ if stage_on core_nt_full; then
       break
     fi
     search "$label" blastn /opt/hapax/db/core_nt "@@NCBI_PREFIX@@" "$q"
+  done
+fi
+
+# ---------------------------------------------------------------- the cheap task, same reads
+# `dc-megablast` on the SAME reads the sensitive task saw. The pilot measured the sensitive
+# blastn at about a second per 107 nt read, which puts a whole sample's residue past 500
+# hours and therefore outside any production tool - so the task stops being a fixed choice
+# and becomes a measured axis. Running both says what the cheap one FAILS to find, which is
+# this project's own cost-versus-completeness curve applied to itself. It runs second
+# because if only one of the two finishes, the sensitive one is the one worth having.
+if stage_on core_nt_fast; then
+  FASTBUDGET=@@FAST_BUDGET_HOURS@@
+  FASTSTART=$SECONDS
+  for q in /opt/hapax/queries/block_*.fa; do
+    label="fast_$(basename "$q" .fa)"
+    n=$(grep -c '^>' "$q" || echo 0)
+    if [ -f /opt/hapax/out/timing_fast_block_s1.json ]; then
+      left=$("$PYBIN" -c "import sys;print(max(0.0,float(sys.argv[1])-float(sys.argv[2])/3600))" \
+        "$FASTBUDGET" "$((SECONDS - FASTSTART))")
+      fits fast_block_s1 "$n" "$left" || { echo "=== stopping fast pass before $label ==="; break; }
+    fi
+    search "$label" blastn /opt/hapax/db/core_nt "@@NCBI_PREFIX@@" "$q" \
+      --blastn-task dc-megablast
   done
 fi
 

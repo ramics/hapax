@@ -47,20 +47,29 @@ FIELDS = ("qseqid", "sseqid", "pident", "length", "qlen", "evalue", "bitscore")
 
 def command(program: str, db: Path, query: Path, out: Path, threads: int,
             max_targets: int, sensitive: bool, blast_bin: Path,
-            diamond_bin: Path) -> list[str]:
+            diamond_bin: Path, blastn_task: str = "blastn") -> list[str]:
     """The search, as the exact argument list that will be recorded in the manifest.
 
-    `blastn` runs the plain task rather than megablast, matching
+    `blastn` defaults to the plain task rather than megablast, matching
     `experiments/remote_blast_check.py`: megablast is tuned for close matches, and the
     question here is whether a relative exists *however far*, so megablast would answer a
     different question and flatter the cascade.
+
+    `blastn_task` exists because the plain task's cost turned out to be the binding
+    constraint: measured on this run's own pilot, a sensitive blastn of 107 nt reads against
+    core_nt is about a second per read on eight cores, which is 550+ hours for a whole
+    sample's residue and therefore not a step any production tool can contain. So the task
+    becomes a measured axis rather than a fixed choice: `dc-megablast` is built for
+    cross-species nucleotide matching and is far cheaper, and running both on the SAME reads
+    says what the cheap task fails to find. That difference is the cost-versus-completeness
+    curve this project exists to publish, applied to itself.
 
     DIAMOND's `--sensitive` is not a free switch - measured in this repo it costs 10-14x
     default - so it is a flag, and which was used goes in the manifest beside the timing.
     """
     fmt = list(FIELDS)
     if program == "blastn":
-        return [str(blast_bin / "blastn"), "-task", "blastn", "-db", str(db),
+        return [str(blast_bin / "blastn"), "-task", blastn_task, "-db", str(db),
                 "-query", str(query), "-out", str(out), "-num_threads", str(threads),
                 "-max_target_seqs", str(max_targets), "-evalue", "10",
                 "-outfmt", " ".join(["6", *fmt])]
@@ -146,6 +155,10 @@ def main() -> None:
     ap.add_argument("--threads", type=int, default=8)
     ap.add_argument("--max-targets", type=int, default=5)
     ap.add_argument("--sensitive", action="store_true")
+    ap.add_argument("--blastn-task", default="blastn",
+                    choices=["blastn", "dc-megablast", "megablast"],
+                    help="which nucleotide task. Recorded in the timing file, because the "
+                         "task is a bigger lever on cost than the database is")
     ap.add_argument("--blast-bin", type=Path, default=Path("/opt/hapax/blast/bin"))
     ap.add_argument("--diamond-bin", type=Path, default=Path("/opt/hapax/diamond"))
     ap.add_argument("--out", type=Path, default=Path("/opt/hapax/out"))
@@ -155,13 +168,15 @@ def main() -> None:
     hits = args.out / f"hits_{args.label}.tsv"
     n_q = count_queries(args.query)
     cmd = command(args.program, args.db, args.query, hits, args.threads,
-                  args.max_targets, args.sensitive, args.blast_bin, args.diamond_bin)
+                  args.max_targets, args.sensitive, args.blast_bin, args.diamond_bin,
+                  args.blastn_task)
 
     # The timing file is written BEFORE the search and rewritten after, so a run killed by
     # the dead man's switch still leaves behind what it was doing and with what arguments.
     # The reference project lost two fourteen-hour machines that left nothing at all.
     timing = {"label": args.label, "program": args.program, "db": str(args.db),
               "db_version": args.db_version, "queries": n_q, "threads": args.threads,
+              "blastn_task": args.blastn_task if args.program == "blastn" else None,
               "sensitive": bool(args.sensitive), "command": cmd,
               "started": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
               "finished": None, "seconds": None, "exit_code": None,

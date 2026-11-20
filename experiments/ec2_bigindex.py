@@ -86,7 +86,7 @@ HEARTBEAT_SECONDS = 300
 #: to a list like this, and the instance died on an ImportError having read nothing.
 PAYLOAD_MODULES = ("experiments/bigindex_search.py",)
 
-STAGES = ("core_nt", "pilot", "core_nt_full", "nr")
+STAGES = ("core_nt", "pilot", "core_nt_full", "core_nt_fast", "nr")
 
 
 def render_user_data(**tokens: Any) -> str:
@@ -199,6 +199,8 @@ def main(argv: list[str] | None = None) -> int:
                          "this project has ever measured that rate and the first chunk is "
                          "what measures it")
     ap.add_argument("--nr-budget-hours", type=float, default=8.0)
+    ap.add_argument("--fast-budget-hours", type=float, default=4.0,
+                    help="dc-megablast on the same reads. Cheap by design: if it needs a large budget it is not the cheap task and the comparison says so")
     ap.add_argument("--full-budget-hours", type=float, default=20.0,
                     help="the wall clock the full core_nt pass is allowed to project to "
                          "before the run refuses it and stops at the pilot")
@@ -248,6 +250,7 @@ def main(argv: list[str] | None = None) -> int:
         NCBI_BUCKET=NCBI_BUCKET, NCBI_PREFIX=NCBI_PREFIX,
         FULL_QUERIES=full_queries, FULL_BUDGET_HOURS=args.full_budget_hours,
         NR_CHUNK=args.nr_chunk, NR_BUDGET_HOURS=args.nr_budget_hours,
+        FAST_BUDGET_HOURS=args.fast_budget_hours,
     )
     script = render_user_data(**tokens)
 
