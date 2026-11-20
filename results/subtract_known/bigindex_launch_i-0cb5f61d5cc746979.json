@@ -20,5 +20,6 @@
   "diamond": "2.1.10",
   "launched": "2026-11-20T22:43:56Z",
   "results_prefix": "s3://amazebio-corpora-897641797669/corpora/results/hapax-bigindex/results/bigindex/i-0cb5f61d5cc746979/",
-  "logs_prefix": "s3://amazebio-corpora-897641797669/corpora/results/hapax-bigindex/logs/bigindex-i-0cb5f61d5cc746979/"
+  "logs_prefix": "s3://amazebio-corpora-897641797669/corpora/results/hapax-bigindex/logs/bigindex-i-0cb5f61d5cc746979/",
+  "note": "reconstructed after the second launch overwrote the single-file record; values from the launch output and PLAN section 7"
 }

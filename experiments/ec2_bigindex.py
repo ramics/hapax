@@ -320,7 +320,10 @@ def main(argv: list[str] | None = None) -> int:
         raise
     iid = reply["Instances"][0]["InstanceId"]
     print(f"launched {iid}", flush=True)
-    (ROOT / "results/subtract_known/bigindex_launch.json").write_text(json.dumps({
+    # Per instance, not one file: the first launch's record was overwritten by the second
+    # within the hour, and a launch record that only remembers the newest launch cannot
+    # answer "what was running when this number was produced".
+    record = json.dumps({
         "instance_id": iid, "commit": commit, "shipped_dirty": shipped_dirty,
         "wider_tree_dirty": tree_dirty,
         "instance_type": args.instance_type, "stages": args.stages,
@@ -331,7 +334,8 @@ def main(argv: list[str] | None = None) -> int:
         "launched": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "results_prefix": f"s3://{bucket}/{prefix}/results/bigindex/{iid}/",
         "logs_prefix": f"s3://{bucket}/{prefix}/logs/bigindex-{iid}/",
-    }, indent=2))
+    }, indent=2)
+    (ROOT / f"results/subtract_known/bigindex_launch_{iid}.json").write_text(record)
 
     if args.detach:
         print(f"detached: {iid} is held by its own {args.hard_stop_minutes}-minute timer "
