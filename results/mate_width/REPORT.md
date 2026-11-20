@@ -13,8 +13,9 @@ be true for it to be worth doing:
 4. what that buys survives the mate correlation of **false** flags (§4).
 
 Headline: **(2) is false, (3) is true and measured, (1) is capped by the library kit
-rather than by the sewage, and (4) kills the both-mates rule while leaving the
-either-mate rule the beneficiary of width.** The idea survives as a library-design
+rather than by the sewage, and (4) finds the both-mates rule worthless at public-database
+index coverage but worth 1.8–2.6× once the score has range, with width helping both
+rules.** The idea survives as a library-design
 recommendation with a measured effect size, not as a way to re-use public data. And at
 Imo's operating point of 1 false flag per million, no pair rule gets there at any insert
 length (§4.1): the pair buys sensitivity, not orders of magnitude of specificity.
@@ -348,7 +349,68 @@ index (UniRef or nr), which neither thread has run.
 
 Agreed wording with PR #11: the conjunction squares the error term and does nothing for
 the organism term; at measured thresholds on real background the organism term dominates,
-so the conjunction does not deliver a usable false-positive reduction.
+so the conjunction does not deliver a usable false-positive reduction **at the index
+coverage available from public databases**. §4.3 shows that last clause is load-bearing.
+
+### 4.3 How much of this is the index? An index-coverage arm, and a revision
+
+The saturation caveat above deserved a measurement rather than a caveat, so here is one.
+The question: is 86% of background being fully absent a statement about the *reads* or
+about the *database*? The sharpest available test is to index the proteins predicted from
+**the sample's own assembly** - 79,667 proteins, 8.0 Maa, from Prodigal over the authors'
+72,877 contigs. That is the one "database" guaranteed to contain this sample's abundant
+organisms. It is circular as a detector and says nothing about what a real pipeline could
+know; as a decomposition of the absence rate it is decisive.
+
+Adding it grows the index by 3% in k-mers and changes everything (**measured**, 5 seeds,
+40,000 pairs per seed):
+
+| index | 10-mers | background fully absent | mean absence | r (all pairs) | r (insert 107–150) | r (insert 400–600) |
+|---|---|---|---|---|---|---|
+| RefSeq viral | 87.6M | 0.883 | 0.941 | 0.878 | 0.975 | 0.855 |
+| + Swiss-Prot | 221.1M | 0.863 | 0.938 | 0.860 | 0.964 | 0.848 |
+| **+ the sample's own assembly** | **228.0M** | **0.222** | **0.486** | **0.650** | **0.855** | **0.284** |
+
+Three things follow, and one of them revises §4.1.
+
+**1. The 86% absence is database incompleteness, not novelty.** 8 Maa drawn from this
+sample removes three quarters of it, where 200 Maa of Swiss-Prot removed two points. So
+"absence in wastewater means wastewater" (the protein thread's phrasing) is sharper than
+that: it means *not in public protein databases*, and the organisms are sitting in the
+sample's own contigs.
+
+**2. The mate correlation becomes more visible, not less.** In ratio terms the excess over
+independence grows as the score gains range: both mates fully absent is 3.26× the
+independent prediction with the sample-assembly index (0.161 vs 0.049), against 1.09× with
+the public-only index (0.813 vs 0.745). The correlation was always there; saturation was
+hiding it by pushing every rate towards 1.
+
+**3. REVISION to §4.1: the both-mates rule is not dead in general - it is dead at the
+index coverage public databases give you.** With range in the score, ρ_fp falls steeply
+with separation (0.855 at insert 107–150 → 0.284 at 400–600), and the conjunction's merit
+goes above break-even (`pair_rule_merit_sample_index.json`, per-read FP 1e-5):
+
+| insert | ρ_true (rabies) | ρ_fp | both-mates merit | either-mate pair sensitivity |
+|---|---|---|---|---|
+| 107 | 0.977 | 0.870 | 1.14 | 0.123 |
+| 300 | 0.578 | 0.351 | **2.25** | 0.193 |
+| 500 | 0.348 | 0.380 | **1.77** | 0.243 |
+
+So at better index coverage **a wide insert helps both rules**: the either-mate rule through
+ρ_true and the both-mates rule through ρ_fp. That strengthens the wide-insert case rather
+than weakening it, and it was my own flagged caveat that turned out to carry the verdict.
+What does *not* change: the absolute rate. At the strictest threshold the pair false-flag
+rate is still 160,774 per million (231,230 at ≥80% absent), five orders of magnitude from
+Imo's target, so no pair rule rescues peptide-10-mer absence as a detector.
+
+**Environment limit, recorded rather than worked around.** The clean version of this arm is
+the same measurement against a comprehensive public index (UniRef50). It could not be run
+here: this session's egress proxy will not sustain a 9.2 GB transfer - one attempt arrived
+corrupt (10.4 GB written, gzip stream broken at record 41.2M of ~70M), a second was refused
+outright, and a 512 MB-chunked ranged download failed permanently on chunk 3 of 18 after
+five retries. So the index-coverage axis has three points, the largest of which is a local
+proxy for coverage rather than a real database. A UniRef50 or nr run remains the open item,
+and both this thread and the protein thread need it.
 
 ---
 
