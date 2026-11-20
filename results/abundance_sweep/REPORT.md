@@ -264,3 +264,58 @@ the lineages are the answer. The same event cannot be prevented without losing
 the length, which argues for labelling it: a per-contig flag saying "this contig
 is supported by reads that disagree with each other in a structured way", which
 is the one thing no assembler emits.
+
+### 5.1 The 4–7% band, and why there is no threshold
+
+The first ladder left 4–7% empty. That was an artefact of having downloaded 40 of
+the ~2,840 deposited complete rabies genomes, not a property of the data: the full
+pairwise matrix over 200 of them (`find_divergence_pairs.py`, 19,900 pairs) gives
+real pairs at 4.50%, 5.50% and 6.52%. The band is thin — 570 of 19,900 pairs,
+real lineage structure — but thin is not empty, so the rungs are real sequence
+rather than a genome mutated to order. These are also the first rungs anywhere in
+this project between 2.5% and 10%: `results/stress/ladder.md` has eight rungs
+with nothing between 2.505% and 3.953%.
+
+| Divergence | Mode | Breadth A | Breadth B | Longest | Mass ≥1500 | Mosaic |
+|---|---|---|---|---|---|---|
+| 4.50% | A alone | 38.2 ± 12.0% | — | 831 ± 326 | 0 | 0.0 |
+| 4.50% | B alone | — | 40.5 ± 2.4% | 1,103 ± 175 | 0 | 1.0 |
+| 4.50% | both | 39.3 ± 8.7% | 45.7 ± 4.2% | 1,622 ± 557 | 1,355 ± 2,346 | 2.7 |
+| 5.50% | A alone | 38.8 ± 2.2% | — | 684 ± 21 | 0 | 0.7 |
+| 5.50% | B alone | — | 47.3 ± 2.4% | 773 ± 176 | 0 | 0.0 |
+| 5.50% | both | 44.5 ± 2.1% | 36.8 ± 4.9% | 1,636 ± 234 | 1,169 ± 1,019 | 3.3 |
+| 6.52% | A alone | 40.0 ± 10.0% | — | 946 ± 132 | 0 | 0.7 |
+| 6.52% | B alone | — | 38.5 ± 2.1% | 750 ± 164 | 0 | 0.0 |
+| 6.52% | both | 35.1 ± 7.0% | 42.1 ± 4.4% | 1,055 ± 206 | 0 | 3.0 |
+
+**It is a rate, not a threshold.** Across all 63 runs, the fraction of mixtures
+in which any contig crosses 1,500 nt reads 3/3 at 2.0%, 2/3 at 3.8%, 1/3 at
+4.5%, 2/3 at 5.5%, 0/3 at 6.5%, 0/3 at 7.3% and 2/3 at 9.7%. A single lineage at
+half the budget crosses it in **0 of 42** control runs. So pooling is what
+produces classifier-useful length, it does so in roughly half of runs over the
+whole 3.8–9.7% range, and the rung-to-rung pattern is what sampling a rate of
+that size with three seeds looks like rather than a transition to locate. The
+earlier reading of §5 — a window that closes by about 4% — does not survive the
+band being filled in.
+
+The mechanism is the one the k-mer measurement implies (`kmer_survival.json`).
+Shared 21-mer fraction sits within a few points of the uniform expectation
+(1−d)^21 for every pair, so at 4.5–9.7% a 12 kb pair still shares 1,600–4,600
+exact 21-mers: bridges are abundant, and what varies between seeds is whether one
+falls where local coverage can use it. That is a property of the draw, which is
+exactly what produces a rate. It also retires the two-mechanism paragraph above:
+the longest exactly identical stretch is 85–111 nt for every pair at 4.5% and
+above, against 107 nt reads, and even at 2.0% the stretches at actual join points
+are 81–201 nt. Conserved windows long enough to join reads outright are real —
+two HBV genomes from different hosts share 709 exact 150-mers — but they are not
+what is operating here. One mechanism, isolated 21-mer bridges, at every rung.
+
+**Caveat that limits the mosaic numbers, not the length numbers.** Control runs
+contain a single lineage, so a mosaic there is impossible by construction, yet 13
+of 42 controls report one and the control mean is 0.33 (max 2). The per-window
+lineage call therefore has a false-mosaic rate, presumably where a 300 nt window
+genuinely matches both genomes or sits at a contig end. Mixture runs average 3.19
+with a minimum of 1, so the signal is well clear of that floor, but a mosaic
+count here should be read as "about three above a baseline of a third" rather
+than as an exact count. The 1,500 nt crossing rate is unaffected: controls never
+cross it.
