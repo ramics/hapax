@@ -1,8 +1,12 @@
 # hapax — production tool spec
 
-One sample in, one breakdown out. What is known, what is new, what assembled, what did not,
-what codes and what does not — each pile quantified, with its own confidence interval and
-its own declared blind spot.
+One sample in, one breakdown out. What is known, what assembled, what did not, what codes
+and what does not — each pile quantified, with its own confidence interval and its own
+declared blind spot.
+
+**The target is not a novel-or-not call. It is a multidimensional measurement of signal
+against noise.** That is a deliberate change of goal, and §1.1 gives the measured reason
+for it.
 
 Every number in this spec is measured on Berlin wastewater SRR23973193, five seeds,
 and is reproducible from a committed script plus a seed. Nothing here is a projection.
@@ -28,6 +32,29 @@ is swallowed whole by tier 1.
 
 The output is a **breakdown plus a cost-versus-completeness curve**. It is not a discovery
 claim. The residue is the honest remainder, not a finding.
+
+### 1.1 Why the target is a measurement and not a call
+
+Every feature this project has killed, it killed **as a threshold on one axis**: peptide
+absence, read-level translated homology, ORF-likeness, k-mer composition, codon usage, GC,
+and every paired-end rule. The joint distribution of those axes has never been measured.
+So the kills do not say there is no signal in the residue; they say **no single axis carries
+a call**, which is a weaker and much more useful statement.
+
+The machinery was already built for this. The per-read report is deliberately
+un-thresholded and already ships, per field, a shuffled null and a comparison against reads
+the cascade did subtract. Changing the target from a call to a measurement does not change
+the machinery; it changes what the kills mean. They stop being failures and become the
+calibration.
+
+**And the noise here is mostly not instrument noise.** It is index incompleteness — which is
+what made 86% of this library look novel until the sample's own assembly was indexed —
+annotation artefacts, where a handful of automatically annotated public entries make
+ribosomal reads look known through a conservation multiplier of 388, and library artefacts
+of the kind a match-nothing pile collects by construction. Those have different signatures
+from biology. That is the reason a multidimensional separation is plausible where a
+threshold was not, and it is the reason every noise source below is measured per sample
+rather than assumed.
 
 ---
 
@@ -184,6 +211,43 @@ than a reason to hide it.
 **Nothing is combined into a score.** `cannot discriminate here` is a legitimate row, not a
 gap — it is what honest calibration of a 107 nt read produces about half the time.
 
+### 4.2 The axes of the signal-versus-noise measurement
+
+Five dimensions, each either already measured or cheap, chosen because each is continuous
+and each has a noise source whose signature differs from biology's.
+
+**1. Coverage × identity, not hit versus no-hit.** The ground truth in §2.1 already
+established this as the discriminating axis and the spec previously carried it as a caveat.
+It is a feature: a ribosomal read aligns end to end at 100%, a residue read over a third of
+itself at 89%. Two numbers per index, never collapsed to a boolean.
+
+**2. A read's trajectory across the index-size ladder.** Something recognised only by the
+largest index is further away than something caught at 0.67 GB. That is a continuous
+divergence estimate, and the per-tier per-read outcome is already computed and written to
+the result files — it is currently unused. Costs nothing new.
+
+**3. Recurrence shape across the other 115 samples.** Two-sided, which is rare here: a real
+organism recurs with a pattern, random error recurs never, a systematic artefact recurs
+everywhere. The project has only ever used recurrence as a yes or no. Shape — how many
+samples, how evenly, alongside what else — is the unused half. Still a reference axis and
+never a subtrahend.
+
+**4. Mate disagreement as a per-sample error-floor estimator.** Instrument error is
+independent between mates; organism-level absence is shared. That orthogonality is dead as
+a detection rule (no pair rule approaches one per million) but it measures *this sample's*
+noise floor for free, which is exactly what the calibration requirement in §6 needs.
+
+**5. Profile reach.** Pfam-A profiles are the only axis still alive past 20% divergence,
+where DIAMOND and every nucleotide index read zero (§7). The gap between "no sequence hit"
+and "yes profile hit" is itself a distance measurement.
+
+**First experiment, before any of this is built into the tool:** take the residue rows
+already on disk and ask whether they are *structured* or *diffuse* in that joint space — do
+clusters appear that behave like a genome (consistent coverage, GC, mate linkage,
+co-recurrence), or is it a featureless cloud behaving like error? Five seeds, data already
+committed, and a clean negative if the answer is cloud. Nothing downstream should be built
+until that question has an answer.
+
 ---
 
 ## 5. For known material: new strains of existing viruses
@@ -228,6 +292,12 @@ headline, and spread reported rather than averaged away.
 ## 7. Declared blind spots
 
 These are measured, not cautious. The tool states them in its own output.
+
+**Dimensionality does not move either wall, and the spec must not imply it does.** The
+recognition limit is a property of the indexes, not of the decision rule, so adding axes
+cannot shift it. And at one in a million there is nothing to aggregate — the molecules are
+not there. What §4.2 buys is a deliverable that is honest at depth, which is where the
+1–5% divergence band this project cares about actually sits. It does not buy abundance.
 
 **No read-level rule gets near one false positive per million.** Peptide absence gives
 160,774 false flags per million at the strictest expressible threshold (PR #11/#13).
@@ -332,6 +402,10 @@ that is not in a committed file.
 - **The divergence ladder** from this run's calibration spike, labelled ordinal.
 - **The residue table**, filterable, one row per surviving pair, with every field's null and
   known-positive beside it and `cannot discriminate here` rendered as a value.
+- **The joint space** of §4.2's axes, as the one view that is the actual deliverable: each
+  surviving read a point, each axis selectable, the shuffled null and the subtracted-read
+  population drawn underneath as the two reference clouds. This is where signal against
+  noise is read off, and it replaces any panel that would have shown a novelty score.
 - **Blind spots** as a fixed panel, not a footnote.
 
 Three rules for the interface, all inherited from how numbers died in this project: no
@@ -342,7 +416,9 @@ calibration run behind it.
 
 ## 9. What this is not
 
-It is not a novel-virus detector. It is an instrument that says, for one sample, how much is
-known and by what, how much assembles, how much can be characterised and how much cannot —
-and prices each answer. The deliverable is the breakdown and the cost-versus-completeness
-curve. The residue is reported as residue.
+It is not a novel-virus detector, and it does not emit a novel-or-not call. It is an
+instrument that says, for one sample, how much is known and by what, how much assembles,
+how much can be characterised and how much cannot — and prices each answer. The deliverable
+is the breakdown, the cost-versus-completeness curve, and a multidimensional measurement of
+signal against noise in which every axis carries its own null and its own per-sample
+calibration. The residue is reported as residue.
