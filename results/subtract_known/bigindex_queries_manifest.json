@@ -1,0 +1,74 @@
+{
+  "script": "experiments/bigindex_queries.py",
+  "git_sha": "205d40a20b0b6a9be4c73d4cbd8fe4e44fe62b01",
+  "tree_dirty": false,
+  "script_sha256": "8ea73b708c645f38",
+  "parameters": {
+    "seed": 1,
+    "blocks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "cascade_work": "/tmp/claude-0/wk/recut",
+    "pilot": 2000,
+    "nr_sample": 3000,
+    "out": "/tmp/claude-0/wk/bigindex_queries",
+    "manifest_out": "/home/user/hapax/results/subtract_known"
+  },
+  "files": {
+    "block_s1.fa": {
+      "sequences": 85950,
+      "residue": 45950,
+      "identified": 40000,
+      "bytes": 11193041,
+      "sha256_16": "0d6a8874aab57c3b"
+    },
+    "block_s2.fa": {
+      "sequences": 85442,
+      "residue": 45442,
+      "identified": 40000,
+      "bytes": 11311206,
+      "sha256_16": "346a420b74ecd48a"
+    },
+    "block_s3.fa": {
+      "sequences": 85868,
+      "residue": 45868,
+      "identified": 40000,
+      "bytes": 11358608,
+      "sha256_16": "202dd6be5217f7bf"
+    },
+    "block_s4.fa": {
+      "sequences": 85778,
+      "residue": 45778,
+      "identified": 40000,
+      "bytes": 11347776,
+      "sha256_16": "5a2885b7a82042a4"
+    },
+    "block_s5.fa": {
+      "sequences": 85966,
+      "residue": 45966,
+      "identified": 40000,
+      "bytes": 11371005,
+      "sha256_16": "a88e5449318e8315"
+    },
+    "pilot.fa": {
+      "sequences": 2000,
+      "bytes": 273921,
+      "sha256_16": "48834a2ebe115d57"
+    },
+    "nr_sample.fa": {
+      "sequences": 6000,
+      "bytes": 834225,
+      "sha256_16": "647d968b3a949687"
+    }
+  },
+  "total_sequences": 437004,
+  "total_bytes": 57689782,
+  "note": "the block files carry both mates and both piles; pilot and nr_sample are mate 1 only. Class is the part of each name before the pipe.",
+  "wall_seconds": 0.5758929549992899,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}

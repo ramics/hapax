@@ -1,0 +1,177 @@
+"""Build the query sets the big-index run searches. Runs here, not on the instance.
+
+WHY THE QUERIES ARE BUILT HERE. Deciding which reads are the residue is the cascade's job
+and it has already been done, five times, by `experiments/subtract_known.py`: the residue
+and a matched sample of SUBTRACTED (identified) pairs are written out as FASTA for exactly
+this kind of reuse. Rebuilding those sets on the instance would mean shipping SILVA,
+Kraken2's hash, the sample's own contigs and the labelling code to a machine that cannot be
+debugged, to recompute something already on disk. So the instance gets FASTA and nothing
+else, and the only thing that has to be right about it is the names.
+
+THE CONTROL IS NOT OPTIONAL. Every pile in this project is reported beside the already-
+identified pile, because that is what caught two bugs in one evening: a test firing on 100%
+of both populations, and a shuffled control identical to the real reads. A big-index pass
+that searched only the residue would produce a column of identities with nothing to compare
+them to - and the protein ladder already had to re-label such a column "not searched".
+Here the control costs the same per read as the residue and makes every number a contrast.
+
+NAMES CARRY THE CLASS, as `<class>|<read>` with the read name exactly as the cascade wrote
+it (`SRR23973193.<n>/<mate>`). That is what lets the instance-side script stay a search
+wrapper with no reference data, and it is what lets the residue NAME LISTS the sibling
+thread asked for be derived afterwards in the container, where the agreed format can still
+be fixed without another launch.
+
+BOTH MATES IN THE BLOCK FILES, mate 1 only in the samples. A pair survives a rung only if
+NEITHER mate is identified, so a mate-1-only pass would under-identify and the name lists
+would be wrong in the dangerous direction. It is also the rule this repo learned the hard
+way: mate 2 is 93 nt against mate 1's 107 after the non-template trim, so anything
+mate-interchangeable has to be reported per mate, which needs both mates present. The pilot
+and the nr subsample are distributions rather than survival sets, so they take mate 1 only
+and cost half as much.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import platform
+import random
+import sys
+import time
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from subtract_known import provenance
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def read_fasta(path: Path) -> list[tuple[str, str]]:
+    out, name, buf = [], None, []
+    with open(path) as h:
+        for line in h:
+            if line.startswith(">"):
+                if name is not None:
+                    out.append((name, "".join(buf)))
+                name, buf = line[1:].strip(), []
+            else:
+                buf.append(line.strip())
+    if name is not None:
+        out.append((name, "".join(buf)))
+    return out
+
+
+def write_fasta(path: Path, records: list[tuple[str, str]]) -> int:
+    with open(path, "w") as h:
+        for name, seq in records:
+            h.write(f">{name}\n{seq}\n")
+    return len(records)
+
+
+def mate1(records: list[tuple[str, str]]) -> list[tuple[str, str]]:
+    return [(n, s) for n, s in records if n.endswith("/1")]
+
+
+def digest(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()[:16]
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--seed", type=int, default=1,
+                    help="draws the subsamples. The blocks themselves are not sampled")
+    ap.add_argument("--blocks", type=int, nargs="+", default=[1, 2, 3, 4, 5])
+    ap.add_argument("--cascade-work", type=Path,
+                    default=Path("/tmp/claude-0/wk/recut"),
+                    help="where subtract_known.py wrote residue_s*.fa and subtracted_s*.fa")
+    ap.add_argument("--pilot", type=int, default=2000,
+                    help="sequences in the timed pilot. Big enough that the rate is not "
+                         "all database scan, small enough that the pilot is minutes")
+    ap.add_argument("--nr-sample", type=int, default=3000,
+                    help="sequences per pile for the blastx-against-nr pass. nr is only "
+                         "readable by blastx, which is far slower per read than DIAMOND, "
+                         "and the question it answers is a comparison of identity "
+                         "distributions - which a few thousand per pile settles at the "
+                         "percentage resolution this project reports anyway")
+    ap.add_argument("--out", type=Path, default=Path("/tmp/claude-0/wk/bigindex_queries"))
+    ap.add_argument("--manifest-out", type=Path,
+                    default=ROOT / "results/subtract_known")
+    args = ap.parse_args()
+
+    args.out.mkdir(parents=True, exist_ok=True)
+    rng = random.Random(args.seed)
+    t0 = time.perf_counter()
+    files: dict[str, dict] = {}
+
+    pooled_residue: list[tuple[str, str]] = []
+    pooled_control: list[tuple[str, str]] = []
+    for b in args.blocks:
+        res = args.cascade_work / f"residue_s{b}.fa"
+        ctl = args.cascade_work / f"subtracted_s{b}.fa"
+        for p in (res, ctl):
+            if not p.exists():
+                raise SystemExit(f"{p} is missing; the cascade's work dir is the input")
+        residue = [(f"residue|{n}", s) for n, s in read_fasta(res)]
+        control = [(f"identified|{n}", s) for n, s in read_fasta(ctl)]
+        out = args.out / f"block_s{b}.fa"
+        # Interleaved rather than concatenated: a search killed part way through then has a
+        # usable sample of BOTH piles instead of all of one and none of the other, and on a
+        # machine with a dead man's switch that is not a hypothetical.
+        merged: list[tuple[str, str]] = []
+        for i in range(max(len(residue), len(control))):
+            if i < len(residue):
+                merged.append(residue[i])
+            if i < len(control):
+                merged.append(control[i])
+        n = write_fasta(out, merged)
+        files[out.name] = {"sequences": n, "residue": len(residue),
+                           "identified": len(control), "bytes": out.stat().st_size,
+                           "sha256_16": digest(out)}
+        print(f"{out.name}: {n} sequences ({len(residue)} residue, "
+              f"{len(control)} identified)", flush=True)
+        pooled_residue += mate1(residue)
+        pooled_control += mate1(control)
+
+    rng.shuffle(pooled_residue)
+    rng.shuffle(pooled_control)
+
+    # The pilot is residue only and mate 1 only: it exists to measure a rate, and the rate
+    # is what the full pass is projected from, so it has to be drawn from the same kind of
+    # sequence the full pass is mostly made of.
+    pilot = pooled_residue[:args.pilot]
+    p = args.out / "pilot.fa"
+    files["pilot.fa"] = {"sequences": write_fasta(p, pilot), "bytes": p.stat().st_size,
+                         "sha256_16": digest(p)}
+
+    nr = pooled_residue[args.pilot:args.pilot + args.nr_sample] + \
+        pooled_control[:args.nr_sample]
+    rng.shuffle(nr)
+    q = args.out / "nr_sample.fa"
+    files["nr_sample.fa"] = {"sequences": write_fasta(q, nr), "bytes": q.stat().st_size,
+                             "sha256_16": digest(q)}
+    print(f"pilot.fa: {len(pilot)} residue mate-1; nr_sample.fa: {len(nr)} "
+          f"({args.nr_sample} per pile)", flush=True)
+
+    manifest = {
+        "script": "experiments/bigindex_queries.py", **provenance(__file__),
+        "parameters": {k: (str(v) if isinstance(v, Path) else v)
+                       for k, v in vars(args).items()},
+        "files": files,
+        "total_sequences": sum(f["sequences"] for f in files.values()),
+        "total_bytes": sum(f["bytes"] for f in files.values()),
+        "note": "the block files carry both mates and both piles; pilot and nr_sample are "
+                "mate 1 only. Class is the part of each name before the pipe.",
+        "wall_seconds": time.perf_counter() - t0,
+        "python": platform.python_version(), "platform": platform.platform(),
+    }
+    args.manifest_out.mkdir(parents=True, exist_ok=True)
+    (args.manifest_out / "bigindex_queries_manifest.json").write_text(
+        json.dumps(manifest, indent=2))
+    print(f"{manifest['total_sequences']:,} sequences, "
+          f"{manifest['total_bytes'] / 1e6:.1f} MB in {args.out}")
+
+
+if __name__ == "__main__":
+    main()
