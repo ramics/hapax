@@ -403,14 +403,25 @@ What does *not* change: the absolute rate. At the strictest threshold the pair f
 rate is still 160,774 per million (231,230 at ≥80% absent), five orders of magnitude from
 Imo's target, so no pair rule rescues peptide-10-mer absence as a detector.
 
-**Environment limit, recorded rather than worked around.** The clean version of this arm is
-the same measurement against a comprehensive public index (UniRef50). It could not be run
-here: this session's egress proxy will not sustain a 9.2 GB transfer - one attempt arrived
-corrupt (10.4 GB written, gzip stream broken at record 41.2M of ~70M), a second was refused
-outright, and a 512 MB-chunked ranged download failed permanently on chunk 3 of 18 after
-five retries. So the index-coverage axis has three points, the largest of which is a local
-proxy for coverage rather than a real database. A UniRef50 or nr run remains the open item,
-and both this thread and the protein thread need it.
+**A retraction about the environment, which was my error and not the environment's.**
+An earlier version of this section reported that the clean version of this arm - the same
+measurement against a comprehensive public index - could not be run here, because the
+egress proxy would not carry UniRef50's 9.2 GB to disk. The file cannot be *stored*, and
+that part is true: one attempt arrived with the gzip stream broken, a second was refused,
+and a 512 MB-chunked ranged download failed permanently on chunk 3 of 18. But it
+*streams*, and a subsample never needs the file. `experiments/subsample_uniref.py` streams
+it and keeps nested every-10th and every-100th subsamples, and the completeness check is
+decisive rather than hopeful: UniProt's REST API reports 41,243,524 clusters for this
+release (`x-total-results` for `query=identity:0.5`), which is exactly the record count the
+stream reached - including on the first attempt, whose output had been discarded as
+prefix-biased on the strength of a `BadGzipFile` raised *after* the last record. The lesson
+is the general one for this project: a failure at the end of a stream is not evidence about
+its middle, and the cheap check (ask the source how many records there should be) was
+available the whole time.
+
+§4.4 below is that measurement. The remaining limit is real but much smaller: the far end
+of the curve, a full UniRef50 or nr index, is ~160 GB of sorted hashes and still does not
+fit, so the largest point here is a tenth of UniRef50 rather than all of it.
 
 ---
 
@@ -440,3 +451,111 @@ database and on phmmer's sensitivity at E ≤ 1e-3 - a more sensitive search wou
 the novel fraction and could lengthen or shorten blocks. Four genomes is four, not a
 survey, and all four are human-associated RNA viruses with annotated CDS. The insert
 distribution is one run from one plant with one kit.
+
+
+---
+
+## 4.4 What the residue is, once the index stops being the explanation
+
+§4.3 left 23.0% ± 0.4% of background reads with no known peptide 10-mer, and that residue
+is what an absence-based detector would actually flag, so it is worth knowing what it is.
+Two mechanisms predict it and they point opposite ways:
+
+1. **rare and unsequenced** - organisms neither in public databases nor abundant enough to
+   assemble here. If this dominates, the feature separates "abundant or known" from "rare
+   and unknown", the detection target sits on the same side as the false positives, and no
+   index fixes it.
+2. **abundant but non-coding** - a read off ribosomal RNA, a UTR or a structural RNA can
+   never match a protein index however complete, and in a total-RNA library rRNA is the
+   most abundant thing present, not the rarest.
+
+Both are testable from data already on disk, which is why this cost an afternoon rather
+than a run: every read is mapped to the sample's own assembly, and SPAdes writes per-contig
+coverage into the contig name, so abundance comes free with the mapping
+(`experiments/absence_residual.py`, 5 seeds, 39.8k reads per seed,
+`results/absence_residual/`).
+
+| | fully absent | the rest |
+|---|---|---|
+| maps to the sample's own assembly | 0.391 (0.007) | 0.928 (0.002) |
+| inside a predicted CDS, of those that map | 0.180 (0.012) | 0.725 (0.005) |
+| contig coverage, median | 115 (7) | 140 (3) |
+| on a contig below 2x | 0.055 | 0.060 |
+| mate also maps | 0.442 (0.009) | 0.912 (0.003) |
+| unmapped but mate mapped | 0.072 (0.002) | 0.028 (0.001) |
+| adapter present | 0.0004 | 0.0001 |
+| dinucleotide entropy, mean | 3.804 | 3.839 |
+
+The residue splits two ways rather than one.
+
+**39% maps, and where it maps it is not rare.** Median coverage 115 and only 5.5% below 2x,
+indistinguishable from the rest of the library, but it sits outside gene calls at 0.18
+against 0.73. That is mechanism 2's signature.
+
+**61% does not map to the sample's own assembly at all, and the mate agrees.** Only 7.2% of
+residual reads are unmapped with a mapped mate, so these are whole molecules missing from
+the assembly rather than unalignable ends of abundant ones. That is mechanism 1's
+signature, and it is the larger half.
+
+**Artefacts are not the story.** Adapter content is enriched fourfold and is 0.0004 in
+absolute terms; entropy and homopolymer distributions are flat between the groups. Worth
+recording, because a residue defined by matching nothing is exactly where this project
+expected artefacts to collect.
+
+**My advance prediction was wrong** and is recorded as such: I predicted a mapped fraction
+"well above half", on the implicit assumption that the assembly captures the library. It
+captures 93% of ordinary reads and 39% of these.
+
+### 4.5 A challenge to §4.3, and what it cost to check
+
+The sibling rRNA thread then measured something that §4.3 cannot survive unexamined: 34.5%
+of this library is ribosomal RNA by exact 31-mer containment against SILVA 138.1, and reads
+called rRNA are *less* than half as likely to be fully absent as other reads (0.125 against
+0.286). Ribosomal RNA has no protein product, so a clean index cannot match it. The
+proposed explanation was that Prodigal - a prokaryotic caller, run here over a mixed
+metatranscriptome - calls spurious genes on the highest-coverage contigs in the assembly,
+which are ribosomal, and that those spurious peptides are a large part of what made the
+sample-self index look so effective.
+
+Checked directly, by labelling the assembly rather than the reads
+(`experiments/rrna_contigs.py`, SILVA SSU+LSU NR99, exact 31-mer containment; a contig
+offers thousands of k-mers where a 107 nt read offers 77, so the call barely depends on the
+threshold):
+
+| | |
+|---|---|
+| contigs called ribosomal (hit fraction ≥ 0.5) | 5,303 of 82,856 |
+| share of assembly bases | 1.72% |
+| Prodigal coding density on them | 0.281, against 0.831 elsewhere |
+| predicted proteins on them | 388 of 79,667 |
+| **indexed residues on them** | **19,137 of 8,042,848 = 0.24%** |
+
+So the mechanism is real and small. Spurious gene calls on ribosomal contigs do enter the
+index, their coding density is a third of the rest of the assembly's, and they are a
+quarter of one percent of the residues that moved the absence rate from 86% to 22%. The
+conclusion does not depend on the threshold: loosening it to 0.3, 0.2, 0.1 and an absurd
+0.05 gives 0.62%, 0.77%, 0.96% and 1.10%. The sibling thread's own generalised version
+agrees from the other side - pyrodigal over SILVA sequences calls genes at density 0.164,
+and its composition-shuffled control calls *more*, so the calling is generic short-ORF
+behaviour rather than something ribosomal structure provokes.
+
+The challenge therefore stands as a correctly identified contaminant of the index and a
+rejected explanation of the drop. What it leaves live is a different route to the same
+observation: translated rRNA may be low-complexity and match the low-complexity stretches
+of real proteins, which no cleaning of gene calls would remove. §4.6 measures that, because
+every query k-mer in the curve carries its distinct-residue count.
+
+Two limits of this labelling, stated because they bound it in opposite directions: realised
+k-mer retention was 1 in 65 rather than the intended 1 in 8 (the low bits of an FNV-style
+hash over a 4-letter alphabet are not uniform), so each contig had fewer chances than
+designed and `hit_frac` must not be read as a coverage estimate; and exact 31-mers miss
+divergent environmental rRNA on the contig side exactly as on the read side, so 1.72% of
+bases is a floor.
+
+**The nucleotide-side comparison.** The subtraction thread measures the same subtraction in
+nucleotide space and finds the sample's own 35 MB assembly removes 83.6% of pairs on its
+own, and 40.5% on top of 0.7 GB of Kraken2 viral plus 16 GB of PlusPF
+(`results/subtract_known/`, seed 1 of 5). Both sides therefore land in the same place from
+different alphabets: the sample's own contigs are worth more than any public database we
+can reach, which is a statement about what has been deposited rather than about what is
+novel.
