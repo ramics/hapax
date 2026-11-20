@@ -1,8 +1,8 @@
 {
-  "git_sha": "034d60ecb7129a59a8c6bc9c00ff63aa5234f2af-dirty",
+  "git_sha": "17da900d0054eb9fb0cda2941590a76a4b765a27-dirty",
   "params": {
-    "seed": "1",
-    "n_seeds": "3",
+    "seed": "101",
+    "n_seeds": "15",
     "bg1": "/home/user/sweepdata/bg/SRR23973193_1.fastq.gz",
     "bg2": "/home/user/sweepdata/bg/SRR23973193_2.fastq.gz",
     "bg_pairs": "1000000",
@@ -12,11 +12,12 @@
     "read_len": "107",
     "r2_trim_start": "15",
     "threads": "4",
-    "controls": "True",
-    "modes": "",
+    "controls": "False",
+    "modes": "both",
     "cross_score": "False",
-    "rows_name": "two_lineage_rows_band.jsonl",
-    "only": "div045,div055,div065",
+    "rows_name": "two_lineage_rate.jsonl",
+    "join_observables": "False",
+    "only": "div045,div07",
     "work": "/home/user/sweepdata/twolin",
     "out": "results/abundance_sweep"
   },
@@ -65,5 +66,5 @@
     ]
   ],
   "window": 300,
-  "wall_total": 4535.2
+  "wall_total": 4923.4
 }

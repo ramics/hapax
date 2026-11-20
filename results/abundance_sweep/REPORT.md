@@ -424,3 +424,35 @@ Rescoring the existing rows needs re-assembly, about 90 runs, because the
 persisted contigs that would have made it a lookup do not exist: the 15-seed
 study was launched without `--join-observables` and the ladder runs predate the
 flag. Noted so the next thread budgets the re-run rather than the lookup.
+
+### 5.3 Fifteen seeds at two rungs: the 7.3% null is real
+
+The first result in this project to clear the repo's five-seed rule.
+`two_lineage_rate.jsonl`, 30 runs, both lineages at 3.8× each on the same fixed
+background.
+
+| Divergence | n | Crossed 1,500 nt | Wilson 95% | Longest contig |
+|---|---|---|---|---|
+| 4.50% | 15 | 6/15 = 0.40 | 0.20–0.64 | 1,520 ± 418 (1,035–2,460) |
+| 7.29% | 15 | **0/15 = 0.00** | 0.00–0.20 | 1,136 ± 197 (838–1,475) |
+
+Difference 0.40, 95% interval 0.15 to 0.65; Fisher exact two-sided P = 0.017.
+
+So the apparent dip at 7.3% was not three-seed noise after all. Fifteen runs at
+that rung produced no contig over 1,500 nt at all, and the longest anything
+reached was 1,475 nt. This is the opposite of what §5.1's permutation test
+suggested on three seeds a rung, and it is why that section says "consistent
+with constant" rather than "constant": the binary trend test across seven rungs
+had too little power to see a difference this size.
+
+**What it does and does not license.** It establishes a real difference between
+these two genome pairs, and the direction agrees with divergence. It does not
+establish that divergence is the cause, because each rung is still a single pair,
+so the contrast is confounded with pair identity exactly as §5.1 sets out — the
+4.50% pair is MG458312/PZ227553 and the 7.29% pair is PZ227608/AB044824, and
+nothing here separates "more divergent" from "these two genomes". The experiment
+that would is two or three distinct pairs per rung, selectable from the
+19,900-pair matrix, and it is the first thing to run next.
+
+Mosaic and join columns in this file are void: the study ran without
+`--join-observables`, and §5.2 withdraws those columns in any case.
