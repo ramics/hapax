@@ -508,6 +508,11 @@ that comparison is unaffected because both populations carry the same mate asymm
 the floor should be reported per mate, and a 54:46 split between mates must not be read as
 biology.
 
+The general rule this is an instance of lives in `CLAUDE.md` under Conventions - the mates
+of this library are not interchangeable, because of the 14 nt non-template trim - so that
+whoever builds the next pair-symmetric field meets it before they build it rather than after.
+What follows here is the worked example.
+
 The pooled 1.17x turned out to hide something, which the sibling thread measured on the
 k-mer side: **the two halves of that field lean towards opposite mates, and both leans are
 length artefacts.** Asymmetric absence falls on mate 2 (64:36 in identified pairs, 60:40 in
