@@ -1,0 +1,375 @@
+{
+  "seed": 1,
+  "pairs_with_axes": 99745,
+  "log_cov_band": [
+    3.9512,
+    6.5013
+  ],
+  "band_quantiles": [
+    0.4,
+    0.6
+  ],
+  "axes_source": "/home/user/hapax/results/residue_structure/coverage_axes_allpairs_s1.tsv.gz",
+  "rungs": [
+    {
+      "rung": "nothing_subtracted",
+      "cumulative_subtrahend_bytes": 0,
+      "identified": 0,
+      "not_identified": 99745,
+      "band_identified": 0,
+      "band_not_identified": 19970,
+      "auc_overall": {
+        "cov_step": null,
+        "cov_spread": null,
+        "mate_disagree": null,
+        "zero_frac": null,
+        "log_cov": null
+      },
+      "auc_within_band": {
+        "cov_step": null,
+        "cov_spread": null,
+        "mate_disagree": null,
+        "zero_frac": null,
+        "log_cov": null
+      },
+      "auc_overall_ci95": {
+        "cov_step": [
+          null,
+          null
+        ],
+        "cov_spread": [
+          null,
+          null
+        ],
+        "mate_disagree": [
+          null,
+          null
+        ],
+        "zero_frac": [
+          null,
+          null
+        ],
+        "log_cov": [
+          null,
+          null
+        ]
+      },
+      "auc_within_band_ci95": {
+        "cov_step": [
+          null,
+          null
+        ],
+        "cov_spread": [
+          null,
+          null
+        ],
+        "mate_disagree": [
+          null,
+          null
+        ],
+        "zero_frac": [
+          null,
+          null
+        ],
+        "log_cov": [
+          null,
+          null
+        ]
+      }
+    },
+    {
+      "rung": "silva",
+      "cumulative_subtrahend_bytes": 1120691813,
+      "identified": 37987,
+      "not_identified": 61758,
+      "band_identified": 8132,
+      "band_not_identified": 11838,
+      "auc_overall": {
+        "cov_step": 0.24754398393631474,
+        "cov_spread": 0.20692603169768442,
+        "mate_disagree": 0.3326983242658655,
+        "zero_frac": 0.591544110865494,
+        "log_cov": 0.1413746297888637
+      },
+      "auc_within_band": {
+        "cov_step": 0.3167724624287198,
+        "cov_spread": 0.20071381755020867,
+        "mate_disagree": 0.4314800158759086,
+        "zero_frac": 0.49846896041302624,
+        "log_cov": 0.40405585151139
+      },
+      "auc_overall_ci95": {
+        "cov_step": [
+          0.2443,
+          0.2508
+        ],
+        "cov_spread": [
+          0.2039,
+          0.2099
+        ],
+        "mate_disagree": [
+          0.3292,
+          0.3362
+        ],
+        "zero_frac": [
+          0.588,
+          0.5951
+        ],
+        "log_cov": [
+          0.1388,
+          0.1439
+        ]
+      },
+      "auc_within_band_ci95": {
+        "cov_step": [
+          0.3091,
+          0.3244
+        ],
+        "cov_spread": [
+          0.1942,
+          0.2072
+        ],
+        "mate_disagree": [
+          0.4234,
+          0.4396
+        ],
+        "zero_frac": [
+          0.4903,
+          0.5066
+        ],
+        "log_cov": [
+          0.396,
+          0.4121
+        ]
+      }
+    },
+    {
+      "rung": "own_rrna_contigs",
+      "cumulative_subtrahend_bytes": 1122104348,
+      "identified": 39501,
+      "not_identified": 60244,
+      "band_identified": 8505,
+      "band_not_identified": 11465,
+      "auc_overall": {
+        "cov_step": 0.24361102629783676,
+        "cov_spread": 0.20449730201170835,
+        "mate_disagree": 0.333203306343239,
+        "zero_frac": 0.5914910590235323,
+        "log_cov": 0.1358804645989393
+      },
+      "auc_within_band": {
+        "cov_step": 0.31968601112759665,
+        "cov_spread": 0.20514595324112211,
+        "mate_disagree": 0.4359078072389116,
+        "zero_frac": 0.4967666540269147,
+        "log_cov": 0.40314141164749295
+      },
+      "auc_overall_ci95": {
+        "cov_step": [
+          0.2404,
+          0.2468
+        ],
+        "cov_spread": [
+          0.2015,
+          0.2075
+        ],
+        "mate_disagree": [
+          0.3297,
+          0.3367
+        ],
+        "zero_frac": [
+          0.5879,
+          0.595
+        ],
+        "log_cov": [
+          0.1334,
+          0.1384
+        ]
+      },
+      "auc_within_band_ci95": {
+        "cov_step": [
+          0.3121,
+          0.3273
+        ],
+        "cov_spread": [
+          0.1987,
+          0.2116
+        ],
+        "mate_disagree": [
+          0.4278,
+          0.444
+        ],
+        "zero_frac": [
+          0.4887,
+          0.5049
+        ],
+        "log_cov": [
+          0.3952,
+          0.4111
+        ]
+      }
+    },
+    {
+      "rung": "own_identified_contigs",
+      "cumulative_subtrahend_bytes": 1137197720,
+      "identified": 74798,
+      "not_identified": 24947,
+      "band_identified": 18378,
+      "band_not_identified": 1592,
+      "auc_overall": {
+        "cov_step": 0.21256449404977382,
+        "cov_spread": 0.22325472438533245,
+        "mate_disagree": 0.22650012947098105,
+        "zero_frac": 0.6259797404900378,
+        "log_cov": 0.09507845608330721
+      },
+      "auc_within_band": {
+        "cov_step": 0.49445942165939066,
+        "cov_spread": 0.45803124270279466,
+        "mate_disagree": 0.493265243400592,
+        "zero_frac": 0.5006426325774044,
+        "log_cov": 0.4950830849207404
+      },
+      "auc_overall_ci95": {
+        "cov_step": [
+          0.2097,
+          0.2154
+        ],
+        "cov_spread": [
+          0.2203,
+          0.2262
+        ],
+        "mate_disagree": [
+          0.2235,
+          0.2295
+        ],
+        "zero_frac": [
+          0.6218,
+          0.6301
+        ],
+        "log_cov": [
+          0.0933,
+          0.0969
+        ]
+      },
+      "auc_within_band_ci95": {
+        "cov_step": [
+          0.4797,
+          0.5092
+        ],
+        "cov_spread": [
+          0.4437,
+          0.4724
+        ],
+        "mate_disagree": [
+          0.4785,
+          0.508
+        ],
+        "zero_frac": [
+          0.4859,
+          0.5154
+        ],
+        "log_cov": [
+          0.4803,
+          0.5098
+        ]
+      }
+    },
+    {
+      "rung": "all_sample_contigs_1kb",
+      "cumulative_subtrahend_bytes": 1714140791,
+      "identified": 85569,
+      "not_identified": 14176,
+      "band_identified": 19733,
+      "band_not_identified": 237,
+      "auc_overall": {
+        "cov_step": 0.11702299921740186,
+        "cov_spread": 0.11563983694320112,
+        "mate_disagree": 0.13269706905838957,
+        "zero_frac": 0.6397772091217186,
+        "log_cov": 0.061154205840430756
+      },
+      "auc_within_band": {
+        "cov_step": 0.46746791181257125,
+        "cov_spread": 0.4240882661163666,
+        "mate_disagree": 0.44422972847856435,
+        "zero_frac": 0.48029057110740625,
+        "log_cov": 0.4981421812419428
+      },
+      "auc_overall_ci95": {
+        "cov_step": [
+          0.1148,
+          0.1193
+        ],
+        "cov_spread": [
+          0.1134,
+          0.1179
+        ],
+        "mate_disagree": [
+          0.1302,
+          0.1352
+        ],
+        "zero_frac": [
+          0.6346,
+          0.645
+        ],
+        "log_cov": [
+          0.0597,
+          0.0626
+        ]
+      },
+      "auc_within_band_ci95": {
+        "cov_step": [
+          0.4314,
+          0.5036
+        ],
+        "cov_spread": [
+          0.3895,
+          0.4587
+        ],
+        "mate_disagree": [
+          0.4089,
+          0.4796
+        ],
+        "zero_frac": [
+          0.4438,
+          0.5168
+        ],
+        "log_cov": [
+          0.4612,
+          0.5351
+        ]
+      }
+    }
+  ],
+  "change_from_first_to_last_rung": {
+    "cov_step": {
+      "delta_auc_overall": -0.1305,
+      "delta_auc_within_band": 0.1507
+    },
+    "cov_spread": {
+      "delta_auc_overall": -0.0913,
+      "delta_auc_within_band": 0.2234
+    },
+    "mate_disagree": {
+      "delta_auc_overall": -0.2,
+      "delta_auc_within_band": 0.0127
+    },
+    "zero_frac": {
+      "delta_auc_overall": 0.0482,
+      "delta_auc_within_band": -0.0182
+    },
+    "log_cov": {
+      "delta_auc_overall": -0.0802,
+      "delta_auc_within_band": 0.0941
+    }
+  },
+  "reading_rule": [
+    "witnesses: the shape axes' AUC falls INSIDE the fixed band as well as overall",
+    "abundance: the shape axes hold their AUC inside the band while the overall number falls, because log_cov is the dominant axis and partly definitional",
+    "the band is fixed once from the rung-zero population and reused, so the comparison is not against a moving definition",
+    "an AUC below 0.5 means the axis scores the IDENTIFIED pairs higher, which is the familiarity polarity rather than a weak result",
+    "the unidentified arm inside the band shrinks as the subtrahend grows, to a few hundred pairs at the last rung, so read the intervals: the rung to trust for the in-band claim is the last one whose smaller arm is still in the thousands"
+  ],
+  "wall_seconds": 63.91064633499991
+}
