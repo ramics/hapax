@@ -52,6 +52,15 @@ Record them and say so rather than tuning a simulator until it looks good.
 - Any reported number is reproducible from a committed script plus a seed.
 - Headline results run across at least 5 seeds, reporting spread. A single-seed conclusion
   from simulated data is noise.
+- **The two mates are not interchangeable, and any field computed symmetrically over a pair
+  inherits that.** Mate 2 of SRR23973193 carries ~14 nt of non-template 5' sequence which
+  every experiment trims, so R2 is 93 nt against R1's 107 — 62 scorable 31-mers against 76 —
+  and it maps at a different rate. Measured consequences so far: asymmetric absence leans to
+  R2 (64:36) while a fixed-width error signature leans to R1 (58:42), opposite directions
+  from one cause (`results/residue_structure/REPORT.md` §6b); mate novelty and mapping rates
+  differ likewise (`results/residue_structure/`, `results/subtract_known/`). Report a
+  pair-symmetric field per mate, or show the length-matched control. A pooled number here
+  averages two biases that point opposite ways and cannot be unpicked afterwards.
 - Percentages of a library are of read pairs, the occurrence-weighted unit. Never average
   over distinct k-mers: for conserved sequence the two differ by two orders of magnitude, and
   a read sees the occurrence-weighted one.
