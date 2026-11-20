@@ -8,7 +8,7 @@
     "s4.npz",
     "s5.npz"
   ],
-  "index": "viral + Swiss-Prot, 221M peptide 10-mers",
+  "index_arm": "viral_sprot",
   "pairs_per_seed": 39928,
   "seeds": 5,
   "background_fully_absent_single_read": {
@@ -36,7 +36,7 @@
       "single_read_rate_per_million": 938045.7141230744,
       "both_mates_rate_per_million": 925035.6679317706,
       "independence_would_give_per_million": 879929.7617846688,
-      "conjunction_gain_vs_independence": 1.0512608029709305,
+      "excess_over_independence": 1.0512608029709305,
       "over_budget_factor_vs_1_per_million": 925035.6679317706
     },
     {
@@ -45,7 +45,7 @@
       "single_read_rate_per_million": 919489.9716845362,
       "both_mates_rate_per_million": 891205.4683016277,
       "independence_would_give_per_million": 845461.808028429,
-      "conjunction_gain_vs_independence": 1.054104939855143,
+      "excess_over_independence": 1.054104939855143,
       "over_budget_factor_vs_1_per_million": 891205.4683016277
     },
     {
@@ -54,7 +54,7 @@
       "single_read_rate_per_million": 862890.9641431131,
       "both_mates_rate_per_million": 813300.3638228283,
       "independence_would_give_per_million": 744580.8159998313,
-      "conjunction_gain_vs_independence": 1.0922929336162384,
+      "excess_over_independence": 1.0922929336162384,
       "over_budget_factor_vs_1_per_million": 813300.3638228283
     }
   ]

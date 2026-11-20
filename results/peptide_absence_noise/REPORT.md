@@ -33,14 +33,17 @@ because a failure here would kill the direction at zero data cost.
    from an impossible T ≥ 26 of 26 on a single read to T ≥ 16 of 26 on a pair. **But the
    error term is not what sets the floor.** PR #10 measured the total mate correlation of
    false flags on real Berlin pairs at ρ_fp = 0.77–0.98, with a 0.00 shuffled control, and
-   found the both-mates rule at or below break-even. Measured against real Berlin
-   background with a viral + Swiss-Prot index, **§9's own T ≥ 16 threshold is crossed by
-   925,036 pairs per million against a target of 1** (§10). The 16-of-26 figure is an
-   error-only bound and is not an operating point.
+   found the both-mates rule at or below break-even on a public-database index. Measured
+   against real Berlin background, **§9's own T ≥ 16 threshold is crossed by 925,036 pairs
+   per million against a target of 1** (§10), falling to 305,708/M once the index covers
+   the sample's own proteins (§11). The 16-of-26 figure is an error-only bound and is not
+   an operating point. §11 also revises the conjunction verdict: it is dead at public-index
+   coverage, not in general, and mate width is what makes it worth having.
 7. **So peptide 10-mer absence does not reach one per million on wastewater, and is not
-   close** (§10). 86% of background reads have no known peptide 10-mer at all: absence
-   there means "wastewater", not "novel virus". This is the ORF-likeness polarity failure
-   one level up — the background has the property we were treating as the signal.
+   close** (§10). Against the best index reachable here it still gives 160,774 false pairs
+   per million at the strictest threshold the score can express — five orders out. The
+   residual false positives are reads from organisms that are rare **and** unsequenced,
+   which is the same description as the target, and no index fixes that (§11).
 
 ## 2. Synonymous shielding
 
@@ -244,6 +247,65 @@ and valuable for absence scores, because error-driven absence is mate-specific. 
 component of rho_fp for peptide absence is not merely low, it is zero. What remains to
 measure there is the organism-driven component, which is the same quantity step two needs.
 
+
+## 11. Correction: the 86% was database incompleteness, not wastewater
+
+§10 said that 86% of Berlin background reads have no known peptide 10-mer, and concluded
+that "absence means wastewater, not novel virus" — the ORF-likeness polarity failure one
+level up. **That mechanism claim was wrong and is withdrawn.** PR #10 tested it and the
+answer is database coverage.
+
+UniRef50 could not be fetched through this sandbox's proxy, so they ran a sharper arm
+instead: index the proteins Prodigal predicts from the sample's **own assembly** — 79,667
+proteins, 8.0 Maa, about +3% k-mers on top of viral + Swiss-Prot. I re-derived the
+thresholds from their per-pair scores with the same script, both arms, 5 seeds:
+
+| | viral + Swiss-Prot (221M k-mers) | + sample assembly (8 Maa more) |
+|---|---|---|
+| background fully absent, single read | 86.35% | **23.43%** |
+| background fully absent, both mates | 81.33% | 16.08% |
+| mate correlation, unconditional | 0.860 | 0.650 |
+| T ≥ 16 of 26, both mates | 925,036/M | 305,708/M |
+| T ≥ 26 of 26, both mates | 813,300/M | **160,774/M** |
+
+8 Maa drawn from the sample did roughly forty times what 200 Maa of Swiss-Prot did. The
+organisms producing the absence are in the sample's own contigs; they are simply not in
+public protein databases. So the correct statement is **absence means "not in public
+protein databases"**, and the ORF-likeness analogy does not hold: with adequate coverage
+the score has real range rather than being saturated by the background.
+
+**Two of §10's conclusions change, and one does not.**
+
+*Changed — the mechanism.* Withdrawn as above.
+
+*Changed — the conjunction.* §10 took the both-mates rule as dead. It is dead **at the
+coverage public databases give you**, where saturation was hiding the structure. With range
+in the score, ρ_fp falls steeply with mate separation — PR #10 measures 0.855 at insert
+107–150 against 0.284 at 400–600, shuffled floor 0.001 — and their both-mates merit runs
+1.14 at insert 107, 2.25 at 300, 1.77 at 500, i.e. above break-even. The conjunction is
+worth having, and mate width is what makes it worth having. (Note on the table above: the
+"excess over independence" column in the JSON is not a gain. A value above 1 means the
+observed both-mates rate exceeds what independent mates would give, so it measures
+correlation working against the conjunction; merit is the separate quantity PR #10
+computes, and it can exceed 1 while this does too.)
+
+*Unchanged — the verdict at one per million.* 160,774 false pairs per million at the
+strictest threshold the score can express is five orders of magnitude from the target. A
+64-point improvement in background absence bought about half an order. The kill stands.
+
+**Why no index closes the remaining gap.** The residual background that is still fully
+absent after indexing the sample's own assembly is, by construction, reads from organisms
+that are neither in public databases nor abundant enough to assemble here — rare and
+unsequenced. A novel virus at one in a million is also rare and unsequenced. The feature
+separates *abundant-or-known* from *rare-and-unknown*, and both the target and the
+irreducible false positives sit on the same side of that split. That is not an index-size
+problem, because the index that would fix it would have to contain organisms nobody has
+sequenced. This is a narrower and better-supported claim than §10's, and it is what should
+be carried forward.
+
+**Standing against my own prediction.** §10 recorded in advance that the index-coverage
+curve would confirm the kill. It did, on the thing that matters, and it refuted the
+mechanism I gave for it. Both halves are recorded rather than the flattering one.
 
 ## 10. Reconciliation with PR #10, which measured the total correlation
 
