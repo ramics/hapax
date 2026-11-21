@@ -121,6 +121,20 @@ def _best_significant(row: dict, key: str):
     return None if best is None else best.get(key)
 
 
+def _one(rundir: Path, pattern: str):
+    """The single matching file in a run directory, or None.
+
+    A run holds at most one of each of these per seed and the page reads one seed, so a
+    glob with a first match is the whole lookup. Returning None rather than raising is
+    deliberate: the panels that use these files print what is missing and which script
+    writes it, which is more use to a reader than a traceback at build time.
+    """
+    hits = sorted(rundir.glob(pattern))
+    if not hits:
+        return None
+    return json.loads(hits[0].read_text())
+
+
 def _trim_ranking(R: dict, seed: int, cards: int = 400, per_facet: int = 60,
                   points: int = 6000) -> dict:
     """Keep the page readable when the ranking covers the whole residue.
@@ -245,6 +259,11 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int) -> d
         "census": load(rundir / "census.json"),
         "calibration_ladder": load(rundir / "calibration_ladder.json"),
         "blind_spots": (load(rundir / "blind_spots.json") or {}).get("blind_spots"),
+        # The two public-health files. Absent is a legitimate state and the page says so
+        # rather than drawing an empty panel: a run made before these stages existed is
+        # still a valid run of the stages it had.
+        "profile": _one(rundir, "public_health_profile_s*.json"),
+        "strain_divergence": _one(rundir, "known_strain_divergence_s*.json"),
         # Accession to organism, from the same local FASTA the DIAMOND database was built
         # from. Absent is a legitimate state: the page then shows the accession alone
         # rather than inventing a label.
@@ -399,6 +418,38 @@ details > summary { cursor: pointer; font-size: 13px; color: var(--dim); }
 @keyframes fanin { from { opacity: 0 } }
 .fanrib { animation: fanin 0.7s ease both; }
 @media (prefers-reduced-motion: reduce) { .fanrib { animation: none } }
+.panelgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 0.9rem 1.4rem; margin: 0.7rem 0; }
+.pghead { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--dim); margin: 0.2rem 0 0.35rem; }
+.prow { padding: 0.28rem 0; border-bottom: 1px solid var(--edge); font-size: 0.84rem; }
+.prow .pname { color: var(--dim); }
+.prow.found .pname b { color: var(--fg); font-weight: 600; }
+.prow .pval { font-size: 0.78rem; margin-top: 0.05rem; }
+.prow:not(.found) .pval { font-size: 0.76rem; }
+.chip { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.05em;
+  border: 1px solid var(--edge); border-radius: 3px; padding: 0.02rem 0.26rem;
+  color: var(--dim); white-space: nowrap; }
+.bar.big { height: 30px; }
+.twocol { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.4rem; margin-top: 0.9rem; }
+.trow { display: grid; grid-template-columns: 1fr 70px 62px 58px; gap: 0.5rem;
+  align-items: center; font-size: 0.82rem; padding: 0.11rem 0; }
+.tname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tbar { height: 9px; background: var(--edge); border-radius: 2px; overflow: hidden; }
+.tbar span { display: block; height: 100%; }
+.tnum, .tpct { text-align: right; font-family: var(--mono); font-size: 0.75rem; }
+.tpct { color: var(--dim); }
+.drows { display: flex; flex-direction: column; gap: 0.25rem; margin: 0.6rem 0; }
+.drow { display: grid; grid-template-columns: 1fr 160px 58px 1.1fr; gap: 0.6rem;
+  align-items: center; font-size: 0.84rem; padding: 0.2rem 0;
+  border-bottom: 1px solid var(--edge); }
+.dbar { height: 10px; background: var(--edge); border-radius: 2px; overflow: hidden; }
+.dbar span { display: block; height: 100%; }
+.dnum { text-align: right; }
+.dmeta { font-size: 0.76rem; }
+.cards3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.8rem; margin: 0.7rem 0; }
 .bites { display: flex; flex-direction: column; gap: 0.3rem; }
 .bite { display: grid; grid-template-columns: 15rem 1fr 6rem 5rem; gap: 0.6rem;
   align-items: center; font-size: 12px; }
@@ -578,16 +629,31 @@ function interval(iv) {
 (function () {
   const r = D.run || {};
   const h = el('header', null, '');
-  h.append(el('h1', null, 'Hapax run viewer'));
   const inp = (r.inputs || {});
+  // Name the sample, not the tool. Whoever opens this is looking at one water on one
+  // day, and the accession is the only thing that lets them find it again or compare it
+  // with another; "run viewer" told them which program wrote the page.
+  const acc = ((inp.r1 || '').match(/([A-Z]{3}\d{6,})/) || [])[1];
+  h.append(el('h1', null, acc ? esc(acc) + ', untreated wastewater'
+                              : 'Hapax run viewer'));
   h.append(el('p', 'lede',
-    'Everything below is read from one run directory. Subtract what is identifiable, ' +
-    'keep what is left, and report each number beside the operating point and ' +
-    'calibration that make it readable. There is no novelty score on this page: an index ' +
-    'can say whether something is already known and cannot say whether it is new.'));
-  h.append(opChips({seed: r.seed, pairs: (D.parameters || {}).pairs,
-    'mate 2 trim': inp.trim_r2, 'git sha': (r.git_sha || '').slice(0, 10),
-    'tree dirty': String(!!r.tree_dirty), complete: String(!!r.complete)}));
+    'What is in this water, what we screened for and did not find, and how far the ' +
+    'things we recognise have drifted from the references. Then the larger part: the ' +
+    'sequence nothing could name, and what is and is not known about it. Every number ' +
+    'is printed beside the operating point and the control that make it readable, and ' +
+    'nothing here scores novelty: an index can say whether something is already known ' +
+    'and cannot say whether it is new.'));
+  // Two scopes on one page, said once at the top. The classified profile and the
+  // residue search read every pair; the cascade reads a block, because it cannot be run
+  // over the library in this container. A reader who assumes one scope for all of it
+  // will misread the panels against each other.
+  const lib = (D.profile || {}).library_pairs;
+  h.append(opChips({sample: acc, library: lib ? lib.toLocaleString() + ' read pairs' : null,
+    'library type': 'RNA, untargeted shotgun',
+    'cascade block': ((D.parameters || {}).pairs || 0).toLocaleString() + ' pairs',
+    seed: r.seed, 'mate 2 trim': inp.trim_r2,
+    'git sha': (r.git_sha || '').slice(0, 10),
+    complete: String(!!r.complete)}));
   if (r.incomplete_because && r.incomplete_because.length) {
     const d = el('div', 'note');
     d.innerHTML = '<b>Incomplete run.</b> ' +
@@ -2077,16 +2143,334 @@ function interval(iv) {
   p.append(note);
   app.append(p);
 })();
+
+// ---------- public health: what we screened for
+// The first thing a public-health reader asks of a sewage sample is not what is novel in
+// it. It is whether anything they watch for is present, and what was looked for and not
+// found. An empty row is a result here, so every panel entry is drawn whether or not it
+// was seen.
+(function () {
+  const P = D.profile;
+  const p = panel('What we screened for',
+    'A committed list of organisms a public-health reader would want asked about, every ' +
+    'one reported whether it was found or not. Found means reads in this library share ' +
+    'enough k-mers with a reference for the classifier to place them there. It is not a ' +
+    'diagnosis, not a viable organism, and not a case.');
+  if (!P) {
+    p.append(el('div', 'absent', 'public_health_profile_s*.json absent: run ' +
+      'experiments/public_health_profile.py over this library'));
+    app.append(p); return;
+  }
+  const CONF = '0.1';
+  const at = P.at_confidence[CONF] || {};
+  const rows = at.panel || [];
+  const hit = rows.filter(r => r.detected);
+  const miss = rows.filter(r => !r.detected);
+  const lo = (P.at_confidence['0.2'] || {}).panel || [];
+  const hi = (P.at_confidence['0.0'] || {}).panel || [];
+  const byName = l => { const m = {}; l.forEach(r => { m[r.name] = r; }); return m; };
+  const LO = byName(lo), HI = byName(hi);
+
+  const nul = P.shuffled_null || {};
+  const head = el('div', 'callout');
+  head.innerHTML = '<b>' + hit.length + ' of ' + rows.length + ' found, ' + miss.length +
+    ' not found</b>, over ' + (at.pairs || 0).toLocaleString() + ' read pairs at ' +
+    'classifier confidence ' + CONF + '. <b>That threshold is not a preference, it is ' +
+    'the calibration:</b> the same panel run over this library with every read shuffled ' +
+    'lights up ' + ((nul['0.0'] || {}).panel_rows_detected) + ' of ' + rows.length +
+    ' rows at confidence 0 and ' + ((nul[CONF] || {}).panel_rows_detected) + ' at ' +
+    CONF + '. Counts at all three thresholds are on every found row, smallest last; a ' +
+    'detection that survives the strictest one is the strongest claim here.';
+  p.append(head);
+
+  // One in N, not a percentage. Every rate on this panel is of the order of one pair in
+  // a million, where a percentage to two places prints 0.00% for everything and a reader
+  // learns nothing. One in N is also the unit this project talks in.
+  const oneIn = x => {
+    if (!x) return '-';
+    const n = 1 / x;
+    return n >= 1e6 ? '1 in ' + (n / 1e6).toFixed(1) + ' million'
+         : n >= 1e3 ? '1 in ' + Math.round(n / 1e3) + ',000'
+         : '1 in ' + Math.round(n);
+  };
+  const grid = el('div', 'panelgrid');
+  // The panel file's own order, which groups the enteric viruses wastewater
+  // surveillance was built on before the organisms it was later extended to. Sorting by
+  // how many were found would put the sample in charge of the running order.
+  const groups = [];
+  rows.slice().sort((a, b) => rows.indexOf(a) - rows.indexOf(b))
+    .forEach(r => { if (groups.indexOf(r.group) < 0) groups.push(r.group); });
+  groups.forEach(g => {
+    const mine = rows.filter(r => r.group === g);
+    const sec = el('div', 'pgroup');
+    sec.append(el('div', 'pghead', esc(g) + ' <span class="dim">' +
+      mine.filter(r => r.detected).length + ' of ' + mine.length + '</span>'));
+    mine.forEach(r => {
+      const row = el('div', 'prow' + (r.detected ? ' found' : ''));
+      const strict = (LO[r.name] || {}).pairs || 0;
+      if (r.detected) {
+        const sweep = [(HI[r.name] || {}).pairs || 0, r.pairs, strict];
+        row.innerHTML = '<div class="pname"><b>' + esc(r.name) + '</b>' +
+          (strict ? ' <span class="chip">holds at 0.2</span>' : '') + '</div>' +
+          '<div class="pval"><span class="mono">' + r.pairs.toLocaleString() +
+          '</span> pair' + (r.pairs === 1 ? '' : 's') + ', ' + oneIn(r.fraction) +
+          '<span class="dim mono"> &nbsp;' + sweep.join(' / ') + '</span></div>';
+      } else {
+        row.innerHTML = '<div class="pname">' + esc(r.name) + '</div>' +
+          '<div class="pval dim">not found, under ' +
+          oneIn(r.upper_bound_if_absent) + '</div>';
+      }
+      row.title = r.why_on_the_panel;
+      sec.append(row);
+    });
+    grid.append(sec);
+  });
+  p.append(grid);
+  const foot = el('div', 'note');
+  foot.innerHTML = '<b>What a not-found row does not mean.</b> ' + esc(P.panel_note);
+  p.append(foot);
+  app.append(p);
+})();
+
+// ---------- public health: composition, with the threshold as a control
+(function () {
+  const P = D.profile;
+  const p = panel('What the water is made of',
+    'Every read pair in the library, put in the broadest group the classifier can place ' +
+    'it in. Move the threshold and watch the picture move: that movement is the single ' +
+    'most important thing to understand about any number like this one.');
+  if (!P) {
+    p.append(el('div', 'absent', 'public_health_profile_s*.json absent'));
+    app.append(p); return;
+  }
+  const COL = {Viruses: 'var(--g-phage)', Bacteria: 'var(--g-vert)',
+    Archaea: 'var(--g-fungal)', Eukaryota: 'var(--g-plant)',
+    unclassified: 'var(--null)', 'classified, above superkingdom': 'var(--g-unknown)'};
+  const confs = Object.keys(P.at_confidence).sort();
+  const ctl = el('div', 'controls');
+  const sel = document.createElement('select');
+  confs.forEach(c => { const o = document.createElement('option');
+    o.value = c; o.textContent = 'confidence ' + c; sel.append(o); });
+  sel.value = confs.indexOf('0.1') >= 0 ? '0.1' : confs[0];
+  ctl.append(el('span', 'dim', 'classifier threshold'), sel);
+  p.append(ctl);
+
+  const bar = el('div', 'bar big');
+  const lg = el('div', 'legend');
+  // The whole library is mostly unclassified at any usable threshold, so a single bar
+  // is one grey block and tells a reader nothing about the part that was placed. The
+  // second bar renormalises over the classified part alone and is labelled as such:
+  // it answers "of what we could name, how much is viral", which is the question, and
+  // it must never be read as a share of the library.
+  const bar2 = el('div', 'bar big');
+  const lg2 = el('div', 'legend');
+  const cols = el('div', 'twocol');
+  p.append(el('div', 'pghead', 'every read pair in the library'), bar, lg,
+           el('div', 'pghead', 'the classified part alone, renormalised'), bar2, lg2,
+           cols);
+
+  function taxaList(title, list, total, col) {
+    const box = el('div', 'tcol');
+    box.append(el('div', 'pghead', title));
+    if (!list || !list.length) {
+      box.append(el('div', 'dim', 'nothing placed in this group'));
+      return box;
+    }
+    const top = list[0].pairs || 1;
+    list.slice(0, 12).forEach(t => {
+      const r = el('div', 'trow');
+      const b = el('div', 'tbar');
+      const f = document.createElement('span');
+      f.style.width = (100 * t.pairs / top) + '%';
+      f.style.background = col;
+      b.append(f);
+      // Counts, with a percentage whose precision follows the value. A column of
+      // "0.00%" is what a fixed two places does to a profile whose tail is most of it.
+      const pc = 100 * t.pairs / total;
+      const sig = pc >= 1 ? pc.toFixed(2)
+                : pc >= 0.01 ? pc.toFixed(3) : pc.toExponential(1);
+      r.append(el('div', 'tname', esc(t.name)), b,
+        el('div', 'tnum', t.pairs.toLocaleString()),
+        el('div', 'tpct dim', sig + '%'));
+      r.title = t.pairs.toLocaleString() + ' pairs of ' + total.toLocaleString();
+      box.append(r);
+    });
+    return box;
+  }
+
+  function draw() {
+    const a = P.at_confidence[sel.value] || {};
+    const total = a.pairs || 1;
+    bar.innerHTML = '';
+    (a.by_superkingdom || []).forEach(g => {
+      const sp = document.createElement('span');
+      sp.style.width = (100 * g.fraction) + '%';
+      sp.style.background = COL[g.group] || 'var(--null)';
+      sp.title = g.group + ': ' + g.pairs.toLocaleString() + ' pairs (' +
+        (100 * g.fraction).toFixed(2) + '%)';
+      bar.append(sp);
+    });
+    const cl = (a.by_superkingdom || []).filter(g => g.group !== 'unclassified');
+    const clTot = cl.reduce((x, g) => x + g.pairs, 0) || 1;
+    bar2.innerHTML = '';
+    cl.forEach(g => {
+      const sp = document.createElement('span');
+      sp.style.width = (100 * g.pairs / clTot) + '%';
+      sp.style.background = COL[g.group] || 'var(--null)';
+      sp.title = g.group + ': ' + (100 * g.pairs / clTot).toFixed(2) +
+        '% of the classified part';
+      bar2.append(sp);
+    });
+    lg2.innerHTML = cl.map(g =>
+      '<span><i style="background:' + (COL[g.group] || 'var(--null)') + '"></i>' +
+      esc(g.group) + ' <b>' + (100 * g.pairs / clTot).toFixed(1) + '%</b></span>')
+      .join('') + '<span class="dim">of the ' + clTot.toLocaleString() +
+      ' pairs placed at all</span>';
+    lg.innerHTML = (a.by_superkingdom || []).map(g =>
+      '<span><i style="background:' + (COL[g.group] || 'var(--null)') + '"></i>' +
+      esc(g.group) + ' <b>' + (100 * g.fraction).toFixed(2) + '%</b> <span class="dim ' +
+      'mono">' + g.pairs.toLocaleString() + '</span></span>').join('');
+    cols.innerHTML = '';
+    cols.append(taxaList('viruses, most reads first', (a.top_taxa || {}).Viruses, total,
+                         COL.Viruses),
+                taxaList('bacteria, most reads first', (a.top_taxa || {}).Bacteria, total,
+                         COL.Bacteria));
+  }
+  sel.onchange = draw; draw();
+
+  const note = el('div', 'callout');
+  // The JSON fields are sentences without terminators, so the page supplies them
+  // rather than the files carrying page punctuation.
+  note.innerHTML = '<b>This is RNA, not organisms.</b> ' + esc(P.reading) +
+    '. <b>And the threshold is the measurement.</b> ' + esc(P.bias) + '.';
+  p.append(note);
+  app.append(p);
+})();
+
+// ---------- public health: known viruses, reference or drifted
+(function () {
+  const S = D.strain_divergence;
+  const p = panel('Known viruses: the reference, or a drifted strain',
+    'For each virus this sample assembled, how far its own sequence has drifted from the ' +
+    'closest reference protein. Low identity over a LONG alignment is a divergent strain ' +
+    'and is the row worth attention; low identity over a short one says nothing and is ' +
+    'marked unreadable rather than scored.');
+  if (!S) {
+    p.append(el('div', 'absent', 'known_strain_divergence_s*.json absent: run ' +
+      'experiments/known_strain_divergence.py'));
+    app.append(p); return;
+  }
+  const taxa = (S.taxa || []).filter(t => t.median_identity_percent != null);
+  const head = el('div', 'callout');
+  const div = taxa.filter(t => t.median_identity_percent < 90);
+  head.innerHTML = '<b>' + taxa.length + ' taxa have an alignment long enough to read an ' +
+    'identity from, and ' + div.length + ' of them sit below 90% identity to their ' +
+    'closest reference protein.</b> This measures drift from the DATABASE. It is blind ' +
+    'to strain mixtures inside the sample, because an assembler fuses lineages below ' +
+    'about 3.8% divergence at any depth.';
+  p.append(head);
+  // Most drifted first. The file is ordered by assembled mass, which is the right
+  // order for an archive and the wrong one here: a reader opening this panel is asking
+  // which of the things we recognise has moved furthest from the reference.
+  const list = el('div', 'drows');
+  taxa.slice().sort((a, b) => a.median_identity_percent - b.median_identity_percent)
+    .slice(0, 24).forEach(t => {
+    const r = el('div', 'drow');
+    const far = t.median_identity_percent < 90;
+    r.innerHTML = '<div class="dname"><b>' + esc(t.name) + '</b>' +
+      (t.on_the_panel ? ' <span class="chip">on the panel</span>' : '') + '</div>' +
+      '<div class="dbar"><span style="width:' + t.median_identity_percent + '%;' +
+      'background:' + (far ? 'var(--residue)' : 'var(--identified)') + '"></span></div>' +
+      '<div class="dnum mono">' + num(t.median_identity_percent, 1) + '%</div>' +
+      '<div class="dmeta dim">over ' + t.median_aligned_aa + ' aa, ' + t.contigs +
+      ' contig' + (t.contigs === 1 ? '' : 's') + ', longest ' +
+      t.longest_nt.toLocaleString() + ' nt</div>';
+    r.title = t.reading;
+    list.append(r);
+  });
+  p.append(list);
+  const bs = el('div', 'note');
+  bs.innerHTML = '<b>What this cannot see.</b> ' +
+    (S.blind_spots || []).map(b => esc(b)).join('. ') + '.';
+  p.append(bs);
+  app.append(p);
+})();
+
+// ---------- public health: the part nothing could name
+// The whole of the rest of this page is about this pile. On the front page it gets one
+// panel and a number, because a public-health reader needs to know it exists and how big
+// it is before they need to know how it was characterised.
+(function () {
+  const R = D.ranking, K = R && R.kind_summary, b = (D.tier_table || {}).breakdown;
+  if (!K || !b) return;
+  const p = panel('What nothing could name',
+    'The reads no index places, which on this library is most of them. This is the ' +
+    'research question the rest of this page is about; here it is as one number and ' +
+    'what is known about it.');
+  const big = el('div', 'cards3');
+  const card = (v, l, c) => {
+    const d = el('div');
+    const n = el('div', 'bignum', v); if (c) n.style.color = c;
+    d.append(n); d.append(el('div', 'biglab', l));
+    return d;
+  };
+  big.append(
+    card(pct(b.residual.point), 'of the library survives every index the cascade runs',
+         'var(--residue)'),
+    card(pct(1 - (K.named / (K.searched || 1))),
+         'of those reads point at nothing nameable even in protein', 'var(--residue)'),
+    card(pct((b.identified || {}).point), 'identifiable, which is what gets subtracted',
+         'var(--identified)'));
+  p.append(big);
+  // TWO NUMBERS ON THIS PAGE LOOK LIKE A CONTRADICTION AND ARE NOT. The panel above
+  // classifies 6.9% of the library; the cascade calls 77% of it identifiable. A reader
+  // who meets both and is not told why will not trust either, so the reconciliation is
+  // computed here from the same tier table rather than left as an exercise.
+  const cur = (D.tier_table || {}).curve || [];
+  const tier = k => (cur.filter(c => c.tier === k)[0] || {});
+  const rr = tier('rrna').tier_alone_removed;
+  const own = tier('selfasm_sample_contigs_identified_norrna').marginal_removed;
+  const k2 = tier('k2_pluspf08').tier_alone_removed;
+  const P2 = D.profile;
+  if (rr != null && own != null) {
+    const rec = el('div', 'callout');
+    rec.innerHTML = '<b>Why this page says both 6.9% classified and ' +
+      pct((D.tier_table.breakdown || {}).identified.point) + ' identifiable.</b> They ' +
+      'are different questions. Naming a read means placing it on a taxon, which the ' +
+      'classifier does for ' +
+      (P2 ? pct(1 - (P2.at_confidence['0.1'].by_superkingdom
+        .filter(g => g.group === 'unclassified')[0] || {}).fraction) : '-') +
+      ' of pairs. Recognising a read means matching it to sequence we have seen, which ' +
+      'is a much weaker requirement and covers far more: ' + pct(rr) + ' of this ' +
+      'library matches ribosomal RNA and a further ' + pct(own) + ' matches contigs ' +
+      'assembled from this very sample. Neither of those carries a name. <b>Most of ' +
+      'what we can remove as known, we remove by matching sequence nobody has named.</b> ' +
+      'The two instruments agree where they overlap: the same Kraken2 index removes ' +
+      pct(k2) + ' inside the cascade.';
+    p.append(rec);
+  }
+
+  const note = el('div', 'callout');
+  note.innerHTML = '<b>Unnamed is not novel.</b> An index can say whether something is ' +
+    'already known; it cannot say whether it is new, because any score built from a ' +
+    'search tracks distance to the database. What is measured instead, in the detail ' +
+    'below: this pile is not artefact, holds no abundant hidden genome, and sits at a ' +
+    'median depth of one read, which is below every instrument that needs a second copy.';
+  p.append(note);
+  app.append(p);
+})();
 // ---------- summary and detail
 // Runs last, after every panel has rendered. It reorganises rather than regenerates: the
 // detail panels keep the markup they were built with and are only moved inside a
 // disclosure, so a figure can never disagree with the summary that cites it.
 (function () {
-  const SUMMARY = ['What is in the water', 'How the library splits',
-                   'Each index takes a bite',
-                   'Phage, virus, or something living',
-                   'What a leftover read sits next to', 'Layering the leftovers',
-                   'Worth a second look', 'Where the relatives sit'];
+  // The front page answers a public-health reader's questions in the order they ask
+  // them. Everything else on this page is how those answers were arrived at, and goes
+  // below the fold: it was all on the front page before, and the front page was a
+  // method report wearing a sample report's clothes.
+  const SUMMARY = ['What we screened for', 'What the water is made of',
+                   'Known viruses: the reference, or a drifted strain',
+                   'What nothing could name'];
   const panels = Array.prototype.filter.call(app.children,
     n => n.tagName === 'SECTION' && n.classList.contains('panel'));
   const detail = panels.filter(n => {
