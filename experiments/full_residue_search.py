@@ -36,6 +36,7 @@ number here is therefore reported as its own instrument, never merged with that 
 from __future__ import annotations
 
 import argparse
+import collections
 import gzip
 import json
 import statistics
@@ -55,6 +56,12 @@ from subtract_known import provenance  # noqa: E402
 SIGNIFICANT_EVALUE = 1e-5
 
 
+def say(msg: str) -> None:
+    """Progress on stderr. A run of this length is unreadable without it, and the
+    per-index seconds are what price the next one."""
+    print(f"[{time.strftime('%H:%M:%S')}] {msg}", file=sys.stderr, flush=True)
+
+
 def pair_class(class1: np.ndarray, class2: np.ndarray, codes: list[str]) -> np.ndarray:
     """Collapse the two mates to one class per pair, by the priority the census uses."""
     idx = {c: i for i, c in enumerate(codes)}
@@ -67,30 +74,44 @@ def pair_class(class1: np.ndarray, class2: np.ndarray, codes: list[str]) -> np.n
     return out
 
 
-def write_pile(r1: Path, r2: Path, want: np.ndarray, trim_r2: int, fa: Path) -> int:
-    """Stream both FASTQs once and write the wanted pairs as two FASTA records each."""
-    n = 0
-    with gzip.open(r1, "rt") as h1, gzip.open(r2, "rt") as h2, open(fa, "w") as out:
-        i = 0
-        while True:
-            a = h1.readline()
-            if not a:
-                break
-            s1 = h1.readline().rstrip("\n")
-            h1.readline(); h1.readline()
-            h2.readline()
-            s2 = h2.readline().rstrip("\n")[trim_r2:]
-            h2.readline(); h2.readline()
-            if i < want.size and want[i]:
-                name = a[1:].split()[0]
-                out.write(f">{name}/1\n{s1}\n>{name}/2\n{s2}\n")
-                n += 1
-            i += 1
+def write_piles(r1: Path, r2: Path, wants: dict, trim_r2: int, paths: dict) -> dict:
+    """Stream both FASTQs ONCE and write every pile in the same pass.
+
+    Decompressing 8.7 M pairs twice is the dominant fixed cost of this script and it
+    buys nothing: the piles are disjoint masks over one read order, so one pass can
+    fill all of them. The pilot paid it per pile, which is why this is a function over
+    a dict of masks rather than one called repeatedly.
+    """
+    tags = list(wants)
+    n = {t: 0 for t in tags}
+    handles = {t: open(paths[t], "w") for t in tags}
+    try:
+        with gzip.open(r1, "rt") as h1, gzip.open(r2, "rt") as h2:
+            i = 0
+            while True:
+                a = h1.readline()
+                if not a:
+                    break
+                s1 = h1.readline().rstrip("\n")
+                h1.readline(); h1.readline()
+                h2.readline()
+                s2 = h2.readline().rstrip("\n")[trim_r2:]
+                h2.readline(); h2.readline()
+                for t in tags:
+                    w = wants[t]
+                    if i < w.size and w[i]:
+                        name = a[1:].split()[0]
+                        handles[t].write(f">{name}/1\n{s1}\n>{name}/2\n{s2}\n")
+                        n[t] += 1
+                i += 1
+    finally:
+        for h in handles.values():
+            h.close()
     return n
 
 
 def diamond_best(dbin: Path, db: Path, fa: Path, tsv: Path, threads: int,
-                 mode: str) -> tuple[dict, float]:
+                 mode: str, label: str) -> tuple[dict, float]:
     t0 = time.perf_counter()
     subprocess.run([str(dbin), "blastx", "--db", str(db), "--query", str(fa),
                     "--out", str(tsv), "--threads", str(threads), "--outfmt", "6",
@@ -106,19 +127,28 @@ def diamond_best(dbin: Path, db: Path, fa: Path, tsv: Path, threads: int,
             if bits > best.get(name, {}).get("bitscore", -1.0):
                 best[name] = {"subject": s, "pident": float(pid), "aln_len": int(length),
                               "evalue": float(ev), "bitscore": bits,
-                              "mate": q.rsplit("/", 1)[1]}
+                              "mate": q.rsplit("/", 1)[1], "index": label}
     tsv.unlink(missing_ok=True)
     return best, time.perf_counter() - t0
 
 
-def merge_best(a: dict, b: dict, index_of: dict) -> dict:
+def merge_best(a: dict, b: dict) -> dict:
+    """Best hit per mate across the two indexes, ties to the viral index.
+
+    Each hit records which index produced it at the point it was parsed. The pilot
+    instead kept a side table keyed on id() of the hit dicts and then copied the dict
+    before reading it, so the copy never matched either identity and a mate hit by
+    only one index raised KeyError. A field on the row cannot come apart that way.
+    """
     out = {}
     for name in set(a) | set(b):
         ha, hb = a.get(name), b.get(name)
-        pick = ha if (hb is None or (ha is not None and ha["bitscore"] >= hb["bitscore"])) else hb
-        pick = dict(pick)
-        pick["index"] = index_of[id(ha)] if pick is ha else index_of[id(hb)]
-        out[name] = pick
+        if hb is None:
+            out[name] = dict(ha)
+        elif ha is None:
+            out[name] = dict(hb)
+        else:
+            out[name] = dict(ha if ha["bitscore"] >= hb["bitscore"] else hb)
     return out
 
 
@@ -193,25 +223,26 @@ def main() -> None:
     want_ctl = np.zeros_like(placed)
     want_ctl[keep_p] = True
 
+    wants = {"residue": want_res, "control": want_ctl}
+    fas = {t: args.work / f"{t}_s{args.seed}.fa" for t in wants}
+    t0 = time.perf_counter()
+    npair = write_piles(args.r1, args.r2, wants, args.trim_r2, fas)
+    extract_s = time.perf_counter() - t0
+    say(f"extracted {npair} pairs in {extract_s:.0f}s")
+
     piles = {}
-    for tag, want in (("residue", want_res), ("control", want_ctl)):
-        fa = args.work / f"{tag}_s{args.seed}.fa"
-        t0 = time.perf_counter()
-        n = write_pile(args.r1, args.r2, want, args.trim_r2, fa)
-        extract_s = time.perf_counter() - t0
-        hits, secs = {}, {}
+    for tag in wants:
+        fa, n = fas[tag], npair[tag]
+        secs = {}
         per_index = {}
         for db, label in zip(args.dmnd, ("viral", "sprot")):
             b, sec = diamond_best(args.diamond_bin, db, fa,
                                   args.work / f"{tag}_{label}_s{args.seed}.tsv",
-                                  args.threads, args.diamond_mode)
+                                  args.threads, args.diamond_mode, label)
             per_index[label] = b
             secs[label] = round(sec, 1)
-        index_of = {}
-        for label, b in per_index.items():
-            for h in b.values():
-                index_of[id(h)] = label
-        best = merge_best(per_index["viral"], per_index["sprot"], index_of)
+            say(f"{tag}/{label}: {len(b)} mates hit, {sec:.0f}s over {2 * n} mates")
+        best = merge_best(per_index["viral"], per_index["sprot"])
         sig = {k: v for k, v in best.items() if v["evalue"] < SIGNIFICANT_EVALUE}
         piles[tag] = {
             "pairs": n, "mates": 2 * n,
@@ -219,9 +250,14 @@ def main() -> None:
             "mates_with_significant_hit": len(sig),
             "subjects": subjects_from(best) if tag == "residue" else None,
             "subject_count": len({v["subject"] for v in sig.values()}),
-            "control_subjects": sorted({v["subject"] for v in sig.values()})
-            if tag == "control" else None,
-            "extract_seconds": round(extract_s, 1),
+            # Counts, not a name list. A residue subject that the already-placed pile
+            # also hits is ALREADY SEEN, and the page says so on the row - so what is
+            # needed here is how often, which a set of names cannot answer. It is a
+            # sample of the placed pile, so it bounds from below: a subject absent here
+            # may still be placed material that this sample missed.
+            "control_subject_reads": (collections.Counter(
+                v["subject"] for v in sig.values()) if tag == "control" else None),
+            "extract_seconds_all_piles": round(extract_s, 1),
             "diamond_seconds": secs,
         }
         fa.unlink(missing_ok=True)

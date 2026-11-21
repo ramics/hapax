@@ -337,6 +337,8 @@ details > summary { cursor: pointer; font-size: 13px; color: var(--dim); }
 @media (prefers-reduced-motion: reduce) {
   .bar > span, .axbar > i, .bbar > i { transition: none !important; }
 }
+.clicky { cursor: pointer; border-bottom: 1px dotted var(--edge); }
+.clicky:hover { color: var(--fg); border-bottom-color: var(--dim); }
 .bites { display: flex; flex-direction: column; gap: 0.3rem; }
 .bite { display: grid; grid-template-columns: 15rem 1fr 6rem 5rem; gap: 0.6rem;
   align-items: center; font-size: 12px; }
@@ -690,6 +692,17 @@ function interval(iv) {
   });
   g += '</svg>';
   const holder = el('div', 'scroll flowwrap'); holder.innerHTML = g; p.append(holder);
+  // Click a slice of the last panel to see the records behind it. The diagram and the
+  // list are then showing one pile, which is the question a reader has at exactly this
+  // point and otherwise has to carry down the page by hand.
+  Array.prototype.forEach.call(holder.querySelectorAll('.flowseg'), n => {
+    const k = n.getAttribute('data-k');
+    if (!K.by_kind[k]) return;
+    n.style.cursor = 'pointer';
+    n.addEventListener('click', () => {
+      if (window.__hapaxShowKind) window.__hapaxShowKind(k);
+    });
+  });
   p.append(el('p', 'note',
     '<b>The second join changes the unit and the sample, and that is marked on it.</b> ' +
     'The first two panels are read PAIRS over the whole block this run read. The third ' +
@@ -821,11 +834,19 @@ function interval(iv) {
   const lg = el('div', 'legend');
   lg.innerHTML = kinds.map(k => {
     const v = K.by_kind[k];
-    return '<span><i style="background:' + (KCOL[k] || 'var(--null)') + '"></i>' +
+    return '<span data-k="' + k + '" class="clicky"><i style="background:' +
+      (KCOL[k] || 'var(--null)') + '"></i>' +
       esc(v.label) + ' <b>' + v.reads + '</b> reads, ' + v.subjects + ' records ' +
       '<span class="mono">(' + pct(v.share_of_searched.point) + ' of all leftovers)' +
       '</span></span>';
   }).join('');
+  Array.prototype.forEach.call(lg.children, n => {
+    const k = n.getAttribute('data-k');
+    if (!k) return;
+    n.addEventListener('click', () => {
+      if (window.__hapaxShowKind) window.__hapaxShowKind(k);
+    });
+  });
   p.append(lg);
 
   const big = el('div', 'hero');
@@ -985,6 +1006,16 @@ function interval(iv) {
       '<div class="absent">no subject in that combination</div>';
   }
   sel.onchange = draw; gsel.onchange = draw; ksel.onchange = draw; draw();
+  // Published so the split diagrams above can drive this list. It only ever sets a
+  // filter this panel already offers, so a click cannot show anything the select
+  // could not; if the kind is not one of the options the call does nothing.
+  window.__hapaxShowKind = function (kind) {
+    const ok = Array.prototype.some.call(ksel.options, o => o.value === kind);
+    if (!ok) return false;
+    ksel.value = kind; draw();
+    p.scrollIntoView({behavior: 'smooth', block: 'start'});
+    return true;
+  };
   p.append(grid);
 
   const det = el('details');
