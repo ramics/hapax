@@ -1,0 +1,72 @@
+{
+  "queries": 39659,
+  "subjects_done": [
+    "SRR23973261",
+    "SRR23973341",
+    "SRR23973251",
+    "SRR23973335",
+    "SRR23973329",
+    "SRR23973269",
+    "SRR23973189",
+    "SRR23973393"
+  ],
+  "timings": {
+    "SRR23973261": {
+      "stage": 2.3,
+      "fastq": 82.3,
+      "scan": 53.4,
+      "library_pairs": 17143417,
+      "total": 138.2
+    },
+    "SRR23973341": {
+      "stage": 2.7,
+      "fastq": 77.5,
+      "scan": 54.0,
+      "library_pairs": 15958495,
+      "total": 134.4
+    },
+    "SRR23973251": {
+      "stage": 2.1,
+      "fastq": 63.6,
+      "scan": 40.9,
+      "library_pairs": 13386664,
+      "total": 106.8
+    },
+    "SRR23973335": {
+      "stage": 1.5,
+      "fastq": 42.8,
+      "scan": 32.5,
+      "library_pairs": 10038933,
+      "total": 77.0
+    },
+    "SRR23973329": {
+      "stage": 1.1,
+      "fastq": 22.9,
+      "scan": 19.6,
+      "library_pairs": 6265867,
+      "total": 43.7
+    },
+    "SRR23973269": {
+      "stage": 1.4,
+      "fastq": 37.9,
+      "scan": 26.8,
+      "library_pairs": 8929908,
+      "total": 66.4
+    },
+    "SRR23973189": {
+      "stage": 1.7,
+      "fastq": 51.5,
+      "scan": 35.8,
+      "library_pairs": 11740628,
+      "total": 89.2
+    },
+    "SRR23973393": {
+      "stage": 1.4,
+      "fastq": 36.7,
+      "scan": 28.3,
+      "library_pairs": 9009242,
+      "total": 66.5
+    }
+  },
+  "seconds_elapsed": 722.5
+}
