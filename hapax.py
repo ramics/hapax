@@ -161,9 +161,7 @@ class Run:
         or 3.5% of this library depending only on confidence.
         """
         a = self.args
-        need = [a.r1, a.r2, *a.k2_dbs, *a.silva, *a.dmnd]
-        if a.contigs:
-            need.append(a.contigs)
+        need = [a.r1, a.r2, *a.k2_dbs, *a.silva, *a.dmnd, *(a.contigs or [])]
         gone = self.missing("cascade", need)
         if gone:
             return self.record("cascade", "skipped", reason=f"absent inputs: {gone}")
@@ -173,7 +171,7 @@ class Run:
                 "--threads", str(a.threads), "--rows-out",
                 "--work", str(self.work / "cascade_work"), "--out", str(out)]
         if a.contigs:
-            argv += ["--selfasm", str(a.contigs)]
+            argv += ["--selfasm", *[str(c) for c in a.contigs]]
         if a.unidentified_contigs:
             argv += ["--observe", str(a.unidentified_contigs)]
         return self.call("cascade", "subtract_known.py", argv,
@@ -275,6 +273,8 @@ class Run:
             return self.record("calibration", "skipped", reason=f"absent inputs: {gone}")
         out = self.work / "calibration"
         argv = ["--seed", str(a.seed), "--out", str(out),
+                "--genome", str(a.spike_genome),
+                "--r1", str(a.r1), "--r2", str(a.r2), "--threads", str(a.threads),
                 "--work", str(self.work / "calibration_work")]
         return self.call("calibration", "spike_holdout.py", argv,
                          {"calibration_ladder.json": out / f"spike_holdout_s{a.seed}.json"},
@@ -809,9 +809,17 @@ def main() -> int:
                         "number readable")
     r.add_argument("--trim-r2", type=int, default=14)
     r.add_argument("--threads", type=int, default=4)
-    r.add_argument("--contigs", type=Path, default=ROOT / "data/geo/sample_contigs.fa",
-                   help="the sample's own identified contigs, the most efficient "
-                        "subtrahend this project has measured by orders of magnitude")
+    r.add_argument("--contigs", type=Path, nargs="+",
+                   default=[ROOT / "data/geo/sample_contigs_rrna.fa",
+                            ROOT / "data/geo/sample_contigs_identified_norrna.fa"],
+                   help="the sample's own IDENTIFIED contigs, the most efficient "
+                        "subtrahend this project has measured by orders of magnitude - "
+                        "1.4 MB of its own ribosomal contigs beats all 272 MB of SILVA. "
+                        "It must be the identified ones only: the subtrahend is "
+                        "IDENTIFICATION, not assembly, and subtracting contigs that "
+                        "nothing identified would remove the tier 2 population into tier "
+                        "1 and inflate every removal figure. Measured here: the whole "
+                        "contig set removes 85.9% against 77.0% for the identified half")
     r.add_argument("--unidentified-contigs", type=Path, default=None,
                    help="contigs that assembled but nothing identified: tier 2's "
                         "population, observed and never subtracted")
@@ -822,6 +830,12 @@ def main() -> int:
                    default=[ROOT / "data/silva/SSU.fa.gz", ROOT / "data/silva/LSU.fa.gz"])
     r.add_argument("--dmnd", type=Path, nargs="*",
                    default=[ROOT / "data/prot/viral.dmnd", ROOT / "data/prot/sprot.dmnd"])
+    r.add_argument("--spike-genome", type=Path, default=ROOT / "data/spike/holdout.fa",
+                   help="genomes for the divergence ladder. Only a genome ABSENT from "
+                        "this sample's own assembly is a clean holdout - a resident one "
+                        "is removed by the sample's own contigs at every rung and reads "
+                        "as the tool working when it is the sample working "
+                        "(results/spike_holdout/)")
     r.add_argument("--calibrate", action="store_true",
                    help="run the per-sample divergence ladder. Without it the run carries "
                         "no positive control and says so")
