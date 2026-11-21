@@ -1,0 +1,50 @@
+{
+  "script": "experiments/panel_inventory.py",
+  "git_sha": "562b348958e6110a48f79ebdf27b5a10265ed143",
+  "tree_dirty": false,
+  "script_sha256": "a60db354ad90f34d",
+  "parameters": {
+    "project": "PRJNA948850",
+    "seed": 1,
+    "query_sample": "SRR23973193"
+  },
+  "source": "ENA filereport, read_run",
+  "fetched": "2026-11-21T09:11:27Z",
+  "seconds": 1.7,
+  "summary": {
+    "runs_total": 215,
+    "panel_runs": 116,
+    "panel_paired": 116,
+    "panel_waters": 85,
+    "panel_waters_with_prep_variants": 17,
+    "panel_runs_sharing_water": 48,
+    "panel_dates": 41,
+    "panel_dates_with_siblings": 40,
+    "panel_runs_on_shared_dates": 115,
+    "panel_pairs_millions": 1455.0,
+    "panel_fastq_gb": 129.9,
+    "panel_mean_read_len": 106,
+    "capture_runs": 99,
+    "capture_paired": 0,
+    "capture_fastq_gb": 53.5,
+    "prep_variants": {
+      "befo_captu": 1,
+      "captu_elu": 1,
+      "captu_elu_conc": 1,
+      "captu_ft": 1,
+      "cer_trizol": 4,
+      "PCRinh_rem": 4,
+      "cer_BIOM": 4,
+      "centri_BIOM": 2,
+      "cer_trizol_PCRinh_rem": 2,
+      "centri_BIOMcombi": 1,
+      "cer_BIOMcombi": 10
+    },
+    "query_water": "2021-10-13_20-22hmix",
+    "query_prep_siblings": [],
+    "query_sample": "SRR23973193",
+    "query_capture_partner": [
+      "SRR23973294"
+    ]
+  }
+}
