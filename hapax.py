@@ -1,0 +1,590 @@
+"""`hapax run` - the production tool's command line, per SPEC.md 8.1.
+
+WHAT THIS IS. An orchestrator, deliberately thin. Every measurement it reports already
+exists as a script in `experiments/`, each with its own seed, manifest and calibration,
+because that is how this project establishes that a number is real. The production tool is
+those scripts run in a fixed order into one directory with one manifest - not a
+reimplementation of them. A parallel implementation would be a second instrument, and this
+project's own rule is never to compare numbers from two instruments.
+
+WHAT IT ADDS, which is the part worth having:
+
+  1. **One run directory with one provenance record.** Each stage's own manifest is read
+     back and its `script_sha256` recorded, so the run says which code produced every
+     file in it. A `-dirty` tree is recorded as dirty rather than hidden: it names HEAD,
+     not what ran, and two runs can carry the same SHA and different code.
+  2. **Enforcement of the three interface rules** from SPEC.md 8.3, at write time rather
+     than in review. No tier row leaves this script without its operating point; no pile
+     fraction leaves it without an interval; no field leaves it without its calibration or
+     an explicit statement that it has none. `cannot discriminate here` and `not measured`
+     are values, written into the file, never blanks.
+  3. **The declared blind spots travel with the run**, copied from the committed
+     `blind_spots.json` with its hash, so a run directory cannot be read without them.
+
+WHY A STAGE MAY REFUSE RATHER THAN DEGRADE. A stage whose reference data is absent writes
+`status: "skipped"` with the reason, and the run is marked incomplete. It does not fall back
+to a cheaper index and report the number as if it were the real one - the project has
+already had to withdraw a figure whose index silently differed from the one named.
+
+THE RESIDUE IS LAYERED, NOT SCORED. `layers.json` orders the residue from most to least
+worth a human's attention using only fields whose direction has been measured on known
+material: whether a relative exists at all and how far, whether anything recurs, whether
+the read's own mate places, whether a profile matches, and whether the pair is artefact-
+shaped. A layer is a sort order with its evidence attached, and emphatically not a novelty
+score: an index can say what is already known and cannot say what is new.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import math
+import os
+import platform
+import shutil
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent / "experiments"))
+
+ROOT = Path(__file__).resolve().parent
+PY = sys.executable
+
+
+def sha256(path: Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def git(*args: str) -> str:
+    try:
+        return subprocess.run(["git", *args], cwd=ROOT, capture_output=True,
+                              text=True, check=True).stdout.strip()
+    except Exception:
+        return ""
+
+
+def wilson(k: int, n: int, z: float = 1.96) -> dict | None:
+    """Wilson score interval for a count out of a total.
+
+    Every pile in this project ships with an interval, and a single-seed run has no
+    across-seed spread to quote, so the interval has to come from the counts. Wilson rather
+    than normal-approximation because the interesting fractions here are small and a few of
+    them are zero, where the normal interval is a point.
+    """
+    if n <= 0:
+        return None
+    p = k / n
+    d = 1 + z * z / n
+    centre = (p + z * z / (2 * n)) / d
+    half = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / d
+    return {"point": round(p, 6), "lo": round(max(0.0, centre - half), 6),
+            "hi": round(min(1.0, centre + half), 6), "k": k, "n": n,
+            "method": "wilson_95"}
+
+
+class Run:
+    def __init__(self, args):
+        self.args = args
+        self.dir: Path = args.out
+        self.stages: list[dict] = []
+        self.t0 = time.perf_counter()
+        (self.dir / "stages").mkdir(parents=True, exist_ok=True)
+        self.work: Path = args.work or (self.dir / "work")
+        self.work.mkdir(parents=True, exist_ok=True)
+
+    # -- stage plumbing -------------------------------------------------------
+    def record(self, name: str, status: str, **kw) -> dict:
+        entry = {"stage": name, "status": status, **kw}
+        self.stages.append(entry)
+        print(f"[{name}] {status}" + (f": {kw.get('reason')}" if kw.get("reason") else ""),
+              flush=True)
+        return entry
+
+    def missing(self, name: str, paths: list[Path]) -> list[str]:
+        """Inputs are checked by existence before a stage runs, never assumed.
+
+        A stage that starts without its reference data fails deep inside a subprocess,
+        often hours in, and on a machine that cannot be debugged. `test -f` first is the
+        cheapest rule this project keeps.
+        """
+        return [str(p) for p in paths if not Path(p).exists()]
+
+    def call(self, name: str, script: str, argv: list[str],
+             expect: dict[str, Path], manifest: Path | None) -> dict:
+        """Run one experiment script and adopt its outputs into the run directory."""
+        t = time.perf_counter()
+        log = self.dir / "stages" / f"{name}.log"
+        cmd = [PY, "-I", str(ROOT / "experiments" / script), *argv]
+        with open(log, "w") as lg:
+            lg.write("$ " + " ".join(cmd) + "\n\n")
+            lg.flush()
+            proc = subprocess.run(cmd, cwd=ROOT, stdout=lg, stderr=subprocess.STDOUT)
+        seconds = round(time.perf_counter() - t, 1)
+        if proc.returncode != 0:
+            tail = log.read_text().splitlines()[-12:]
+            return self.record(name, "failed", script=script, seconds=seconds,
+                               argv=argv, log=str(log.relative_to(self.dir)),
+                               reason=f"exit {proc.returncode}", tail=tail)
+        prov = {}
+        if manifest and manifest.exists():
+            m = json.loads(manifest.read_text())
+            prov = {k: m[k] for k in ("git_sha", "tree_dirty", "script_sha256") if k in m}
+            if "script_sha256" not in prov:
+                prov["script_sha256"] = "absent from this stage's own manifest"
+        outputs = {}
+        for label, src in expect.items():
+            if not src.exists():
+                return self.record(name, "failed", script=script, seconds=seconds,
+                                   argv=argv, reason=f"{src} was not written")
+            dst = self.dir / label
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(src, dst)
+            outputs[label] = {"bytes": dst.stat().st_size, "sha256_16": sha256(dst)[:16],
+                              "from": str(src)}
+        return self.record(name, "ok", script=script, seconds=seconds, argv=argv,
+                           provenance=prov, outputs=outputs,
+                           log=str(log.relative_to(self.dir)))
+
+    # -- stages ---------------------------------------------------------------
+    def cascade(self) -> dict:
+        """Tier 1: remove everything identifiable at all, and record what each index cost.
+
+        This is the subtrahend and it is IDENTIFICATION, not assembly. Its own operating
+        points matter more than its database sizes: the same Kraken2 database removes 42.8%
+        or 3.5% of this library depending only on confidence.
+        """
+        a = self.args
+        need = [a.r1, a.r2, *a.k2_dbs, *a.silva, *a.dmnd]
+        if a.contigs:
+            need.append(a.contigs)
+        gone = self.missing("cascade", need)
+        if gone:
+            return self.record("cascade", "skipped", reason=f"absent inputs: {gone}")
+        out = self.work / "cascade"
+        argv = ["--seed", str(a.seed), "--pairs", str(a.pairs),
+                "--r1", str(a.r1), "--r2", str(a.r2), "--trim-r2", str(a.trim_r2),
+                "--threads", str(a.threads), "--rows-out",
+                "--work", str(self.work / "cascade_work"), "--out", str(out)]
+        if a.contigs:
+            argv += ["--selfasm", str(a.contigs)]
+        if a.unidentified_contigs:
+            argv += ["--observe", str(a.unidentified_contigs)]
+        return self.call("cascade", "subtract_known.py", argv,
+                         {"tiers.json": out / f"subtract_s{a.seed}.json",
+                          "stages/cascade_rows.jsonl":
+                              out / f"residue_rows_s{a.seed}.jsonl"},
+                         out / f"manifest_s{a.seed}.json")
+
+    def reads(self) -> dict:
+        """Tier 3: the per-read report, un-thresholded, every field beside its calibration."""
+        a = self.args
+        res = self.work / "cascade_work" / f"residue_s{a.seed}.fa"
+        sub = self.work / "cascade_work" / f"subtracted_s{a.seed}.fa"
+        gone = self.missing("reads", [res, a.r1, a.r2])
+        if gone:
+            return self.record("reads", "skipped",
+                               reason=f"the cascade's residue is the input and {gone} is "
+                                      f"absent; run the cascade stage first")
+        out = self.work / "reads"
+        argv = ["--seed", str(a.seed), "--residue", str(res), "--reads", str(res),
+                "--max-pairs", str(a.report_pairs), "--threads", str(a.threads),
+                "--library-r1", str(a.r1), "--library-r2", str(a.r2),
+                "--work", str(self.work / "reads_work"), "--out", str(out)]
+        if sub.exists():
+            argv += ["--subtracted-reads", str(sub)]
+        return self.call("reads", "residue_report.py", argv,
+                         {"reads.jsonl": out / f"rows_s{a.seed}.jsonl",
+                          "fields.json": out / f"calibration_s{a.seed}.json"},
+                         out / f"manifest_s{a.seed}.json")
+
+    def linkage(self) -> dict:
+        """The grouping calibration: can a read find a read it is genuinely related to?
+
+        Mate linkage is the only label-free ground truth for "same molecule" available in a
+        real library, so it is what the grouping step is calibrated on. It is an UPPER bound
+        on friendship resolution - two mates share an insert - and the planted-genome purity
+        in results/residue_structure/ is the lower bound. Both belong in the run directory
+        or the grouping in the web view has no operating point.
+        """
+        a = self.args
+        tool = ROOT / "experiments/kmer_coverage/target/release/kmer_coverage"
+        gone = self.missing("linkage", [tool, a.r1, a.r2])
+        if gone:
+            return self.record("linkage", "skipped",
+                               reason=f"absent inputs: {gone}. cargo build --release in "
+                                      f"experiments/kmer_coverage builds the counter")
+        out = self.work / "linkage"
+        argv = ["--seed", str(a.seed), "--pairs", str(a.linkage_pairs),
+                "--r1", str(a.r1), "--r2", str(a.r2), "--trim-r2", str(a.trim_r2),
+                "--work", str(self.work / "linkage_work"), "--out", str(out)]
+        return self.call("linkage", "mate_friends.py", argv,
+                         {"linkage.json": out / f"mate_friends_s{a.seed}.json"},
+                         out / f"mate_friends_s{a.seed}.json")
+
+    def calibration(self) -> dict:
+        """Per-sample divergence ladder: a holdout genome spiked at known divergence.
+
+        Imo's requirement, and the only positive control this tool has. Without it every
+        sensitivity statement in the run is an assertion: the ladder is what converts
+        "survived subtraction" into "would have survived at 20% divergence".
+        """
+        a = self.args
+        if not a.calibrate:
+            return self.record("calibration", "skipped",
+                               reason="--calibrate not given. The run's divergence ladder "
+                                      "is therefore absent rather than assumed, and no "
+                                      "sensitivity-at-divergence figure may be read off it")
+        gone = self.missing("calibration", [a.r1, a.r2, ROOT / "data/spike"])
+        if gone:
+            return self.record("calibration", "skipped", reason=f"absent inputs: {gone}")
+        out = self.work / "calibration"
+        argv = ["--seed", str(a.seed), "--out", str(out),
+                "--work", str(self.work / "calibration_work")]
+        return self.call("calibration", "spike_holdout.py", argv,
+                         {"calibration_ladder.json": out / f"spike_holdout_s{a.seed}.json"},
+                         out / f"spike_holdout_s{a.seed}.json")
+
+    # -- assembled-but-unidentifiable ----------------------------------------
+    def contigs(self) -> dict:
+        """Tier 2: what assembled but could not be identified.
+
+        The assembly is an input rather than a step here, and its provenance is recorded as
+        such. A production run assembles at run time; this version refuses to pretend it
+        did, because a contig set of unknown origin in a run directory is exactly the
+        unresolved provenance this project has a rule against.
+        """
+        a = self.args
+        if not a.unidentified_contigs:
+            return self.record("contigs", "skipped",
+                               reason="--unidentified-contigs not given, so tier 2 has no "
+                                      "population in this run")
+        p = Path(a.unidentified_contigs)
+        if not p.exists():
+            return self.record("contigs", "skipped", reason=f"{p} is absent")
+        rows = self.dir / "contigs.jsonl"
+        n = 0
+        with open(p) as fh, open(rows, "w") as out:
+            name, buf = None, []
+
+            def flush():
+                nonlocal n
+                if name is None:
+                    return
+                seq = "".join(buf).upper()
+                if not seq:
+                    return
+                acgt = sum(1 for c in seq if c in "ACGT") or 1
+                out.write(json.dumps({
+                    "contig": name, "length": len(seq),
+                    "gc": round(sum(1 for c in seq if c in "GC") / acgt, 4),
+                    "n_fraction": round(1 - acgt / len(seq), 4),
+                    "class": "assembled_unidentifiable",
+                    "operating_point": {
+                        "source": str(p), "source_sha256_16": sha256(p)[:16],
+                        "note": "class is the cascade's own label at its 40-base minimum "
+                                "match length; no classifier was run on the contig here"},
+                }) + "\n")
+                n += 1
+
+            for line in fh:
+                if line.startswith(">"):
+                    flush()
+                    name, buf = line[1:].strip().split()[0], []
+                else:
+                    buf.append(line.strip())
+            flush()
+        return self.record("contigs", "ok", rows=n,
+                           outputs={"contigs.jsonl": {
+                               "bytes": rows.stat().st_size, "rows": n,
+                               "sha256_16": sha256(rows)[:16]}},
+                           assembly={"source": str(p), "sha256_16": sha256(p)[:16],
+                                     "assembled_at_run_time": False,
+                                     "note": "supplied contig set; see assembly.json"})
+
+    # -- derived views --------------------------------------------------------
+    def intervals(self) -> dict:
+        """Attach a Wilson interval and an operating point to every tier row.
+
+        The rule is SPEC.md 8.3's: no pile without its interval. A single-seed run cannot
+        quote across-seed spread, so the interval comes from the counts, and the file says
+        which it is.
+        """
+        p = self.dir / "tiers.json"
+        if not p.exists():
+            return self.record("intervals", "skipped", reason="tiers.json is absent")
+        d = json.loads(p.read_text())
+        n = d.get("pairs") or d.get("pairs_scored") or 0
+        op = {"k2_confidence": d.get("parameters", {}).get("k2_operating_confidence"),
+              "min_match_length_nt": d.get("parameters", {}).get("min_mlen"),
+              "diamond_bitscore": d.get("parameters", {}).get("diamond_bitscore"),
+              "diamond_sensitivity": d.get("parameters", {}).get("diamond_sensitivity")}
+        rows = []
+        for c in d.get("curve", []):
+            row = dict(c)
+            for key in ("tier_alone_removed", "marginal_removed", "cumulative_removed",
+                        "residue"):
+                if isinstance(c.get(key), (int, float)) and n:
+                    row[f"{key}_interval"] = wilson(int(round(c[key] * n)), int(n))
+            row["operating_point"] = op
+            missing = [k for k, v in op.items() if v is None]
+            if missing:
+                row["operating_point_incomplete"] = missing
+            rows.append(row)
+        out = {"pairs": n, "operating_point": op, "curve": rows,
+               "interval_method": "wilson_95_on_this_run's_counts; a multi-seed run "
+                                  "reports across-seed spread instead",
+               "source": "tiers.json", "source_sha256_16": sha256(p)[:16]}
+        (self.dir / "tier_table.json").write_text(json.dumps(out, indent=2))
+        return self.record("intervals", "ok", rows=len(rows),
+                           operating_point_complete=not any(v is None for v in op.values()))
+
+    def layers(self) -> dict:
+        """Order the residue most to least worth a human's attention.
+
+        A LAYER IS A SORT ORDER WITH ITS EVIDENCE, NOT A SCORE. Each field used here has a
+        measured direction on known material, which is the only reason it may be used at
+        all: a field whose polarity is unmeasured would be ordering reads by database
+        proximity and calling it interest. The layers, most interesting first:
+
+          L1 recurs_and_unplaceable  no relative at significance, and the sequence recurs
+                                     in the library. Rare AND unsequenced is the narrow
+                                     honest claim; a singleton is more likely an artefact.
+          L2 distant_relative        a relative exists but far away. This is where a new
+                                     strain or a divergent homolog of a known pathogen
+                                     lives, and it is the layer with an actual number
+                                     attached: identity to closest relative, with coverage.
+          L3 profile_only            no sequence relative but a family profile matches - a
+                                     model reaches further than a sequence.
+          L4 placed                  a close relative exists. Already known; kept so the
+                                     reader can see the pile it was separated from.
+          L5 artefact_shaped         low entropy, long homopolymer, adapter-like, or N-rich.
+                                     Last on purpose and never silently dropped.
+
+        A read with no field determinable lands in `undetermined`, which is a layer and not
+        an error.
+        """
+        p = self.dir / "reads.jsonl"
+        if not p.exists():
+            return self.record("layers", "skipped", reason="reads.jsonl is absent")
+        counts: dict[str, int] = {}
+        order = ["recurs_and_unplaceable", "distant_relative", "profile_only", "placed",
+                 "artefact_shaped", "undetermined"]
+        out_rows = self.dir / "layers.jsonl"
+        n = 0
+        with open(p) as fh, open(out_rows, "w") as out:
+            for line in fh:
+                r = json.loads(line)
+                layer, why = self._layer_of(r)
+                counts[layer] = counts.get(layer, 0) + 1
+                n += 1
+                out.write(json.dumps({"name": r.get("name"), "layer": layer,
+                                      "evidence": why}) + "\n")
+        summary = {
+            "layer_order_most_to_least_interesting": order,
+            "counts": {k: counts.get(k, 0) for k in order},
+            "fractions": {k: wilson(counts.get(k, 0), n) for k in order},
+            "rule": {k: v for k, v in LAYER_RULES.items()},
+            "not_a_score": "layers are a sort order with evidence attached. Searching only "
+                           "ever removes background; it never scores novelty, because "
+                           "score ordering tracks database proximity",
+            "rows": n}
+        (self.dir / "layers.json").write_text(json.dumps(summary, indent=2))
+        return self.record("layers", "ok", rows=n, counts=summary["counts"])
+
+    @staticmethod
+    def _layer_of(r: dict) -> tuple[str, dict]:
+        """Assign one read to a layer, returning the evidence that put it there."""
+        ev: dict = {}
+        art = (r.get("entropy3") is not None and r.get("entropy3") < 0.5) or \
+              (r.get("longest_homopolymer") or 0) > 25 or \
+              bool(r.get("adapter")) or (r.get("n_fraction") or 0) > 0.05
+        if art:
+            ev = {"entropy3": r.get("entropy3"),
+                  "longest_homopolymer": r.get("longest_homopolymer"),
+                  "adapter": r.get("adapter"), "n_fraction": r.get("n_fraction")}
+            return "artefact_shaped", ev
+
+        best = None
+        for key in ("closest_relative", "viral_protein", "sprot_protein", "protein"):
+            h = r.get(key)
+            if isinstance(h, dict) and h.get("evalue") is not None:
+                if best is None or h["evalue"] < best["evalue"]:
+                    best = {**h, "field": key}
+        sig = best is not None and best.get("evalue") is not None and \
+            best["evalue"] < SIGNIFICANCE_EVALUE
+        close = sig and (best.get("pident") or 0) >= CLOSE_IDENTITY_PERCENT
+        recurs = r.get("abundance_median") if r.get("abundance_median") is not None \
+            else r.get("kmer_median")
+        profile = r.get("pfam") or r.get("rfam")
+
+        if sig and close:
+            return "placed", {"closest_relative": best}
+        if sig:
+            return "distant_relative", {"closest_relative": best,
+                                        "identity_percent": best.get("pident"),
+                                        "alignment_length": best.get("aln_len")}
+        if profile:
+            return "profile_only", {"profile": profile, "no_sequence_relative_at": {
+                "evalue": SIGNIFICANCE_EVALUE}}
+        if recurs is not None:
+            if recurs >= RECURRENCE_MIN_OCCURRENCES:
+                return "recurs_and_unplaceable", {"occurrences": recurs,
+                                                  "threshold": RECURRENCE_MIN_OCCURRENCES}
+            return "undetermined", {"occurrences": recurs,
+                                    "reason": "no relative at significance and the "
+                                              "sequence does not recur, so an artefact "
+                                              "and a singleton molecule cannot be "
+                                              "separated here"}
+        return "undetermined", {"reason": "neither a relative nor an abundance field was "
+                                          "determinable for this read"}
+
+    # -- the manifest ---------------------------------------------------------
+    def finish(self) -> int:
+        a = self.args
+        bs = ROOT / "blind_spots.json"
+        if bs.exists():
+            shutil.copyfile(bs, self.dir / "blind_spots.json")
+        fields = self.dir / "fields.json"
+        field_check = {}
+        if fields.exists():
+            d = json.loads(fields.read_text())
+            for name, v in (d.get("fields", d) or {}).items():
+                if not isinstance(v, dict):
+                    continue
+                has_null = any(k in v for k in ("null", "shuffled", "shuffled_null"))
+                has_pos = any(k in v for k in ("known_positive", "subtracted",
+                                               "subtracted_reads"))
+                field_check[name] = ("calibrated" if has_null and has_pos else
+                                     "null only" if has_null else
+                                     "known-positive only" if has_pos else
+                                     "cannot discriminate here: no calibration in this run")
+        bad = [s for s in self.stages if s["status"] == "failed"]
+        skipped = [s for s in self.stages if s["status"] == "skipped"]
+        manifest = {
+            "tool": "hapax run", "spec": "SPEC.md 8.1",
+            "script": "hapax.py", "script_sha256": sha256(ROOT / "hapax.py"),
+            "git_sha": git("rev-parse", "HEAD"),
+            "tree_dirty": bool(git("status", "--porcelain")),
+            "seed": a.seed,
+            "inputs": {"r1": str(a.r1), "r2": str(a.r2),
+                       "r1_bytes": a.r1.stat().st_size if a.r1.exists() else None,
+                       "r2_bytes": a.r2.stat().st_size if a.r2.exists() else None,
+                       "trim_r2": a.trim_r2,
+                       "trim_note": "measured, not detected; the non-template prefix is a "
+                                    "distribution with mode 14 - see "
+                                    "results/nontemplate_prefix/"},
+            "parameters": {k: (str(v) if isinstance(v, Path) else
+                               [str(x) for x in v] if isinstance(v, list) else v)
+                           for k, v in vars(a).items()},
+            "stages": self.stages,
+            "complete": not bad and not skipped,
+            "incomplete_because": ([f"{s['stage']} failed" for s in bad] +
+                                   [f"{s['stage']} skipped: {s.get('reason')}"
+                                    for s in skipped]) or None,
+            "field_calibration": field_check or "fields.json absent in this run",
+            "blind_spots": {"file": "blind_spots.json",
+                            "sha256_16": sha256(bs)[:16] if bs.exists() else None},
+            "interface_rules": [
+                "no figure without its operating point",
+                "no pile without its interval",
+                "no score without the calibration run behind it"],
+            "wall_seconds": round(time.perf_counter() - self.t0, 1),
+            "python": platform.python_version(), "platform": platform.platform(),
+            "cpu_count": os.cpu_count(),
+        }
+        (self.dir / "manifest.json").write_text(json.dumps(manifest, indent=2))
+        print(f"\n{self.dir}")
+        for s in self.stages:
+            print(f"  {s['stage']:<12} {s['status']:<8} "
+                  f"{s.get('seconds', '')}{'s' if s.get('seconds') else ''}"
+                  f"{'  ' + str(s.get('reason')) if s.get('reason') else ''}")
+        print(f"  complete: {manifest['complete']}")
+        return 1 if bad else 0
+
+
+#: Written into layers.json so the rule is in the run directory rather than only in code.
+SIGNIFICANCE_EVALUE = 1e-5
+CLOSE_IDENTITY_PERCENT = 90.0
+RECURRENCE_MIN_OCCURRENCES = 2
+LAYER_RULES = {
+    "significance_evalue": SIGNIFICANCE_EVALUE,
+    "significance_note": "1e-5, because the chance band reads identically on residue and "
+                         "already-identified reads: at E<1e-5 14.6% of residue reads have "
+                         "a relative covering ~96% of the read at 90.1% identity, and a "
+                         "weaker hit describes the database rather than the read "
+                         "(results/partial_match_subjects/)",
+    "close_identity_percent": CLOSE_IDENTITY_PERCENT,
+    "recurrence_min_occurrences": RECURRENCE_MIN_OCCURRENCES,
+    "recurrence_note": "a 1-in-a-million virus is a singleton against ~68 occurrences for "
+                       "background, so recurrence is weak evidence per read and is used "
+                       "only to separate 'rare and unsequenced' from 'could be artefact'",
+    "artefact_entropy3_below": 0.5,
+    "artefact_homopolymer_above": 25,
+}
+
+STAGE_ORDER = ["cascade", "contigs", "reads", "linkage", "calibration",
+               "intervals", "layers"]
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(prog="hapax", description=__doc__.split("\n")[0])
+    sub = ap.add_subparsers(dest="command", required=True)
+    r = sub.add_parser("run", help="subtract the known, then characterise what is left")
+    r.add_argument("r1", type=Path)
+    r.add_argument("r2", type=Path)
+    r.add_argument("--seed", type=int, required=True)
+    r.add_argument("--out", type=Path, required=True, help="the run directory")
+    r.add_argument("--pairs", type=int, default=200_000,
+                   help="pairs through the cascade. The block is seed-determined, so five "
+                        "seeds are five disjoint blocks of the same library")
+    r.add_argument("--report-pairs", type=int, default=20_000,
+                   help="residue pairs through the per-read report, whose per-read fields "
+                        "are far costlier than the cascade's")
+    r.add_argument("--linkage-pairs", type=int, default=20_000)
+    r.add_argument("--trim-r2", type=int, default=14)
+    r.add_argument("--threads", type=int, default=4)
+    r.add_argument("--contigs", type=Path, default=ROOT / "data/geo/sample_contigs.fa",
+                   help="the sample's own identified contigs, the most efficient "
+                        "subtrahend this project has measured by orders of magnitude")
+    r.add_argument("--unidentified-contigs", type=Path, default=None,
+                   help="contigs that assembled but nothing identified: tier 2's "
+                        "population, observed and never subtracted")
+    r.add_argument("--k2-dbs", type=Path, nargs="+",
+                   default=[ROOT / "data/k2_viral", ROOT / "data/k2_standard08",
+                            ROOT / "data/k2_pluspf08", ROOT / "data/k2_pluspf16"])
+    r.add_argument("--silva", type=Path, nargs="*",
+                   default=[ROOT / "data/silva/SSU.fa.gz", ROOT / "data/silva/LSU.fa.gz"])
+    r.add_argument("--dmnd", type=Path, nargs="*",
+                   default=[ROOT / "data/prot/viral.dmnd", ROOT / "data/prot/sprot.dmnd"])
+    r.add_argument("--calibrate", action="store_true",
+                   help="run the per-sample divergence ladder. Without it the run carries "
+                        "no positive control and says so")
+    r.add_argument("--stages", nargs="+", default=STAGE_ORDER, choices=STAGE_ORDER)
+    r.add_argument("--work", type=Path, default=None)
+    r.add_argument("--plan", action="store_true", help="print the stages and exit")
+    args = ap.parse_args()
+
+    if args.plan:
+        print("hapax run would execute, in order:")
+        for s in args.stages:
+            print(f"  {s:<12} {getattr(Run, s).__doc__.splitlines()[0]}")
+        return 0
+
+    run = Run(args)
+    for name in STAGE_ORDER:
+        if name not in args.stages:
+            run.record(name, "skipped", reason="not selected with --stages")
+            continue
+        getattr(run, name)()
+    return run.finish()
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
