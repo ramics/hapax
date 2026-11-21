@@ -35,11 +35,25 @@ length drawn from the same unidentifiable set; 61% of these contigs have half th
 inside a predicted CDS against 90% of the control. Rfam is the only field where this pile
 leads every other pile, at 3.0%, and the hits are large- and small-subunit rRNA.
 
-That is a negative for the obvious hypothesis and a positive for a duller one. The most
-abundant thing in this library that nothing can name is not a hidden coding virus; it
-looks like non-coding and structural RNA, some of it ribosomal sequence SILVA did not
-catch. **A profile search on the deepest residue contigs does not find a virus, and the
-reason is not that the contigs were too short.**
+That is a negative for the obvious hypothesis. The most abundant thing in this library
+that nothing can name is not a hidden coding virus. **A profile search on the deepest
+residue contigs does not find a virus, and the reason is not that the contigs were too
+short.**
+
+**And it is not ribosomal either, which this report first said and had to withdraw.** The
+Rfam excess above is six LSU/SSU hits against two in the control, and six is not a
+mechanism. The residue thread put the reading to a direct test
+(`experiments/top_contig_rrna_check.py`, `results/residue_census/top_contig_rrna_s*.json`,
+5 seeds): the contig split calls a contig ribosomal at 100 or more matching bases against
+SILVA, so ribosomal-but-missed contigs should pile up just under that line. They do not.
+These 200 contigs read a median of **0** matching bases, 97.5% at exactly zero and
+**none at all above 100**, while the known-positive arm - the contigs the split did call
+ribosomal - reads a median of 464 and clears the threshold on every single one. The piles
+are not near the line; they are nowhere near it.
+
+So the honest statement is the stronger one: **the deepest unnameable sequence here is
+non-coding AND non-ribosomal.** That makes the anti-correlation below more interesting
+rather than less, because the easy explanation for it has been excluded by measurement.
 
 ## Pile two: the 2,832 genuinely new contigs from unplaced pairs
 
@@ -78,21 +92,27 @@ assembly at all.
 
 ## What this changes
 
-1. **Depth and novelty point in opposite directions here.** The deepest unidentifiable
-   contigs are the least coding; the newly assembled ones are the most protein-rich. A
-   pipeline that ranks residue by abundance and runs profiles on the top of the list will
-   find rRNA. Both lists are worth keeping and they are not the same list.
+1. **Depth and recognisability point in opposite directions here.** The deepest
+   unidentifiable contigs are the least coding; the newly assembled ones are the most
+   protein-rich. A pipeline that ranks the residue by abundance and runs profiles down the
+   list finds neither a virus nor rRNA: it finds long, deep, non-coding sequence that
+   nothing can name, which is a better reason to keep the ranking than the one this report
+   first gave. Both lists are worth keeping and they are not the same list.
 2. **There is a protein tier's worth of signal in the unplaced pairs.** 23% of new contigs
    carry a Pfam family at the curators' own threshold, from reads that four nucleotide and
    two protein indexes did not place. That is consistent with the holdout ladder, where
    nucleotide identification dies at 20% divergence and protein is last standing.
-3. **A small annotation gap is measurable.** Rfam fires on 2.1% of new contigs against
-   0.94% of the control, mostly large-subunit rRNA, so roughly one point of this pile is
-   ribosomal sequence the nucleotide tier missed. Small, and it is the first time this
-   project has put a number on it.
+3. **Rfam's excess on the new contigs is one point and unexplained.** It fires on 2.1%
+   of new contigs (59 of 2,832) against 0.94% of the control, mostly large-subunit rRNA.
+   At that count it is above noise where the top-200's six hits were not, but it has not
+   had the direct SILVA test the top 200 got, and it sits oddly: those contigs were built
+   from pairs that had no SILVA match at 40 bases in the first place. So it is either
+   divergent ribosomal sequence or Rfam reading through, and this report does not know
+   which. It is written down as an open question, not as a measured annotation gap.
 4. **Rfam is otherwise close to silent on the residue**, which closes part of the
    non-coding ladder left open in `results/README.md`: at these contig lengths, Rfam adds
-   about one point over its own control and nothing like a new family.
+   about one point over its own control and nothing like a new family. Whatever the deep
+   non-coding material is, Rfam does not recognise it.
 
 ## Operating point
 
