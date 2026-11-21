@@ -5,3 +5,9 @@ __pycache__/
 .venv/
 target/
 experiments/kmer_coverage/target/
+
+# search and subsample intermediates: regenerable, large, and keyed by a content hash
+# in the manifest rather than by being kept
+results/*/work/
+bin_local/
+*.log
