@@ -32,7 +32,23 @@
       },
       "median_pident": 88.62,
       "median_aln_frac": 0.3738,
-      "identified_at_operating_point": 0.078
+      "identified_at_operating_point": 0.078,
+      "significant": {
+        "cutoff": 1e-05,
+        "reads": 73,
+        "frac_of_queries": 0.146,
+        "frac_of_queries_ci95": [
+          0.11774829657860895,
+          0.1796499333412706
+        ],
+        "partial_reads": 28,
+        "partial_frac_of_queries": 0.056,
+        "median_aln_frac": 0.9626,
+        "median_pident": 90.1,
+        "partial_median_pident": 82.97,
+        "partial_median_aln_len": 87.5,
+        "median_evalue_all_hits": 0.24
+      }
     }
   },
   "residue_per_mate": {
@@ -50,8 +66,8 @@
     "contains": "pairs still unidentified after the tier-1 cascade PLUS core_nt_pilot; cumulative, not a delta",
     "rung": "core_nt_pilot",
     "block": 1,
-    "program": "blastn",
-    "db_version": "2026-10-22-01-05-01",
+    "program": "",
+    "db_version": "",
     "min_pident": 90.0,
     "min_aln_bases": 40,
     "min_bitscore": 0.0,
@@ -61,7 +77,7 @@
     "removed_by_this_rung": 39,
     "name_drift_vs_committed_list": null,
     "source_files": [
-      "bi2_rows_pilot_core_nt.jsonl"
+      "rows_pilot_core_nt_i-0b42267a.jsonl"
     ],
     "truncated_rows_dropped": 0
   },
@@ -70,5 +86,5 @@
     "the control pile is the cascade's already-identified reads, which is a contrast rather than a ground truth: a database this size has its own gaps",
     "one block is one seed; the repo rule is five, and the run adds blocks only while they fit its measured rate, so the seed count is whatever ran"
   ],
-  "wall_seconds": 0.0027141250029671937
+  "wall_seconds": 0.0036020839979755692
 }

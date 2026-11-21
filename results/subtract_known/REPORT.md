@@ -175,17 +175,52 @@ residue mate-1 reads of block 1:
 
 | readout | residue reads against core_nt |
 |---|---|
-| any hit | 86.8% (83.6-89.5) |
+| any hit, at BLAST's default E <= 10 (**not a significance test**; see below) | 86.8% (83.6-89.5) |
 | strong alignment (>=80% identity over >=80% of the read) | 10.2% (7.8-13.2) |
 | **identified at the cascade's own operating point** (>=90% identity over >=40 bases) | **7.8% (5.8-10.5)** |
 | median identity of the best hit | 88.6% |
 | median fraction of the read aligned | 0.374 |
 
 Best-hit identity piles up at 80-90% (211 of 434 hits) while the aligned fraction piles up
-between a quarter and a half of the read (298 of 434). **So a typical residue read's closest
-relative in all of core_nt is a ~40-base partial match at ~88% identity**, which is the
-evidence requirement 1.iii asks for - and it is a joint distribution rather than a threshold
-on either axis, because either axis alone counts a third of a read at 95% as a 95% match.
+between a quarter and a half of the read (298 of 434), which this report first read as "a
+typical residue read's closest relative in all of core_nt is a ~40-base partial match at
+~88% identity".
+
+**That reading is withdrawn. It describes chance matches.** The rows carry an E-value and
+this table did not read it; BLAST's reporting default is 10, so every figure above includes
+alignments that are not significant at all. Of the 334 partial-but-unidentified reads the
+median E-value is **0.24**, 45.5% sit between 0.05 and 1, and 24.6% are at E >= 1 - which is
+what a 107 nt nucleotide query finds by chance in 318.8 GB. Demanding significance inverts
+the shape:
+
+| readout, at E < 1e-5 | residue reads against core_nt |
+|---|---|
+| reads with a significant hit | **73 of 500 (14.6%)** |
+| median fraction of the read aligned, among those | **0.96** |
+| median identity, among those | 90.1% |
+| significant *and* partial (aligned fraction < 0.95) | 28 of 500 (5.6%), at 83% identity, aligning a median of **87 of 107 bases** |
+| the 39 identified at the operating point | 105 of 107 bases at 97.7%, median E 6.6e-40 |
+
+**So a real relative aligns end to end, and partial alignment is the signature of a chance
+match rather than of divergence.** Note what the 28 survivors are not: they align 87 of 107
+bases, so even the significant partial matches are not the "half matches, half is gibberish"
+shape requirement 1.ii was written about. At read level that shape has no population left. The operating point itself is unharmed - everything it
+identifies is significant by four orders of magnitude - and requirement 1.iii is answered
+more cleanly than before: 14.6% of residue reads have a relative in core_nt, typically ~90%
+identical over their whole length, which is a divergent strain rather than novel material;
+~85% have no significant relative in the largest nucleotide database there is.
+
+The mechanism is the one Imo named on 2026-11-21: a 107 nt nucleotide query has almost no
+statistical power against a database this size unless it matches end to end. It is also why
+the small significant-and-partial pile matters out of proportion to its size - it is the only
+population where the reference-boundary explanation (a spliced transcript against a genomic
+subject, a truncated record) can be tested at all, and
+`experiments/partial_alignment_eyeball.py` renders it for inspection in
+`results/partial_eyeball/`.
+
+**Rule this cost us: never quote a BLAST identity without its E-value.** Same family as the
+fixed cost quoted as a rate (section 3.6) - an instrument reporting a default that the
+analysis forgot to constrain.
 
 **The efficiency comparison is the result.** 318.8 GB of the world's nucleotide sequence
 removes about 8 points of the residue at the operating point the rest of the curve uses. 15

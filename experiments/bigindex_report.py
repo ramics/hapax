@@ -102,6 +102,32 @@ def load(paths: list[str]) -> list[dict]:
     return rows
 
 
+def sig_block(hits: list[dict], n: int, cutoff: float) -> dict:
+    """What survives an E-value cutoff, and what shape it has.
+
+    Reported as its own block rather than folded into the headline so that the two readings
+    stay visible side by side: this report published the unfiltered one, and the difference
+    between them is the finding, not a footnote.
+    """
+    sig = [r for r in hits if r.get("evalue") is not None and r["evalue"] < cutoff]
+    part = [r for r in sig if r.get("aln_frac", 1.0) < 0.95]
+    out = {"cutoff": cutoff, "reads": len(sig),
+           "frac_of_queries": len(sig) / n if n else None,
+           "frac_of_queries_ci95": wilson(len(sig), n),
+           "partial_reads": len(part),
+           "partial_frac_of_queries": len(part) / n if n else None}
+    if sig:
+        out["median_aln_frac"] = round(st.median([r["aln_frac"] for r in sig]), 4)
+        out["median_pident"] = round(st.median([r["pident"] for r in sig]), 2)
+    if part:
+        out["partial_median_pident"] = round(st.median([r["pident"] for r in part]), 2)
+        out["partial_median_aln_len"] = st.median([r["aln_len"] for r in part])
+    if hits:
+        out["median_evalue_all_hits"] = st.median([r["evalue"] for r in hits
+                                                   if r.get("evalue") is not None])
+    return out
+
+
 def identified(row: dict, min_pident: float, min_aln: int,
                min_bitscore: float) -> bool:
     """Does this row clear the operating point?
@@ -136,6 +162,9 @@ def main() -> None:
     ap.add_argument("--strong-pident", type=float, default=80.0,
                     help="requirement 1.iii's own number")
     ap.add_argument("--strong-aln-frac", type=float, default=0.8)
+    ap.add_argument("--significant", type=float, default=1e-5,
+                    help="E-value below which a match is treated as real rather than as the "
+                         "best chance alignment a short query finds in a large database")
     ap.add_argument("--residue-names", type=Path, default=None,
                     help="the cascade's own residue name list for this block, so the rung "
                          "is CUMULATIVE on it rather than measured against nothing. "
@@ -186,6 +215,13 @@ def main() -> None:
             "identified_at_operating_point":
                 sum(1 for r in rs if identified(r, args.min_pident, args.min_aln,
                                                 args.min_bitscore)) / n if n else None,
+            # SIGNIFICANCE, which the first version of this report did not read and which
+            # inverts its conclusion. BLAST reports down to E = 10 by default, so "any hit"
+            # against a 318.8 GB database counts the best CHANCE match a 107 nt query finds
+            # - median E = 0.24 on the first pilot. These fields are therefore not an extra
+            # cut of the same quantity, they are the quantity: a relative that is real
+            # aligns end to end, and partial alignment is mostly what chance looks like.
+            "significant": sig_block(hits, n, args.significant),
         }
 
     # ---- per mate, because the two mates are not interchangeable here

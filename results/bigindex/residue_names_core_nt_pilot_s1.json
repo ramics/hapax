@@ -3,8 +3,8 @@
   "contains": "pairs still unidentified after the tier-1 cascade PLUS core_nt_pilot; cumulative, not a delta",
   "rung": "core_nt_pilot",
   "block": 1,
-  "program": "blastn",
-  "db_version": "2026-10-22-01-05-01",
+  "program": "",
+  "db_version": "",
   "min_pident": 90.0,
   "min_aln_bases": 40,
   "min_bitscore": 0.0,
@@ -14,7 +14,7 @@
   "removed_by_this_rung": 39,
   "name_drift_vs_committed_list": null,
   "source_files": [
-    "bi2_rows_pilot_core_nt.jsonl"
+    "rows_pilot_core_nt_i-0b42267a.jsonl"
   ],
   "truncated_rows_dropped": 0
 }
