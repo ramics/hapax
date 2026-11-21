@@ -12,6 +12,35 @@ Then: [`CLAUDE.md`](CLAUDE.md) for how to work in the repo, and
 **[`results/README.md`](results/README.md) for the experiment archive** — one line per
 experiment saying what it measured, what it killed, and where its report is.
 
+## Running it
+
+```
+python3 hapax.py run SAMPLE_1.fastq.gz SAMPLE_2.fastq.gz --seed 1 --out RUNDIR
+python3 experiments/make_web.py RUNDIR          # writes RUNDIR/web/index.html
+```
+
+`hapax.py` is an orchestrator: every number in `RUNDIR` comes from the `experiments/`
+script that already measures it, with that script's own seed and manifest. The web view is
+a thin reader over `RUNDIR` and contains no number that is not in a committed file. Add
+`--plan` to print the stages without running them.
+
+## How far signal-to-noise gets today, and where it stops
+
+**It gets to:** a three-way breakdown of the library with intervals and operating points
+(77.0% identified, 11.9% assembled-but-unidentified, 11.1% residual reads on this sample);
+per read, the distance to its closest relative with the alignment's coverage and E-value,
+what kind of sequence it is, whether it recurs in the library, and what it physically sits
+next to; per subject, how many residue reads point at one known relative from how far,
+which is where a new strain of a known virus appears; and a divergence ladder from a spiked
+holdout genome that says what the whole cascade would have missed at 10% and 20%.
+
+**It stops at:** any per-read verdict, and grouping. A mate finds its own partner in its ten
+nearest neighbours 23 times above chance with no shared sequence, which says the geometry
+carries real molecule-level information — but the rate falls as the space grows, so at
+library scale a read cannot find even its own mate, let alone a stranger from the same
+genome ([`results/mate_friends/`](results/mate_friends/REPORT.md)). Nothing here approaches
+one false positive per million.
+
 ## What this is not
 
 It does not emit a novel-or-not call. The target is a multidimensional measurement of signal
