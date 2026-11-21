@@ -90,6 +90,7 @@ tar xzf code.tar.gz
 test -f experiments/recurrence_pass.py || die "the payload has no recurrence_pass.py"
 test -f experiments/crossplant_sample.py || die "the payload has no crossplant_sample.py"
 test -f experiments/crossplant_pass.py || die "the payload has no crossplant_pass.py"
+test -f experiments/crossplant_reduce.py || die "the payload has no crossplant_reduce.py"
 test -f experiments/kmer_coverage/Cargo.toml || die "the payload has no kmer_coverage crate"
 
 ( cd experiments/kmer_coverage && cargo build --release --offline 2>/dev/null \
@@ -119,6 +120,9 @@ if n and n < len(rows):
     rows = [rows[int(i * stride)] for i in range(n)]
 for r in rows:
     print(f'{r["run"]}:{14 if r["project"] == "PRJNA948850" else 0}')
+# Our own sample at the same depth, so its piles have an own-library abundance and it can be
+# held out like any other library. It is not a panel member and never enters a union.
+print("@@QUERY_RUN@@:14")
 PY
 test -s /opt/hapax/subjects.txt || die "no subjects were selected"
 cp /opt/hapax/subjects.txt /opt/hapax/out/subjects.txt
@@ -193,4 +197,7 @@ cp /opt/hapax/log-sample.txt /opt/hapax/out/ || true
 gzip -c /opt/hapax/queries.tsv > /opt/hapax/out/queries_used.tsv.gz || true
 [ "$RC" -eq 0 ] || echo "=== at least one shard exited $RC ==="
 ls /opt/hapax/out/witness/witness_*.npz | wc -l > /opt/hapax/out/subjects_scored.txt
+"$PYBIN" experiments/crossplant_reduce.py --witness /opt/hapax/out/witness \
+  --queries /opt/hapax/queries.tsv --out /opt/hapax/out/packed > /opt/hapax/log-reduce.txt 2>&1 \
+  || echo "=== reduce failed; the per-subject npz files are still uploaded ==="
 die "the crossplant pass finished" 0

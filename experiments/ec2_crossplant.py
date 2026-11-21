@@ -58,6 +58,7 @@ HEARTBEAT_SECONDS = 300
 PAYLOAD_MODULES = ("experiments/recurrence_pass.py",
                    "experiments/crossplant_sample.py",
                    "experiments/crossplant_pass.py",
+                   "experiments/crossplant_reduce.py",
                    "experiments/kmer_coverage/Cargo.toml",
                    "experiments/kmer_coverage/Cargo.lock",
                    "experiments/kmer_coverage/src/main.rs")
