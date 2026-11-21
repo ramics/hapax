@@ -733,12 +733,10 @@ function interval(iv) {
   h.append(el('h1', null, acc ? esc(acc) + ', untreated wastewater'
                               : 'Hapax run viewer'));
   h.append(el('p', 'lede',
-    'What is in this water, what we screened for and did not find, and how far the ' +
-    'things we recognise have drifted from the references. Then the larger part: the ' +
-    'sequence nothing could name, and what is and is not known about it. Every number ' +
-    'is printed beside the operating point and the control that make it readable, and ' +
-    'nothing here scores novelty: an index can say whether something is already known ' +
-    'and cannot say whether it is new.'));
+    'Untargeted RNA sequencing of untreated wastewater. Screening results, ' +
+    'composition, divergence of assembled viruses from their references, and the ' +
+    'unnamed remainder. Every figure carries its operating point and control. No ' +
+    'figure on this page scores novelty.'));
   // Two scopes on one page, said once at the top. The classified profile and the
   // residue search read every pair; the cascade reads a block, because it cannot be run
   // over the library in this container. A reader who assumes one scope for all of it
@@ -860,22 +858,21 @@ function interval(iv) {
     'What this run did, and what came out of it.');
   const b = (t && t.breakdown) || {};
   const lede = el('p', 'lede',
-    'This is sewage from one treatment plant in Berlin, sequenced as RNA. Most of what ' +
-    'is in it is already known to science, so the job is to take the known away and look ' +
-    'hard at what is left. Nothing here guesses that a sequence is new. The page says ' +
-    'how far a piece of sequence is from its nearest known relative, and how confident ' +
-    'that distance is, and stops there.');
+    'Sewage from one treatment plant in Berlin, sequenced as RNA. The cascade removes ' +
+    'identifiable sequence; the remainder is characterised, not scored. Reported ' +
+    'quantity is distance to the nearest known relative and the confidence in that ' +
+    'distance.');
   p.append(lede);
   const g = el('div', 'big');
   function big(v, lab) { const d = el('div');
     d.append(el('div', 'bignum', v)); d.append(el('div', 'biglab', lab)); g.append(d); }
-  if (b.identified) big(pct(b.identified.point), 'of the library was identified outright');
+  if (b.identified) big(pct(b.identified.point), 'of the library identified');
   if (b.assembled_unidentified) big(pct(b.assembled_unidentified.point),
-    'assembled into something, but nothing could name it');
+    'assembled, unidentified');
   if (b.residual) big(pct(b.residual.point),
-    'left over: no name, and no contig either');
+    'residual: no name, no contig');
   if (S && S.subjects_total != null) big(String(S.subjects_total),
-    'known organisms the leftovers resemble from a distance');
+    'distinct subjects matched by residual reads');
   p.append(g);
   const bits = [];
   if (S && (S.subjects || []).length) {
@@ -2248,10 +2245,9 @@ function interval(iv) {
 // for and not found is a result.
 (function () {
   const P = D.profile;
-  const p = panel('What we watch for, and what is here',
-    'The organisms a public-health reader asks a sewage sample about, ranked by how ' +
-    'much of the library they account for. A level is reads, not cases: it says this ' +
-    'sequence is in the water, not that anyone is ill.');
+  const p = panel('Watchlist screen',
+    'Forty-four watchlist taxa screened against the whole library. Levels are read ' +
+    'pairs, not cases.');
   if (!P) {
     p.append(el('div', 'absent', 'public_health_profile_s*.json absent: run ' +
       'experiments/public_health_profile.py over this library'));
@@ -2280,13 +2276,12 @@ function interval(iv) {
   const hero = el('div', 'verdict');
   hero.innerHTML =
     '<div class="vmain">' + (top
-      ? 'The highest anything on the watchlist reaches is <b>' + esc(top.name) +
-        '</b>, at <b>' + oneIn(top.fraction) + ' read pairs</b>.'
-      : 'Nothing on the watchlist was seen at all.') + '</div>' +
-    '<div class="vsub">' + hit.length + ' of ' + rows.length + ' seen, ' + miss.length +
-    ' not. Everything here is a trace: no watchlist organism reaches one pair in ' +
-    '100,000, and this is an untargeted library, which is a blunt instrument for ' +
-    'finding a pathogen at wastewater concentrations.</div>';
+      ? 'Highest watchlist detection: <b>' + esc(top.name) + '</b>, at <b>' +
+        oneIn(top.fraction) + ' read pairs</b>.'
+      : 'No watchlist taxon detected.') + '</div>' +
+    '<div class="vsub">' + hit.length + ' of ' + rows.length + ' detected at ' +
+    'confidence ' + CONF + '. No row reaches 1 pair in 100,000. Untargeted RNA ' +
+    'sequencing has low sensitivity for human pathogens at these concentrations.</div>';
   p.append(hero);
 
   const rank = el('div', 'ranked');
@@ -2298,7 +2293,7 @@ function interval(iv) {
       '<div class="rno mono">' + (i + 1) + '</div>' +
       '<div class="rname"><b>' + esc(r.name) + '</b> <span class="dim">' +
         esc(r.group) + '</span>' + (holds
-          ? '<span class="chip strong">holds at the strictest threshold</span>'
+          ? '<span class="chip strong">holds at confidence 0.2</span>'
           : '<span class="chip">trace</span>') + '</div>' +
       // One hue for every bar. Length is the level and the chip is the operating
       // point; colouring the bar by robustness as well put the two encodings in
@@ -2313,7 +2308,7 @@ function interval(iv) {
 
   const more = el('details', 'more');
   const sum = document.createElement('summary');
-  sum.innerHTML = 'the ' + miss.length + ' we looked for and did not find';
+  sum.innerHTML = miss.length + ' not detected';
   more.append(sum);
   const mgrid = el('div', 'misses');
   miss.forEach(r => {
@@ -2325,21 +2320,17 @@ function interval(iv) {
   });
   more.append(mgrid);
   more.append(el('p', 'note',
-    'Not found is not absent. The bound is what this sequencing could have seen, not ' +
-    'what is in the catchment, and an untargeted library is reported in the literature ' +
-    'as insensitive for human pathogens at these concentrations. A targeted assay ' +
-    'answers this question and this does not.'));
+    'Bounds are rule-of-three upper limits at this sequencing depth, not statements ' +
+    'about the catchment. Absence requires a targeted assay.'));
   p.append(more);
 
   const cal = el('div', 'callout');
-  cal.innerHTML = '<b>Why these rows and not twice as many.</b> Run the same panel over ' +
-    'this library with every read shuffled, and at the loosest threshold <b>' +
-    ((nul['0.0'] || {}).panel_rows_detected) + ' of ' + rows.length + ' rows light up ' +
-    'on sequence that carries no information at all</b>. At the threshold used here, ' +
-    ((nul[CONF] || {}).panel_rows_detected) + '. That is what the threshold is for. It ' +
-    'does not control the other way a row can be wrong, which is one organism matching ' +
-    'a close relative, and nothing in this run does: read a one-pair row as a reason ' +
-    'for a targeted test, never as a detection.';
+  cal.innerHTML = '<b>Shuffled control.</b> The same panel over composition-matched ' +
+    'shuffled reads detects <b>' + ((nul['0.0'] || {}).panel_rows_detected) + ' of ' +
+    rows.length + ' rows at confidence 0</b> and ' +
+    ((nul[CONF] || {}).panel_rows_detected) + ' at confidence ' + CONF + '. ' +
+    'Misassignment to a close relative is uncontrolled. Treat a one-pair row as ' +
+    'grounds for a targeted test.';
   p.append(cal);
   app.append(p);
 })();
@@ -2348,9 +2339,8 @@ function interval(iv) {
 (function () {
   const P = D.profile;
   const p = panel('What this water is',
-    'What the sequence in this library turns out to be. Only a small part of it can be ' +
-    'put on a named organism at all, so the first circle is how much, and the second ' +
-    'is what that part is made of.');
+    'Kraken2 PlusPF-08 over all read pairs. First circle: the fraction carrying any ' +
+    'name. Second: the composition of that fraction.');
   if (!P) { p.append(el('div', 'absent', 'public_health_profile_s*.json absent'));
     app.append(p); return; }
 
@@ -2490,15 +2480,15 @@ function interval(iv) {
   sel.onchange = draw; draw();
 
   const note = el('div', 'callout');
-  note.innerHTML = '<b>Three things this picture is not.</b> It is not the organisms in ' +
-    'the water: this is RNA, and a bacterium with a thousand ribosomes contributes a ' +
-    'thousand times what its cell count would. It is not stable: move the control ' +
-    'above and the named fraction swings between ' +
+  note.innerHTML = '<b>Caveats.</b> This is RNA abundance, not cell counts: one ' +
+    'bacterium with a thousand ribosomes contributes a thousand times its cell count. ' +
+    'The named fraction ranges from ' +
     pct(1 - (((P.at_confidence['0.0'] || {}).by_superkingdom || [])
       .filter(g => g.group === 'unclassified')[0] || {}).fraction) + ' and ' +
     pct(1 - (((P.at_confidence['0.2'] || {}).by_superkingdom || [])
       .filter(g => g.group === 'unclassified')[0] || {}).fraction) +
-    ' on one parameter. And the unnamed part is not novelty: see below.';
+    ' across the confidence settings above. Unnamed sequence is not evidence of ' +
+    'novelty; see below.';
   p.append(note);
   app.append(p);
 })();
@@ -2506,11 +2496,9 @@ function interval(iv) {
 // ---------- public health: known viruses, reference or drifted
 (function () {
   const S = D.strain_divergence;
-  const p = panel('The viruses here, and how far from the reference',
-    'Where this sample assembled enough of a virus to compare it with the closest ' +
-    'reference, how far it has drifted. Most divergent first, because that is the row ' +
-    'worth attention: a known virus that no longer looks like the reference is what ' +
-    'wastewater surveillance exists to notice early.');
+  const p = panel('Assembled viruses and their divergence',
+    'Contig-level protein identity to the closest published reference, most ' +
+    'divergent first.');
   if (!S) {
     p.append(el('div', 'absent', 'known_strain_divergence_s*.json absent: run ' +
       'experiments/known_strain_divergence.py'));
@@ -2521,10 +2509,10 @@ function interval(iv) {
   const div = taxa.filter(t => t.median_identity_percent < 90);
   const hero = el('div', 'verdict');
   hero.innerHTML = '<div class="vmain"><b>' + div.length + ' of ' + taxa.length +
-    '</b> viruses this sample assembled sit <b>below 90% identity</b> to the closest ' +
-    'protein anyone has published.</div><div class="vsub">Drift from the database, ' +
-    'measured over alignments long enough to mean something. It cannot see strain ' +
-    'mixtures inside the sample, because assembly fuses lineages that close.</div>';
+    '</b> assembled viruses sit <b>below 90% identity</b> to their closest published ' +
+    'protein.</div><div class="vsub">DIAMOND blastx, alignments of at least 60 aa at ' +
+    'E&lt;1e-5. Divergence is measured against the database, not within the sample: ' +
+    'assembly fuses lineages below about 3.8% divergence.</div>';
   p.append(hero);
 
   const rank = el('div', 'ranked');
@@ -2556,16 +2544,27 @@ function interval(iv) {
   if (taxa.length > 10) {
     const d = el('details', 'more');
     const s2 = document.createElement('summary');
-    s2.textContent = 'the other ' + (taxa.length - 10) + ', closer to their references';
+    s2.textContent = 'the other ' + (taxa.length - 10);
     d.append(s2);
     const r2 = el('div', 'ranked');
     taxa.slice(10).forEach(t => r2.append(draw(t)));
     d.append(r2);
     p.append(d);
   }
-  const bs = el('div', 'note');
-  bs.innerHTML = '<b>What this cannot see.</b> ' +
-    (S.blind_spots || []).map(b => esc(b)).join('. ') + '.';
+  // The blind-spot list is five sentences from the result file. It stays complete and
+  // goes behind a disclosure rather than onto the face of the panel.
+  const bs = el('details', 'more');
+  const bsum = document.createElement('summary');
+  bsum.textContent = 'limitations of this measurement';
+  bs.append(bsum);
+  const bl = document.createElement('ul');
+  bl.className = 'note';
+  (S.blind_spots || []).forEach(x => {
+    const li = document.createElement('li');
+    li.textContent = String(x).replace(/\.$/, '') + '.';
+    bl.append(li);
+  });
+  bs.append(bl);
   p.append(bs);
   app.append(p);
 })();
@@ -2576,20 +2575,17 @@ function interval(iv) {
   const cur = (D.tier_table || {}).curve || [];
   const tier = k => (cur.filter(c => c.tier === k)[0] || {});
   if (!K || !b) return;
-  const p = panel('The part nobody can name',
-    'What is left when every reference has had its turn. This is most of the library, ' +
-    'and it is the part this project is really about.');
+  const p = panel('The unnamed remainder',
+    'The fraction no reference names.');
   const own = tier('selfasm_sample_contigs_identified_norrna').marginal_removed;
   const rr = tier('rrna').tier_alone_removed;
 
   const hero = el('div', 'verdict');
   hero.innerHTML = '<div class="vmain"><b>' +
-    pct(1 - (K.named / (K.searched || 1))) + '</b> of the leftover reads match nothing ' +
-    'anyone has named, in any protein database we can run.</div>' +
-    '<div class="vsub">And it is not that they are unlike anything: ' + pct(own) +
-    ' of this library is sequence we have seen in this very sample before, assembled ' +
-    'into contigs that nobody has ever named. Another ' + pct(rr) + ' is ribosomal RNA, ' +
-    'which tells you it is a ribosome and not whose.</div>';
+    pct(1 - (K.named / (K.searched || 1))) + '</b> of residual reads have no ' +
+    'significant protein match in any index available here.</div>' +
+    '<div class="vsub">' + pct(own) + ' of the library matches contigs assembled from ' +
+    'this sample that carry no name; ' + pct(rr) + ' is ribosomal RNA.</div>';
   p.append(hero);
 
   // One picture of the whole library, split by WHAT WE CAN SAY about each part rather
@@ -2606,16 +2602,16 @@ function interval(iv) {
     const ident = brk.identified.point;
     const bands = [
       {lab: 'named', v: named, col: 'var(--v1)',
-       sub: 'a taxon or an accession came back'},
+       sub: 'a taxon or an accession'},
       {lab: 'ribosomal RNA', v: rr, col: 'var(--v1)', op: 0.45,
-       sub: 'a ribosome, and not whose'},
-      {lab: 'seen here before, never named', v: Math.max(0, ident - named - rr),
-       col: 'var(--v-mute)', sub: 'mostly a contig assembled from this very sample (' +
-         pct(own) + '), the rest adapter and low complexity'},
-      {lab: 'assembles, nothing names it', v: brk.assembled_unidentified.point,
-       col: 'var(--v2-soft)', sub: 'real recurring sequence, median depth 6'},
-      {lab: 'left over', v: brk.residual.point, col: 'var(--v2)',
-       sub: 'median depth 1, seen once and never again'},
+       sub: 'identifies a ribosome, not an organism'},
+      {lab: 'recognised, unnamed', v: Math.max(0, ident - named - rr),
+       col: 'var(--v-mute)', sub: 'mostly own-sample contigs (' + pct(own) +
+         '), rest adapter and low complexity'},
+      {lab: 'assembles, unidentified', v: brk.assembled_unidentified.point,
+       col: 'var(--v2-soft)', sub: 'median depth 6'},
+      {lab: 'residual', v: brk.residual.point, col: 'var(--v2)',
+       sub: 'median depth 1'},
     ].filter(b => b.v > 0);
     const tot = bands.reduce((a, b) => a + b.v, 0) || 1;
     const bar = el('div', 'split');
@@ -2634,13 +2630,11 @@ function interval(iv) {
   })();
 
   const note = el('div', 'callout');
-  note.innerHTML = '<b>Unnamed is not novel, and this is the one place on the page ' +
-    'where that matters most.</b> An index can say whether something is already known; ' +
-    'it cannot say whether it is new, because any score built from a search tracks ' +
-    'distance to the database rather than novelty. What is measured instead, in the ' +
-    'detail below: this pile is not laboratory artefact, it holds no abundant hidden ' +
-    'genome, and it sits at a median depth of one read, which is below every instrument ' +
-    'that needs to see a molecule twice.';
+  note.innerHTML = '<b>Unnamed is not novel.</b> A search establishes that sequence ' +
+    'is already known; it cannot establish novelty, because any search-derived score ' +
+    'tracks distance to the database. Measured in the detail below: artefact ' +
+    'signatures account for under 1% of this pile, it contains no abundant unknown ' +
+    'genome, and its median depth is 1.';
   p.append(note);
   app.append(p);
 })();
@@ -2654,20 +2648,18 @@ function interval(iv) {
   const P = D.profile, curve = (D.tier_table || {}).curve || [];
   const brk = (D.tier_table || {}).breakdown;
   if (!P || !curve.length || !brk) return;
-  const p = panel('Naming something against recognising it',
-    'Why this run can say 7% of the library is named and 77% of it is identifiable, ' +
-    'with no contradiction between them.');
+  const p = panel('Named against recognised',
+    'Reconciling 7% named against 77% identifiable.');
   // Which tiers can name is a property of the tier, declared here where it can be read.
   // A Kraken2 or DIAMOND hit carries a taxon or an accession; an artefact filter, a
   // SILVA match and a match to a contig from this very sample tell you the sequence has
   // been seen before and nothing about what it is.
   const CAN_NAME = {k2_viral: 1, k2_standard08: 1, k2_pluspf08: 1, k2_pluspf16: 1,
                     prot_viral: 1, prot_sprot: 1};
-  const WHY = {artefact: 'adapter and low complexity, removed and not named',
-               rrna: 'matches ribosomal RNA, which says it is a ribosome and not whose',
-               selfasm_sample_contigs_rrna: 'matches this sample own ribosomal contigs',
-               selfasm_sample_contigs_identified_norrna:
-                 'matches a contig assembled from this very sample, which nobody named'};
+  const WHY = {artefact: 'adapter and low complexity',
+               rrna: 'ribosomal RNA',
+               selfasm_sample_contigs_rrna: 'own-sample ribosomal contigs',
+               selfasm_sample_contigs_identified_norrna: 'own-sample unnamed contigs'};
   let named = 0, unnamed = 0; const unnamedRows = [];
   curve.forEach(c => {
     const m = c.marginal_removed || 0;
@@ -2685,22 +2677,21 @@ function interval(iv) {
       '<div class="csub dim">' + sub + '</div>';
     box.append(r);
   };
-  rowbar('<b>named</b> by one index', k2here, 'var(--v1)',
-    'Kraken2, PlusPF-08, confidence 0.1, whole library.');
-  rowbar('<b>named</b> by the whole cascade', named, 'var(--v1)',
-    'every cascade tier that returns a taxon or an accession, added up. That it lands ' +
-    'beside the figure above is the cross-check.');
-  rowbar('<b>recognised but not named</b>', unnamed, 'var(--v-mute)',
+  rowbar('<b>named</b>, one index', k2here, 'var(--v1)',
+    'Kraken2 PlusPF-08, confidence 0.1, whole library.');
+  rowbar('<b>named</b>, whole cascade', named, 'var(--v1)',
+    'sum of every cascade tier returning a taxon or accession. Agrees with the row ' +
+    'above.');
+  rowbar('<b>recognised, unnamed</b>', unnamed, 'var(--v-mute)',
     unnamedRows.map(r => (WHY[r[0]] || r[0]) + ', ' + pct(r[1])).join('; ') + '.');
-  rowbar('left over after everything', brk.residual.point, 'var(--v2)',
-    'plus ' + pct((brk.assembled_unidentified || {}).point) + ' that assembles into ' +
-    'contigs nothing can name.');
+  rowbar('residual', brk.residual.point, 'var(--v2)',
+    'plus ' + pct((brk.assembled_unidentified || {}).point) +
+    ' assembling into unidentified contigs.');
   p.append(box);
   p.append(el('p', 'note',
-    'Most of what this pipeline removes as known, it removes by matching sequence ' +
-    'nobody has named. The scopes differ too: the index figure is the whole library, ' +
-    'the cascade figures its ' + ((D.parameters || {}).pairs || 0).toLocaleString() +
-    '-pair block.'));
+    'Most removal is by match to unnamed sequence. Scopes differ: the index row is ' +
+    'the whole library, the cascade rows its ' +
+    ((D.parameters || {}).pairs || 0).toLocaleString() + '-pair block.'));
   app.append(p);
 })();
 // ---------- summary and detail
@@ -2712,9 +2703,9 @@ function interval(iv) {
   // them. Everything else on this page is how those answers were arrived at, and goes
   // below the fold: it was all on the front page before, and the front page was a
   // method report wearing a sample report's clothes.
-  const SUMMARY = ['What we watch for, and what is here', 'What this water is',
-                   'The viruses here, and how far from the reference',
-                   'The part nobody can name'];
+  const SUMMARY = ['Watchlist screen', 'What this water is',
+                   'Assembled viruses and their divergence',
+                   'The unnamed remainder'];
   const panels = Array.prototype.filter.call(app.children,
     n => n.tagName === 'SECTION' && n.classList.contains('panel'));
   const detail = panels.filter(n => {
