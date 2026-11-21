@@ -1,0 +1,15 @@
+{
+ "reads_scanned": {
+  "SRR23421544": 4290429,
+  "SRR23421542": 6469570,
+  "SRR23421543": 10578319
+ },
+ "files": [
+  "/tmp/claude-0/-home-user/091726aa-0c4a-5e0b-a85c-99f5c136bf59/scratchpad/reads/SRR23421544.fastq.gz",
+  "/tmp/claude-0/-home-user/091726aa-0c4a-5e0b-a85c-99f5c136bf59/scratchpad/reads/SRR23421542.fastq.gz",
+  "/tmp/claude-0/-home-user/091726aa-0c4a-5e0b-a85c-99f5c136bf59/scratchpad/reads/SRR23421543.fastq.gz"
+ ],
+ "seed": 1,
+ "preset": "minimap2 sr via mappy",
+ "primary_only": true
+}

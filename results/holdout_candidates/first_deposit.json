@@ -1,0 +1,3140 @@
+{
+ "10941": {
+  "organism": "Human rotavirus A",
+  "pool_records": 1,
+  "prior_to_cutoff": 36232,
+  "total_records": 51415
+ },
+ "11053": {
+  "organism": "dengue virus type 1",
+  "pool_records": 1,
+  "prior_to_cutoff": 13378,
+  "total_records": 22171
+ },
+ "11827": {
+  "organism": "Human endogenous retrovirus",
+  "pool_records": 1,
+  "prior_to_cutoff": 269,
+  "total_records": 280
+ },
+ "11987": {
+  "organism": "Melon necrotic spot virus",
+  "pool_records": 4,
+  "prior_to_cutoff": 118,
+  "total_records": 166
+ },
+ "12022": {
+  "organism": "Escherichia phage MS2",
+  "pool_records": 2,
+  "prior_to_cutoff": 516,
+  "total_records": 540
+ },
+ "12072": {
+  "organism": "Coxsackievirus B3",
+  "pool_records": 17,
+  "prior_to_cutoff": 1301,
+  "total_records": 1709
+ },
+ "12078": {
+  "organism": "Echovirus E11",
+  "pool_records": 5,
+  "prior_to_cutoff": 2387,
+  "total_records": 3783
+ },
+ "12083": {
+  "organism": "Poliovirus 2",
+  "pool_records": 279,
+  "prior_to_cutoff": 2393,
+  "total_records": 3732
+ },
+ "12086": {
+  "organism": "Poliovirus 3",
+  "pool_records": 2,
+  "prior_to_cutoff": 1069,
+  "total_records": 1617
+ },
+ "12089": {
+  "organism": "Coxsackievirus A24",
+  "pool_records": 27,
+  "prior_to_cutoff": 1775,
+  "total_records": 2426
+ },
+ "12092": {
+  "organism": "Hepatovirus A",
+  "pool_records": 13,
+  "prior_to_cutoff": 9657,
+  "total_records": 12996
+ },
+ "12235": {
+  "organism": "Cucumber green mottle mosaic virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 363,
+  "total_records": 565
+ },
+ "12239": {
+  "organism": "Pepper mild mottle virus",
+  "pool_records": 2,
+  "prior_to_cutoff": 571,
+  "total_records": 716
+ },
+ "12241": {
+  "organism": "Tobacco mild green mosaic virus",
+  "pool_records": 2,
+  "prior_to_cutoff": 221,
+  "total_records": 417
+ },
+ "28875": {
+  "organism": "Rotavirus A",
+  "pool_records": 20,
+  "prior_to_cutoff": 93037,
+  "total_records": 138790
+ },
+ "33758": {
+  "organism": "Echovirus",
+  "pool_records": 8,
+  "prior_to_cutoff": 18,
+  "total_records": 76
+ },
+ "35293": {
+  "organism": "Echovirus E12",
+  "pool_records": 1,
+  "prior_to_cutoff": 180,
+  "total_records": 260
+ },
+ "35294": {
+  "organism": "Echovirus E2",
+  "pool_records": 1,
+  "prior_to_cutoff": 94,
+  "total_records": 102
+ },
+ "35317": {
+  "organism": "Olifantsvlei virus",
+  "pool_records": 3,
+  "prior_to_cutoff": 0,
+  "total_records": 3
+ },
+ "36427": {
+  "organism": "Rotavirus C",
+  "pool_records": 7,
+  "prior_to_cutoff": 4765,
+  "total_records": 5920
+ },
+ "42769": {
+  "organism": "Coxsackievirus A10",
+  "pool_records": 2,
+  "prior_to_cutoff": 2586,
+  "total_records": 3494
+ },
+ "42770": {
+  "organism": "Coxsackievirus A11",
+  "pool_records": 98,
+  "prior_to_cutoff": 73,
+  "total_records": 185
+ },
+ "42772": {
+  "organism": "Coxsackievirus A13",
+  "pool_records": 104,
+  "prior_to_cutoff": 607,
+  "total_records": 757
+ },
+ "42773": {
+  "organism": "Coxsackievirus A14",
+  "pool_records": 2,
+  "prior_to_cutoff": 89,
+  "total_records": 95
+ },
+ "42775": {
+  "organism": "Coxsackievirus A17",
+  "pool_records": 2,
+  "prior_to_cutoff": 128,
+  "total_records": 131
+ },
+ "42778": {
+  "organism": "Coxsackievirus A19",
+  "pool_records": 194,
+  "prior_to_cutoff": 57,
+  "total_records": 276
+ },
+ "42779": {
+  "organism": "Coxsackievirus A1",
+  "pool_records": 82,
+  "prior_to_cutoff": 223,
+  "total_records": 370
+ },
+ "42782": {
+  "organism": "Coxsackievirus A20",
+  "pool_records": 8,
+  "prior_to_cutoff": 235,
+  "total_records": 255
+ },
+ "42783": {
+  "organism": "Coxsackievirus A22",
+  "pool_records": 6,
+  "prior_to_cutoff": 88,
+  "total_records": 100
+ },
+ "42785": {
+  "organism": "Coxsackievirus A4",
+  "pool_records": 16,
+  "prior_to_cutoff": 1280,
+  "total_records": 2118
+ },
+ "42789": {
+  "organism": "enterovirus D68",
+  "pool_records": 2,
+  "prior_to_cutoff": 4859,
+  "total_records": 7596
+ },
+ "45101": {
+  "organism": "Echovirus E25",
+  "pool_records": 5,
+  "prior_to_cutoff": 641,
+  "total_records": 706
+ },
+ "47501": {
+  "organism": "Echovirus E13",
+  "pool_records": 1,
+  "prior_to_cutoff": 827,
+  "total_records": 852
+ },
+ "47503": {
+  "organism": "Echovirus E15",
+  "pool_records": 1,
+  "prior_to_cutoff": 56,
+  "total_records": 60
+ },
+ "47506": {
+  "organism": "Echovirus E18",
+  "pool_records": 1,
+  "prior_to_cutoff": 686,
+  "total_records": 821
+ },
+ "47507": {
+  "organism": "Echovirus E19",
+  "pool_records": 2,
+  "prior_to_cutoff": 336,
+  "total_records": 395
+ },
+ "47515": {
+  "organism": "Echovirus E33",
+  "pool_records": 1,
+  "prior_to_cutoff": 224,
+  "total_records": 241
+ },
+ "64320": {
+  "organism": "Zika virus",
+  "pool_records": 4,
+  "prior_to_cutoff": 2206,
+  "total_records": 3425
+ },
+ "86107": {
+  "organism": "Coxsackievirus A6",
+  "pool_records": 1,
+  "prior_to_cutoff": 9265,
+  "total_records": 14884
+ },
+ "106966": {
+  "organism": "Enterovirus G",
+  "pool_records": 50,
+  "prior_to_cutoff": 778,
+  "total_records": 1094
+ },
+ "122928": {
+  "organism": "Norovirus GI",
+  "pool_records": 5,
+  "prior_to_cutoff": 7000,
+  "total_records": 9957
+ },
+ "122929": {
+  "organism": "Norovirus GII",
+  "pool_records": 32,
+  "prior_to_cutoff": 37640,
+  "total_records": 54329
+ },
+ "138948": {
+  "organism": "Enterovirus A",
+  "pool_records": 98,
+  "prior_to_cutoff": 37651,
+  "total_records": 51914
+ },
+ "138949": {
+  "organism": "Enterovirus B",
+  "pool_records": 229,
+  "prior_to_cutoff": 28281,
+  "total_records": 34799
+ },
+ "138950": {
+  "organism": "Enterovirus C",
+  "pool_records": 189,
+  "prior_to_cutoff": 12097,
+  "total_records": 16950
+ },
+ "147712": {
+  "organism": "Rhinovirus B",
+  "pool_records": 1,
+  "prior_to_cutoff": 1578,
+  "total_records": 2490
+ },
+ "222889": {
+  "organism": "Enterovirus B74",
+  "pool_records": 1,
+  "prior_to_cutoff": 26,
+  "total_records": 28
+ },
+ "291484": {
+  "organism": "Hepatitis E virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 14228,
+  "total_records": 16999
+ },
+ "306588": {
+  "organism": "Enterovirus A76",
+  "pool_records": 3,
+  "prior_to_cutoff": 115,
+  "total_records": 144
+ },
+ "318564": {
+  "organism": "Enterovirus B81",
+  "pool_records": 1,
+  "prior_to_cutoff": 12,
+  "total_records": 13
+ },
+ "318566": {
+  "organism": "Enterovirus B83",
+  "pool_records": 1,
+  "prior_to_cutoff": 38,
+  "total_records": 43
+ },
+ "318571": {
+  "organism": "Enterovirus B88",
+  "pool_records": 1,
+  "prior_to_cutoff": 14,
+  "total_records": 20
+ },
+ "325445": {
+  "organism": "Enterovirus C96",
+  "pool_records": 5,
+  "prior_to_cutoff": 111,
+  "total_records": 127
+ },
+ "351073": {
+  "organism": "Mammalian orthoreovirus",
+  "pool_records": 195,
+  "prior_to_cutoff": 1236,
+  "total_records": 2464
+ },
+ "463676": {
+  "organism": "Rhinovirus C",
+  "pool_records": 3,
+  "prior_to_cutoff": 5416,
+  "total_records": 8912
+ },
+ "538120": {
+  "organism": "Mammalian orthoreovirus 1",
+  "pool_records": 10,
+  "prior_to_cutoff": 115,
+  "total_records": 160
+ },
+ "568715": {
+  "organism": "Astrovirus MLB1",
+  "pool_records": 7,
+  "prior_to_cutoff": 186,
+  "total_records": 333
+ },
+ "658048": {
+  "organism": "Measles virus genotype B3",
+  "pool_records": 2,
+  "prior_to_cutoff": 4506,
+  "total_records": 8089
+ },
+ "683172": {
+  "organism": "Astrovirus MLB2",
+  "pool_records": 5,
+  "prior_to_cutoff": 76,
+  "total_records": 101
+ },
+ "1134340": {
+  "organism": "Enterovirus C116",
+  "pool_records": 6,
+  "prior_to_cutoff": 29,
+  "total_records": 40
+ },
+ "1196647": {
+  "organism": "Canine picornavirus",
+  "pool_records": 39,
+  "prior_to_cutoff": 6,
+  "total_records": 73
+ },
+ "1239565": {
+  "organism": "Mamastrovirus 1",
+  "pool_records": 19,
+  "prior_to_cutoff": 2263,
+  "total_records": 2774
+ },
+ "1239573": {
+  "organism": "Mamastrovirus 9",
+  "pool_records": 4,
+  "prior_to_cutoff": 89,
+  "total_records": 97
+ },
+ "1247114": {
+  "organism": "Astrovirus MLB3",
+  "pool_records": 3,
+  "prior_to_cutoff": 2,
+  "total_records": 7
+ },
+ "1248136": {
+  "organism": "Enterovirus B106",
+  "pool_records": 3,
+  "prior_to_cutoff": 10,
+  "total_records": 13
+ },
+ "1295563": {
+  "organism": "Enterovirus C99",
+  "pool_records": 11,
+  "prior_to_cutoff": 193,
+  "total_records": 255
+ },
+ "1313215": {
+  "organism": "aichivirus A1",
+  "pool_records": 4,
+  "prior_to_cutoff": 1218,
+  "total_records": 1365
+ },
+ "1330521": {
+  "organism": "Enterovirus J",
+  "pool_records": 1,
+  "prior_to_cutoff": 140,
+  "total_records": 169
+ },
+ "1330524": {
+  "organism": "Salivirus A",
+  "pool_records": 16,
+  "prior_to_cutoff": 333,
+  "total_records": 410
+ },
+ "1389204": {
+  "organism": "Feline astrovirus 2",
+  "pool_records": 1,
+  "prior_to_cutoff": 3,
+  "total_records": 6
+ },
+ "1398550": {
+  "organism": "Sapovirus GI.1",
+  "pool_records": 35,
+  "prior_to_cutoff": 596,
+  "total_records": 857
+ },
+ "1398551": {
+  "organism": "Sapovirus GI.2",
+  "pool_records": 1,
+  "prior_to_cutoff": 375,
+  "total_records": 506
+ },
+ "1442164": {
+  "organism": "Enterovirus B111",
+  "pool_records": 1,
+  "prior_to_cutoff": 2,
+  "total_records": 4
+ },
+ "1503998": {
+  "organism": "Sapovirus GII.3",
+  "pool_records": 12,
+  "prior_to_cutoff": 80,
+  "total_records": 282
+ },
+ "1530250": {
+  "organism": "Enterovirus A119",
+  "pool_records": 4,
+  "prior_to_cutoff": 31,
+  "total_records": 36
+ },
+ "1658270": {
+  "organism": "Sapovirus GV.1",
+  "pool_records": 14,
+  "prior_to_cutoff": 55,
+  "total_records": 88
+ },
+ "1678143": {
+  "organism": "Paslahepevirus balayani",
+  "pool_records": 4,
+  "prior_to_cutoff": 5251,
+  "total_records": 12244
+ },
+ "1697443": {
+  "organism": "Sapovirus GII.5",
+  "pool_records": 3,
+  "prior_to_cutoff": 47,
+  "total_records": 70
+ },
+ "1746063": {
+  "organism": "Shuangao insect virus 7",
+  "pool_records": 20,
+  "prior_to_cutoff": 8,
+  "total_records": 60
+ },
+ "1761477": {
+  "organism": "Tomato brown rugose fruit virus",
+  "pool_records": 6,
+  "prior_to_cutoff": 196,
+  "total_records": 868
+ },
+ "1868658": {
+  "organism": "Human astrovirus",
+  "pool_records": 273,
+  "prior_to_cutoff": 1687,
+  "total_records": 2289
+ },
+ "1906670": {
+  "organism": "Sapovirus sp.",
+  "pool_records": 4,
+  "prior_to_cutoff": 287,
+  "total_records": 524
+ },
+ "1907787": {
+  "organism": "Picobirnavirus sp.",
+  "pool_records": 4,
+  "prior_to_cutoff": 535,
+  "total_records": 2772
+ },
+ "1912147": {
+  "organism": "Mamastrovirus sp.",
+  "pool_records": 121,
+  "prior_to_cutoff": 817,
+  "total_records": 1711
+ },
+ "2003650": {
+  "organism": "Cosavirus D",
+  "pool_records": 1,
+  "prior_to_cutoff": 81,
+  "total_records": 101
+ },
+ "2021417": {
+  "organism": "Bastrovirus Brazil/sewage",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2039694": {
+  "organism": "Salivirus sp.",
+  "pool_records": 5,
+  "prior_to_cutoff": 21,
+  "total_records": 49
+ },
+ "2094719": {
+  "organism": "Kobuvirus sp.",
+  "pool_records": 5,
+  "prior_to_cutoff": 99,
+  "total_records": 308
+ },
+ "2749859": {
+  "organism": "Cosavirus sp.",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 11
+ },
+ "2749860": {
+  "organism": "Cardiovirus sp.",
+  "pool_records": 3,
+  "prior_to_cutoff": 0,
+  "total_records": 20
+ },
+ "2749864": {
+  "organism": "Astrovirus BF34",
+  "pool_records": 4,
+  "prior_to_cutoff": 0,
+  "total_records": 4
+ },
+ "2785983": {
+  "organism": "ssRNA phage AIN000",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2785984": {
+  "organism": "ssRNA phage AIN001",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2785985": {
+  "organism": "ssRNA phage AIN002",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2785986": {
+  "organism": "ssRNA phage AIN003",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2785987": {
+  "organism": "ssRNA phage AVE015",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2785988": {
+  "organism": "ssRNA phage AVE016",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2785989": {
+  "organism": "ssRNA phage AVE017",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2785990": {
+  "organism": "ssRNA phage AVE018",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2785991": {
+  "organism": "ssRNA phage AVE019",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2785992": {
+  "organism": "ssRNA phage AVE020",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2785993": {
+  "organism": "ssRNA phage EMS014",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2785994": {
+  "organism": "ssRNA phage EOC000",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2785995": {
+  "organism": "ssRNA phage ESE005",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2785996": {
+  "organism": "ssRNA phage ESE006",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2785997": {
+  "organism": "ssRNA phage ESE007",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2785998": {
+  "organism": "ssRNA phage ESE015",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2785999": {
+  "organism": "ssRNA phage ESE016",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786000": {
+  "organism": "ssRNA phage ESE017",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786001": {
+  "organism": "ssRNA phage ESE018",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786002": {
+  "organism": "ssRNA phage ESE019",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786003": {
+  "organism": "ssRNA phage ESE020",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786004": {
+  "organism": "ssRNA phage ESE021",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786005": {
+  "organism": "ssRNA phage ESE029",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786006": {
+  "organism": "ssRNA phage ESE058",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786007": {
+  "organism": "ssRNA phage ESO000",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786008": {
+  "organism": "ssRNA phage ESO001",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786009": {
+  "organism": "ssRNA phage ESO002",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786010": {
+  "organism": "ssRNA phage ESO010",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786378": {
+  "organism": "ssRNA phage SRR5208570_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786379": {
+  "organism": "ssRNA phage SRR5208570_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786380": {
+  "organism": "ssRNA phage SRR5208570_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786381": {
+  "organism": "ssRNA phage SRR5208570_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786382": {
+  "organism": "ssRNA phage SRR5208570_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786383": {
+  "organism": "ssRNA phage SRR5208570_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786384": {
+  "organism": "ssRNA phage SRR5208572_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786385": {
+  "organism": "ssRNA phage SRR5208572_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786386": {
+  "organism": "ssRNA phage SRR5208575_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786387": {
+  "organism": "ssRNA phage SRR5466337_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786388": {
+  "organism": "ssRNA phage SRR5466337_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786389": {
+  "organism": "ssRNA phage SRR5466337_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786390": {
+  "organism": "ssRNA phage SRR5466338_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786391": {
+  "organism": "ssRNA phage SRR5466338_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786392": {
+  "organism": "ssRNA phage SRR5466338_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786393": {
+  "organism": "ssRNA phage SRR5466338_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786394": {
+  "organism": "ssRNA phage SRR5466338_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786395": {
+  "organism": "ssRNA phage SRR5466364_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786396": {
+  "organism": "ssRNA phage SRR5466364_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786397": {
+  "organism": "ssRNA phage SRR5466364_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786398": {
+  "organism": "ssRNA phage SRR5466364_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786399": {
+  "organism": "ssRNA phage SRR5466364_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786400": {
+  "organism": "ssRNA phage SRR5466365_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786401": {
+  "organism": "ssRNA phage SRR5466365_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786402": {
+  "organism": "ssRNA phage SRR5466365_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786403": {
+  "organism": "ssRNA phage SRR5466366_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786404": {
+  "organism": "ssRNA phage SRR5466369_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786405": {
+  "organism": "ssRNA phage SRR5466369_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786406": {
+  "organism": "ssRNA phage SRR5466369_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786407": {
+  "organism": "ssRNA phage SRR5466725_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786408": {
+  "organism": "ssRNA phage SRR5466725_10",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786409": {
+  "organism": "ssRNA phage SRR5466725_11",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786410": {
+  "organism": "ssRNA phage SRR5466725_12",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786411": {
+  "organism": "ssRNA phage SRR5466725_13",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786412": {
+  "organism": "ssRNA phage SRR5466725_14",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786413": {
+  "organism": "ssRNA phage SRR5466725_15",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786414": {
+  "organism": "ssRNA phage SRR5466725_16",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786415": {
+  "organism": "ssRNA phage SRR5466725_17",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786416": {
+  "organism": "ssRNA phage SRR5466725_18",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786417": {
+  "organism": "ssRNA phage SRR5466725_19",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786418": {
+  "organism": "ssRNA phage SRR5466725_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786419": {
+  "organism": "ssRNA phage SRR5466725_20",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786420": {
+  "organism": "ssRNA phage SRR5466725_21",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786421": {
+  "organism": "ssRNA phage SRR5466725_22",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786422": {
+  "organism": "ssRNA phage SRR5466725_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786423": {
+  "organism": "ssRNA phage SRR5466725_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786424": {
+  "organism": "ssRNA phage SRR5466725_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786425": {
+  "organism": "ssRNA phage SRR5466725_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786426": {
+  "organism": "ssRNA phage SRR5466725_7",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786427": {
+  "organism": "ssRNA phage SRR5466725_8",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786428": {
+  "organism": "ssRNA phage SRR5466725_9",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786429": {
+  "organism": "ssRNA phage SRR5466727_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786430": {
+  "organism": "ssRNA phage SRR5466727_10",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786431": {
+  "organism": "ssRNA phage SRR5466727_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786432": {
+  "organism": "ssRNA phage SRR5466727_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786433": {
+  "organism": "ssRNA phage SRR5466727_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786434": {
+  "organism": "ssRNA phage SRR5466727_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786435": {
+  "organism": "ssRNA phage SRR5466727_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786436": {
+  "organism": "ssRNA phage SRR5466727_7",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786437": {
+  "organism": "ssRNA phage SRR5466727_8",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786438": {
+  "organism": "ssRNA phage SRR5466727_9",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786439": {
+  "organism": "ssRNA phage SRR5466728_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786440": {
+  "organism": "ssRNA phage SRR5466728_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786441": {
+  "organism": "ssRNA phage SRR5466728_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786442": {
+  "organism": "ssRNA phage SRR5466728_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786443": {
+  "organism": "ssRNA phage SRR5466728_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786444": {
+  "organism": "ssRNA phage SRR5466729_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786445": {
+  "organism": "ssRNA phage SRR5466729_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786446": {
+  "organism": "ssRNA phage SRR5466729_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786447": {
+  "organism": "ssRNA phage SRR5467090_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786448": {
+  "organism": "ssRNA phage SRR5467090_10",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786449": {
+  "organism": "ssRNA phage SRR5467090_11",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786450": {
+  "organism": "ssRNA phage SRR5467090_12",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786451": {
+  "organism": "ssRNA phage SRR5467090_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786452": {
+  "organism": "ssRNA phage SRR5467090_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786453": {
+  "organism": "ssRNA phage SRR5467090_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786454": {
+  "organism": "ssRNA phage SRR5467090_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786455": {
+  "organism": "ssRNA phage SRR5467090_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786456": {
+  "organism": "ssRNA phage SRR5467090_7",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786457": {
+  "organism": "ssRNA phage SRR5467090_8",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786458": {
+  "organism": "ssRNA phage SRR5467090_9",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786459": {
+  "organism": "ssRNA phage SRR5467091_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786460": {
+  "organism": "ssRNA phage SRR5467091_10",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786461": {
+  "organism": "ssRNA phage SRR5467091_11",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786462": {
+  "organism": "ssRNA phage SRR5467091_12",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786463": {
+  "organism": "ssRNA phage SRR5467091_13",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786464": {
+  "organism": "ssRNA phage SRR5467091_14",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786465": {
+  "organism": "ssRNA phage SRR5467091_15",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786466": {
+  "organism": "ssRNA phage SRR5467091_16",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786467": {
+  "organism": "ssRNA phage SRR5467091_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786468": {
+  "organism": "ssRNA phage SRR5467091_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786469": {
+  "organism": "ssRNA phage SRR5467091_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786470": {
+  "organism": "ssRNA phage SRR5467091_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786471": {
+  "organism": "ssRNA phage SRR5467091_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786472": {
+  "organism": "ssRNA phage SRR5467091_7",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786473": {
+  "organism": "ssRNA phage SRR5467091_8",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786474": {
+  "organism": "ssRNA phage SRR5467091_9",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786475": {
+  "organism": "ssRNA phage SRR5467137_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786476": {
+  "organism": "ssRNA phage SRR5467139_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786477": {
+  "organism": "ssRNA phage SRR5467139_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786480": {
+  "organism": "ssRNA phage SRR6049586_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786481": {
+  "organism": "ssRNA phage SRR6049586_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786482": {
+  "organism": "ssRNA phage SRR6050698_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786483": {
+  "organism": "ssRNA phage SRR6050698_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786484": {
+  "organism": "ssRNA phage SRR6050738_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786485": {
+  "organism": "ssRNA phage SRR6050738_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786486": {
+  "organism": "ssRNA phage SRR6050738_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786487": {
+  "organism": "ssRNA phage SRR6050738_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786488": {
+  "organism": "ssRNA phage SRR6253161_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786489": {
+  "organism": "ssRNA phage SRR6253161_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786490": {
+  "organism": "ssRNA phage SRR6253161_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786491": {
+  "organism": "ssRNA phage SRR6253161_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786492": {
+  "organism": "ssRNA phage SRR6254351_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786493": {
+  "organism": "ssRNA phage SRR6254353_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786494": {
+  "organism": "ssRNA phage SRR6254353_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786495": {
+  "organism": "ssRNA phage SRR6254984_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786496": {
+  "organism": "ssRNA phage SRR6255513_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786497": {
+  "organism": "ssRNA phage SRR6255733_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786498": {
+  "organism": "ssRNA phage SRR6255733_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786499": {
+  "organism": "ssRNA phage SRR6255733_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786500": {
+  "organism": "ssRNA phage SRR6255733_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786501": {
+  "organism": "ssRNA phage SRR6255733_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786502": {
+  "organism": "ssRNA phage SRR6255733_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786503": {
+  "organism": "ssRNA phage SRR6255746_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786504": {
+  "organism": "ssRNA phage SRR6255746_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786505": {
+  "organism": "ssRNA phage SRR6255746_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786506": {
+  "organism": "ssRNA phage SRR6255746_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786507": {
+  "organism": "ssRNA phage SRR6960507_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786508": {
+  "organism": "ssRNA phage SRR6960507_10",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786509": {
+  "organism": "ssRNA phage SRR6960507_11",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786510": {
+  "organism": "ssRNA phage SRR6960507_12",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786511": {
+  "organism": "ssRNA phage SRR6960507_13",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786512": {
+  "organism": "ssRNA phage SRR6960507_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786513": {
+  "organism": "ssRNA phage SRR6960507_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786514": {
+  "organism": "ssRNA phage SRR6960507_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786515": {
+  "organism": "ssRNA phage SRR6960507_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786516": {
+  "organism": "ssRNA phage SRR6960507_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786517": {
+  "organism": "ssRNA phage SRR6960507_7",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786518": {
+  "organism": "ssRNA phage SRR6960507_8",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786519": {
+  "organism": "ssRNA phage SRR6960507_9",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786520": {
+  "organism": "ssRNA phage SRR6960509_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786521": {
+  "organism": "ssRNA phage SRR6960509_10",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786522": {
+  "organism": "ssRNA phage SRR6960509_11",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786523": {
+  "organism": "ssRNA phage SRR6960509_12",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786524": {
+  "organism": "ssRNA phage SRR6960509_13",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786525": {
+  "organism": "ssRNA phage SRR6960509_14",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786526": {
+  "organism": "ssRNA phage SRR6960509_15",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786527": {
+  "organism": "ssRNA phage SRR6960509_16",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786528": {
+  "organism": "ssRNA phage SRR6960509_17",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786529": {
+  "organism": "ssRNA phage SRR6960509_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786530": {
+  "organism": "ssRNA phage SRR6960509_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786531": {
+  "organism": "ssRNA phage SRR6960509_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786532": {
+  "organism": "ssRNA phage SRR6960509_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786533": {
+  "organism": "ssRNA phage SRR6960509_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786534": {
+  "organism": "ssRNA phage SRR6960509_7",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786535": {
+  "organism": "ssRNA phage SRR6960509_8",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786536": {
+  "organism": "ssRNA phage SRR6960509_9",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786537": {
+  "organism": "ssRNA phage SRR6960540_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786538": {
+  "organism": "ssRNA phage SRR6960549_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786539": {
+  "organism": "ssRNA phage SRR6960549_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786540": {
+  "organism": "ssRNA phage SRR6960549_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786541": {
+  "organism": "ssRNA phage SRR6960549_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786542": {
+  "organism": "ssRNA phage SRR6960549_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786543": {
+  "organism": "ssRNA phage SRR6960549_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786544": {
+  "organism": "ssRNA phage SRR6960549_7",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786545": {
+  "organism": "ssRNA phage SRR6960549_8",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786546": {
+  "organism": "ssRNA phage SRR6960549_9",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786547": {
+  "organism": "ssRNA phage SRR6960551_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786548": {
+  "organism": "ssRNA phage SRR6960551_10",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786549": {
+  "organism": "ssRNA phage SRR6960551_11",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786550": {
+  "organism": "ssRNA phage SRR6960551_12",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786551": {
+  "organism": "ssRNA phage SRR6960551_13",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786552": {
+  "organism": "ssRNA phage SRR6960551_14",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786553": {
+  "organism": "ssRNA phage SRR6960551_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786554": {
+  "organism": "ssRNA phage SRR6960551_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786555": {
+  "organism": "ssRNA phage SRR6960551_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786556": {
+  "organism": "ssRNA phage SRR6960551_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786557": {
+  "organism": "ssRNA phage SRR6960551_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786558": {
+  "organism": "ssRNA phage SRR6960551_7",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786559": {
+  "organism": "ssRNA phage SRR6960551_8",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786560": {
+  "organism": "ssRNA phage SRR6960551_9",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786561": {
+  "organism": "ssRNA phage SRR6960797_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786562": {
+  "organism": "ssRNA phage SRR6960797_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786563": {
+  "organism": "ssRNA phage SRR6960797_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786564": {
+  "organism": "ssRNA phage SRR6960797_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786565": {
+  "organism": "ssRNA phage SRR6960799_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786566": {
+  "organism": "ssRNA phage SRR6960799_10",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 3
+ },
+ "2786567": {
+  "organism": "ssRNA phage SRR6960799_11",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786568": {
+  "organism": "ssRNA phage SRR6960799_12",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786569": {
+  "organism": "ssRNA phage SRR6960799_13",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786570": {
+  "organism": "ssRNA phage SRR6960799_14",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786571": {
+  "organism": "ssRNA phage SRR6960799_15",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786572": {
+  "organism": "ssRNA phage SRR6960799_16",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786573": {
+  "organism": "ssRNA phage SRR6960799_17",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786574": {
+  "organism": "ssRNA phage SRR6960799_18",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786575": {
+  "organism": "ssRNA phage SRR6960799_19",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786576": {
+  "organism": "ssRNA phage SRR6960799_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786577": {
+  "organism": "ssRNA phage SRR6960799_20",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786578": {
+  "organism": "ssRNA phage SRR6960799_21",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786579": {
+  "organism": "ssRNA phage SRR6960799_22",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786580": {
+  "organism": "ssRNA phage SRR6960799_23",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786581": {
+  "organism": "ssRNA phage SRR6960799_24",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786582": {
+  "organism": "ssRNA phage SRR6960799_25",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786583": {
+  "organism": "ssRNA phage SRR6960799_26",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786584": {
+  "organism": "ssRNA phage SRR6960799_27",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786585": {
+  "organism": "ssRNA phage SRR6960799_28",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786586": {
+  "organism": "ssRNA phage SRR6960799_29",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786587": {
+  "organism": "ssRNA phage SRR6960799_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786588": {
+  "organism": "ssRNA phage SRR6960799_30",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786589": {
+  "organism": "ssRNA phage SRR6960799_31",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786590": {
+  "organism": "ssRNA phage SRR6960799_32",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786591": {
+  "organism": "ssRNA phage SRR6960799_33",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786592": {
+  "organism": "ssRNA phage SRR6960799_34",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786593": {
+  "organism": "ssRNA phage SRR6960799_35",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786594": {
+  "organism": "ssRNA phage SRR6960799_36",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786595": {
+  "organism": "ssRNA phage SRR6960799_37",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786596": {
+  "organism": "ssRNA phage SRR6960799_38",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786597": {
+  "organism": "ssRNA phage SRR6960799_39",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786598": {
+  "organism": "ssRNA phage SRR6960799_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786599": {
+  "organism": "ssRNA phage SRR6960799_40",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786600": {
+  "organism": "ssRNA phage SRR6960799_41",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786601": {
+  "organism": "ssRNA phage SRR6960799_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786602": {
+  "organism": "ssRNA phage SRR6960799_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786603": {
+  "organism": "ssRNA phage SRR6960799_7",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786604": {
+  "organism": "ssRNA phage SRR6960799_8",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786605": {
+  "organism": "ssRNA phage SRR6960799_9",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786606": {
+  "organism": "ssRNA phage SRR6960801_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786607": {
+  "organism": "ssRNA phage SRR6960802_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786608": {
+  "organism": "ssRNA phage SRR6960802_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786609": {
+  "organism": "ssRNA phage SRR6960802_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786610": {
+  "organism": "ssRNA phage SRR6960802_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786611": {
+  "organism": "ssRNA phage SRR6960802_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786612": {
+  "organism": "ssRNA phage SRR6960803_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786613": {
+  "organism": "ssRNA phage SRR6960803_10",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786614": {
+  "organism": "ssRNA phage SRR6960803_11",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786615": {
+  "organism": "ssRNA phage SRR6960803_12",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786616": {
+  "organism": "ssRNA phage SRR6960803_13",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786617": {
+  "organism": "ssRNA phage SRR6960803_14",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786618": {
+  "organism": "ssRNA phage SRR6960803_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786619": {
+  "organism": "ssRNA phage SRR6960803_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786620": {
+  "organism": "ssRNA phage SRR6960803_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786621": {
+  "organism": "ssRNA phage SRR6960803_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786622": {
+  "organism": "ssRNA phage SRR6960803_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786623": {
+  "organism": "ssRNA phage SRR6960803_7",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786624": {
+  "organism": "ssRNA phage SRR6960803_8",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786625": {
+  "organism": "ssRNA phage SRR6960803_9",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786626": {
+  "organism": "ssRNA phage SRR7473382_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786627": {
+  "organism": "ssRNA phage SRR7473382_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786628": {
+  "organism": "ssRNA phage SRR7473382_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786629": {
+  "organism": "ssRNA phage SRR7473382_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786631": {
+  "organism": "ssRNA phage SRR7976299_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786632": {
+  "organism": "ssRNA phage SRR7976299_10",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786633": {
+  "organism": "ssRNA phage SRR7976299_11",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786634": {
+  "organism": "ssRNA phage SRR7976299_12",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786635": {
+  "organism": "ssRNA phage SRR7976299_13",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786636": {
+  "organism": "ssRNA phage SRR7976299_14",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786637": {
+  "organism": "ssRNA phage SRR7976299_15",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786638": {
+  "organism": "ssRNA phage SRR7976299_16",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786639": {
+  "organism": "ssRNA phage SRR7976299_17",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786640": {
+  "organism": "ssRNA phage SRR7976299_18",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786641": {
+  "organism": "ssRNA phage SRR7976299_19",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786642": {
+  "organism": "ssRNA phage SRR7976299_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786643": {
+  "organism": "ssRNA phage SRR7976299_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786644": {
+  "organism": "ssRNA phage SRR7976299_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786645": {
+  "organism": "ssRNA phage SRR7976299_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786646": {
+  "organism": "ssRNA phage SRR7976299_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786647": {
+  "organism": "ssRNA phage SRR7976299_7",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786648": {
+  "organism": "ssRNA phage SRR7976299_8",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786649": {
+  "organism": "ssRNA phage SRR7976299_9",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786650": {
+  "organism": "ssRNA phage SRR7976300_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786651": {
+  "organism": "ssRNA phage SRR7976300_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786652": {
+  "organism": "ssRNA phage SRR7976300_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786653": {
+  "organism": "ssRNA phage SRR7976300_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786654": {
+  "organism": "ssRNA phage SRR7976300_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786655": {
+  "organism": "ssRNA phage SRR7976300_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786656": {
+  "organism": "ssRNA phage SRR7976300_7",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786657": {
+  "organism": "ssRNA phage SRR7976300_8",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786658": {
+  "organism": "ssRNA phage SRR7976300_9",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786659": {
+  "organism": "ssRNA phage SRR7976301_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786660": {
+  "organism": "ssRNA phage SRR7976301_10",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786661": {
+  "organism": "ssRNA phage SRR7976301_11",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786662": {
+  "organism": "ssRNA phage SRR7976301_12",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786663": {
+  "organism": "ssRNA phage SRR7976301_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786664": {
+  "organism": "ssRNA phage SRR7976301_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786665": {
+  "organism": "ssRNA phage SRR7976301_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786666": {
+  "organism": "ssRNA phage SRR7976301_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786667": {
+  "organism": "ssRNA phage SRR7976301_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786668": {
+  "organism": "ssRNA phage SRR7976301_7",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786669": {
+  "organism": "ssRNA phage SRR7976301_8",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786670": {
+  "organism": "ssRNA phage SRR7976301_9",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786671": {
+  "organism": "ssRNA phage SRR7976310_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786672": {
+  "organism": "ssRNA phage SRR7976310_10",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786673": {
+  "organism": "ssRNA phage SRR7976310_11",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786674": {
+  "organism": "ssRNA phage SRR7976310_12",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786675": {
+  "organism": "ssRNA phage SRR7976310_13",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786676": {
+  "organism": "ssRNA phage SRR7976310_14",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786677": {
+  "organism": "ssRNA phage SRR7976310_15",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786678": {
+  "organism": "ssRNA phage SRR7976310_16",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786679": {
+  "organism": "ssRNA phage SRR7976310_17",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786680": {
+  "organism": "ssRNA phage SRR7976310_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786681": {
+  "organism": "ssRNA phage SRR7976310_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786682": {
+  "organism": "ssRNA phage SRR7976310_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786683": {
+  "organism": "ssRNA phage SRR7976310_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786684": {
+  "organism": "ssRNA phage SRR7976310_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786685": {
+  "organism": "ssRNA phage SRR7976310_7",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786686": {
+  "organism": "ssRNA phage SRR7976310_8",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786687": {
+  "organism": "ssRNA phage SRR7976310_9",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786688": {
+  "organism": "ssRNA phage SRR7976323_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786689": {
+  "organism": "ssRNA phage SRR7976323_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786690": {
+  "organism": "ssRNA phage SRR7976323_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786691": {
+  "organism": "ssRNA phage SRR7976323_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786692": {
+  "organism": "ssRNA phage SRR7976323_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786693": {
+  "organism": "ssRNA phage SRR7976323_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786694": {
+  "organism": "ssRNA phage SRR7976324_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786695": {
+  "organism": "ssRNA phage SRR7976324_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786696": {
+  "organism": "ssRNA phage SRR7976325_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786697": {
+  "organism": "ssRNA phage SRR7976325_10",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786698": {
+  "organism": "ssRNA phage SRR7976325_11",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786699": {
+  "organism": "ssRNA phage SRR7976325_12",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786700": {
+  "organism": "ssRNA phage SRR7976325_13",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786701": {
+  "organism": "ssRNA phage SRR7976325_14",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786702": {
+  "organism": "ssRNA phage SRR7976325_15",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786703": {
+  "organism": "ssRNA phage SRR7976325_16",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786704": {
+  "organism": "ssRNA phage SRR7976325_17",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786705": {
+  "organism": "ssRNA phage SRR7976325_18",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786706": {
+  "organism": "ssRNA phage SRR7976325_19",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786707": {
+  "organism": "ssRNA phage SRR7976325_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786708": {
+  "organism": "ssRNA phage SRR7976325_20",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786709": {
+  "organism": "ssRNA phage SRR7976325_21",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786710": {
+  "organism": "ssRNA phage SRR7976325_22",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786711": {
+  "organism": "ssRNA phage SRR7976325_23",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786712": {
+  "organism": "ssRNA phage SRR7976325_24",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786713": {
+  "organism": "ssRNA phage SRR7976325_25",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786714": {
+  "organism": "ssRNA phage SRR7976325_26",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786715": {
+  "organism": "ssRNA phage SRR7976325_27",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786716": {
+  "organism": "ssRNA phage SRR7976325_28",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786717": {
+  "organism": "ssRNA phage SRR7976325_29",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786718": {
+  "organism": "ssRNA phage SRR7976325_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786719": {
+  "organism": "ssRNA phage SRR7976325_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786720": {
+  "organism": "ssRNA phage SRR7976325_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786721": {
+  "organism": "ssRNA phage SRR7976325_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786722": {
+  "organism": "ssRNA phage SRR7976325_7",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786723": {
+  "organism": "ssRNA phage SRR7976325_8",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786724": {
+  "organism": "ssRNA phage SRR7976325_9",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786725": {
+  "organism": "ssRNA phage SRR7976326_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786726": {
+  "organism": "ssRNA phage SRR7976326_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786727": {
+  "organism": "ssRNA phage SRR7976326_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786728": {
+  "organism": "ssRNA phage SRR7976326_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786729": {
+  "organism": "ssRNA phage SRR7976326_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786730": {
+  "organism": "ssRNA phage SRR7976327_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786731": {
+  "organism": "ssRNA phage SRR7976327_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786732": {
+  "organism": "ssRNA phage SRR7976356_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786733": {
+  "organism": "ssRNA phage SRR7976356_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786734": {
+  "organism": "ssRNA phage SRR7976356_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786735": {
+  "organism": "ssRNA phage SRR7976356_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786736": {
+  "organism": "ssRNA phage SRR7976356_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786737": {
+  "organism": "ssRNA phage SRR7976356_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786738": {
+  "organism": "ssRNA phage SRR7976357_1",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786739": {
+  "organism": "ssRNA phage SRR7976357_10",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786740": {
+  "organism": "ssRNA phage SRR7976357_11",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786741": {
+  "organism": "ssRNA phage SRR7976357_12",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786742": {
+  "organism": "ssRNA phage SRR7976357_2",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786743": {
+  "organism": "ssRNA phage SRR7976357_3",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786744": {
+  "organism": "ssRNA phage SRR7976357_4",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786745": {
+  "organism": "ssRNA phage SRR7976357_5",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786746": {
+  "organism": "ssRNA phage SRR7976357_6",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786747": {
+  "organism": "ssRNA phage SRR7976357_7",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786748": {
+  "organism": "ssRNA phage SRR7976357_8",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2786749": {
+  "organism": "ssRNA phage SRR7976357_9",
+  "pool_records": 1,
+  "prior_to_cutoff": 1,
+  "total_records": 2
+ },
+ "2789016": {
+  "organism": "Escherichia phage Qbeta",
+  "pool_records": 1,
+  "prior_to_cutoff": 93,
+  "total_records": 94
+ },
+ "2809914": {
+  "organism": "Tolivirales sp.",
+  "pool_records": 5,
+  "prior_to_cutoff": 0,
+  "total_records": 432
+ },
+ "3019441": {
+  "organism": "Sewage-associated tobamovirus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038626": {
+  "organism": "StochSRVP_1 picorna-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038627": {
+  "organism": "StochSRVP_10 levi-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038628": {
+  "organism": "StochSRVP_11 levi-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038629": {
+  "organism": "StochSRVP_12 levi-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038630": {
+  "organism": "StochSRVP_2 picorna-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038631": {
+  "organism": "StochSRVP_3 picorna-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038632": {
+  "organism": "StochSRVP_4 martelli-like virus",
+  "pool_records": 2,
+  "prior_to_cutoff": 0,
+  "total_records": 2
+ },
+ "3038633": {
+  "organism": "StochSRVP_5 martelli-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038634": {
+  "organism": "StochSRVP_6 martelli-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038635": {
+  "organism": "StochSRVP_7 martelli-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038636": {
+  "organism": "StochSRVP_8 martelli-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038637": {
+  "organism": "StochSRVP_9 levi-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038638": {
+  "organism": "StochSev_1 picorna-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038639": {
+  "organism": "StochSev_2 levi-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038640": {
+  "organism": "StochSlu_1 picorna-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038641": {
+  "organism": "StochSlu_10 levi-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038643": {
+  "organism": "StochSlu_2 picorna-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038644": {
+  "organism": "StochSlu_3 picorna-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 2
+ },
+ "3038645": {
+  "organism": "StochSlu_4 martelli-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038646": {
+  "organism": "StochSlu_5 martelli-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038647": {
+  "organism": "StochSlu_6 martelli-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038648": {
+  "organism": "StochSlu_8 picorna-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038649": {
+  "organism": "StochSlu_9 levi-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038650": {
+  "organism": "StochSlu_11 noda-like virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3038651": {
+  "organism": "StochSlu_7 virus",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3393935": {
+  "organism": "Enterovirus C119",
+  "pool_records": 1,
+  "prior_to_cutoff": 0,
+  "total_records": 1
+ },
+ "3428505": {
+  "organism": "Enterovirus coxsackiepol",
+  "pool_records": 12,
+  "prior_to_cutoff": 12097,
+  "total_records": 17040
+ },
+ "3467446": {
+  "organism": "Enterovirus 11",
+  "pool_records": 10,
+  "prior_to_cutoff": 0,
+  "total_records": 10
+ },
+ "3467447": {
+  "organism": "Enterovirus 19",
+  "pool_records": 12,
+  "prior_to_cutoff": 0,
+  "total_records": 13
+ },
+ "3467448": {
+  "organism": "Enterovirus 24",
+  "pool_records": 10,
+  "prior_to_cutoff": 0,
+  "total_records": 10
+ },
+ "3467449": {
+  "organism": "Enterovirus 6",
+  "pool_records": 13,
+  "prior_to_cutoff": 0,
+  "total_records": 14
+ },
+ "3467450": {
+  "organism": "Enterovirus 7",
+  "pool_records": 9,
+  "prior_to_cutoff": 0,
+  "total_records": 9
+ }
+}

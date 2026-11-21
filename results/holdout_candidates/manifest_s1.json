@@ -1,0 +1,26 @@
+{
+ "script": "holdout_candidates.py",
+ "script_sha256": "9e0896af9a01f8d33c9eadaeabe9555f21cb78cfe8837176c66db37176f1b682",
+ "git_sha": "285aa8957fca6cf27690b1167b5afc5bc3c4a18b-dirty",
+ "argv": {
+  "seed": 1,
+  "outdir": "results/holdout_candidates",
+  "cutoff": "2022-01-01",
+  "stages": "depth,rank",
+  "blastbin": "",
+  "ntdb": "",
+  "protdb": "",
+  "candfa": "",
+  "reads": [
+   "/tmp/claude-0/-home-user/091726aa-0c4a-5e0b-a85c-99f5c136bf59/scratchpad/reads/SRR23421544.fastq.gz",
+   "/tmp/claude-0/-home-user/091726aa-0c4a-5e0b-a85c-99f5c136bf59/scratchpad/reads/SRR23421542.fastq.gz",
+   "/tmp/claude-0/-home-user/091726aa-0c4a-5e0b-a85c-99f5c136bf59/scratchpad/reads/SRR23421543.fastq.gz"
+  ]
+ },
+ "timings_s": {
+  "depth": 89.6,
+  "rank": 0.0
+ },
+ "archive_queried_utc": "2026-11-21T20:09:32Z",
+ "note": "deterministic given the archive snapshot; the archive query date is the provenance that matters, not the seed"
+}
