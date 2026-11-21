@@ -339,6 +339,9 @@ details > summary { cursor: pointer; font-size: 13px; color: var(--dim); }
 }
 .clicky { cursor: pointer; border-bottom: 1px dotted var(--edge); }
 .clicky:hover { color: var(--fg); border-bottom-color: var(--dim); }
+@keyframes fanin { from { opacity: 0 } }
+.fanrib { animation: fanin 0.7s ease both; }
+@media (prefers-reduced-motion: reduce) { .fanrib { animation: none } }
 .bites { display: flex; flex-direction: column; gap: 0.3rem; }
 .bite { display: grid; grid-template-columns: 15rem 1fr 6rem 5rem; gap: 0.6rem;
   align-items: center; font-size: 12px; }
@@ -388,6 +391,109 @@ function panel(title, sub) { const p = el('section', 'panel');
   p.append(el('h2', null, esc(title)));
   if (sub) p.append(el('p', 'note', sub));
   return p; }
+
+
+/* A PILE FANNING INTO ITS PARTS, WITH ITS CONTROL DRAWN THE SAME WAY UNDERNEATH.
+   Two of this page's measurements are splits of one pile into named parts, and both of
+   them only mean anything against the same split of material we can already name - this
+   repo has had three results turn out to be the control moving with the test. Drawing
+   both rows from one function is the cheapest way to keep them honestly comparable:
+   neither row can quietly get a different scale, a different order or a different
+   colour from the other. The interval is drawn where the file carries one, because a
+   share without its interval is the thing the spec forbids. */
+function fanFig(rows, opts) {
+  const W = 920, RH = (opts && opts.rowHeight) || 190, GAP = 42;
+  const srcX = 18, srcW = 64, dstX = 452, dstW = 64, labX = dstX + dstW + 10;
+  const H = rows.length * RH + (rows.length - 1) * GAP + 30;
+  const keys = rows[0].slices.map(s => s.k);
+  let g = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' +
+    esc((opts && opts.alt) || 'a pile fanning into its parts') + '">';
+  let delay = 0;
+  rows.forEach((row, ri) => {
+    const y0 = 20 + ri * (RH + GAP);
+    const tot = row.slices.reduce((a, c) => a + c.v, 0) || 1;
+    // A destination block never falls below MIN, or a 0.17% pile has no bar to label and
+    // the label lands on the pile above it. The floor is paid for out of the blocks that
+    // can afford it rather than out of the figure's height, so the stack still ends where
+    // the source bar ends and the two rows stay on one scale.
+    const MIN = 12, nz = row.slices.filter(s => s.v > 0).length || 1;
+    let pool = RH - 10 * (nz - 1), rest = tot, hd = {};
+    row.slices.forEach(sl => {
+      if (sl.v > 0 && pool * sl.v / (rest || 1) < MIN) {
+        hd[sl.k] = MIN; pool -= MIN; rest -= sl.v;
+      }
+    });
+    row.slices.forEach(sl => {
+      if (sl.v > 0 && hd[sl.k] == null) hd[sl.k] = Math.max(MIN, pool * sl.v / (rest || 1));
+    });
+    let ys = y0, yd = y0;
+    const dim = row.control ? 0.42 : 1;
+    g += '<text x="' + srcX + '" y="' + (y0 - 7) + '" font-size="11.5" ' +
+      'fill="var(--fg)" font-weight="500">' + esc(row.title) +
+      ' <tspan font-family="var(--mono)" font-weight="400" fill="var(--dim)">' +
+      row.total.toLocaleString() + '</tspan></text>';
+    g += '<rect x="' + srcX + '" y="' + y0 + '" width="' + srcW + '" height="' + RH +
+      '" rx="3" fill="var(--edge)" opacity="' + (row.control ? 0.5 : 0.9) + '"/>';
+    row.slices.forEach(sl => {
+      const hs = RH * sl.v / tot;
+      const h = hd[sl.k] || 0;
+      if (sl.v > 0) {
+        const col = sl.col || 'var(--null)';
+        const x1 = srcX + srcW, x2 = dstX;
+        const cx = (x1 + x2) / 2;
+        g += '<path class="fanrib" style="animation-delay:' + delay + 'ms" d="M' + x1 +
+          ' ' + ys.toFixed(1) + ' C' + cx + ' ' + ys.toFixed(1) + ' ' + cx + ' ' +
+          yd.toFixed(1) + ' ' + x2 + ' ' + yd.toFixed(1) + ' L' + x2 + ' ' +
+          (yd + h).toFixed(1) + ' C' + cx + ' ' + (yd + h).toFixed(1) + ' ' + cx +
+          ' ' + (ys + hs).toFixed(1) + ' ' + x1 + ' ' + (ys + hs).toFixed(1) +
+          ' Z" fill="' + col + '" opacity="' + (0.22 * dim + 0.04) + '"/>';
+        g += '<rect x="' + dstX + '" y="' + yd.toFixed(1) + '" width="' + dstW +
+          '" height="' + h.toFixed(1) + '" rx="2" fill="' + col + '" opacity="' +
+          (0.95 * dim) + '"><title>' + esc(sl.lab + ': ' + sl.v.toLocaleString() +
+          ' of ' + tot.toLocaleString() + ' (' + (100 * sl.v / tot).toFixed(2) + '%)') +
+          '</title></rect>';
+        const pct = (100 * sl.v / tot);
+        let txt = esc(sl.lab) + ' <tspan font-family="var(--mono)" fill="var(--fg)">' +
+          pct.toFixed(pct < 10 ? 2 : 1) + '%</tspan>';
+        if (sl.ci) txt += ' <tspan font-size="10" fill="var(--dim)">' +
+          (100 * sl.ci[0]).toFixed(1) + ' to ' + (100 * sl.ci[1]).toFixed(1) + '</tspan>';
+        g += '<text x="' + labX + '" y="' + (yd + h / 2 + 4).toFixed(1) +
+          '" font-size="11" fill="var(--dim)">' + txt + '</text>';
+        delay += 70;
+      }
+      ys += hs;
+      yd += h + (sl.v > 0 ? 10 : 0);
+    });
+  });
+  g += '</svg>';
+  const holder = el('div', 'scroll flowwrap');
+  holder.innerHTML = g;
+  return holder;
+}
+
+/* WHICH PILE THESE ROWS CAME FROM, on the panel's face. The rows of a search over the
+   whole residue and a search over a 6,000-pair sample of it look identical, and they
+   differ by more than two orders of magnitude in what they cover - so a reader who is
+   not told assumes the wider one. The denominator is printed with it, because that is
+   the number the shares on these rows are taken over. */
+function scopeLine(R) {
+  const sc = (R && R.scope) || {};
+  const res = ((R && R.piles) || {}).residue || {};
+  const bits = [];
+  if (sc.residue_pairs) {
+    bits.push('<b>Every unplaced pair in the library</b>: ' + num(sc.residue_pairs, 0) +
+      ' pairs, ' + num(sc.residue_mates, 0) + ' mates searched, against a control of ' +
+      num(sc.control_pairs, 0) + ' already-placed pairs through the same search in the ' +
+      'same pass.');
+  } else {
+    bits.push('<b>The per-read report\\'s block sample of the residue</b>: ' +
+      num(res.searched, 0) + ' mates, not the whole pile.');
+  }
+  if (sc.bias) bits.push(esc(sc.bias));
+  const e = el('div', 'callout');
+  e.innerHTML = bits.join(' ');
+  return e;
+}
 
 /* No figure without its operating point: this is the only way a panel gets its chips,
    and a missing value renders as the words rather than as a clean blank. */
@@ -880,6 +986,7 @@ function interval(iv) {
   if (!R) { p.append(el('div', 'absent',
     'ranking.json absent: run experiments/concern_ranking.py over this directory'));
     app.append(p); return; }
+  p.append(scopeLine(R));
 
   // The honest headline of the whole panel, and it is a negative. Put it above the
   // leaderboard rather than under it: a reader who scrolls the cards without seeing this
@@ -1799,6 +1906,90 @@ function interval(iv) {
   p.append(d);
   app.append(p);
 })();
+
+// ---------- what a leftover read sits next to (a split, with its control)
+(function () {
+  const C = D.census, r = C && C.result;
+  if (!r || !r.residue || !r.identified) return;
+  const p = panel('What a leftover read sits next to',
+    'Take a leftover pair, find every other read in the library that covers the same ' +
+    'sequence, and ask what those neighbours were called. The same question asked of ' +
+    'reads the cascade already named is the row underneath, and it is the row to read ' +
+    'first: it is what this measurement looks like on material that is not a mystery.');
+  const ORDER = [
+    ['unknown_neighbourhood', 'neighbours, none of them namable', 'var(--residue)'],
+    ['beside_assembled_unidentified', 'beside a contig nothing could name', 'var(--tier2)'],
+    ['no_witnesses', 'no neighbours at all', 'var(--null)'],
+    ['beside_known', 'beside named sequence', 'var(--identified)'],
+    ['mixed', 'both kinds at once', 'var(--g-unknown)']];
+  const row = (src, title, control) => {
+    const piles = src.piles || {};
+    return {title: title, control: control,
+      total: src.queries || 0,
+      slices: ORDER.map(([k, lab, col]) => {
+        const v = piles[k] || {};
+        return {k: k, lab: lab, col: col, v: v.k || 0,
+                ci: (v.lo != null && v.hi != null) ? [v.lo, v.hi] : null};
+      })};
+  };
+  p.append(fanFig([row(r.residue, 'leftover pairs', false),
+                   row(r.identified, 'pairs the cascade already named (the control)', true)],
+                  {alt: 'what a leftover read sits next to, against the same split on ' +
+                        'reads that were already named'}));
+  const res = r.residue.piles || {}, idp = r.identified.piles || {};
+  const note = el('div', 'callout');
+  note.innerHTML = '<b>The split itself is the finding.</b> A leftover read sits in a ' +
+    'neighbourhood of sequence that is also unnamable ' +
+    num(100 * (res.unknown_neighbourhood || {}).point, 1) + '% of the time, against ' +
+    num(100 * (idp.unknown_neighbourhood || {}).point, 1) + '% for a named read &mdash; ' +
+    'so the unnamable material keeps company with itself rather than being scattered ' +
+    'through ordinary reads. The other end matters as much: ' +
+    num(100 * (res.no_witnesses || {}).point, 1) + '% of leftover pairs have no ' +
+    'neighbours at all, and nothing in this figure or anywhere else on this page can ' +
+    'say anything about those beyond what one molecule carries.';
+  p.append(note);
+  app.append(p);
+})();
+// ---------- the layers as a split, against the known pile
+(function () {
+  const L = D.layers;
+  if (!L || !L.counts || !L.counts.residue) return;
+  const p = panel('Layering the leftovers',
+    'Each leftover read put in the most interesting layer it qualifies for, most ' +
+    'interesting first. The same rule run over reads the cascade already named is ' +
+    'underneath: a layer that fills up equally on both is a layer that is describing ' +
+    'the library rather than the mystery.');
+  const COL = {recurs_and_unplaceable: 'var(--residue)', distant_relative: 'var(--tier2)',
+    profile_only: 'var(--g-unknown)', placed: 'var(--identified)',
+    artefact_shaped: 'var(--g-vert)', undetermined: 'var(--null)'};
+  const LAB = {recurs_and_unplaceable: 'recurs, and nothing can place it',
+    distant_relative: 'a distant relative exists', profile_only: 'only a profile sees it',
+    placed: 'placed after all', artefact_shaped: 'artefact shaped',
+    undetermined: 'nothing in this run decides it'};
+  const order = L.layer_order_most_to_least_interesting || Object.keys(COL);
+  const row = (counts, title, control) => ({
+    title: title, control: control,
+    total: Object.keys(counts).reduce((a, k) => a + counts[k], 0),
+    slices: order.map(k => ({k: k, lab: LAB[k] || k, col: COL[k] || 'var(--null)',
+                             v: counts[k] || 0}))});
+  p.append(fanFig([row(L.counts.residue, 'leftover reads', false),
+                   row(L.counts.known || {}, 'already-named reads (the control)', true)],
+                  {alt: 'the leftover reads laid out in layers, against the same layers ' +
+                        'on reads that were already named'}));
+  const rc = L.counts.residue, kc = L.counts.known || {};
+  const tr = Object.keys(rc).reduce((a, k) => a + rc[k], 0) || 1;
+  const tk = Object.keys(kc).reduce((a, k) => a + kc[k], 0) || 1;
+  const note = el('div', 'callout');
+  note.innerHTML = '<b>Read the control first.</b> The top layer takes ' +
+    num(100 * (rc.recurs_and_unplaceable || 0) / tr, 1) + '% of the leftovers and ' +
+    num(100 * (kc.recurs_and_unplaceable || 0) / tk, 1) + '% of the already-named reads, ' +
+    'so recurrence on its own is not what separates them. What does separate them is the ' +
+    'bottom layer: ' + num(100 * (rc.undetermined || 0) / tr, 1) + '% of leftovers ' +
+    'against ' + num(100 * (kc.undetermined || 0) / tk, 1) + '% of named reads fall ' +
+    'through every rule this run has. <b>This ordering is a layout, not a score.</b>';
+  p.append(note);
+  app.append(p);
+})();
 // ---------- summary and detail
 // Runs last, after every panel has rendered. It reorganises rather than regenerates: the
 // detail panels keep the markup they were built with and are only moved inside a
@@ -1807,6 +1998,7 @@ function interval(iv) {
   const SUMMARY = ['What is in the water', 'How the library splits',
                    'Each index takes a bite',
                    'Phage, virus, or something living',
+                   'What a leftover read sits next to', 'Layering the leftovers',
                    'Worth a second look', 'Where the relatives sit'];
   const panels = Array.prototype.filter.call(app.children,
     n => n.tagName === 'SECTION' && n.classList.contains('panel'));

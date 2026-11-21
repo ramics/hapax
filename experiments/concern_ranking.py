@@ -247,17 +247,92 @@ def kind_summary(rows: list[dict], piles: dict, table: dict) -> dict:
     }
 
 
+def from_full_search(path: Path) -> tuple[dict, dict, dict]:
+    """A whole-residue search, reshaped into what the block-sample report produces.
+
+    WHY RESHAPE RATHER THAN BRANCH. Everything downstream of here - the keyword axes, the
+    damping, the composite, the intervals - is the same arithmetic whichever pile the
+    subjects came from, and it is arithmetic this repo has already had to debug once. So
+    the only thing that changes with the source is the rows and the denominators, and
+    they are made to look identical here.
+
+    WHAT THE DENOMINATOR MEANS HERE, AND IT IS NOT THE SAME WORD. In the block sample,
+    `searched` meant the mates the per-read report actually put through a search, which
+    was a fraction of the pile. In this file every unplaced mate went through the search,
+    so the denominator is the whole pile and a share is a share of the residue rather than
+    a share of a sample of it. That makes the number larger in meaning and smaller in
+    value than the block figure, which is why the two are reported as different
+    instruments and never merged.
+
+    The control's per-subject counts bound ALREADY SEEN from below: it is a sample of the
+    placed pile, so a subject missing from it may still be placed material this sample did
+    not happen to draw. The row says which pile it was compared against.
+    """
+    d = json.loads(path.read_text())
+    res = d["piles"]["residue"]
+    ctl = d["piles"]["control"]
+    ctl_reads = ctl.get("control_subject_reads") or {}
+    rows = []
+    for r in res.get("subjects") or []:
+        known = int(ctl_reads.get(r["subject"], 0))
+        rows.append({**r, "known_reads": known,
+                     "reading": ("present and partly identified: the already-placed "
+                                 "sample points at this subject too"
+                                 if known else
+                                 "pointed at only by unplaced reads in this sample of "
+                                 "the placed pile")})
+    S = {"subjects": rows,
+         "significance_evalue": d["operating_point"]["significance_evalue"],
+         "subjects_total": len(rows),
+         "known_pile_searched_reads": ctl["mates"]}
+    piles = {"residue": {"scored": res["mates"], "searched": res["mates"],
+                         "significant": res["mates_with_significant_hit"],
+                         "with_any_reported_hit": res["searched_mates_with_any_hit"]},
+             "known": {"scored": ctl["mates"], "searched": ctl["mates"],
+                       "significant": ctl["mates_with_significant_hit"],
+                       "with_any_reported_hit": ctl["searched_mates_with_any_hit"]}}
+    meta = {"source": path.name,
+            "residue_pairs": res["pairs"], "residue_mates": res["mates"],
+            "control_pairs": ctl["pairs"],
+            "library_pairs": d["library_pairs"],
+            "unplaced_fraction": d["unplaced_fraction"],
+            "operating_point": d["operating_point"],
+            "bias": d["bias"],
+            "wall_seconds": d.get("wall_seconds"),
+            "script_sha256": d.get("script_sha256"),
+            "git_sha": d.get("git_sha"),
+            "scope": ("every unplaced pair in the library, not a block sample. The pile "
+                      "comes from a nucleotide-only label table, so it is a little more "
+                      "generous than the cascade's residue and the named-relative rate "
+                      "is if anything a small overestimate")}
+    return S, piles, meta
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("rundir", type=Path)
     ap.add_argument("--table", type=Path, default=TABLE)
     ap.add_argument("--out", type=Path, default=None)
+    ap.add_argument("--full-residue", type=Path, default=None,
+                    help="a full_residue_search_s*.json to rank instead of the block "
+                         "sample's strains.json. Default: use one if the run dir has it")
+    ap.add_argument("--block-sample", action="store_true",
+                    help="rank the block sample even when a full-residue search is there")
     args = ap.parse_args()
 
-    strains = args.rundir / "strains.json"
-    if not strains.exists():
-        raise SystemExit(f"{strains} absent: the per-read report did not run here")
-    S = json.loads(strains.read_text())
+    full = args.full_residue
+    if full is None and not args.block_sample:
+        found = sorted(args.rundir.glob("full_residue_search_s*.json"))
+        full = found[0] if found else None
+    scope = None
+    if full is not None:
+        S, full_piles, scope = from_full_search(full)
+    else:
+        strains = args.rundir / "strains.json"
+        if not strains.exists():
+            raise SystemExit(f"{strains} absent: the per-read report did not run here")
+        S = json.loads(strains.read_text())
+        full_piles = None
     names = (json.loads((args.rundir / "subject_names.json").read_text())
              if (args.rundir / "subject_names.json").exists() else {}).get("names", {})
     table = json.loads(args.table.read_text())
@@ -270,11 +345,15 @@ def main() -> None:
     # whole cascade block, which is both a different unit and about 1.8x larger, so every
     # share was understated by that factor. Numerator and denominator now come from one
     # pass over one file, which is the only way this stays true when either changes.
-    piles = pile_counts(args.rundir)
+    piles = full_piles if full_piles is not None else pile_counts(args.rundir)
     n_denom = (piles.get("residue") or {}).get("searched") or 0
-    denom_note = ("residue mates searched by the per-read report (reads.jsonl), not the "
-                  "residual pairs of the cascade block: the numerator counts mates in that "
-                  "same sample")
+    denom_note = (("every unplaced mate in the library, all of which went through this "
+                   "search, so a share here is a share of the residue rather than of a "
+                   "sample of it")
+                  if full_piles is not None else
+                  ("residue mates searched by the per-read report (reads.jsonl), not the "
+                   "residual pairs of the cascade block: the numerator counts mates in "
+                   "that same sample"))
 
     rows, unplaced = [], 0
     for r in S.get("subjects", []):
@@ -395,6 +474,10 @@ def main() -> None:
         "kind_summary": kind_summary(rows, piles, table),
         "piles": piles,
         "denominator_note": denom_note,
+        # Which pile this ranking was built from, so the page can say it on its face
+        # rather than a reader assuming the wider one.
+        "scope": scope or {"source": "strains.json",
+                           "scope": "the per-read report's block sample of the residue"},
         "interval_note": f"shares of the residue carry a Wilson interval widened by "
                          f"{RESIDUE_DESIGN_EFFECT}x, the measured design effect of "
                          f"reading a contiguous block of the FASTQ "
