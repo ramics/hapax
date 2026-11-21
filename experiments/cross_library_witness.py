@@ -101,7 +101,7 @@ def summarise(v: list[float]) -> dict:
 
 
 def build_queries(reads1: Path, reads2: Path, calls: Path, out: Path, pairs: int,
-                  per_group: int, trim_r2: int, seed: int) -> dict:
+                  per_group: int, trim_r2: int, seed: int, skip: int = 0) -> dict:
     """Query set: pairs of one library, split by whether Kraken2 identified them.
 
     The split comes from the classifier's own per-read output rather than being recomputed,
@@ -112,7 +112,19 @@ def build_queries(reads1: Path, reads2: Path, calls: Path, out: Path, pairs: int
         for line in h:
             f = line.rstrip("\n").split("\t")
             classified[f[1]] = f[2] != "0"
-    rows = list(read_pairs(reads1, reads2, pairs, trim_r2=trim_r2, skip=0))
+    rows = list(read_pairs(reads1, reads2, pairs, trim_r2=trim_r2, skip=skip))
+    # THE SPLIT FAILS SILENTLY IF THE CALLS ARE FROM ANOTHER BLOCK. A name the classifier
+    # never saw falls through `classified.get` as False, so a mismatched calls file would
+    # put every read in the "unidentified" group and the experiment would still produce two
+    # tidy numbers. dna_rna_pair.py overwrites its per-read output once per seed, so this is
+    # one `--query-skip` away from happening.
+    seen = sum(1 for r in rows if r[0] in classified)
+    if seen < 0.9 * len(rows):
+        raise SystemExit(
+            f"only {seen} of {len(rows)} query reads appear in {calls}. The classifier "
+            f"output is from a different block of the library than --query-skip "
+            f"{skip} selects, and the identified/unidentified split would be meaningless "
+            f"rather than wrong-looking.")
     groups = {"identified": [r for r in rows if classified.get(r[0])],
               "unidentified": [r for r in rows if not classified.get(r[0])]}
     rng = random.Random(seed)
@@ -134,11 +146,22 @@ def main() -> None:
                     default=ROOT / "data/berlin_pair/SRR23973265_1.fastq.gz")
     ap.add_argument("--query-r2", type=Path,
                     default=ROOT / "data/berlin_pair/SRR23973265_2.fastq.gz")
-    ap.add_argument("--query-trim-r2", type=int, default=16)
+    ap.add_argument("--query-trim-r2", type=int, default=14,
+                    help="MEASURED, not detected. The first pass used 16, taken from "
+                         "dna_rna_pair.py's composition detector; mapping untrimmed reads "
+                         "to SILVA gives a 5' soft-clip mode of 14 in 5/5 seeds on both RNA "
+                         "libraries (results/nontemplate_prefix/). Two bases of 93 is two "
+                         "extra 31-mers per mate, which is small - but it is also the "
+                         "operating point of every fraction this script reports, so the "
+                         "first pass's numbers are superseded rather than adjusted")
     ap.add_argument("--calls", type=Path, required=True,
                     help="Kraken2 per-read output for the query library, from the same "
                          "block: dna_rna_pair.py leaves it in its work dir")
     ap.add_argument("--pairs", type=int, default=200_000)
+    ap.add_argument("--query-block", type=int, default=1_500_000,
+                    help="pairs skipped per seed, matching dna_rna_pair.py, so that --seed "
+                         "selects the same block of the library the classifier output came "
+                         "from. dna_rna_pair.py overwrites that output once per seed")
     ap.add_argument("--per-group", type=int, default=10_000)
     ap.add_argument("--subject", action="append", nargs=4,
                     metavar=("LABEL", "R1", "R2", "TRIM_R2"), required=True,
@@ -160,7 +183,8 @@ def main() -> None:
     args.out.mkdir(parents=True, exist_ok=True)
     q = args.work / f"query_s{args.seed}.tsv"
     qmeta = build_queries(args.query_r1, args.query_r2, args.calls, q, args.pairs,
-                          args.per_group, args.query_trim_r2, args.seed)
+                          args.per_group, args.query_trim_r2, args.seed,
+                          skip=args.query_block * (args.seed - 1))
     print(f"query set: {qmeta}", flush=True)
 
     results, timings = {}, {}
