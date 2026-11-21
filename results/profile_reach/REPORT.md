@@ -152,6 +152,24 @@ measured gain conservative.
   better *description* of each single molecule, which is exactly the deliverable SPEC.md
   §4.1 specifies for this pile.
 
+## Correction: the reporting cutoff, and what `diamond_any_hit` holds
+
+This run searched with DIAMOND's **default** `--evalue 0.001`, so no weak hit was ever
+reported: the `diamond_any_hit` field in `cells.json` counts only significant hits and is
+misnamed for what it holds. Nothing above depends on a weak-hit population — the reach
+ladder and the merged-against-mate comparison are all at or above significance, and the
+bitscore floors of 30 and 40 sit inside that cutoff rather than below it.
+
+The weak-hit question therefore could not be asked of this run, and is asked of the same
+instrument at a permissive cutoff over a byte-identical query set in
+[`../weak_hits/`](../weak_hits/REPORT.md). Two findings there bear on this report. The
+merged advantage **survives at a fixed E-value**, which penalises query length, and grows
+at stricter ones (at 20% divergence 52.7% against 29.5% at E <= 1e-5, and 23.2% against
+2.5% at E <= 1e-10; `../weak_hits/TABLES.md` §3), so §2's gain is not an artefact of the bitscore floor chosen here.
+And a merged read's bitscore is at or *below* its mate's scaled by the length ratio, so
+the gain is not extra evidence combining across the insert — it is that an E-value's
+length penalty is a test only a real alignment passes.
+
 ## Provenance
 
 | file | script | what |

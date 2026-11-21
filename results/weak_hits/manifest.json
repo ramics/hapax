@@ -1,0 +1,24 @@
+{
+ "script": "experiments/weak_hit_conversion.py",
+ "script_sha256": "36b494243c468ff7620462939d436247b6507cae28bae82a261a472172b32be2",
+ "git_sha": "c712f233259462807fed7c4f627e481b525dcceb-dirty",
+ "seeds": [
+  "s1",
+  "s2",
+  "s3",
+  "s4",
+  "s5"
+ ],
+ "params": {
+  "significance_cutoff_evalue": 0.001,
+  "reporting_cutoff_evalue": 100.0,
+  "diamond_mode": "--ultra-sensitive --max-target-seqs 1",
+  "queries": "results/profile_reach/work/queries.fa",
+  "query_count": 100912,
+  "note": "the query set is byte-identical to results/profile_reach/'s; only the reporting E-value cutoff differs, so the two runs are the same instrument at two operating points"
+ },
+ "timings_s": {
+  "diamond": 0.0,
+  "total": 0.46827220916748047
+ }
+}
