@@ -1,0 +1,63 @@
+{
+ "script": "experiments/profile_reach.py",
+ "script_sha256": "c5ee9180fa12d09819626d4a6e42db933b6c5a764289f71b10a6e5dfabefc12d",
+ "git_sha": "6a941d66fc07d453aff4654fb5636c1af4004da7-dirty",
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5
+ ],
+ "params": {
+  "n_sim_pairs_per_seed_per_rung": 1200,
+  "n_background_pairs_per_seed": 1200,
+  "rungs_pct": [
+   0,
+   5,
+   10,
+   20,
+   30
+  ],
+  "read_lengths": [
+   107,
+   93
+  ],
+  "insert_lognormal": {
+   "mu": 5.267858159063328,
+   "sigma": 0.38091211578670586,
+   "fitted_to": {
+    "median": 194.0,
+    "p95": 363.0
+   },
+   "truncated": [
+    60,
+    1158
+   ]
+  },
+  "error_rates": {
+   "body": 0.00068,
+   "final_base": 0.0019
+  },
+  "min_peptide_aa": 10,
+  "diamond_mode": "--ultra-sensitive",
+  "diamond_db": [
+   "viral.1.protein.faa.gz",
+   "uniprot_sprot.fasta.gz"
+  ],
+  "pfam_threshold": "--cut_ga (family gathering thresholds)",
+  "overlap_min_nt": 20,
+  "overlap_max_mismatch_frac": 0.05
+ },
+ "timings_s": {
+  "diamond": 530.0941166877747,
+  "pfam": 3339.996910095215,
+  "total": 3879.041995048523
+ },
+ "inputs": {
+  "holdout": "D00239 (human rhinovirus A1B), ENA fasta",
+  "holdout_len_nt": 7133,
+  "library": "SRR23973193 (ENA fastq), mate 2 trimmed 14 nt",
+  "pfam": "Pfam-A.hmm"
+ }
+}

@@ -1,0 +1,490 @@
+{
+ "levels": [
+  0.125,
+  0.25,
+  0.5,
+  1.0
+ ],
+ "per_seed": {
+  "1": {
+   "0.125": {
+    "library_pairs": 1090240,
+    "mate1": {
+     "n": 9984,
+     "median_depth": 24.0,
+     "mean_depth": 600.7961738782051,
+     "frac_depth0": 0.24178685897435898,
+     "frac_depth_lt5": 0.3803084935897436,
+     "frac_depth_lt2": 0.3110977564102564,
+     "mean_scorable_kmers": 76.17578125
+    },
+    "mate2": {
+     "n": 9975,
+     "median_depth": 19.0,
+     "mean_depth": 606.0514285714286,
+     "frac_depth0": 0.25433583959899747,
+     "frac_depth_lt5": 0.397593984962406,
+     "frac_depth_lt2": 0.32280701754385965,
+     "mean_scorable_kmers": 62.16591478696742
+    }
+   },
+   "0.25": {
+    "library_pairs": 2179512,
+    "mate1": {
+     "n": 9984,
+     "median_depth": 47.0,
+     "mean_depth": 1200.499499198718,
+     "frac_depth0": 0.18559695512820512,
+     "frac_depth_lt5": 0.3372395833333333,
+     "frac_depth_lt2": 0.25961538461538464,
+     "mean_scorable_kmers": 76.17578125
+    },
+    "mate2": {
+     "n": 9975,
+     "median_depth": 37.0,
+     "mean_depth": 1209.5318295739348,
+     "frac_depth0": 0.19799498746867167,
+     "frac_depth_lt5": 0.3523809523809524,
+     "frac_depth_lt2": 0.2719799498746867,
+     "mean_scorable_kmers": 62.16591478696742
+    }
+   },
+   "0.5": {
+    "library_pairs": 4359953,
+    "mate1": {
+     "n": 9984,
+     "median_depth": 94.0,
+     "mean_depth": 2403.9188701923076,
+     "frac_depth0": 0.12900641025641027,
+     "frac_depth_lt5": 0.2943709935897436,
+     "frac_depth_lt2": 0.2024238782051282,
+     "mean_scorable_kmers": 76.17578125
+    },
+    "mate2": {
+     "n": 9975,
+     "median_depth": 75.0,
+     "mean_depth": 2421.4403007518795,
+     "frac_depth0": 0.13834586466165413,
+     "frac_depth_lt5": 0.3068671679197995,
+     "frac_depth_lt2": 0.2131328320802005,
+     "mean_scorable_kmers": 62.16591478696742
+    }
+   },
+   "1.0": {
+    "library_pairs": 8721224,
+    "mate1": {
+     "n": 9984,
+     "median_depth": 190.0,
+     "mean_depth": 4805.27233573718,
+     "frac_depth0": 0.07441907051282051,
+     "frac_depth_lt5": 0.24569310897435898,
+     "frac_depth_lt2": 0.13731971153846154,
+     "mean_scorable_kmers": 76.17578125
+    },
+    "mate2": {
+     "n": 9975,
+     "median_depth": 146.0,
+     "mean_depth": 4839.181353383458,
+     "frac_depth0": 0.08481203007518796,
+     "frac_depth_lt5": 0.259047619047619,
+     "frac_depth_lt2": 0.14847117794486214,
+     "mean_scorable_kmers": 62.16591478696742
+    }
+   }
+  },
+  "2": {
+   "0.125": {
+    "library_pairs": 1090313,
+    "mate1": {
+     "n": 9987,
+     "median_depth": 22.0,
+     "mean_depth": 586.9416241113447,
+     "frac_depth0": 0.23981175528186643,
+     "frac_depth_lt5": 0.38249724642034644,
+     "frac_depth_lt2": 0.3097026133974166,
+     "mean_scorable_kmers": 76.2800640833083
+    },
+    "mate2": {
+     "n": 9979,
+     "median_depth": 16.0,
+     "mean_depth": 604.9967932658583,
+     "frac_depth0": 0.2592444132678625,
+     "frac_depth_lt5": 0.40334702876039685,
+     "frac_depth_lt2": 0.3290910912917126,
+     "mean_scorable_kmers": 62.27557871530213
+    }
+   },
+   "0.25": {
+    "library_pairs": 2181214,
+    "mate1": {
+     "n": 9987,
+     "median_depth": 45.0,
+     "mean_depth": 1173.258536096926,
+     "frac_depth0": 0.18774406728747373,
+     "frac_depth_lt5": 0.3377390607790127,
+     "frac_depth_lt2": 0.26053870031040355,
+     "mean_scorable_kmers": 76.2800640833083
+    },
+    "mate2": {
+     "n": 9979,
+     "median_depth": 32.0,
+     "mean_depth": 1208.6385409359655,
+     "frac_depth0": 0.20563182683635634,
+     "frac_depth_lt5": 0.3549453853091492,
+     "frac_depth_lt2": 0.276681030163343,
+     "mean_scorable_kmers": 62.27557871530213
+    }
+   },
+   "0.5": {
+    "library_pairs": 4361090,
+    "mate1": {
+     "n": 9987,
+     "median_depth": 88.0,
+     "mean_depth": 2346.285871633123,
+     "frac_depth0": 0.12846700710924203,
+     "frac_depth_lt5": 0.29308100530689896,
+     "frac_depth_lt2": 0.2057674977470712,
+     "mean_scorable_kmers": 76.2800640833083
+    },
+    "mate2": {
+     "n": 9979,
+     "median_depth": 64.0,
+     "mean_depth": 2413.684036476601,
+     "frac_depth0": 0.14340114239903798,
+     "frac_depth_lt5": 0.3149614189798577,
+     "frac_depth_lt2": 0.2188596051708588,
+     "mean_scorable_kmers": 62.27557871530213
+    }
+   },
+   "1.0": {
+    "library_pairs": 8721224,
+    "mate1": {
+     "n": 9987,
+     "median_depth": 177.0,
+     "mean_depth": 4691.120156203064,
+     "frac_depth0": 0.07509762691498949,
+     "frac_depth_lt5": 0.2414138379893862,
+     "frac_depth_lt2": 0.13777911284670072,
+     "mean_scorable_kmers": 76.2800640833083
+    },
+    "mate2": {
+     "n": 9979,
+     "median_depth": 130.0,
+     "mean_depth": 4821.026154925343,
+     "frac_depth0": 0.08497845475498547,
+     "frac_depth_lt5": 0.26184988475799176,
+     "frac_depth_lt2": 0.151618398637138,
+     "mean_scorable_kmers": 62.27557871530213
+    }
+   }
+  },
+  "3": {
+   "0.125": {
+    "library_pairs": 1090520,
+    "mate1": {
+     "n": 9987,
+     "median_depth": 21.0,
+     "mean_depth": 601.3246220086112,
+     "frac_depth0": 0.24581956543506558,
+     "frac_depth_lt5": 0.39411234604986484,
+     "frac_depth_lt2": 0.31851406828877543,
+     "mean_scorable_kmers": 76.19325122659457
+    },
+    "mate2": {
+     "n": 9974,
+     "median_depth": 15.0,
+     "mean_depth": 600.2155604571886,
+     "frac_depth0": 0.26117906557048326,
+     "frac_depth_lt5": 0.4113695608582314,
+     "frac_depth_lt2": 0.33276518949268097,
+     "mean_scorable_kmers": 62.24052536595148
+    }
+   },
+   "0.25": {
+    "library_pairs": 2180557,
+    "mate1": {
+     "n": 9987,
+     "median_depth": 42.0,
+     "mean_depth": 1201.224892360068,
+     "frac_depth0": 0.18984680084109343,
+     "frac_depth_lt5": 0.34695103634725144,
+     "frac_depth_lt2": 0.26894963452488235,
+     "mean_scorable_kmers": 76.19325122659457
+    },
+    "mate2": {
+     "n": 9974,
+     "median_depth": 30.0,
+     "mean_depth": 1198.9236013635452,
+     "frac_depth0": 0.20252656907960698,
+     "frac_depth_lt5": 0.36254261078804895,
+     "frac_depth_lt2": 0.2817325045117305,
+     "mean_scorable_kmers": 62.24052536595148
+    }
+   },
+   "0.5": {
+    "library_pairs": 4359555,
+    "mate1": {
+     "n": 9987,
+     "median_depth": 81.0,
+     "mean_depth": 2401.5255832582357,
+     "frac_depth0": 0.13117052167818163,
+     "frac_depth_lt5": 0.3014919395213778,
+     "frac_depth_lt2": 0.20797036146991088,
+     "mean_scorable_kmers": 76.19325122659457
+    },
+    "mate2": {
+     "n": 9974,
+     "median_depth": 61.5,
+     "mean_depth": 2402.6595147383196,
+     "frac_depth0": 0.14086625225586524,
+     "frac_depth_lt5": 0.3169240024062563,
+     "frac_depth_lt2": 0.21646280328855022,
+     "mean_scorable_kmers": 62.24052536595148
+    }
+   },
+   "1.0": {
+    "library_pairs": 8721224,
+    "mate1": {
+     "n": 9987,
+     "median_depth": 163.0,
+     "mean_depth": 4805.532592370081,
+     "frac_depth0": 0.07129268048463001,
+     "frac_depth_lt5": 0.2528286772804646,
+     "frac_depth_lt2": 0.14188444978472015,
+     "mean_scorable_kmers": 76.19325122659457
+    },
+    "mate2": {
+     "n": 9974,
+     "median_depth": 122.0,
+     "mean_depth": 4804.147683978344,
+     "frac_depth0": 0.08020854220974534,
+     "frac_depth_lt5": 0.26398636454782437,
+     "frac_depth_lt2": 0.14788449969921796,
+     "mean_scorable_kmers": 62.24052536595148
+    }
+   }
+  },
+  "4": {
+   "0.125": {
+    "library_pairs": 1089528,
+    "mate1": {
+     "n": 9989,
+     "median_depth": 22.0,
+     "mean_depth": 603.703974371809,
+     "frac_depth0": 0.24136550205225749,
+     "frac_depth_lt5": 0.3852237461207328,
+     "frac_depth_lt2": 0.31164280708779657,
+     "mean_scorable_kmers": 76.15627189908899
+    },
+    "mate2": {
+     "n": 9979,
+     "median_depth": 17.0,
+     "mean_depth": 611.2503256839362,
+     "frac_depth0": 0.25643852089387714,
+     "frac_depth_lt5": 0.4047499749473895,
+     "frac_depth_lt2": 0.32838961819821627,
+     "mean_scorable_kmers": 62.16675017536827
+    }
+   },
+   "0.25": {
+    "library_pairs": 2180465,
+    "mate1": {
+     "n": 9989,
+     "median_depth": 46.0,
+     "mean_depth": 1209.9033937331064,
+     "frac_depth0": 0.1838021824006407,
+     "frac_depth_lt5": 0.3400740814896386,
+     "frac_depth_lt2": 0.2605866453098408,
+     "mean_scorable_kmers": 76.15627189908899
+    },
+    "mate2": {
+     "n": 9979,
+     "median_depth": 35.0,
+     "mean_depth": 1223.835855296122,
+     "frac_depth0": 0.19821625413368074,
+     "frac_depth_lt5": 0.35985569696362363,
+     "frac_depth_lt2": 0.27497745265056617,
+     "mean_scorable_kmers": 62.16675017536827
+    }
+   },
+   "0.5": {
+    "library_pairs": 4358427,
+    "mate1": {
+     "n": 9989,
+     "median_depth": 89.0,
+     "mean_depth": 2418.5916508158975,
+     "frac_depth0": 0.12744018420262287,
+     "frac_depth_lt5": 0.2939233156472119,
+     "frac_depth_lt2": 0.19981980178196015,
+     "mean_scorable_kmers": 76.15627189908899
+    },
+    "mate2": {
+     "n": 9979,
+     "median_depth": 69.0,
+     "mean_depth": 2445.366569796573,
+     "frac_depth0": 0.1399939873734843,
+     "frac_depth_lt5": 0.31295721014129674,
+     "frac_depth_lt2": 0.21465076660988075,
+     "mean_scorable_kmers": 62.16675017536827
+    }
+   },
+   "1.0": {
+    "library_pairs": 8721224,
+    "mate1": {
+     "n": 9989,
+     "median_depth": 178.0,
+     "mean_depth": 4833.002302532786,
+     "frac_depth0": 0.07388126939633596,
+     "frac_depth_lt5": 0.24056462108319152,
+     "frac_depth_lt2": 0.13314646110721795,
+     "mean_scorable_kmers": 76.15627189908899
+    },
+    "mate2": {
+     "n": 9979,
+     "median_depth": 139.0,
+     "mean_depth": 4884.7625012526305,
+     "frac_depth0": 0.0823729832648562,
+     "frac_depth_lt5": 0.2585429401743662,
+     "frac_depth_lt2": 0.14580619300531114,
+     "mean_scorable_kmers": 62.16675017536827
+    }
+   }
+  },
+  "5": {
+   "0.125": {
+    "library_pairs": 1090828,
+    "mate1": {
+     "n": 9984,
+     "median_depth": 23.0,
+     "mean_depth": 587.0754206730769,
+     "frac_depth0": 0.24078525641025642,
+     "frac_depth_lt5": 0.3825120192307692,
+     "frac_depth_lt2": 0.3073918269230769,
+     "mean_scorable_kmers": 76.16546474358974
+    },
+    "mate2": {
+     "n": 9974,
+     "median_depth": 18.0,
+     "mean_depth": 603.2084419490676,
+     "frac_depth0": 0.25406055744936834,
+     "frac_depth_lt5": 0.3983356727491478,
+     "frac_depth_lt2": 0.32404251052737115,
+     "mean_scorable_kmers": 62.184680168437936
+    }
+   },
+   "0.25": {
+    "library_pairs": 2181997,
+    "mate1": {
+     "n": 9984,
+     "median_depth": 47.5,
+     "mean_depth": 1173.3324318910256,
+     "frac_depth0": 0.18850160256410256,
+     "frac_depth_lt5": 0.33643830128205127,
+     "frac_depth_lt2": 0.2594150641025641,
+     "mean_scorable_kmers": 76.16546474358974
+    },
+    "mate2": {
+     "n": 9974,
+     "median_depth": 36.0,
+     "mean_depth": 1203.0787046320434,
+     "frac_depth0": 0.20292761179065572,
+     "frac_depth_lt5": 0.3508121114898737,
+     "frac_depth_lt2": 0.2746139963906156,
+     "mean_scorable_kmers": 62.184680168437936
+    }
+   },
+   "0.5": {
+    "library_pairs": 4361287,
+    "mate1": {
+     "n": 9984,
+     "median_depth": 96.0,
+     "mean_depth": 2342.4844751602564,
+     "frac_depth0": 0.12630208333333334,
+     "frac_depth_lt5": 0.28956330128205127,
+     "frac_depth_lt2": 0.19881810897435898,
+     "mean_scorable_kmers": 76.16546474358974
+    },
+    "mate2": {
+     "n": 9974,
+     "median_depth": 72.5,
+     "mean_depth": 2402.5435131341487,
+     "frac_depth0": 0.14076599157810307,
+     "frac_depth_lt5": 0.30559454581912976,
+     "frac_depth_lt2": 0.2138560256667335,
+     "mean_scorable_kmers": 62.184680168437936
+    }
+   },
+   "1.0": {
+    "library_pairs": 8721224,
+    "mate1": {
+     "n": 9984,
+     "median_depth": 190.0,
+     "mean_depth": 4685.599459134615,
+     "frac_depth0": 0.07281650641025642,
+     "frac_depth_lt5": 0.23798076923076922,
+     "frac_depth_lt2": 0.13782051282051283,
+     "mean_scorable_kmers": 76.16546474358974
+    },
+    "mate2": {
+     "n": 9974,
+     "median_depth": 146.0,
+     "mean_depth": 4803.22488470022,
+     "frac_depth0": 0.0809103669540806,
+     "frac_depth_lt5": 0.25576498897132544,
+     "frac_depth_lt2": 0.15029075596551034,
+     "mean_scorable_kmers": 62.184680168437936
+    }
+   }
+  }
+ },
+ "mates": {
+  "1": {
+   "frac_depth0_mean": [
+    0.24191378763076096,
+    0.18709832164430312,
+    0.12847724131595803,
+    0.07350143074380647
+   ],
+   "frac_depth0_min": [
+    0.23981175528186643,
+    0.1838021824006407,
+    0.12630208333333334,
+    0.07129268048463001
+   ],
+   "frac_depth0_max": [
+    0.24581956543506558,
+    0.18984680084109343,
+    0.13117052167818163,
+    0.07509762691498949
+   ],
+   "slope_per_doubling": -0.05638581509892084,
+   "max_abs_residual_of_linear_fit": 0.001157718761135601,
+   "projected_one_doubling": 0.017115615644885625,
+   "extrapolation_horizon": "one doubling only; a 10x figure is not reported because the accumulation estimators behind it are not reliable that far"
+  },
+  "2": {
+   "frac_depth0_mean": [
+    0.2570516793561178,
+    0.20145944986179426,
+    0.14067464765362897,
+    0.08265647545177111
+   ],
+   "frac_depth0_min": [
+    0.25406055744936834,
+    0.19799498746867167,
+    0.13834586466165413,
+    0.08020854220974534
+   ],
+   "frac_depth0_max": [
+    0.26117906557048326,
+    0.20563182683635634,
+    0.14340114239903798,
+    0.08497845475498547
+   ],
+   "slope_per_doubling": -0.05839704139212049,
+   "max_abs_residual_of_linear_fit": 0.0018003660849060243,
+   "projected_one_doubling": 0.02425943405965062,
+   "extrapolation_horizon": "one doubling only; a 10x figure is not reported because the accumulation estimators behind it are not reliable that far"
+  }
+ }
+}
