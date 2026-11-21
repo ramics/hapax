@@ -204,6 +204,18 @@ def main() -> None:
             if n not in kcols:
                 continue
             a, b = cols[n], kcols[n]
+            # A FIELD THAT IS IDENTICALLY ZERO IN THE CONTROL WAS NOT MEASURED THERE, and
+            # saying so is not pedantry: `closest_bitscore` read 0 for every identified
+            # read and produced a standardised difference of +9.5, the largest in the
+            # table, purely because the protein search was run on the residue only. The
+            # protein ladder had to re-label a whole column for the same reason. A constant
+            # zero beside a varying column is absence, not a measurement of zero, so it is
+            # named rather than scored.
+            if st.pstdev(b) == 0 and st.mean(b) == 0 and st.pstdev(a) > 0:
+                separation[n] = {"residue_mean": st.mean(a), "known_mean": None,
+                                 "standardised_difference": None,
+                                 "not_measured_in_control": True}
+                continue
             pooled = (st.pstdev(a) + st.pstdev(b)) / 2 or 1.0
             separation[n] = {"residue_mean": st.mean(a), "known_mean": st.mean(b),
                              "standardised_difference": (st.mean(a) - st.mean(b)) / pooled}
@@ -229,9 +241,21 @@ def main() -> None:
               "| field | residue mean | known mean | standardised difference |",
               "|---|---|---|---|"]
     for n, s in sorted(separation.items(),
-                       key=lambda kv: -abs(kv[1]["standardised_difference"])):
+                       key=lambda kv: -abs(kv[1]["standardised_difference"] or 0)):
+        if s.get("not_measured_in_control"):
+            lines.append(f"| {n} | {s['residue_mean']:.4g} | *not searched* | "
+                         f"*cannot be computed* |")
+            continue
         lines.append(f"| {n} | {s['residue_mean']:.4g} | {s['known_mean']:.4g} | "
                      f"{s['standardised_difference']:+.2f} |")
+    nm = [n for n, s in separation.items() if s.get("not_measured_in_control")]
+    if nm:
+        lines += ["", "**" + ", ".join(f"`{n}`" for n in nm) + "** read identically zero "
+                  "across the control, which means the measurement was never made there - "
+                  "the protein search ran on the residue only. Reported as *not searched* "
+                  "rather than as a difference: scored naively, `closest_bitscore` showed "
+                  "the largest separation in this table (+9.5 standardised) and it was an "
+                  "artefact of a population nobody searched."]
     lines += ["", "Independence and usefulness are different properties: a field can be "
               "its own axis and still say nothing about whether a read is interesting, "
               "and both columns are needed to read the report honestly.", "",

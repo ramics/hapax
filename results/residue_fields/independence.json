@@ -1,0 +1,333 @@
+{
+  "reads": 30000,
+  "fields": [
+    "gc",
+    "entropy3",
+    "homopolymer",
+    "dup_kmer16",
+    "longest_orf_aa",
+    "stop_free_frames",
+    "CpG_oe",
+    "UpA_oe",
+    "fold_z",
+    "fold_mfe",
+    "library_abundance",
+    "cross_sample_samples",
+    "closest_bitscore"
+  ],
+  "spearman": {
+    "gc": {
+      "gc": 1.0,
+      "entropy3": -0.024064415099830937,
+      "homopolymer": -0.1676215383236583,
+      "dup_kmer16": 0.03177304469976201,
+      "longest_orf_aa": 0.43418546010003095,
+      "stop_free_frames": 0.45984822119049706,
+      "CpG_oe": 0.27143401851004356,
+      "UpA_oe": -0.26650675493600373,
+      "fold_z": 0.03162995696997644,
+      "fold_mfe": -0.6955467506780605,
+      "library_abundance": 0.018383937948355664,
+      "cross_sample_samples": -0.06530480142611841,
+      "closest_bitscore": 0.14830322514117897
+    },
+    "entropy3": {
+      "gc": -0.024064415099830937,
+      "entropy3": 1.0,
+      "homopolymer": -0.12390902043532669,
+      "dup_kmer16": -0.11592563772153343,
+      "longest_orf_aa": -0.1042912397454967,
+      "stop_free_frames": -0.2009884857716739,
+      "CpG_oe": 0.04381613780891251,
+      "UpA_oe": 0.2359613537044669,
+      "fold_z": -0.22451152724602005,
+      "fold_mfe": -0.12510416839483082,
+      "library_abundance": 0.1168173460752474,
+      "cross_sample_samples": 0.22218975955128367,
+      "closest_bitscore": 0.08883003868309929
+    },
+    "homopolymer": {
+      "gc": -0.1676215383236583,
+      "entropy3": -0.12390902043532669,
+      "homopolymer": 1.0,
+      "dup_kmer16": -0.004954246956021087,
+      "longest_orf_aa": -0.06680419723971161,
+      "stop_free_frames": -0.10278966059958611,
+      "CpG_oe": -0.1069236814922323,
+      "UpA_oe": 0.02826360314497474,
+      "fold_z": -0.028805520346311658,
+      "fold_mfe": 0.11418489205819109,
+      "library_abundance": 0.039895072797747115,
+      "cross_sample_samples": 0.02551614262041419,
+      "closest_bitscore": -0.017450062241989275
+    },
+    "dup_kmer16": {
+      "gc": 0.03177304469976201,
+      "entropy3": -0.11592563772153343,
+      "homopolymer": -0.004954246956021087,
+      "dup_kmer16": 1.0,
+      "longest_orf_aa": 0.021415008549623946,
+      "stop_free_frames": 0.05501362298227265,
+      "CpG_oe": -0.04654757450621976,
+      "UpA_oe": 0.00030275666981566046,
+      "fold_z": -0.019525281287168243,
+      "fold_mfe": -0.03198724644069161,
+      "library_abundance": -0.020001865437663045,
+      "cross_sample_samples": -0.05142321583386343,
+      "closest_bitscore": -0.07108598503679725
+    },
+    "longest_orf_aa": {
+      "gc": 0.43418546010003095,
+      "entropy3": -0.1042912397454967,
+      "homopolymer": -0.06680419723971161,
+      "dup_kmer16": 0.021415008549623946,
+      "longest_orf_aa": 1.0,
+      "stop_free_frames": 0.7906764559922647,
+      "CpG_oe": 0.16419227249590085,
+      "UpA_oe": -0.32550263046739475,
+      "fold_z": 0.08430415117413206,
+      "fold_mfe": -0.3077462189238728,
+      "library_abundance": -0.08098561315589013,
+      "cross_sample_samples": -0.05272286091789071,
+      "closest_bitscore": 0.1835123353012167
+    },
+    "stop_free_frames": {
+      "gc": 0.45984822119049706,
+      "entropy3": -0.2009884857716739,
+      "homopolymer": -0.10278966059958611,
+      "dup_kmer16": 0.05501362298227265,
+      "longest_orf_aa": 0.7906764559922647,
+      "stop_free_frames": 1.0,
+      "CpG_oe": 0.16272335280648814,
+      "UpA_oe": -0.3463877665493047,
+      "fold_z": 0.11821455570466598,
+      "fold_mfe": -0.25753021823868333,
+      "library_abundance": -0.10061857018425284,
+      "cross_sample_samples": -0.11620155520665675,
+      "closest_bitscore": 0.10271146321547772
+    },
+    "CpG_oe": {
+      "gc": 0.27143401851004356,
+      "entropy3": 0.04381613780891251,
+      "homopolymer": -0.1069236814922323,
+      "dup_kmer16": -0.04654757450621976,
+      "longest_orf_aa": 0.16419227249590085,
+      "stop_free_frames": 0.16272335280648814,
+      "CpG_oe": 1.0,
+      "UpA_oe": -0.03659141313227288,
+      "fold_z": 0.028882332775940538,
+      "fold_mfe": -0.18240624561509233,
+      "library_abundance": -0.026271254325125736,
+      "cross_sample_samples": 0.03503490077866227,
+      "closest_bitscore": 0.04577433735917852
+    },
+    "UpA_oe": {
+      "gc": -0.26650675493600373,
+      "entropy3": 0.2359613537044669,
+      "homopolymer": 0.02826360314497474,
+      "dup_kmer16": 0.00030275666981566046,
+      "longest_orf_aa": -0.32550263046739475,
+      "stop_free_frames": -0.3463877665493047,
+      "CpG_oe": -0.03659141313227288,
+      "UpA_oe": 1.0,
+      "fold_z": -0.1257395488603454,
+      "fold_mfe": 0.1336780994174829,
+      "library_abundance": 0.1287353507080524,
+      "cross_sample_samples": 0.12802690822735682,
+      "closest_bitscore": -0.09788123063545907
+    },
+    "fold_z": {
+      "gc": 0.03162995696997644,
+      "entropy3": -0.22451152724602005,
+      "homopolymer": -0.028805520346311658,
+      "dup_kmer16": -0.019525281287168243,
+      "longest_orf_aa": 0.08430415117413206,
+      "stop_free_frames": 0.11821455570466598,
+      "CpG_oe": 0.028882332775940538,
+      "UpA_oe": -0.1257395488603454,
+      "fold_z": 1.0,
+      "fold_mfe": 0.44158917020573857,
+      "library_abundance": -0.10267971620933372,
+      "cross_sample_samples": -0.16229309424471333,
+      "closest_bitscore": -0.00970299439376038
+    },
+    "fold_mfe": {
+      "gc": -0.6955467506780605,
+      "entropy3": -0.12510416839483082,
+      "homopolymer": 0.11418489205819109,
+      "dup_kmer16": -0.03198724644069161,
+      "longest_orf_aa": -0.3077462189238728,
+      "stop_free_frames": -0.25753021823868333,
+      "CpG_oe": -0.18240624561509233,
+      "UpA_oe": 0.1336780994174829,
+      "fold_z": 0.44158917020573857,
+      "fold_mfe": 1.0,
+      "library_abundance": -0.051029698931149406,
+      "cross_sample_samples": -0.035978269817519774,
+      "closest_bitscore": -0.1551816461331502
+    },
+    "library_abundance": {
+      "gc": 0.018383937948355664,
+      "entropy3": 0.1168173460752474,
+      "homopolymer": 0.039895072797747115,
+      "dup_kmer16": -0.020001865437663045,
+      "longest_orf_aa": -0.08098561315589013,
+      "stop_free_frames": -0.10061857018425284,
+      "CpG_oe": -0.026271254325125736,
+      "UpA_oe": 0.1287353507080524,
+      "fold_z": -0.10267971620933372,
+      "fold_mfe": -0.051029698931149406,
+      "library_abundance": 1.0,
+      "cross_sample_samples": 0.32749588418439884,
+      "closest_bitscore": -0.04219677638117853
+    },
+    "cross_sample_samples": {
+      "gc": -0.06530480142611841,
+      "entropy3": 0.22218975955128367,
+      "homopolymer": 0.02551614262041419,
+      "dup_kmer16": -0.05142321583386343,
+      "longest_orf_aa": -0.05272286091789071,
+      "stop_free_frames": -0.11620155520665675,
+      "CpG_oe": 0.03503490077866227,
+      "UpA_oe": 0.12802690822735682,
+      "fold_z": -0.16229309424471333,
+      "fold_mfe": -0.035978269817519774,
+      "library_abundance": 0.32749588418439884,
+      "cross_sample_samples": 1.0,
+      "closest_bitscore": -0.025412299918127428
+    },
+    "closest_bitscore": {
+      "gc": 0.14830322514117897,
+      "entropy3": 0.08883003868309929,
+      "homopolymer": -0.017450062241989275,
+      "dup_kmer16": -0.07108598503679725,
+      "longest_orf_aa": 0.1835123353012167,
+      "stop_free_frames": 0.10271146321547772,
+      "CpG_oe": 0.04577433735917852,
+      "UpA_oe": -0.09788123063545907,
+      "fold_z": -0.00970299439376038,
+      "fold_mfe": -0.1551816461331502,
+      "library_abundance": -0.04219677638117853,
+      "cross_sample_samples": -0.025412299918127428,
+      "closest_bitscore": 1.0
+    }
+  },
+  "groups": [
+    [
+      "fold_mfe",
+      "gc"
+    ],
+    [
+      "entropy3"
+    ],
+    [
+      "homopolymer"
+    ],
+    [
+      "dup_kmer16"
+    ],
+    [
+      "longest_orf_aa",
+      "stop_free_frames"
+    ],
+    [
+      "CpG_oe"
+    ],
+    [
+      "UpA_oe"
+    ],
+    [
+      "fold_z"
+    ],
+    [
+      "library_abundance"
+    ],
+    [
+      "cross_sample_samples"
+    ],
+    [
+      "closest_bitscore"
+    ]
+  ],
+  "eigenvalues": [
+    2.8687694602069094,
+    1.8928398697183315,
+    1.1556611454387897,
+    1.1414299984269196,
+    1.0589146838046997,
+    0.9132646951311868,
+    0.8616606453966948,
+    0.8050896323630435,
+    0.7277453892072542,
+    0.6392644948001646,
+    0.5799709294164686,
+    0.2086647065745294,
+    0.1467243495150276
+  ],
+  "participation_ratio": 10.49521841344668,
+  "separation_from_known": {
+    "gc": {
+      "residue_mean": 0.5034476966666667,
+      "known_mean": 0.4964071566666667,
+      "standardised_difference": 0.08893330622153989
+    },
+    "entropy3": {
+      "residue_mean": 0.8738652466666667,
+      "known_mean": 0.88384356,
+      "standardised_difference": -0.23159753828660729
+    },
+    "homopolymer": {
+      "residue_mean": 4.494133333333333,
+      "known_mean": 4.5086,
+      "standardised_difference": -0.00730510665653539
+    },
+    "dup_kmer16": {
+      "residue_mean": 0.00251561,
+      "known_mean": 0.0020456233333333335,
+      "standardised_difference": 0.013147717320468724
+    },
+    "longest_orf_aa": {
+      "residue_mean": 58.77036666666667,
+      "known_mean": 56.447066666666665,
+      "standardised_difference": 0.2363765816567037
+    },
+    "stop_free_frames": {
+      "residue_mean": 0.8089666666666666,
+      "known_mean": 0.46016666666666667,
+      "standardised_difference": 0.39173641301253165
+    },
+    "CpG_oe": {
+      "residue_mean": 0.9567449566666667,
+      "known_mean": 0.94082033,
+      "standardised_difference": 0.05429091396816143
+    },
+    "UpA_oe": {
+      "residue_mean": 0.77828202,
+      "known_mean": 0.89105657,
+      "standardised_difference": -0.39606468257254485
+    },
+    "fold_z": {
+      "residue_mean": -0.4933610333333333,
+      "known_mean": -0.3993547,
+      "standardised_difference": -0.1113958831116662
+    },
+    "fold_mfe": {
+      "residue_mean": -26.980484666666666,
+      "known_mean": -24.59467666666667,
+      "standardised_difference": -0.28336477970945934
+    },
+    "library_abundance": {
+      "residue_mean": 8.8905,
+      "known_mean": 89.06946666666667,
+      "standardised_difference": -1.124839715593356
+    },
+    "closest_bitscore": {
+      "residue_mean": 31.596883333333334,
+      "known_mean": null,
+      "standardised_difference": null,
+      "not_measured_in_control": true
+    }
+  },
+  "threshold": 0.5,
+  "seeds": 5
+}
