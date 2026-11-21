@@ -131,35 +131,71 @@ to work at all. Tier 2 is therefore a small, honest pile rather than the easy wi
 three-tier sketch implies, and its 1,784 members are the right size for the per-contig
 characterisation Imo asked for.
 
-### 3.4 Ground truth: an actual BLAST against NCBI core_nt
+### 3.4 Ground truth: an actual BLAST, remotely and then on our own staged copy
 
-`experiments/remote_blast_check.py` draws a stratified sample, 60 mate-1 reads per class,
-labels every class locally with the cascade's own references and thresholds, and submits
-them to NCBI's remote BLAST (blastn against nt, 133 M sequences / 1.1 Tbase - two orders
-of magnitude more sequence than any index that fits here). Seed 1:
+Two instruments, and they agree. `experiments/remote_blast_check.py` draws a stratified
+sample, 60 mate-1 reads per class, labels every class locally with the cascade's own
+references and thresholds, and submits them to NCBI's remote BLAST (blastn against nt, two
+orders of magnitude more sequence than any index that fits here).
+`experiments/report_blastcheck.py` aggregates it; a "strong hit" is 95% identity over 80%
+of the query. Three clean seeds:
 
-| class | % of library | any hit | median identity | median query coverage |
-|---|---|---|---|---|
-| rRNA | 37.6 | 60/60 | 100.0 | 0.99 |
-| public nucleotide (Kraken2) | 2.7 | 60/60 | 100.0 | 0.99 |
-| identified by the sample's own assembly | 34.3 | 53/60 | 91.6 | 0.64 |
-| residue, maps an unidentified contig | 9.1 | 49/60 | 90.6 | 0.34 |
-| residue, maps nothing | 16.3 | 52/60 | 88.9 | 0.38 |
-| tier-2 contigs (>=500 nt, >=2x) | - | 58/60 | 86.7 | 0.07 |
+| class | % of library | any hit | **strong hit** | median identity | median query coverage |
+|---|---|---|---|---|---|
+| rRNA | 38.0 | 100.0 | **90.0 (86.7-93.3)** | 100.0 | 1.0 |
+| public nucleotide (Kraken2) | 2.7 | 100.0 | **94.4 (93.3-95.0)** | 100.0 | 1.0 |
+| identified by the sample's own assembly | 34.3 | 89.1 | **25.2 (17.8-33.3)** | 92.4 | 0.6 |
+| residue, maps an unidentified contig | 8.8 | 81.1 | **9.3 (6.7-11.1)** | 89.4 | 0.4 |
+| residue, maps nothing | 16.2 | 90.0 | **5.6 (3.3-6.7)** | 87.5 | 0.4 |
+| tier-2 contigs (>=500 nt, >=2x) | - | 100.0 | **3.9 (3.3-5.0)** | 87.1 | 0.1 |
 
-The headline is a correction to our own language. **The residue is not matchless.** Against
-1.1 Tbase, 87% of residue reads hit something - so "matches nothing" was always shorthand
-for "matches nothing in an index that fits on this disk". What separates the classes is not
-whether they hit but how much of the read is covered at what identity: a ribosomal read
-aligns over its whole length at 100%, a residue read aligns over a third of itself at 89%.
-That is precisely the distant-partial-homology signature, and it is why the per-read report
-reports closest relative as a continuous field and never thresholds it.
+The headline is a correction to our own language. **The residue is not matchless.** 81-90%
+of residue reads hit something, so "matches nothing" was always shorthand for "matches
+nothing in an index that fits on this disk". What separates the classes is not whether they
+hit but how much of the read is covered at what identity: a ribosomal read aligns over its
+whole length at 100%, a residue read over a third of itself at 88%. That is the
+distant-partial-homology signature, and it is why the per-read report carries closest
+relative as a continuous field and never thresholds it.
 
-It is also independent support for the coordinator's point that the index-size curve has
-not flattened: the sequence our indexes miss is findable in a database 70 times larger
-than anything local, so removal is still rising with index size at the largest index
-reachable. Five seeds and a blastx pass against nr on the residue and tier-2 classes are
-running; this table is seed 1 only and is labelled as such.
+**Two of five seeds are excluded, by a key rather than by judgement.** Seeds 1 and 2 were
+written before failed NCBI batches were dropped from the denominator, so their real misses
+and their lost queries are the same number and cannot now be separated - seed 2 reported
+50% any-hit for a class that sits at 100%, which is how it was caught. Their files lack
+`dropped_failed_batch`, which is the test the aggregator applies; both are re-running. Seeds
+3 and 4 lost batches too and dropped them correctly, which is why two of their classes have
+n=45.
+
+#### Our own staged copy of core_nt: what the biggest nucleotide database is worth
+
+The remote service caps the sample at 60 per class, rate-limits, and runs against a database
+that moves under us with no version to cite. So a copy of NCBI's prebuilt `core_nt` (318.8
+GB, pinned at prefix `2026-10-22-01-05-01`) was staged in `us-east-1` and searched directly
+(`experiments/bigindex_search.py`, `experiments/bigindex_report.py`). The first pass is 500
+residue mate-1 reads of block 1:
+
+| readout | residue reads against core_nt |
+|---|---|
+| any hit | 86.8% (83.6-89.5) |
+| strong alignment (>=80% identity over >=80% of the read) | 10.2% (7.8-13.2) |
+| **identified at the cascade's own operating point** (>=90% identity over >=40 bases) | **7.8% (5.8-10.5)** |
+| median identity of the best hit | 88.6% |
+| median fraction of the read aligned | 0.374 |
+
+Best-hit identity piles up at 80-90% (211 of 434 hits) while the aligned fraction piles up
+between a quarter and a half of the read (298 of 434). **So a typical residue read's closest
+relative in all of core_nt is a ~40-base partial match at ~88% identity**, which is the
+evidence requirement 1.iii asks for - and it is a joint distribution rather than a threshold
+on either axis, because either axis alone counts a third of a read at 95% as a 95% match.
+
+**The efficiency comparison is the result.** 318.8 GB of the world's nucleotide sequence
+removes about 8 points of the residue at the operating point the rest of the curve uses. 15
+MB of this sample's own identified contigs removes 30 points (section 3.1). Four orders of
+magnitude of index for a quarter of the effect, now measured against the real database
+rather than inferred from what fits on this disk.
+
+Limits: one block, mate 1 only, 500 reads, so this is a pilot and not the table. Five
+6,000-read blocks and a cheap-task comparison are running; `results/bigindex/` carries the
+rows, the timing and the operating point for each.
 
 ### 3.5 Does the removal curve flatten? Not on this evidence
 
