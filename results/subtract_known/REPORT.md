@@ -218,6 +218,15 @@ subject, a truncated record) can be tested at all, and
 `experiments/partial_alignment_eyeball.py` renders it for inspection in
 `results/partial_eyeball/`.
 
+**An unplanned reproduction, and the strongest provenance claim in this repo.** The pilot
+ran twice, on two instances launched four hours apart, each staging its own copy of the
+pinned NCBI prefix, the second after a spot reclaim destroyed the first machine's volume.
+The 500 reads produced **identical best hits in all 500 rows** - subject, identity, aligned
+length and E-value, zero differences
+(`rows_pilot_core_nt_i-0b42267a.jsonl` against `rows_pilot_core_nt_i-019ad3b0.jsonl`). Most
+results here are reproducible as a design property, from a committed script and a seed; this
+one has actually been reproduced from clean, on different hardware, by accident.
+
 **Rule this cost us: never quote a BLAST identity without its E-value.** Same family as the
 fixed cost quoted as a rate (section 3.6) - an instrument reporting a default that the
 analysis forgot to constrain.
