@@ -68,7 +68,7 @@
     "unwitnessed_kmer_frac_mean": 0.14483955597994747
    }
   },
-  "residue_other": {
+  "residue_on_unsplit_contig": {
    "mate1": {
     "n": 448,
     "median_depth_p50": 10619.5,
@@ -115,12 +115,13 @@
  },
  "manifest": {
   "script": "experiments/residue_depth.py",
-  "git_sha": "4c78a33a3c3bb3443f93e79097837ae435706689",
+  "git_sha": "63f90818254ee2cf1c80bbcbbf02072b19356fd0",
   "tree_dirty": false,
-  "script_sha256": "1763f488f0c4ec53",
+  "script_sha256": "a5a503915be0ec1a",
   "parameters": {
    "seed": "1",
-   "cov": "/home/user/hapax/data/work/cov_block1.tsv",
+   "cov": "/home/user/hapax/data/work/cov_blocks5.tsv",
+   "block": "0",
    "classes": "/home/user/hapax/data/work/library_label_classes.npz",
    "recut": "/home/user/hapax/data/recut",
    "out": "/home/user/hapax/results/residue_census"

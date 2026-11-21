@@ -1,0 +1,135 @@
+{
+ "seed": 4,
+ "block_pairs": 100000,
+ "piles": {
+  "identified_other": {
+   "mate1": {
+    "n": 37838,
+    "median_depth_p50": 87.0,
+    "median_depth_p10": 2.0,
+    "median_depth_p90": 3532.0,
+    "frac_depth_0": 0.04421481050795496,
+    "frac_depth_lt_5": 0.17955494476452244,
+    "frac_depth_ge_50": 0.5639568687562767,
+    "unwitnessed_kmer_frac_mean": NaN
+   },
+   "mate2": {
+    "n": 37838,
+    "median_depth_p50": 66.0,
+    "median_depth_p10": 1.0,
+    "median_depth_p90": 2580.0,
+    "frac_depth_0": 0.05727046884084783,
+    "frac_depth_lt_5": 0.2041862677731381,
+    "frac_depth_ge_50": 0.5320841482107934,
+    "unwitnessed_kmer_frac_mean": 0.06974449495216448
+   }
+  },
+  "identified_rrna": {
+   "mate1": {
+    "n": 39273,
+    "median_depth_p50": 2876.0,
+    "median_depth_p10": 46.0,
+    "median_depth_p90": 31785.80000000006,
+    "frac_depth_0": 0.00659486160975734,
+    "frac_depth_lt_5": 0.02770351131820844,
+    "frac_depth_ge_50": 0.8958826674814758,
+    "unwitnessed_kmer_frac_mean": 0.022533180556616506
+   },
+   "mate2": {
+    "n": 39273,
+    "median_depth_p50": 2398.0,
+    "median_depth_p10": 30.0,
+    "median_depth_p90": 32841.0,
+    "frac_depth_0": 0.013673516156137804,
+    "frac_depth_lt_5": 0.03860158378529779,
+    "frac_depth_ge_50": 0.8763017849413083,
+    "unwitnessed_kmer_frac_mean": 0.022735581697349325
+   }
+  },
+  "residue_on_unident_contig": {
+   "mate1": {
+    "n": 8298,
+    "median_depth_p50": 6.0,
+    "median_depth_p10": 0.0,
+    "median_depth_p90": 656.6000000000004,
+    "frac_depth_0": 0.1101470233791275,
+    "frac_depth_lt_5": 0.4516751024343215,
+    "frac_depth_ge_50": 0.2792239093757532,
+    "unwitnessed_kmer_frac_mean": 0.12622511448541818
+   },
+   "mate2": {
+    "n": 8298,
+    "median_depth_p50": 5.0,
+    "median_depth_p10": 0.0,
+    "median_depth_p90": 596.0,
+    "frac_depth_0": 0.12701855868884068,
+    "frac_depth_lt_5": 0.48734634851771513,
+    "frac_depth_ge_50": 0.26512412629549287,
+    "unwitnessed_kmer_frac_mean": 0.1346627982646421
+   }
+  },
+  "residue_on_unsplit_contig": {
+   "mate1": {
+    "n": 500,
+    "median_depth_p50": 8454.0,
+    "median_depth_p10": 1.0,
+    "median_depth_p90": 21628.0,
+    "frac_depth_0": 0.09,
+    "frac_depth_lt_5": 0.192,
+    "frac_depth_ge_50": 0.742,
+    "unwitnessed_kmer_frac_mean": 0.0919716
+   },
+   "mate2": {
+    "n": 500,
+    "median_depth_p50": 7041.0,
+    "median_depth_p10": 1.0,
+    "median_depth_p90": 19416.0,
+    "frac_depth_0": 0.092,
+    "frac_depth_lt_5": 0.2,
+    "frac_depth_ge_50": 0.734,
+    "unwitnessed_kmer_frac_mean": 0.0934802
+   }
+  },
+  "residue_unplaced": {
+   "mate1": {
+    "n": 14091,
+    "median_depth_p50": 1.0,
+    "median_depth_p10": 0.0,
+    "median_depth_p90": 4.0,
+    "frac_depth_0": 0.32503016109573485,
+    "frac_depth_lt_5": 0.918103754169328,
+    "frac_depth_ge_50": 0.0038322333404300617,
+    "unwitnessed_kmer_frac_mean": 0.3307191185863317
+   },
+   "mate2": {
+    "n": 14091,
+    "median_depth_p50": 1.0,
+    "median_depth_p10": 0.0,
+    "median_depth_p90": 4.0,
+    "frac_depth_0": 0.3425590802639983,
+    "frac_depth_lt_5": 0.9184585905897381,
+    "frac_depth_ge_50": 0.0037612660563480236,
+    "unwitnessed_kmer_frac_mean": 0.3382489958129303
+   }
+  }
+ },
+ "manifest": {
+  "script": "experiments/residue_depth.py",
+  "git_sha": "63f90818254ee2cf1c80bbcbbf02072b19356fd0-dirty",
+  "tree_dirty": true,
+  "script_sha256": "a5a503915be0ec1a",
+  "parameters": {
+   "seed": "4",
+   "cov": "/home/user/hapax/data/work/cov_blocks5.tsv",
+   "block": "0",
+   "classes": "/home/user/hapax/data/work/library_label_classes.npz",
+   "recut": "/home/user/hapax/data/recut",
+   "out": "/home/user/hapax/results/residue_census"
+  },
+  "instrument": "experiments/kmer_coverage, exact canonical 31-mers over all 8,731,224 pairs, each pair's own occurrences subtracted",
+  "operating_points": {
+   "class_split": "40 matching bases, SILVA or own contig",
+   "depth": "median over a mate's scorable 31-mers"
+  }
+ }
+}
