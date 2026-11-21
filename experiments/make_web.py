@@ -196,6 +196,7 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int) -> d
         # table between them name a few hundred.
         "names": _names_for(rundir, strains_subjects, table),
         "significant_evalue": SIGNIFICANT_EVALUE,
+        "ranking": load(rundir / "ranking.json"),
         "axes": [{"key": k, "label": l} for k, l, _f in SCATTER_AXES],
         "scatter": scatter,
         "table": {"rows": [{"name": r.get("name"),
@@ -222,6 +223,8 @@ PAGE = """<title>Hapax run viewer</title>
   --bg: #f5f6f4; --panel: #ffffff; --edge: #d8dcd6; --fg: #15201c; --dim: #5c6b64;
   --identified: #41708a; --tier2: #8a7a41; --residue: #b4603a; --null: #9aa39e;
   --ok: #3f7d55; --warn: #a2622a;
+  --g-phage: #78889a; --g-plant: #4f8a46; --g-fungal: #8168a6; --g-invert: #2f877f;
+  --g-vert: #b07d22; --g-human: #c0392b; --g-unknown: #9aa39e;
   --sans: "IBM Plex Sans", system-ui, -apple-system, Segoe UI, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
@@ -229,11 +232,15 @@ PAGE = """<title>Hapax run viewer</title>
   --bg: #101513; --panel: #171e1b; --edge: #2a332f; --fg: #e6ebe8; --dim: #97a39d;
   --identified: #6ea2bf; --tier2: #c0ab63; --residue: #df8a5e; --null: #68756f;
   --ok: #67b183; --warn: #d39354; color-scheme: dark;
+  --g-phage: #93a3b4; --g-plant: #74b069; --g-fungal: #a68cc8; --g-invert: #4fa89f;
+  --g-vert: #d2a04a; --g-human: #e0695c; --g-unknown: #68756f;
 } }
 :root[data-theme="dark"] {
   --bg: #101513; --panel: #171e1b; --edge: #2a332f; --fg: #e6ebe8; --dim: #97a39d;
   --identified: #6ea2bf; --tier2: #c0ab63; --residue: #df8a5e; --null: #68756f;
   --ok: #67b183; --warn: #d39354; color-scheme: dark;
+  --g-phage: #93a3b4; --g-plant: #74b069; --g-fungal: #a68cc8; --g-invert: #4fa89f;
+  --g-vert: #d2a04a; --g-human: #e0695c; --g-unknown: #68756f;
 }
 body { background: var(--bg); color: var(--fg); font-family: var(--sans);
   font-size: 15px; line-height: 1.5; }
@@ -301,6 +308,19 @@ details > summary { cursor: pointer; font-size: 13px; color: var(--dim); }
   padding: 0.1rem 0.45rem; border-radius: 10px; border: 1px solid var(--edge);
   color: var(--dim); }
 .tag-only { border-color: var(--residue); color: var(--residue); }
+.callout { border: 1px solid var(--warn); border-left-width: 3px; border-radius: 4px;
+  padding: 0.7rem 0.8rem; font-size: 13px; line-height: 1.5; max-width: 76ch; }
+.rankno { font-family: var(--mono); font-size: 11.5px; color: var(--dim); }
+.axrow { display: grid; grid-template-columns: 4.2rem 1fr auto; gap: 0.5rem;
+  align-items: center; font-size: 11.5px; color: var(--dim); margin-top: 0.3rem; }
+.axlab { font-family: var(--mono); }
+.axbar { background: var(--edge); border-radius: 2px; height: 6px; overflow: hidden; }
+.axbar > i { display: block; height: 100%; border-radius: 2px; }
+.axval { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--fg); }
+.hero { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.9rem; }
+.hero > div { border: 1px solid var(--edge); border-radius: 6px; padding: 0.85rem 0.9rem; }
+.hero .bignum { font-size: 34px; }
 .big { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 0.9rem; margin: 1rem 0 0.4rem; }
 .bignum { font-size: 30px; font-weight: 650; line-height: 1.1;
@@ -376,6 +396,95 @@ function interval(iv) {
   app.append(h);
 })();
 
+// ---------- hero: the library as 100 squares
+// One square is one percent of the read pairs in this run. The point of drawing it this
+// way rather than as another stacked bar is that a reader can count the dark squares,
+// which is the whole argument of the project in one picture. Every value comes from
+// tier_table.json; nothing here is typed in.
+(function () {
+  const t = D.tier_table, b = (t && t.breakdown) || {};
+  if (!b.identified || !b.residual) return;
+  const p = panel('What is in the water',
+    'Each square is one percent of the read pairs in this run. Pale squares were named ' +
+    'by searching; the dark ones are what no search could name.');
+  const frac = {identified: b.identified.point,
+    assembled_unidentified: (b.assembled_unidentified || {}).point || 0,
+    residual: b.residual.point};
+  const COL = {identified: 'var(--identified)', assembled_unidentified: 'var(--tier2)',
+    residual: 'var(--residue)'};
+  const LAB = {identified: 'identified outright',
+    assembled_unidentified: 'assembled, nothing could name it',
+    residual: 'no name and no contig'};
+  // Largest-remainder apportionment, so the 100 squares sum to 100 and the rounding
+  // error does not quietly land on the smallest pile - which is the pile of interest.
+  const keys = Object.keys(frac);
+  const exact = keys.map(k => 100 * frac[k]);
+  const base = exact.map(Math.floor);
+  let left = 100 - base.reduce((a, c) => a + c, 0);
+  keys.map((k, i) => [i, exact[i] - base[i]]).sort((a, c) => c[1] - a[1])
+    .forEach(([i]) => { if (left > 0) { base[i]++; left--; } });
+  const squares = [];
+  keys.forEach((k, i) => { for (let j = 0; j < base[i]; j++) squares.push(k); });
+  const W = 920, gap = 6, cols = 20, rows = 5;
+  const side = (W - gap * (cols - 1)) / cols;
+  const H = (side + gap) * rows - gap;
+  let svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMinYMin meet" ' +
+    'role="img" aria-label="one hundred squares, ' + base.map((n, i) =>
+      n + ' ' + LAB[keys[i]]).join(', ') + '">';
+  squares.forEach((k, i) => {
+    const x = (i % cols) * (side + gap), y = Math.floor(i / cols) * (side + gap);
+    svg += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' +
+      side.toFixed(1) + '" height="' + side.toFixed(1) + '" rx="4" fill="' + COL[k] +
+      '" opacity="' + (k === 'identified' ? '0.30' : '0.95') + '"><title>' +
+      esc(LAB[k]) + '</title></rect>';
+  });
+  svg += '</svg>';
+  const holder = el('div'); holder.innerHTML = svg; p.append(holder);
+  const lg = el('div', 'legend');
+  lg.innerHTML = keys.map((k, i) => '<span><i style="background:' + COL[k] +
+    ';opacity:' + (k === 'identified' ? '0.30' : '0.95') + '"></i>' +
+    base[i] + ' &middot; ' + esc(LAB[k]) + ' (' + pct(frac[k]) + ')</span>').join('');
+  p.append(lg);
+
+  const g = el('div', 'hero');
+  function card(v, lab) { const d = el('div');
+    d.append(el('div', 'bignum', v)); d.append(el('div', 'biglab', lab)); g.append(d); }
+  card(pct(frac.assembled_unidentified + frac.residual),
+    'of the library that the largest databases available could not name, at the operating ' +
+    'point in the chips below');
+  const R = D.ranking, hc = (R && R.host_confidence_summary) || {};
+  if (hc.subjects != null) card(String(hc.subjects),
+    'known organisms the leftovers resemble from a distance, none of them closely');
+  if (hc.best_identity_percent != null) card(num(hc.best_identity_percent, 1) + '%',
+    'the closest any of those resemblances gets, and over only ' + hc.best_aligned_aa +
+    ' amino acids');
+  // The wall, read off the only positive control the tool has. A spiked genome whose
+  // reads SURVIVE tier 1 is a genome the cascade failed to recognise, so the first rung
+  // where the median genome is more than half unrecognised is where recognition breaks.
+  const cal = D.calibration_ladder && (D.calibration_ladder.result || D.calibration_ladder);
+  const rungs = (cal && cal.rungs) || [];
+  if (rungs.length) {
+    const med = r => {
+      const v = Object.values(r.genomes || {})
+        .map(g => (g.survival || {}).survives_tier1).filter(x => x != null).sort((a, c) => a - c);
+      return v.length ? v[Math.floor(v.length / 2)] : null;
+    };
+    const ord = rungs.slice().sort((a, c) => a.divergence - c.divergence);
+    const die = ord.find(r => { const v = med(r); return v != null && v >= 0.5; });
+    if (die) card(num(100 * die.divergence, 0) + '%',
+      'divergence at which the cascade stops recognising more than half of a known virus ' +
+      'planted in this very library');
+  }
+  p.append(g);
+  p.append(el('p', 'note',
+    'The dark squares are the subject of this page. They are not a discovery: ' +
+    'unnameable sequence is the normal state of a wastewater metagenome, and the ' +
+    'measurements below are an attempt to say what is actually in that pile, how far ' +
+    'from anything known it sits, and where the instrument stops being able to tell.'));
+  p.append(opChips((t || {}).operating_point || {}));
+  app.append(p);
+})();
+
 // ---------- in plain words
 // A reader who is not a bioinformatician should be able to leave this page knowing what
 // was done and what was found. Every figure in it is pulled from the same files the rest
@@ -436,6 +545,217 @@ function interval(iv) {
     li.className = 'lede'; li.style.marginBottom = '0.5rem'; li.innerHTML = t2;
     ul.append(li); });
   p.append(ul);
+  app.append(p);
+})();
+
+// ---------- worth a second look
+(function () {
+  const R = D.ranking;
+  const p = panel('Worth a second look',
+    'The named relatives the leftover reads point at, ordered by how much of a person\\'s ' +
+    'attention each one deserves. Four measured things go in and all four are shown on ' +
+    'every row, so the order can be argued with one row at a time.');
+  if (!R) { p.append(el('div', 'absent',
+    'ranking.json absent: run experiments/concern_ranking.py over this directory'));
+    app.append(p); return; }
+
+  // The honest headline of the whole panel, and it is a negative. Put it above the
+  // leaderboard rather than under it: a reader who scrolls the cards without seeing this
+  // will read the host colours as claims about the sample.
+  const hc = R.host_confidence_summary || {};
+  const warn = el('div', 'callout');
+  warn.innerHTML = '<b>Read this before the colours below.</b> Nothing in this residue is ' +
+    'close enough to a known organism for that organism\\'s host to transfer. The best ' +
+    'match of all ' + hc.subjects + ' is ' + num(hc.best_identity_percent, 1) +
+    '% identity over ' + hc.best_aligned_aa + ' amino acids, <b>' + hc['at_or_above_0.5'] +
+    ' of ' + hc.subjects + '</b> clear even half confidence, and the median is ' +
+    num(hc.median, 2) + '. So the host groups here are labels on the matched database ' +
+    'record, not claims about what is in the water, and the ranking below is really ' +
+    'distance and quantity wearing a colour. <b>That is the finding, not a caveat:</b> ' +
+    'this is what it looks like when a surveillance question runs past the edge of what ' +
+    'the references can answer.';
+  p.append(warn);
+
+  const ctl = el('div', 'controls');
+  const sel = el('select');
+  [['second_look', 'overall, worth a second look'],
+   ['distance', 'furthest from anything known'],
+   ['residue_reads', 'most reads pointing at it'],
+   ['host', 'host group of the relative']].forEach(([v, t]) => {
+    const o = document.createElement('option'); o.value = v; o.textContent = t;
+    sel.append(o); });
+  const gsel = el('select');
+  const gnames = ['every group'].concat(Object.keys(R.host_table.groups));
+  gnames.forEach(g => { const o = document.createElement('option'); o.value = g;
+    o.textContent = g.replace(/_/g, ' '); gsel.append(o); });
+  ctl.append(el('span', 'dim', 'order by'), sel, el('span', 'dim', 'show'), gsel);
+  p.append(ctl);
+
+  const GCOL = {bacteriophage: 'var(--g-phage)', plant: 'var(--g-plant)',
+    fungal_or_protist: 'var(--g-fungal)', invertebrate: 'var(--g-invert)',
+    vertebrate_non_human: 'var(--g-vert)', human_associated: 'var(--g-human)',
+    unknown_host: 'var(--g-unknown)'};
+
+  // The group mix as one bar, because 201 of 243 being phage is the single most
+  // informative picture on this page and a table buries it.
+  const mix = {};
+  (R.subjects || []).forEach(r => { mix[r.host_group] = (mix[r.host_group] || 0) + 1; });
+  const mixbar = el('div', 'bar');
+  Object.keys(R.host_table.groups).forEach(g => {
+    if (!mix[g]) return;
+    const sp = document.createElement('span');
+    sp.style.width = (100 * mix[g] / R.subjects.length) + '%';
+    sp.style.background = GCOL[g] || 'var(--null)';
+    sp.title = g + ': ' + mix[g];
+    mixbar.append(sp);
+  });
+  p.append(mixbar);
+  const mlg = el('div', 'legend');
+  mlg.innerHTML = Object.keys(R.host_table.groups).filter(g => mix[g]).map(g =>
+    '<span><i style="background:' + (GCOL[g] || 'var(--null)') + '"></i>' +
+    esc(g.replace(/_/g, ' ')) + ' ' + mix[g] + '</span>').join('');
+  p.append(mlg);
+
+  const grid = el('div', 'cards');
+  function draw() {
+    const v = sel.value, g = gsel.value;
+    const list = (R.subjects || [])
+      .filter(r => g === 'every group' || r.host_group === g)
+      .slice().sort((a, b) =>
+        v === 'distance' ? b.distance - a.distance :
+        v === 'residue_reads' ? b.residue_reads - a.residue_reads :
+        v === 'host' ? (b.host_term - a.host_term) || (b.second_look - a.second_look) :
+        b.second_look - a.second_look).slice(0, 48);
+    grid.innerHTML = '';
+    list.forEach(r => {
+      const c = el('div', 'card');
+      c.style.borderLeft = '3px solid ' + (GCOL[r.host_group] || 'var(--null)');
+      const axis = (lab, val, col, extra) =>
+        '<div class="axrow"><span class="axlab">' + lab + '</span>' +
+        '<span class="axbar"><i style="width:' + (100 * Math.max(0, Math.min(1, val)))
+        .toFixed(1) + '%;background:' + col + '"></i></span>' +
+        '<span class="axval">' + extra + '</span></div>';
+      c.innerHTML =
+        '<div class="rankno">#' + r.rank + '</div>' +
+        '<div class="ctitle">' + esc(r.organism || r.subject) + '</div>' +
+        (r.protein ? '<div class="csub">' + esc(r.protein) + '</div>' : '') +
+        '<div class="tag" style="border-color:' + (GCOL[r.host_group] || 'var(--edge)') +
+          ';color:' + (GCOL[r.host_group] || 'var(--dim)') + '">' +
+          esc(r.host_group.replace(/_/g, ' ')) +
+          (r.host_group_matched_keyword ? ' &middot; "' +
+            esc(r.host_group_matched_keyword) + '"' : ' &middot; no rule matched') +
+        '</div>' +
+        axis('how far', r.distance, 'var(--residue)',
+             num(r.median_identity_percent, 1) + '% id') +
+        axis('how much', r.weight_term, 'var(--identified)', r.residue_reads + ' reads') +
+        axis('host', r.host_term, GCOL[r.host_group] || 'var(--null)',
+             'conf ' + num(r.host_confidence, 2)) +
+        axis('alone', r.only_in_residue ? 1 : 0, 'var(--tier2)',
+             r.only_in_residue ? 'residue only' : 'also identified') +
+        '<div class="crow dim mono">E ' + (+r.median_evalue).toExponential(1) +
+        ' &middot; ' + r.median_aligned_aa + ' aa &middot; ' + esc(r.subject) + '</div>';
+      grid.append(c);
+    });
+    if (!list.length) grid.innerHTML = '<div class="absent">no subject in that group</div>';
+  }
+  sel.onchange = draw; gsel.onchange = draw; draw();
+  p.append(grid);
+
+  const det = el('details');
+  det.innerHTML = '<summary>the formula, in full, and what it is blind to</summary>';
+  const dd = el('div', 'note');
+  dd.innerHTML = '<p class="mono">' + esc(R.formula) + '</p>' +
+    Object.entries(R.formula_terms).map(([k, v]) =>
+      '<p><b>' + esc(k) + '</b> &mdash; ' + esc(v) + '</p>').join('') +
+    '<p><b>' + esc(R.not_a_risk_assessment) + '</b></p>' +
+    '<p>' + esc(R.host_table.subjects_no_rule_placed) + ' of ' +
+      esc(R.host_table.subjects_total) + ' names no rule in <span class="mono">' +
+      esc(R.host_table.source) + '</span> could place. ' +
+      esc(R.host_table.coverage_note) + '.</p>' +
+    '<p>' + esc(R.interval_note) + '.</p>' +
+    '<ul>' + (R.blind_to || []).map(b => '<li>' + esc(b) + '</li>').join('') + '</ul>';
+  det.append(dd); p.append(det);
+  app.append(p);
+})();
+
+// ---------- where the relatives sit
+(function () {
+  const R = D.ranking;
+  if (!R || !(R.subjects || []).length) return;
+  const p = panel('Where the relatives sit',
+    'Every named relative at once: how far the reads are from it, against how many reads ' +
+    'point at it. One picture of the whole residue\\'s relationship to what is known.');
+  const GCOL = {bacteriophage: 'var(--g-phage)', plant: 'var(--g-plant)',
+    fungal_or_protist: 'var(--g-fungal)', invertebrate: 'var(--g-invert)',
+    vertebrate_non_human: 'var(--g-vert)', human_associated: 'var(--g-human)',
+    unknown_host: 'var(--g-unknown)'};
+  const W = 920, H = 420, m = {l: 62, r: 20, t: 18, b: 52};
+  const rows = R.subjects.filter(r => r.median_identity_percent != null);
+  // The axis is fixed from 40 to 100 rather than fitted to the data, because the empty
+  // right-hand third IS the result: a fitted axis would silently rescale the gap away
+  // and make a cloud of 50% matches look like it reaches identification.
+  const obslo = Math.min(...rows.map(r => r.median_identity_percent));
+  const obshi = Math.max(...rows.map(r => r.median_identity_percent));
+  const xmin = 40, xmax = 100;
+  const ymax = Math.max(...rows.map(r => r.residue_reads));
+  const px = v => m.l + (v - xmin) / ((xmax - xmin) || 1) * (W - m.l - m.r);
+  const py = v => H - m.b - (Math.log1p(v) / Math.log1p(ymax)) * (H - m.t - m.b);
+  let s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="relatives">';
+  // Where an identification would sit, drawn as a region rather than asserted in prose.
+  s += '<rect x="' + px(90).toFixed(1) + '" y="' + m.t + '" width="' +
+    (px(100) - px(90)).toFixed(1) + '" height="' + (H - m.t - m.b) +
+    '" fill="var(--identified)" opacity="0.08"/>';
+  s += '<text x="' + ((px(90) + px(100)) / 2).toFixed(1) + '" y="' + (m.t + 16) +
+    '" font-size="11" fill="var(--dim)" text-anchor="middle">an identification ' +
+    'would be here</text>';
+  s += '<rect x="' + m.l + '" y="' + m.t + '" width="' + (W - m.l - m.r) + '" height="' +
+    (H - m.t - m.b) + '" fill="none" stroke="var(--edge)"/>';
+  [1, 2, 5, 10, 25].filter(v => v <= ymax).forEach(v => {
+    s += '<line x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + py(v).toFixed(1) +
+      '" y2="' + py(v).toFixed(1) + '" stroke="var(--edge)" stroke-dasharray="2 3"/>' +
+      '<text x="' + (m.l - 8) + '" y="' + (py(v) + 4).toFixed(1) + '" font-size="11" ' +
+      'fill="var(--dim)" text-anchor="end" font-family="var(--mono)">' + v + '</text>';
+  });
+  rows.forEach(r => {
+    s += '<circle cx="' + px(r.median_identity_percent).toFixed(1) + '" cy="' +
+      py(r.residue_reads).toFixed(1) + '" r="' +
+      (3 + 2.5 * r.weight_term).toFixed(1) + '" fill="' +
+      (GCOL[r.host_group] || 'var(--null)') + '" opacity="0.72"><title>' +
+      esc((r.organism || r.subject) + ' - ' + r.residue_reads + ' reads at ' +
+          r.median_identity_percent + '%') + '</title></circle>';
+  });
+  [40, 50, 60, 70, 80, 90, 100].forEach(v => {
+    s += '<text x="' + px(v).toFixed(1) + '" y="' + (H - m.b + 17) +
+      '" font-size="11" fill="var(--dim)" font-family="var(--mono)" ' +
+      'text-anchor="middle">' + v + '%</text>';
+  });
+  s += '<text x="' + ((W + m.l - m.r) / 2) + '" y="' + (H - 12) + '" text-anchor="middle"' +
+    ' font-size="11.5" fill="var(--dim)">identity to the nearest named relative</text>';
+  s += '<text transform="translate(16 ' + ((H - m.b + m.t) / 2) + ') rotate(-90)" ' +
+    'text-anchor="middle" font-size="11.5" fill="var(--dim)">residue reads pointing at ' +
+    'it (log)</text></svg>';
+  const holder = el('div', 'scroll'); holder.innerHTML = s; p.append(holder);
+  p.append(el('p', 'note',
+    'The cloud sits between ' + num(obslo, 1) + '% and ' + num(obshi, 1) + '% identity ' +
+    'over a median of a few dozen amino acids. ' +
+    (function () { const inb = rows.filter(r => r.median_identity_percent >= 90);
+      return inb.length === 0 ? 'The shaded band is empty. '
+        : inb.length + ' of them reach the shaded band, over ' +
+          inb.map(r => r.median_aligned_aa).sort((a, c) => a - c)
+            .filter((v, i, a2) => a2.indexOf(v) === i).join(' and ') +
+          ' amino acids respectively. Over an alignment that short, high identity is ' +
+          'ordinary rather than an identification, which is why every hit on this page ' +
+          'is filtered to E &lt; ' + D.significant_evalue + ' and still reported with ' +
+          'its aligned length. '; })() +
+    'Colour is ' +
+    'the matched record\\'s host group and carries the same warning as the panel above: ' +
+    'at these identities it describes the database entry, not the sample. ' +
+    (function () { const n = rows.filter(r => r.host_group === 'human_associated').length;
+      return n === 0
+        ? 'Note what is not here: not one of these ' + rows.length + ' records falls in ' +
+          'the human-associated group at all.'
+        : n + ' of these ' + rows.length + ' records are in the human-associated group, ' +
+          'at host confidences the panel above says are too low to transfer.'; })()));
   app.append(p);
 })();
 
