@@ -1,0 +1,115 @@
+{
+  "script": "experiments/trim_sensitivity.py",
+  "git_sha": "365059f790ee28d4f686e6005bee3c2f0b4c3472-dirty",
+  "tree_dirty": true,
+  "script_sha256": "8ec3ab0dd5cbcaf8",
+  "parameters": {
+    "seed": 4,
+    "library": "rna_2022",
+    "pairs": 100000,
+    "block": 1500000,
+    "trims": [
+      0,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20,
+      24
+    ],
+    "k2_db": "/home/user/hapax/data/k2_pluspf16",
+    "k2_confidence": 0.1,
+    "classify_bin": "/home/user/tools/k2pkg/root/share/kraken2-2.17.2/libexec/classify",
+    "threads": 4,
+    "work": "/tmp/claude-0/wk/trimsens",
+    "out": "/home/user/hapax/results/nontemplate_prefix"
+  },
+  "library": {
+    "name": "rna_2022",
+    "run": "SRR23973265"
+  },
+  "rungs": [
+    {
+      "trim": 0,
+      "pairs": 100000,
+      "identified": 0.3574,
+      "mean_len_r1": 104.08,
+      "mean_len_r2": 104.0,
+      "kraken2_seconds": 6.4,
+      "peak_rss_kb": 109047808
+    },
+    {
+      "trim": 10,
+      "pairs": 100000,
+      "identified": 0.39022,
+      "mean_len_r1": 104.08,
+      "mean_len_r2": 94.0,
+      "kraken2_seconds": 3.2,
+      "peak_rss_kb": 183672832
+    },
+    {
+      "trim": 12,
+      "pairs": 100000,
+      "identified": 0.38714,
+      "mean_len_r1": 104.08,
+      "mean_len_r2": 92.0,
+      "kraken2_seconds": 1.3,
+      "peak_rss_kb": 183672832
+    },
+    {
+      "trim": 14,
+      "pairs": 100000,
+      "identified": 0.38579,
+      "mean_len_r1": 104.08,
+      "mean_len_r2": 90.0,
+      "kraken2_seconds": 0.7,
+      "peak_rss_kb": 183672832
+    },
+    {
+      "trim": 16,
+      "pairs": 100000,
+      "identified": 0.40389,
+      "mean_len_r1": 104.08,
+      "mean_len_r2": 88.0,
+      "kraken2_seconds": 0.6,
+      "peak_rss_kb": 188768256
+    },
+    {
+      "trim": 18,
+      "pairs": 100000,
+      "identified": 0.39578,
+      "mean_len_r1": 104.08,
+      "mean_len_r2": 86.0,
+      "kraken2_seconds": 0.6,
+      "peak_rss_kb": 188768256
+    },
+    {
+      "trim": 20,
+      "pairs": 100000,
+      "identified": 0.38848,
+      "mean_len_r1": 104.08,
+      "mean_len_r2": 84.0,
+      "kraken2_seconds": 0.6,
+      "peak_rss_kb": 188768256
+    },
+    {
+      "trim": 24,
+      "pairs": 100000,
+      "identified": 0.3803,
+      "mean_len_r1": 104.08,
+      "mean_len_r2": 80.0,
+      "kraken2_seconds": 0.6,
+      "peak_rss_kb": 188768256
+    }
+  ],
+  "best_trim": 16,
+  "best_identified": 0.40389,
+  "span_points": 4.649,
+  "measured_mode_14_vs_16": 1.81,
+  "readout": "fraction of pairs Kraken2 PlusPF-16 classifies at confidence 0.1, against bases removed from mate 2's 5' end. Mate 1 is untouched at every rung and the same block is used throughout, so nothing varies but the trim",
+  "bias": "removing junk and removing template both shorten the read, so length cannot tell them apart; the classified fraction can, because junk removal should raise it while template removal lowers it. Kraken2's confidence is a FRACTION of a read's minimizers, so this curve is a property of a fraction-thresholded classifier and not of the prefix",
+  "wall_seconds": 91.49050291100139,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}

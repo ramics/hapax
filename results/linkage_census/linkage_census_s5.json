@@ -1,0 +1,322 @@
+{
+  "script": "experiments/linkage_census.py",
+  "git_sha": "f5d95c6229f5c9040358dbd646625e36686feac3",
+  "tree_dirty": false,
+  "script_sha256": "ea12fcf9b7abc48f",
+  "parameters": {
+    "seed": 5,
+    "cascade_work": "/tmp/claude-0/wk/recut",
+    "queries": 3000,
+    "r1": "/home/user/hapax/data/berlin/SRR23973193_1.fastq.gz",
+    "r2": "/home/user/hapax/data/berlin/SRR23973193_2.fastq.gz",
+    "trim_r2": 14,
+    "binary": "/home/user/hapax/experiments/kmer_coverage/target/release/census",
+    "min_shared": 10,
+    "max_witnesses": 30,
+    "min_mlen": 40,
+    "silva": [
+      "/home/user/hapax/data/silva/SSU.fa.gz",
+      "/home/user/hapax/data/silva/LSU.fa.gz"
+    ],
+    "identified_contigs": "/home/user/hapax/data/geo/sample_contigs_identified.fa",
+    "unidentified_contigs": "/home/user/hapax/data/geo/sample_contigs_unidentified.fa",
+    "rrna_contigs": "/home/user/hapax/data/geo/sample_contigs_rrna.fa",
+    "threads": 4,
+    "work": "/tmp/claude-0/wk/census",
+    "out": "/home/user/hapax/results/linkage_census"
+  },
+  "classes": [
+    "rrna",
+    "identified_contig",
+    "unidentified_contig",
+    "none"
+  ],
+  "references": {
+    "rrna": "/home/user/hapax/data/geo/sample_contigs_rrna.fa",
+    "identified_contig": "/home/user/hapax/data/geo/sample_contigs_identified.fa",
+    "unidentified_contig": "/home/user/hapax/data/geo/sample_contigs_unidentified.fa"
+  },
+  "result": {
+    "residue": {
+      "piles": {
+        "beside_assembled_unidentified": {
+          "point": 0.29167,
+          "lo": 0.27568,
+          "hi": 0.30819,
+          "k": 875,
+          "n": 3000
+        },
+        "unknown_neighbourhood": {
+          "point": 0.36633,
+          "lo": 0.34927,
+          "hi": 0.38374,
+          "k": 1099,
+          "n": 3000
+        },
+        "no_witnesses": {
+          "point": 0.30733,
+          "lo": 0.29108,
+          "hi": 0.32408,
+          "k": 922,
+          "n": 3000
+        },
+        "beside_known": {
+          "point": 0.02733,
+          "lo": 0.02208,
+          "hi": 0.0338,
+          "k": 82,
+          "n": 3000
+        },
+        "mixed": {
+          "point": 0.00733,
+          "lo": 0.00485,
+          "hi": 0.01108,
+          "k": 22,
+          "n": 3000
+        }
+      },
+      "pile_counts": {
+        "beside_assembled_unidentified": 875,
+        "unknown_neighbourhood": 1099,
+        "no_witnesses": 922,
+        "beside_known": 82,
+        "mixed": 22
+      },
+      "queries": 3000,
+      "witnesses_dropped_as_overlapping": 0,
+      "neighbour_label_mix": {
+        "rrna": 241,
+        "identified_contig": 1642,
+        "unidentified_contig": 15490,
+        "none": 6948
+      },
+      "permuted_label_null": {
+        "unknown_neighbourhood": {
+          "point": 0.085,
+          "lo": 0.07554,
+          "hi": 0.09552,
+          "k": 255,
+          "n": 3000
+        },
+        "beside_known": {
+          "point": 0.02567,
+          "lo": 0.02059,
+          "hi": 0.03196,
+          "k": 77,
+          "n": 3000
+        },
+        "beside_assembled_unidentified": {
+          "point": 0.559,
+          "lo": 0.54117,
+          "hi": 0.57668,
+          "k": 1677,
+          "n": 3000
+        },
+        "no_witnesses": {
+          "point": 0.30733,
+          "lo": 0.29108,
+          "hi": 0.32408,
+          "k": 922,
+          "n": 3000
+        },
+        "mixed": {
+          "point": 0.023,
+          "lo": 0.01821,
+          "hi": 0.02901,
+          "k": 69,
+          "n": 3000
+        }
+      }
+    },
+    "residue_without_overlapping_witnesses": {
+      "piles": {
+        "unknown_neighbourhood": {
+          "point": 0.17933,
+          "lo": 0.16602,
+          "hi": 0.19347,
+          "k": 538,
+          "n": 3000
+        },
+        "no_witnesses": {
+          "point": 0.528,
+          "lo": 0.51011,
+          "hi": 0.54582,
+          "k": 1584,
+          "n": 3000
+        },
+        "beside_assembled_unidentified": {
+          "point": 0.25233,
+          "lo": 0.23711,
+          "hi": 0.26819,
+          "k": 757,
+          "n": 3000
+        },
+        "mixed": {
+          "point": 0.00667,
+          "lo": 0.00432,
+          "hi": 0.01028,
+          "k": 20,
+          "n": 3000
+        },
+        "beside_known": {
+          "point": 0.03367,
+          "lo": 0.02779,
+          "hi": 0.04074,
+          "k": 101,
+          "n": 3000
+        }
+      },
+      "pile_counts": {
+        "unknown_neighbourhood": 538,
+        "no_witnesses": 1584,
+        "beside_assembled_unidentified": 757,
+        "mixed": 20,
+        "beside_known": 101
+      },
+      "queries": 3000,
+      "witnesses_dropped_as_overlapping": 9111,
+      "neighbour_label_mix": {
+        "rrna": 221,
+        "identified_contig": 1435,
+        "unidentified_contig": 9712,
+        "none": 3842
+      }
+    },
+    "identified": {
+      "piles": {
+        "beside_known": {
+          "point": 0.94867,
+          "lo": 0.94018,
+          "hi": 0.95601,
+          "k": 2846,
+          "n": 3000
+        },
+        "no_witnesses": {
+          "point": 0.00767,
+          "lo": 0.00511,
+          "hi": 0.01148,
+          "k": 23,
+          "n": 3000
+        },
+        "unknown_neighbourhood": {
+          "point": 0.032,
+          "lo": 0.02628,
+          "hi": 0.03892,
+          "k": 96,
+          "n": 3000
+        },
+        "beside_assembled_unidentified": {
+          "point": 0.00767,
+          "lo": 0.00511,
+          "hi": 0.01148,
+          "k": 23,
+          "n": 3000
+        },
+        "mixed": {
+          "point": 0.004,
+          "lo": 0.00229,
+          "hi": 0.00698,
+          "k": 12,
+          "n": 3000
+        }
+      },
+      "pile_counts": {
+        "beside_known": 2846,
+        "no_witnesses": 23,
+        "unknown_neighbourhood": 96,
+        "beside_assembled_unidentified": 23,
+        "mixed": 12
+      },
+      "queries": 3000,
+      "witnesses_dropped_as_overlapping": 0,
+      "neighbour_label_mix": {
+        "rrna": 43576,
+        "identified_contig": 34419,
+        "unidentified_contig": 1020,
+        "none": 4134
+      },
+      "permuted_label_null": {
+        "beside_known": {
+          "point": 0.99167,
+          "lo": 0.98773,
+          "hi": 0.99435,
+          "k": 2975,
+          "n": 3000
+        },
+        "no_witnesses": {
+          "point": 0.00767,
+          "lo": 0.00511,
+          "hi": 0.01148,
+          "k": 23,
+          "n": 3000
+        },
+        "unknown_neighbourhood": {
+          "point": 0.00067,
+          "lo": 0.00018,
+          "hi": 0.00243,
+          "k": 2,
+          "n": 3000
+        }
+      }
+    },
+    "identified_without_overlapping_witnesses": {
+      "piles": {
+        "beside_known": {
+          "point": 0.93467,
+          "lo": 0.92526,
+          "hi": 0.94297,
+          "k": 2804,
+          "n": 3000
+        },
+        "no_witnesses": {
+          "point": 0.02567,
+          "lo": 0.02059,
+          "hi": 0.03196,
+          "k": 77,
+          "n": 3000
+        },
+        "unknown_neighbourhood": {
+          "point": 0.028,
+          "lo": 0.02267,
+          "hi": 0.03453,
+          "k": 84,
+          "n": 3000
+        },
+        "beside_assembled_unidentified": {
+          "point": 0.008,
+          "lo": 0.00538,
+          "hi": 0.01188,
+          "k": 24,
+          "n": 3000
+        },
+        "mixed": {
+          "point": 0.00367,
+          "lo": 0.00205,
+          "hi": 0.00655,
+          "k": 11,
+          "n": 3000
+        }
+      },
+      "pile_counts": {
+        "beside_known": 2804,
+        "no_witnesses": 77,
+        "unknown_neighbourhood": 84,
+        "beside_assembled_unidentified": 24,
+        "mixed": 11
+      },
+      "queries": 3000,
+      "witnesses_dropped_as_overlapping": 28092,
+      "neighbour_label_mix": {
+        "rrna": 28401,
+        "identified_contig": 22459,
+        "unidentified_contig": 794,
+        "none": 3403
+      }
+    }
+  },
+  "readout": "for each query pair, the labels of the OTHER mates of the library pairs that cover the same sequence; then the pile each query's neighbourhood falls into",
+  "bias": "witnesses are found through shared sequence, so the census is blind to singleton molecules, which land in no_witnesses and are never folded into unknown_neighbourhood. About a third of pairs overlap their own mate, so the census is reported with and without witnesses whose two mates both match. Labels are at the cascade's own 40-base operating point, so none means unidentified there and not in any absolute sense",
+  "wall_seconds": 112.3,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}

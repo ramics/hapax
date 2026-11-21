@@ -1,0 +1,88 @@
+{
+  "script": "experiments/cross_library_witness.py",
+  "git_sha": "365059f790ee28d4f686e6005bee3c2f0b4c3472-dirty",
+  "tree_dirty": true,
+  "script_sha256": "3536d4c1889d42ce",
+  "parameters": {
+    "seed": 5,
+    "query_r1": "/home/user/hapax/data/berlin_pair/SRR23973265_1.fastq.gz",
+    "query_r2": "/home/user/hapax/data/berlin_pair/SRR23973265_2.fastq.gz",
+    "query_trim_r2": 14,
+    "calls": "/tmp/claude-0/rna_s5.k2",
+    "pairs": 200000,
+    "query_block": 1500000,
+    "per_group": 10000,
+    "subject": [
+      [
+        "dna2022",
+        "data/berlin_pair/SRR23973375_1.fastq.gz",
+        "data/berlin_pair/SRR23973375_2.fastq.gz",
+        "14"
+      ],
+      [
+        "rna2021",
+        "data/berlin/SRR23973193_1.fastq.gz",
+        "data/berlin/SRR23973193_2.fastq.gz",
+        "14"
+      ]
+    ],
+    "tool": "/home/user/hapax/experiments/kmer_coverage/target/release/kmer_coverage",
+    "work": "/tmp/claude-0/wk/crosswitness",
+    "out": "/home/user/hapax/results/dna_rna_pair"
+  },
+  "query": {
+    "available": {
+      "identified": 78387,
+      "unidentified": 121613
+    },
+    "written": {
+      "identified": 10000,
+      "unidentified": 10000
+    }
+  },
+  "subjects": {
+    "dna2022": {
+      "identified": {
+        "pairs": 10000,
+        "mean_frac_present": 0.1589,
+        "median_frac_present": 0.0821,
+        "frac_with_half_present": 0.0727,
+        "frac_with_none_present": 0.3619
+      },
+      "unidentified": {
+        "pairs": 9716,
+        "mean_frac_present": 0.1388,
+        "median_frac_present": 0.0,
+        "frac_with_half_present": 0.1051,
+        "frac_with_none_present": 0.5983
+      },
+      "gap_unidentified_minus_identified": -0.0201
+    },
+    "rna2021": {
+      "identified": {
+        "pairs": 10000,
+        "mean_frac_present": 0.9649,
+        "median_frac_present": 1.0,
+        "frac_with_half_present": 0.9906,
+        "frac_with_none_present": 0.0049
+      },
+      "unidentified": {
+        "pairs": 9716,
+        "mean_frac_present": 0.7103,
+        "median_frac_present": 0.9394,
+        "frac_with_half_present": 0.7395,
+        "frac_with_none_present": 0.1523
+      },
+      "gap_unidentified_minus_identified": -0.2546
+    }
+  },
+  "readout": "fraction of a pair's exact canonical 31-mers occurring at least once in the subject library, averaged over the two mates",
+  "bias": "the query reads are RNA, so a same-nucleic-acid subject shares ribosomal sequence with them that a virome cannot. That inflates the RNA subject; no third library exists here to correct it",
+  "timings": {
+    "dna2022": 51.20656895900174,
+    "rna2021": 41.711701956999605
+  },
+  "wall_seconds": 106.35004389499954,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}

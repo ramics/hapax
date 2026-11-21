@@ -524,6 +524,11 @@ def main() -> None:
     ap.add_argument("--chimaera-ref", type=Path,
                     default=ROOT / "data/geo/sample_contigs.fa")
     ap.add_argument("--pfam-evalue", type=float, default=1e-3)
+    ap.add_argument("--known-motifs", action="store_true", default=True,
+                    help="also run the Pfam pass on the subtracted pile, which is that "
+                         "field's known-positive comparison")
+    ap.add_argument("--no-known-motifs", dest="known_motifs",
+                    action="store_false")
     ap.add_argument("--diamond-mode", default="--very-sensitive",
                     help="--very-sensitive for the closest-relative field, where the "
                          "point is to find the faintest hit; --sensitive when the run is "
@@ -760,6 +765,28 @@ def main() -> None:
             pf.setdefault(key.rsplit("|", 1)[0], []).extend(hits)
         for name, hits in pf.items():
             rows[name]["motif"] = sorted(hits, key=lambda h: h["evalue"])[:3]
+        # The same profiles on the known pile. A profile hit is the one field that can reach
+        # a relative too divergent for DIAMOND, which makes it the field whose
+        # known-positive rate matters most: if a Pfam model hits identified wastewater reads
+        # at the same rate, "a profile matches" says nothing about the residue. It costs a
+        # second pyhmmer pass over the control pile, which is why it is optional, but an
+        # uncalibrated field is worse than a slower run.
+        if known and args.known_motifs:
+            kprot = {}
+            for name, (s1, s2) in known.items():
+                for strand, off, s in six_frames(s1 + "NN" + s2):
+                    kprot[f"{name}|{strand}{off}"] = translate(s).replace("*", "X")
+            kraw = pfam_hits(kprot, args.pfam, args.pfam_evalue, args.threads)
+            kpf: dict[str, list] = {}
+            for key, hits in kraw.items():
+                kpf.setdefault(key.rsplit("|", 1)[0], []).extend(hits)
+            for name, hits in kpf.items():
+                if name in known_rows:
+                    known_rows[name]["motif"] = sorted(hits,
+                                                       key=lambda h: h["evalue"])[:3]
+            pf_known_rate = len(kpf) / len(known)
+        else:
+            pf_known_rate = None
 
     # ---- chimaera evidence, and its own false-positive rate on subtracted reads
     chim_fp = None
@@ -769,7 +796,12 @@ def main() -> None:
         for name, (s1, s2) in pairs.items():
             rows[name]["chimaera"] = chimaera_evidence(idx, s1, s2)
         if known:
-            k = [chimaera_evidence(idx, a, b) for a, b in known.values()]
+            # Per row as well as pooled: the pooled rate is the test's false-positive rate,
+            # which is what makes a read-level chimaera call readable, and the per-row copy
+            # is what lets anything downstream compare the two piles read by read.
+            for name, (a, b) in known.items():
+                known_rows[name]["chimaera"] = chimaera_evidence(idx, a, b)
+            k = [known_rows[name]["chimaera"] for name in known]
             chim_fp = sum(1 for x in k if x["split_disagree"]) / len(k)
 
     # ---- field calibration: residue against shuffled null and against subtracted reads
@@ -799,6 +831,7 @@ def main() -> None:
             "low_entropy_0.5": sum(1 for r in rows.values() if r["entropy3"] < 0.5) / len(rows),
         },
         "motif_rate": len(pf) / len(rows) if pf else 0.0,
+        "motif_rate_on_subtracted_reads": pf_known_rate,
         "library_abundance": abund,
         "crispr": crispr,
         "rfam": rfam,
@@ -839,6 +872,15 @@ def main() -> None:
             calib["fields"][tag]["subtracted_reads_any_hit_frac"] = len(kb) / len(known)
             calib["fields"][tag]["subtracted_reads_bitscore"] = (
                 spread(v["bitscore"] for v in kb.values()) if kb else None)
+            # The hit is attached to the KNOWN ROW as well as summarised, because a summary
+            # cannot be compared per read and a missing field in the control pile reads as
+            # a zero rather than as "not measured". Building `hapax run` on these rows
+            # surfaced exactly that: five of six residue layers were reporting a perfect
+            # separation from the known pile that was only the search never having been
+            # written down for it. The search already ran; this costs nothing but the key.
+            for kname, v in kb.items():
+                if kname in known_rows:
+                    known_rows[kname][tag] = v
 
     (args.out / f"calibration_s{args.seed}.json").write_text(json.dumps(calib, indent=2))
     with open(args.out / f"rows_s{args.seed}.jsonl", "w") as h:
