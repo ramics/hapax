@@ -35,6 +35,7 @@ import argparse
 import json
 import platform
 import random
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -139,6 +140,7 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int) -> d
         "fields": load(rundir / "fields.json"),
         "linkage": load(rundir / "linkage.json"),
         "strains": load(rundir / "strains.json"),
+        "census": load(rundir / "census.json"),
         "calibration_ladder": load(rundir / "calibration_ladder.json"),
         "blind_spots": (load(rundir / "blind_spots.json") or {}).get("blind_spots"),
         "axes": [{"key": k, "label": l} for k, l, _f in SCATTER_AXES],
@@ -562,6 +564,43 @@ function interval(iv) {
   app.append(p);
 })();
 
+// ---------- the linkage census
+(function () {
+  const C = D.census;
+  const p = panel('What the residue sits next to',
+    'A paired library answers adjacency for free. For each residue read, the other reads ' +
+    'covering the same sequence are found and THEIR other mates are labelled: each is ' +
+    'sequence one insert away from something the read also covers. That separates reads ' +
+    'that are unidentified because our references are a gene catalogue from reads whose ' +
+    'neighbourhood is as unknown as they are.');
+  if (!C) { p.append(el('div', 'absent', 'census.json absent: the census did not run'));
+    app.append(p); return; }
+  const R = C.result || {};
+  const order = ['beside_known', 'beside_assembled_unidentified', 'unknown_neighbourhood',
+                 'mixed', 'no_witnesses'];
+  const sc = el('div', 'scroll');
+  const tb = el('table');
+  tb.innerHTML = '<thead><tr><th>the query sits...</th><th>residue</th>' +
+    '<th>already identified</th><th>permuted-label null</th></tr></thead>';
+  const body = el('tbody');
+  order.forEach(k => {
+    const a = (R.residue && R.residue.piles || {})[k];
+    const b = (R.identified && R.identified.piles || {})[k];
+    const nl = (R.residue && R.residue.permuted_label_null || {})[k];
+    if (!a && !b) return;
+    const tr = el('tr');
+    tr.innerHTML = '<td>' + esc(k.replace(/_/g, ' ')) + '</td><td>' + interval(a) +
+      '</td><td>' + interval(b) + '</td><td class="dim">' + interval(nl) + '</td>';
+    body.append(tr);
+  });
+  tb.append(body); sc.append(tb); p.append(sc);
+  p.append(el('p', 'note', 'Read the two right-hand columns first. The null says what the ' +
+    'piles would read from the neighbour label mix alone, so a pile that matches it is ' +
+    'reporting the composition of the library and nothing about adjacency.'));
+  p.append(el('p', 'note', esc(C.bias || '')));
+  app.append(p);
+})();
+
 // ---------- new strains of known viruses
 (function () {
   const S = D.strains;
@@ -587,15 +626,20 @@ function interval(iv) {
       (S.known_pile_searched_reads ? r.known_reads :
         '<span class="absent">not searched</span>') + '</td><td class="mono">' +
       num(r.median_identity_percent, 1) + '%</td><td class="mono">' +
-      r.median_aligned_aa + ' aa</td><td class="mono">' + r.median_evalue +
-      '</td><td class="mono">' + r.worst_evalue + '</td><td class="dim" ' +
-      'style="white-space:normal;text-align:left;max-width:28ch">' + esc(r.reading) +
+      r.median_aligned_aa + ' aa</td><td class="mono">' + (+r.median_evalue).toExponential(1) +
+      '</td><td class="mono">' + (+r.worst_evalue).toExponential(1) + '</td><td class="' +
+      (/not comparable/.test(r.reading) ? 'absent' : 'dim') + '">' +
+      esc(/not comparable/.test(r.reading) ? 'control not searched' :
+          /also/.test(r.reading) ? 'also in the identified pile' : 'residue only') +
       '</td>';
     body.append(tr);
   });
   tb.append(body); sc.append(tb); p.append(sc);
   p.append(el('p', 'note', S.subjects_total + ' subjects at E < ' +
-    S.significance_evalue + ', the top 120 by read count shown. ' + esc(S.caveat)));
+    S.significance_evalue + ', the top 120 by read count shown. ' + esc(S.caveat) +
+    (S.known_pile_searched_reads ? '' : ' In this run the already-subtracted pile was ' +
+      'not searched, so every zero in that column is absence rather than a measurement ' +
+      'and no row may be read as residue-only.')));
   app.append(p);
 })();
 
@@ -801,9 +845,27 @@ def main() -> None:
     if "</script" in payload:
         raise SystemExit("the bundle contains a closing script tag and would break the "
                          "page; a value in the run directory needs escaping")
-    out.write_text(PAGE.replace("__BUNDLE__", payload))
+    page = PAGE.replace("__BUNDLE__", payload)
+    # A page whose script does not parse renders as a blank panel-less document and says
+    # nothing about why, which is exactly how one stray apostrophe cost a build here. Node
+    # is present in this container; where it is not, the check is skipped rather than
+    # faked, and the build says which it did.
+    script = page[page.rindex("<script>") + len("<script>"):page.rindex("</script>")]
+    tmp = out.parent / ".page_check.js"
+    checked = "not checked: node is not on PATH"
+    try:
+        tmp.write_text(script)
+        r = subprocess.run(["node", "--check", str(tmp)], capture_output=True, text=True)
+        if r.returncode != 0:
+            raise SystemExit(f"the generated page does not parse:\n{r.stderr.strip()}")
+        checked = "node --check passed"
+    except FileNotFoundError:
+        pass
+    finally:
+        tmp.unlink(missing_ok=True)
+    out.write_text(page)
     size = out.stat().st_size
-    print(f"{out}  {size / 1e6:.2f} MB  "
+    print(f"{out}  {size / 1e6:.2f} MB  {checked}  "
           f"residue rows {b['table']['n_total']}, drawn {b['table']['n_drawn']}; "
           f"scatter {b['scatter'].get('residue', {}).get('n_drawn', 0)}+"
           f"{b['scatter'].get('known', {}).get('n_drawn', 0)}")

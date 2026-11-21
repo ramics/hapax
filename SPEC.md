@@ -450,6 +450,17 @@ hapax run SAMPLE.R1.fq.gz SAMPLE.R2.fq.gz --seed N --out RUNDIR
 rows, the calibration block and the assembly version. Everything downstream — including the
 web interface — reads those committed files and nothing else.
 
+**Implemented in [`hapax.py`](hapax.py)**, deliberately as an orchestrator: every number in
+the run directory comes from the `experiments/` script that already measures it, with that
+script's own seed and manifest, because a parallel implementation would be a second
+instrument and this project does not compare two. What the command adds is one provenance
+record per run, enforcement of §8.3's three rules at write time rather than in review, and
+the declared blind spots travelling with the run. Stages: `cascade`, `contigs`, `reads`,
+`linkage`, `census`, `calibration`, `intervals`, `layers`, `strains`. A stage whose
+reference data is absent writes `status: "skipped"` with the reason and the run is marked
+incomplete; it never falls back to a cheaper index and reports the number as if it were the
+real one.
+
 ### 8.2 Visual results reuse the existing generator
 
 `experiments/make_infographic.py` already builds a one-page figure from committed result
@@ -464,6 +475,13 @@ panels are added to it.
 
 A thin reader over `RUNDIR`. It adds navigation and nothing else — no number appears in it
 that is not in a committed file.
+
+**Implemented in [`experiments/make_web.py`](experiments/make_web.py)**, a generator rather
+than a page: it reads the run directory, bundles exactly what the panels draw and writes one
+self-contained HTML file. The three rules are enforced in the generator — a panel whose
+operating point is missing from the files renders the words `operating point absent` rather
+than rendering clean, a fraction with no interval is drawn as a bare tick, and
+`cannot discriminate here` is rendered as a value in the field table.
 
 - **The breakdown** as one stacked bar: identified / assembled-unidentifiable / residual,
   split coding and non-coding, each segment labelled with its interval and its operating

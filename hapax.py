@@ -229,6 +229,34 @@ class Run:
                          {"linkage.json": out / f"mate_friends_s{a.seed}.json"},
                          out / f"mate_friends_s{a.seed}.json")
 
+    def census(self) -> dict:
+        """What the residue sits NEXT TO, from the adjacency a paired library gives free.
+
+        Coverage says how often a read's sequence recurs and cannot say what it is attached
+        to. This finds the library pairs covering the same sequence as a residue read and
+        labels THEIR other mates, which splits the residue into reads that are unidentified
+        because the reference is a gene catalogue and reads whose neighbourhood is as
+        unknown as they are. The control pile goes through the same pass, and a query with
+        no witnesses is reported apart rather than folded into the unknown.
+        """
+        a = self.args
+        res = self.work / "cascade_work" / f"residue_s{a.seed}.fa"
+        binary = ROOT / "experiments/kmer_coverage/target/release/census"
+        gone = self.missing("census", [binary, res, a.r1, a.r2])
+        if gone:
+            return self.record("census", "skipped", reason=f"absent inputs: {gone}")
+        out = self.work / "census"
+        argv = ["--seed", str(a.seed), "--queries", str(a.census_queries),
+                "--cascade-work", str(self.work / "cascade_work"),
+                "--r1", str(a.r1), "--r2", str(a.r2), "--trim-r2", str(a.trim_r2),
+                "--threads", str(a.threads),
+                "--work", str(self.work / "census_work"), "--out", str(out)]
+        if a.unidentified_contigs:
+            argv += ["--unidentified-contigs", str(a.unidentified_contigs)]
+        return self.call("census", "linkage_census.py", argv,
+                         {"census.json": out / f"linkage_census_s{a.seed}.json"},
+                         out / f"linkage_census_s{a.seed}.json")
+
     def calibration(self) -> dict:
         """Per-sample divergence ladder: a holdout genome spiked at known divergence.
 
@@ -756,7 +784,7 @@ LAYER_FIELDS = {
     "undetermined": ["closest_*", "library_abundance"],
 }
 
-STAGE_ORDER = ["cascade", "contigs", "reads", "linkage", "calibration",
+STAGE_ORDER = ["cascade", "contigs", "reads", "linkage", "census", "calibration",
                "intervals", "layers", "strains"]
 
 
@@ -775,6 +803,10 @@ def main() -> int:
                    help="residue pairs through the per-read report, whose per-read fields "
                         "are far costlier than the cascade's")
     r.add_argument("--linkage-pairs", type=int, default=20_000)
+    r.add_argument("--census-queries", type=int, default=3_000,
+                   help="pairs per pile through the linkage census. Both piles "
+                        "always run: the control is what makes the residue "
+                        "number readable")
     r.add_argument("--trim-r2", type=int, default=14)
     r.add_argument("--threads", type=int, default=4)
     r.add_argument("--contigs", type=Path, default=ROOT / "data/geo/sample_contigs.fa",
