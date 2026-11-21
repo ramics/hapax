@@ -192,6 +192,20 @@ def main() -> None:
                     help="pairs per library for the protein tier. Smaller than the "
                          "nucleotide rungs because a sensitive DIAMOND blastx is 10-14x the "
                          "cost of default and the readout is a proportion")
+    ap.add_argument("--r2-trim", type=int, default=14,
+                    help="bases removed from mate 2's 5' end. MEASURED, not detected: "
+                         "nontemplate_prefix_map.py maps untrimmed reads to SILVA and finds "
+                         "a 5' soft-clip mode of 14 in 5/5 seeds on both RNA libraries, "
+                         "with 95% of anchored R2 reads clipping >=10 and the same reads "
+                         "flush at their 3' end. The composition detector below read 16, "
+                         "and an earlier pass trimmed by it - a 2-base over-trim. The "
+                         "detector's value is kept in the output as a diagnostic because it "
+                         "still flags that something is compositionally odd at a read's "
+                         "start, which is true; it is no longer a length")
+    ap.add_argument("--trim-disagreement", type=int, default=4,
+                    help="how far the detector may differ from --r2-trim before the run "
+                         "stops. A larger gap means one of the two is measuring something "
+                         "else and a silent trim is the worst way to find out")
     ap.add_argument("--min-mlen", type=int, default=40)
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--work", type=Path, default=Path("/tmp/claude-0/wk/dnarna"))
@@ -222,6 +236,17 @@ def main() -> None:
               f" r2 {libs[name]['nontemplate_prefix']['r2']['prefix_len']}, GC "
               f"{libs[name]['gc']['r1']:.3f}, duplicates "
               f"{libs[name]['duplicate_frac']:.4f}", flush=True)
+        # The detector is a diagnostic now, so it no longer sets the trim - but a large gap
+        # between it and the measured value means one of the two is reading something else,
+        # and a silent trim is the worst possible way to discover that.
+        det = libs[name]["nontemplate_prefix"]["r2"]["prefix_len"]
+        if abs(det - args.r2_trim) > args.trim_disagreement:
+            raise SystemExit(
+                f"{name}: the composition detector reads {det} bases of 5' prefix on mate 2 "
+                f"and --r2-trim is {args.r2_trim}, a gap of {abs(det - args.r2_trim)}. The "
+                f"trim is measured by mapping (results/nontemplate_prefix/), so a gap this "
+                f"size means this library is not the one that was measured. Run "
+                f"experiments/nontemplate_prefix_map.py on it before trusting either value.")
 
     # ---- rRNA, the cascade's largest subtrahend, with the same index and threshold
     silva_fa = args.work / "silva.fa"
@@ -234,7 +259,7 @@ def main() -> None:
     timings["silva_index"] = time.perf_counter() - t
 
     for name, lib in libs.items():
-        pre = lib["nontemplate_prefix"]["r2"]["prefix_len"]
+        pre = args.r2_trim
         seqs = {r[0]: (r[1], r[2][pre:]) for r in lib["_pairs"]}
         t = time.perf_counter()
         hits = map_filter(idx, seqs, args.min_mlen)
@@ -248,7 +273,7 @@ def main() -> None:
 
     # ---- identifiable fraction, same database and confidence as the cascade's rung
     for name, lib in libs.items():
-        pre = lib["nontemplate_prefix"]["r2"]["prefix_len"]
+        pre = args.r2_trim
         rows = [(r[0], r[1], r[2][pre:], r[3], r[4][pre:]) for r in lib["_pairs"]]
         fq1 = args.work / f"{name}_1.fq"
         fq2 = args.work / f"{name}_2.fq"
@@ -287,7 +312,7 @@ def main() -> None:
     # a phage-dominated library IS. Same databases, bitscore and sensitivity as the cascade's
     # own rung, on a subsample because the question is a proportion at percentage resolution.
     for name, lib in libs.items():
-        pre = lib["nontemplate_prefix"]["r2"]["prefix_len"]
+        pre = args.r2_trim
         rows = [(r[0], r[1], r[2][pre:], r[3], r[4][pre:])
                 for r in lib["_pairs"][:args.protein_pairs]]
         fa = args.work / f"{name}_prot.fa"

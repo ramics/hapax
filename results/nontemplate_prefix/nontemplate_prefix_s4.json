@@ -1,0 +1,794 @@
+{
+  "script": "experiments/nontemplate_prefix_map.py",
+  "git_sha": "6490dfbad41db079097b64882cc18094c901b07b",
+  "tree_dirty": false,
+  "script_sha256": "097518b407ef4072",
+  "parameters": {
+    "seed": 4,
+    "pairs": 100000,
+    "min_mlen": 60,
+    "min_mapq": 0,
+    "silva": "/home/user/hapax/data/silva/silva_dna.fa",
+    "threads": 8,
+    "libraries": [
+      "rna_2021",
+      "rna_2022",
+      "dna_2022"
+    ],
+    "work": "/tmp/claude-0/wk/ntprefix",
+    "out": "/home/user/hapax/results/nontemplate_prefix"
+  },
+  "libraries": {
+    "rna_2021": {
+      "run": "SRR23973193",
+      "note": "the library whose R2 every experiment trims by 14",
+      "pairs_read": 100000,
+      "file_offset_pairs": 300000,
+      "anchored": {
+        "r1": 35182,
+        "r2": 34134
+      },
+      "anchored_frac": {
+        "r1": 0.3518,
+        "r2": 0.3413
+      },
+      "r1_five_prime_clip": {
+        "n": 35182,
+        "mode": 0,
+        "mode_share": 0.5692,
+        "median": 0.0,
+        "mean": 3.22,
+        "frac_ge_10": 0.0872,
+        "frac_zero": 0.5692,
+        "top": [
+          [
+            0,
+            0.5692
+          ],
+          [
+            5,
+            0.0861
+          ],
+          [
+            4,
+            0.0744
+          ],
+          [
+            3,
+            0.0532
+          ],
+          [
+            6,
+            0.0507
+          ],
+          [
+            2,
+            0.0401
+          ]
+        ]
+      },
+      "r1_three_prime_clip": {
+        "n": 35182,
+        "mode": 0,
+        "mode_share": 0.907,
+        "median": 0.0,
+        "mean": 1.25,
+        "frac_ge_10": 0.0596,
+        "frac_zero": 0.907,
+        "top": [
+          [
+            0,
+            0.907
+          ],
+          [
+            14,
+            0.0145
+          ],
+          [
+            13,
+            0.0068
+          ],
+          [
+            4,
+            0.005
+          ],
+          [
+            5,
+            0.0046
+          ],
+          [
+            12,
+            0.0045
+          ]
+        ]
+      },
+      "r1_five_minus_three_mean": 1.97,
+      "r1_five_prime_by_strand": {
+        "plus": {
+          "n": 1843,
+          "mode": 0,
+          "mode_share": 0.3744,
+          "median": 5,
+          "mean": 6.24,
+          "frac_ge_10": 0.2821,
+          "frac_zero": 0.3744,
+          "top": [
+            [
+              0,
+              0.3744
+            ],
+            [
+              6,
+              0.1015
+            ],
+            [
+              5,
+              0.0917
+            ],
+            [
+              14,
+              0.0906
+            ],
+            [
+              4,
+              0.0537
+            ],
+            [
+              13,
+              0.0412
+            ]
+          ]
+        },
+        "minus": {
+          "n": 33339,
+          "mode": 0,
+          "mode_share": 0.58,
+          "median": 0,
+          "mean": 3.05,
+          "frac_ge_10": 0.0764,
+          "frac_zero": 0.58,
+          "top": [
+            [
+              0,
+              0.58
+            ],
+            [
+              5,
+              0.0858
+            ],
+            [
+              4,
+              0.0756
+            ],
+            [
+              3,
+              0.0541
+            ],
+            [
+              6,
+              0.0479
+            ],
+            [
+              2,
+              0.0415
+            ]
+          ]
+        }
+      },
+      "r2_five_prime_clip": {
+        "n": 34134,
+        "mode": 14,
+        "mode_share": 0.5101,
+        "median": 14.0,
+        "mean": 14.2,
+        "frac_ge_10": 0.9482,
+        "frac_zero": 0.0198,
+        "top": [
+          [
+            14,
+            0.5101
+          ],
+          [
+            13,
+            0.1613
+          ],
+          [
+            15,
+            0.0665
+          ],
+          [
+            12,
+            0.0663
+          ],
+          [
+            11,
+            0.025
+          ],
+          [
+            16,
+            0.0216
+          ]
+        ]
+      },
+      "r2_three_prime_clip": {
+        "n": 34134,
+        "mode": 0,
+        "mode_share": 0.9474,
+        "median": 0.0,
+        "mean": 0.59,
+        "frac_ge_10": 0.0247,
+        "frac_zero": 0.9474,
+        "top": [
+          [
+            0,
+            0.9474
+          ],
+          [
+            5,
+            0.0056
+          ],
+          [
+            3,
+            0.0047
+          ],
+          [
+            4,
+            0.0043
+          ],
+          [
+            2,
+            0.0039
+          ],
+          [
+            10,
+            0.0027
+          ]
+        ]
+      },
+      "r2_five_minus_three_mean": 13.61,
+      "r2_five_prime_by_strand": {
+        "plus": {
+          "n": 32585,
+          "mode": 14,
+          "mode_share": 0.5278,
+          "median": 14,
+          "mean": 14.18,
+          "frac_ge_10": 0.9604,
+          "frac_zero": 0.0189,
+          "top": [
+            [
+              14,
+              0.5278
+            ],
+            [
+              13,
+              0.163
+            ],
+            [
+              15,
+              0.0671
+            ],
+            [
+              12,
+              0.0662
+            ],
+            [
+              11,
+              0.0253
+            ],
+            [
+              16,
+              0.0216
+            ]
+          ]
+        },
+        "minus": {
+          "n": 1549,
+          "mode": 14,
+          "mode_share": 0.1375,
+          "median": 13,
+          "mean": 14.5,
+          "frac_ge_10": 0.6914,
+          "frac_zero": 0.0387,
+          "top": [
+            [
+              14,
+              0.1375
+            ],
+            [
+              13,
+              0.1272
+            ],
+            [
+              9,
+              0.0833
+            ],
+            [
+              12,
+              0.0684
+            ],
+            [
+              15,
+              0.0549
+            ],
+            [
+              7,
+              0.0523
+            ]
+          ]
+        }
+      }
+    },
+    "rna_2022": {
+      "run": "SRR23973265",
+      "note": "same plant, eight months later, same naming series",
+      "pairs_read": 100000,
+      "file_offset_pairs": 300000,
+      "anchored": {
+        "r1": 61941,
+        "r2": 60249
+      },
+      "anchored_frac": {
+        "r1": 0.6194,
+        "r2": 0.6025
+      },
+      "r1_five_prime_clip": {
+        "n": 61941,
+        "mode": 0,
+        "mode_share": 0.6377,
+        "median": 0,
+        "mean": 2.81,
+        "frac_ge_10": 0.0862,
+        "frac_zero": 0.6377,
+        "top": [
+          [
+            0,
+            0.6377
+          ],
+          [
+            5,
+            0.0671
+          ],
+          [
+            4,
+            0.0603
+          ],
+          [
+            3,
+            0.0463
+          ],
+          [
+            2,
+            0.0387
+          ],
+          [
+            6,
+            0.0334
+          ]
+        ]
+      },
+      "r1_three_prime_clip": {
+        "n": 61941,
+        "mode": 0,
+        "mode_share": 0.8826,
+        "median": 0,
+        "mean": 1.54,
+        "frac_ge_10": 0.081,
+        "frac_zero": 0.8826,
+        "top": [
+          [
+            0,
+            0.8826
+          ],
+          [
+            14,
+            0.0292
+          ],
+          [
+            13,
+            0.0113
+          ],
+          [
+            12,
+            0.0064
+          ],
+          [
+            4,
+            0.0051
+          ],
+          [
+            3,
+            0.005
+          ]
+        ]
+      },
+      "r1_five_minus_three_mean": 1.27,
+      "r1_five_prime_by_strand": {
+        "plus": {
+          "n": 2909,
+          "mode": 0,
+          "mode_share": 0.4225,
+          "median": 4,
+          "mean": 6.09,
+          "frac_ge_10": 0.3128,
+          "frac_zero": 0.4225,
+          "top": [
+            [
+              0,
+              0.4225
+            ],
+            [
+              14,
+              0.1207
+            ],
+            [
+              6,
+              0.0739
+            ],
+            [
+              5,
+              0.0684
+            ],
+            [
+              13,
+              0.0578
+            ],
+            [
+              4,
+              0.0406
+            ]
+          ]
+        },
+        "minus": {
+          "n": 59032,
+          "mode": 0,
+          "mode_share": 0.6483,
+          "median": 0.0,
+          "mean": 2.65,
+          "frac_ge_10": 0.0751,
+          "frac_zero": 0.6483,
+          "top": [
+            [
+              0,
+              0.6483
+            ],
+            [
+              5,
+              0.0671
+            ],
+            [
+              4,
+              0.0613
+            ],
+            [
+              3,
+              0.0472
+            ],
+            [
+              2,
+              0.0396
+            ],
+            [
+              6,
+              0.0314
+            ]
+          ]
+        }
+      },
+      "r2_five_prime_clip": {
+        "n": 60249,
+        "mode": 14,
+        "mode_share": 0.5355,
+        "median": 14,
+        "mean": 14.1,
+        "frac_ge_10": 0.9533,
+        "frac_zero": 0.0178,
+        "top": [
+          [
+            14,
+            0.5355
+          ],
+          [
+            13,
+            0.1637
+          ],
+          [
+            12,
+            0.0659
+          ],
+          [
+            15,
+            0.0564
+          ],
+          [
+            11,
+            0.0238
+          ],
+          [
+            16,
+            0.0201
+          ]
+        ]
+      },
+      "r2_three_prime_clip": {
+        "n": 60249,
+        "mode": 0,
+        "mode_share": 0.9485,
+        "median": 0,
+        "mean": 0.53,
+        "frac_ge_10": 0.0203,
+        "frac_zero": 0.9485,
+        "top": [
+          [
+            0,
+            0.9485
+          ],
+          [
+            5,
+            0.0067
+          ],
+          [
+            2,
+            0.006
+          ],
+          [
+            4,
+            0.0058
+          ],
+          [
+            3,
+            0.0046
+          ],
+          [
+            6,
+            0.0029
+          ]
+        ]
+      },
+      "r2_five_minus_three_mean": 13.58,
+      "r2_five_prime_by_strand": {
+        "plus": {
+          "n": 57767,
+          "mode": 14,
+          "mode_share": 0.5518,
+          "median": 14,
+          "mean": 14.06,
+          "frac_ge_10": 0.9647,
+          "frac_zero": 0.0169,
+          "top": [
+            [
+              14,
+              0.5518
+            ],
+            [
+              13,
+              0.1668
+            ],
+            [
+              12,
+              0.0664
+            ],
+            [
+              15,
+              0.0563
+            ],
+            [
+              11,
+              0.024
+            ],
+            [
+              16,
+              0.0201
+            ]
+          ]
+        },
+        "minus": {
+          "n": 2482,
+          "mode": 14,
+          "mode_share": 0.1555,
+          "median": 13.0,
+          "mean": 15.05,
+          "frac_ge_10": 0.6902,
+          "frac_zero": 0.0371,
+          "top": [
+            [
+              14,
+              0.1555
+            ],
+            [
+              9,
+              0.0923
+            ],
+            [
+              13,
+              0.0902
+            ],
+            [
+              15,
+              0.0596
+            ],
+            [
+              8,
+              0.0564
+            ],
+            [
+              12,
+              0.0552
+            ]
+          ]
+        }
+      }
+    },
+    "dna_2022": {
+      "run": "SRR23973375",
+      "note": "0.01% rRNA, so SILVA cannot anchor it; kept to show that",
+      "pairs_read": 100000,
+      "file_offset_pairs": 300000,
+      "anchored": {
+        "r1": 3,
+        "r2": 4
+      },
+      "anchored_frac": {
+        "r1": 0.0,
+        "r2": 0.0
+      },
+      "r1_five_prime_clip": {
+        "n": 3,
+        "mode": 0,
+        "mode_share": 1.0,
+        "median": 0,
+        "mean": 0,
+        "frac_ge_10": 0.0,
+        "frac_zero": 1.0,
+        "top": [
+          [
+            0,
+            1.0
+          ]
+        ]
+      },
+      "r1_three_prime_clip": {
+        "n": 3,
+        "mode": 0,
+        "mode_share": 0.6667,
+        "median": 0,
+        "mean": 14.33,
+        "frac_ge_10": 0.3333,
+        "frac_zero": 0.6667,
+        "top": [
+          [
+            0,
+            0.6667
+          ],
+          [
+            43,
+            0.3333
+          ]
+        ]
+      },
+      "r1_five_minus_three_mean": -14.33,
+      "r1_five_prime_by_strand": {
+        "plus": {
+          "n": 2,
+          "mode": 0,
+          "mode_share": 1.0,
+          "median": 0.0,
+          "mean": 0,
+          "frac_ge_10": 0.0,
+          "frac_zero": 1.0,
+          "top": [
+            [
+              0,
+              1.0
+            ]
+          ]
+        },
+        "minus": {
+          "n": 1,
+          "mode": 0,
+          "mode_share": 1.0,
+          "median": 0,
+          "mean": 0,
+          "frac_ge_10": 0.0,
+          "frac_zero": 1.0,
+          "top": [
+            [
+              0,
+              1.0
+            ]
+          ]
+        }
+      },
+      "r2_five_prime_clip": {
+        "n": 4,
+        "mode": 0,
+        "mode_share": 0.5,
+        "median": 20.5,
+        "mean": 20.75,
+        "frac_ge_10": 0.5,
+        "frac_zero": 0.5,
+        "top": [
+          [
+            0,
+            0.5
+          ],
+          [
+            41,
+            0.25
+          ],
+          [
+            42,
+            0.25
+          ]
+        ]
+      },
+      "r2_three_prime_clip": {
+        "n": 4,
+        "mode": 0,
+        "mode_share": 0.75,
+        "median": 0.0,
+        "mean": 1.25,
+        "frac_ge_10": 0.0,
+        "frac_zero": 0.75,
+        "top": [
+          [
+            0,
+            0.75
+          ],
+          [
+            5,
+            0.25
+          ]
+        ]
+      },
+      "r2_five_minus_three_mean": 19.5,
+      "r2_five_prime_by_strand": {
+        "plus": {
+          "n": 1,
+          "mode": 42,
+          "mode_share": 1.0,
+          "median": 42,
+          "mean": 42,
+          "frac_ge_10": 1.0,
+          "frac_zero": 0.0,
+          "top": [
+            [
+              42,
+              1.0
+            ]
+          ]
+        },
+        "minus": {
+          "n": 3,
+          "mode": 0,
+          "mode_share": 0.6667,
+          "median": 0,
+          "mean": 13.67,
+          "frac_ge_10": 0.3333,
+          "frac_zero": 0.6667,
+          "top": [
+            [
+              0,
+              0.6667
+            ],
+            [
+              41,
+              0.3333
+            ]
+          ]
+        }
+      }
+    }
+  },
+  "readout": "soft-clip length at each end of the best anchored SILVA alignment, on UNTRIMMED reads. A non-template prefix predicts a sharp mode at a fixed length on one mate's 5' end, absent from its own 3' end and from the other mate",
+  "bias": "adapter read-through clips 3' ends and inflates the within-read control, which makes a real 5' excess harder to see, not easier. Divergence from the SILVA entry clips both ends and cancels in the difference. The DNA library is 0.01% ribosomal so its row is a statement about the reference, not the library",
+  "coordinate_check": "every 5' distribution is also split by strand; equal modes confirm q_st is on the query as supplied, a mirror invalidates the run",
+  "timings": {
+    "rna_2021": 27.258937080994656,
+    "rna_2022": 48.01832104300411,
+    "dna_2022": 1.6074048790032975
+  },
+  "wall_seconds": 79.27623700299591,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}
