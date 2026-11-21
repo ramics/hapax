@@ -1,0 +1,484 @@
+study	runs	median_pairs	max_pairs	cutoff_min	cutoff_max	cutoff_source	rna_evidence	country	title
+PRJNA616359	9	15688053	19634000	2001-02-23	2017-12-15	collection_date	text	USA	Viral metagenomics of wastewater
+PRJNA366174	1	140034366	140034366	2007-12-21	2007-12-21	collection_date	source=METATRANSCRIPTOMIC;text	USA:Madison, WI, USA	Wastewater treatment Type I Accumulibacter community from EBPR Bioreactor in Madison, WI -
+PRJNA366173	1	129070079	129070079	2007-12-21	2007-12-21	collection_date	source=METATRANSCRIPTOMIC;text	USA:Madison, WI, USA	Wastewater treatment Type I Accumulibacter community from EBPR Bioreactor in Madison, WI -
+PRJNA366169	1	128268130	128268130	2007-12-21	2007-12-21	collection_date	source=METATRANSCRIPTOMIC;text	USA:Madison, WI, USA	Wastewater treatment Type I Accumulibacter community from EBPR Bioreactor in Madison, WI -
+PRJNA366171	1	126442340	126442340	2007-12-21	2007-12-21	collection_date	source=METATRANSCRIPTOMIC;text	USA:Madison, WI, USA	Wastewater treatment Type I Accumulibacter community from EBPR Bioreactor in Madison, WI -
+PRJNA366172	1	107162748	107162748	2007-12-21	2007-12-21	collection_date	source=METATRANSCRIPTOMIC;text	USA:Madison, WI, USA	Wastewater treatment Type I Accumulibacter community from EBPR Bioreactor in Madison, WI -
+PRJNA366170	1	101315574	101315574	2007-12-21	2007-12-21	collection_date	source=METATRANSCRIPTOMIC;text	USA:Madison, WI, USA	Wastewater treatment Type I Accumulibacter community from EBPR Bioreactor in Madison, WI -
+PRJNA230567	53	33469570	44174409	2010-10-04	2015-06-05	collection_date;first_public	source=METATRANSCRIPTOMIC	Luxembourg: Schifflange	Systems Biology of Lipid Accumulating Organisms
+PRJNA226633	8	606395266	1948792904	2010-10-07	2011-02-25	collection_date	source=METATRANSCRIPTOMIC;text	Singapore	UluPandan WasteWater Sludge Metatranscriptome
+PRJNA602123	2	16663946	16663946	2011-02-15	2011-02-15	collection_date	source=METATRANSCRIPTOMIC;text;text	China: Stanley Sewage Treatment Works, Hong Kong	Metagenomic and metatranscriptomic analysis of microbial community structure and gene expr
+PRJNA362697	3	30836982	33665446	2011-05-01	2012-03-01	collection_date	text	China: Beijing	WWTP_virome
+PRJEB8669	3	3102248	5191596	2012-10-31	2012-10-31	collection_date	source=METATRANSCRIPTOMIC;text;text	Denmark	MiDAS DNA Extraction metagenomics and metatranscriptomics
+PRJNA450306	8	25204542	29328742	2012-12-25	2012-12-25	collection_date	source=METATRANSCRIPTOMIC;text	China: Hong Kong	BPA degrading microbial community Raw sequence reads
+PRJNA268704	1	29039526	29039526	2014-03-06	2014-03-06	collection_date	source=METATRANSCRIPTOMIC;text	Switzerland: Geneva	Initial activated sludge RNA GCZ16 Transcriptome or Gene expression
+PRJNA268710	1	20883263	20883263	2014-03-06	2014-03-06	collection_date	source=METATRANSCRIPTOMIC;text	Switzerland: Geneva	Initial activated sludge and aerobic granules RNA GCZ18 Transcriptome or Gene expression
+PRJNA268712	1	30083619	30083619	2014-04-06	2014-04-06	collection_date	source=METATRANSCRIPTOMIC;text	Switzerland: Geneva	Final activated sludge and aerobic granules RNA GCZ19 Transcriptome or Gene expression
+PRJNA268709	1	27741335	27741335	2014-04-06	2014-04-06	collection_date	source=METATRANSCRIPTOMIC;text	Switzerland: Geneva	Final activated sewage sludge RNA GCZ17 Transcriptome or Gene expression
+PRJNA475466	1	169851808	169851808	2014-04-16	2014-04-16	collection_date	source=TRANSCRIPTOMIC	Germany:Freiburg	Adaptation experiments with G. sulfurreducens and isolates in wastewater focused on curren
+PRJNA720805	72	18758665	55579397	2014-05-12	2014-05-17	collection_date	source=METATRANSCRIPTOMIC;text;text	Singapore	Mesocosm sludge bioreactors under sustained 3-chloroaniline (3-CA) stress (with controls) 
+PRJEB27589	1	3912637	3912637	2014-05-20	2014-05-20	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA	Greece	Analysis of the microbial community dynamics during acclimatization of a membrane bioreact
+PRJNA367174	1	54340395	54340395	2014-06-11	2014-06-11	collection_date	source=METATRANSCRIPTOMIC;text	USA:Milwaukee, Wisconsin, USA	Wastewater effluent complex algal communities from Wisconsin, to seasonally profile nutrie
+PRJNA367175	1	53779454	53779454	2014-06-11	2014-06-11	collection_date	source=METATRANSCRIPTOMIC;text	USA:Milwaukee, Wisconsin, USA	Wastewater effluent complex algal communities from Wisconsin, to seasonally profile nutrie
+PRJNA367176	1	50413928	50413928	2014-06-11	2014-06-11	collection_date	source=METATRANSCRIPTOMIC;text	USA:Milwaukee, Wisconsin, USA	Wastewater effluent complex algal communities from Wisconsin, to seasonally profile nutrie
+PRJNA395784	4	28971599	29650865	2014-06-21	2015-08-21	collection_date	source=VIRAL RNA;selection=cDNA;text	Brazil: Brasilia	An overview of the virome in wastwater in Brasilia, Brazil by High-throughput sequencing
+PRJNA356367	12	11054346	12523909	2014-06-30	2014-06-30	collection_date	source=METATRANSCRIPTOMIC;text	Singapore	bioreactor sludge metatranscriptome Raw sequence reads
+PRJNA367179	1	51359553	51359553	2014-07-17	2014-07-17	collection_date	source=METATRANSCRIPTOMIC;text	USA:Milwaukee, Wisconsin, USA	Wastewater effluent complex algal communities from Wisconsin, to seasonally profile nutrie
+PRJNA367177	1	48578565	48578565	2014-07-17	2014-07-17	collection_date	source=METATRANSCRIPTOMIC;text	USA:Milwaukee, Wisconsin, USA	Wastewater effluent complex algal communities from Wisconsin, to seasonally profile nutrie
+PRJNA367178	1	48144290	48144290	2014-07-17	2014-07-17	collection_date	source=METATRANSCRIPTOMIC;text	USA:Milwaukee, Wisconsin, USA	Wastewater effluent complex algal communities from Wisconsin, to seasonally profile nutrie
+PRJNA367181	1	54413019	54413019	2014-08-11	2014-08-11	collection_date	source=METATRANSCRIPTOMIC;text	USA:Milwaukee, Wisconsin, USA	Wastewater effluent complex algal communities from Wisconsin, to seasonally profile nutrie
+PRJNA367180	1	50969468	50969468	2014-08-11	2014-08-11	collection_date	source=METATRANSCRIPTOMIC;text	USA:Milwaukee, Wisconsin, USA	Wastewater effluent complex algal communities from Wisconsin, to seasonally profile nutrie
+PRJNA367183	1	66392783	66392783	2014-09-18	2014-09-18	collection_date	source=METATRANSCRIPTOMIC;text	USA:Milwaukee, Wisconsin, USA	Wastewater effluent complex algal communities from Wisconsin, to seasonally profile nutrie
+PRJNA367184	1	54167689	54167689	2014-09-18	2014-09-18	collection_date	source=METATRANSCRIPTOMIC;text	USA:Milwaukee, Wisconsin, USA	Wastewater effluent complex algal communities from Wisconsin, to seasonally profile nutrie
+PRJNA367182	1	47167334	47167334	2014-09-18	2014-09-18	collection_date	source=METATRANSCRIPTOMIC;text	USA:Milwaukee, Wisconsin, USA	Wastewater effluent complex algal communities from Wisconsin, to seasonally profile nutrie
+PRJNA367186	1	58486826	58486826	2014-10-23	2014-10-23	collection_date	source=METATRANSCRIPTOMIC;text	USA:Milwaukee, Wisconsin, USA	Wastewater effluent complex algal communities from Wisconsin, to seasonally profile nutrie
+PRJNA367187	1	56762965	56762965	2014-10-23	2014-10-23	collection_date	source=METATRANSCRIPTOMIC;text	USA:Milwaukee, Wisconsin, USA	Wastewater effluent complex algal communities from Wisconsin, to seasonally profile nutrie
+PRJNA367185	1	56593316	56593316	2014-10-23	2014-10-23	collection_date	source=METATRANSCRIPTOMIC;text	USA:Milwaukee, Wisconsin, USA	Wastewater effluent complex algal communities from Wisconsin, to seasonally profile nutrie
+PRJNA444694	1	40968039	40968039	2014-11-24	2014-11-24	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444692	1	40795210	40795210	2014-12-10	2014-12-10	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444700	1	37463574	37463574	2014-12-22	2014-12-22	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444701	1	34836893	34836893	2014-12-22	2014-12-22	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444695	1	25423982	25423982	2014-12-23	2014-12-23	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444702	1	38091031	38091031	2014-12-29	2014-12-29	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444697	1	31323186	31323186	2015-01-07	2015-01-07	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444691	1	38228918	38228918	2015-01-08	2015-01-08	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444696	1	25724338	25724338	2015-01-23	2015-01-23	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJDB6477	6	5185307	6779848	2015-02-03	2015-02-20	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA;text	Japan:Ibaraki, Tsukuba	Metatranscriptome analysis of sludge microbiomes in MBRs treating heavy oil
+PRJNA444705	1	34241342	34241342	2015-02-05	2015-02-05	collection_date	source=METATRANSCRIPTOMIC;text	Japan: Niigata Prefecture	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444703	1	33495454	33495454	2015-02-05	2015-02-05	collection_date	source=METATRANSCRIPTOMIC;text	Japan: Niigata Prefecture	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444704	1	33218410	33218410	2015-02-05	2015-02-05	collection_date	source=METATRANSCRIPTOMIC;text	Japan: Niigata Prefecture	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444698	1	38520805	38520805	2015-02-09	2015-02-09	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444693	1	30721125	30721125	2015-02-12	2015-02-12	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444699	1	31846940	31846940	2015-03-09	2015-03-09	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA405961	1	74097612	74097612	2015-03-24	2015-03-24	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA365462	2	65016337	65016337	2015-03-24	2015-03-24	collection_date	source=METATRANSCRIPTOMIC;text	Austria	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA365454	1	45484418	45484418	2015-03-24	2015-03-24	collection_date	source=METATRANSCRIPTOMIC;text	Austria	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA405962	1	72027549	72027549	2015-03-26	2015-03-26	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA365455	1	54334896	54334896	2015-03-26	2015-03-26	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA405966	1	53895801	53895801	2015-03-26	2015-03-26	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA365456	1	57639473	57639473	2015-04-15	2015-04-15	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA464887	1	56719326	56719326	2015-04-15	2015-04-15	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA464881	1	49249404	49249404	2015-04-15	2015-04-15	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA464882	1	85899131	85899131	2015-04-20	2015-04-20	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA464878	2	57710457	57710457	2015-04-20	2015-04-20	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA464883	1	51528735	51528735	2015-04-20	2015-04-20	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA365464	2	48277971	48277971	2015-04-20	2015-04-20	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA365463	1	43825336	43825336	2015-04-20	2015-04-20	collection_date	source=METATRANSCRIPTOMIC;text	Austria	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA365457	1	37150428	37150428	2015-04-20	2015-04-20	collection_date	source=METATRANSCRIPTOMIC;text	Austria:Klosterneuburg, Austria	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA405963	1	33289874	33289874	2015-04-20	2015-04-20	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA365459	1	26525361	26525361	2015-04-20	2015-04-20	collection_date	source=METATRANSCRIPTOMIC;text	Austria:Klosterneuburg, Austria	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA405964	1	32509766	32509766	2015-04-22	2015-04-22	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA365465	1	29659577	29659577	2015-04-22	2015-04-22	collection_date	source=METATRANSCRIPTOMIC;text	Austria:Klosterneuburg, Austria	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA365460	1	21234321	21234321	2015-04-22	2015-04-22	collection_date	source=METATRANSCRIPTOMIC;text	Austria:Klosterneuburg, Austria	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA405965	1	65642801	65642801	2015-04-29	2015-04-29	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA464888	1	54143788	54143788	2015-04-29	2015-04-29	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA464879	1	49689105	49689105	2015-04-29	2015-04-29	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA405967	1	48851107	48851107	2015-04-29	2015-04-29	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA464880	1	48396085	48396085	2015-04-29	2015-04-29	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA365461	1	43238623	43238623	2015-04-29	2015-04-29	collection_date	source=METATRANSCRIPTOMIC;text	Austria:Klosterneuburg, Austria	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA365458	1	36607749	36607749	2015-04-29	2015-04-29	collection_date	source=METATRANSCRIPTOMIC;text	Austria:Klosterneuburg, Austria	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA464884	1	34796390	34796390	2015-04-29	2015-04-29	collection_date	source=METATRANSCRIPTOMIC;text	Austria: Klosterneuburg	Active sludge microbial communities from Klosterneuburg, Austria - Klosterneuburg WWTP act
+PRJNA365417	1	33789065	33789065	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA:Illinois, USA	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA405878	1	32975027	32975027	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA365422	1	32471731	32471731	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA:Illinois, USA	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA365421	1	32428614	32428614	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA:Illinois, USA	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA405875	1	30706696	30706696	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA405870	1	30578635	30578635	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA365418	1	29984163	29984163	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA:Illinois, USA	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA365419	1	29171812	29171812	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA:Illinois, USA	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA405874	1	28930724	28930724	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA405869	1	28870110	28870110	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA405872	1	28524147	28524147	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA405876	1	28501669	28501669	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA405884	1	28471032	28471032	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA405881	1	28161956	28161956	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA405871	1	27835299	27835299	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA365426	1	27816627	27816627	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA:Illinois, USA	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA405873	1	27563709	27563709	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA405879	1	27484771	27484771	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA405882	1	27158668	27158668	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA365420	1	26985323	26985323	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA:Illinois, USA	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA365424	1	26783603	26783603	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA365429	1	26642325	26642325	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA:Illinois, USA	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA365428	1	26536024	26536024	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA:Illinois, USA	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA365430	1	26515818	26515818	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA405877	1	26208567	26208567	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA405883	1	25777748	25777748	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA365427	1	25382385	25382385	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA365425	1	25296403	25296403	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA365423	1	24401780	24401780	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA405880	1	23799599	23799599	2015-05-01	2015-05-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: Illinois	Active sludge microbial communities from Illinois, USA, of municipal wastewater-treating a
+PRJNA444710	1	36504444	36504444	2015-05-15	2015-05-15	collection_date	source=METATRANSCRIPTOMIC;text	Japan: Gunma Prefecture	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444709	1	35227368	35227368	2015-05-15	2015-05-15	collection_date	source=METATRANSCRIPTOMIC;text	Japan: Gunma Prefecture	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444711	1	28374689	28374689	2015-05-15	2015-05-15	collection_date	source=METATRANSCRIPTOMIC;text	Japan: Gunma Prefecture	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444708	1	36917224	36917224	2015-05-17	2015-05-17	collection_date	source=METATRANSCRIPTOMIC;text	Japan: Saitama Prefecture	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444706	1	33066201	33066201	2015-05-17	2015-05-17	collection_date	source=METATRANSCRIPTOMIC;text	Japan: Saitama Prefecture	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444707	1	32508941	32508941	2015-05-17	2015-05-17	collection_date	source=METATRANSCRIPTOMIC;text	Japan: Saitama Prefecture	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444713	1	34966649	34966649	2015-05-20	2015-05-20	collection_date	source=METATRANSCRIPTOMIC;text	Japan: Hyogo Prefecture	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444714	1	34755658	34755658	2015-05-20	2015-05-20	collection_date	source=METATRANSCRIPTOMIC;text	Japan: Hyogo Prefecture	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA444712	1	31927575	31927575	2015-05-20	2015-05-20	collection_date	source=METATRANSCRIPTOMIC;text	Japan: Hyogo Prefecture	Active sludge microbial communities of municipal wastewater-treating anaerobic digesters f
+PRJNA320780	10	27761538	31178460	2015-05-29	2015-08-14	collection_date	source=METATRANSCRIPTOMIC	Singapore:Ulu Pandan	Integrative community analysis of tropical climate EBPR
+PRJNA290846	3	14961141	15496377	2015-07-27	2015-11-03	first_public	source=METATRANSCRIPTOMIC	China	active sludge Raw sequence reads
+PRJNA343219	1	22056078	22056078	2015-09-09	2015-09-09	collection_date	source=METATRANSCRIPTOMIC;text	USA: Utah, Salt Lake City, University of Utah	lab-scale anammox bioreactor Metagenome
+PRJNA449491	6	7606705	9342309	2015-10-15	2015-10-15	collection_date	source=METATRANSCRIPTOMIC;text	Chile:Santiago	Metatranscriptome of microbial communities associated to anaerobic sludge
+PRJEB15519	6	31945507	42400727	2015-12-05	2015-12-05	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA;text	Saudi Arabia	Membrane bioreactor-based wastewater treatment plant - Reduction of Viral Diversity, Load 
+PRJNA406858	3	176522888	182398796	2015-12-25	2015-12-25	collection_date	source=METATRANSCRIPTOMIC	Taiwan	Activated sludge Metagenome
+PRJEB23496	6	6460470	8600429	2016-01-26	2016-02-02	collection_date	text	Chad	COMPARE global sewage snapshot virome sequencing part
+PRJNA327020	29	5389513	8659759	2016-02-01	2016-02-01	collection_date	source=METATRANSCRIPTOMIC	Singapore	sludge metagenome Raw sequence reads
+PRJNA415974	103	21733888	30863982	2016-02-23	2016-07-28	collection_date	text	USA: North Carolina	Urban Enviromental Genomics Project
+PRJNA1281354	54	14600961	21280969	2016-04-12	2016-07-12	collection_date	source=METATRANSCRIPTOMIC;text;text	Portugal: Porto	Tertiary wastewater metagenome and transcriptome
+PRJNA505772	7	6291698	8178446	2016-05-16	2016-05-16	collection_date	text	Spain:Alicante	Wastewater Bacterial and Viral Metagenome Raw sequence reads
+PRJNA438281	34	17340019	64706868	2016-06-07	2017-08-02	collection_date	text	Singapore	Virome communities in a full-scale wastewater reclamation plant
+PRJNA472060	5	27521057	30857701	2016-06-21	2016-08-09	collection_date	text	USA: Maryland	Reclaimed water Metagenome
+PRJNA613935	18	16786662	28830625	2016-07-12	2016-07-21	collection_date	source=TRANSCRIPTOMIC;text	China:Hunan	RNA sequencing
+PRJNA668760	7	31364122	37988595	2016-10-01	2016-10-07	collection_date	source=METATRANSCRIPTOMIC;text	USA:WI	Activated Sludge Metagenomes and Metatranscriptomes
+PRJNA438386	11	26416608	28248788	2016-10-05	2017-01-18	collection_date	text	Singapore	Metagenomics analysis of virome in a wastewater reclamation plant by flow cytometric sorti
+PRJNA902729	14	53854535	63283221	2016-12-21	2018-08-01	collection_date	source=TRANSCRIPTOMIC	Canada: Vancouver	Wastewater Multi-Omics Time Series
+PRJNA407660	2	28682700	28682700	2017-01-15	2017-01-15	collection_date	source=METATRANSCRIPTOMIC;text	missing	Metatranscriptomic analysis of anaerobic digestion
+PRJNA365870	1	158876129	158876129	2017-01-27	2017-01-27	first_public	source=METATRANSCRIPTOMIC;text	USA:Madison, Wisconsin, USA	Wastewater treatment Type I Accumulibacter community from EBPR Bioreactor in Madison, WI, 
+PRJNA365871	1	144743649	144743649	2017-01-27	2017-01-27	first_public	source=METATRANSCRIPTOMIC;text	USA:Madison, Wisconsin, USA	Wastewater treatment Type I Accumulibacter community from EBPR Bioreactor in Madison, WI, 
+PRJNA365875	1	143485790	143485790	2017-01-27	2017-01-27	first_public	source=METATRANSCRIPTOMIC;text	USA:Madison, Wisconsin, USA	Wastewater treatment Type I Accumulibacter community from EBPR Bioreactor in Madison, WI, 
+PRJNA365872	1	139924841	139924841	2017-01-27	2017-01-27	first_public	source=METATRANSCRIPTOMIC;text	USA:Madison, Wisconsin, USA	Wastewater treatment Type I Accumulibacter community from EBPR Bioreactor in Madison, WI, 
+PRJNA365873	1	136493403	136493403	2017-01-27	2017-01-27	first_public	source=METATRANSCRIPTOMIC;text	USA:Madison, Wisconsin, USA	Wastewater treatment Type I Accumulibacter community from EBPR Bioreactor in Madison, WI, 
+PRJNA365874	1	135715295	135715295	2017-01-27	2017-01-27	first_public	source=METATRANSCRIPTOMIC;text	USA:Madison, Wisconsin, USA	Wastewater treatment Type I Accumulibacter community from EBPR Bioreactor in Madison, WI, 
+PRJNA930611	6	38054494	121154358	2017-02-24	2017-02-24	collection_date	source=METATRANSCRIPTOMIC	France: Limoges	Hospital and urban wastewaters shape the structure and active resistome of environmental b
+PRJNA477269	8	47095587	52120679	2017-03-09	2017-03-09	collection_date	source=METATRANSCRIPTOMIC;text;text	China: Beijing	bioreactor sludge metagenome Genome sequencing and assembly
+PRJNA448050	4	33051299	33281601	2017-03-22	2017-03-22	collection_date	source=METATRANSCRIPTOMIC	Taiwan: Taipei	Sludge metagenome raw sequence data
+PRJNA520032	1	45284667	45284667	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA519330	1	29395205	29395205	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA519341	1	28446144	28446144	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA519342	1	27811478	27811478	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA519332	1	27251343	27251343	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520021	1	26273045	26273045	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520031	1	25509337	25509337	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520018	1	25426095	25426095	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA519338	1	25362119	25362119	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520022	1	25336206	25336206	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520026	1	24559359	24559359	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA519340	1	24102992	24102992	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520010	1	24043783	24043783	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA519334	1	23995587	23995587	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA519333	1	23620477	23620477	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520013	1	23545021	23545021	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520023	1	23007208	23007208	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520025	1	22959479	22959479	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520030	1	22824940	22824940	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520011	1	22822086	22822086	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA519335	1	22797031	22797031	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520033	1	22767767	22767767	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520038	1	22759322	22759322	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520020	1	22456087	22456087	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520017	1	22431426	22431426	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520034	1	22362309	22362309	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520009	1	22304996	22304996	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520035	1	22289586	22289586	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520015	1	21941383	21941383	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520039	1	21910874	21910874	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520041	1	21902107	21902107	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520042	1	21695798	21695798	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520008	1	20724083	20724083	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520016	1	20617728	20617728	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA519337	1	20391874	20391874	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520014	1	20348397	20348397	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520024	1	20305049	20305049	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520028	1	20222070	20222070	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520012	1	19816893	19816893	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA519336	1	19812287	19812287	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520019	1	19707448	19707448	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA519339	1	18797574	18797574	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520040	1	18487702	18487702	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA519331	1	17002813	17002813	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520027	1	16327970	16327970	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520036	1	16097757	16097757	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520029	1	12237908	12237908	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA520037	1	8477477	8477477	2017-04-17	2017-04-17	collection_date	source=METATRANSCRIPTOMIC;text	USA: Wisconsin	Metatranscriptome of enriched activated sludge microbial communities from anaerobic digest
+PRJNA1224513	14	36671013	74593620	2017-04-23	2017-05-26	collection_date	text	South Korea: Gwangju	Korean Wastewater Treatment Plants Virome Data
+PRJNA530884	6	25960644	27833887	2017-06-13	2017-06-15	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA;text	China:Nanjing	wastewater metatranscriptome Raw sequence reads
+PRJNA1236013	36	12510404	27734052	2017-07-15	2018-05-24	collection_date	source=METATRANSCRIPTOMIC;text	Switzerland: Lausanne	Biological phosphorus removal lab-scale aerobic granular sludge reactors fed with differen
+PRJNA743546	12	60356358	105614978	2017-07-17	2017-07-27	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA;text;text	USA: Altavista Wastewater Treatment Plant, Altavista, Virgina	Metagenomes and metatranscriptomes from polychlorinated biphenyl (PCB)-contaminated sedime
+PRJNA571457	1	91581986	91581986	2017-08-11	2017-08-11	collection_date	source=METATRANSCRIPTOMIC;text	Netherlands: Nijmegen, Gelderland	Metatranscriptome of activated sludge microbial communities from WWTP in Nijmegen, Gelderl
+PRJNA1341067	2	43139509	43139509	2017-08-24	2017-08-24	collection_date	source=METATRANSCRIPTOMIC;text	Germany: Geslau, Bavaria	Metatranscriptome of mesophilic digester sludge microbial communities from biogas plant in
+PRJNA863608	59	19858590	25437851	2017-10-10	2019-11-11	collection_date	text	China:Beijing	Virome analysis in the anaerobic digestion
+PRJNA475660	1	61247963	61247963	2017-11-13	2017-11-13	collection_date	source=METATRANSCRIPTOMIC	missing	CSTR Enriched anammox
+PRJNA1341414	2	59856930	59856930	2017-11-20	2017-11-20	collection_date	source=METATRANSCRIPTOMIC;text	Germany: Geslau, Bavaria	Metatranscriptome of mesophilic digester sludge microbial communities from biogas plant in
+PRJNA477223	2	39394237	39394237	2017-11-26	2017-11-26	collection_date	source=METATRANSCRIPTOMIC	China: Dalian	Microbial community diversity of Anammox reactor and AnammoxDeNOx process
+PRJNA884640	2	692526879	692526879	2017-12-13	2017-12-13	collection_date	source=METATRANSCRIPTOMIC;text;text	China: Hong Kong	Anammox-EGSB microbiome
+PRJNA1341236	2	44438568	44438568	2018-01-29	2018-01-29	collection_date	source=METATRANSCRIPTOMIC;text	Germany: Weichs, Bavaria	Metatranscriptome of mesophilic digester sludge microbial communities from biogas plant in
+PRJNA1343395	2	45095881	45095881	2018-02-22	2018-02-22	collection_date	source=METATRANSCRIPTOMIC;text	Germany: Weichs, Bavaria	Metatranscriptome of mesophilic digester sludge microbial communities from biogas plant in
+PRJNA1341294	2	77337062	77337062	2018-02-26	2018-02-26	collection_date	source=METATRANSCRIPTOMIC;text	Germany: Geslau, Bavaria	Metatranscriptome of mesophilic digester sludge microbial communities from biogas plant in
+PRJNA1342008	2	36526185	36526185	2018-03-21	2018-03-21	collection_date	source=METATRANSCRIPTOMIC;text	Germany: Weichs, Bavaria	Metatranscriptome of mesophilic digester sludge microbial communities from biogas plant in
+PRJNA1341611	2	89231008	89231008	2018-03-22	2018-03-22	collection_date	source=METATRANSCRIPTOMIC;text	Germany: Geslau, Bavaria	Metatranscriptome of mesophilic digester sludge microbial communities from biogas plant in
+PRJEB13233	36	21941872	165028613	2018-03-30	2018-03-30	first_public	source=METATRANSCRIPTOMIC;selection=Inverse rRNA selection;text	Switzerland	Studying the presence and selection of antibiotic resistance genes
+PRJEB13232	30	20004861	55917563	2018-03-30	2018-03-30	first_public	source=METATRANSCRIPTOMIC;selection=Inverse rRNA selection;text	Switzerland	Influence of biodiversity on the functionality of activated sludge communities
+PRJNA601861	9	40441792	44638147	2018-04-01	2018-04-01	collection_date	source=METATRANSCRIPTOMIC	China:NanJing	activated sludge metagenome Raw sequence reads
+PRJNA1341074	2	62420930	62420930	2018-04-05	2018-04-05	collection_date	source=METATRANSCRIPTOMIC;text	Germany: Geslau, Bavaria	Metatranscriptome of mesophilic digester sludge microbial communities from biogas plant in
+PRJNA1340984	2	43371993	43371993	2018-04-24	2018-04-24	collection_date	source=METATRANSCRIPTOMIC;text	Germany: Weichs, Bavaria	Metatranscriptome of mesophilic digester sludge microbial communities from biogas plant in
+PRJNA526440	4	169845376	176145467	2018-04-26	2018-04-26	collection_date	source=METATRANSCRIPTOMIC;text;text	Germany	Activated sludge and biofilm Metagenome
+PRJNA1341413	2	59651746	59651746	2018-05-15	2018-05-15	collection_date	source=METATRANSCRIPTOMIC;text	Germany: Geslau, Bavaria	Metatranscriptome of mesophilic digester sludge microbial communities from biogas plant in
+PRJNA1341845	2	36910123	36910123	2018-05-22	2018-05-22	collection_date	source=METATRANSCRIPTOMIC;text	Germany: Weichs, Bavaria	Metatranscriptome of mesophilic digester sludge microbial communities from biogas plant in
+PRJEB36638	38	38837110	57217062	2018-05-28	2018-05-28	collection_date	source=METATRANSCRIPTOMIC	Switzerland	Temperature modulates stress response in anammox reactors
+PRJNA1341502	2	72809648	72809648	2018-07-03	2018-07-03	collection_date	source=METATRANSCRIPTOMIC;text	Germany: Geslau, Bavaria	Metatranscriptome of mesophilic digester sludge microbial communities from biogas plant in
+PRJNA521641	3	11098523	11880310	2018-07-25	2018-07-25	collection_date	source=TRANSCRIPTOMIC	missing	Denitrification
+PRJNA1340983	2	27854331	27854331	2018-08-21	2018-08-21	collection_date	source=METATRANSCRIPTOMIC;text	Germany: Geslau, Bavaria	Metatranscriptome of mesophilic digester sludge microbial communities from biogas plant in
+PRJNA428383	4	43677870	49937696	2018-08-22	2018-08-22	first_public	source=METATRANSCRIPTOMIC	USA: California	Metagenomic Sequencing of a Groundwater Replenishment System in Orange County, CA
+PRJNA1343295	2	45610118	45610118	2018-09-13	2018-09-13	collection_date	source=METATRANSCRIPTOMIC;text	Germany: Geslau, Bavaria	Metatranscriptome of mesophilic digester sludge microbial communities from biogas plant in
+PRJNA552555	6	25277466	25899056	2018-10-01	2018-10-01	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA	China: Zhaoqing	pig farm wastewater Raw sequence reads
+PRJNA1196808	4	35203502	41850327	2018-10-05	2019-06-11	collection_date	text		From sewage to genomes: expanding our understanding of the urban and semi- urban municipal
+PRJNA535370	2	43548077	43548077	2018-10-18	2018-10-18	collection_date	text	China:Beijing	Anammox community cultured under different nitrogen load Genome sequencing and assembly
+PRJNA825080	2	49430612	49430612	2018-10-20	2018-10-20	collection_date	source=METATRANSCRIPTOMIC;text	China:Shanghai	sludge transcriptome
+PRJNA1341612	2	40450373	40450373	2018-10-25	2018-10-25	collection_date	source=METATRANSCRIPTOMIC;text	Germany: Weichs, Bavaria	Metatranscriptome of mesophilic digester sludge microbial communities from biogas plant in
+PRJNA503492	6	67685731	88265507	2018-11-10	2018-11-10	first_public	source=METATRANSCRIPTOMIC	missing	Con & AgNPs microbial community in 2017-3
+PRJNA526679	3	27106470	28319204	2018-12-09	2018-12-13	collection_date	text	Israel: Tel Aviv	Israel Pilot-Scale Hospital Wastewater Treatment System Raw sequence reads
+PRJEB25996	6	20420342	21585505	2019-02-08	2019-02-08	first_public	source=METATRANSCRIPTOMIC;selection=cDNA;text	Brazil	Comparative metatranscriptomic analysis of anaerobic digesters treating anionic surfactant
+PRJNA1011033	15	54024259	64664026	2019-03-06	2019-08-09	collection_date	source=METATRANSCRIPTOMIC	China:Guangdong	anammox under nitrite stress Raw sequence reads
+PRJNA849246	3	71853075	146632906	2019-03-11	2021-05-26	collection_date	source=METATRANSCRIPTOMIC;text;text	Germany:Bremen	Metagenomes and metatranscriptomes of a nitric oxide-reducing enrichment culture
+PRJNA1029559	2	6550220	6550220	2019-03-26	2019-05-14	collection_date	text	Spain:Alicante	Metagenomic water samples of Alicante city (Spain)
+PRJNA1246641	1	3413866	3413866	2019-04-01	2019-04-01	collection_date	text	Portugal: Lisbon	Wastewater metavirome
+PRJNA656595	1	38098335	38098335	2019-08-21	2019-08-21	collection_date	source=METATRANSCRIPTOMIC;text	China:guangdong	Metatranscriptomes of aerobic sludge taken from wastewater treatment plants
+PRJNA624319	17	20333657	30046999	2019-09-18	2019-09-18	collection_date	source=METATRANSCRIPTOMIC	India	Global Meta-Omics Survey of Microbiomes in Fecal Sludge
+PRJNA797516	12	26666514	31686174	2019-10-01	2019-10-01	collection_date	source=METATRANSCRIPTOMIC	China:NanJing	Partial denitrification and anammox across different temperatures Raw sequence reads
+PRJNA656416	2	41877509	41877509	2019-10-10	2019-10-10	collection_date	source=METATRANSCRIPTOMIC	China: Shanghai	Sludge metagenome
+PRJNA989758	4	62519699	106301356	2019-10-20	2019-11-20	collection_date	source=METATRANSCRIPTOMIC	Australia: Brisbane	Enrichment of anaerobic ethane and butane oxidation microorganisms
+PRJNA984423	1	38362793	38362793	2019-10-20	2019-10-20	collection_date	source=METATRANSCRIPTOMIC	Australia: Brisbane	Microbial nitrate-dependent anaerobic propane and butane oxidation coupled to anaerobic am
+PRJNA1046284	26	16460105	25787391	2019-11-20	2020-04-14	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA;text	Denmark: Bjergmarken WWTP, Roskilde	MBBR Wasterwater transcriptomes
+PRJNA670053	6	44802092	50846393	2019-11-30	2019-11-30	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA;text	China: Daqing	consortia metatranscriptome
+PRJNA1029899	6	41754557	67212737	2020-01-28	2020-02-19	collection_date	text	Spain:Alicante	input and output water from a WWTP in Alicante: prokaryotic and viral fractions
+PRJNA974210	9	41532859	53876014	2020-03-19	2020-03-19	collection_date	source=METATRANSCRIPTOMIC;text	China:Hong Kong	Exhaustive understanding of RBC microbiomes
+PRJNA1028167	1	16492391	16492391	2020-04-04	2020-04-04	collection_date	source=TRANSCRIPTOMIC	China	Motility Behavior and Physiological Response Mechanisms of Aerobic Denitrifier, Enterobact
+PRJNA1421147	120	14152591	61551522	2020-04-19	2025-03-16	collection_date	text	Finland:Turku	MiWaGen: Twist-enriched Wastewater Virome from Finland 2020-21 and 2024-25
+PRJNA729801	477	11435742	88897609	2020-04-21	2021-08-18	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA;text;source=METATRANSCRIPTOMIC;text	USA: California	Metatranscriptomic sequencing of Southern California wastewater
+PRJNA789121	2	43960834	43960834	2020-04-27	2020-10-19	collection_date	source=METATRANSCRIPTOMIC;text	South Korea:Daejeon	Identification of N2O reducers with extremely high affinity in activate sludge wastewater 
+PRJNA661613	7	41207484	48462833	2020-06-30	2020-07-01	collection_date	source=METATRANSCRIPTOMIC;text	USA: California	California sewage metatranscriptomes enriched for respiratory viruses
+PRJNA941081	86	36944394	64982013	2020-07-29	2020-09-18	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA;text;text	South Korea: Gyeonggi Province	Microbial and Viral communities in wastewater treatment plants
+PRJNA682778	1	21067487	21067487	2020-08-15	2020-08-15	collection_date	source=TRANSCRIPTOMIC	China:Haikou	Free-living anammox Metagenome
+PRJNA1103965	9	23063789	27961705	2020-08-20	2020-10-21	collection_date	source=METATRANSCRIPTOMIC;text	China	metatranscriptomics sequencing of municipal sludge AD
+PRJNA946141	1245	31063745	1017122334	2020-09-30	2024-10-05	collection_date;first_public	source=METATRANSCRIPTOMIC	USA: Miami Dade County	South Florida - Rapid Acceleration of Diagnostics: Development and Proof-of-Concept Implem
+PRJNA799261	12	12716580	18791863	2020-10-01	2021-09-01	collection_date	source=TRANSCRIPTOMIC	China	Synergistic effect of sulfidated nanoscale zerovalent iron in donor and recipient bacteria
+PRJNA671818	4	50134373	57145957	2020-10-20	2020-10-26	collection_date	source=METATRANSCRIPTOMIC	China:Shanghai	A single-stage partial nitrification, anammox and denitratation (SPNADA) process for treat
+PRJNA902851	3	53215460	54082164	2020-11-12	2020-11-16	collection_date	source=METATRANSCRIPTOMIC	China: Hangzhou	anammox sludge sequencing
+PRJNA827939	9	24518136	52441015	2020-11-24	2020-11-24	collection_date	source=METATRANSCRIPTOMIC	missing	Efficient treatment of phenol wastewater by co-culture of Chlorella vulgaris and Candida t
+PRJNA579484	2	8863499	8863499	2020-11-25	2020-11-25	first_public	text	Germany	Microbial diversity (16S rRNA gene) at different stages of a wastewater treatment plant in
+PRJNA791813	11	39790489	42618132	2020-11-30	2021-02-12	collection_date	source=TRANSCRIPTOMIC;text	China: Tianjin	GAOs model transcriptome sequencing
+PRJNA853368	10	95032202	109423341	2020-12-19	2020-12-24	collection_date	text	USA: Ann Arbor, MI	Wastewater Influent and Secondary Effluent Viral Metagenomes
+PRJNA950131	7	32300938	35475059	2020-12-23	2021-08-01	collection_date	source=METATRANSCRIPTOMIC;text	China:ShenZhen	Successional sulfadiazine exposure on biofilm in moving bed biofilm reactor (Metatranscrip
+PRJNA874458	4	58924763	65089885	2021-01-15	2021-01-18	collection_date	source=TRANSCRIPTOMIC;text	China	Metatranscriptome revealed the effectiveness and safety of novel natural ammoxidation inhi
+PRJNA792438	9	24591820	33428453	2021-01-25	2021-01-25	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA;text	China:Changsha	pyrite & AQDS Transcriptome
+PRJDB38115	581	13947611	47810487	2021-01-29	2024-12-31	collection_date	source=VIRAL RNA	missing: data agreement established pre-2023	Environmental Genome of municipal sewage in Shanghai (PRJCA012341)
+PRJNA1019091	42	21932510	29360150	2021-03-01	2021-03-10	collection_date	source=METATRANSCRIPTOMIC	Germany	Aquaflow Experiment 2021 with mesocosms receiving treated wastewater
+PRJNA1152770	9	23922468	26935337	2021-03-10	2021-03-10	collection_date	source=METATRANSCRIPTOMIC	missing	Biogenic amorphous FeOOH activated extra intracellular electron flow pathways for accelera
+PRJNA822532	10	23453355	27759826	2021-05-10	2021-05-19	collection_date	text	missing	RNA-sequencing of tissues in AA-fed mice
+PRJNA1152486	15	23498424	26403270	2021-05-30	2022-02-25	collection_date	source=METATRANSCRIPTOMIC	China:Chongqing	Microbial community in wastewater treatment plant
+PRJDB11764	3	21891528	22040758	2021-06-09	2021-06-09	first_public	source=METATRANSCRIPTOMIC	Japan	Ecogenomics reveals microbial metabolic networks in a psychrophilic methanogenic bioreacto
+PRJDB17922	6	27156647	31271897	2021-06-10	2021-06-10	collection_date	source=METATRANSCRIPTOMIC;text	Japan:Tokyo, Koganei, The sludge was collected in lab-scale bioreactor	Metatranscriptomics of microaerophilic activated sludge for retaining ammonia from high-st
+PRJNA821050	12	30851054	36056727	2021-06-22	2021-06-22	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA	China:Changsha	TN removal Raw sequence reads
+PRJNA1012813	5	98973864	123453539	2021-07-20	2021-12-01	collection_date	source=METATRANSCRIPTOMIC	China	Pig farm wastewater Metagenome
+PRJEB80470	3065	8532332	161652308	2021-08-08	2024-09-25	collection_date;first_public	text	USA;USA:CA: San Diego	Return to Learn wastewater metatranscriptomics
+PRJNA1169742	1	25336644	25336644	2021-08-20	2021-08-20	collection_date	selection=cDNA	China: Chongqing	metagenome of AME-SND
+PRJNA878919	5	22626181	23335634	2021-08-30	2021-08-30	collection_date	source=METATRANSCRIPTOMIC;text;text	China: Harbin	sludge metagnome and metatranscriptome
+PRJNA1025897	36	52077583	71997217	2021-09-11	2021-09-11	collection_date	source=METATRANSCRIPTOMIC	missing	oxygen anammox cefalexin
+PRJNA767800	4	13308437	13423674	2021-09-20	2021-10-25	collection_date	source=VIRAL RNA		GenomeTrakr wastewater project: protocol pilot exercise
+PRJNA1025917	8	63120336	67710626	2021-10-01	2021-10-01	collection_date	source=TRANSCRIPTOMIC;text		SMX_metatranscriptome
+PRJNA900728	19	40604747	49758105	2021-10-01	2022-06-10	collection_date	source=METATRANSCRIPTOMIC;text;text	China: Beijing, Haidian	Metagenomic and metatranscriptomic sequencing and assembly of Photogranules
+PRJNA628882	1	31911427	31911427	2021-10-02	2021-10-02	first_public	source=TRANSCRIPTOMIC	China	DMF reactor
+PRJNA1046271	36	20460577	44545800	2021-10-08	2021-10-08	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA_randomPriming;text	China: Shanghai	Metatranscriptomic data of sludges in A/A/O units of 12 WWTPs
+PRJEB67571	129	185998918	841998858	2021-10-26	2021-11-04	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA;text	Denmark	Aalborg West wastewater treatment plant metagenome sequencing, assembly and metatranscript
+PRJNA901366	12	39903506	47323037	2021-11-01	2022-02-01	collection_date	source=METATRANSCRIPTOMIC	China:Guangdong	bioreactor sludge in trace fluoroquinolones Raw sequence reads
+PRJNA1020623	1	92561375	92561375	2021-11-15	2021-11-15	collection_date	selection=cDNA	Australia: Brisbane	A novel acidophilic nitrite oxidizing bacterium partnered with ammonia-oxidizing archaea
+PRJNA1147895	8	36232556	40006102	2021-11-18	2021-11-25	collection_date	source=TRANSCRIPTOMIC;selection=cDNA;text	missing	sludge metatranscriptome Raw sequence reads
+PRJNA1001132	9	24178127	35619599	2021-11-24	2021-12-14	collection_date	source=METATRANSCRIPTOMIC;text;text	China: Harbin	sludge16S rRNA, metagnome and metatranscriptome
+PRJNA1028643	3	21121777	25109749	2021-11-29	2021-12-14	collection_date	text	China: Harbin	DAMO sludge16S rRNA, metagnome and metatranscriptome
+PRJNA1219246	4	24392656	59838326	2021-12-20	2021-12-20	collection_date	source=METATRANSCRIPTOMIC;text;text	China: Harbin	16S, metagenomic and metatranscriptomic sequencing of DAMO reactors
+PRJNA999947	6	23665709	24199692	2021-12-28	2021-12-28	collection_date	source=METATRANSCRIPTOMIC;text	China:nanjing	Analysis of the full-length transcriptome and study on the mechanism of larval pupation in
+PRJNA1200214	2	21860843	21860843	2021-12-31	2021-12-31	collection_date	text	missing	Metatranscriptome of anaerobic digestion bioaugmented with QK5
+PRJNA891449	1	22188987	22188987	2022-01-08	2022-01-08	collection_date	source=TRANSCRIPTOMIC	China: Beijing	metagenomics data of aerobic granular sludge
+PRJNA886745	14	3880552	6364895	2022-02-03	2022-07-18	collection_date	source=VIRAL RNA	USA: Nevada, Las Vegas	Severe acute respiratory syndrome coronavirus 2 Genome sequencing
+PRJNA1253297	4	54661165	55037136	2022-02-07	2025-04-27	collection_date;first_public	source=METATRANSCRIPTOMIC	China:Beijing	Dual Anammox-Based Nitrogen Removal Pathways Enhance a A2/O System Treating Low-COD/N Muni
+PRJNA799876	12	38928130	47213101	2022-02-11	2022-02-11	first_public	source=METATRANSCRIPTOMIC	China: Guangzhou	Acclimated activated sludge that degraded SMX as sole carbon source
+PRJNA1142195	2	44853891	44853891	2022-02-17	2022-02-17	collection_date	source=METATRANSCRIPTOMIC;text;text	China: Shaanxi	Sludge metagenome and metatranscriptome
+PRJNA1126861	7	33396254	40863995	2022-02-28	2022-04-19	collection_date	source=METATRANSCRIPTOMIC;text;text	China: Harbin	N2O and nitrite metatranscriptome
+PRJNA801677	2246	13851321	91648586	2022-03-23	2022-10-05	collection_date	source=METATRANSCRIPTOMIC	USA: Montana	Biobot Analytics Wastewater Monitoring
+PRJNA759764	6	45199714	48553599	2022-04-06	2022-04-06	first_public	source=METATRANSCRIPTOMIC;selection=cDNA	China:Zhejiang	metagenome of a 1,4-dioxane-degrading microbial community
+PRJNA984968	7	16721254	18196687	2022-04-21	2022-04-21	collection_date	source=METATRANSCRIPTOMIC;text	China:GuangDong	microlunatus carbon source utilization experiment
+PRJNA896645	2	10385108	10385108	2022-04-24	2022-06-12	collection_date	source=VIRAL RNA	USA: Ohio	US National Wastewater Surveillance System (NWSS) wastewater project: Ohio Department of H
+PRJNA1010687	4	58174174	58993212	2022-04-26	2022-05-08	collection_date	source=METATRANSCRIPTOMIC	missing	Salt-Tolerant Marine Sludge for Stable and Efficient High-Saline Wastewater Treatment
+PRJNA1039320	2	25411004	25411004	2022-04-30	2022-06-30	collection_date	source=METATRANSCRIPTOMIC	China:Xi 'an	WYX's sample
+PRJNA995884	48	55981008	63107608	2022-05-01	2022-06-17	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA	China:Beijing	Wastewater biofilm raw data
+PRJNA954540	1	23732956	23732956	2022-05-01	2022-05-01	collection_date	text	missing	n-D/A granular sludge Metagenomic and Metatranscriptomic raw data
+PRJNA966185	824	15196721	75815892	2022-05-04	2025-01-07	collection_date	text	USA: El Paso, TX	Comprehensive Wastewater Sequencing Reveals Community and Variant Dynamics of the Collecti
+PRJNA833727	48	44427693	97787087	2022-05-05	2022-05-05	first_public	source=METATRANSCRIPTOMIC;text;text	China: Shenzhen	Metagenomic and metatranscriptomic sequencing of consortium CL
+PRJNA984758	9	44911251	53321284	2022-05-30	2022-05-30	collection_date	source=METATRANSCRIPTOMIC	China	From mechanism to application: decrypting light-regulated denitrifying microbiome through 
+PRJNA928855	6	24756341	25658579	2022-06-15	2022-06-15	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA	China: Guangzhou, Guangdong	Comammox bacteria in a weakly acidic continuous flow membrane (CFM) reactor
+PRJNA989260	1	7279182	7279182	2022-07-06	2022-07-06	collection_date	source=VIRAL RNA	USA: Illinois	US National Wastewater Surveillance System (NWSS) wastewater project: Illinois Wastewater 
+PRJNA1186535	3	25246552	28749411	2022-08-12	2022-08-12	collection_date	source=METATRANSCRIPTOMIC;text	missing	The effects of pH on the metatranscriptomic genes involved in WAS-derived MCFAs production
+PRJNA1163518	3	43365517	44106003	2022-08-28	2022-08-28	collection_date	source=METATRANSCRIPTOMIC	China:Heilongjiang,Harbin	Denitrifying anaerobic methane oxidation enriched culture metagenome
+PRJDB17783	6	35379915	40968592	2022-09-01	2022-09-01	collection_date	source=METATRANSCRIPTOMIC;selection=Inverse rRNA	Japan:Ishikawa	Gene expression of bacterial consortium during PFOS biotransformation
+PRJNA1176303	3	25511180	25518756	2022-09-07	2022-09-07	collection_date	source=METATRANSCRIPTOMIC;text	missing	The effects of temperature on the metatranscriptomic genes involved in WAS-derived MCFAs p
+PRJNA1132512	3	55282054	57488350	2022-09-08	2022-09-08	collection_date	source=METATRANSCRIPTOMIC	missing	Comparison of the differences and mechanisms of anammox bacteria in-situ self-enrichment u
+PRJNA1243864	31	25684488	30988440	2022-09-15	2023-03-21	collection_date	source=METATRANSCRIPTOMIC	missing	MT data of field sample in Yangze
+PRJNA991294	4	82153838	93836858	2022-09-27	2022-09-27	collection_date	source=METATRANSCRIPTOMIC	China: Zhejiang,Jinaye district	Sewage sludge Raw sequence reads
+PRJNA1177640	11	41456705	53828979	2022-09-30	2022-10-28	collection_date	source=METATRANSCRIPTOMIC	China:Wuhan	Resistance of microbial community in activated sludge to nano-Ag stress through regulation
+PRJNA1144857	24	17150143	22778875	2022-10-11	2023-03-29	collection_date	source=METATRANSCRIPTOMIC;text	Switzerland: Thun	Metatranscriptomes taken during aerobic granule formation
+PRJNA1147936	18	44445371	54895172	2022-10-30	2022-10-30	collection_date	source=METATRANSCRIPTOMIC	missing	transformation process
+PRJNA1093580	3	34994471	43554819	2022-10-30	2022-10-30	collection_date	source=METATRANSCRIPTOMIC	China: beijing	unclassified sequences Genome sequencing and assembly
+PRJEB85787	54	8907120	41068320	2022-11-06	2024-02-29	collection_date	source=VIRAL RNA	Switzerland	Sequencing RSV virus from wastewater
+PRJNA1236888	12	48866430	58133501	2022-12-20	2022-12-20	collection_date	source=METATRANSCRIPTOMIC	missing	Combining high electron transfer efficiency and reductibility in nZVI with coatings of EPS
+PRJNA1165503	6	14602071	15699633	2022-12-25	2022-12-25	collection_date	source=TRANSCRIPTOMIC	missing	Developing physiologically compatible electron donors for reductive dechlorination by Shew
+PRJNA985870	9	22458346	22635193	2022-12-29	2022-12-29	collection_date	source=TRANSCRIPTOMIC	China	sludge sequencing
+PRJNA861902	1	35704069	35704069	2023-01-11	2023-01-11	first_public	text	China:Shenzhen	Metavirome sequencing to evaluate the diversity of phages in human feces and wastewater
+PRJNA1241220	2	68548379	68548379	2023-01-18	2023-05-20	collection_date	source=TRANSCRIPTOMIC	China: Changchun	Influent COD/N regulatemicrobial intercellular communication influencing partial nitrifica
+PRJNA1077074	1	15046895	15046895	2023-01-27	2023-01-27	collection_date	source=METATRANSCRIPTOMIC	China:Haikou	activesludge Raw sequence reads
+PRJNA1181286	11	4677733	5834327	2023-01-29	2023-01-29	collection_date	source=TRANSCRIPTOMIC	South Korea	Anammox sludge Raw sequence reads
+PRJNA941021	9	66054989	84893810	2023-03-11	2023-03-11	first_public	source=TRANSCRIPTOMIC	China: shanghai	C1,C2,C3,P5-1,P5-2,P5-3,H2-1,H2-2,H2-3 Raw sequence reads
+PRJNA1079239	2	62583398	62583398	2023-03-25	2023-03-25	collection_date	source=METATRANSCRIPTOMIC;text	China:Beijing	formate acetate
+PRJNA996570	6	23619701	23830766	2023-04-09	2023-04-09	collection_date	source=METATRANSCRIPTOMIC	China:Shanghai	Enhancing proton-coupled electron transfer drives efficient biomethane generation from mul
+PRJNA1290707	4	29664200	33375123	2023-04-10	2023-10-18	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA;text	South Korea	Metatranscriptomic profiling of seasonal and crop-specific microbial and viral communities
+PRJNA948850	116	11796836	27610462	2023-04-14	2023-04-14	first_public	source=TRANSCRIPTOMIC;selection=cDNA	Germany: Berlin	Pathogen dynamics and discovery of novel viruses and enzymes by deep nucleic acid sequenci
+PRJNA1185030	2	34457671	34457671	2023-04-28	2023-04-28	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA;text	China: changsha	sludge metatranscriptomics
+PRJNA1293420	9	45696995	55825799	2023-04-29	2023-06-03	collection_date	source=METATRANSCRIPTOMIC;text	China: SBR reactor (Qingdao)	Sludge metatranscriptome
+PRJNA1229137	5	37337605	38869936	2023-05-20	2023-05-24	collection_date	text		Viral metagenome
+PRJDB36680	13	36921764	49491797	2023-05-25	2024-01-09	collection_date	source=METATRANSCRIPTOMIC	missing: data agreement established pre-2023	wastewater sludge microbiome (PRJCA039809)
+PRJNA1011215	3	47998489	53372436	2023-06-02	2023-06-02	collection_date	source=METATRANSCRIPTOMIC;text	China:Qingdao	Metatranscriptomic analysis of coastal sediments.
+PRJEB80330	108	53428696	389897714	2023-06-15	2023-09-12	collection_date	source=METATRANSCRIPTOMIC	Saudi Arabia	Establishing a national defense strategy through epidemiology wastewater surveillance at t
+PRJNA1145449	6	79372193	82077143	2023-07-01	2023-07-01	collection_date	source=METATRANSCRIPTOMIC	USA	Genome Centric Multiomics enabled discovery of metabolic versatility and functionalities o
+PRJNA1293677	5	54382202	60076714	2023-07-10	2023-09-19	collection_date	source=METATRANSCRIPTOMIC	China: Changchun	Anammox-MBfR-NO
+PRJNA1126892	21	24768897	27455644	2023-07-15	2023-07-29	collection_date	source=METATRANSCRIPTOMIC;text	China:Chengdu	Temporal changes of macrotranscriptome of microbial community in anode of microbial fuel c
+PRJNA1050755	2	68214781	68214781	2023-08-01	2023-08-01	collection_date	source=METATRANSCRIPTOMIC;text	China: Guangdong	swine wastewater Metagenome
+PRJNA1002968	1	23952355	23952355	2023-08-09	2023-08-09	first_public	source=METATRANSCRIPTOMIC	China:NanJing	Simultaneous anammox and denitrification (SAD) Metagenome
+PRJNA1346433	3	40034999	40053284	2023-08-15	2023-08-15	collection_date	source=METATRANSCRIPTOMIC;text	China: The laboratory in Beijing	Macrotranscriptome data of anaerobic ammonium oxidation granular sludge
+PRJNA1085860	6	35916934	38212946	2023-08-15	2023-08-15	collection_date	source=METATRANSCRIPTOMIC	China:Qingdao	A synthetic biofilm community for efficient phosphorus removal from high-salinity wastewat
+PRJNA1186576	3	41573755	44642447	2023-08-16	2023-08-16	collection_date	source=METATRANSCRIPTOMIC	China	Feedback inhibition derived from hydrogen sulfide in microbial sulfidogenic process via el
+PRJNA1243471	42	23407165	25914014	2023-08-19	2023-08-24	collection_date	source=METATRANSCRIPTOMIC	missing	MT data of high and low temperature
+PRJNA1480700	4	26597765	29730535	2023-08-22	2023-08-27	collection_date	source=METATRANSCRIPTOMIC	missing	MT data of temperature control groups
+PRJNA863858	9	28138998	31662320	2023-08-27	2023-08-27	first_public	text		Eukaryotic cognate transcriptome sequencing
+PRJNA1044550	4	33482985	37778723	2023-08-31	2023-08-31	collection_date	source=TRANSCRIPTOMIC	China	sludge sequencing
+PRJNA1072835	2	42227914	42227914	2023-09-04	2023-11-24	collection_date	source=METATRANSCRIPTOMIC;text	China: Chongqing	environmental metatranscriptome
+PRJNA1098580	2	67433049	67433049	2023-09-05	2023-09-05	collection_date	source=METATRANSCRIPTOMIC	China: Xi'an	Sequencing under different PVC microplastic levels
+PRJNA1012503	3	26465191	39084328	2023-09-09	2023-09-09	first_public	source=TRANSCRIPTOMIC;text	China: zhejiang	Macrotranscriptome data for aerobic granular sludge Raw sequence reads
+PRJNA1211336	18	22864021	27102191	2023-09-13	2024-01-19	collection_date	text	China: SHANGHAI	Metatranscriptome of anaerobic digestion bioaugmented with HK1 and PAC
+PRJNA1007408	6	36776712	38414859	2023-09-24	2023-09-24	first_public	selection=cDNA	China:Harbin	Metagenomics sequencing
+PRJDB13386	5	19455462	26915555	2023-09-24	2023-09-24	first_public	source=METATRANSCRIPTOMIC	Japan	Cultivation of ultra-small microorganisms
+PRJNA1265293	46	22109977	24535946	2023-09-24	2023-10-02	collection_date	source=METATRANSCRIPTOMIC	missing	MT data of dilution
+PRJNA1145323	16	53956195	70054568	2023-10-01	2024-01-30	collection_date	source=METATRANSCRIPTOMIC	Spain:Granada,Granada	Characterizacion of the anode microbiome of a microbial fuel cell treating real wastewater
+PRJNA1030159	19	71646953	97941323	2023-10-24	2023-10-24	first_public	source=METATRANSCRIPTOMIC;text;text	China: Shenzhen	Metagenomic and metatranscriptomic datasets of TAP-degrading consortium
+PRJNA1260489	5	47350842	64951611	2023-10-28	2024-01-11	collection_date	selection=cDNA	China	The study of algal-bacterial symbiosis
+PRJNA1131110	2	37339824	37339824	2023-10-30	2023-10-30	collection_date	source=METATRANSCRIPTOMIC	China:Chengdu	Enhanced Extracellular Electron Transfer in Magnetite Mediated Anaerobic Methane Oxidation
+PRJNA1308596	6	38482622	45369319	2023-11-01	2024-10-20	collection_date	source=METATRANSCRIPTOMIC;text	missing	activated sludge metatranscriptome
+PRJNA938474	20	5077777	6877207	2023-11-01	2023-11-09	collection_date	source=VIRAL RNA;selection=cDNA	USA: Oregon	OHA/OSU wastewater project
+PRJNA1237603	2	60248834	60248834	2023-11-09	2023-11-09	collection_date	source=METATRANSCRIPTOMIC	missing	Response of nitrifying bacteria to sulfide exposure
+PRJNA1336151	24	37286134	43679382	2023-11-09	2024-10-28	collection_date	source=TRANSCRIPTOMIC	China:Hangzhou	Wastewater microbiome Raw sequence reads
+PRJNA1288398	3	23106011	24144321	2023-11-11	2024-11-18	collection_date	source=TRANSCRIPTOMIC	China: Guangzhou	mainstream anammox hongzhuanlu
+PRJNA1039473	6	131083104	153627476	2023-11-19	2023-11-19	first_public	source=METATRANSCRIPTOMIC		Study the impact of sewage pollution on phages and viruses in urban rivers
+PRJNA1232215	44	35910531	42530547	2023-11-20	2024-02-23	collection_date	source=METATRANSCRIPTOMIC;text;text	USA	Full-Scale EBPR DNA and RNA Sequencing
+PRJNA1475049	48	42358350	68139934	2023-11-22	2023-11-22	collection_date	source=TRANSCRIPTOMIC;selection=cDNA;text	Netherlands: Utrecht	Metatranscriptome from Aerobic Granular Sludge sampled at different reactor depths
+PRJNA1167668	12	50637646	58392585	2023-12-01	2026-03-04	collection_date;first_public	source=METATRANSCRIPTOMIC	China: Beijing, Haidian	Activated Sludge Microbiome under Light and Iron Treatments
+PRJNA1198001	40	1084501812	1417628627	2023-12-03	2024-04-14	collection_date	selection=cDNA;text	USA: California	Metatranscriptomic sequencing of Los Angeles Treatment Plant Wastewater
+PRJNA1134406	2	44704151	44704151	2023-12-03	2023-12-21	collection_date	source=METATRANSCRIPTOMIC;text	China: Beijing	Macro transcriptome and 16S rDNA Sequencing data
+PRJNA897252	9	35449601	55734645	2023-12-07	2023-12-07	first_public	source=METATRANSCRIPTOMIC	China: Guangzhou	Tris (2-butoxyethyl) phosphate-degrading culture Metagenome
+PRJNA1143144	8	23420206	23693359	2023-12-12	2023-12-26	collection_date	source=METATRANSCRIPTOMIC	China	ntracellular and extracellular macrogenic data
+PRJNA1079496	5	69484659	138520097	2023-12-15	2023-12-15	collection_date	source=METATRANSCRIPTOMIC;text	China: tianjin	Macrotranscriptome analysis of bioelectrochemical flora in wastewater contaminated by micr
+PRJEB70898	5	60549646	88803386	2023-12-15	2023-12-15	first_public	source=METATRANSCRIPTOMIC;text	Portugal	Bioreactor sludge metagenome
+PRJNA1166440	3	50355286	53076654	2023-12-18	2023-12-18	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA;text	China: Chongqing	Effluent organic matters facilitate anaerobic methane oxidation coupled to nitrous oxide r
+PRJNA1055674	8	14751339	23731293	2023-12-31	2023-12-31	first_public	source=METATRANSCRIPTOMIC	missing	Isolation and identification of vesicles-cloaked virus clusters in wastewater
+PRJNA856462	24	67496089	315910928	2024-01-01	2024-01-01	first_public	source=METATRANSCRIPTOMIC;selection=cDNA;text	China: Shanghai	The metatranscriptomics of carboxydotrophs
+PRJNA1225462	6	43839503	47890387	2024-01-01	2024-01-01	collection_date	source=METATRANSCRIPTOMIC	China: ChangSha	Feasibility of nitrite-absent anodic anaerobic ammonium oxidation by anammox granules for 
+PRJNA1247874	2032	843317633	2458259802	2024-01-02	2026-09-30	collection_date	selection=cDNA	USA: Missouri, Columbia	Metagenomic sequencing data from wastewater samples (CASPER)
+PRJNA1173498	4	29481447	31862757	2024-01-03	2024-01-03	collection_date	source=METATRANSCRIPTOMIC	missing	Tailoring microbial redox with alternating current for efficient mineralization of refract
+PRJNA1093370	12	30337916	33511149	2024-01-09	2024-01-09	collection_date	source=METATRANSCRIPTOMIC;text	China: Shanghai	Metatranscriptome of bioaugmented semi-continuous anaerobic digestion
+PRJNA1282962	3	38187837	38945864	2024-01-15	2024-01-15	collection_date	source=METATRANSCRIPTOMIC;text	China: Guangzhou	Metatranscriptome of activated sludge samples collected at 9% salinity
+PRJDB43423	4	45140103	78149658	2024-01-20	2024-01-20	collection_date	source=TRANSCRIPTOMIC	missing: data agreement established pre-2023	PHA fermentation of mixed microbial consortia (PRJCA025934)
+PRJNA1171563	4	23055956	28692820	2024-01-23	2024-01-23	collection_date	source=METATRANSCRIPTOMIC	missing	Mechanisms of low-dose nZVI induced microbial community evolution: extracellular secretion
+PRJNA1237993	8	44978904	68073661	2024-02-15	2024-02-20	collection_date	source=METATRANSCRIPTOMIC;text	missing	Metatranscriptome raw data from extremely acid biological desulfurization system
+PRJNA1312788	5	41835275	68016116	2024-02-15	2024-02-20	collection_date	source=METATRANSCRIPTOMIC;text	missing	Raw data of metatranscriptomic sequencing
+PRJNA1065278	59	69813225	148347071	2024-02-25	2024-02-25	first_public	source=METATRANSCRIPTOMIC;selection=cDNA_randomPriming;text;text	China: Shenzhen	Virome in WWTPs in Guangdong Province
+PRJNA995177	4	61092163	67110032	2024-02-25	2024-02-25	first_public	source=METATRANSCRIPTOMIC;text	China: Chongqing	aerobic methane oxidation coupled with denitrification (AME-D) metatranscriptome
+PRJNA1346286	1	70971273	70971273	2024-03-06	2024-03-06	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA	China: Beijing	Environmental Bioinformatics in Carbon-Rich and Carbon-Poor Municipal Wastewater Treatment
+PRJNA1085517	14	33279102	129620657	2024-03-10	2025-08-03	first_public	source=METATRANSCRIPTOMIC;text;text	USA: Stanford	Metagenomic and metatranscriptomic sequences of biomass samples from a polit-scale SAF-MBR
+PRJNA1053868	2	55870197	55870197	2024-03-24	2024-03-24	first_public	source=METATRANSCRIPTOMIC;text;text	China: Guangzhou, Guangdong	Poultry slaughterhouse metagenomic and metatranscriptomic sequencing
+PRJEB114145	81	109738472	309846696	2024-04-04	2025-11-25	collection_date	text	France	Municipal wastewater treatment plants (WWTPs) for surveying microbial and viral dynamics
+PRJNA1294496	6	25505309	28701576	2024-04-24	2024-04-24	collection_date	source=TRANSCRIPTOMIC;selection=cDNA	China:jinzhong	Sulfoquinoxaline degrading functional bacteria
+PRJNA1322292	5	51672918	54098668	2024-04-25	2024-07-30	collection_date	selection=cDNA	USA: Houston	Defluorination enrichment from anaerobic digestion sludge
+PRJNA1050761	32	54249662	60431395	2024-04-28	2024-04-28	first_public	source=METATRANSCRIPTOMIC;selection=cDNA_randomPriming;text	USA:Virginia	Transcriptomics of IFAS Wastewater Treatment Facility
+PRJEB74464	20	15832072	23462982	2024-05-09	2024-08-29	first_public	source=METATRANSCRIPTOMIC	United Kingdom	Antimicrobial effects, and selection for AMR by non-antibiotic drugs on bacterial communit
+PRJNA1377145	3	22673631	24935041	2024-05-29	2024-11-29	collection_date	source=METATRANSCRIPTOMIC	missing	Metagenomic and Metatranscriptional Analysis of Sulfur-Autotrophic Denitrification Coupled
+PRJNA1117381	6	17279791	21811209	2024-06-02	2024-06-02	first_public	source=METATRANSCRIPTOMIC	China: Anhui	Enhanced degradation of sulfadimethoxine by consortium FY3 and its Multi-Omics analysis
+PRJNA1217938	21	39879389	55938957	2024-06-03	2024-06-03	collection_date	source=TRANSCRIPTOMIC	China:Tianjin	Microplastics enhance the denitrification of glycogen-accumulating organisms by regulating
+PRJNA1120465	4	4381642	4463243	2024-06-09	2024-06-09	first_public	text		CONSTRUCTION AND CHARACTERIZATION OF FUNCTIONAL GENOMIC, MULTIGENOMIC, AND METAGENOMIC DNA
+PRJNA1180912	1	34803981	34803981	2024-06-17	2024-06-17	collection_date	source=METATRANSCRIPTOMIC	China: Hangzhou	Synthetic 3A5MI-Degrading Microbiome
+PRJDB36967	7	33578673	54941533	2024-06-28	2024-06-28	collection_date	source=METATRANSCRIPTOMIC;text;text	missing: data agreement established pre-2023	The metagenome and metatranscriptome of an anammox bioreactor (PRJCA040911)
+PRJNA1309581	10	37137993	43384159	2024-07-01	2024-07-01	collection_date	source=TRANSCRIPTOMIC;selection=Inverse rRNA	China: Shanghai	Mixotrophic Nitrogen Removal in Low C/N Wastewater Using TBER
+PRJNA842493	1	3437559	3437559	2024-07-01	2024-07-01	collection_date	source=VIRAL RNA	USA: Texas, Houston	Wastewater sequencing using metagenomics and epicPCR
+PRJNA1221613	2	50195477	50195477	2024-07-22	2024-07-22	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA	China: changsha	Light assisted anaerobic digestion for the disposal of cadmium containing waste activated 
+PRJNA1152281	9	22279407	23192398	2024-07-22	2025-01-29	collection_date;first_public	source=METATRANSCRIPTOMIC	China: Changchun	Unveiling significant roles of phytohormone 6-benzylaminopurine in empowering Phaeodactylu
+PRJNA1244472	4	70976101	72746034	2024-07-30	2024-08-18	collection_date	source=METATRANSCRIPTOMIC	China: Xi'an	Sequence for membrane fouling
+PRJDB37467	8	60772047	73944449	2024-08-02	2024-09-30	collection_date	source=METATRANSCRIPTOMIC;text;text	missing: data agreement established pre-2023	The metagenome and metatranscriptome of an anammox reactor (PRJCA041179)
+PRJNA1293658	1	25123249	25123249	2024-08-30	2024-08-30	collection_date	source=TRANSCRIPTOMIC	China:Tianjin	Redox-active conductive carrier enables direct electron transfer in anaerobic biofilms
+PRJNA1313914	7	24952633	32240195	2024-09-02	2024-09-02	collection_date	source=METATRANSCRIPTOMIC;text;text	missing	Metagenomics and Metatranscriptomics
+PRJNA1052955	4	54948937	56234836	2024-09-11	2024-09-11	first_public	source=METATRANSCRIPTOMIC	Malaysia: Perak	Phenol degradation and polyhydroxybutyrate production by the bacterial community from the 
+PRJNA1162048	3	27261568	30104055	2024-09-17	2024-09-17	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA	China: chongqing	Quorum sensing mediated cross-feeding determines the impaired denitrification under micro(
+PRJDB36909	9	23345842	26394042	2024-09-18	2024-09-18	collection_date	source=METATRANSCRIPTOMIC;text	missing: data agreement established pre-2023	Metatranscriptomic analysis of ADC (PRJCA040690)
+PRJEB78461	6	99006188	107739502	2024-09-28	2024-09-28	first_public	source=METATRANSCRIPTOMIC;text	Portugal	Metatranscriptomics of butyrate-degrading methanogenic enrichment with activated carbon
+PRJNA1356822	9	23345842	26394042	2024-10-05	2024-10-05	collection_date	source=METATRANSCRIPTOMIC;text	missing	Metatranscriptomic analysis of ADC
+PRJNA1309183	6	25453300	27088053	2024-10-18	2024-10-23	collection_date	source=METATRANSCRIPTOMIC	China: Shanghai	nitrospira Genome sequencing and assembly
+PRJNA1249663	7	23163138	25788393	2024-11-11	2024-11-11	collection_date	source=METATRANSCRIPTOMIC	missing	The impact of quorum sensing signal molecule concentrations on the treatment performance a
+PRJNA1132546	21	53632685	72428475	2024-12-01	2024-12-01	first_public	source=METATRANSCRIPTOMIC;selection=cDNA_randomPriming;text	China: Shenzhen	Consortium LIN treating antibiotic production wastewater from activated sludge
+PRJNA989177	87	10588849	31055229	2024-12-11	2025-03-12	collection_date	source=VIRAL RNA	USA: California, San Francisco	CDC's Traveler-Based Genomic Surveillance Program
+PRJNA1279795	5	22903881	26025672	2024-12-11	2024-12-11	collection_date	source=TRANSCRIPTOMIC	China	Clarithromycin degradation mechanisms by a bacterial-algal consortium in a novel photobior
+PRJDB39268	3	42375556	43564358	2024-12-22	2025-04-13	collection_date	source=METATRANSCRIPTOMIC	missing: data agreement established pre-2023	Wastewater sludge capable of methane oxidation (PRJCA045492)
+PRJNA1309270	6	22043594	25608293	2024-12-26	2024-12-26	collection_date	source=TRANSCRIPTOMIC;selection=cDNA;text	China:Chishui	the Transcriptome of Adult Rhoptroceros cyatheae
+PRJNA1307245	10	23102059	27092875	2024-12-28	2025-05-30	collection_date	source=METATRANSCRIPTOMIC	China: Shanghai	S0-driven partial denitrification coupled with anammox - high-strength nitrogen removal
+PRJNA1424273	2	23896836	23896836	2024-12-30	2024-12-30	collection_date	source=METATRANSCRIPTOMIC	missing	bioreactor metagenome
+PRJNA1205527	1	10370135	10370135	2025-01-03	2025-01-03	first_public	text	China:guangzhou	Integrated physiological and transcriptomics analysis reveal the mechanism of rhamnolipid-
+PRJNA1291451	12	7928330	8977983	2025-01-04	2025-01-04	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA;text	China: Zhengzhou	Transcriptomic response of paracoccus denitrificans to perfluorooctanoic acid (PFOA) stres
+PRJNA1414509	12	35474869	40036273	2025-01-18	2025-01-18	collection_date	source=METATRANSCRIPTOMIC	China: shanghai	Hydrovoltaic Energy Harvesting from Sewage Sludge Induce Its Efficient Anaerobic Digestion
+PRJNA1472472	4	40636996	47545096	2025-02-15	2025-02-15	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA	China:Jiangxi,Nanchang	Synergistic improvement of biological hydrogen production from waste activated sludge by s
+PRJNA1256941	6	27717136	31879545	2025-02-25	2025-02-25	collection_date	source=METATRANSCRIPTOMIC;text	China: Dalian	anammox bacteria in EMBR Transcriptome
+PRJNA1437864	15	23416820	26373898	2025-03-09	2025-04-07	collection_date	source=METATRANSCRIPTOMIC;text	China:shanghai	Metatranscriptomic_Resource-Specific Maturation of Public Goods Supply Networks During Ana
+PRJNA1333603	4	45842665	46879909	2025-03-20	2025-05-29	collection_date	source=METATRANSCRIPTOMIC		Aerobic granular sludge
+PRJNA1335926	1	40810795	40810795	2025-03-30	2025-03-30	collection_date	source=METATRANSCRIPTOMIC	China	Synergistic enhancements in nitrogen removal and greenhouse gas reduction in a manganese-b
+PRJNA1452244	6	45104364	53889010	2025-04-18	2025-04-18	collection_date	source=METATRANSCRIPTOMIC	China: Beijing,Haidian	Turning motion into methane: electromagnetic induction in microbial aggregates enhances wa
+PRJNA1253908	4	45220333	46047025	2025-04-27	2025-04-27	first_public	source=METATRANSCRIPTOMIC;selection=cDNA		Enhancement of partial denitrification by nirS-deficient strain of Pseudomonas aeruginosa 
+PRJNA1088268	24	37091260	37091260	2025-04-27	2025-04-27	first_public	selection=cDNA	Hong Kong	Viruses in activated sludge
+PRJNA1156557	12	30386952	37280958	2025-05-04	2025-05-04	first_public	source=METATRANSCRIPTOMIC	Hong Kong: Stonecutters Island sewage treatment work	Comparative study of microbial functional repertoire and gene expression alterations under
+PRJNA1054024	8	35099276	37641989	2025-05-28	2025-05-28	first_public	source=METATRANSCRIPTOMIC;text;text	Ireland: Dublin	Genome-Resolved Metatranscriptomics Unveils Distinct Microbial Functionalities Across Aggr
+PRJNA1467839	4	169428247	170929438	2025-05-29	2026-01-04	collection_date	source=TRANSCRIPTOMIC	China:beijing	Partial Nitrification and Thiocyanate-Driven Denitrification activated sludge Genome seque
+PRJNA1454829	9	21720484	24087487	2025-06-16	2025-06-17	collection_date	source=METATRANSCRIPTOMIC;text	China: Shanghai	Metatranscriptomic analysis of biomass-retention states in sidestream partial nitritation 
+PRJNA1403249	12	43635040	47553000	2025-06-17	2025-06-17	collection_date	source=METATRANSCRIPTOMIC	missing	Metagenomic analysis of microbial community response to simulated domestic sewage input in
+PRJNA1482763	18	22113323	23874145	2025-06-20	2025-06-25	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA;text;text	China: Shanghai	Metagenomic and metatranscriptomic profiling of partial nitritation reactors under differe
+PRJNA1358973	6	7739062	9103177	2025-06-25	2025-06-30	collection_date	source=METATRANSCRIPTOMIC;text	missing	Multidimensional Analysis of the High-Temperature Response Mechanism in Acetobacter pasteu
+PRJNA1282049	36	14667399	42982385	2025-06-29	2025-06-29	first_public	source=METATRANSCRIPTOMIC	Hungary: Szeged	Functional resistomes in municipal wastewater treatment plant posing challenges to public 
+PRJNA1302027	12	22816513	25142738	2025-08-10	2025-08-10	first_public	source=METATRANSCRIPTOMIC	China: Yunfu City, Guangdong Province	waste water metagenome
+PRJNA1002991	102	4198840	20641410	2025-08-28	2026-07-27	collection_date	source=VIRAL RNA;selection=cDNA	USA: North Carolina	NWSS Wastewater Project: North Carolina State Laboratory of Public Health
+PRJNA1552810	6	32959370	39390107	2025-09-12	2025-09-12	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA		Multi-omics sequencing of sludge samples
+PRJNA1224817	41	35171074	44972113	2025-09-28	2025-09-28	first_public	source=METATRANSCRIPTOMIC;text;text	Ireland: Dublin	Genome-Resolved Metatranscriptomics Provide Insights on Immigration Influence in Structuri
+PRJNA1335933	6	69278327	79164837	2025-09-30	2025-09-30	first_public	source=METATRANSCRIPTOMIC;selection=cDNA	China:Zhejiang	bacteria and microalgal Raw sequence reads
+PRJNA1493291	2	27076979	27076979	2025-10-10	2025-10-10	collection_date	source=METATRANSCRIPTOMIC;selection=cDNA_randomPriming	China: Shanxi, Yuncheng Salt Lake2	Light-driven upcycling of saline wastewater into carotenoid-enriched functional protein by
+PRJNA1363671	6	40707532	40949113	2025-10-11	2025-10-11	collection_date	source=TRANSCRIPTOMIC;selection=cDNA	missing	Alkaline fermentation of sludge pretreated with ferrate
+PRJNA1328376	20	4273497	19952616	2025-10-23	2025-10-23	first_public	source=METATRANSCRIPTOMIC;selection=cDNA_randomPriming;text	Brazil: Sao Paulo	Tracking viral diversity in urban rivers: what environmental surveillance reveals about pu
+PRJDB45204	5	33226920	42234481	2025-11-15	2025-11-17	collection_date	source=TRANSCRIPTOMIC	missing: data agreement established pre-2023	Biochar-Enhanced Nitrogen Removal and High Nitrogen Load Tolerance in Anaerobic Ammonia Ox
+PRJNA1419821	36	39642895	51952282	2025-11-20	2025-11-20	collection_date	source=TRANSCRIPTOMIC;selection=cDNA;text	Netherlands: Utrecht	Metatranscriptomic Analysis of the Utrecht AGS WWTP Under Anaerobic Conditions
+PRJNA1363887	6	36137450	37801991	2025-11-20	2025-11-23	first_public	selection=cDNA	missing	Zero-valent iron combined with electrochemical treatment activates sodium percarbonate to 
+PRJNA1204190	2	22950265	22950265	2025-11-20	2025-11-20	first_public	source=METATRANSCRIPTOMIC	China	The global WWTPs activated sludge microbe catalog GWASMC
+PRJNA1373133	6	57921967	62349931	2025-12-04	2025-12-04	first_public	source=METATRANSCRIPTOMIC;text	China	metatranscriptomics of electroplating wastewater treated by MPR
+PRJNA1427215	2	22404742	22404742	2025-12-15	2025-12-15	collection_date	source=METATRANSCRIPTOMIC;text;text	China: Hainan	Metagenomic and metatranscriptomic insights into microbial community and nitrogen metaboli
+PRJNA1180562	12	47760862	57361497	2026-01-02	2026-01-02	first_public	source=METATRANSCRIPTOMIC	missing	Nano zero-valent iron induces the shift from denitrification to ammonification in microbia
+PRJNA1302307	4	37670486	37840933	2026-01-20	2026-01-20	first_public	source=METATRANSCRIPTOMIC	China: Wuhan	activated sludge Raw sequence reads
+PRJNA1456067	2	26584532	26584532	2026-01-20	2026-01-20	collection_date	source=METATRANSCRIPTOMIC	China:Shanghai	activated sludge
+PRJNA1287070	9	25617630	27864268	2026-01-29	2026-01-29	first_public	source=TRANSCRIPTOMIC	China: SZ	Biological wastewater treatment
+PRJNA1222189	1	52221337	52221337	2026-02-22	2026-02-22	first_public	source=METATRANSCRIPTOMIC	China: Qingdao	Macrogenomics of anaerobic digestion of food waste and sludge
+PRJNA1425736	15	40635676	48194004	2026-02-22	2026-02-22	first_public	source=METATRANSCRIPTOMIC;selection=cDNA;text		Metatranscriptomic responses of microbial communities to environmental stresses in wastewa
+PRJNA1476348	1	3207779	3207779	2026-02-25	2026-02-25	collection_date	selection=cDNA	China: Beijing	QS-PN
+PRJNA1090844	1	5466798	5466798	2026-04-01	2026-04-01	collection_date	source=VIRAL RNA	USA: Delaware, Sussex County	US National Wastewater Surveillance System (NWSS) wastewater project: Delaware Public Heal
+PRJNA1452058	2	49517197	49517197	2026-04-15	2026-04-15	first_public	source=METATRANSCRIPTOMIC		Advanced carbon, nitrogen, and phosphorus removal was achieved from real municipal wastewa
+PRJNA1499938	20	41180517	49041527	2026-05-01	2026-05-01	collection_date	source=METATRANSCRIPTOMIC;selection=Inverse rRNA;text	China: Qingdao	16S-Metatranscriptomics
+PRJNA1461830	5	33627863	42068373	2026-05-13	2026-05-13	first_public	source=METATRANSCRIPTOMIC;selection=cDNA;text		METATRANSCRIPTOMIC INSIGHTS INTO THE IMPACT OF PFOS AND PFOA BIODEGRADATION ON THE BACTERI
+PRJNA1152483	6	36520397	55644903	2026-05-20	2026-05-20	first_public	source=METATRANSCRIPTOMIC	China: zhejiang	Biosample of granular sludge Genome sequencing and assembly
+PRJNA1477390	6	8845017	16154839	2026-06-13	2026-06-13	first_public	source=METATRANSCRIPTOMIC;text		Shotgun metagenomics and metatranscriptomics of naproxen-metabolizing microbial consortia 
+PRJNA1478176	15	47147373	56137949	2026-06-16	2026-06-16	first_public	source=METATRANSCRIPTOMIC		activated sludge Raw sequence reads
+PRJNA1192232	4	56103661	56978760	2026-07-16	2026-07-16	first_public	source=METATRANSCRIPTOMIC;text		Activated sludge metagenome and metatranscriptome, sequencing and assembly
+PRJNA1494339	6	58051674	61801720	2026-08-14	2026-08-14	first_public	source=METATRANSCRIPTOMIC	Missing	Ammonia nitrogen-degrading fermentation sludge sample
+PRJNA1519923	10	102024289	254496749	2026-08-29	2026-08-29	first_public	source=METATRANSCRIPTOMIC		An effect of filtration strategy on recovery of signals from different organisms from wast
+PRJNA1521840	3	43677367	61992237	2026-09-03	2026-09-03	first_public	source=METATRANSCRIPTOMIC;selection=cDNA		Metal-adaptation traits are enriched among populations encoding denitrification genes in a
+PRJNA1541321	2	23296178	23296178	2026-10-16	2026-10-16	first_public	source=METATRANSCRIPTOMIC		Study on functional genes related to nitrogen removal in activated sludge wastewater treat
+PRJNA1543313	78	29432959	38821527	2026-10-19	2026-10-19	first_public	source=METATRANSCRIPTOMIC;text		Integrated metagenomic and metatranscriptomic sequencing of wastewater samples across wast
+PRJNA1550786	30	37535865	42491737	2026-11-03	2026-11-03	first_public	source=METATRANSCRIPTOMIC		Application of photothermal technology in wastewater treatment
