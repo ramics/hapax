@@ -1,0 +1,171 @@
+{
+ "parameters": {
+  "labels": "/mnt/project-files/shared/resasm/library_label_classes.npz",
+  "pairs_per_block": 100000,
+  "cascade_block_skip": 1500000,
+  "blocks_in_library": 87,
+  "library_pairs": 8731224,
+  "random_draws": 200,
+  "seed": 2,
+  "scored_by": "mate 1 only; the mates are not interchangeable and a pooled label would average two measurements",
+  "label_operating_point": "SILVA 138.2 SSU+LSU and all 82,947 of this sample's own contigs at >=40 matching bases, the cascade's own threshold; no Kraken2 and no DIAMOND, so 'none' is an upper bound on the residue rather than the residue"
+ },
+ "class_codes": [
+  "none",
+  "rrna",
+  "identified",
+  "unident",
+  "other_ctg"
+ ],
+ "library_fractions": {
+  "none": 0.182298,
+  "rrna": 0.3876,
+  "identified": 0.33323,
+  "unident": 0.086745,
+  "other_ctg": 0.010127
+ },
+ "cascade_blocks": [
+  {
+   "seed": 1,
+   "offset_pairs": 0,
+   "fractions": {
+    "none": 0.18263,
+    "rrna": 0.38591,
+    "identified": 0.33438,
+    "unident": 0.08716,
+    "other_ctg": 0.00992
+   }
+  },
+  {
+   "seed": 2,
+   "offset_pairs": 1500000,
+   "fractions": {
+    "none": 0.18089,
+    "rrna": 0.38749,
+    "identified": 0.33514,
+    "unident": 0.08622,
+    "other_ctg": 0.01026
+   }
+  },
+  {
+   "seed": 3,
+   "offset_pairs": 3000000,
+   "fractions": {
+    "none": 0.18295,
+    "rrna": 0.38637,
+    "identified": 0.33325,
+    "unident": 0.08728,
+    "other_ctg": 0.01015
+   }
+  },
+  {
+   "seed": 4,
+   "offset_pairs": 4500000,
+   "fractions": {
+    "none": 0.18289,
+    "rrna": 0.38648,
+    "identified": 0.334,
+    "unident": 0.0867,
+    "other_ctg": 0.00993
+   }
+  },
+  {
+   "seed": 5,
+   "offset_pairs": 6000000,
+   "fractions": {
+    "none": 0.18332,
+    "rrna": 0.38471,
+    "identified": 0.33442,
+    "unident": 0.08741,
+    "other_ctg": 0.01014
+   }
+  }
+ ],
+ "classes": {
+  "none": {
+   "library_fraction": 0.18229849560611433,
+   "block_sd_observed": 0.001401705657047012,
+   "binomial_sd_expected": 0.0012209248711770183,
+   "overdispersion": 1.1480687224396648,
+   "random_draw_sd": 0.0012212700366882685,
+   "random_draw_sd_over_binomial": 1.0002827082316028,
+   "block_min": 0.17875,
+   "block_max": 0.18596,
+   "block_1_fraction": 0.18263,
+   "block_1_z_against_blocks": 0.24600570346085374,
+   "block_1_z_against_binomial": 0.2715190768176208,
+   "cascade_seeds_mean": 0.182536,
+   "cascade_seeds_minus_library_points": 0.023750439388567357,
+   "lag1_autocorrelation": 0.04088813570833088
+  },
+  "rrna": {
+   "library_fraction": 0.3875999516219032,
+   "block_sd_observed": 0.0022030051526842334,
+   "binomial_sd_expected": 0.0015406694295811854,
+   "overdispersion": 1.4299012561592117,
+   "random_draw_sd": 0.0014800239676179634,
+   "random_draw_sd_over_binomial": 0.9606369408006571,
+   "block_min": 0.38249,
+   "block_max": 0.39275,
+   "block_1_fraction": 0.38591,
+   "block_1_z_against_blocks": -0.7788212044561704,
+   "block_1_z_against_binomial": -1.096894369068265,
+   "cascade_seeds_mean": 0.386192,
+   "cascade_seeds_minus_library_points": -0.1407951621903214,
+   "lag1_autocorrelation": 0.24443863901726579
+  },
+  "identified": {
+   "library_fraction": 0.3332299114076102,
+   "block_sd_observed": 0.0023416962839432538,
+   "binomial_sd_expected": 0.0014905963154083215,
+   "overdispersion": 1.5709795198989132,
+   "random_draw_sd": 0.0014116531667929559,
+   "random_draw_sd_over_binomial": 0.9470392165877985,
+   "block_min": 0.32743,
+   "block_max": 0.3386,
+   "block_1_fraction": 0.33438,
+   "block_1_z_against_blocks": 0.49620184776134624,
+   "block_1_z_against_binomial": 0.7715627500895518,
+   "cascade_seeds_mean": 0.334238,
+   "cascade_seeds_minus_library_points": 0.10080885923897664,
+   "lag1_autocorrelation": 0.2816132092630335
+  },
+  "unident": {
+   "library_fraction": 0.08674511156740453,
+   "block_sd_observed": 0.0010068716322490434,
+   "binomial_sd_expected": 0.000890058409243815,
+   "overdispersion": 1.1312421991546282,
+   "random_draw_sd": 0.0008727200576330161,
+   "random_draw_sd_over_binomial": 0.9805199844968271,
+   "block_min": 0.08445,
+   "block_max": 0.08954,
+   "block_1_fraction": 0.08716,
+   "block_1_z_against_blocks": 0.40765849088241585,
+   "block_1_z_against_binomial": 0.466136186441922,
+   "cascade_seeds_mean": 0.086954,
+   "cascade_seeds_minus_library_points": 0.020888843259547762,
+   "lag1_autocorrelation": 0.024039151236650208
+  },
+  "other_ctg": {
+   "library_fraction": 0.010126529796967756,
+   "block_sd_observed": 0.0004051400238437012,
+   "binomial_sd_expected": 0.000316606746473269,
+   "overdispersion": 1.2796316830156589,
+   "random_draw_sd": 0.00032068205813868086,
+   "random_draw_sd_over_binomial": 1.0128718408903392,
+   "block_min": 0.00894,
+   "block_max": 0.01136,
+   "block_1_fraction": 0.00992,
+   "block_1_z_against_blocks": -0.4973447228489537,
+   "block_1_z_against_binomial": -0.6523227924493813,
+   "cascade_seeds_mean": 0.01008,
+   "cascade_seeds_minus_library_points": -0.004652979696775569,
+   "lag1_autocorrelation": -0.022939260631523035
+  }
+ },
+ "readout": "overdispersion is the factor by which the observed between-block spread exceeds what a simple random sample of the same size would give. 1.0 means a contiguous block IS a random sample for that class; above 1.0 is how much every Wilson interval in this repo is too narrow. random_draw_sd_over_binomial is the same statistic computed on real random samples and must sit at 1.0, or the instrument is wrong rather than the blocks",
+ "wall_seconds": 0.5583388805389404,
+ "git_sha": "12c61b26afd43eaed6402631504aa17a73f8e0b9",
+ "tree_dirty": false,
+ "script_sha256": "981ce9c42291bc14"
+}

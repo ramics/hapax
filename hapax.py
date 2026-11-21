@@ -516,6 +516,20 @@ class Run:
                     "one denominator and sum to the library; the per-set fractions below "
                     "do not, because the observe sets overlap",
         }
+        # The reads scored here are a contiguous block of the FASTQ, so the Wilson
+        # interval above is too narrow. Both are carried: Wilson because it is what the
+        # counts support, and the widened one because it is what the sampling supports.
+        # Neither replaces the other silently.
+        for key in ("identified", "assembled_unidentified", "residual"):
+            iv = breakdown.get(key)
+            if not iv:
+                continue
+            de = DESIGN_EFFECT.get(key, DESIGN_EFFECT["_default"])
+            half = 0.5 * (iv["hi"] - iv["lo"]) * de
+            iv["design_effect"] = de
+            iv["lo_block_corrected"] = max(0.0, iv["point"] - half)
+            iv["hi_block_corrected"] = min(1.0, iv["point"] + half)
+        breakdown["design_effect"] = DESIGN_EFFECT
         out = {"pairs": n, "operating_point": op, "breakdown": breakdown, "curve": rows,
                "interval_method": "wilson_95_on_this_run's_counts; a multi-seed run "
                                   "reports across-seed spread instead",
@@ -782,6 +796,34 @@ class Run:
 
 
 #: Written into layers.json so the rule is in the run directory rather than only in code.
+#: How much wider than Wilson an interval has to be, because the reads scored here are a
+#: CONTIGUOUS block of the FASTQ and not a random sample of the library. Measured over all
+#: 8,731,224 pairs of SRR23973193 in `results/block_position_bias/`: the observed
+#: between-block standard deviation divided by the binomial one a Wilson interval assumes,
+#: with uniform random samples of the same size as the control reading 0.92-1.10.
+#:
+#: The structure sits in the abundant classes - adjacent blocks correlate at +0.24 and
+#: +0.28 on ribosomal and identified - and is near absent from the residue classes, whose
+#: autocorrelation is within noise of zero. So the residue, which is what this tool is
+#: about, is very nearly a simple random sample and the correction to it is small.
+#:
+#: Carried across from a label-based instrument (SILVA plus the sample's own contigs at 40
+#: bases, no Kraken2 and no DIAMOND) to cascade numbers as the best available estimate,
+#: not as the same measurement. It is a property of how the reads are arranged on the flow
+#: cell rather than of the classifier, which is what makes the transfer defensible, and
+#: every number that uses it carries the citation.
+DESIGN_EFFECT = {
+    "identified": 1.57,
+    "assembled_unidentified": 1.13,
+    "residual": 1.15,
+    "_default": 1.15,
+    "_source": "results/block_position_bias/REPORT.md, 5 seeds, measured on SRR23973193",
+    "_why": "the cascade reads a contiguous block of the FASTQ, so a Wilson interval, "
+            "which assumes a simple random sample of the library, is too narrow",
+    "_control": "uniform random samples of the same size read 0.92-1.10 on the same "
+                "statistic, so the instrument is sound and the blocks are the finding",
+}
+
 SIGNIFICANCE_EVALUE = 1e-5
 CLOSE_IDENTITY_PERCENT = 90.0
 RECURRENCE_MIN_OCCURRENCES = 2

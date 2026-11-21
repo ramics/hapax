@@ -475,6 +475,24 @@ function interval(iv) {
     'these reads map to contigs that assembled without being identified, from ' +
     esc(b.tier2_from || '') + '.' :
     'Tier 2 has no population in this run, so the bar has two segments rather than three.'));
+  // The reads scored are a contiguous block of the FASTQ, not a random sample of the
+  // library, so the Wilson interval above is narrower than the sampling supports. Both
+  // are shown: hiding either would be a choice presented as a measurement.
+  const de = b.design_effect;
+  if (de && ident && ident.lo_block_corrected != null) {
+    const w = iv => '<span class="mono">' + pct(iv.lo_block_corrected) + ', ' +
+      pct(iv.hi_block_corrected) + '</span>';
+    const d2 = el('p', 'note');
+    d2.innerHTML = '<b>Widened for block sampling.</b> These reads are a contiguous ' +
+      'block of the file rather than a random sample of the library, and a Wilson ' +
+      'interval assumes the latter. Measured over all 8.7 million pairs, the real ' +
+      'between-block spread exceeds the binomial one by ' + num(de.identified, 2) +
+      'x on identified and ' + num(de.residual, 2) + 'x on the residue, with random ' +
+      'samples of the same size reading 1.0 as the control. So the honest intervals are ' +
+      'identified [' + w(ident) + ']' + (tier2 ? ', assembled-not-identified [' +
+      w(tier2) + ']' : '') + ', residual [' + w(resid) + ']. ' + esc(de._source) + '.';
+    p.append(d2);
+  }
   app.append(p);
 })();
 
