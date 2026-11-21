@@ -169,9 +169,19 @@ moves against the test. Both subjects here are scored through the identical quer
   reads to SILVA gives a 5' soft-clip mode of **14** in 5/5 seeds on both RNA libraries, with
   95% of anchored R2 reads clipping ≥10 and the same reads flush at their 3' end, against
   mate 1's mode of 0. The composition detector read **9 and 16**, and it was setting the trim
-  in the run that produced the table above, so **that pass over-trimmed mate 2 by 2 bases of
-  93**. `--r2-trim` now carries the measured 14 and the detector is a diagnostic with a
-  guard. Every figure in this report has been re-run on the correction.
+  in the run that produced the table above. `--r2-trim` now carries the measured 14, the
+  detector is a diagnostic with a guard, and every figure here has been re-run on it.
+
+  **But I first called 16 an over-trim, and that is withdrawn.** Re-running at 14 made the
+  Kraken2 fraction go *down* — 0.4065 → 0.3899 on the 2022 library and 0.2265 → 0.2159 on the
+  2021 one — from two more bases of what the mapping calls template. The prefix length is a
+  distribution (mode 14 at 51% of anchored reads, 13 at 16%, 15 at 6.5%, 16 at 2.2%, with a
+  tail), and Kraken2's confidence is a *fraction* of a read's minimizers, so two extra
+  minimizers where that variability lives lower every read's confidence and push marginal
+  ones under the threshold. 14 is the measured prefix; 16 is the better operating point for
+  this classifier. The table above is at trim 14, and
+  `../nontemplate_prefix/trim_sensitivity_*.json` is the curve that says what the choice
+  costs — 1.7 points, the size of effects this repo reports as findings.
 
   Two caveats stay. The **DNA library's trim rests on the detector alone**, because SILVA
   anchored 0 to 11 of its reads per 100,000 and no reference here can replace it for a DNA

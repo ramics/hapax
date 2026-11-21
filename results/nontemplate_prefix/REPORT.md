@@ -61,13 +61,39 @@ nothing else here does.
 Mate 1 is the second control and it separates cleanly: mode 0, 57% of reads clipping nothing
 at all, and a 5'-minus-3' excess of about 2 bases against mate 2's 13.6.
 
+## 1a. A correction to this report's own first conclusion
+
+I first read §2 below as meaning `dna_rna_pair.py` had been **over-trimming mate 2 by 2
+bases**, corrected it to 14 and re-ran. **The Kraken2 removal fraction went down** — 1.66
+points on the 2022 RNA library (0.4065 → 0.3899) and 1.06 on the 2021 one (0.2265 →
+0.2159) — from being given two *more* bases of what the mapping calls template. That is the
+wrong direction for a correction, so "over-trim" is withdrawn.
+
+Two bases of real template cannot make a read harder to classify. What can is that **the
+prefix length is a distribution, not a constant**: mode 14 at 51% of anchored reads, with 13
+at 16%, 12 at 6.5%, 15 at 6.5%, 16 at 2.2% and a tail. Kraken2's confidence is the *fraction*
+of a read's minimizers falling in the called clade, so two extra minimizers at the end of the
+read where the prefix variability lives lower every read's confidence a little and push
+marginal ones below the threshold. A 5,000-pair check reproduces it directly: 0.3844 at trim
+14 against 0.4048 at trim 16, mate 1 untouched and the same block at both rungs.
+
+**So the mode answers one question and not the other.** Trimming at 14 is the best estimate
+of the prefix length, which is what §1 measures. Trimming above it is the better operating
+point for a fraction-thresholded classifier. The trim is therefore an operating point in this
+repo's sense, and `experiments/trim_sensitivity.py` measures its curve
+(`trim_sensitivity_*.json`) rather than leaving it as a decision somebody made once — 1.7
+points is the size of effects reported here as findings.
+
 ## 2. The composition detector was wrong in both directions, and this is why it is a flag
 
 `dna_rna_pair.py` read **9 bases on R1 and 16 on R2**. Mapping reads **0 and 14**, in both
-libraries, in all five seeds. So the detector overstated R1 (where there is no fixed-length
-prefix at all) and overstated R2 by two. Its reading is now superseded; treat
-`nontemplate_prefix` in that experiment's output as a flag that something is compositionally
-odd at a read's start, which is true, and not as a length.
+libraries, in all five seeds. So the detector is not reading the prefix length: there is no
+fixed-length prefix on R1 at all, and R2's is 14.
+
+But as §1a records, that does **not** make its 16 a worse trim — on a fraction-thresholded
+classifier it is a better one. The detector was right by accident and for a reason it cannot
+state, which is the definition of a flag. Treat `nontemplate_prefix` as saying that something
+is compositionally odd at a read's start, which is true and useful, and never as a length.
 
 ## 3. Mate 1 is not perfectly clean, and the difference in shape is the point
 
@@ -82,8 +108,11 @@ composition could not make, and it is why trimming R1 by a fixed amount would be
 The 2022 library, eight months later at the same plant, gives the same mode at the same
 length with the same 95% of reads clipping ≥10. **Every library in this series should be
 assumed to carry it**, which matters because the 2022 libraries are new to this project and
-`experiments/dna_rna_pair.py` trims R2 by 16 on a detector reading rather than by 14 on a
-measurement. That is a 2-base over-trim, small, but it should be corrected to 14.
+`experiments/dna_rna_pair.py` trimmed R2 by 16 on a detector reading rather than by 14 on a
+measurement. It now takes `--r2-trim`, defaulting to the measured 14, with a guard that stops
+the run if the detector disagrees by more than 4 — but see §1a: 14 is the measured prefix and
+16 classifies better, so the default is the honest estimate rather than the optimum, and the
+curve beside it says what the choice costs.
 
 ## 5. The coordinate assumption was checked, not assumed
 
