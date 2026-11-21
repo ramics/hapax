@@ -164,14 +164,19 @@ moves against the test. Both subjects here are scored through the identical quer
 ## What is not measured here
 
 - **One seed.** Five are queued. No figure above should be quoted until they land.
-- **The non-template prefix is unresolved.** The composition detector fires on all four
-  mate-and-library combinations — 14 bases on both DNA mates, 9 and 16 on the RNA ones — and
-  the two RNA libraries give near-identical deviation profiles, which is what identical prep
-  should do. But composition cannot separate a genuine non-template prefix from ordinary
-  Illumina 5' priming bias. Deciding that needs a mapping test (do those bases align with
-  the rest of the read?), which is how the 14 for the 2021 library was established in the
-  first place. Until then the numbers in `nontemplate_prefix` are a flag, not a measurement,
-  and the r2 trim used here follows the detector.
+- ~~**The non-template prefix is unresolved.**~~ **RESOLVED, and the detector was wrong** —
+  see [`../nontemplate_prefix/REPORT.md`](../nontemplate_prefix/REPORT.md). Mapping untrimmed
+  reads to SILVA gives a 5' soft-clip mode of **14** in 5/5 seeds on both RNA libraries, with
+  95% of anchored R2 reads clipping ≥10 and the same reads flush at their 3' end, against
+  mate 1's mode of 0. The composition detector read **9 and 16**, and it was setting the trim
+  in the run that produced the table above, so **that pass over-trimmed mate 2 by 2 bases of
+  93**. `--r2-trim` now carries the measured 14 and the detector is a diagnostic with a
+  guard. Every figure in this report has been re-run on the correction.
+
+  Two caveats stay. The **DNA library's trim rests on the detector alone**, because SILVA
+  anchored 0 to 11 of its reads per 100,000 and no reference here can replace it for a DNA
+  virome. And the prefix is measured on the ribosomal fraction only, since SILVA is the
+  anchor.
 - **No cross-library subtraction yet.** The question this pair is really for — can the DNA
   library identify reads the RNA library's residue cannot explain, and vice versa — needs
   the DNA library's own assembly or k-mer index as a subtrahend. That is the next run, and
