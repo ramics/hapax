@@ -113,7 +113,9 @@ def classify(text: str, table: dict, index: str | None = None) -> tuple[str, str
     first run by reading the matched keyword printed beside the row, which is why it is
     printed.
     """
-    for rule in table["rules"]:
+    # Descending priority, then file order. Python's sort is stable, so a table with no
+    # priorities anywhere behaves exactly as it did before this existed.
+    for rule in sorted(table["rules"], key=lambda r: -r.get("priority", 0)):
         if rule.get("only_if_index") and rule["only_if_index"] != index:
             continue
         for kw in rule.get("any", ()):

@@ -121,6 +121,63 @@ def _best_significant(row: dict, key: str):
     return None if best is None else best.get(key)
 
 
+def _trim_ranking(R: dict, seed: int, cards: int = 400, per_facet: int = 60,
+                  points: int = 6000) -> dict:
+    """Keep the page readable when the ranking covers the whole residue.
+
+    Searching every unplaced pair instead of a 6,000-pair sample took the subject table
+    from 243 rows to 41,829 and ranking.json from 0.2 MB to 53 MB. Embedding that whole
+    file would be a page nobody can open, so the page carries three different things and
+    says which is which:
+
+    - the AGGREGATES (the group mix) are computed here over every row, so the bar a
+      reader sees is the whole ranking and not the part that fitted;
+    - the SCATTER is a seeded sample, because 41,829 circles is megabytes of markup and
+      the shape is the point. The sample is recorded with its seed and its size;
+    - the CARDS are the highest-ranked rows, plus the highest-ranked of each host group
+      and each kind, so that every filter the page offers has real rows behind it rather
+      than whatever survived a global cut.
+
+    The archive keeps the whole file. This only decides what travels into the HTML.
+    """
+    rows = R.get("subjects") or []
+    if not rows:
+        return R
+    mix = {}
+    for r in rows:
+        mix[r["host_group"]] = mix.get(r["host_group"], 0) + 1
+    R["host_mix"] = mix
+    R["subjects_total"] = len(rows)
+
+    rng = random.Random(seed)
+    withx = [r for r in rows if r.get("median_identity_percent") is not None]
+    sample = withx if len(withx) <= points else rng.sample(withx, points)
+    R["points"] = [{"x": r["median_identity_percent"], "y": r["residue_reads"],
+                    "g": r["host_group"], "w": r["weight_term"],
+                    "a": r.get("median_aligned_aa"),
+                    "n": r.get("organism") or r["subject"]} for r in sample]
+    R["points_note"] = {"drawn": len(sample), "of": len(withx), "seed": seed,
+                        "note": ("a seeded sample of the subjects, not the top of them: "
+                                 "a cut by rank would empty the lower left corner, which "
+                                 "is where most of the residue is")}
+
+    keep, seen = [], set()
+    def take(lst, n):
+        for r in lst[:n]:
+            if r["subject"] not in seen:
+                seen.add(r["subject"])
+                keep.append(r)
+    take(rows, cards)
+    for field in ("host_group", "sequence_kind"):
+        vals = {r[field] for r in rows}
+        for v in sorted(vals):
+            take([r for r in rows if r[field] == v], per_facet)
+    keep.sort(key=lambda r: r["rank"])
+    R["subjects"] = keep
+    R["subjects_embedded"] = len(keep)
+    return R
+
+
 def _names_for(rundir: Path, subjects, table_rows) -> dict:
     """The accession-to-organism map, cut down to what this page can display."""
     full = (load(rundir / "subject_names.json") or {}).get("names") or {}
@@ -196,7 +253,7 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int) -> d
         # table between them name a few hundred.
         "names": _names_for(rundir, strains_subjects, table),
         "significant_evalue": SIGNIFICANT_EVALUE,
-        "ranking": load(rundir / "ranking.json"),
+        "ranking": _trim_ranking(load(rundir / "ranking.json") or {}, seed),
         "axes": [{"key": k, "label": l} for k, l, _f in SCATTER_AXES],
         "scatter": scatter,
         "table": {"rows": [{"name": r.get("name"),
@@ -1042,13 +1099,15 @@ function interval(iv) {
 
   // The group mix as one bar, because 201 of 243 being phage is the single most
   // informative picture on this page and a table buries it.
-  const mix = {};
-  (R.subjects || []).forEach(r => { mix[r.host_group] = (mix[r.host_group] || 0) + 1; });
+  // Over EVERY subject in the ranking, not only the rows embedded below: the bar is the
+  // shape of the whole thing and the cards are a window onto the top of it.
+  const mix = R.host_mix || {};
+  const mixn = R.subjects_total || (R.subjects || []).length;
   const mixbar = el('div', 'bar');
   Object.keys(R.host_table.groups).forEach(g => {
     if (!mix[g]) return;
     const sp = document.createElement('span');
-    sp.style.width = (100 * mix[g] / R.subjects.length) + '%';
+    sp.style.width = (100 * mix[g] / mixn) + '%';
     sp.style.background = GCOL[g] || 'var(--null)';
     sp.title = g + ': ' + mix[g];
     mixbar.append(sp);
@@ -1059,6 +1118,16 @@ function interval(iv) {
     '<span><i style="background:' + (GCOL[g] || 'var(--null)') + '"></i>' +
     esc(GLAB(g)) + ' ' + mix[g] + '</span>').join('');
   p.append(mlg);
+
+  if (R.subjects_embedded && R.subjects_total &&
+      R.subjects_embedded < R.subjects_total) {
+    p.append(el('p', 'note',
+      'The bar above and the map at the end of this page are over all ' +
+      R.subjects_total.toLocaleString() + ' subjects. The cards below are the ' +
+      R.subjects_embedded.toLocaleString() + ' highest ranked, including the highest ' +
+      'ranked of every group and every kind, so each filter has real rows behind it. ' +
+      'The whole table is in ranking.json in the run directory.'));
+  }
 
   const grid = el('div', 'cards');
   function draw() {
@@ -1146,15 +1215,25 @@ function interval(iv) {
 (function () {
   const R = D.ranking;
   if (!R || !(R.subjects || []).length) return;
+  const pn = R.points_note;
   const p = panel('Where the relatives sit',
-    'Every named relative at once: how far the reads are from it, against how many reads ' +
-    'point at it. One picture of the whole residue\\'s relationship to what is known.');
+    'The named relatives at once: how far the reads are from each one, against how many ' +
+    'reads point at it. One picture of what the leftovers are related to, and how ' +
+    'distantly.' + (pn ? ' Drawn from a seeded sample of ' + pn.drawn.toLocaleString() +
+    ' of the ' + pn.of.toLocaleString() + ' subjects, because a cut by rank would empty ' +
+    'the lower left corner and that is where most of the residue is.' : ''));
   const GCOL = {bacteriophage: 'var(--g-phage)', plant: 'var(--g-plant)',
     fungal_or_protist: 'var(--g-fungal)', invertebrate: 'var(--g-invert)',
     vertebrate_non_human: 'var(--g-vert)', human_associated: 'var(--g-human)',
     unknown_host: 'var(--g-unknown)'};
   const W = 920, H = 420, m = {l: 62, r: 20, t: 18, b: 52};
-  const rows = R.subjects.filter(r => r.median_identity_percent != null);
+  // The sampled points when the ranking is bigger than the page can carry, mapped onto
+  // the same field names the full rows use so the drawing code is unchanged.
+  const rows = (R.points || []).length
+    ? R.points.map(q => ({median_identity_percent: q.x, residue_reads: q.y,
+                          host_group: q.g, weight_term: q.w, median_aligned_aa: q.a,
+                          organism: q.n}))
+    : R.subjects.filter(r => r.median_identity_percent != null);
   // The axis is fixed from 40 to 100 rather than fitted to the data, because the empty
   // right-hand third IS the result: a fitted axis would silently rescale the gap away
   // and make a cloud of 50% matches look like it reaches identification.
@@ -1200,17 +1279,25 @@ function interval(iv) {
     'it (log)</text></svg>';
   const holder = el('div', 'scroll'); holder.innerHTML = s; p.append(holder);
   p.append(el('p', 'note',
-    'The cloud sits between ' + num(obslo, 1) + '% and ' + num(obshi, 1) + '% identity ' +
-    'over a median of a few dozen amino acids. ' +
-    (function () { const inb = rows.filter(r => r.median_identity_percent >= 90);
-      return inb.length === 0 ? 'The shaded band is empty. '
-        : inb.length + ' of them reach the shaded band, over ' +
-          inb.map(r => r.median_aligned_aa).sort((a, c) => a - c)
-            .filter((v, i, a2) => a2.indexOf(v) === i).join(' and ') +
-          ' amino acids respectively. Over an alignment that short, high identity is ' +
-          'ordinary rather than an identification, which is why every hit on this page ' +
-          'is filtered to E &lt; ' + D.significant_evalue + ' and still reported with ' +
-          'its aligned length. '; })() +
+    (function () {
+      // The aligned length is the whole reason the shaded band is not an identification,
+      // so it is computed from the drawn points rather than described. This sentence
+      // used to list the band's lengths one by one, which was right when the band held
+      // two points and unreadable once the search covered the whole residue.
+      const mid = a => { const v = a.filter(x => x != null).sort((x, y) => x - y);
+        return v.length ? v[Math.floor(v.length / 2)] : null; };
+      const inb = rows.filter(r => r.median_identity_percent >= 90);
+      let t = 'The cloud sits between ' + num(obslo, 1) + '% and ' + num(obshi, 1) +
+        '% identity, over a median of ' + mid(rows.map(r => r.median_aligned_aa)) +
+        ' amino acids. ';
+      t += inb.length === 0 ? 'The shaded band is empty. '
+        : inb.length.toLocaleString() + ' of the ' + rows.length.toLocaleString() +
+          ' drawn here reach the shaded band, at a median alignment of ' +
+          mid(inb.map(r => r.median_aligned_aa)) + ' amino acids. Over an alignment ' +
+          'that short, high identity is ordinary rather than an identification, which ' +
+          'is why every hit on this page is filtered to E &lt; ' + D.significant_evalue +
+          ' and still reported with its aligned length. ';
+      return t; })() +
     'Colour is ' +
     'the matched record\\'s host group and carries the same warning as the panel above: ' +
     'at these identities it describes the database entry, not the sample. ' +
