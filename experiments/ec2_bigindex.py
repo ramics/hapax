@@ -72,6 +72,40 @@ DIAMOND_VERSION = "2.1.10"
 #: Eight vCPU is the account ceiling either way, so the cheaper types buy nothing but risk.
 DEFAULT_INSTANCE_TYPE = "r6i.2xlarge"
 
+#: US-east-1 on-demand rates, for the pre-launch cost projection only. Rough and rounded up;
+#: the projection exists to catch an order-of-magnitude mistake before it bills, not to
+#: predict the invoice. Spot is taken as 0.35x on-demand, which is conservative against the
+#: ~0.3x actually seen.
+ON_DEMAND_USD_PER_HOUR = {"c6i.2xlarge": 0.34, "c6i.4xlarge": 0.68, "c6i.8xlarge": 1.36,
+                          "r6i.2xlarge": 0.50, "r6i.4xlarge": 1.01, "m6i.2xlarge": 0.38,
+                          "m6i.4xlarge": 0.77}
+SPOT_FRACTION = 0.35
+#: Imo's standing project rule, 2026-11-21: "a single EC2 spend under $10 is autoapproved".
+#: Above it, a launch still needs his explicit yes on a figure.
+AUTO_APPROVED_USD = 10.0
+
+
+def projected_cost(instance_type: str, hard_stop_minutes: int, spot: bool,
+                   volume_gb: int) -> tuple[float, str]:
+    """Worst-case dollars for one run: the dead-man timer is the ceiling on its life.
+
+    The timer is the only thing that bounds the bill without depending on anything in the
+    run working, so it is what the projection uses - not the budget hours the stages are
+    gated on, which a crash loop could sit inside without ever finishing.
+    """
+    hours = hard_stop_minutes / 60.0
+    rate = ON_DEMAND_USD_PER_HOUR.get(instance_type)
+    if rate is None:
+        return float("nan"), (f"{instance_type} is not in ON_DEMAND_USD_PER_HOUR, so no "
+                              f"projection is possible; add it rather than guessing")
+    compute = rate * (SPOT_FRACTION if spot else 1.0) * hours
+    # gp3 at $0.08/GB-month, charged for the hours the volume exists.
+    storage = volume_gb * 0.08 * hours / 730.0
+    total = compute + storage
+    return total, (f"{instance_type} {'spot' if spot else 'on demand'} for up to "
+                   f"{hours:.1f}h (the dead-man timer) is about ${compute:.2f} of compute "
+                   f"plus ${storage:.2f} for {volume_gb} GB = **${total:.2f}**")
+
 #: GB, gp3. core_nt 319 + nr 928 + a UniRef100 build with headroom, under Imo's 2 TB.
 DEFAULT_VOLUME_GB = 1700
 
@@ -250,9 +284,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--profile", default="AmazebioStager")
     ap.add_argument("--owner", default="hapax")
     ap.add_argument("--no-spot", action="store_true",
-                    help="on demand is 3-4x the spot price Imo approved, so this needs "
-                         "--allow-price-change and a new approval")
-    ap.add_argument("--allow-price-change", action="store_true")
+                    help="launch on demand rather than spot. No longer gated on the "
+                         "market: the gate is the projected cost against the $10 Imo "
+                         "pre-approved for a single run. Spot was reclaimed twice in four "
+                         "hours, and a reclaim costs whatever chunk it lands in")
+    ap.add_argument("--allow-price-change", action="store_true",
+                    help="proceed with a run projected over the pre-approved ceiling. Only "
+                         "after Imo has said yes to that figure")
     ap.add_argument("--timeout-minutes", type=float, default=100.0)
     ap.add_argument("--poll-seconds", type=float, default=300.0)
     ap.add_argument("--attach", help="watch an already-running instance")
@@ -270,11 +308,26 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--print-user-data", action="store_true")
     args = ap.parse_args(argv)
 
-    if args.no_spot and not args.allow_price_change:
+    # THE GATE IS THE COST, NOT THE MARKET. This used to refuse `--no-spot` outright, on the
+    # grounds that the $25 Imo approved was a spot figure. That was the wrong variable: the
+    # market is not what he was protecting against, the bill is. His standing rule of
+    # 2026-11-21 is that a single run under $10 is pre-approved, so the gate is now a
+    # projection against that ceiling and on demand needs no special pleading when it is
+    # cheap. The projection uses the dead-man timer rather than the stage budgets, because
+    # the timer is the only bound that does not depend on the run working.
+    cost, cost_note = projected_cost(args.instance_type, args.hard_stop_minutes,
+                                     not args.no_spot, args.volume_size)
+    print(f"projected worst case: {cost_note}")
+    if not (cost == cost):                                   # NaN: unknown instance type
+        raise SystemExit(cost_note)
+    if cost > AUTO_APPROVED_USD and not args.allow_price_change:
         raise SystemExit(
-            "refusing to launch on demand: the $25 Imo approved is a spot figure "
-            "(r6i.2xlarge at $0.29/h). On demand is 3-4x that, which is a new approval, "
-            "not a flag. Pass --allow-price-change once he has given one.")
+            f"refusing to launch: {cost_note}, over the ${AUTO_APPROVED_USD:.0f} Imo "
+            f"pre-approved for a single run. Above that he wants an explicit yes on a "
+            f"figure, so put the number above on a decision card and pass "
+            f"--allow-price-change once he has given one. Shortening "
+            f"--hard-stop-minutes is the other way down: the projection is the timer's "
+            f"worst case, not the expected bill.")
 
     if args.chunk_target_seconds is None:
         args.chunk_target_seconds = (ON_DEMAND_CHUNK_TARGET_SECONDS if args.no_spot
