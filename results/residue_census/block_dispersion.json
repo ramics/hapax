@@ -59,12 +59,30 @@
    "five_block_minus_whole_pct_points": -0.008917026616199475
   }
  },
+ "unident_subdefinitions": {
+  "unident_either_mate": {
+   "whole_library": 0.09302269647417132,
+   "inflation_all_windows": 1.2431145551493874
+  },
+  "unident_both_mates": {
+   "whole_library": 0.0690359106581162,
+   "inflation_all_windows": 1.2307186590328523
+  },
+  "unident_one_mate_with_none": {
+   "whole_library": 0.021347636940708428,
+   "inflation_all_windows": 1.1839255081515219
+  },
+  "none_or_unident": {
+   "whole_library": 0.25016229110603505,
+   "inflation_all_windows": 1.1036433509996288
+  }
+ },
  "reading": "Widen a binomial interval on rrna or identified by its inflation_all_windows factor; the residue classes (none, unident) are near 1 and barely move. Never take the factor from 5 blocks: that column is a 5-sample variance and reads below 1 where the truth is 1.6.",
  "manifest": {
   "script": "experiments/block_dispersion.py",
-  "git_sha": "496f20b2a4d7d780541948912e1738fb71f3ba99",
-  "tree_dirty": false,
-  "script_sha256": "1f248e384466fe01",
+  "git_sha": "628449eb1ce87bddaddad6f99d4afd32799e590e-dirty",
+  "tree_dirty": true,
+  "script_sha256": "34ff3561adb1a43f",
   "parameters": {
    "seed": "1",
    "classes": "/home/user/hapax/data/work/library_label_classes.npz",

@@ -80,6 +80,29 @@ def main() -> None:
             "five_block_mean": float(five.mean()),
             "five_block_minus_whole_pct_points": float((five.mean() - whole) * 100),
         }
+    # The companion thread reads 1.13 for its unidentifiable-contig class where this reads
+    # 1.24, so the factor for that class ships as a range. These sub-definitions test whether
+    # the gap is this class being broader (it holds pairs no read-level index was asked
+    # about): tightening it does NOT move the number, so breadth is not the explanation and
+    # the remaining difference is between two populations that cannot be compared directly -
+    # the cascade's residue is defined only on its five blocks, so it has no window series.
+    pairmask = {"unident_either_mate": pair == 3,
+                "unident_both_mates": (c1 == 3) & (c2 == 3),
+                "unident_one_mate_with_none": ((c1 == 3) & (c2 == 0)) | ((c1 == 0) & (c2 == 3)),
+                "none_or_unident": (pair == 3) | (pair == 0)}
+    out["unident_subdefinitions"] = {}
+    for nm, msk in pairmask.items():
+        whole = float(msk.mean())
+        b = float(np.sqrt(whole * (1 - whole) / n))
+        W = []
+        for lo in range(0, int(spot.max()) - n, n):
+            mm = (spot > lo) & (spot <= lo + n)
+            if mm.sum() >= n * 0.9:
+                W.append(float(msk[mm].mean()))
+        Wa = np.array(W)
+        out["unident_subdefinitions"][nm] = {"whole_library": whole,
+                                             "inflation_all_windows": float(Wa.std(ddof=1) / b)}
+
     out["reading"] = ("Widen a binomial interval on rrna or identified by its "
                       "inflation_all_windows factor; the residue classes (none, unident) are "
                       "near 1 and barely move. Never take the factor from 5 blocks: that "
