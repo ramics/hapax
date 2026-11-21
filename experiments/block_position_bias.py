@@ -92,6 +92,7 @@ def main() -> None:
     # - mate 2 is 93 nt against mate 1's 107 and maps at a different rate - and pooling
     # them would average two different measurements, which is the standing rule.
     cls = z["class1"]
+    cls2 = z["class2"]
     n_lib = cls.size
     rng = np.random.default_rng(args.seed)
 
@@ -106,6 +107,36 @@ def main() -> None:
     tiled = cls[:n_blocks * args.pairs].reshape(n_blocks, args.pairs)
     counts = np.stack([np.bincount(row, minlength=len(codes)) for row in tiled])
     block_f = counts / args.pairs
+
+    # ---- the same, per mate and at pair level.
+    #
+    # This is not decoration. The first version of this script scored mate 1 alone and
+    # reported 1.13 for the unidentified class; the residue thread's independent run read
+    # 1.24 and we spent a message each on the disagreement. It is the standing rule: the
+    # mates are not interchangeable, and this is the class where they differ most, 1.13 on
+    # mate 1 against 1.39 on mate 2. A pair-symmetric figure averages two different
+    # measurements, so all three are reported.
+    #
+    # The PAIR-LEVEL figures are the ones a cascade interval needs, because the cascade
+    # removes a pair when either mate matches, and `both_mates_none` is tier 3 exactly as
+    # the tool defines it.
+    def series(ind: np.ndarray) -> dict:
+        f = ind[:n_blocks * args.pairs].reshape(n_blocks, args.pairs).mean(axis=1)
+        p = float(ind.mean())
+        bsd = float(np.sqrt(p * (1 - p) / args.pairs)) if 0 < p < 1 else None
+        osd = float(f.std(ddof=1))
+        return {"fraction": p, "block_sd_observed": osd,
+                "binomial_sd_expected": bsd,
+                "overdispersion": (osd / bsd) if bsd else None,
+                "lag1_autocorrelation": float(np.corrcoef(f[:-1], f[1:])[0, 1])}
+
+    per_mate, pair_level = {}, {}
+    for i, c in enumerate(codes):
+        per_mate[c] = {"mate1": series((cls == i).astype(np.int8)),
+                       "mate2": series((cls2 == i).astype(np.int8))}
+        pair_level[c] = series(((cls == i) | (cls2 == i)).astype(np.int8))
+    ni = codes.index("none")
+    pair_level["both_mates_none"] = series(((cls == ni) & (cls2 == ni)).astype(np.int8))
 
     # ---- the blocks the cascade actually uses
     used = []
@@ -166,6 +197,12 @@ def main() -> None:
                            "residue rather than the residue"},
         "class_codes": codes,
         "library_fractions": dict(zip(codes, library.round(6).tolist())),
+        "per_mate": per_mate,
+        "pair_level": pair_level,
+        "pair_level_note": "a pair counts for a class when EITHER mate carries it, which "
+                           "is how the cascade removes a pair; both_mates_none is tier 3 "
+                           "as the tool defines it. These are the factors a cascade "
+                           "interval needs, and they are not the mate-1 figures below",
         "cascade_blocks": used,
         "classes": out_classes,
         "readout": "overdispersion is the factor by which the observed between-block "
@@ -183,6 +220,15 @@ def main() -> None:
     dest.write_text(json.dumps(out, indent=1))
     np.savez_compressed(args.out / f"block_fractions_s{args.seed}.npz",
                         block_fractions=block_f, class_codes=np.array(codes))
+    print("pair level (either mate), the figures a cascade interval needs:")
+    for c, v in pair_level.items():
+        print(f"  {c:16s} p={v['fraction']:.5f}  overdispersion {v['overdispersion']:5.3f}"
+              f"  lag1 {v['lag1_autocorrelation']:+.3f}")
+    print("per mate, because the mates are not interchangeable:")
+    for c, v in per_mate.items():
+        print(f"  {c:16s} mate1 {v['mate1']['overdispersion']:5.3f}"
+              f"  mate2 {v['mate2']['overdispersion']:5.3f}")
+    print("mate 1 only, against the random-sample control:")
     for c, v in out_classes.items():
         print(f"{c:12s} library {100*v['library_fraction']:6.3f}%  "
               f"blocks {100*v['block_min']:6.3f}-{100*v['block_max']:6.3f}%  "

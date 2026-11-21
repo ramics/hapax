@@ -802,10 +802,17 @@ class Run:
 #: between-block standard deviation divided by the binomial one a Wilson interval assumes,
 #: with uniform random samples of the same size as the control reading 0.92-1.10.
 #:
-#: The structure sits in the abundant classes - adjacent blocks correlate at +0.24 and
-#: +0.28 on ribosomal and identified - and is near absent from the residue classes, whose
+#: The structure sits in the abundant classes - adjacent blocks correlate at +0.25 and
+#: +0.29 on ribosomal and identified - and is near absent from the residue classes, whose
 #: autocorrelation is within noise of zero. So the residue, which is what this tool is
 #: about, is very nearly a simple random sample and the correction to it is small.
+#:
+#: These are PAIR-LEVEL factors: a pair counts for a class when either mate carries it,
+#: which is how the cascade removes a pair, and the residual factor is measured on pairs
+#: whose BOTH mates are unplaced, which is tier 3 as this tool defines it. The mate-1 and
+#: mate-2 figures differ and must not be substituted - on the tier-2 class they are 1.13
+#: and 1.39, and a disagreement with another thread over exactly that class turned out to
+#: be this rule and not a discrepancy in the quantity.
 #:
 #: Carried across from a label-based instrument (SILVA plus the sample's own contigs at 40
 #: bases, no Kraken2 and no DIAMOND) to cascade numbers as the best available estimate,
@@ -813,10 +820,10 @@ class Run:
 #: cell rather than of the classifier, which is what makes the transfer defensible, and
 #: every number that uses it carries the citation.
 DESIGN_EFFECT = {
-    "identified": 1.57,
-    "assembled_unidentified": 1.13,
-    "residual": 1.15,
-    "_default": 1.15,
+    "identified": 1.58,
+    "assembled_unidentified": 1.27,
+    "residual": 1.09,
+    "_default": 1.27,
     "_source": "results/block_position_bias/REPORT.md, 5 seeds, measured on SRR23973193",
     "_why": "the cascade reads a contiguous block of the FASTQ, so a Wilson interval, "
             "which assumes a simple random sample of the library, is too narrow",

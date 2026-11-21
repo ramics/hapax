@@ -50,6 +50,9 @@ and it is answered in the direction that costs nothing.
 The blocks do differ from each other by more than sampling noise, which is the half that
 matters, because a Wilson interval assumes a simple random sample.
 
+Mate 1, with the random-sample control beside it. The per-mate and pair-level figures
+are in the next section, and the pair-level ones are what the tool uses.
+
 | class | overdispersion | lag-1 autocorrelation between adjacent blocks |
 |---|---|---|
 | `none` | **1.15x** | +0.04 |
@@ -75,9 +78,28 @@ The residue thread re-derived this from the same label table with its own script
 (`experiments/block_dispersion.py`, `results/residue_census/block_dispersion.json`). Over
 the same 87 windows it reads 1.44 and 1.61 on `rrna` and `identified` against the 1.43 and
 1.57 here, with the autocorrelation splitting the same way, and five-block means within
-0.16 points of the library. One figure differs: `unident` reads 1.24 there against 1.13
-here, so treat that class's factor as 1.1-1.25 rather than a point value. Everything the
-conclusion rests on is reproduced.
+0.16 points of the library.
+
+One class disagreed - `unident`, 1.24 there against 1.13 here - and **the disagreement was
+this project's own standing rule, not a discrepancy in the quantity.** This script scored
+mate 1 alone. On that class the two mates read **1.13 and 1.39**, the widest mate split of
+any class here, and the other thread's figure was pair-symmetric. Both numbers were right
+about different things. All three are now reported:
+
+| class | mate 1 | mate 2 | pair level, either mate |
+|---|---|---|---|
+| `none` | 1.148 | 1.086 | 1.132 |
+| `rrna` | 1.430 | 1.427 | 1.443 |
+| `identified` | 1.571 | 1.489 | 1.581 |
+| `unident` | **1.131** | **1.390** | 1.268 |
+| `other_ctg` | 1.280 | 1.126 | 1.265 |
+| both mates unplaced (tier 3 as the tool defines it) | - | - | **1.092** |
+
+**The pair-level column is the one a cascade interval needs**, because the cascade removes
+a pair when either mate matches, so those are the factors `hapax.py` now carries: 1.58 on
+identified, 1.27 on tier 2, 1.09 on tier 3. The earlier mate-1 figures were close enough
+not to change any conclusion and wrong enough to argue about for two messages, which is
+what the rule is for.
 
 **The trap.** Computed from the five cascade blocks alone rather than from all 87 windows,
 the same statistic reads **0.65 for `rrna` and 0.44 for `identified`** - "no inflation, if
