@@ -1,0 +1,578 @@
+{
+  "script": "experiments/partial_match_subjects.py",
+  "git_sha": "2ca5bbae94b8a0b4e5ca7384a3a8e35301bad919",
+  "tree_dirty": false,
+  "script_sha256": "a641d15c288984dc",
+  "parameters": {
+    "seed": 1,
+    "rows": [
+      "/tmp/claude-0/wk/boxrows/rows_core_nt_block_s1_c000.jsonl",
+      "/tmp/claude-0/wk/boxrows/rows_core_nt_block_s1_c001.jsonl",
+      "/tmp/claude-0/wk/boxrows/rows_core_nt_block_s1_c002.jsonl",
+      "/tmp/claude-0/wk/bi2_rows_pilot_core_nt.jsonl"
+    ],
+    "reads_r1": "/home/user/hapax/data/berlin/SRR23973193_1.fastq.gz",
+    "min_aln": 30,
+    "max_aln_frac": 0.8,
+    "max_ref_length": 1000000,
+    "max_alignments": 600,
+    "pause": 0.4,
+    "work": "/tmp/claude-0/wk/partialsubj",
+    "out": "/home/user/hapax/results/partial_match_subjects"
+  },
+  "rows_read": 1133,
+  "partial_matches": 567,
+  "mates": {
+    "1": 567
+  },
+  "distinct_subjects": 543,
+  "bands": {
+    "significant": {
+      "n": 28,
+      "median_evalue": 3.735e-09,
+      "median_pident": 84.31,
+      "median_aln_len": 73.5,
+      "median_aln_frac": 0.719,
+      "top_organisms": [
+        [
+          "Caudoviricetes sp.",
+          5
+        ],
+        [
+          "Riboviria sp.",
+          2
+        ],
+        [
+          "Hymenobacter sp. 5516J-16",
+          1
+        ],
+        [
+          "Ignavibacteriota bacterium",
+          1
+        ],
+        [
+          "Burkholderia phage BCSR129",
+          1
+        ],
+        [
+          "Leviviridae sp.",
+          1
+        ],
+        [
+          "ssRNA phage Zoerhiza.1_20",
+          1
+        ],
+        [
+          "ssRNA phage SRR6960507_10",
+          1
+        ],
+        [
+          "Marine RNA phage MB",
+          1
+        ],
+        [
+          "Sneathia sanguinegens",
+          1
+        ],
+        [
+          "Acrobeloides maximus",
+          1
+        ],
+        [
+          "Prokaryotic dsDNA virus sp.",
+          1
+        ]
+      ]
+    },
+    "chance": {
+      "n": 539,
+      "median_evalue": 0.82,
+      "median_pident": 87.81,
+      "median_aln_len": 38,
+      "median_aln_frac": 0.3645,
+      "top_organisms": [
+        [
+          "Caudoviricetes sp.",
+          11
+        ],
+        [
+          "Acidobacteriota bacterium",
+          9
+        ],
+        [
+          "uncultured bacterium",
+          7
+        ],
+        [
+          "Verrucomicrobiia bacterium",
+          5
+        ],
+        [
+          "Actinomycetes bacterium",
+          5
+        ],
+        [
+          "Homo sapiens",
+          4
+        ],
+        [
+          "Acidimicrobiales bacterium",
+          4
+        ],
+        [
+          "Actinomycetota bacterium",
+          4
+        ],
+        [
+          "Leviviridae sp.",
+          3
+        ],
+        [
+          "Spirometra erinaceieuropaei",
+          3
+        ],
+        [
+          "Alphaproteobacteria bacterium",
+          3
+        ],
+        [
+          "Timema shepardi",
+          3
+        ]
+      ]
+    }
+  },
+  "by_class": {
+    "identified": {
+      "significant": {
+        "n": 8,
+        "median_evalue": 4.655e-08,
+        "median_pident": 81.87,
+        "median_aln_len": 73.5,
+        "median_aln_frac": 0.7068,
+        "top_organisms": [
+          [
+            "Riboviria sp.",
+            2
+          ],
+          [
+            "Ignavibacteriota bacterium",
+            1
+          ],
+          [
+            "Leviviridae sp.",
+            1
+          ],
+          [
+            "ssRNA phage Zoerhiza.1_20",
+            1
+          ],
+          [
+            "ssRNA phage SRR6960507_10",
+            1
+          ],
+          [
+            "Marine RNA phage MB",
+            1
+          ],
+          [
+            "Acrobeloides maximus",
+            1
+          ]
+        ]
+      },
+      "chance": {
+        "n": 49,
+        "median_evalue": 0.81,
+        "median_pident": 87.18,
+        "median_aln_len": 39,
+        "median_aln_frac": 0.3645,
+        "top_organisms": [
+          [
+            "uncultured Methanobacterium sp.",
+            2
+          ],
+          [
+            "Timema cristinae",
+            2
+          ],
+          [
+            "Silvibacterium sp.",
+            1
+          ],
+          [
+            "Bradyrhizobium sp.",
+            1
+          ],
+          [
+            "ssRNA phage SRR6960551_9",
+            1
+          ],
+          [
+            "Paenibacillus sp. FSL W8-0186",
+            1
+          ],
+          [
+            "Leviviricetes sp.",
+            1
+          ],
+          [
+            "Pelagibacter phage EXVC032P Baldr",
+            1
+          ],
+          [
+            "Equus asinus",
+            1
+          ],
+          [
+            "Colwellia sp. 20A7",
+            1
+          ],
+          [
+            "Vibrio atlanticus",
+            1
+          ],
+          [
+            "Homo sapiens",
+            1
+          ]
+        ]
+      }
+    },
+    "residue": {
+      "significant": {
+        "n": 20,
+        "median_evalue": 4.93e-10,
+        "median_pident": 85.81,
+        "median_aln_len": 74.0,
+        "median_aln_frac": 0.7243,
+        "top_organisms": [
+          [
+            "Caudoviricetes sp.",
+            5
+          ],
+          [
+            "Hymenobacter sp. 5516J-16",
+            1
+          ],
+          [
+            "Burkholderia phage BCSR129",
+            1
+          ],
+          [
+            "Sneathia sanguinegens",
+            1
+          ],
+          [
+            "Prokaryotic dsDNA virus sp.",
+            1
+          ],
+          [
+            "Nocardioides sp. MTN3-22",
+            1
+          ],
+          [
+            "Aeromonas phage Akh-2",
+            1
+          ],
+          [
+            "methanogenic archaeon ISO4-H5",
+            1
+          ],
+          [
+            "Frigidibacter mobilis",
+            1
+          ],
+          [
+            "Acidobacteriota bacterium",
+            1
+          ],
+          [
+            "uncultured fungus",
+            1
+          ],
+          [
+            "Diaphorobacter limosus",
+            1
+          ]
+        ]
+      },
+      "chance": {
+        "n": 490,
+        "median_evalue": 0.82,
+        "median_pident": 87.81,
+        "median_aln_len": 38.0,
+        "median_aln_frac": 0.3645,
+        "top_organisms": [
+          [
+            "Caudoviricetes sp.",
+            11
+          ],
+          [
+            "Acidobacteriota bacterium",
+            9
+          ],
+          [
+            "uncultured bacterium",
+            7
+          ],
+          [
+            "Actinomycetes bacterium",
+            5
+          ],
+          [
+            "Verrucomicrobiia bacterium",
+            4
+          ],
+          [
+            "Actinomycetota bacterium",
+            4
+          ],
+          [
+            "Spirometra erinaceieuropaei",
+            3
+          ],
+          [
+            "Alphaproteobacteria bacterium",
+            3
+          ],
+          [
+            "Timema shepardi",
+            3
+          ],
+          [
+            "Verrucomicrobiales bacterium",
+            3
+          ],
+          [
+            "Homo sapiens",
+            3
+          ],
+          [
+            "Acidimicrobiales bacterium",
+            3
+          ]
+        ]
+      }
+    }
+  },
+  "aligned": 13,
+  "fetch_failures": [
+    {
+      "read": "SRR23973193.53525/1",
+      "accession": "QB087862.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.1544124/1",
+      "accession": "BK046118.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.94498/1",
+      "accession": "NC_074167.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.72168/1",
+      "accession": "MW460247.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.23246/1",
+      "accession": "ON163248.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.3049585/1",
+      "accession": "MK318083.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.4557372/1",
+      "accession": "JX898658.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.13943/1",
+      "accession": "PV944484.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.31963/1",
+      "accession": "MK892672.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.69460/1",
+      "accession": "OQ424759.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.2964/1",
+      "accession": "KF510034.2",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.9276/1",
+      "accession": "PX730737.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.62515/1",
+      "accession": "QB083065.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.3006510/1",
+      "accession": "QB084003.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.10944/1",
+      "accession": "CP174166.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.77085/1",
+      "accession": "ON163230.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.30582/1",
+      "accession": "NC_074362.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.6081111/1",
+      "accession": "PZ691248.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.4583588/1",
+      "accession": "BK057540.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.3066004/1",
+      "accession": "PX730792.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.38788/1",
+      "accession": "NC_073895.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.23306/1",
+      "accession": "OQ423989.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.1526618/1",
+      "accession": "OA883081.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.1510448/1",
+      "accession": "PP986817.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.99663/1",
+      "accession": "XM_044812981.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.25128/1",
+      "accession": "OR221720.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.16538/1",
+      "accession": "OQ423624.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.6059012/1",
+      "accession": "BK050159.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.1562795/1",
+      "accession": "CP034351.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.6014372/1",
+      "accession": "PP172089.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.71670/1",
+      "accession": "NC_073895.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.44366/1",
+      "accession": "NC_074372.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.3021590/1",
+      "accession": "OC216150.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.3012721/1",
+      "accession": "ON162802.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.3092430/1",
+      "accession": "XM_023688485.2",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.6071917/1",
+      "accession": "XR_006408775.3",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.6069079/1",
+      "accession": "XM_033699529.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.3096127/1",
+      "accession": "QB084163.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.6078487/1",
+      "accession": "MH153801.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    },
+    {
+      "read": "SRR23973193.41149/1",
+      "accession": "XR_015449741.1",
+      "error": "no local alignment even at k=9; BLAST's hit is below what a short-read aligner can seed, which is itself the informative result"
+    }
+  ],
+  "unreproducible_locally": 218,
+  "seed_tier": {
+    "sr_k9": 7,
+    "sr_k11": 5,
+    "sr": 1
+  },
+  "padded_identity": {
+    "median": 0.6168,
+    "mean": 0.6015,
+    "frac_above_0.8": 0.0769
+  },
+  "readout": "identity across a window the width of the read, centred on the reported match. A real relative holds its identity into the padding; a chance match decays to background outside its block",
+  "bias": "mate 1 only, so no pair statement is available. Organism names are NCBI's annotation and travel through unchecked. References over the length cap are inventoried without an alignment, and the cap correlates with organism - large genomes are cellular - so the aligned subset leans viral relative to the inventory",
+  "wall_seconds": 160.28025270500075,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}

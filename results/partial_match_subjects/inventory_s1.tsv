@@ -1,0 +1,568 @@
+read	class	accession	organism	ref_length	pident	aln_len	qlen	aln_frac	evalue	band	title
+SRR23973193.74500/1	residue	CP160095.1	Sneathia sanguinegens	1305941	92.308	78	107	0.729	1.96e-21	significant	Sneathia sanguinegens strain CCUG 41628T chromosome, complete genome
+SRR23973193.53283/1	residue	CP136921.1	Diaphorobacter limosus	4099615	91.358	81	107	0.757	1.96e-21	significant	Diaphorobacter limosus strain Y-1 chromosome, complete genome
+SRR23973193.3069129/1	residue	AP051734.1	Nocardioides sp. MTN3-22	3917191	86.076	79	107	0.7383	6.41e-15	significant	Nocardioides sp. MTN3-22 DNA, complete genome
+SRR23973193.80670/1	residue	BK028722.1	Caudoviricetes sp.	124155	84.337	83	106	0.783	2.21e-14	significant	MAG TPA_asm: Caudoviricetes sp. isolate ctVx91, partial genome
+SRR23973193.4574926/1	residue	CP012661.1	Frigidibacter mobilis	4738298	85.897	78	107	0.729	2.24e-14	significant	Frigidibacter mobilis strain cai42, complete sequence
+SRR23973193.4591095/1	residue	CP014214.1	methanogenic archaeon ISO4-H5	1937883	89.552	67	105	0.6381	7.59e-14	significant	Methanogenic archaeon ISO4-H5, complete genome
+SRR23973193.1591145/1	residue	PP215199.1	Penaeus vannamei levi-like virus 2	3615	87.5	72	107	0.6729	7.81e-14	significant	Penaeus vannamei levi-like virus 2 isolate 01/JS/202008 glycoprotein and RNA-dependent RNA polymerase genes, complete cds
+SRR23973193.13023/1	identified	OY969585.1	Ignavibacteriota bacterium	3643693	81.928	83	106	0.783	1.14e-11	significant	MAG: Ignavibacteriota bacterium isolate MFD03726.bin.c.11 genome assembly, chromosome: 1
+SRR23973193.57929/1	residue	CP095058.1	Hymenobacter sp. 5516J-16	4537763	94.34	53	107	0.4953	1.16e-11	significant	Hymenobacter sp. 5516J-16 chromosome, complete genome
+SRR23973193.58938/1	identified	NC_074217.1	ssRNA phage Zoerhiza.1_20	3659	83.784	74	103	0.7184	3.81e-11	significant	TPA: SsRNA phage Zoerhiza.1_20 genomic sequence
+SRR23973193.6056785/1	residue	OZ517511.1	Acidobacteriota bacterium	6340750	83.117	77	105	0.7333	3.93e-11	significant	MAG: Acidobacteriota bacterium isolate MFD15127.bin.c.84 genome assembly, chromosome: 1
+SRR23973193.53525/1	residue	QB087862.1	Caudoviricetes sp.	16472	81.818	77	107	0.7196	4.93e-10	significant	MAG: Caudoviricetes sp. isolate KCR_vOTU_09299 genomic sequence
+SRR23973193.1544124/1	residue	BK046118.1	Caudoviricetes sp.	43715	84.286	70	107	0.6542	4.93e-10	significant	MAG TPA_asm: Caudoviricetes sp. isolate ctMF016, partial genome
+SRR23973193.85231/1	residue	CP190752.1	Neisseria meningitidis	2190622	97.727	44	107	0.4112	1.72e-09	significant	Neisseria meningitidis strain JS-24-12 chromosome, complete genome
+SRR23973193.94498/1	identified	NC_074167.1	ssRNA phage SRR6960507_10	3764	81.333	75	104	0.7212	5.75e-09	significant	TPA: SsRNA phage SRR6960507_10 genomic sequence
+SRR23973193.72168/1	residue	MW460247.1	Burkholderia phage BCSR129	66147	79.518	83	107	0.7757	6e-09	significant	Burkholderia phage BCSR129, complete genome
+SRR23973193.3039027/1	residue	CP036282.1	Rhodoferax aquaticus	4737690	81.333	75	107	0.7009	6e-09	significant	Rhodoferax aquaticus strain Gr-4 chromosome, complete genome
+SRR23973193.6078443/1	residue	KY483383.1	uncultured Lactobacillus sp.	300	100.0	38	51	0.7451	1.67e-08	significant	Uncultured Lactobacillus sp. clone CCB14318 16S ribosomal RNA gene, partial sequence
+SRR23973193.5923/1	identified	EU195987.1	Acrobeloides maximus	3483	97.619	42	107	0.3925	2.1e-08	significant	Acrobeloides maximus strain DF5048 28S ribosomal RNA gene, partial sequence
+SRR23973193.23246/1	identified	ON163248.1	Leviviridae sp.	1416	81.818	77	106	0.7264	7.21e-08	significant	MAG: Leviviridae sp. isolate 174-k141_200678 RNA dependent RNA polymerase gene, partial cds
+SRR23973193.3049585/1	residue	MK318083.1	Aeromonas phage Akh-2	114901	78.049	82	106	0.7736	2.52e-07	significant	Aeromonas phage Akh-2, complete genome
+SRR23973193.4557372/1	residue	JX898658.1	uncultured fungus	703	80.556	72	106	0.6792	2.52e-07	significant	Uncultured ectomycorrhizal fungus clone WMU_D11-10 28S ribosomal RNA gene, partial sequence
+SRR23973193.13943/1	residue	PV944484.1	Caudoviricetes sp.	81191	85.965	57	107	0.5327	2.55e-07	significant	MAG: Caudoviricetes sp. isolate pajarito_V2_53 genomic sequence
+SRR23973193.12064/1	residue	QB082933.1	Caudoviricetes sp.	54531	85.714	56	106	0.5283	8.78e-07	significant	MAG: Caudoviricetes sp. isolate KCR_vOTU_00413 genomic sequence
+SRR23973193.99654/1	identified	OQ424400.1	Riboviria sp.	3321	85.714	56	107	0.5234	8.91e-07	significant	MAG: Riboviria sp. isolate parrot82_contig_36 genomic sequence
+SRR23973193.31963/1	residue	MK892672.1	Prokaryotic dsDNA virus sp.	41745	79.452	73	94	0.7766	2.53e-06	significant	MAG: Prokaryotic dsDNA virus sp. isolate GOV_bin_2380, complete genome
+SRR23973193.69460/1	identified	OQ424759.1	Riboviria sp.	3989	79.452	73	105	0.6952	3.02e-06	significant	MAG: Riboviria sp. isolate silverpheasant213_contig_3679 genomic sequence
+SRR23973193.2964/1	identified	KF510034.2	Marine RNA phage MB	3925	81.538	65	106	0.6132	3.07e-06	significant	Marine RNA phage MB strain QB3 gp1, putative ORF3, and gp2 genes, complete cds
+SRR23973193.9276/1	identified	PX730737.1	Leviviricetes	4745	84.211	57	106	0.5377	1.07e-05	chance	MAG: Leviviricetes isolate E10B_k141_65725 genomic sequence
+SRR23973193.62515/1	residue	QB083065.1	Caudoviricetes sp.	34535	77.922	77	107	0.7196	1.09e-05	chance	MAG: Caudoviricetes sp. isolate KCR_vOTU_00545 genomic sequence
+SRR23973193.3006510/1	residue	QB084003.1	Caudoviricetes sp.	40301	77.215	79	107	0.7383	1.09e-05	chance	MAG: Caudoviricetes sp. isolate KCR_vOTU_02281 genomic sequence
+SRR23973193.10944/1	residue	CP174166.1	Mesomycoplasma moatsii	737137	82.812	64	105	0.6095	3.68e-05	chance	Mesomycoplasma moatsii strain MK 405 chromosome, complete genome
+SRR23973193.77085/1	residue	ON163230.1	Leviviridae sp.	1083	83.929	56	107	0.5234	3.79e-05	chance	MAG: Leviviridae sp. isolate 178bR-k141_110268 RNA dependent RNA polymerase gene, partial cds
+SRR23973193.16560/1	residue	PQ054572.1	Qianjiang levi-like virus 9	3902	97.222	36	107	0.3364	3.79e-05	chance	MAG: Qianjiang levi-like virus 9 isolate QJ5DS2684 cRNA sequence
+SRR23973193.63395/1	residue	OZ532163.1	Solibacteraceae bacterium	6271579	90.698	43	107	0.4019	3.79e-05	chance	MAG: Solibacteraceae bacterium isolate MFD15113.bin.s.66 genome assembly, chromosome: 1
+SRR23973193.6072843/1	residue	CP040709.1	Inhella inkyongensis	4084412	80.952	63	107	0.5888	3.79e-05	chance	Inhella inkyongensis strain IMCC1713 chromosome, complete genome
+SRR23973193.30582/1	identified	NC_074362.1	ssRNA phage Esthiorhiza.1_1	4722	77.108	83	105	0.7905	0.000128	chance	TPA: SsRNA phage Esthiorhiza.1_1 genomic sequence
+SRR23973193.6081111/1	residue	PZ691248.1	Ascomycota sp.	348	81.667	60	107	0.5607	0.000132	chance	Ascomycota sp. isolate OTU1019 5.8S ribosomal RNA gene, partial sequence; internal transcribed spacer 2, complete sequence; and large subunit ribosomal RNA gene, partial sequence
+SRR23973193.4583588/1	residue	BK057540.1	Caudoviricetes sp.	77476	77.381	84	107	0.785	0.000132	chance	MAG TPA_asm: Caudoviricetes sp. isolate ctswQ4, partial genome
+SRR23973193.3066004/1	residue	PX730792.1	Leviviricetes	2849	88.889	45	107	0.4206	0.000132	chance	MAG: Leviviricetes isolate E15A_k141_105956 genomic sequence
+SRR23973193.65589/1	residue	CP109487.1	Streptomyces sp. NBC_01439	9578283	97.059	34	106	0.3208	0.000455	chance	Streptomyces sp. NBC_01439 chromosome, complete genome
+SRR23973193.38788/1	residue	NC_073895.1	ssRNA phage SRR6960551_9	3536	90.244	41	106	0.3868	0.000455	chance	TPA: SsRNA phage SRR6960551_9 genomic sequence
+SRR23973193.3596/1	residue	OZ223259.1	Vallitaleaceae bacterium	3632899	85.185	54	107	0.5047	0.000462	chance	MAG: Vallitaleaceae bacterium isolate f7497915-b9e0-484a-baa0-6aef27885f3a genome assembly, chromosome: 4
+SRR23973193.23306/1	identified	OQ423989.1	Riboviria sp.	1804	84.314	51	107	0.4766	0.000462	chance	MAG: Riboviria sp. isolate ElliotsPheasant225_contig_5963 genomic sequence
+SRR23973193.4092/1	residue	AP025592.1	Anaeromyxobacter paludicola	4590331	79.71	69	107	0.6449	0.000462	chance	Anaeromyxobacter paludicola DNA, complete genome
+SRR23973193.61229/1	residue	CP066784.1	Alicyclobacillus sp. ALC3	4936174	88.636	44	107	0.4112	0.000462	chance	Alicyclobacillus sp. ALC3 chromosome, complete genome
+SRR23973193.1526618/1	residue	OA883081.1	Notodromas monacha	69829	79.412	68	107	0.6355	0.000462	chance	Notodromas monacha
+SRR23973193.4520400/1	residue	CP173360.1	Kitasatospora griseola	8319864	85.0	60	107	0.5607	0.000462	chance	Kitasatospora griseola strain AC2-5 chromosome, complete genome
+SRR23973193.4593582/1	residue	OZ534116.1	Chthoniobacteraceae bacterium	4645437	80.328	61	107	0.5701	0.000462	chance	MAG: Chthoniobacteraceae bacterium isolate MFD15109.bin.c.60 genome assembly, chromosome: 1
+SRR23973193.54401/1	residue	OZ521209.1	Actinomycetes bacterium	2775829	86.957	46	107	0.4299	0.000462	chance	MAG: Actinomycetes bacterium isolate MFD15179.bin.s.1036 genome assembly, chromosome: 1
+SRR23973193.4526684/1	residue	OZ512626.1	Granulicella sp.	3742538	83.929	56	107	0.5234	0.000462	chance	MAG: Granulicella sp. isolate MFD15078.bin.c.32 genome assembly, chromosome: 1
+SRR23973193.3086992/1	residue	OZ521449.1	Myxococcales bacterium	8583183	94.444	36	107	0.3364	0.000462	chance	MAG: Myxococcales bacterium isolate MFD15181.bin.c.21 genome assembly, chromosome: 1
+SRR23973193.1510448/1	residue	PP986817.1	Pakpunavirus sp.	12689	80.328	61	107	0.5701	0.000462	chance	MAG: Pakpunavirus sp. isolate vContig3 genomic sequence
+SRR23973193.3096924/1	residue	OZ535409.1	Pseudomonadota bacterium	5365003	93.023	43	107	0.4019	0.000462	chance	MAG: Pseudomonadota bacterium isolate MFD15115.bin.c.54 genome assembly, chromosome: 1
+SRR23973193.23849/1	residue	CP053835.1	Arcobacter defluvii	3021240	96.875	32	48	0.6667	0.001	chance	Arcobacter defluvii strain LMG 25694 chromosome, complete genome
+SRR23973193.64548/1	residue	CP108512.1	Streptomyces sp. NBC_01236	11360030	96.97	33	107	0.3084	0.002	chance	Streptomyces sp. NBC_01236 chromosome, complete genome
+SRR23973193.95506/1	residue	OY969099.1	uncultured Actinomycetes bacterium	3133461	86.667	45	107	0.4206	0.002	chance	MAG: uncultured Actinomycetes bacterium isolate MFD01721.bin.1.13 genome assembly, chromosome: 1
+SRR23973193.27709/1	residue	CP049298.1	Chryseobacterium sp. POL2	3243462	77.143	70	104	0.6731	0.002	chance	Chryseobacterium sp. POL2 chromosome, complete genome
+SRR23973193.99663/1	residue	XM_044812981.1	Bacidia gigantensis	2286	94.286	35	106	0.3302	0.002	chance	Bacidia gigantensis uncharacterized protein (KY384_004475), partial mRNA
+SRR23973193.25128/1	residue	OR221720.1	Caudoviricetes sp.	47122	86.538	52	107	0.486	0.002	chance	MAG: Caudoviricetes sp. isolate MSP1314 genomic sequence
+SRR23973193.16538/1	residue	OQ423624.1	Riboviria sp.	4448	78.462	65	107	0.6075	0.002	chance	MAG: Riboviria sp. isolate BluePeacock205_contig_2707 genomic sequence
+SRR23973193.6059012/1	residue	BK050159.1	Caudoviricetes sp.	36094	83.019	53	107	0.4953	0.002	chance	MAG TPA_asm: Caudoviricetes sp. isolate ctBe313, partial genome
+SRR23973193.1588554/1	residue	CP066167.1	Spongiibacter nanhainus	4078570	100.0	30	107	0.2804	0.002	chance	Spongiibacter nanhainus strain csc3.9 chromosome, complete genome
+SRR23973193.27709/1	residue	CP049298.1	Chryseobacterium sp. POL2	3243462	77.143	70	104	0.6731	0.002	chance	Chryseobacterium sp. POL2 chromosome, complete genome
+SRR23973193.6058298/1	residue	CP174285.1	Microbulbifer mixtoriginis (SeqCode)	4927283	83.333	54	106	0.5094	0.002	chance	Microbulbifer mixtoriginis (SeqCode) strain PSTR4-B chromosome, complete genome
+SRR23973193.1562795/1	residue	CP034351.1	Streptomyces sp. W1SF4	481785	83.333	54	106	0.5094	0.002	chance	Streptomyces sp. W1SF4 plasmid p1, complete sequence
+SRR23973193.31913/1	residue	XM_027599313.1	Zalophus californianus	1595	86.667	45	107	0.4206	0.002	chance	PREDICTED: Zalophus californianus ADP ribosylation factor like GTPase 9 (ARL9), transcript variant X1, mRNA
+SRR23973193.6014372/1	residue	PP172089.1	Chrocarolt virus	3718	84.0	50	107	0.4673	0.002	chance	MAG: Chrocarolt virus isolate CC1C_k141_59079 genomic sequence
+SRR23973193.4560878/1	residue	CP117523.1	Terrisporobacter glycolicus ATCC 14880 = DSM 1288	4039277	85.417	48	105	0.4571	0.005	chance	Terrisporobacter glycolicus ATCC 14880 = DSM 1288 chromosome, complete genome
+SRR23973193.1534589/1	residue	OZ515709.1	Tepidisphaeraceae bacterium	5656431	85.106	47	105	0.4476	0.005	chance	MAG: Tepidisphaeraceae bacterium isolate MFD15102.bin.c.184 genome assembly, chromosome: 1
+SRR23973193.6047578/1	residue	OY969711.1	uncultured Chloroflexia bacterium	2069280	90.698	43	104	0.4135	0.005	chance	MAG: uncultured Chloroflexia bacterium isolate MFD09730.bin.c.1 genome assembly, chromosome: 1
+SRR23973193.71670/1	identified	NC_073895.1	ssRNA phage SRR6960551_9	3536	86.364	44	107	0.4112	0.006	chance	TPA: SsRNA phage SRR6960551_9 genomic sequence
+SRR23973193.60194/1	residue	CP115165.1	Deinococcus aquaticus	3131215	86.364	44	106	0.4151	0.006	chance	Deinococcus aquaticus strain PB-314 chromosome, complete genome
+SRR23973193.9916/1	residue	CP107958.1	Streptomyces sp. NBC_00377	9195461	80.328	61	107	0.5701	0.006	chance	Streptomyces sp. NBC_00377 chromosome, complete genome
+SRR23973193.64146/1	residue	CP137761.1	Bacillus sp. T3	4600623	86.364	44	107	0.4112	0.006	chance	Bacillus sp. T3 chromosome, complete genome
+SRR23973193.4849/1	residue	OZ512377.1	Vulcanimicrobiota bacterium	2402703	88.095	42	107	0.3925	0.006	chance	MAG: Vulcanimicrobiota bacterium isolate MFD15081.bin.c.169 genome assembly, chromosome: 1
+SRR23973193.44366/1	identified	NC_074372.1	ssRNA phage Gerhypos.2_15	4652	82.692	52	107	0.486	0.006	chance	TPA: SsRNA phage Gerhypos.2_15 genomic sequence
+SRR23973193.86015/1	residue	OZ516004.1	Chloroflexia bacterium	3342039	90.244	41	107	0.3832	0.006	chance	MAG: Chloroflexia bacterium isolate MFD15103.bin.s.273 genome assembly, chromosome: 1
+SRR23973193.39007/1	residue	HF933227.1	Oryzias latipes	31883787	91.892	37	107	0.3458	0.006	chance	TPA_asm: Oryzias latipes strain Hd-rR, complete genome assembly, chromosome 21
+SRR23973193.2481/1	identified	OZ503536.1	Tepidisphaerales bacterium	5680035	96.875	32	107	0.2991	0.006	chance	MAG: Tepidisphaerales bacterium isolate MFD15009.bin.c.219 genome assembly, chromosome: 1
+SRR23973193.6822/1	residue	OZ515869.1	Actinomycetes bacterium	2891837	85.106	47	107	0.4393	0.006	chance	MAG: Actinomycetes bacterium isolate MFD15103.bin.c.113 genome assembly, chromosome: 1
+SRR23973193.3065002/1	residue	CP135602.1	Stenotrophomonas maltophilia	4975815	75.325	77	107	0.7196	0.006	chance	Stenotrophomonas maltophilia strain SI1 chromosome, complete genome
+SRR23973193.6038767/1	residue	LK064669.1	Apteryx mantelli mantelli	16422433	92.105	38	107	0.3551	0.006	chance	Apteryx australis mantelli genome assembly AptMant0, scaffold scaffold19
+SRR23973193.3021590/1	residue	OC216150.1	Timema shepardi	310	86.957	46	107	0.4299	0.006	chance	2_Tsi_b3v08
+SRR23973193.3012721/1	residue	ON162802.1	Leviviridae sp.	1659	86.364	44	107	0.4112	0.006	chance	MAG: Leviviridae sp. isolate 348R-k141_328816 RNA dependent RNA polymerase gene, partial cds
+SRR23973193.3092430/1	residue	XM_023688485.2	Cucurbita pepo subsp. pepo	870	81.481	54	107	0.5047	0.006	chance	PREDICTED: Cucurbita pepo subsp. pepo DTW domain-containing protein (LOC111803881), mRNA
+SRR23973193.6071917/1	residue	XR_006408775.3	Ursus arctos	15521	94.118	34	107	0.3178	0.006	chance	PREDICTED: Ursus arctos uncharacterized LOC123000644 (LOC123000644), ncRNA
+SRR23973193.9149/1	residue	OZ535318.1	Candidatus Omnitrophota bacterium	2443898	88.095	42	106	0.3962	0.006	chance	MAG: Candidatus Omnitrophota bacterium isolate MFD15115.bin.s.152 genome assembly, chromosome: 1
+SRR23973193.3015360/1	residue	CP027665.1	Pukyongiella litopenaei	3892138	82.759	58	107	0.5421	0.006	chance	Pukyongiella litopenaei strain SH-1 chromosome, complete genome
+SRR23973193.6069079/1	residue	XM_033699529.1	Macroventuria anomochaeta	1245	88.095	42	107	0.3925	0.006	chance	Macroventuria anomochaeta DUF6-domain-containing protein (BU25DRAFT_328571), partial mRNA
+SRR23973193.3063567/1	residue	CP169367.1	Lonepinella sp. MS14437	2178008	88.095	42	107	0.3925	0.006	chance	Lonepinella sp. MS14437 chromosome, complete genome
+SRR23973193.3096127/1	residue	QB084163.1	Caudoviricetes sp.	52219	86.364	44	107	0.4112	0.006	chance	MAG: Caudoviricetes sp. isolate KCR_vOTU_01638 genomic sequence
+SRR23973193.6078487/1	residue	MH153801.1	Microbacterium phage Count	78922	76.389	72	107	0.6729	0.006	chance	Microbacterium phage Count, complete genome
+SRR23973193.4504917/1	residue	CP091196.1	Amycolatopsis thermalba	7285716	79.365	63	107	0.5888	0.006	chance	Amycolatopsis thermalba strain KNN 49.3e chromosome, complete genome
+SRR23973193.90771/1	residue	OC001098.1	Timema shepardi	192025	94.118	34	106	0.3208	0.006	chance	2_Tsi_b3v08
+SRR23973193.67358/1	residue	CP126625.1	Geothrix sp.	3733873	94.118	34	107	0.3178	0.006	chance	MAG: Geothrix sp. isolate L227-G1 chromosome, complete genome
+SRR23973193.41149/1	residue	XR_015449741.1	Heterocephalus glaber	34935	78.788	66	106	0.6226	0.006	chance	PREDICTED: Heterocephalus glaber StAR related lipid transfer domain containing 9 (Stard9), transcript variant X1, misc_RNA
+SRR23973193.86696/1	residue	XM_065632048.1	Caloenas nicobarica	2072	88.889	45	107	0.4206	0.006	chance	PREDICTED: Caloenas nicobarica retinol dehydrogenase 14 (RDH14), mRNA
+SRR23973193.89827/1	residue	OZ502844.1	Phycisphaerales bacterium	2457909	93.939	33	102	0.3235	0.018	chance	MAG: Phycisphaerales bacterium isolate MFD15007.bin.2.1680 genome assembly, chromosome: 1
+SRR23973193.67414/1	residue	CP154843.1	Microbacterium pratiae	3412197	96.774	31	103	0.301	0.019	chance	Microbacterium pratiae strain 2P06AB chromosome
+SRR23973193.83179/1	identified	PZ823746.1	Leviviricetes sp.	4101	76.471	68	106	0.6415	0.019	chance	MAG: Leviviricetes sp. hypothetical protein (IAJLFNCJ_00001) and maturation protein A (IAJLFNCJ_00002) genes, complete cds
+SRR23973193.39246/1	residue	OZ308322.1	uncultured Hyphomicrobiaceae bacterium	4724571	86.667	45	106	0.4245	0.019	chance	MAG: uncultured Hyphomicrobiaceae bacterium isolate 038-SE-10.bin.1.58 genome assembly, chromosome: 1
+SRR23973193.38741/1	residue	XM_051297381.1	Leptopilina boulardi	3028	79.412	68	105	0.6476	0.019	chance	PREDICTED: Leptopilina boulardi probable ATP-dependent RNA helicase DDX31 (LOC127276744), mRNA
+SRR23973193.70896/1	residue	CP104279.1	Comamonas aquatica	4048791	86.047	43	105	0.4095	0.019	chance	Comamonas aquatica strain SCLZS63 chromosome, complete genome
+SRR23973193.59818/1	residue	XM_050496653.1	Nymphalis io	4380	78.378	74	106	0.6981	0.019	chance	PREDICTED: Nymphalis io protein fem-1 homolog B (LOC126774965), transcript variant X1, mRNA
+SRR23973193.81854/1	residue	OZ562697.1	uncultured Lachnospiraceae bacterium	3096059	83.333	48	105	0.4571	0.019	chance	MAG: uncultured Lachnospiraceae bacterium isolate SHD1_0821 genome assembly, chromosome: 1
+SRR23973193.3063208/1	residue	XM_077648999.1	Amblyomma americanum	895	86.667	45	105	0.4286	0.019	chance	PREDICTED: Amblyomma americanum sulfiredoxin-1-like (LOC144114945), mRNA
+SRR23973193.4598688/1	residue	OZ304398.1	uncultured Planctomycetaceae bacterium	5600653	83.333	48	104	0.4615	0.019	chance	MAG: uncultured Planctomycetaceae bacterium isolate 074-IN-03.bin.c.23 genome assembly, chromosome: 1
+SRR23973193.1526267/1	residue	XM_066111384.1	Trichoderma atroviride	2905	81.132	53	104	0.5096	0.019	chance	Trichoderma atroviride uncharacterized protein (TrAtP1_002270), partial mRNA
+SRR23973193.4551716/1	residue	CP070304.1	Glaciimonas sp. PAMC28666	5230360	74.074	81	106	0.7642	0.019	chance	Glaciimonas sp. PAMC28666 chromosome, complete genome
+SRR23973193.1546165/1	residue	OZ534291.1	Actinomycetota bacterium	10207626	86.047	43	106	0.4057	0.019	chance	MAG: Actinomycetota bacterium isolate MFD15213.bin.c.128 genome assembly, chromosome: 1
+SRR23973193.58836/1	residue	CP082923.1	Caulobacter segnis	5173281	85.417	48	106	0.4528	0.019	chance	Caulobacter segnis strain CBR1 chromosome, complete genome
+SRR23973193.4547741/1	residue	CP033875.1	Caulobacter sp. FWC26	4525637	84.783	46	106	0.434	0.019	chance	Caulobacter sp. FWC26 chromosome, complete genome
+SRR23973193.67414/1	residue	CP154843.1	Microbacterium pratiae	3412197	96.774	31	103	0.301	0.019	chance	Microbacterium pratiae strain 2P06AB chromosome
+SRR23973193.39135/1	residue	CP004349.1	Polaribacter sp. MED152	2961474	92.105	38	106	0.3585	0.019	chance	Polaribacter sp. MED152, complete genome
+SRR23973193.8847/1	residue	OZ465667.1	Paramecium bursaria	37508	84.0	50	107	0.4673	0.02	chance	Paramecium bursaria genome assembly, organelle: macronuclear
+SRR23973193.13502/1	residue	CP109152.1	Nonomuraea sp. NBC_01738	9089626	87.805	41	107	0.3832	0.02	chance	Nonomuraea sp. NBC_01738 chromosome, complete genome
+SRR23973193.52650/1	residue	OZ515776.1	Adhaeribacter sp.	6303606	88.372	43	107	0.4019	0.02	chance	MAG: Adhaeribacter sp. isolate MFD15094.bin.c.84 genome assembly, chromosome: 1
+SRR23973193.77902/1	residue	CP108430.1	Streptomyces sp. NBC_01283	9425041	81.132	53	107	0.4953	0.02	chance	Streptomyces sp. NBC_01283 chromosome, complete genome
+SRR23973193.50288/1	residue	CP030840.1	Acidisarcina polymorpha	7112011	93.939	33	107	0.3084	0.02	chance	Acidisarcina polymorpha strain SBC82 chromosome, complete genome
+SRR23973193.82017/1	residue	OZ510609.1	Acidimicrobiales bacterium	4155477	93.939	33	107	0.3084	0.02	chance	MAG: Acidimicrobiales bacterium isolate MFD15057.bin.c.26 genome assembly, chromosome: 1
+SRR23973193.85935/1	identified	XR_014430822.1	Cajanus cajan	1403	91.667	36	107	0.3364	0.02	chance	PREDICTED: Cajanus cajan uncharacterized LOC145953282 (LOC145953282), ncRNA
+SRR23973193.56949/1	residue	CP025719.1	Cryptococcus neoformans	1560801	88.372	43	107	0.4019	0.02	chance	Cryptococcus neoformans strain EN28 chromosome 3, complete sequence
+SRR23973193.4598457/1	residue	OB792925.1	Timema monikensis	539276	80.0	65	107	0.6075	0.02	chance	3_Tms_b3v08
+SRR23973193.4590000/1	residue	XM_086767670.1	Chlamydotis macqueenii	5334	83.333	54	107	0.5047	0.02	chance	PREDICTED: Chlamydotis macqueenii unconventional myosin-Vb (LOC104481215), mRNA
+SRR23973193.4785/1	residue	OZ305155.1	uncultured bacterium	928968	93.939	33	107	0.3084	0.02	chance	MAG: uncultured bacterium isolate 004-NL-18.bin.c.3 genome assembly, chromosome: 1
+SRR23973193.4554528/1	residue	CP191913.1	Amycolatopsis sp. CA-239491	10399379	93.939	33	107	0.3084	0.02	chance	Amycolatopsis sp. CA-239491 chromosome, complete genome
+SRR23973193.4554680/1	residue	AP048854.1	Clostridium tetani	2820850	86.047	43	107	0.4019	0.02	chance	Clostridium tetani KHSU-234315-040 DNA, complete genome
+SRR23973193.3040729/1	residue	OZ523903.1	Ginsengibacter sp.	4446234	91.667	36	107	0.3364	0.02	chance	MAG: Ginsengibacter sp. isolate MFD15206.bin.s.284 genome assembly, chromosome: 1
+SRR23973193.1539000/1	residue	OY986433.1	Synechococcus sp. CBW1107	3085273	83.019	53	107	0.4953	0.02	chance	Synechococcus sp. CBW1107 isolate KAC_106 genome assembly, chromosome: 1
+SRR23973193.1518891/1	residue	XM_021864712.1	Chenopodium quinoa	4749	92.105	38	107	0.3551	0.02	chance	PREDICTED: Chenopodium quinoa CCAAT/enhancer-binding protein zeta-like (LOC110688042), transcript variant X2, mRNA
+SRR23973193.3006069/1	residue	CP077152.1	Fusobacterium nucleatum	2465284	82.353	51	107	0.4766	0.02	chance	Fusobacterium nucleatum strain KCOM1276 chromosome, complete genome
+SRR23973193.1502843/1	residue	OZ510613.1	Rhodospirillales bacterium	5010188	93.939	33	107	0.3084	0.02	chance	MAG: Rhodospirillales bacterium isolate MFD15057.bin.c.29 genome assembly, chromosome: 1
+SRR23973193.3068252/1	residue	CP002025.1	Brachyspira pilosicoli 95/1000	2586443	77.941	68	107	0.6355	0.02	chance	Brachyspira pilosicoli 95/1000, complete genome
+SRR23973193.4544252/1	residue	OZ304470.1	uncultured Haliea sp.	5399037	89.474	38	107	0.3551	0.02	chance	MAG: uncultured Haliea sp. isolate 061-AU-11.bin.c.51 genome assembly, chromosome: 1
+SRR23973193.46765/1	residue	CP136989.1	Mollicutes bacterium LVI A0006	2030641	91.892	37	105	0.3524	0.067	chance	Mollicutes bacterium LVI A0006 chromosome, complete genome
+SRR23973193.6082878/1	residue	CP126241.1	Arthrobacter sp. zg-Y20	3526984	82.692	52	105	0.4952	0.067	chance	Arthrobacter sp. zg-Y20 chromosome, complete genome
+SRR23973193.9404/1	identified	CP045311.1	Aeromonas dhakensis	4830202	80.769	52	106	0.4906	0.068	chance	Aeromonas dhakensis strain Aer_OnIF1 chromosome, complete genome
+SRR23973193.12520/1	residue	OZ509382.1	Alteraurantiacibacter sp.	4073195	93.75	32	106	0.3019	0.068	chance	MAG: Alteraurantiacibacter sp. isolate MFD15050.bin.c.206 genome assembly, chromosome: 1
+SRR23973193.92278/1	residue	OZ514075.1	Actinomycetes bacterium	3034458	93.75	32	106	0.3019	0.068	chance	MAG: Actinomycetes bacterium isolate MFD15086.bin.c.11 genome assembly, chromosome: 1
+SRR23973193.37665/1	identified	PP173793.1	Ripatrar virus	3683	82.979	47	106	0.4434	0.068	chance	MAG: Ripatrar virus isolate RCCP2_k141_62571 genomic sequence
+SRR23973193.1558048/1	residue	XM_006901230.1	Elephantulus edwardii	2283	93.75	32	106	0.3019	0.068	chance	PREDICTED: Elephantulus edwardii excision repair cross-complementing rodent repair deficiency, complementation group 2 (ERCC2), mRNA
+SRR23973193.1528013/1	residue	OE179590.1	Timema californicum	253405	80.702	57	106	0.5377	0.068	chance	2_Tcm_b3v08
+SRR23973193.4552318/1	residue	CP007151.1	Marinobacter similis	3975896	91.429	35	106	0.3302	0.068	chance	Marinobacter similis strain A3d10, complete genome
+SRR23973193.6054926/1	residue	OZ381666.1	Paramecium tetratobursaria	39956	83.673	49	106	0.4623	0.068	chance	Paramecium tetratobursaria genome assembly, organelle: macronuclear
+SRR23973193.1598338/1	residue	OZ490226.1	uncultured Gemmatimonadaceae bacterium	4077379	93.75	32	106	0.3019	0.068	chance	MAG: uncultured Gemmatimonadaceae bacterium isolate MFD05705.bin.s.82.r1 genome assembly, chromosome: 1
+SRR23973193.4563404/1	residue	CP162807.1	Pseudomonas sp. H3_A02	6566774	81.667	60	106	0.566	0.068	chance	Pseudomonas sp. H3_A02 chromosome
+SRR23973193.1508598/1	residue	CP050313.1	Shewanella aestuarii	4029210	87.234	47	106	0.4434	0.068	chance	Shewanella aestuarii strain PN3F2 chromosome PN3F2, complete sequence
+SRR23973193.16474/1	residue	CP152425.1	Candidatus Symbiodolus clandestinus	1499781	80.702	57	106	0.5377	0.068	chance	MAG: Candidatus Symbiodolus clandestinus isolate Ogal chromosome, complete genome
+SRR23973193.4537403/1	residue	BK027412.1	Caudoviricetes sp.	36542	89.189	37	106	0.3491	0.068	chance	MAG TPA_asm: Caudoviricetes sp. isolate ctOG211, partial genome
+SRR23973193.1584996/1	residue	OZ304335.1	uncultured bacterium	4724904	87.5	40	106	0.3774	0.068	chance	MAG: uncultured bacterium isolate 042-US1-105.bin.c.1 genome assembly, chromosome: 1
+SRR23973193.1560338/1	residue	OZ305169.1	uncultured Defluviicoccus sp.	4369069	93.75	32	106	0.3019	0.068	chance	MAG: uncultured Defluviicoccus sp. isolate 096-US2-26.bin.c.31 genome assembly, chromosome: 1
+SRR23973193.63820/1	residue	XM_022360230.2	Drosophila obscura	4946	93.75	32	107	0.2991	0.069	chance	PREDICTED: Drosophila obscura probable multidrug resistance-associated protein lethal(2)03659 (LOC111069959), mRNA
+SRR23973193.66958/1	identified	CP047130.1	Colwellia sp. 20A7	4580615	89.744	39	107	0.3645	0.069	chance	Colwellia sp. 20A7 chromosome, complete genome
+SRR23973193.54976/1	residue	OZ248344.1	Rivularia sp. (in: cyanobacteria)	7921362	89.189	37	107	0.3458	0.069	chance	MAG: Rivularia sp. (in: cyanobacteria) isolate 23fe80d2-2bef-4b14-a7c1-d0d5c20622be genome assembly, chromosome: 2
+SRR23973193.87253/1	residue	OY843749.1	Arenicellales bacterium	3149763	85.714	42	107	0.3925	0.069	chance	MAG: Arenicellales bacterium isolate be53ef9f-0ae9-4f29-a0ed-3ab0769f1983 genome assembly, chromosome: 1
+SRR23973193.82787/1	residue	OZ535485.1	Xanthobacteraceae bacterium	4887912	77.419	62	107	0.5794	0.069	chance	MAG: Xanthobacteraceae bacterium isolate MFD15115.bin.c.35 genome assembly, chromosome: 1
+SRR23973193.70198/1	residue	XM_065904678.1	Muntiacus reevesi	2768	85.714	49	107	0.4579	0.069	chance	PREDICTED: Muntiacus reevesi bifunctional methylenetetrahydrofolate dehydrogenase/cyclohydrolase 2, mitochondrial-like (LOC136145905), transcript variant X4, mRNA
+SRR23973193.72137/1	residue	OZ490794.1	Actinomycetota bacterium	4320488	84.783	46	107	0.4299	0.069	chance	MAG: Actinomycetota bacterium isolate MFD01213.bin.c.4.r1 genome assembly, chromosome: 1
+SRR23973193.95798/1	residue	XM_077604944.1	Stigmatopora argus	2458	89.189	37	107	0.3458	0.069	chance	PREDICTED: Stigmatopora argus calpain 9 (capn9), mRNA
+SRR23973193.11055/1	residue	CP040748.1	Nocardioides jishulii	3536142	87.5	40	107	0.3738	0.069	chance	Nocardioides jishulii strain dk3136 chromosome, complete genome
+SRR23973193.88267/1	residue	CP095491.1	Halosolutus gelatinilyticus	3906818	91.429	35	107	0.3271	0.069	chance	Halosolutus gelatinilyticus strain SQT-29-1 chromosome, complete genome
+SRR23973193.85955/1	residue	CP114904.1	Micromonospora sp. WMMD812	7135096	93.75	32	107	0.2991	0.069	chance	Micromonospora sp. WMMD812 chromosome
+SRR23973193.16326/1	residue	CP022253.1	Azospirillum baldaniorum	3049901	93.75	32	107	0.2991	0.069	chance	Azospirillum baldaniorum strain Sp245 chromosome
+SRR23973193.15869/1	residue	CP020100.1	Halopseudomonas phragmitis	4035153	91.429	35	107	0.3271	0.069	chance	Halopseudomonas phragmitis strain S-6-2 chromosome, complete genome
+SRR23973193.91731/1	residue	OZ503659.1	Gemmatimonadaceae bacterium	4960574	80.702	57	107	0.5327	0.069	chance	MAG: Gemmatimonadaceae bacterium isolate MFD15009.bin.c.152 genome assembly, chromosome: 1
+SRR23973193.56585/1	identified	CP157793.1	Stappia sp.	4672223	86.047	43	107	0.4019	0.069	chance	MAG: Stappia sp. isolate ALCB114379_MAG1 chromosome, complete genome
+SRR23973193.84296/1	residue	OZ505771.1	Sphingomicrobium sp.	2646494	85.714	42	107	0.3925	0.069	chance	MAG: Sphingomicrobium sp. isolate MFD15010.bin.c.69 genome assembly, chromosome: 1
+SRR23973193.3054484/1	residue	NC_071921.1	Asplenium incisum	153116	82.979	47	107	0.4393	0.069	chance	Asplenium incisum voucher CBNU2020-0064B chloroplast, complete genome
+SRR23973193.6009631/1	residue	OZ509439.1	Candidatus Eiseniibacteriota bacterium	5536619	80.357	56	107	0.5234	0.069	chance	MAG: Candidatus Eiseniibacteriota bacterium isolate MFD15050.bin.c.65 genome assembly, chromosome: 1
+SRR23973193.1561352/1	residue	OZ516606.1	Pyrinomonadaceae bacterium	6505251	91.892	37	107	0.3458	0.069	chance	MAG: Pyrinomonadaceae bacterium isolate MFD15106.bin.c.1 genome assembly, chromosome: 1
+SRR23973193.3081250/1	residue	OB793325.1	Timema monikensis	334156	89.189	37	107	0.3458	0.069	chance	3_Tms_b3v08
+SRR23973193.6066650/1	residue	GQ890223.1	Rhinolophus pearsonii	573	96.667	30	107	0.2804	0.069	chance	Rhinolophus pearsonii haplotype 7 nucleosome remodeling factor (Chd1) gene, intron 26
+SRR23973193.4579781/1	residue	OX460909.1	Photobacterium phosphoreum	3242459	82.0	50	107	0.4673	0.069	chance	Photobacterium phosphoreum strain MIP2473 genome assembly, chromosome: MIP2473_c1
+SRR23973193.1598529/1	residue	MF361175.1	Entamoeba invadens IP1	1852	93.75	32	107	0.2991	0.069	chance	Entamoeba invadens IP1 clone 30 transposable element-like protein-like mRNA, partial sequence
+SRR23973193.3056220/1	residue	XM_048014427.1	Daldinia vernicosa	1739	91.429	35	107	0.3271	0.069	chance	Daldinia vernicosa uncharacterized protein (F5Y00DRAFT_99036), mRNA
+SRR23973193.1572942/1	residue	CP041637.1	Formosa sediminum	3934786	84.314	51	107	0.4766	0.069	chance	Formosa sediminum strain PS13 chromosome, complete genome
+SRR23973193.3091515/1	residue	XR_013926277.1	Falco punctatus	30001	88.095	42	107	0.3925	0.069	chance	Falco punctatus uncharacterized lncRNA (ACYX44_006034), lncRNA
+SRR23973193.4578085/1	residue	OZ513072.1	Terriglobia bacterium	5942253	96.667	30	107	0.2804	0.069	chance	MAG: Terriglobia bacterium isolate MFD15081.bin.c.82 genome assembly, chromosome: 1
+SRR23973193.6092146/1	residue	OZ513037.1	Chthoniobacteraceae bacterium	6423688	85.714	42	107	0.3925	0.069	chance	MAG: Chthoniobacteraceae bacterium isolate MFD15080.bin.c.121 genome assembly, chromosome: 1
+SRR23973193.6086439/1	residue	CP010623.1	Phaeobacter inhibens	3688987	91.429	35	107	0.3271	0.069	chance	Phaeobacter inhibens strain P51 chromosome, complete genome
+SRR23973193.6077652/1	residue	OZ524492.1	Burkholderiaceae bacterium	5570368	80.769	52	107	0.486	0.069	chance	MAG: Burkholderiaceae bacterium isolate MFD15206.bin.c.77 genome assembly, chromosome: 1
+SRR23973193.1519438/1	residue	OY970232.1	uncultured Solirubrobacterales bacterium	3748080	85.106	47	107	0.4393	0.069	chance	MAG: uncultured Solirubrobacterales bacterium isolate MFD09286.bin.c.3 genome assembly, chromosome: 1
+SRR23973193.33658/1	residue	CP141038.1	Mycoplasmopsis cynos	989333	85.714	42	107	0.3925	0.069	chance	Mycoplasmopsis cynos strain 64228 chromosome, complete genome
+SRR23973193.3064072/1	residue	CP001632.1	Capnocytophaga ochracea DSM 7271	2612925	94.118	34	107	0.3178	0.069	chance	Capnocytophaga ochracea DSM 7271, complete genome
+SRR23973193.3092413/1	residue	XM_028548940.1	Dendronephthya gigantea	2934	96.667	30	107	0.2804	0.069	chance	PREDICTED: Dendronephthya gigantea uncharacterized LOC114527282 (LOC114527282), mRNA
+SRR23973193.87253/1	residue	OY843749.1	Arenicellales bacterium	3149763	85.714	42	107	0.3925	0.069	chance	MAG: Arenicellales bacterium isolate be53ef9f-0ae9-4f29-a0ed-3ab0769f1983 genome assembly, chromosome: 1
+SRR23973193.3012364/1	residue	OZ306544.1	uncultured bacterium	2868630	84.444	45	107	0.4206	0.069	chance	MAG: uncultured bacterium isolate 002-MX-07.bin.1.212 genome assembly, chromosome: 1
+SRR23973193.6092393/1	residue	OB793825.1	Timema monikensis	232475	89.474	38	93	0.4086	0.19	chance	3_Tms_b3v08
+SRR23973193.34583/1	identified	OZ520042.1	Verrucomicrobiia bacterium	3849244	89.474	38	105	0.3619	0.23	chance	MAG: Verrucomicrobiia bacterium isolate MFD15173.bin.c.41 genome assembly, chromosome: 1
+SRR23973193.6098249/1	residue	CP019044.1	Salaquimonas pukyongi	3357577	91.176	34	104	0.3269	0.23	chance	Salaquimonas pukyongi strain RR3-28 chromosome, complete genome
+SRR23973193.1581381/1	residue	BK034500.1	Caudoviricetes sp.	28766	89.474	38	105	0.3619	0.23	chance	MAG TPA_asm: Caudoviricetes sp. isolate ctvgp7, partial genome
+SRR23973193.17114/1	identified	OZ518613.1	Silvibacterium sp.	3481616	88.889	36	107	0.3364	0.24	chance	MAG: Silvibacterium sp. isolate MFD15134.bin.s.232 genome assembly, chromosome: 1
+SRR23973193.86457/1	residue	OZ305059.1	uncultured Ignavibacteria bacterium	4701572	93.548	31	107	0.2897	0.24	chance	MAG: uncultured Ignavibacteria bacterium isolate 091-US1-126.bin.c.68 genome assembly, chromosome: 1
+SRR23973193.68525/1	residue	LN005995.1	Spirometra erinaceieuropaei	14740	88.889	36	107	0.3364	0.24	chance	Spirometra erinaceieuropaei genome assembly S_erinaceieuropaei, scaffold SPER_scaffold0005939
+SRR23973193.17084/1	residue	XM_066683776.1	Hoplias malabaricus	5643	88.372	43	106	0.4057	0.24	chance	PREDICTED: Hoplias malabaricus uncharacterized protein protein homolog (zgc:66448), mRNA
+SRR23973193.15429/1	residue	OZ252252.1	Deinococcales bacterium	5085195	93.548	31	107	0.2897	0.24	chance	MAG: Deinococcales bacterium isolate 5cafd705-4e53-402a-ab4b-ed1a629fd506 genome assembly, chromosome: 1
+SRR23973193.72592/1	residue	OZ507520.1	Alphaproteobacteria bacterium	5720169	93.548	31	107	0.2897	0.24	chance	MAG: Alphaproteobacteria bacterium isolate MFD15040.bin.s.52 genome assembly, chromosome: 1
+SRR23973193.64271/1	residue	OZ378470.1	Paramecium deuterobursaria	72459	84.0	50	106	0.4717	0.24	chance	Paramecium deuterobursaria genome assembly, organelle: macronuclear
+SRR23973193.47983/1	residue	AC022089.7	Homo sapiens	44504	93.548	31	107	0.2897	0.24	chance	Homo sapiens chromosome 5 clone CTB-125N5, complete sequence
+SRR23973193.9657/1	residue	CP157743.1	Methylomarinum roseum	4444060	93.548	31	106	0.2925	0.24	chance	Methylomarinum roseum strain Ch1-1 chromosome, complete genome
+SRR23973193.28265/1	residue	CU234120.4	Sus scrofa	178451	83.333	48	107	0.4486	0.24	chance	Pig DNA sequence from clone CH242-184E22 on chromosome 7, complete sequence
+SRR23973193.22752/1	residue	XM_047556430.1	Sciurus carolinensis	2486	88.889	36	107	0.3364	0.24	chance	PREDICTED: Sciurus carolinensis DTW domain containing 2 (Dtwd2), mRNA
+SRR23973193.47138/1	residue	OZ532077.1	Bacteroidales bacterium	3971400	93.548	31	107	0.2897	0.24	chance	MAG: Bacteroidales bacterium isolate MFD15113.bin.c.53 genome assembly, chromosome: 1
+SRR23973193.83448/1	residue	CP182472.1	Bradyrhizobium sp. SPXBL-04	8655749	81.633	49	107	0.4579	0.24	chance	Bradyrhizobium sp. SPXBL-04 strain DASA03030 chromosome, complete genome
+SRR23973193.58090/1	identified	OZ490583.1	Spirochaetia bacterium	2655995	84.091	44	106	0.4151	0.24	chance	MAG: Spirochaetia bacterium isolate MFD04716.bin.s.398.r1 genome assembly, chromosome: 1
+SRR23973193.18186/1	residue	XM_079995796.1	Podarcis cretensis	3094	86.047	43	107	0.4019	0.24	chance	Podarcis cretensis metaxin-3 (MTX3), transcript variant 1, mRNA
+SRR23973193.5525/1	identified	OZ524649.1	uncultured Methanobacterium sp.	2407117	94.286	35	106	0.3302	0.24	chance	MAG: uncultured Methanobacterium sp. isolate MFD15205.bin.c.82 genome assembly, chromosome: 1
+SRR23973193.9642/1	identified	CP191906.1	Kutzneria sp. CA-250172	12243265	93.548	31	107	0.2897	0.24	chance	Kutzneria sp. CA-250172 chromosome, complete genome
+SRR23973193.64127/1	residue	OZ504504.1	Acidobacteriota bacterium	3334028	91.667	36	106	0.3396	0.24	chance	MAG: Acidobacteriota bacterium isolate MFD15051.bin.2.1002 genome assembly, chromosome: 1
+SRR23973193.35963/1	residue	OZ502921.1	Leptolyngbya sp.	6329348	85.366	41	106	0.3868	0.24	chance	MAG: Leptolyngbya sp. isolate MFD15007.bin.c.3 genome assembly, chromosome: 1
+SRR23973193.24694/1	identified	OZ524649.1	uncultured Methanobacterium sp.	2407117	94.286	35	106	0.3302	0.24	chance	MAG: uncultured Methanobacterium sp. isolate MFD15205.bin.c.82 genome assembly, chromosome: 1
+SRR23973193.62767/1	residue	OZ532881.1	Alphaproteobacteria bacterium	3169356	87.179	39	106	0.3679	0.24	chance	MAG: Alphaproteobacteria bacterium isolate MFD15065.bin.c.158 genome assembly, chromosome: 1
+SRR23973193.89046/1	residue	OZ505949.1	Gammaproteobacteria bacterium	4122320	91.667	36	107	0.3364	0.24	chance	MAG: Gammaproteobacteria bacterium isolate MFD15015.bin.c.1 genome assembly, chromosome: 1
+SRR23973193.86568/1	identified	OC325211.1	Timema cristinae	11645	89.474	38	107	0.3551	0.24	chance	3_Tce_b3v08
+SRR23973193.81385/1	residue	XM_020398637.1	Asparagus officinalis	2304	84.444	45	107	0.4206	0.24	chance	PREDICTED: Asparagus officinalis uncharacterized LOC109831306 (LOC109831306), mRNA
+SRR23973193.50324/1	residue	OZ523527.1	Acidobacteriaceae bacterium	7452180	86.047	43	106	0.4057	0.24	chance	MAG: Acidobacteriaceae bacterium isolate MFD15200.bin.c.72 genome assembly, chromosome: 1
+SRR23973193.7044/1	identified	OZ516948.1	Hymenobacter sp.	4725564	91.667	36	106	0.3396	0.24	chance	MAG: Hymenobacter sp. isolate MFD15097.bin.c.209 genome assembly, chromosome: 1
+SRR23973193.795/1	identified	XM_025904871.1	Oreochromis niloticus	3145	93.548	31	106	0.2925	0.24	chance	PREDICTED: Oreochromis niloticus coxsackievirus and adenovirus receptor homolog (LOC109200285), transcript variant X2, mRNA
+SRR23973193.84200/1	residue	OZ517165.1	Ignavibacteriaceae bacterium	4623850	78.571	56	107	0.5234	0.24	chance	MAG: Ignavibacteriaceae bacterium isolate MFD15129.bin.c.7 genome assembly, chromosome: 1
+SRR23973193.93550/1	residue	OZ520348.1	Acidobacteriota bacterium	5038143	85.366	41	106	0.3868	0.24	chance	MAG: Acidobacteriota bacterium isolate MFD15168.bin.c.62 genome assembly, chromosome: 1
+SRR23973193.68437/1	residue	CP071179.1	Listeria innocua	2927254	88.889	36	106	0.3396	0.24	chance	Listeria innocua strain LI47 chromosome, complete genome
+SRR23973193.19996/1	residue	XM_055453677.1	Sitodiplosis mosellana	3002	93.548	31	106	0.2925	0.24	chance	PREDICTED: Sitodiplosis mosellana zinc finger protein 888-like (LOC129573289), mRNA
+SRR23973193.47512/1	residue	OZ517447.1	Actinomycetes bacterium	3185724	86.364	44	107	0.4112	0.24	chance	MAG: Actinomycetes bacterium isolate MFD15130.bin.c.55 genome assembly, chromosome: 1
+SRR23973193.75681/1	identified	OC329933.1	Timema cristinae	4854	83.333	48	107	0.4486	0.24	chance	3_Tce_b3v08
+SRR23973193.4568/1	residue	OY782746.1	Selenomonadaceae bacterium	2274903	89.474	38	106	0.3585	0.24	chance	MAG: Selenomonadaceae bacterium isolate 4fda78c2-e908-4b87-bee1-7819ea9ca0c8 genome assembly, chromosome: 1
+SRR23973193.67099/1	residue	OZ506639.1	Muriicola sp.	3106032	91.176	34	107	0.3178	0.24	chance	MAG: Muriicola sp. isolate MFD15018.bin.c.27 genome assembly, chromosome: 1
+SRR23973193.61839/1	residue	OZ517307.1	Gemmatimonadaceae bacterium	4731972	93.939	33	107	0.3084	0.24	chance	MAG: Gemmatimonadaceae bacterium isolate MFD15097.bin.c.171 genome assembly, chromosome: 1
+SRR23973193.46366/1	identified	OZ557116.1	Fiersviridae sp.	3358	75.758	66	107	0.6168	0.24	chance	Oyster-associated RNA virus (ORV) 499 genomic RNA sequence
+SRR23973193.36451/1	residue	OZ533174.1	Polyangiaceae bacterium	8807774	93.548	31	107	0.2897	0.24	chance	MAG: Polyangiaceae bacterium isolate MFD15109.bin.c.161 genome assembly, chromosome: 1
+SRR23973193.4599657/1	residue	OZ534831.1	Acidobacteriota bacterium	6696789	88.889	36	107	0.3364	0.24	chance	MAG: Acidobacteriota bacterium isolate MFD15214.bin.c.31 genome assembly, chromosome: 1
+SRR23973193.3042618/1	residue	XM_069374956.1	Cladosporium halotolerans	1461	81.481	54	107	0.5047	0.24	chance	Cladosporium halotolerans uncharacterized protein (WHR41_06351), partial mRNA
+SRR23973193.1573058/1	residue	CP019799.1	Cellvibrio sp. PSBB023	4705304	85.366	41	107	0.3832	0.24	chance	Cellvibrio sp. PSBB023 chromosome, complete genome
+SRR23973193.86420/1	residue	AP023355.1	Actinocatenispora thailandica	7426695	91.176	34	107	0.3178	0.24	chance	Actinocatenispora thailandica NBRC 105041 DNA, complete genome
+SRR23973193.1568614/1	residue	XM_064973543.1	Oncorhynchus masou masou	5434	88.889	36	107	0.3364	0.24	chance	PREDICTED: Oncorhynchus masou masou A disintegrin and metalloproteinase with thrombospondin motifs 2-like (LOC135545726), mRNA
+SRR23973193.6077024/1	residue	OZ307453.1	uncultured Chondromyces sp.	14271404	84.783	46	107	0.4299	0.24	chance	MAG: uncultured Chondromyces sp. isolate 035-MX-06.bin.c.1 genome assembly, chromosome: 1
+SRR23973193.4561781/1	residue	CP184571.1	Ensifer sp. R-19	788500	89.189	37	106	0.3491	0.24	chance	Ensifer sp. R-19 plasmid unnamed1, complete sequence
+SRR23973193.90402/1	residue	OZ514311.1	Actinomycetota bacterium	2937052	80.769	52	107	0.486	0.24	chance	MAG: Actinomycetota bacterium isolate MFD15074.bin.c.4 genome assembly, chromosome: 1
+SRR23973193.4549587/1	residue	XM_013862868.3	Brassica napus	1187	91.176	34	107	0.3178	0.24	chance	PREDICTED: Brassica napus 1-aminocyclopropane-1-carboxylate oxidase 5 (LOC106422042), mRNA
+SRR23973193.6051772/1	residue	CP130419.1	Cairina moschata	75911107	91.667	36	106	0.3396	0.24	chance	Cairina moschata breed yongchun chromosome 4
+SRR23973193.6033274/1	residue	CP143776.1	Enterobacter sp. ECC-175	4603544	93.939	33	107	0.3084	0.24	chance	Enterobacter sp. ECC-175 chromosome, complete genome
+SRR23973193.3065318/1	residue	XM_014802103.1	Moesziomyces antarcticus	1194	93.548	31	107	0.2897	0.24	chance	Moesziomyces antarcticus uncharacterized protein (PAN0_004c2158), partial mRNA
+SRR23973193.6059459/1	residue	OZ505473.1	Ignavibacteriaceae bacterium	2236600	86.047	43	107	0.4019	0.24	chance	MAG: Ignavibacteriaceae bacterium isolate MFD15068.bin.2.101 genome assembly, chromosome: 1
+SRR23973193.97486/1	residue	XM_814904.1	Trypanosoma cruzi	777	91.176	34	106	0.3208	0.24	chance	Trypanosoma cruzi mucin-associated surface protein (MASP), putative (Tc00.1047053506501.240), partial mRNA
+SRR23973193.28352/1	residue	CP136963.1	Micrococcus terreus	3099144	84.091	44	107	0.4112	0.24	chance	Micrococcus terreus strain UMB0712 chromosome, complete genome
+SRR23973193.1588104/1	residue	OZ531582.1	Acidobacteriota bacterium	2664459	84.783	46	107	0.4299	0.24	chance	MAG: Acidobacteriota bacterium isolate MFD03634.bin.c.34 genome assembly, chromosome: 1
+SRR23973193.3047379/1	residue	CP181499.1	Methylocystis sp. JAN1	4022259	89.474	38	107	0.3551	0.24	chance	Methylocystis sp. JAN1 chromosome, complete genome
+SRR23973193.6075627/1	residue	CP019229.1	Tessaracoccus sp. T2.5-30	3212699	87.179	39	107	0.3645	0.24	chance	Tessaracoccus sp. T2.5-30, complete genome
+SRR23973193.4576002/1	residue	OZ513758.1	Thermoanaerobaculia bacterium	7023945	91.176	34	107	0.3178	0.24	chance	MAG: Thermoanaerobaculia bacterium isolate MFD15096.bin.c.58 genome assembly, chromosome: 1
+SRR23973193.6075182/1	residue	OZ502018.1	Acidimicrobiales bacterium	4939226	87.179	39	107	0.3645	0.24	chance	MAG: Acidimicrobiales bacterium isolate MFD15001.bin.c.183 genome assembly, chromosome: 1
+SRR23973193.6034517/1	residue	LT827128.1	Gordonibacter massiliensis (ex Traore et al. 2017)	3948172	88.889	36	107	0.3364	0.24	chance	Gordonibacter sp. Marseille-P2775 genome assembly, chromosome: contig00001
+SRR23973193.68568/1	residue	LN005995.1	Spirometra erinaceieuropaei	14740	88.889	36	107	0.3364	0.24	chance	Spirometra erinaceieuropaei genome assembly S_erinaceieuropaei, scaffold SPER_scaffold0005939
+SRR23973193.3053203/1	residue	OY969929.1	uncultured Actinomycetota bacterium	4132591	87.5	40	107	0.3738	0.24	chance	MAG: uncultured Actinomycetota bacterium isolate MFD01275.bin.c.20 genome assembly, chromosome: 1
+SRR23973193.1542130/1	residue	XM_088706650.1	Phoenix dactylifera	1112	87.805	41	106	0.3868	0.24	chance	PREDICTED: Phoenix dactylifera vesicle-associated membrane protein 714 (LOC103720746), mRNA
+SRR23973193.69688/1	residue	XM_045355737.2	Mercenaria mercenaria	12300	84.091	44	107	0.4112	0.24	chance	PREDICTED: Mercenaria mercenaria trinucleotide repeat-containing gene 6C protein-like (LOC123563130), transcript variant X4, mRNA
+SRR23973193.3023570/1	residue	OZ522402.1	Acidobacteriota bacterium	4820646	87.179	39	106	0.3679	0.24	chance	MAG: Acidobacteriota bacterium isolate MFD15190.bin.c.55 genome assembly, chromosome: 1
+SRR23973193.3054869/1	residue	XM_053470485.1	Spea bombifrons	6246	93.548	31	107	0.2897	0.24	chance	PREDICTED: Spea bombifrons periplakin (PPL), mRNA
+SRR23973193.3022486/1	residue	OZ557121.1	Fiersviridae sp.	4558	84.091	44	106	0.4151	0.24	chance	Oyster-associated RNA virus (ORV) 504 genomic RNA sequence
+SRR23973193.6022339/1	residue	AC201945.3	Gallus gallus	224843	88.889	36	107	0.3364	0.24	chance	Gallus gallus BAC clone CH261-100J4 from chromosome z, complete sequence
+SRR23973193.1557001/1	residue	XM_047728446.1	Lutra lutra	4446	79.31	58	107	0.5421	0.24	chance	PREDICTED: Lutra lutra WD repeat domain 47 (WDR47), transcript variant X3, mRNA
+SRR23973193.6019930/1	residue	CP119133.2	Streptomyces sp. FXJ1.172	9260576	76.471	68	106	0.6415	0.24	chance	Streptomyces sp. FXJ1.172 chromosome, complete genome
+SRR23973193.3093501/1	residue	XM_068342116.1	Antennarius striatus	2166	88.889	36	107	0.3364	0.24	chance	PREDICTED: Antennarius striatus microtubule-associated protein RP/EB family member 3-like (LOC137613161), transcript variant X1, mRNA
+SRR23973193.3098578/1	residue	NC_009817.1	Lactococcus phage KSY1	79232	81.633	49	107	0.4579	0.24	chance	Lactococcus phage KSY1, complete genome
+SRR23973193.6028684/1	residue	OZ513004.1	Planctomycetaceae bacterium	6230327	79.31	58	106	0.5472	0.24	chance	MAG: Planctomycetaceae bacterium isolate MFD15079.bin.c.78 genome assembly, chromosome: 1
+SRR23973193.6046950/1	residue	OZ534762.1	Verrucomicrobiota bacterium	6327453	82.609	46	107	0.4299	0.24	chance	MAG: Verrucomicrobiota bacterium isolate MFD15214.bin.c.67 genome assembly, chromosome: 1
+SRR23973193.53289/1	residue	OZ282555.1	Eleocharis parvula	1187543	93.548	31	107	0.2897	0.24	chance	Eleocharis parvula genome assembly, organelle: mitochondrion
+SRR23973193.4553543/1	residue	XM_048667448.1	Dendroctonus ponderosae	3448	85.366	41	107	0.3832	0.24	chance	PREDICTED: Dendroctonus ponderosae claspin (LOC109546906), transcript variant X4, mRNA
+SRR23973193.33332/1	residue	FN554889.1	Streptomyces scabiei 87.22	10148695	91.176	34	106	0.3208	0.24	chance	Streptomyces scabiei 87.22 complete genome
+SRR23973193.1569231/1	residue	OZ518053.1	Bryobacterales bacterium	8911163	88.889	36	106	0.3396	0.24	chance	MAG: Bryobacterales bacterium isolate MFD15143.bin.c.75 genome assembly, chromosome: 1
+SRR23973193.1585293/1	residue	CP196184.1	Streptomyces sp. HUAS TT11	9715851	79.63	54	107	0.5047	0.24	chance	Streptomyces sp. HUAS TT11 chromosome, complete genome
+SRR23973193.6017153/1	residue	BX296527.6	Danio rerio	185706	80.702	57	106	0.5377	0.24	chance	Zebrafish DNA sequence from clone DKEYP-32C3 in linkage group 2, complete sequence
+SRR23973193.6072787/1	residue	XM_062657900.1	Corticium candelabrum	1528	91.667	36	107	0.3364	0.24	chance	PREDICTED: Corticium candelabrum armadillo-like helical domain containing protein 1 (LOC134189582), mRNA
+SRR23973193.3078898/1	residue	AP028646.1	Candidatus Rickettsia mendelii	1050158	87.179	39	106	0.3679	0.24	chance	Candidatus Rickettsia mendelii It06094 DNA, complete genome
+SRR23973193.1534180/1	residue	OZ507792.1	Betaproteobacteria bacterium	5675761	80.357	56	107	0.5234	0.24	chance	MAG: Betaproteobacteria bacterium isolate MFD15035.bin.c.15 genome assembly, chromosome: 1
+SRR23973193.53535/1	residue	CP060496.1	Brachybacterium sp. Z12	3511914	91.176	34	107	0.3178	0.24	chance	Brachybacterium sp. Z12 chromosome, complete genome
+SRR23973193.81796/1	residue	XM_061049296.1	Labrus mixtus	1779	93.333	30	65	0.4615	0.35	chance	PREDICTED: Labrus mixtus zinc-binding protein A33 (si:ch73-54f23.4), mRNA
+SRR23973193.3726/1	residue	CP003732.1	Thermacetogenium phaeum DSM 12270	2939057	93.333	30	81	0.3704	0.52	chance	Thermacetogenium phaeum DSM 12270, complete genome
+SRR23973193.6073529/1	residue	OZ519388.1	Solirubrobacterales bacterium	1720541	90.909	33	92	0.3587	0.66	chance	MAG: Solirubrobacterales bacterium isolate MFD15169.bin.3.1431 genome assembly, chromosome: 1
+SRR23973193.79271/1	residue	OZ518314.1	Solirubrobacterales bacterium	6143162	93.333	30	94	0.3191	0.68	chance	MAG: Solirubrobacterales bacterium isolate MFD15147.bin.s.191 genome assembly, chromosome: 1
+SRR23973193.1561004/1	residue	OZ244128.1	Candidatus Azotimanducaceae bacterium	5670752	81.633	49	95	0.5158	0.69	chance	MAG: Candidatus Azotimanducaceae bacterium isolate 677a7970-e1ef-4541-8232-3b7c88f4bfe2 genome assembly, chromosome: 1
+SRR23973193.4504859/1	residue	JX197070.1	Moroccan pepper virus	4772	93.75	32	99	0.3232	0.74	chance	Moroccan pepper virus isolate MPV-PG83, complete genome
+SRR23973193.4560183/1	residue	CP033581.1	Streptomyces sp. ADI95-16	8184000	85.0	40	102	0.3922	0.78	chance	Streptomyces sp. ADI95-16 chromosome, complete genome
+SRR23973193.20759/1	identified	CP150207.1	Paenibacillus sp. FSL W8-0186	5657310	93.333	30	103	0.2913	0.79	chance	Paenibacillus sp. FSL W8-0186 chromosome, complete genome
+SRR23973193.42995/1	residue	OZ513000.1	Candidatus Saccharimonadota bacterium	802112	93.333	30	103	0.2913	0.79	chance	MAG: Candidatus Saccharimonadota bacterium isolate MFD15078.bin.c.131 genome assembly, chromosome: 1
+SRR23973193.47445/1	residue	OZ505267.1	Nitrospiraceae bacterium	3081772	93.333	30	104	0.2885	0.8	chance	MAG: Nitrospiraceae bacterium isolate MFD15056.bin.c.120 genome assembly, chromosome: 1
+SRR23973193.6093328/1	residue	XM_044161686.1	Aphidius gifuensis	5444	90.909	33	104	0.3173	0.8	chance	PREDICTED: Aphidius gifuensis DNA topoisomerase 2 (LOC122858655), transcript variant X2, mRNA
+SRR23973193.3037168/1	residue	OZ520218.1	Actinomycetota bacterium	4660738	93.75	32	104	0.3077	0.8	chance	MAG: Actinomycetota bacterium isolate MFD15173.bin.c.13 genome assembly, chromosome: 1
+SRR23973193.5345/1	identified	OZ532398.1	Bradyrhizobium sp.	5989388	78.947	57	105	0.5429	0.81	chance	MAG: Bradyrhizobium sp. isolate MFD15108.bin.c.145 genome assembly, chromosome: 1
+SRR23973193.31719/1	residue	CP006774.1	Leisingera methylohalidivorans DSM 14336	220701	90.909	33	105	0.3143	0.81	chance	Leisingera methylohalidivorans DSM 14336 strain MB2, DSM 14336 plasmid unnamed, complete sequence
+SRR23973193.70427/1	residue	OZ520948.1	Candidatus Acidiferrales bacterium	5391727	83.721	43	105	0.4095	0.81	chance	MAG: Candidatus Acidiferrales bacterium isolate MFD15180.bin.c.6 genome assembly, chromosome: 1
+SRR23973193.3027148/1	residue	XM_012000837.1	Mandrillus leucophaeus	6291	88.571	35	105	0.3333	0.81	chance	PREDICTED: Mandrillus leucophaeus prostaglandin F2 receptor inhibitor (PTGFRN), mRNA
+SRR23973193.83328/1	residue	CP011028.1	Pseudoalteromonas espejiana DSM 9414	3720756	89.189	37	105	0.3524	0.81	chance	Pseudoalteromonas espejiana strain ATCC 29659 chromosome I, complete sequence
+SRR23973193.51528/1	residue	U40455.1	Homo sapiens	106000	80.0	50	105	0.4762	0.81	chance	Human chromosome X cosmid, clones 196B12, 9H11 and 43H9, repeat units and sequence tagged sites
+SRR23973193.9320/1	identified	OQ414636.1	Pelagibacter phage EXVC032P Baldr	39463	93.333	30	106	0.283	0.82	chance	Pelagibacter phage EXVC032P Baldr, complete genome
+SRR23973193.29406/1	residue	OZ507481.1	Verrucomicrobiales bacterium	6444253	82.222	45	106	0.4245	0.82	chance	MAG: Verrucomicrobiales bacterium isolate MFD15019.bin.s.158 genome assembly, chromosome: 1
+SRR23973193.19656/1	identified	OZ306490.1	uncultured Elusimicrobiota bacterium	2502716	89.189	37	106	0.3491	0.82	chance	MAG: uncultured Elusimicrobiota bacterium isolate 021-CZ-11.bin.1.247 genome assembly, chromosome: 1
+SRR23973193.25316/1	residue	OZ520735.1	Thermoanaerobaculia bacterium	5506914	87.5	40	106	0.3774	0.82	chance	MAG: Thermoanaerobaculia bacterium isolate MFD15177.bin.c.38 genome assembly, chromosome: 1
+SRR23973193.90600/1	residue	PP172253.1	Chronimunb virus	3298	74.39	82	106	0.7736	0.82	chance	MAG: Chronimunb virus isolate CN1B_k141_41676 genomic sequence
+SRR23973193.84390/1	residue	XM_065685079.1	Lathamus discolor	9440	88.571	35	106	0.3302	0.82	chance	PREDICTED: Lathamus discolor cell cycle exit and neuronal differentiation 1 (CEND1), transcript variant X5, mRNA
+SRR23973193.29539/1	residue	CP096585.1	Gordonia terrae	5662353	90.909	33	106	0.3113	0.82	chance	Gordonia terrae strain PE42 chromosome, complete genome
+SRR23973193.16312/1	residue	CP139909.1	Buchnera aphidicola (Chaetogeoica yunlongensis)	588399	80.0	50	106	0.4717	0.82	chance	MAG: Buchnera aphidicola (Chaetogeoica yunlongensis) isolate R17 chromosome, complete genome
+SRR23973193.87419/1	identified	OZ344943.1	Pseudomonas abietaniphila	7089936	85.0	40	106	0.3774	0.82	chance	Pseudomonas abietaniphila strain R-92687 genome assembly, chromosome: 1
+SRR23973193.21974/1	residue	AC103876.2	Homo sapiens	113199	90.909	33	106	0.3113	0.82	chance	Homo sapiens chromosome 15, clone CTD-2282O12, complete sequence
+SRR23973193.67170/1	residue	OZ517274.1	Verrucomicrobiota bacterium	2583220	89.189	37	106	0.3491	0.82	chance	MAG: Verrucomicrobiota bacterium isolate MFD15127.bin.c.153 genome assembly, chromosome: 1
+SRR23973193.90544/1	residue	CP180443.1	Klebsiella sp. B345	5315998	85.714	42	106	0.3962	0.82	chance	Klebsiella sp. B345 chromosome, complete genome
+SRR23973193.6052712/1	residue	CP178543.1	Capilliphycus salinus ALCB114379	7712874	85.714	42	106	0.3962	0.82	chance	Capilliphycus salinus ALCB114379 voucher ALCB 114379 chromosome, complete genome
+SRR23973193.3023274/1	residue	XM_076609211.1	Babylonia areolata	3836	93.333	30	106	0.283	0.82	chance	PREDICTED: Babylonia areolata uncharacterized LOC143297042 (LOC143297042), transcript variant X1, mRNA
+SRR23973193.33429/1	residue	OZ532322.1	Gammaproteobacteria bacterium	4484297	86.842	38	106	0.3585	0.82	chance	MAG: Gammaproteobacteria bacterium isolate MFD15108.bin.c.51 genome assembly, chromosome: 1
+SRR23973193.1581759/1	residue	CP158656.1	Cannabis sativa	84599500	80.0	55	106	0.5189	0.82	chance	Cannabis sativa cultivar ERBxHO40_23 chromosome 3
+SRR23973193.3067192/1	residue	AP029193.1	Pseudarthrobacter oxydans	4718891	80.0	50	106	0.4717	0.82	chance	Pseudarthrobacter oxydans JCM 2521 DNA, complete genome
+SRR23973193.1592858/1	residue	OZ562660.1	Clostridiales bacterium	2776268	93.333	30	106	0.283	0.82	chance	MAG: Clostridiales bacterium isolate SHD1_0246 genome assembly, chromosome: 1
+SRR23973193.90600/1	residue	PP172253.1	Chronimunb virus	3298	74.39	82	106	0.7736	0.82	chance	MAG: Chronimunb virus isolate CN1B_k141_41676 genomic sequence
+SRR23973193.1509175/1	residue	OZ244983.1	Cyclobacteriaceae bacterium	5405164	93.333	30	106	0.283	0.82	chance	MAG: Cyclobacteriaceae bacterium isolate 7f17972e-910f-433b-9d46-bf72b5f6a249 genome assembly, chromosome: 1
+SRR23973193.3096220/1	residue	OE183554.1	Timema californicum	55727	90.909	33	106	0.3113	0.82	chance	2_Tcm_b3v08
+SRR23973193.4501609/1	residue	CP134536.1	Thalassobellus suaedae	4113577	88.571	35	106	0.3302	0.82	chance	Thalassobellus suaedae strain HL-DH10 chromosome, complete genome
+SRR23973193.3053237/1	residue	CP025996.1	Stenotrophomonas sp. ZAC14D2_NAIMI4_6	4431104	80.392	51	106	0.4811	0.82	chance	Stenotrophomonas sp. ZAC14D2_NAIMI4_6 chromosome
+SRR23973193.1591327/1	residue	OZ508894.1	Pseudomonadales bacterium	4342824	83.721	43	106	0.4057	0.82	chance	MAG: Pseudomonadales bacterium isolate MFD15044.bin.s.167 genome assembly, chromosome: 1
+SRR23973193.6067999/1	residue	CP095745.1	Niallia sp. Man26	233972	89.189	37	106	0.3491	0.82	chance	Niallia sp. Man26 plasmid unnamed1, complete sequence
+SRR23973193.4548646/1	residue	OZ519702.1	Candidatus Omnitrophota bacterium	2768682	88.571	35	106	0.3302	0.82	chance	MAG: Candidatus Omnitrophota bacterium isolate MFD15168.bin.c.146 genome assembly, chromosome: 1
+SRR23973193.3060723/1	residue	OZ510366.1	Mycobacterium sp.	5024564	81.25	48	106	0.4528	0.82	chance	MAG: Mycobacterium sp. isolate MFD15057.bin.3.2683 genome assembly, chromosome: 1
+SRR23973193.1553866/1	residue	OA565150.1	Timema douglasi	203293	90.909	33	106	0.3113	0.82	chance	1_Tdi_b3v08
+SRR23973193.97378/1	residue	OZ520685.1	Acidobacteriota bacterium	5273475	88.571	35	107	0.3271	0.83	chance	MAG: Acidobacteriota bacterium isolate MFD15184.bin.c.19 genome assembly, chromosome: 1
+SRR23973193.80303/1	residue	XM_082271617.1	Pelophylax lessonae	11074	90.909	33	107	0.3084	0.83	chance	Pelophylax lessonae laminin subunit alpha-5 (LAMA5), transcript variant 2, partial mRNA
+SRR23973193.81539/1	residue	CP078089.1	Allobaculum mucilyticum	3144153	93.333	30	107	0.2804	0.83	chance	Allobaculum mucilyticum strain 128 chromosome, complete genome
+SRR23973193.89299/1	residue	XM_072579301.1	Chiloscyllium punctatum	1859	88.571	35	107	0.3271	0.83	chance	PREDICTED: Chiloscyllium punctatum interleukin-8-like (LOC140482213), mRNA
+SRR23973193.71043/1	residue	CP139994.1	Comamonas testosteroni	5812347	85.714	42	107	0.3925	0.83	chance	Comamonas testosteroni strain HAMBI_0403 chromosome, complete genome
+SRR23973193.54737/1	residue	XM_027703572.1	Neopelma chrysocephalum	5047	93.75	32	107	0.2991	0.83	chance	PREDICTED: Neopelma chrysocephalum DExH-box helicase 30 (DHX30), transcript variant X3, mRNA
+SRR23973193.24169/1	residue	OZ503897.1	Bacteroidota bacterium	4861197	89.189	37	107	0.3458	0.83	chance	MAG: Bacteroidota bacterium isolate MFD15009.bin.s.157 genome assembly, chromosome: 1
+SRR23973193.73076/1	identified	XM_047894258.1	Psilocybe cubensis	978	90.909	33	107	0.3084	0.83	chance	Psilocybe cubensis uncharacterized protein (JR316_0008545), partial mRNA
+SRR23973193.26238/1	residue	OZ516197.1	Rhizomicrobium sp.	2232910	84.783	46	107	0.4299	0.83	chance	MAG: Rhizomicrobium sp. isolate MFD15105.bin.3.2441 genome assembly, chromosome: 1
+SRR23973193.8896/1	residue	XM_048601581.1	Rhincodon typus	1849	93.333	30	107	0.2804	0.83	chance	PREDICTED: Rhincodon typus ral guanine nucleotide dissociation stimulator-like 1 (LOC109928375), transcript variant X3, mRNA
+SRR23973193.56183/1	residue	OZ533964.1	Candidatus Acidiferrum sp.	7488371	88.571	35	107	0.3271	0.83	chance	MAG: Candidatus Acidiferrum sp. isolate MFD15205.bin.s.108 genome assembly, chromosome: 1
+SRR23973193.62785/1	residue	XM_080564519.1	Anser brachyrhynchus	3341	88.571	35	107	0.3271	0.83	chance	Anser brachyrhynchus 52 kDa repressor of the inhibitor of the protein kinase (THAP12), transcript variant 6, mRNA
+SRR23973193.47836/1	identified	CP009460.1	Dickeya fangzhongdai	5052868	93.333	30	107	0.2804	0.83	chance	Dickeya fangzhongdai strain ND14b chromosome, complete genome
+SRR23973193.61751/1	residue	CP126111.1	Neobacillus cucumis	6291318	85.714	42	107	0.3925	0.83	chance	Neobacillus cucumis strain WH12 chromosome, complete genome
+SRR23973193.69825/1	residue	OZ517246.1	Vulcanimicrobiota bacterium	3086014	93.333	30	107	0.2804	0.83	chance	MAG: Vulcanimicrobiota bacterium isolate MFD15143.bin.c.25 genome assembly, chromosome: 1
+SRR23973193.30054/1	residue	CP089981.1	Fulvivirga ulvae	6978354	93.333	30	107	0.2804	0.83	chance	Fulvivirga ulvae strain SS9-22 chromosome, complete genome
+SRR23973193.59065/1	residue	CP019239.1	Rhodoferax saidenbachensis	4264855	86.842	38	107	0.3551	0.83	chance	Rhodoferax saidenbachensis strain DSM 22694 chromosome, complete genome
+SRR23973193.84587/1	residue	OZ244983.1	Cyclobacteriaceae bacterium	5405164	93.333	30	107	0.2804	0.83	chance	MAG: Cyclobacteriaceae bacterium isolate 7f17972e-910f-433b-9d46-bf72b5f6a249 genome assembly, chromosome: 1
+SRR23973193.90113/1	identified	CP047694.1	Marinomonas mediterranea	4700249	82.979	47	107	0.4393	0.83	chance	Marinomonas mediterranea strain MMB-3 (CPR1) chromosome, complete genome
+SRR23973193.45313/1	residue	OZ305258.1	uncultured Dehalococcoidia bacterium	6525840	86.842	38	107	0.3551	0.83	chance	MAG: uncultured Dehalococcoidia bacterium isolate 088-SA-05.bin.c.62 genome assembly, chromosome: 1
+SRR23973193.65666/1	identified	OD001587.1	Timema poppense	111670	96.667	30	107	0.2804	0.83	chance	1_Tps_b3v08
+SRR23973193.41358/1	residue	CP180488.1	Streptomyces sp. DC-KA2	10540314	86.842	38	107	0.3551	0.83	chance	Streptomyces sp. DC-KA2 chromosome
+SRR23973193.17085/1	residue	XM_057786229.1	Chionomys nivalis	5492	82.979	47	107	0.4393	0.83	chance	PREDICTED: Chionomys nivalis sterile alpha motif domain containing 8 (Samd8), transcript variant X2, mRNA
+SRR23973193.96861/1	identified	CP108818.1	Streptomyces canus	10632801	85.0	40	107	0.3738	0.83	chance	Streptomyces canus strain NBC_00866 chromosome, complete genome
+SRR23973193.61378/1	residue	XM_085198463.1	Heliconius melpomene rosina	5822	88.571	35	107	0.3271	0.83	chance	PREDICTED: Heliconius melpomene rosina (E3-independent) E2 ubiquitin-conjugating enzyme UBE2O (LOC146531299), transcript variant X1, mRNA
+SRR23973193.48306/1	residue	CP029160.1	Saccharomyces cerevisiae	11848804	86.364	44	107	0.4112	0.83	chance	Saccharomyces cerevisiae strain SY14 chromosome I, complete sequence
+SRR23973193.5503/1	residue	OZ305527.1	uncultured bacterium	916443	88.571	35	107	0.3271	0.83	chance	MAG: uncultured bacterium isolate 006-MY-06.bin.c.17 genome assembly, chromosome: 1
+SRR23973193.80963/1	residue	OZ515087.1	Actinomycetes bacterium	2667859	84.783	46	107	0.4299	0.83	chance	MAG: Actinomycetes bacterium isolate MFD15101.bin.2.363 genome assembly, chromosome: 1
+SRR23973193.25416/1	identified	OZ514414.1	Burkholderiaceae bacterium	4507315	93.75	32	107	0.2991	0.83	chance	MAG: Burkholderiaceae bacterium isolate MFD15074.bin.s.269 genome assembly, chromosome: 1
+SRR23973193.75199/1	residue	OZ509410.1	Polaromonas sp.	3999640	88.889	36	107	0.3364	0.83	chance	MAG: Polaromonas sp. isolate MFD15050.bin.c.18 genome assembly, chromosome: 1
+SRR23973193.16364/1	residue	CP168770.1	Malus domestica	35617556	85.714	42	107	0.3925	0.83	chance	Malus domestica cultivar Golden Delicious chromosome 06
+SRR23973193.64259/1	identified	OZ502291.1	Acidimicrobiales bacterium	6139786	82.222	45	107	0.4206	0.83	chance	MAG: Acidimicrobiales bacterium isolate MFD15001.bin.c.9 genome assembly, chromosome: 1
+SRR23973193.34096/1	residue	CP136720.1	Methylobacterium sp. NMS12	948178	89.189	37	107	0.3458	0.83	chance	Methylobacterium sp. NMS12 plasmid pNMS12P1, complete sequence
+SRR23973193.6295/1	residue	XM_020833420.2	Dendrobium catenatum	4521	90.909	33	107	0.3084	0.83	chance	PREDICTED: Dendrobium catenatum translocase of chloroplast 120, chloroplastic (LOC110104356), transcript variant X1, mRNA
+SRR23973193.22268/1	residue	HF547348.1	Desulfamplus magnetovallimortis BW-1	254780	85.714	42	107	0.3925	0.83	chance	Candidatus Desulfamplus magnetomortis magnetosome formation gene region, strain BW-1
+SRR23973193.23163/1	residue	XM_080463528.1	Lipophrys pholis	12268	82.979	47	107	0.4393	0.83	chance	Lipophrys pholis transformation/transcription domain-associated protein (trrap), partial mRNA
+SRR23973193.32674/1	residue	CP019239.1	Rhodoferax saidenbachensis	4264855	86.842	38	107	0.3551	0.83	chance	Rhodoferax saidenbachensis strain DSM 22694 chromosome, complete genome
+SRR23973193.92790/1	residue	XM_013165549.1	Schizosaccharomyces cryophilus OY26	2257	89.189	37	107	0.3458	0.83	chance	Schizosaccharomyces cryophilus OY26 siderophore-iron transporter Str1 (SPOG_02888), mRNA
+SRR23973193.11884/1	residue	CP138630.1	Streptomyces rimosus	9121582	93.333	30	107	0.2804	0.83	chance	Mutant Streptomyces rimosus isolate R6-500, complete genome
+SRR23973193.71236/1	identified	CP152380.1	Marinobacter alkaliphilus	4122221	85.0	40	107	0.3738	0.83	chance	Marinobacter alkaliphilus strain SBY-1 chromosome, complete genome
+SRR23973193.79122/1	residue	XM_075002545.1	Carettochelys insculpta	5539	96.667	30	107	0.2804	0.83	chance	PREDICTED: Carettochelys insculpta ribonucleoprotein, PTB binding 2 (RAVER2), transcript variant X2, mRNA
+SRR23973193.11848/1	residue	XM_020575063.1	Heterostelium album PN500	2286	85.106	47	107	0.4393	0.83	chance	Heterostelium album PN500 TPR domain protein (PPL_04153), partial mRNA
+SRR23973193.7080/1	residue	OZ305066.1	uncultured Caldilineaceae bacterium	8279003	85.0	40	107	0.3738	0.83	chance	MAG: uncultured Caldilineaceae bacterium isolate 097-US2-29.bin.c.23 genome assembly, chromosome: 1
+SRR23973193.27219/1	residue	KX884037.1	Beihai zhaovirus-like virus 2	9086	85.714	42	107	0.3925	0.83	chance	Beihai zhaovirus-like virus 2 strain BHTSS12281 polyprotein gene, complete cds
+SRR23973193.1562/1	identified	OZ517203.1	Puia sp.	5005528	91.429	35	107	0.3271	0.83	chance	MAG: Puia sp. isolate MFD15127.bin.c.188 genome assembly, chromosome: 1
+SRR23973193.3086349/1	residue	LK066792.1	Apteryx mantelli mantelli	25158983	96.667	30	107	0.2804	0.83	chance	Apteryx australis mantelli genome assembly AptMant0, scaffold scaffold38
+SRR23973193.85956/1	residue	CP144335.1	Myxococcus faecalis	10528435	84.091	44	107	0.4112	0.83	chance	Myxococcus faecalis strain O15 chromosome, complete genome
+SRR23973193.4561090/1	residue	XM_067306021.1	Apteryx mantelli	2111	91.429	35	107	0.3271	0.83	chance	PREDICTED: Apteryx mantelli N-acetylglucosamine-1-phosphate transferase subunit gamma (GNPTG), mRNA
+SRR23973193.1529155/1	residue	OZ518092.1	Gammaproteobacteria bacterium	4268848	83.673	49	107	0.4579	0.83	chance	MAG: Gammaproteobacteria bacterium isolate MFD15131.bin.c.62 genome assembly, chromosome: 1
+SRR23973193.4558483/1	residue	XM_034197913.1	Gymnodraco acuticeps	9194	78.689	61	107	0.5701	0.83	chance	PREDICTED: Gymnodraco acuticeps hypermethylated in cancer 1 (hic1), transcript variant X1, mRNA
+SRR23973193.4527637/1	residue	OM514470.1	Leptochloa chinensis fiers-like virus 1	3702	93.333	30	107	0.2804	0.83	chance	MAG: Leptochloa chinensis fiers-like virus 1 isolate LSHLS290 maturation protein, hypothetical protein, and RNA replicase beta chain genes, complete cds
+SRR23973193.4557500/1	residue	AP002882.2	Oryza sativa Japonica Group	135991	77.778	63	107	0.5888	0.83	chance	Oryza sativa Japonica Group genomic DNA, chromosome 1, PAC clone:P0439B06
+SRR23973193.6045683/1	residue	CP109440.1	Streptomyces sp. NBC_01483	87853	87.5	40	107	0.3738	0.83	chance	Streptomyces sp. NBC_01483 plasmid unnamed2, complete sequence
+SRR23973193.52643/1	residue	OZ523884.1	Jatrophihabitantaceae bacterium	3900068	93.75	32	107	0.2991	0.83	chance	MAG: Jatrophihabitantaceae bacterium isolate MFD15203.bin.c.50 genome assembly, chromosome: 1
+SRR23973193.19473/1	residue	AP024470.1	Adlercreutzia equolifaciens subsp. celatus	2929991	84.314	51	107	0.4766	0.83	chance	Adlercreutzia equolifaciens subsp. celatus JCM 14811 DNA, complete genome
+SRR23973193.49440/1	residue	XM_065794345.1	Hydra vulgaris	5642	89.189	37	107	0.3458	0.83	chance	PREDICTED: Hydra vulgaris radixin (LOC100202353), transcript variant X6, mRNA
+SRR23973193.1569007/1	residue	OZ523744.1	Solirubrobacteraceae bacterium	4559975	84.091	44	107	0.4112	0.83	chance	MAG: Solirubrobacteraceae bacterium isolate MFD15204.bin.2.3430 genome assembly, chromosome: 1
+SRR23973193.6145/1	residue	CP003558.1	Synechococcus sp. PCC 6312	3697276	88.571	35	107	0.3271	0.83	chance	Synechococcus sp. PCC 6312, complete genome
+SRR23973193.6055688/1	residue	PQ660245.1	Streptococcus equinus	26218	85.0	40	107	0.3738	0.83	chance	Streptococcus equinus strain NM-L6 cell wall glycopolymer biosynthetic gene cluster, partial sequence
+SRR23973193.4567403/1	residue	CP179205.1	Luminiphilus sp. nBUS_16	3524637	85.0	40	107	0.3738	0.83	chance	Luminiphilus sp. nBUS_16 chromosome, complete genome
+SRR23973193.3090221/1	residue	CP003776.1	Pectobacterium carotovorum subsp. carotovorum PCC21	4842771	93.75	32	107	0.2991	0.83	chance	Pectobacterium carotovorum subsp. carotovorum PCC21, complete genome
+SRR23973193.4561511/1	residue	XM_025701680.1	Aspergillus vadensis CBS 113365	4603	93.75	32	107	0.2991	0.83	chance	Aspergillus vadensis CBS 113365 inositol polyphosphate kinase KCS1 (BO88DRAFT_173611), mRNA
+SRR23973193.11884/1	residue	CP138630.1	Streptomyces rimosus	9121582	93.333	30	107	0.2804	0.83	chance	Mutant Streptomyces rimosus isolate R6-500, complete genome
+SRR23973193.6002070/1	residue	XM_023020068.1	Olea europaea var. sylvestris	1467	86.842	38	107	0.3551	0.83	chance	PREDICTED: Olea europaea var. sylvestris pentatricopeptide repeat-containing protein At2g13420, mitochondrial-like (LOC111394318), mRNA
+SRR23973193.51652/1	residue	OZ516207.1	Polyangiaceae bacterium	7678667	84.091	44	107	0.4112	0.83	chance	MAG: Polyangiaceae bacterium isolate MFD15104.bin.c.30 genome assembly, chromosome: 1
+SRR23973193.1502712/1	residue	OZ521540.1	Rhizomicrobium sp.	3803502	89.189	37	107	0.3458	0.83	chance	MAG: Rhizomicrobium sp. isolate MFD15182.bin.c.74 genome assembly, chromosome: 1
+SRR23973193.4521330/1	residue	AP045288.1	Scomber australasicus	38436549	87.179	39	107	0.3645	0.83	chance	Scomber australasicus DNA, Alternate haplotype, chromosome 3, sequence
+SRR23973193.4507190/1	residue	OZ533972.1	Sphingomicrobium sp.	3071098	87.179	39	107	0.3645	0.83	chance	MAG: Sphingomicrobium sp. isolate MFD15212.bin.s.151 genome assembly, chromosome: 1
+SRR23973193.4553727/1	residue	OZ306747.1	uncultured bacterium	6106844	86.842	38	107	0.3551	0.83	chance	MAG: uncultured bacterium isolate 093-US1-47.bin.1.238 genome assembly, chromosome: 1
+SRR23973193.6050163/1	residue	CP113837.1	Kitasatospora sp. YST-16	7659304	93.75	32	107	0.2991	0.83	chance	Kitasatospora sp. YST-16 chromosome, complete genome
+SRR23973193.3089610/1	residue	CP133090.1	Aestuariibaculum sp. YM273	3737252	88.571	35	107	0.3271	0.83	chance	Aestuariibaculum sp. YM273 chromosome, complete genome
+SRR23973193.4537116/1	residue	CP034539.1	Streptomyces cyaneochromogenes	10677137	82.222	45	107	0.4206	0.83	chance	Streptomyces cyaneochromogenes strain MK-45 chromosome, complete genome
+SRR23973193.6021930/1	residue	OZ489665.1	uncultured Acidobacteriaceae bacterium	5356316	90.909	33	107	0.3084	0.83	chance	MAG: uncultured Acidobacteriaceae bacterium isolate MFD02579.bin.c.33.r1 genome assembly, chromosome: 1
+SRR23973193.18988/1	residue	OZ534402.1	Flavobacteriales bacterium	5404887	87.5	40	107	0.3738	0.83	chance	MAG: Flavobacteriales bacterium isolate MFD15213.bin.c.195 genome assembly, chromosome: 1
+SRR23973193.3090186/1	residue	OZ506700.1	Verrucomicrobiales bacterium	6111735	80.328	61	107	0.5701	0.83	chance	MAG: Verrucomicrobiales bacterium isolate MFD15019.bin.c.60 genome assembly, chromosome: 1
+SRR23973193.90358/1	residue	OZ516239.1	Telmatobacter sp.	6344909	90.909	33	107	0.3084	0.83	chance	MAG: Telmatobacter sp. isolate MFD15104.bin.c.27 genome assembly, chromosome: 1
+SRR23973193.3052648/1	residue	CP098748.1	Brachyspira pilosicoli	2539415	86.842	38	107	0.3551	0.83	chance	Brachyspira pilosicoli strain ZH1268 chromosome, complete genome
+SRR23973193.1542647/1	residue	XM_066222339.1	Kwoniella dendrophila CBS 6074	1779	79.245	53	107	0.4953	0.83	chance	Kwoniella dendrophila CBS 6074 uncharacterized protein (L201_006620), partial mRNA
+SRR23973193.4541956/1	residue	LR901803.1	Darwinula stevensoni	47090	89.189	37	107	0.3458	0.83	chance	Darwinula stevensoni
+SRR23973193.6063590/1	residue	XM_013887870.3	Brassica napus	1078	87.5	40	107	0.3738	0.83	chance	PREDICTED: Brassica napus L-ascorbate peroxidase 5, peroxisomal (LOC106446154), mRNA
+SRR23973193.1527318/1	residue	XM_026622079.1	Ctenocephalides felis	1690	91.176	34	107	0.3178	0.83	chance	PREDICTED: Ctenocephalides felis uncharacterized LOC113384023 (LOC113384023), mRNA
+SRR23973193.62785/1	residue	XM_080564519.1	Anser brachyrhynchus	3341	88.571	35	107	0.3271	0.83	chance	Anser brachyrhynchus 52 kDa repressor of the inhibitor of the protein kinase (THAP12), transcript variant 6, mRNA
+SRR23973193.3084484/1	residue	OZ245777.1	Phycisphaerales bacterium	3326141	93.333	30	107	0.2804	0.83	chance	MAG: Phycisphaerales bacterium isolate 24bfb2b0-0bc0-47df-81b4-c513fc01a924 genome assembly, chromosome: 1
+SRR23973193.6016773/1	residue	OZ535357.1	Acidimicrobiaceae bacterium	4846470	88.571	35	107	0.3271	0.83	chance	MAG: Acidimicrobiaceae bacterium isolate MFD15115.bin.s.217 genome assembly, chromosome: 1
+SRR23973193.17405/1	residue	OZ490127.1	uncultured Chloroflexia bacterium	3188390	86.842	38	107	0.3551	0.83	chance	MAG: uncultured Chloroflexia bacterium isolate MFD04716.bin.c.64.r1 genome assembly, chromosome: 1
+SRR23973193.3064813/1	residue	OZ521289.1	Bryobacteraceae bacterium	8323768	83.721	43	107	0.4019	0.83	chance	MAG: Bryobacteraceae bacterium isolate MFD15189.bin.c.56 genome assembly, chromosome: 1
+SRR23973193.6061175/1	residue	BK037422.1	Caudoviricetes sp.	13140	85.0	40	107	0.3738	0.83	chance	MAG TPA_asm: Caudoviricetes sp. isolate ctkRS12, partial genome
+SRR23973193.3007545/1	residue	EF071898.2	uncultured fungus	867	82.353	51	107	0.4766	0.83	chance	Uncultured endophytic fungus clone C_T7_F05 18S ribosomal RNA gene, partial sequence
+SRR23973193.96916/1	residue	OZ503675.1	Cyanobacteriota bacterium	6408558	88.571	35	107	0.3271	0.83	chance	MAG: Cyanobacteriota bacterium isolate MFD15009.bin.c.18 genome assembly, chromosome: 1
+SRR23973193.6069259/1	residue	XM_044115211.1	Gambusia affinis	10586	89.189	37	107	0.3458	0.83	chance	PREDICTED: Gambusia affinis protein tyrosine phosphatase receptor type Db (ptprdb), transcript variant X8, mRNA
+SRR23973193.6070964/1	residue	MK448995.1	Streptococcus phage Javan626	41682	90.323	31	44	0.7045	1.3	chance	Streptococcus phage Javan626, complete genome
+SRR23973193.1535584/1	residue	XM_039771515.1	Polypterus senegalus	3680	87.805	41	82	0.5	1.9	chance	PREDICTED: Polypterus senegalus family with sequence similarity 13 member C (fam13c), transcript variant X2, mRNA
+SRR23973193.54468/1	residue	XM_086211284.1	Aulostomus chinensis	4337	90.909	33	85	0.3882	2.0	chance	PREDICTED: Aulostomus chinensis phosphoinositide-3-kinase regulatory subunit 6 (pik3r6), transcript variant X4, mRNA
+SRR23973193.6045603/1	residue	OZ524729.1	Desulfobaccales bacterium	3512337	90.625	32	86	0.3721	2.0	chance	MAG: Desulfobaccales bacterium isolate MFD15205.bin.c.88 genome assembly, chromosome: 1
+SRR23973193.4582695/1	residue	XM_039194990.1	Hibiscus syriacus	1932	90.0	30	39	0.7692	2.5	chance	PREDICTED: Hibiscus syriacus 9-cis-epoxycarotenoid dioxygenase NCED6, chloroplastic-like (LOC120192156), mRNA
+SRR23973193.55763/1	residue	XM_054966437.1	Prosopis cineraria	1974	88.889	36	103	0.3495	2.7	chance	PREDICTED: Prosopis cineraria 3-ketoacyl-CoA synthase 11-like (LOC129320811), mRNA
+SRR23973193.17485/1	residue	XR_006305915.1	Polistes fuscatus	545	78.333	60	105	0.5714	2.8	chance	PREDICTED: Polistes fuscatus uncharacterized LOC122525917 (LOC122525917), ncRNA
+SRR23973193.22566/1	residue	XM_053329309.1	Scomber japonicus	1537	91.176	34	105	0.3238	2.8	chance	PREDICTED: Scomber japonicus fibrinogen gamma chain (fgg), mRNA
+SRR23973193.63358/1	residue	OZ503623.1	Sediminicola sp.	2387516	80.392	51	104	0.4904	2.8	chance	MAG: Sediminicola sp. isolate MFD15011.bin.2.160 genome assembly, chromosome: 1
+SRR23973193.39732/1	residue	CP122958.1	Methanonatronarchaeum sp. AMET-Sl	1555502	90.625	32	105	0.3048	2.8	chance	Methanonatronarchaeum sp. AMET-Sl chromosome, complete genome
+SRR23973193.76939/1	identified	OM103330.1	Psammotermes allocerus	448	93.548	31	104	0.2981	2.8	chance	Psammotermes allocerus voucher KW_140155 cytochrome oxidase subunit II (COII) gene, partial cds; mitochondrial
+SRR23973193.51208/1	residue	OZ535188.1	Pyrinomonadales bacterium	5731214	86.486	37	105	0.3524	2.8	chance	MAG: Pyrinomonadales bacterium isolate MFD15213.bin.c.84 genome assembly, chromosome: 1
+SRR23973193.32889/1	residue	OZ524030.1	Mycobacteriales bacterium	5920391	86.486	37	105	0.3524	2.8	chance	MAG: Mycobacteriales bacterium isolate MFD15203.bin.3.1588 genome assembly, chromosome: 1
+SRR23973193.4596974/1	residue	OZ514485.1	Thermoleophilaceae bacterium	4674311	90.625	32	105	0.3048	2.8	chance	MAG: Thermoleophilaceae bacterium isolate MFD15074.bin.c.106 genome assembly, chromosome: 1
+SRR23973193.69645/1	residue	OZ534495.1	Pseudomonadales bacterium	5350347	82.609	46	105	0.4381	2.8	chance	MAG: Pseudomonadales bacterium isolate MFD15124.bin.c.147 genome assembly, chromosome: 1
+SRR23973193.19376/1	residue	CP025546.1	Mycobacterium paragordonae	6730319	90.625	32	105	0.3048	2.8	chance	Mycobacterium paragordonae strain 49061 chromosome, complete genome
+SRR23973193.3029776/1	residue	XR_010829563.1	Anser cygnoides	2591	90.625	32	105	0.3048	2.8	chance	PREDICTED: Anser cygnoides uncharacterized lncRNA (LOC106036033), ncRNA
+SRR23973193.39732/1	residue	CP122958.1	Methanonatronarchaeum sp. AMET-Sl	1555502	90.625	32	105	0.3048	2.8	chance	Methanonatronarchaeum sp. AMET-Sl chromosome, complete genome
+SRR23973193.55863/1	residue	XM_006220056.3	Vicugna pacos	1854	88.889	36	107	0.3364	2.9	chance	PREDICTED: Vicugna pacos JunD proto-oncogene, AP-1 transcription factor subunit (JUND), mRNA
+SRR23973193.56450/1	residue	XM_035058399.2	Populus alba	1566	83.333	42	106	0.3962	2.9	chance	PREDICTED: Populus alba protein FLOURY 1-like (LOC118048627), mRNA
+SRR23973193.57451/1	residue	CP168966.1	Acinetobacter pittii	3967260	88.235	34	107	0.3178	2.9	chance	Acinetobacter pittii strain LS-AP chromosome, complete genome
+SRR23973193.97989/1	residue	XM_031872560.1	Anarrhichthys ocellatus	16113	81.818	44	107	0.4112	2.9	chance	PREDICTED: Anarrhichthys ocellatus furry homolog b (Drosophila) (fryb), transcript variant X7, mRNA
+SRR23973193.7989/1	identified	AP025461.1	Vibrio atlanticus	1605756	88.889	36	107	0.3364	2.9	chance	Vibrio atlanticus CECT 7223 DNA, chromosome 2, complete sequence
+SRR23973193.10648/1	residue	OC000321.1	Timema shepardi	326192	93.548	31	107	0.2897	2.9	chance	2_Tsi_b3v08
+SRR23973193.5841/1	residue	XM_031106042.1	Quercus lobata	3678	83.333	48	107	0.4486	2.9	chance	PREDICTED: Quercus lobata putative receptor-like protein kinase At3g47110 (LOC115983375), transcript variant X1, mRNA
+SRR23973193.80367/1	identified	AC072063.5	Homo sapiens	136286	86.667	45	107	0.4206	2.9	chance	Homo sapiens BAC clone RP11-697B15 from 7, complete sequence
+SRR23973193.25709/1	residue	XM_050732866.1	Bombus affinis	4715	84.783	46	107	0.4299	2.9	chance	PREDICTED: Bombus affinis endoplasmic reticulum transmembrane helix translocase (LOC126921355), mRNA
+SRR23973193.5755/1	residue	CP168971.1	Bdellovibrio bacteriovorus	3431168	93.548	31	106	0.2925	2.9	chance	Bdellovibrio bacteriovorus strain Bd16 chromosome, complete genome
+SRR23973193.75519/1	residue	CP110774.1	Acidocella sp. MX-AZ03	3735595	88.889	36	107	0.3364	2.9	chance	Acidocella sp. MX-AZ03 chromosome, complete genome
+SRR23973193.69969/1	residue	CP168971.1	Bdellovibrio bacteriovorus	3431168	85.366	41	107	0.3832	2.9	chance	Bdellovibrio bacteriovorus strain Bd16 chromosome, complete genome
+SRR23973193.75845/1	identified	XM_030734597.1	Archocentrus centrarchus	1459	88.235	34	107	0.3178	2.9	chance	PREDICTED: Archocentrus centrarchus probable G-protein coupled receptor 160 (LOC115783666), mRNA
+SRR23973193.87542/1	residue	XM_032977738.2	Petromyzon marinus	11077	86.486	37	107	0.3458	2.9	chance	PREDICTED: Petromyzon marinus E3 ubiquitin-protein ligase RNF13-like (LOC116956276), transcript variant X1, mRNA
+SRR23973193.57587/1	residue	OZ516467.1	Cryomorphaceae bacterium	4066619	93.548	31	107	0.2897	2.9	chance	MAG: Cryomorphaceae bacterium isolate MFD15094.bin.s.73 genome assembly, chromosome: 1
+SRR23973193.39872/1	residue	LR699000.1	Methanomethylophilus alvi	1666795	84.615	39	106	0.3679	2.9	chance	Candidatus Methanomethylophilus alvus isolate MGYG-HGUT-02456 genome assembly, chromosome: 1
+SRR23973193.58241/1	identified	XM_028293768.2	Diabrotica virgifera virgifera	18272	82.609	46	107	0.4299	2.9	chance	PREDICTED: Diabrotica virgifera virgifera neurogenic locus Notch protein (LOC114342869), mRNA
+SRR23973193.31215/1	identified	CP015455.1	Syntrophotalea acetylenica	3192352	80.851	47	107	0.4393	2.9	chance	Syntrophotalea acetylenica strain DSM 3246 chromosome, complete genome
+SRR23973193.20313/1	identified	CP030082.1	Bdellovibrio sp. ZAP7	4123562	83.333	42	107	0.3925	2.9	chance	Bdellovibrio sp. ZAP7 chromosome, complete genome
+SRR23973193.72762/1	residue	OZ309106.1	Vreelandella xerophytica	3785665	86.486	37	107	0.3458	2.9	chance	Vreelandella sp. EE22 genome assembly, chromosome: EE22
+SRR23973193.46846/1	identified	ON162655.1	Leviviridae sp.	1575	88.235	34	106	0.3208	2.9	chance	MAG: Leviviridae sp. isolate R28-k141_419302 RNA dependent RNA polymerase gene, partial cds
+SRR23973193.45232/1	residue	XM_049636973.1	Panthera uncia	1458	90.625	32	107	0.2991	2.9	chance	PREDICTED: Panthera uncia cell division cycle 26 (CDC26), transcript variant X2, mRNA
+SRR23973193.1469/1	residue	LN164829.1	Spirometra erinaceieuropaei	2249	91.176	34	106	0.3208	2.9	chance	Spirometra erinaceieuropaei genome assembly S_erinaceieuropaei, scaffold SPER_contig0017682
+SRR23973193.83849/1	residue	CP166840.1	Agaribacterium sp. ZY112	4280525	86.486	37	106	0.3491	2.9	chance	Agaribacterium sp. ZY112 chromosome, complete genome
+SRR23973193.18281/1	residue	XM_065844445.2	Patagioenas fasciata	3205	84.615	39	107	0.3645	2.9	chance	PREDICTED: Patagioenas fasciata MSL complex subunit 2 (MSL2), mRNA
+SRR23973193.97964/1	residue	OZ304314.1	uncultured Pirellula sp.	9075065	88.235	34	107	0.3178	2.9	chance	MAG: uncultured Pirellula sp. isolate 064-CA-01.bin.c.1 genome assembly, chromosome: 1
+SRR23973193.82153/1	identified	OZ306708.1	uncultured Kofleriaceae bacterium	6831319	87.179	39	107	0.3645	2.9	chance	MAG: uncultured Kofleriaceae bacterium isolate 098-UY-13.bin.1.155 genome assembly, chromosome: 1
+SRR23973193.77144/1	residue	OZ542029.1	Dysosmobacter segnis	3305923	88.235	34	106	0.3208	2.9	chance	Dysosmobacter segnis strain AF116-5 genome assembly, chromosome: 1
+SRR23973193.93712/1	identified	XM_069545935.1	Ovis canadensis	5272	90.909	33	107	0.3084	2.9	chance	PREDICTED: Ovis canadensis forkhead associated phosphopeptide binding domain 1 (FHAD1), transcript variant X7, mRNA
+SRR23973193.64515/1	residue	OZ524472.1	Acetobacteraceae bacterium	5280171	90.625	32	106	0.3019	2.9	chance	MAG: Acetobacteraceae bacterium isolate MFD15203.bin.c.160 genome assembly, chromosome: 1
+SRR23973193.82649/1	residue	AC244365.9	Solanum lycopersicum	164698	87.179	39	107	0.3645	2.9	chance	Solanum lycopersicum strain Heinz 1706 chromosome 10 clone hba-9a17 map 10, complete sequence
+SRR23973193.10412/1	residue	AM487298.2	Vitis vinifera	57510	91.176	34	107	0.3178	2.9	chance	Vitis vinifera contig VV78X250833.10, whole genome shotgun sequence
+SRR23973193.57445/1	residue	OZ510651.1	Flavobacteriales bacterium	3618278	93.939	33	107	0.3084	2.9	chance	MAG: Flavobacteriales bacterium isolate MFD15029.bin.c.19 genome assembly, chromosome: 1
+SRR23973193.70486/1	residue	XM_082148447.1	Leuciscus leuciscus	7275	93.548	31	107	0.2897	2.9	chance	Leuciscus leuciscus rho guanine nucleotide exchange factor TIAM2 (tiam2b), transcript variant 2, mRNA
+SRR23973193.86940/1	residue	XM_008024454.1	Exserohilum turcica Et28A	730	91.176	34	107	0.3178	2.9	chance	Exserohilum turcica Et28A uncharacterized protein (SETTUDRAFT_183058), partial mRNA
+SRR23973193.92082/1	residue	XM_002070843.4	Drosophila willistoni	2461	88.889	36	107	0.3364	2.9	chance	PREDICTED: Drosophila willistoni mitochondrial potassium channel ATP-binding subunit (LOC6648306), mRNA
+SRR23973193.8998/1	residue	CP103125.1	Bacteroides faecis	6287716	84.091	44	106	0.4151	2.9	chance	Bacteroides faecis strain BFG-493 chromosome, complete genome
+SRR23973193.35297/1	residue	BK034569.1	Caudoviricetes sp.	74668	84.091	44	106	0.4151	2.9	chance	MAG TPA_asm: Caudoviricetes sp. isolate ctT7J17, partial genome
+SRR23973193.94795/1	residue	XM_042110587.1	Alosa sapidissima	2490	93.548	31	107	0.2897	2.9	chance	PREDICTED: Alosa sapidissima kelch-like protein 25 (LOC121724195), transcript variant X1, mRNA
+SRR23973193.98705/1	residue	OZ515608.1	Granulicella sp.	3494542	86.486	37	106	0.3491	2.9	chance	MAG: Granulicella sp. isolate MFD15102.bin.c.189 genome assembly, chromosome: 1
+SRR23973193.72195/1	identified	CP042997.1	Aquisphaera giovannonii	10370956	83.333	42	107	0.3925	2.9	chance	Aquisphaera giovannonii strain OJF2 chromosome, complete genome
+SRR23973193.75581/1	residue	OZ512694.1	Candidatus Cybelea sp.	3225754	80.851	47	107	0.4393	2.9	chance	MAG: Candidatus Cybelea sp. isolate MFD15080.bin.c.213 genome assembly, chromosome: 1
+SRR23973193.69529/1	residue	OZ508894.1	Pseudomonadales bacterium	4342824	89.474	38	107	0.3551	2.9	chance	MAG: Pseudomonadales bacterium isolate MFD15044.bin.s.167 genome assembly, chromosome: 1
+SRR23973193.75779/1	residue	CP043626.1	Pseudomonas denitrificans (nom. rej.)	6880508	86.842	38	107	0.3551	2.9	chance	Pseudomonas denitrificans (nom. rej.) strain BG1 chromosome, complete genome
+SRR23973193.56080/1	residue	CP037954.1	Chryseobacterium salivictor	3139453	90.625	32	107	0.2991	2.9	chance	Chryseobacterium salivictor strain NBC 122 chromosome, complete genome
+SRR23973193.57726/1	residue	OZ305523.1	uncultured Verrucomicrobiales bacterium	9057423	88.235	34	107	0.3178	2.9	chance	MAG: uncultured Verrucomicrobiales bacterium isolate 008-AR-23.bin.c.12 genome assembly, chromosome: 1
+SRR23973193.72666/1	residue	XM_080049525.1	Ammodytes marinus	3604	87.179	39	107	0.3645	2.9	chance	Ammodytes marinus eukaryotic translation initiation factor 3 subunit C (eif3c), transcript variant 1, mRNA
+SRR23973193.26969/1	residue	CP107244.1	Achromobacter sp. SS2-2022	6474884	86.486	37	107	0.3458	2.9	chance	Achromobacter sp. SS2-2022 chromosome, complete genome
+SRR23973193.99395/1	residue	OZ534989.1	Streptosporangiaceae bacterium	9644904	86.486	37	106	0.3491	2.9	chance	MAG: Streptosporangiaceae bacterium isolate MFD15213.bin.s.223 genome assembly, chromosome: 1
+SRR23973193.37463/1	residue	CP194560.1	Pseudomonas palleroniana	6187538	88.235	34	107	0.3178	2.9	chance	Pseudomonas palleroniana strain B07 chromosome, complete genome
+SRR23973193.71008/1	residue	XM_011119278.1	Orbilia oligospora ATCC 24927	3111	86.842	38	106	0.3585	2.9	chance	Orbilia oligospora ATCC 24927 uncharacterized protein (AOL_s00004g629), partial mRNA
+SRR23973193.8699/1	residue	GU057342.1	Beta vulgaris	124990	88.571	35	107	0.3271	2.9	chance	Beta vulgaris clone SB3, complete sequence
+SRR23973193.19503/1	residue	AP018694.1	Aquipluma nitroreducens	5712279	83.333	42	106	0.3962	2.9	chance	Aquipluma nitroreducens DNA, complete genome
+SRR23973193.60594/1	residue	OZ521028.1	Candidatus Dormiibacterota bacterium	3543757	90.625	32	107	0.2991	2.9	chance	MAG: Candidatus Dormiibacterota bacterium isolate MFD15180.bin.2.4999 genome assembly, chromosome: 1
+SRR23973193.80625/1	residue	OZ512312.1	Steroidobacteraceae bacterium	4040496	80.851	47	107	0.4393	2.9	chance	MAG: Steroidobacteraceae bacterium isolate MFD15078.bin.c.11 genome assembly, chromosome: 1
+SRR23973193.4541685/1	residue	OZ490316.1	uncultured bacterium	3239002	83.333	42	107	0.3925	2.9	chance	MAG: uncultured bacterium isolate MFD08497.bin.c.6.r1 genome assembly, chromosome: 1
+SRR23973193.6042579/1	residue	XM_024551827.3	Desmodus rotundus	5119	86.486	37	106	0.3491	2.9	chance	PREDICTED: Desmodus rotundus 5'-nucleotidase domain containing 1 (NT5DC1), transcript variant X2, mRNA
+SRR23973193.6064016/1	residue	OD004304.1	Timema poppense	53971	82.0	50	107	0.4673	2.9	chance	1_Tps_b3v08
+SRR23973193.3077100/1	residue	OY782760.1	Planctomycetota bacterium	3438145	90.625	32	106	0.3019	2.9	chance	MAG: Planctomycetota bacterium isolate 4c5731f0-34ce-4739-be05-23ee86c4296e genome assembly, chromosome: 1
+SRR23973193.4511379/1	residue	CP070775.1	Betaproteobacteria bacterium	3608118	91.176	34	107	0.3178	2.9	chance	MAG: Betaproteobacteria bacterium isolate bin200 chromosome
+SRR23973193.65958/1	residue	QB090900.1	Caudoviricetes sp.	48819	84.091	44	107	0.4112	2.9	chance	MAG: Caudoviricetes sp. isolate KCR_vOTU_07969 genomic sequence
+SRR23973193.3051656/1	residue	CP025987.1	Marinomonas sp. FW-1	3964876	90.625	32	106	0.3019	2.9	chance	Marinomonas sp. FW-1 chromosome, complete genome
+SRR23973193.6071702/1	residue	OZ533242.1	Gemmatimonadales bacterium	3271778	90.625	32	106	0.3019	2.9	chance	MAG: Gemmatimonadales bacterium isolate MFD15107.bin.c.39 genome assembly, chromosome: 1
+SRR23973193.3082564/1	residue	XM_002080443.4	Drosophila simulans	1616	83.721	43	107	0.4019	2.9	chance	PREDICTED: Drosophila simulans diacylglycerol O-acyltransferase 2 (LOC6733422), mRNA
+SRR23973193.3043842/1	residue	XR_014879983.1	Meleagris gallopavo	11866	84.091	44	107	0.4112	2.9	chance	PREDICTED: Meleagris gallopavo uncharacterized LOC146542571 (LOC146542571), ncRNA
+SRR23973193.1592153/1	residue	OZ515947.1	Acidobacteriota bacterium	4382229	84.615	39	106	0.3679	2.9	chance	MAG: Acidobacteriota bacterium isolate MFD15103.bin.c.9 genome assembly, chromosome: 1
+SRR23973193.43112/1	residue	CP031841.1	Breoghania sp. L-A4	5029620	90.625	32	107	0.2991	2.9	chance	Breoghania sp. L-A4 chromosome, complete genome
+SRR23973193.6040219/1	residue	OZ503911.1	Cyanobacteriota bacterium	4344086	82.222	45	106	0.4245	2.9	chance	MAG: Cyanobacteriota bacterium isolate MFD15009.bin.c.84 genome assembly, chromosome: 1
+SRR23973193.4560070/1	residue	OZ534405.1	Steroidobacteraceae bacterium	4881132	90.625	32	107	0.2991	2.9	chance	MAG: Steroidobacteraceae bacterium isolate MFD15211.bin.c.53 genome assembly, chromosome: 1
+SRR23973193.3095257/1	residue	CP050260.1	Pseudomonas coronafaciens	5661408	83.333	42	107	0.3925	2.9	chance	Pseudomonas coronafaciens strain X-1 chromosome, complete genome
+SRR23973193.63519/1	residue	XM_030387816.2	Drosophila navojoa	3795	86.486	37	106	0.3491	2.9	chance	PREDICTED: Drosophila navojoa RNA polymerase II subunit RpII140 (Polr2B), mRNA
+SRR23973193.6035231/1	residue	CP130420.1	Cairina moschata	63962944	88.235	34	107	0.3178	2.9	chance	Cairina moschata breed yongchun chromosome 5
+SRR23973193.3056992/1	residue	XM_029799488.1	Octopus sinensis	1701	90.625	32	107	0.2991	2.9	chance	PREDICTED: Octopus sinensis uncharacterized LOC115229063 (LOC115229063), mRNA
+SRR23973193.4504669/1	residue	XM_023730343.1	Trichechus manatus latirostris	2945	83.333	42	106	0.3962	2.9	chance	PREDICTED: Trichechus manatus latirostris protein tyrosine phosphatase non-receptor type 7 (PTPN7), transcript variant X5, mRNA
+SRR23973193.19503/1	residue	AP018694.1	Aquipluma nitroreducens	5712279	83.333	42	106	0.3962	2.9	chance	Aquipluma nitroreducens DNA, complete genome
+SRR23973193.5841/1	residue	XM_031106042.1	Quercus lobata	3678	83.333	48	107	0.4486	2.9	chance	PREDICTED: Quercus lobata putative receptor-like protein kinase At3g47110 (LOC115983375), transcript variant X1, mRNA
+SRR23973193.3016910/1	residue	OZ535084.1	Alphaproteobacteria bacterium	5681550	90.625	32	107	0.2991	2.9	chance	MAG: Alphaproteobacteria bacterium isolate MFD15124.bin.c.97 genome assembly, chromosome: 1
+SRR23973193.3084120/1	residue	XM_069425448.1	Rasamsonia byssochlamydoides	774	91.667	36	106	0.3396	2.9	chance	Rasamsonia byssochlamydoides uncharacterized protein (VTN77DRAFT_890), partial mRNA
+SRR23973193.6044457/1	residue	XM_058313546.1	Anopheles ziemanni	2859	87.179	39	107	0.3645	2.9	chance	PREDICTED: Anopheles ziemanni DNA replication licensing factor Mcm2 (LOC131284683), mRNA
+SRR23973193.4397/1	residue	XM_074230398.1	Macrotis lagotis	11331	85.366	41	107	0.3832	2.9	chance	PREDICTED: Macrotis lagotis fin bud initiation factor homolog (FIBIN), mRNA
+SRR23973193.2360/1	residue	OZ502940.1	Candidatus Cyanaurora sp.	3496158	80.851	47	107	0.4393	2.9	chance	MAG: Candidatus Cyanaurora sp. isolate MFD15007.bin.c.58 genome assembly, chromosome: 1
+SRR23973193.65553/1	residue	OZ508094.1	Flavobacteriales bacterium	4467728	88.235	34	107	0.3178	2.9	chance	MAG: Flavobacteriales bacterium isolate MFD15035.bin.s.20 genome assembly, chromosome: 1
+SRR23973193.26820/1	residue	OZ503351.1	Bacteroidota bacterium	4786593	80.851	47	106	0.4434	2.9	chance	MAG: Bacteroidota bacterium isolate MFD15008.bin.c.144 genome assembly, chromosome: 1
+SRR23973193.44123/1	residue	CP027417.1	Oligella urethralis	2511315	91.176	34	107	0.3178	2.9	chance	Oligella urethralis strain FDAARGOS_329 chromosome, complete genome
+SRR23973193.6039512/1	residue	XM_057946186.1	Salvia miltiorrhiza	5328	86.486	37	107	0.3458	2.9	chance	PREDICTED: Salvia miltiorrhiza brefeldin A-inhibited guanine nucleotide-exchange protein 5-like (LOC131017439), transcript variant X2, mRNA
+SRR23973193.6025401/1	residue	XM_010538842.1	Tarenaya hassleriana	478	80.392	51	107	0.4766	2.9	chance	PREDICTED: Tarenaya hassleriana uncharacterized LOC104811951 (LOC104811951), mRNA
+SRR23973193.84929/1	residue	OZ305359.1	uncultured Candidatus Peribacteria bacterium	1364869	88.235	34	107	0.3178	2.9	chance	MAG: uncultured Candidatus Peribacteria bacterium isolate 033-IN-11.bin.c.16 genome assembly, chromosome: 1
+SRR23973193.4571933/1	residue	OZ525282.1	Acidimicrobiaceae bacterium	4571338	91.176	34	107	0.3178	2.9	chance	MAG: Acidimicrobiaceae bacterium isolate MFD15215.bin.c.52 genome assembly, chromosome: 1
+SRR23973193.71008/1	residue	XM_011119278.1	Orbilia oligospora ATCC 24927	3111	86.842	38	106	0.3585	2.9	chance	Orbilia oligospora ATCC 24927 uncharacterized protein (AOL_s00004g629), partial mRNA
+SRR23973193.10007/1	residue	AP026969.1	Comamonadaceae bacterium OS-1	5121829	93.548	31	107	0.2897	2.9	chance	Comamonadaceae bacterium OS-1 DNA, nearly complete genome
+SRR23973193.3086052/1	residue	OZ223194.1	uncultured Acetobacterium sp.	1838342	85.366	41	107	0.3832	2.9	chance	MAG: uncultured Acetobacterium sp. isolate 6abcf8f7-2dc5-46ce-9e35-983ba889e1c3 genome assembly, chromosome: 4
+SRR23973193.4584489/1	residue	XM_058408467.1	Hemibagrus wyckioides	7904	87.5	40	107	0.3738	2.9	chance	PREDICTED: Hemibagrus wyckioides retinoic acid-induced protein 1 (LOC131364949), transcript variant X3, mRNA
+SRR23973193.3013633/1	residue	XR_004317942.1	Camelus ferus	1001	87.179	39	107	0.3645	2.9	chance	PREDICTED: Camelus ferus uncharacterized LOC116661979 (LOC116661979), ncRNA
+SRR23973193.4579223/1	residue	CP009515.1	Methanosarcina lacustris Z-7289	4139808	79.245	53	107	0.4953	2.9	chance	Methanosarcina lacustris Z-7289, complete genome
+SRR23973193.6012004/1	residue	JN955704.1	Mus musculus	37981	87.179	39	107	0.3645	2.9	chance	Mus musculus targeted non-conditional, lacZ-tagged mutant allele Garnl3:tm1e(EUCOMM)Hmgu; transgenic
+SRR23973193.4561849/1	residue	CP046509.1	Erwinia sorbitola	4699895	86.486	37	107	0.3458	2.9	chance	Erwinia sorbitola strain J780 chromosome, complete genome
+SRR23973193.1541961/1	residue	OZ307240.1	uncultured bacterium	2677105	82.0	50	107	0.4673	2.9	chance	MAG: uncultured bacterium isolate 098-UY-13.bin.2.74 genome assembly, chromosome: 1
+SRR23973193.6059117/1	residue	XM_080049525.1	Ammodytes marinus	3604	87.179	39	107	0.3645	2.9	chance	Ammodytes marinus eukaryotic translation initiation factor 3 subunit C (eif3c), transcript variant 1, mRNA
+SRR23973193.6003693/1	residue	OZ520973.1	Verrucomicrobiota bacterium	2915197	88.889	36	107	0.3364	2.9	chance	MAG: Verrucomicrobiota bacterium isolate MFD15177.bin.c.12 genome assembly, chromosome: 1
+SRR23973193.3071487/1	residue	CP063982.1	Orrella daihaiensis	2803849	88.889	36	107	0.3364	2.9	chance	Orrella daihaiensis strain f23 chromosome, complete genome
+SRR23973193.4537302/1	residue	MN694494.1	Marine virus AFVG_250M305	46757	88.235	34	107	0.3178	2.9	chance	MAG: Marine virus AFVG_250M305, complete genome
+SRR23973193.6003080/1	residue	PX360723.1	uncultured phage	248510	90.625	32	107	0.2991	2.9	chance	Uncultured phage isolate MAG-MDB-4844, complete genome
+SRR23973193.3054095/1	residue	XM_007782518.1	Coniosporium apollinis CBS 100218	1368	90.625	32	107	0.2991	2.9	chance	Coniosporium apollinis CBS 100218 homogentisate 1,2-dioxygenase (W97_04629), partial mRNA
+SRR23973193.4544111/1	residue	OZ543017.1	Ruminococcoides intestinihominis	2289535	87.5	40	107	0.3738	2.9	chance	Ruminococcoides intestinihominis strain CNGBjF3MHA02012 genome assembly, chromosome: 1
+SRR23973193.6019555/1	residue	XM_082245775.1	Pelophylax lessonae	7901	77.419	62	107	0.5794	2.9	chance	Pelophylax lessonae acetyl-CoA carboxylase 1 (ACACA), transcript variant 2, mRNA
+SRR23973193.4598220/1	residue	CP100128.1	Chromobacterium sp. IIBBL 290-4	5117379	87.179	39	107	0.3645	2.9	chance	Chromobacterium sp. IIBBL 290-4 chromosome
+SRR23973193.62989/1	residue	OZ539661.1	Stenotrophomonas indicatrix	4591280	83.333	42	107	0.3925	2.9	chance	Stenotrophomonas indicatrix strain PSM2 genome assembly, chromosome: PSM2
+SRR23973193.3021215/1	residue	XR_015803088.1	Sturnus vulgaris	8856	88.235	34	107	0.3178	2.9	chance	PREDICTED: Sturnus vulgaris uncharacterized LOC148223915 (LOC148223915), ncRNA
+SRR23973193.4573598/1	residue	AC183832.3	Pan troglodytes	179012	91.176	34	106	0.3208	2.9	chance	Pan troglodytes BAC clone CH251-260G12 from chromosome 7, complete sequence
+SRR23973193.7421/1	residue	XM_052981311.1	Drosophila gunungcola	2408	90.625	32	106	0.3019	2.9	chance	PREDICTED: Drosophila gunungcola uncharacterized LOC128253134 (LOC128253134), mRNA
+SRR23973193.4525804/1	residue	PP010589.1	Setora postornata	1065	82.353	51	107	0.4766	2.9	chance	Setora postornata isolate Lim205 hypothetical protein (hyp1) gene, partial cds
+SRR23973193.72666/1	residue	XM_080049525.1	Ammodytes marinus	3604	87.179	39	107	0.3645	2.9	chance	Ammodytes marinus eukaryotic translation initiation factor 3 subunit C (eif3c), transcript variant 1, mRNA
+SRR23973193.4530374/1	residue	OZ509221.1	Acidobacteriota bacterium	4396398	90.625	32	106	0.3019	2.9	chance	MAG: Acidobacteriota bacterium isolate MFD15050.bin.c.168 genome assembly, chromosome: 1
+SRR23973193.75581/1	residue	OZ512694.1	Candidatus Cybelea sp.	3225754	80.851	47	107	0.4393	2.9	chance	MAG: Candidatus Cybelea sp. isolate MFD15080.bin.c.213 genome assembly, chromosome: 1
+SRR23973193.4590208/1	residue	OZ521651.1	Gemmatimonadales bacterium	4435504	86.486	37	106	0.3491	2.9	chance	MAG: Gemmatimonadales bacterium isolate MFD15181.bin.c.24 genome assembly, chromosome: 1
+SRR23973193.4056/1	residue	OZ516011.1	Verrucomicrobiales bacterium	7351409	91.429	35	106	0.3302	2.9	chance	MAG: Verrucomicrobiales bacterium isolate MFD15103.bin.c.93 genome assembly, chromosome: 1
+SRR23973193.56058/1	residue	OB661384.1	Cyprideis torosa	42123	86.486	37	106	0.3491	2.9	chance	Cyprideis torosa
+SRR23973193.77174/1	residue	AL671913.11	Mus musculus	220940	88.889	36	107	0.3364	2.9	chance	Mouse DNA sequence from clone RP23-136P3 on chromosome 4, complete sequence
+SRR23973193.1599448/1	residue	CP024610.1	Companilactobacillus metriopterae	1548794	90.625	32	107	0.2991	2.9	chance	Companilactobacillus metriopterae strain NIBRBAC000499792 chromosome, complete genome
+SRR23973193.3016309/1	residue	CP157409.1	Ziziphus jujuba	34239812	91.176	34	107	0.3178	2.9	chance	Ziziphus jujuba isolate TW-2024b chromosome 07
+SRR23973193.4505489/1	residue	CP039247.1	Corynebacterium endometrii	2477061	85.366	41	107	0.3832	2.9	chance	Corynebacterium endometrii strain LMM-1653 chromosome, complete genome
+SRR23973193.3070429/1	residue	OZ506701.1	Saprospiraceae bacterium	6516885	88.889	36	106	0.3396	2.9	chance	MAG: Saprospiraceae bacterium isolate MFD15018.bin.c.67 genome assembly, chromosome: 1
+SRR23973193.6098386/1	residue	CP200293.1	Erythrobacter sp. JB1-18	3269528	88.235	34	107	0.3178	2.9	chance	Erythrobacter sp. JB1-18
+SRR23973193.3052246/1	residue	AC187713.2	Callithrix jacchus	195981	81.818	44	106	0.4151	2.9	chance	Callithrix jacchus BAC clone CH259-58H12 from chromosome unknown, complete sequence
+SRR23973193.3097728/1	residue	OZ223194.1	uncultured Acetobacterium sp.	1838342	85.366	41	107	0.3832	2.9	chance	MAG: uncultured Acetobacterium sp. isolate 6abcf8f7-2dc5-46ce-9e35-983ba889e1c3 genome assembly, chromosome: 4
+SRR23973193.29706/1	residue	OZ515615.1	Acidimicrobiales bacterium	3234836	88.571	35	67	0.5224	4.5	chance	MAG: Acidimicrobiales bacterium isolate MFD15102.bin.c.86 genome assembly, chromosome: 1
+SRR23973193.50435/1	residue	OZ517844.1	Acidobacteriota bacterium	6948363	88.571	35	71	0.493	5.1	chance	MAG: Acidobacteriota bacterium isolate MFD15142.bin.c.92 genome assembly, chromosome: 1
+SRR23973193.61978/1	residue	XM_075515553.1	Mycteria americana	3040	90.323	31	89	0.3483	7.6	chance	PREDICTED: Mycteria americana stannin (SNN), mRNA
+SRR23973193.99931/1	residue	OZ502930.1	Verrucomicrobiia bacterium	6570995	90.323	31	101	0.3069	9.3	chance	MAG: Verrucomicrobiia bacterium isolate MFD15007.bin.c.67 genome assembly, chromosome: 1
+SRR23973193.73898/1	residue	OZ502930.1	Verrucomicrobiia bacterium	6570995	90.323	31	101	0.3069	9.3	chance	MAG: Verrucomicrobiia bacterium isolate MFD15007.bin.c.67 genome assembly, chromosome: 1
+SRR23973193.14619/1	residue	OZ502930.1	Verrucomicrobiia bacterium	6570995	90.323	31	102	0.3039	9.4	chance	MAG: Verrucomicrobiia bacterium isolate MFD15007.bin.c.67 genome assembly, chromosome: 1
+SRR23973193.1578254/1	residue	OZ502930.1	Verrucomicrobiia bacterium	6570995	90.323	31	102	0.3039	9.4	chance	MAG: Verrucomicrobiia bacterium isolate MFD15007.bin.c.67 genome assembly, chromosome: 1
+SRR23973193.39152/1	identified	XR_011506890.1	Equus asinus	494	86.842	38	103	0.3689	9.6	chance	PREDICTED: Equus asinus uncharacterized lncRNA (LOC139046618), transcript variant X2, ncRNA
+SRR23973193.58521/1	residue	OZ512271.1	Candidatus Krumholzibacteriia bacterium	3594197	86.486	37	104	0.3558	9.7	chance	MAG: Candidatus Krumholzibacteriia bacterium isolate MFD15072.bin.c.23 genome assembly, chromosome: 1
+SRR23973193.53464/1	residue	CP104067.1	Alicyclobacillus fastidiosus	5722397	90.323	31	105	0.2952	9.9	chance	Alicyclobacillus fastidiosus strain DSM 17978 chromosome, complete genome
+SRR23973193.71841/1	residue	LR134095.1	Enterococcus faecium	2520984	90.323	31	105	0.2952	9.9	chance	Enterococcus faecium isolate E1334 genome assembly, chromosome: 1
+SRR23973193.6045059/1	residue	CP055157.1	Microbulbifer sp. YPW1	4578595	87.879	33	105	0.3143	9.9	chance	Microbulbifer sp. YPW1 chromosome, complete genome
+SRR23973193.6040656/1	residue	XM_045271772.1	Portunus trituberculatus	4914	87.179	39	105	0.3714	9.9	chance	PREDICTED: Portunus trituberculatus WASH complex subunit 2-like (LOC123514123), mRNA
