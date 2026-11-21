@@ -66,8 +66,23 @@ SCATTER_AXES = [
     ("kmer16_duplicate_frac", "Repetitive fraction",
      lambda r: (r.get("repetitive") or {}).get("kmer16_duplicate_frac")),
     ("best_bitscore", "Best protein bitscore", lambda r: _best(r, "bitscore")),
-    ("best_pident", "Best protein identity %", lambda r: _best(r, "pident")),
+    ("best_pident", "Protein identity %, significant hits only",
+     lambda r: _best_significant(r, "pident")),
 ]
+
+#: Identity is only plotted for hits at or below this E-value. Two reasons, and the second
+#: is the one a reader notices. First, an identity without an E-value is the claim this
+#: project has already retracted once: a 107 nt query against a large protein database
+#: finds about 34 amino acids at chance, and the chance band reads the same on residue and
+#: on already-identified reads, so plotting it draws the database rather than the sample.
+#: Second, percent identity over a short alignment is a RATIO OF SMALL INTEGERS, so it can
+#: only land on the values n/L for the alignment length L: at L=34 the nearest values to
+#: 50% are 47.1% and 52.9% and nothing can fall between. Plotted unfiltered, the chance
+#: band dominates, every short alignment length contributes its own comb, and the axis
+#: shows dense vertical lines at 33.3%, 50% and 100% with empty space either side. That
+#: banding is an artefact of integer arithmetic on short alignments and not a property of
+#: the sample, which is exactly why it is not drawn.
+SIGNIFICANT_EVALUE = 1e-5
 
 
 def _log2(x):
@@ -88,6 +103,33 @@ def _best(row: dict, key: str):
             if best is None or v["evalue"] < best["evalue"]:
                 best = v
     return None if best is None else best.get(key)
+
+
+def _best_significant(row: dict, key: str):
+    """As `_best`, but only when the hit clears the significance threshold.
+
+    A read with no significant hit returns None and is simply absent from that axis, which
+    is the honest rendering: we do not know its identity to anything, and a point at the
+    chance identity would claim we did.
+    """
+    best = None
+    for k, v in row.items():
+        if (k.startswith("closest_") and isinstance(v, dict)
+                and v.get("evalue") is not None and v["evalue"] <= SIGNIFICANT_EVALUE):
+            if best is None or v["evalue"] < best["evalue"]:
+                best = v
+    return None if best is None else best.get(key)
+
+
+def _names_for(rundir: Path, subjects, table_rows) -> dict:
+    """The accession-to-organism map, cut down to what this page can display."""
+    full = (load(rundir / "subject_names.json") or {}).get("names") or {}
+    want = {s for s in subjects if s}
+    for r in table_rows:
+        for v in r.values():
+            if isinstance(v, dict) and v.get("subject"):
+                want.add(v["subject"])
+    return {k: v for k, v in full.items() if k in want}
 
 
 def load(p: Path):
@@ -128,6 +170,9 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int) -> d
                 d = json.loads(line)
                 layers[d["name"]] = d["layer"]
 
+    strains_subjects = [r.get("subject") for r in
+                        ((load(rundir / "strains.json") or {}).get("subjects") or [])]
+
     return {
         "run": {k: manifest.get(k) for k in
                 ("tool", "spec", "seed", "git_sha", "tree_dirty", "script_sha256",
@@ -143,6 +188,14 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int) -> d
         "census": load(rundir / "census.json"),
         "calibration_ladder": load(rundir / "calibration_ladder.json"),
         "blind_spots": (load(rundir / "blind_spots.json") or {}).get("blind_spots"),
+        # Accession to organism, from the same local FASTA the DIAMOND database was built
+        # from. Absent is a legitimate state: the page then shows the accession alone
+        # rather than inventing a label.
+        # Only the accessions the page can actually show. The full map is 14,743 records
+        # and two megabytes of page nobody reads; the strains panel and the sampled read
+        # table between them name a few hundred.
+        "names": _names_for(rundir, strains_subjects, table),
+        "significant_evalue": SIGNIFICANT_EVALUE,
         "axes": [{"key": k, "label": l} for k, l, _f in SCATTER_AXES],
         "scatter": scatter,
         "table": {"rows": [{"name": r.get("name"),
@@ -230,6 +283,30 @@ details > summary { cursor: pointer; font-size: 13px; color: var(--dim); }
 .bs { border-left: 2px solid var(--residue); padding-left: 0.7rem; }
 .bs h3 { font-size: 13.5px; margin: 0 0 0.2rem; font-weight: 600; }
 .bs p { font-size: 12.5px; color: var(--dim); }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 0.75rem; margin-top: 0.9rem; }
+.card { border: 1px solid var(--edge); border-radius: 6px; padding: 0.8rem 0.85rem;
+  min-width: 0; }
+.ctitle { font-size: 14.5px; font-weight: 600; line-height: 1.25; overflow-wrap: anywhere; }
+.csub { font-size: 12.5px; color: var(--dim); margin-top: 0.15rem;
+  overflow-wrap: anywhere; }
+.cbar { height: 5px; border-radius: 3px; background: var(--edge); margin: 0.6rem 0 0.5rem; }
+.cbar > span { display: block; height: 100%; border-radius: 3px;
+  background: var(--residue); }
+.crow { font-size: 12.5px; margin-top: 0.3rem; overflow-wrap: anywhere; }
+.idbar { height: 4px; border-radius: 2px; background: var(--edge); margin-top: 0.3rem; }
+.idbar > span { display: block; height: 100%; border-radius: 2px;
+  background: var(--identified); }
+.tag { display: inline-block; margin-top: 0.55rem; font-size: 11.5px;
+  padding: 0.1rem 0.45rem; border-radius: 10px; border: 1px solid var(--edge);
+  color: var(--dim); }
+.tag-only { border-color: var(--residue); color: var(--residue); }
+.big { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.9rem; margin: 1rem 0 0.4rem; }
+.bignum { font-size: 30px; font-weight: 650; line-height: 1.1;
+  font-feature-settings: "tnum"; }
+.biglab { font-size: 12.5px; color: var(--dim); margin-top: 0.25rem; }
+.lede { font-size: 15px; max-width: 70ch; line-height: 1.55; }
 a { color: var(--identified); }
 :focus-visible { outline: 2px solid var(--identified); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -299,6 +376,69 @@ function interval(iv) {
   app.append(h);
 })();
 
+// ---------- in plain words
+// A reader who is not a bioinformatician should be able to leave this page knowing what
+// was done and what was found. Every figure in it is pulled from the same files the rest
+// of the page reads, so it cannot drift from the panels below it.
+(function () {
+  const t = D.tier_table, S = D.strains, L = D.linkage, C = D.census;
+  const p = panel('In plain words',
+    'What this run did, and what came out of it.');
+  const b = (t && t.breakdown) || {};
+  const lede = el('p', 'lede',
+    'This is sewage from one treatment plant in Berlin, sequenced as RNA. Most of what ' +
+    'is in it is already known to science, so the job is to take the known away and look ' +
+    'hard at what is left. Nothing here guesses that a sequence is new. The page says ' +
+    'how far a piece of sequence is from its nearest known relative, and how confident ' +
+    'that distance is, and stops there.');
+  p.append(lede);
+  const g = el('div', 'big');
+  function big(v, lab) { const d = el('div');
+    d.append(el('div', 'bignum', v)); d.append(el('div', 'biglab', lab)); g.append(d); }
+  if (b.identified) big(pct(b.identified.point), 'of the library was identified outright');
+  if (b.assembled_unidentified) big(pct(b.assembled_unidentified.point),
+    'assembled into something, but nothing could name it');
+  if (b.residual) big(pct(b.residual.point),
+    'left over: no name, and no contig either');
+  if (S && S.subjects_total != null) big(String(S.subjects_total),
+    'known organisms the leftovers resemble from a distance');
+  p.append(g);
+  const bits = [];
+  if (S && (S.subjects || []).length) {
+    const top = (S.subjects || []).slice().sort((a, c) => c.residue_reads - a.residue_reads)[0];
+    const nm = (D.names || {})[top.subject];
+    bits.push('The leftover reads most often resemble ' +
+      '<b>' + esc((nm && (nm.organism || nm.name)) || top.subject) + '</b>, at ' +
+      num(top.median_identity_percent, 0) + '% identity over ' + top.median_aligned_aa +
+      ' amino acids. That is a relative, not an identification.');
+  }
+  const dj = L && L.result && L.result.mates_disjoint && L.result.mates_disjoint['10'];
+  if (dj) {
+    bits.push('Two reads that came off the same fragment of genetic material find each ' +
+      'other <b>' + num(dj.enrichment, 0) + ' times</b> more often than chance here, ' +
+      'counting only the pairs that do not overlap each other. That is a real signal and ' +
+      'still far too weak to gather up the reads of one unknown organism: it finds the ' +
+      'partner itself in ' + pct(dj.recovery) + ' of attempts.');
+  }
+  const cu = C && C.result && C.result.residue && C.result.residue.piles &&
+    C.result.residue.piles.unknown_neighbourhood;
+  if (cu) {
+    bits.push('About <b>' + pct(cu.point) + '</b> of the leftovers sit next to sequence ' +
+      'that is itself unidentified, so they are not simply the unlabelled edges of ' +
+      'things we did recognise.');
+  }
+  bits.push('The honest limit: nothing on this page can see an organism present at less ' +
+    'than about one read pair in a million, and recognition of a relative fails ' +
+    'somewhere between 10% and 20% divergence. Both limits are measured, and both are ' +
+    'in the blind spots panel at the foot of the page with the experiment that found them.');
+  const ul = el('ul');
+  bits.forEach(t2 => { const li = document.createElement('li');
+    li.className = 'lede'; li.style.marginBottom = '0.5rem'; li.innerHTML = t2;
+    ul.append(li); });
+  p.append(ul);
+  app.append(p);
+})();
+
 // ---------- the breakdown
 (function () {
   const t = D.tier_table;
@@ -309,26 +449,32 @@ function interval(iv) {
   if (!t) { p.append(el('div', 'absent', 'tier_table.json absent: the cascade did not run'));
     app.append(p); return; }
   const last = (t.curve || [])[(t.curve || []).length - 1];
-  const identified = last ? last.cumulative_removed : null;
-  const residue = last ? last.residue : null;
+  const b = t.breakdown || {};
+  const ident = b.identified || (last && last.cumulative_removed_interval);
+  const tier2 = b.assembled_unidentified;
+  const resid = b.residual || (last && last.residue_interval);
   const bar = el('div', 'bar');
-  const seg = (frac, colour) => { const s = document.createElement('span');
-    s.style.width = (100 * (frac || 0)) + '%'; s.style.background = colour; return s; };
-  bar.append(seg(identified, 'var(--identified)'));
-  bar.append(seg(residue, 'var(--residue)'));
+  const seg = (iv, colour) => { const s = document.createElement('span');
+    s.style.width = (100 * ((iv && iv.point) || 0)) + '%'; s.style.background = colour;
+    return s; };
+  bar.append(seg(ident, 'var(--identified)'));
+  if (tier2) bar.append(seg(tier2, 'var(--tier2)'));
+  bar.append(seg(resid, 'var(--residue)'));
   p.append(bar);
   const lg = el('div', 'legend');
   lg.innerHTML =
-    '<span><i style="background:var(--identified)"></i>identified ' +
-      interval(last && last.cumulative_removed_interval) + '</span>' +
-    '<span><i style="background:var(--residue)"></i>residue ' +
-      interval(last && last.residue_interval) + '</span>';
+    '<span><i style="background:var(--identified)"></i>identified ' + interval(ident) +
+      '</span>' +
+    (tier2 ? '<span><i style="background:var(--tier2)"></i>assembled, not identified ' +
+      interval(tier2) + '</span>' : '') +
+    '<span><i style="background:var(--residue)"></i>residual reads ' + interval(resid) +
+      '</span>';
   p.append(lg);
   p.append(opChips(t.operating_point));
-  p.append(el('p', 'note', 'Tier 2, what assembled but nothing identified, is drawn ' +
-    'only when a contig set was supplied to the run; this run ' +
-    ((D.run.stages || []).find(s => s.stage === 'contigs' && s.status === 'ok')
-      ? 'has one.' : 'does not, so the bar has two segments rather than three.')));
+  p.append(el('p', 'note', tier2 ? 'The middle segment is observed and never subtracted: ' +
+    'these reads map to contigs that assembled without being identified, from ' +
+    esc(b.tier2_from || '') + '.' :
+    'Tier 2 has no population in this run, so the bar has two segments rather than three.'));
   app.append(p);
 })();
 
@@ -613,30 +759,70 @@ function interval(iv) {
   if (!S) { p.append(el('div', 'absent',
     'strains.json absent: the per-read report did not run in this directory'));
     app.append(p); return; }
-  const sc = el('div', 'scroll');
-  const tb = el('table');
-  tb.innerHTML = '<thead><tr><th>subject</th><th>index</th><th>residue reads</th>' +
-    '<th>identified reads</th><th>median identity</th><th>aligned</th>' +
-    '<th>median E</th><th>worst E</th><th>reading</th></tr></thead>';
-  const body = el('tbody');
-  (S.subjects || []).slice(0, 120).forEach(r => {
-    const tr = el('tr');
-    tr.innerHTML = '<td class="mono">' + esc(r.subject) + '</td><td class="dim">' +
-      esc(r.index) + '</td><td class="mono">' + r.residue_reads + '</td><td class="mono">' +
-      (S.known_pile_searched_reads ? r.known_reads :
-        '<span class="absent">not searched</span>') + '</td><td class="mono">' +
-      num(r.median_identity_percent, 1) + '%</td><td class="mono">' +
-      r.median_aligned_aa + ' aa</td><td class="mono">' + (+r.median_evalue).toExponential(1) +
-      '</td><td class="mono">' + (+r.worst_evalue).toExponential(1) + '</td><td class="' +
-      (/not comparable/.test(r.reading) ? 'absent' : 'dim') + '">' +
-      esc(/not comparable/.test(r.reading) ? 'control not searched' :
-          /also/.test(r.reading) ? 'also in the identified pile' : 'residue only') +
-      '</td>';
-    body.append(tr);
-  });
-  tb.append(body); sc.append(tb); p.append(sc);
+  const NM = D.names || {};
+  const rows = (S.subjects || []).slice();
+  const maxr = Math.max(1, ...rows.map(r => r.residue_reads || 0));
+  const ctl = el('div', 'controls');
+  const sel = el('select');
+  [['reads', 'most reads pointing at it'],
+   ['identity', 'furthest from its relative'],
+   ['residue_only', 'seen only in the residue']].forEach(([v, t]) => {
+    const o = document.createElement('option'); o.value = v; o.textContent = t;
+    sel.append(o); });
+  ctl.append(el('span', 'dim', 'order by'), sel);
+  p.append(ctl);
+  const grid = el('div', 'cards');
+  function label(r) {
+    const n = NM[r.subject];
+    if (!n) return {title: r.subject, sub: null, acc: null};
+    const org = n.organism || null, nm = n.name || null;
+    return {title: org || nm || r.subject, sub: org && nm ? nm : null, acc: r.subject};
+  }
+  function draw() {
+    const v = sel.value;
+    const list = rows.slice().sort((a, b) =>
+      v === 'identity' ? (a.median_identity_percent - b.median_identity_percent) :
+      v === 'residue_only' ? ((b.known_reads === 0) - (a.known_reads === 0)) ||
+                             (b.residue_reads - a.residue_reads) :
+      (b.residue_reads - a.residue_reads)).slice(0, 60);
+    grid.innerHTML = '';
+    list.forEach(r => {
+      const L = label(r);
+      const c = el('div', 'card');
+      const only = S.known_pile_searched_reads && r.known_reads === 0;
+      const id = r.median_identity_percent;
+      // The identity bar runs 0 to 100 and is filled to the median, so a short bar is a
+      // distant relative. It is never used to rank: the ranking control above is explicit
+      // about what it sorts by, because ordering by identity orders by database proximity.
+      c.innerHTML =
+        '<div class="ctitle">' + esc(L.title) + '</div>' +
+        (L.sub ? '<div class="csub">' + esc(L.sub) + '</div>' : '') +
+        '<div class="cbar"><span style="width:' + Math.max(2, 100 * (r.residue_reads /
+          maxr)).toFixed(1) + '%"></span></div>' +
+        '<div class="crow"><b>' + r.residue_reads + '</b> residue reads point here' +
+        (S.known_pile_searched_reads ? ', <b>' + r.known_reads + '</b> identified reads do'
+          : '') + '</div>' +
+        '<div class="crow">closest at <b>' + num(id, 1) + '%</b> identity over ' +
+        r.median_aligned_aa + ' amino acids' +
+        '<div class="idbar"><span style="width:' + Math.max(1, Math.min(100, id)).toFixed(1)
+        + '%"></span></div></div>' +
+        '<div class="crow dim mono">E ' + (+r.median_evalue).toExponential(1) +
+        ' median, ' + (+r.worst_evalue).toExponential(1) + ' worst' +
+        (L.acc ? ' &middot; ' + esc(L.acc) : '') + ' &middot; ' + esc(r.index) + '</div>' +
+        '<div class="tag ' + (only ? 'tag-only' : 'tag-also') + '">' +
+        (!S.known_pile_searched_reads ? 'control not searched' :
+         only ? 'only in the residue' : 'also in the identified pile') + '</div>';
+      grid.append(c);
+    });
+  }
+  sel.onchange = draw; draw();
+  p.append(grid);
   p.append(el('p', 'note', S.subjects_total + ' subjects at E < ' +
-    S.significance_evalue + ', the top 120 by read count shown. ' + esc(S.caveat) +
+    S.significance_evalue + ', the 60 highest shown under the chosen order. Names come ' +
+    'from the header of the matched record in the same local database that was searched, ' +
+    'so a name is what that record calls itself and never a classification of the read: ' +
+    'a read matching a dengue polyprotein over 34 amino acids is not dengue, which is ' +
+    'why the identity and the E-value sit beside every name. ' + esc(S.caveat) +
     (S.known_pile_searched_reads ? '' : ' In this run the already-subtracted pile was ' +
       'not searched, so every zero in that column is absence rather than a measurement ' +
       'and no row may be read as residue-only.')));
@@ -706,7 +892,27 @@ function interval(iv) {
       '</text></svg>';
     holder.innerHTML = s;
   }
-  sx.onchange = draw; sy.onchange = draw; draw();
+  // The identity axis needs its own warning, because the shape it draws is arithmetic
+  // rather than biology and it looked like a defect in the measurement the first time it
+  // was seen on this page.
+  const idnote = el('p', 'note');
+  function notes() {
+    const picked = [axes[+sx.value].key, axes[+sy.value].key];
+    idnote.hidden = !picked.includes('best_pident');
+    idnote.innerHTML = 'Identity is plotted only for hits at E &lt; ' +
+      (D.significant_evalue || 1e-5) + ', so a read with no significant relative is ' +
+      'absent from this axis rather than shown at its chance identity. Even so the ' +
+      'points fall in rows: percent identity over a ' +
+      'short alignment is a ratio of small whole numbers, so at 34 aligned amino acids ' +
+      'the only values near half are 47.1% and 52.9% and nothing can land between them. ' +
+      'The banding is integer arithmetic, not structure in the sample. Unfiltered it is ' +
+      'far worse, with dense lines at 33.3%, 50% and 100% drawn almost entirely by ' +
+      'chance-level matches.';
+  }
+  p.append(idnote);
+  sx.onchange = () => { draw(); notes(); };
+  sy.onchange = () => { draw(); notes(); };
+  draw(); notes();
   const lg = el('div', 'legend');
   lg.innerHTML = '<span><i style="background:var(--residue)"></i>residue (' +
     (S.residue ? S.residue.n_drawn : 0) + ' of ' + (S.residue ? S.residue.n_total : 0) +
@@ -729,8 +935,81 @@ function interval(iv) {
       'sensitivity-at-divergence figure may be read off this page'));
     app.append(p); return;
   }
-  p.append(el('pre', 'mono note scroll', esc(JSON.stringify(C.result || C, null, 1)
-    .slice(0, 4000))));
+  const R = C.result || C;
+  const rungs = R.rungs || [];
+  if (!rungs.length) {
+    p.append(el('pre', 'mono note scroll', esc(JSON.stringify(R, null, 1).slice(0, 3000))));
+    app.append(p); return;
+  }
+  // One line per spiked genome: how much of it the cascade still removes as the genome is
+  // walked away from its own reference. The rungs are ordinal, so the x axis is drawn at
+  // equal spacing and labelled with the divergence rather than scaled by it.
+  const gids = Object.keys(rungs[0].genomes || {});
+  const W = 920, H = 380, m = {l: 54, r: 150, t: 16, b: 50};
+  const xs = i => m.l + (rungs.length === 1 ? 0 : i / (rungs.length - 1)) * (W - m.l - m.r);
+  const ys = v => H - m.b - v * (H - m.t - m.b);
+  const cols = ['var(--residue)', 'var(--identified)', 'var(--null)'];
+  let s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="divergence ladder">';
+  [0, 0.25, 0.5, 0.75, 1].forEach(v => {
+    s += '<line x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + ys(v).toFixed(1) +
+      '" y2="' + ys(v).toFixed(1) + '" stroke="var(--edge)"/>';
+    s += '<text x="' + (m.l - 8) + '" y="' + (ys(v) + 4).toFixed(1) + '" font-size="11" ' +
+      'fill="var(--dim)" text-anchor="end" font-family="var(--mono)">' +
+      (100 * v).toFixed(0) + '%</text>';
+  });
+  rungs.forEach((r, i) => {
+    s += '<text x="' + xs(i).toFixed(1) + '" y="' + (H - m.b + 18) + '" font-size="11.5" ' +
+      'fill="var(--dim)" text-anchor="middle">' + (100 * r.divergence).toFixed(0) +
+      '%</text>';
+  });
+  gids.forEach((gid, gi) => {
+    const col = cols[gi % cols.length];
+    let d = '';
+    rungs.forEach((r, i) => {
+      const v = ((r.genomes[gid] || {}).survival || {}).survives_tier1;
+      if (v == null) return;
+      d += (d ? ' L' : 'M') + xs(i).toFixed(1) + ' ' + ys(v).toFixed(1);
+      s += '<circle cx="' + xs(i).toFixed(1) + '" cy="' + ys(v).toFixed(1) +
+        '" r="3.5" fill="' + col + '"/>';
+    });
+    s += '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="2"/>';
+    // The lines converge at the right, so the end labels are stacked at a fixed pitch
+    // instead of sitting on their own line: three labels on one pixel row is three
+    // labels nobody can read.
+    s += '<text x="' + (W - m.r + 8) + '" y="' + (m.t + 14 + gi * 17) +
+      '" font-size="11.5" fill="' + col + '" font-family="var(--mono)">' + esc(gid) +
+      '</text>';
+  });
+  s += '<text x="' + ((W + m.l - m.r) / 2) + '" y="' + (H - 10) + '" text-anchor="middle" ' +
+    'font-size="11.5" fill="var(--dim)">divergence from the reference the spike was ' +
+    'built on</text>';
+  s += '<text transform="translate(14 ' + ((H - m.b + m.t) / 2) + ') rotate(-90)" ' +
+    'text-anchor="middle" font-size="11.5" fill="var(--dim)">spike reads surviving the ' +
+    'cascade</text></svg>';
+  const holder = el('div', 'scroll'); holder.innerHTML = s; p.append(holder);
+  p.append(el('p', 'note',
+    'A line that stays on the floor is a genome the cascade still catches. Where a line ' +
+    'leaves the floor is where this tool stops recognising a relative, and it is the ' +
+    'single most important number on the page: a negative above that divergence means ' +
+    'nothing. ' + R.spike_pairs_per_rung + ' spiked pairs per rung, inserts drawn from ' +
+    'this library\\'s own distribution, sequencing error applied at ' +
+    (R.error_rates || []).map(e => num(e, 5)).join(' and ') + ' per base.'));
+  const det = el('details');
+  det.innerHTML = '<summary>which index removes the spike, rung by rung</summary>';
+  const sc2 = el('div', 'scroll');
+  const tiers = Object.keys((((rungs[0].genomes[gids[0]] || {}).survival || {})
+    .removed_by_tier) || {});
+  let th = '<thead><tr><th>divergence</th><th>genome</th>' +
+    tiers.map(t2 => '<th>' + esc(t2) + '</th>').join('') + '</tr></thead><tbody>';
+  rungs.forEach(r => gids.forEach(gid => {
+    const rb = ((r.genomes[gid] || {}).survival || {}).removed_by_tier || {};
+    th += '<tr><td class="mono">' + (100 * r.divergence).toFixed(0) + '%</td>' +
+      '<td class="mono dim">' + esc(gid) + '</td>' +
+      tiers.map(t2 => '<td class="mono">' + (rb[t2] == null ? '-' :
+        (100 * rb[t2]).toFixed(1) + '%') + '</td>').join('') + '</tr>';
+  }));
+  const tb2 = el('table'); tb2.innerHTML = th + '</tbody>';
+  sc2.append(tb2); det.append(sc2); p.append(det);
   app.append(p);
 })();
 
@@ -765,9 +1044,14 @@ function interval(iv) {
         if (v && v.evalue != null && (!best || v.evalue < best.evalue)) best = v; });
       const tr = el('tr');
       const occ = r.values[2];
+      const nm = best && (D.names || {})[best.subject];
+      const shown = !best ? '<span class="dim">none</span>'
+        : nm && (nm.organism || nm.name)
+          ? esc(nm.organism || nm.name) +
+            ' <span class="dim mono">' + esc(best.subject) + '</span>'
+          : '<span class="mono">' + esc(best.subject) + '</span>';
       tr.innerHTML = '<td class="mono">' + esc(r.name) + '</td><td class="dim">' +
-        esc((r.layer || '-').replace(/_/g, ' ')) + '</td><td class="mono">' +
-        (best ? esc(best.subject) : '<span class="dim">none</span>') +
+        esc((r.layer || '-').replace(/_/g, ' ')) + '</td><td>' + shown +
         '</td><td class="mono">' + (best ? num(best.pident, 1) + '%' : '-') +
         '</td><td class="mono">' + (best ? best.evalue.toExponential(1) : '-') +
         '</td><td class="mono">' + (occ == null ? '-' : Math.round(Math.pow(2, occ))) +

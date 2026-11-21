@@ -279,8 +279,8 @@ class Run:
                 "--r1", str(a.r1), "--r2", str(a.r2), "--threads", str(a.threads),
                 "--work", str(self.work / "calibration_work")]
         return self.call("calibration", "spike_holdout.py", argv,
-                         {"calibration_ladder.json": out / f"spike_holdout_s{a.seed}.json"},
-                         out / f"spike_holdout_s{a.seed}.json")
+                         {"calibration_ladder.json": out / f"spike_s{a.seed}.json"},
+                         out / f"spike_s{a.seed}.json")
 
     # -- assembled-but-unidentifiable ----------------------------------------
     def contigs(self) -> dict:
@@ -489,7 +489,34 @@ class Run:
             if missing:
                 row["operating_point_incomplete"] = missing
             rows.append(row)
-        out = {"pairs": n, "operating_point": op, "curve": rows,
+        # The three-way breakdown, which is the bar at the top of the web view. Tier 2 is
+        # the OBSERVED population - contigs that assembled without being identified - and
+        # it is deliberately computed from the observe tiers rather than from the curve,
+        # because anything in the curve has been subtracted and tier 2 has not.
+        comp = d.get("residue_composition") or {}
+        tier3 = d.get("tier3_pairs")
+        resid_pairs = d.get("residue_pairs")
+        # Tier 2 is the UNION of the observe tiers, taken as residue minus tier 3 rather
+        # than as the largest single observe tier. The observe sets overlap, so picking one
+        # of them would leave the three segments not summing to the library and quietly
+        # move the difference into tier 3 - the segment whose size is the whole point.
+        tier2_pairs = (resid_pairs - tier3) if (resid_pairs is not None
+                                                and tier3 is not None) else None
+        breakdown = {
+            "identified": wilson(int(round((d.get("union_removed") or 0) * n)), int(n))
+            if n else None,
+            "assembled_unidentified": wilson(int(tier2_pairs), int(n))
+            if (tier2_pairs is not None and n) else None,
+            "residual": wilson(int(tier3), int(n)) if (tier3 is not None and n) else None,
+            "tier2_from": ("the union of " + ", ".join(sorted(comp)) if comp else
+                           "no observe tier in this run, so tier 2 has no population and "
+                           "the bar has two segments rather than three"),
+            "tier2_per_observe_set": comp,
+            "note": "tier 2 is observed and never subtracted. The three fractions share "
+                    "one denominator and sum to the library; the per-set fractions below "
+                    "do not, because the observe sets overlap",
+        }
+        out = {"pairs": n, "operating_point": op, "breakdown": breakdown, "curve": rows,
                "interval_method": "wilson_95_on_this_run's_counts; a multi-seed run "
                                   "reports across-seed spread instead",
                "source": "tiers.json", "source_sha256_16": sha256(p)[:16]}
