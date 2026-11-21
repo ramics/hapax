@@ -309,26 +309,32 @@ function interval(iv) {
   if (!t) { p.append(el('div', 'absent', 'tier_table.json absent: the cascade did not run'));
     app.append(p); return; }
   const last = (t.curve || [])[(t.curve || []).length - 1];
-  const identified = last ? last.cumulative_removed : null;
-  const residue = last ? last.residue : null;
+  const b = t.breakdown || {};
+  const ident = b.identified || (last && last.cumulative_removed_interval);
+  const tier2 = b.assembled_unidentified;
+  const resid = b.residual || (last && last.residue_interval);
   const bar = el('div', 'bar');
-  const seg = (frac, colour) => { const s = document.createElement('span');
-    s.style.width = (100 * (frac || 0)) + '%'; s.style.background = colour; return s; };
-  bar.append(seg(identified, 'var(--identified)'));
-  bar.append(seg(residue, 'var(--residue)'));
+  const seg = (iv, colour) => { const s = document.createElement('span');
+    s.style.width = (100 * ((iv && iv.point) || 0)) + '%'; s.style.background = colour;
+    return s; };
+  bar.append(seg(ident, 'var(--identified)'));
+  if (tier2) bar.append(seg(tier2, 'var(--tier2)'));
+  bar.append(seg(resid, 'var(--residue)'));
   p.append(bar);
   const lg = el('div', 'legend');
   lg.innerHTML =
-    '<span><i style="background:var(--identified)"></i>identified ' +
-      interval(last && last.cumulative_removed_interval) + '</span>' +
-    '<span><i style="background:var(--residue)"></i>residue ' +
-      interval(last && last.residue_interval) + '</span>';
+    '<span><i style="background:var(--identified)"></i>identified ' + interval(ident) +
+      '</span>' +
+    (tier2 ? '<span><i style="background:var(--tier2)"></i>assembled, not identified ' +
+      interval(tier2) + '</span>' : '') +
+    '<span><i style="background:var(--residue)"></i>residual reads ' + interval(resid) +
+      '</span>';
   p.append(lg);
   p.append(opChips(t.operating_point));
-  p.append(el('p', 'note', 'Tier 2, what assembled but nothing identified, is drawn ' +
-    'only when a contig set was supplied to the run; this run ' +
-    ((D.run.stages || []).find(s => s.stage === 'contigs' && s.status === 'ok')
-      ? 'has one.' : 'does not, so the bar has two segments rather than three.')));
+  p.append(el('p', 'note', tier2 ? 'The middle segment is observed and never subtracted: ' +
+    'these reads map to contigs that assembled without being identified, from ' +
+    esc(b.tier2_from || '') + '.' :
+    'Tier 2 has no population in this run, so the bar has two segments rather than three.'));
   app.append(p);
 })();
 
