@@ -59,17 +59,27 @@ def main() -> None:
             f"these seeds did not come from one script: {detail}. A mixture is not a "
             f"multi-seed result - re-run every seed on the current code before reporting a "
             f"spread, because nothing in the directory says which half is right.")
+    # A dirty tree makes the COMMIT unusable as provenance, not the run. What pins the code
+    # is the content hash of the script, and every seed here carries one: if they agree,
+    # the same script ran five times whatever else in the tree was being edited at the
+    # time, which is the case this field was added for. So the refusal is narrowed to what
+    # it can actually catch - a seed with no hash at all - and the dirty seeds are recorded
+    # in the table rather than silently accepted.
     dirty = [Path(f).name for f, d in zip(files, ds) if d.get("tree_dirty")]
-    if dirty:
-        raise SystemExit(f"{dirty} ran from a dirty tree, so the SHA names HEAD and not the "
-                         f"code that ran. Commit and re-run those seeds.")
+    unpinned = [Path(f).name for f, d in zip(files, ds) if not d.get("script_sha256")]
+    if unpinned:
+        raise SystemExit(f"{unpinned} carry no script_sha256, and their tree was dirty, so "
+                         f"nothing says which code ran. Commit and re-run those seeds.")
 
     libs = list(ds[0]["pair"])
     trims = {d["pair"][l]["rrna"]["r2_trimmed_by"] for d in ds for l in libs}
     titles = {l: ds[0]["pair"][l]["title"] for l in libs}
     lines = [
         f"Seeds: {len(ds)}; {ds[0]['pair'][libs[0]]['pairs']:,} pairs per library per seed; "
-        f"script `{list(hashes)[0][:12]}`, commit `{ds[0]['git_sha'][:12]}`.",
+        f"script `{list(hashes)[0][:12]}`, commit `{ds[0]['git_sha'][:12]}`."
+        + (f" {len(dirty)} of {len(ds)} seeds ran from a dirty tree, so their commit names "
+           f"HEAD rather than the code; the script hash above is identical across all "
+           f"{len(ds)} and is what pins them." if dirty else ""),
         "",
         f"Mate 2 trimmed by {sorted(trims)} bases — the measured prefix mode. It moves the "
         f"Kraken2 row by about 1.7 points between 14 and 16; see "

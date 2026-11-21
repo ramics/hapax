@@ -1,8 +1,8 @@
 {
   "script": "experiments/dna_rna_pair.py",
-  "git_sha": "6490dfbad41db079097b64882cc18094c901b07b",
-  "tree_dirty": false,
-  "script_sha256": "634d4c2c01a8f5e9",
+  "git_sha": "69512cce4334b6852716f82739cedddb2ca9f73b-dirty",
+  "tree_dirty": true,
+  "script_sha256": "e5051a199e16307a",
   "parameters": {
     "seed": 3,
     "pairs": 200000,
@@ -23,6 +23,8 @@
     "diamond_sensitivity": "--sensitive",
     "diamond_bitscore": 50.0,
     "protein_pairs": 20000,
+    "r2_trim": 14,
+    "trim_disagreement": 4,
     "min_mlen": 40,
     "threads": 4,
     "work": "/tmp/claude-0/wk/dnarna",
@@ -190,8 +192,8 @@
           0.009668855361261957
         ],
         "unclassified": 198152,
-        "wall_seconds": 53.13111406999815,
-        "peak_rss_kb": 3035967488
+        "wall_seconds": 41.99036370599788,
+        "peak_rss_kb": 3039789056
       },
       "protein": {
         "viral": {
@@ -360,39 +362,39 @@
       },
       "duplicate_frac": 0.25993,
       "rrna": {
-        "pairs_hit": 133817,
-        "frac": 0.669085,
+        "pairs_hit": 134107,
+        "frac": 0.670535,
         "ci95": [
-          0.6670195640200054,
-          0.6711439407741
+          0.6684718307019334,
+          0.6725916183920888
         ],
         "min_mlen": 40,
-        "r2_trimmed_by": 16,
+        "r2_trimmed_by": 14,
         "index_bytes": 271674159
       },
       "kraken2": {
         "db": "/home/user/hapax/data/k2_pluspf16",
         "db_bytes": 16069287627,
         "confidence": 0.1,
-        "classified": 81215,
-        "frac": 0.406075,
+        "classified": 77660,
+        "frac": 0.3883,
         "ci95": [
-          0.40392452780306937,
-          0.4082290802178294
+          0.3861662397017438,
+          0.3904380511253457
         ],
-        "unclassified": 118785,
-        "wall_seconds": 12.588139113999205,
-        "peak_rss_kb": 3109011456
+        "unclassified": 122340,
+        "wall_seconds": 11.974035273997288,
+        "peak_rss_kb": 3112800256
       },
       "protein": {
         "viral": {
           "db_bytes": 239074080,
           "pairs": 20000,
-          "any_hit": 0.53905,
-          "identified": 0.06305,
+          "any_hit": 0.5425,
+          "identified": 0.0635,
           "ci95": [
-            0.059764709531035354,
-            0.06650311077847322
+            0.06020344231035916,
+            0.06696420516669885
           ],
           "bitscore": 50.0,
           "sensitivity": "--sensitive"
@@ -400,11 +402,11 @@
         "sprot": {
           "db_bytes": 294430316,
           "pairs": 20000,
-          "any_hit": 0.63365,
-          "identified": 0.05945,
+          "any_hit": 0.6359,
+          "identified": 0.0601,
           "ci95": [
-            0.05625664672000185,
-            0.06281255624911135
+            0.05688980412378926,
+            0.06347914919845088
           ],
           "bitscore": 50.0,
           "sensitivity": "--sensitive"
@@ -551,39 +553,39 @@
       },
       "duplicate_frac": 0.23969,
       "rrna": {
-        "pairs_hit": 75955,
-        "frac": 0.379775,
+        "pairs_hit": 76050,
+        "frac": 0.38025,
         "ci95": [
-          0.37765031155905765,
-          0.3819043067461065
+          0.3781247878478473,
+          0.3823798122107379
         ],
         "min_mlen": 40,
-        "r2_trimmed_by": 16,
+        "r2_trimmed_by": 14,
         "index_bytes": 271674159
       },
       "kraken2": {
         "db": "/home/user/hapax/data/k2_pluspf16",
         "db_bytes": 16069287627,
         "confidence": 0.1,
-        "classified": 45515,
-        "frac": 0.227575,
+        "classified": 43504,
+        "frac": 0.21752,
         "ci95": [
-          0.22574275879670683,
-          0.22941770609648804
+          0.21571734783798724,
+          0.21933350330647336
         ],
-        "unclassified": 154485,
-        "wall_seconds": 18.136749514000257,
-        "peak_rss_kb": 3118272512
+        "unclassified": 156496,
+        "wall_seconds": 18.598312109003018,
+        "peak_rss_kb": 3122290688
       },
       "protein": {
         "viral": {
           "db_bytes": 239074080,
           "pairs": 20000,
-          "any_hit": 0.6529,
-          "identified": 0.1209,
+          "any_hit": 0.6576,
+          "identified": 0.1233,
           "ci95": [
-            0.11645444888904292,
-            0.1254911528487639
+            0.11881561135719261,
+            0.12792906860754452
           ],
           "bitscore": 50.0,
           "sensitivity": "--sensitive"
@@ -591,11 +593,11 @@
         "sprot": {
           "db_bytes": 294430316,
           "pairs": 20000,
-          "any_hit": 0.68335,
-          "identified": 0.0681,
+          "any_hit": 0.6893,
+          "identified": 0.0684,
           "ci95": [
-            0.06469095724016383,
-            0.07167492350517718
+            0.06498378522322142,
+            0.07198198030048589
           ],
           "bitscore": 50.0,
           "sensitivity": "--sensitive"
@@ -605,11 +607,11 @@
   },
   "taxon_overlap": {
     "taxa_dna": 282,
-    "taxa_rna": 519,
+    "taxa_rna": 498,
     "taxa_shared": 83,
-    "jaccard": 0.11559888579387187,
-    "dna_reads_on_shared_taxa": 0.6455627705627706,
-    "rna_reads_on_shared_taxa": 0.8660592255125285,
+    "jaccard": 0.11908177905308465,
+    "dna_reads_on_shared_taxa": 0.6488095238095238,
+    "rna_reads_on_shared_taxa": 0.8685809940767448,
     "top_dna_only": [
       2986418,
       2933791,
@@ -634,12 +636,12 @@
       203491,
       213849,
       29547,
-      49546,
       171552,
+      49546,
       80840,
       28211,
-      200644,
       1760,
+      200644,
       12234,
       12239,
       481
@@ -648,24 +650,24 @@
   },
   "confound": "the RNA member is 2022-06-16 and the project's calibration library is 2021-10-13, so DNA-vs-RNA here is clean but either against 2021 mixes nucleic acid with eight months",
   "timings": {
-    "profile_dna": 14.514340178000566,
-    "profile_rna": 14.008245826000348,
-    "profile_rna_2021": 13.950251613001456,
-    "silva_index": 2.0362076890014578,
-    "rrna_dna": 1.4669264760013903,
-    "rrna_rna": 88.83574351599964,
-    "rrna_rna_2021": 49.28719387699675,
-    "kraken2_dna": 53.25812216399936,
-    "kraken2_rna": 12.68752901499829,
-    "kraken2_rna_2021": 18.230000289004238,
-    "diamond_dna_viral": 53.25980514800176,
-    "diamond_dna_sprot": 71.3316256879989,
-    "diamond_rna_viral": 48.991302722999535,
-    "diamond_rna_sprot": 65.56875268500153,
-    "diamond_rna_2021_viral": 54.20777209800144,
-    "diamond_rna_2021_sprot": 80.90680226800032
+    "profile_dna": 13.888575602999481,
+    "profile_rna": 13.207363502006046,
+    "profile_rna_2021": 13.850465873998473,
+    "silva_index": 1.9334096949969535,
+    "rrna_dna": 1.2718816679989686,
+    "rrna_rna": 85.39499214800162,
+    "rrna_rna_2021": 46.72908698699757,
+    "kraken2_dna": 42.0675903070005,
+    "kraken2_rna": 12.074998683005106,
+    "kraken2_rna_2021": 18.728934831000515,
+    "diamond_dna_viral": 51.499993470002664,
+    "diamond_dna_sprot": 58.86606856200524,
+    "diamond_rna_viral": 47.23807297700114,
+    "diamond_rna_sprot": 55.40810637100367,
+    "diamond_rna_2021_viral": 49.68781361100264,
+    "diamond_rna_2021_sprot": 57.550764749001246
   },
-  "wall_seconds": 643.7595818870032,
+  "wall_seconds": 570.5763263299959,
   "python": "3.13.18",
   "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
 }

@@ -178,6 +178,7 @@ class Run:
             argv += ["--observe", str(a.unidentified_contigs)]
         return self.call("cascade", "subtract_known.py", argv,
                          {"tiers.json": out / f"subtract_s{a.seed}.json",
+                          "stages/cascade_manifest.json": out / f"manifest_s{a.seed}.json",
                           "stages/cascade_rows.jsonl":
                               out / f"residue_rows_s{a.seed}.jsonl"},
                          out / f"manifest_s{a.seed}.json")
@@ -321,10 +322,19 @@ class Run:
             return self.record("intervals", "skipped", reason="tiers.json is absent")
         d = json.loads(p.read_text())
         n = d.get("pairs") or d.get("pairs_scored") or 0
-        op = {"k2_confidence": d.get("parameters", {}).get("k2_operating_confidence"),
-              "min_match_length_nt": d.get("parameters", {}).get("min_mlen"),
-              "diamond_bitscore": d.get("parameters", {}).get("diamond_bitscore"),
-              "diamond_sensitivity": d.get("parameters", {}).get("diamond_sensitivity")}
+        # The operating point lives in the cascade's own manifest rather than in its result
+        # file, so it is read from there. Reading it from the result file would have
+        # produced a row of nulls and called it an operating point.
+        mp = self.dir / "stages" / "cascade_manifest.json"
+        par = json.loads(mp.read_text()).get("parameters", {}) if mp.exists() else {}
+        op = {"k2_confidence": par.get("k2_operating_confidence"),
+              "min_match_length_nt": par.get("min_mlen"),
+              "diamond_bitscore": par.get("diamond_bitscore"),
+              "diamond_sensitivity": par.get("diamond_sensitivity"),
+              "entropy_min": par.get("entropy_min"),
+              "homopolymer_max": par.get("homopolymer_max"),
+              "trim_r2": par.get("trim_r2")}
+        tiers = d.get("tiers", {})
         rows = []
         for c in d.get("curve", []):
             row = dict(c)
@@ -333,6 +343,17 @@ class Run:
                 if isinstance(c.get(key), (int, float)) and n:
                     row[f"{key}_interval"] = wilson(int(round(c[key] * n)), int(n))
             row["operating_point"] = op
+            # The tier's own threshold sweep travels with the row, because the sweep IS the
+            # finding: one database removes 42.8% or 3.5% of the same library on its
+            # confidence setting alone, and a reader given one of those numbers without the
+            # others has been told something unreadable.
+            t = tiers.get(c.get("tier"), {})
+            sweep = {k: v for k, v in t.items() if k.endswith("_sweep")}
+            if sweep:
+                row["threshold_sweep"] = sweep
+                row["sweep_span_points"] = {
+                    name: round((max(s.values()) - min(s.values())) * 100, 3)
+                    for name, s in sweep.items() if s}
             missing = [k for k, v in op.items() if v is None]
             if missing:
                 row["operating_point_incomplete"] = missing
@@ -373,56 +394,106 @@ class Run:
         p = self.dir / "reads.jsonl"
         if not p.exists():
             return self.record("layers", "skipped", reason="reads.jsonl is absent")
-        counts: dict[str, int] = {}
         order = ["recurs_and_unplaceable", "distant_relative", "profile_only", "placed",
                  "artefact_shaped", "undetermined"]
+        counts: dict[str, dict[str, int]] = {}
+        totals: dict[str, int] = {}
+        coverage: dict[str, dict[str, int]] = {}
         out_rows = self.dir / "layers.jsonl"
-        n = 0
         with open(p) as fh, open(out_rows, "w") as out:
             for line in fh:
                 r = json.loads(line)
+                pile = "residue" if r.get("set", "residue") == "residue" else "known"
+                cov = coverage.setdefault(pile, {})
+                for f in {f for fs in LAYER_FIELDS.values() for f in fs}:
+                    if r.get(f) is not None or (f == "closest_*" and
+                                                any(k.startswith("closest_") and
+                                                    r[k] is not None for k in r)):
+                        cov[f] = cov.get(f, 0) + 1
                 layer, why = self._layer_of(r)
-                counts[layer] = counts.get(layer, 0) + 1
-                n += 1
-                out.write(json.dumps({"name": r.get("name"), "layer": layer,
-                                      "evidence": why}) + "\n")
+                counts.setdefault(pile, {})
+                counts[pile][layer] = counts[pile].get(layer, 0) + 1
+                totals[pile] = totals.get(pile, 0) + 1
+                out.write(json.dumps({"name": r.get("name"), "pile": pile,
+                                      "layer": layer, "evidence": why}) + "\n")
+        # THE LAYERING IS LAID BESIDE ITS CONTROL, which is the whole reason it may be
+        # trusted at all: the same rules are applied to reads the cascade DID identify. A
+        # layer that fires as often on known reads as on the residue is ordering the reader
+        # by something other than interest, and in this project the control moving with the
+        # test is the tell that has caught every bad separator so far. Read it first.
+        res_n, kn_n = totals.get("residue", 0), totals.get("known", 0)
+        comparison = {}
+        for k in order:
+            a = wilson(counts.get("residue", {}).get(k, 0), res_n) if res_n else None
+            b = wilson(counts.get("known", {}).get(k, 0), kn_n) if kn_n else None
+            entry = {"residue": a, "known_positive": b,
+                     "depends_on_fields": LAYER_FIELDS[k],
+                     "field_coverage": {pile: {f: coverage.get(pile, {}).get(f, 0)
+                                               for f in LAYER_FIELDS[k]}
+                                        for pile in ("residue", "known")}}
+            # A ZERO IN THE CONTROL IS ONLY A MEASUREMENT IF THE FIELD WAS MEASURED. The
+            # per-read report currently runs its search fields on the residue alone, so for
+            # any layer that depends on them the control pile reads zero by construction.
+            # Calling that a separation would have been this project's exact failure mode -
+            # a separator that reads the same on both piles describes the database - only
+            # worse, because here the control was never taken.
+            unmeasured = [f for f in LAYER_FIELDS[k]
+                          if kn_n and coverage.get("known", {}).get(f, 0) == 0]
+            if unmeasured and k != "artefact_shaped":
+                entry["separates"] = None
+                entry["reading"] = (
+                    f"not comparable in this run: {', '.join(unmeasured)} was not computed "
+                    f"on the known pile, so its zero is absence rather than a measurement")
+            elif a and b:
+                entry["separates"] = bool(a["lo"] > b["hi"] or b["lo"] > a["hi"])
+                direction = ("enriched in the residue" if a["point"] > b["point"]
+                             else "fires MORE on already-identified reads, which is a sign "
+                                  "flip: whatever it reads, it is not interest")
+                entry["reading"] = (f"separates at 95%, {direction}" if entry["separates"]
+                                    else "cannot discriminate here: the intervals overlap")
+            else:
+                entry["reading"] = "known-positive not measured in this run"
+            comparison[k] = entry
         summary = {
             "layer_order_most_to_least_interesting": order,
-            "counts": {k: counts.get(k, 0) for k in order},
-            "fractions": {k: wilson(counts.get(k, 0), n) for k in order},
-            "rule": {k: v for k, v in LAYER_RULES.items()},
+            "counts": counts, "totals": totals,
+            "against_known_positive": comparison,
+            "rule": dict(LAYER_RULES),
             "not_a_score": "layers are a sort order with evidence attached. Searching only "
                            "ever removes background; it never scores novelty, because "
                            "score ordering tracks database proximity",
-            "rows": n}
+        }
         (self.dir / "layers.json").write_text(json.dumps(summary, indent=2))
-        return self.record("layers", "ok", rows=n, counts=summary["counts"])
+        return self.record("layers", "ok", totals=totals,
+                           counts=counts.get("residue", {}),
+                           separating_layers=[k for k, v in comparison.items()
+                                              if v.get("separates")])
 
     @staticmethod
     def _layer_of(r: dict) -> tuple[str, dict]:
         """Assign one read to a layer, returning the evidence that put it there."""
-        ev: dict = {}
-        art = (r.get("entropy3") is not None and r.get("entropy3") < 0.5) or \
-              (r.get("longest_homopolymer") or 0) > 25 or \
-              bool(r.get("adapter")) or (r.get("n_fraction") or 0) > 0.05
+        art = (r.get("entropy3") is not None
+               and r.get("entropy3") < LAYER_RULES["artefact_entropy3_below"]) or \
+              (r.get("homopolymer") or 0) > LAYER_RULES["artefact_homopolymer_above"] or \
+              bool(r.get("adapter")) or bool(r.get("primer_dimer")) or \
+              (r.get("n_frac") or 0) > 0.05
         if art:
-            ev = {"entropy3": r.get("entropy3"),
-                  "longest_homopolymer": r.get("longest_homopolymer"),
-                  "adapter": r.get("adapter"), "n_fraction": r.get("n_fraction")}
-            return "artefact_shaped", ev
+            return "artefact_shaped", {
+                "entropy3": r.get("entropy3"), "homopolymer": r.get("homopolymer"),
+                "adapter": r.get("adapter"), "primer_dimer": r.get("primer_dimer"),
+                "n_frac": r.get("n_frac")}
 
         best = None
-        for key in ("closest_relative", "viral_protein", "sprot_protein", "protein"):
+        for key in [k for k in r if k.startswith("closest_")]:
             h = r.get(key)
             if isinstance(h, dict) and h.get("evalue") is not None:
                 if best is None or h["evalue"] < best["evalue"]:
                     best = {**h, "field": key}
-        sig = best is not None and best.get("evalue") is not None and \
-            best["evalue"] < SIGNIFICANCE_EVALUE
-        close = sig and (best.get("pident") or 0) >= CLOSE_IDENTITY_PERCENT
-        recurs = r.get("abundance_median") if r.get("abundance_median") is not None \
-            else r.get("kmer_median")
-        profile = r.get("pfam") or r.get("rfam")
+        sig = best is not None and best["evalue"] < SIGNIFICANCE_EVALUE
+        close = bool(sig and (best.get("pident") or 0) >= CLOSE_IDENTITY_PERCENT)
+        ab = r.get("library_abundance") or {}
+        recurs = ab.get("median_31mer_count")
+        profile = r.get("motif") or r.get("rfam")
 
         if sig and close:
             return "placed", {"closest_relative": best}
@@ -451,20 +522,48 @@ class Run:
         bs = ROOT / "blind_spots.json"
         if bs.exists():
             shutil.copyfile(bs, self.dir / "blind_spots.json")
+        # Field calibration is checked at write time rather than in review, because a field
+        # printed without its calibration is the failure this project is built around. A
+        # null says what the field reads on meaningless sequence; the known-positive says
+        # whether it reads differently on sequence the cascade DID identify. The second
+        # comes from the rows file, where subtracted reads travel beside residue reads, so
+        # both files are consulted and neither absence is inferred from the other.
         fields = self.dir / "fields.json"
-        field_check = {}
+        rows = self.dir / "reads.jsonl"
+        known_positive_rows = 0
+        if rows.exists():
+            with open(rows) as fh:
+                for line in fh:
+                    if '"set"' in line and '"residue"' not in line:
+                        known_positive_rows += 1
+        field_check: dict | str = {}
         if fields.exists():
             d = json.loads(fields.read_text())
             for name, v in (d.get("fields", d) or {}).items():
                 if not isinstance(v, dict):
                     continue
-                has_null = any(k in v for k in ("null", "shuffled", "shuffled_null"))
-                has_pos = any(k in v for k in ("known_positive", "subtracted",
-                                               "subtracted_reads"))
-                field_check[name] = ("calibrated" if has_null and has_pos else
-                                     "null only" if has_null else
-                                     "known-positive only" if has_pos else
-                                     "cannot discriminate here: no calibration in this run")
+                null = next((v[k] for k in ("null", "shuffled", "shuffled_null")
+                             if k in v), None)
+                real = v.get("residue")
+                state = "null only" if null is not None else \
+                    "cannot discriminate here: no null in this run"
+                if null is not None and known_positive_rows:
+                    state = "calibrated"
+                note = None
+                if isinstance(null, dict) and isinstance(real, dict) and \
+                        null.get("mean") == real.get("mean") and \
+                        null.get("sd") == real.get("sd"):
+                    # Not a bug here but it must be stated: the shuffle preserves
+                    # mononucleotide composition, so a composition field's null is the field
+                    # itself. A reader shown the two side by side without this would read an
+                    # agreement as a result.
+                    note = ("null identical to the measurement by construction: the "
+                            "shuffle preserves this field, so it has no null here and "
+                            "cannot discriminate")
+                    state = "cannot discriminate here: the null is the field itself"
+                field_check[name] = {"state": state, "note": note} if note else state
+        else:
+            field_check = "fields.json absent in this run"
         bad = [s for s in self.stages if s["status"] == "failed"]
         skipped = [s for s in self.stages if s["status"] == "skipped"]
         manifest = {
@@ -488,7 +587,14 @@ class Run:
             "incomplete_because": ([f"{s['stage']} failed" for s in bad] +
                                    [f"{s['stage']} skipped: {s.get('reason')}"
                                     for s in skipped]) or None,
-            "field_calibration": field_check or "fields.json absent in this run",
+            "field_calibration": field_check,
+            "known_positive_rows": known_positive_rows,
+            "known_positive_note": ("subtracted reads travel in reads.jsonl as the "
+                                    "known-positive comparison; a field that reads the "
+                                    "same on both carries no information about the "
+                                    "residue" if known_positive_rows else
+                                    "no subtracted reads in this run, so every field's "
+                                    "known-positive comparison is not measured"),
             "blind_spots": {"file": "blind_spots.json",
                             "sha256_16": sha256(bs)[:16] if bs.exists() else None},
             "interface_rules": [
@@ -527,6 +633,18 @@ LAYER_RULES = {
                        "only to separate 'rare and unsequenced' from 'could be artefact'",
     "artefact_entropy3_below": 0.5,
     "artefact_homopolymer_above": 25,
+}
+
+#: Which row fields each layer's assignment actually reads. Recorded so the control can be
+#: checked for having been measured at all: a layer whose fields were computed on the
+#: residue alone cannot be compared against the known pile, and its zero there is absence.
+LAYER_FIELDS = {
+    "recurs_and_unplaceable": ["closest_*", "library_abundance"],
+    "distant_relative": ["closest_*"],
+    "profile_only": ["closest_*", "motif"],
+    "placed": ["closest_*"],
+    "artefact_shaped": ["entropy3", "homopolymer", "adapter"],
+    "undetermined": ["closest_*", "library_abundance"],
 }
 
 STAGE_ORDER = ["cascade", "contigs", "reads", "linkage", "calibration",

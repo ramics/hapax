@@ -1,7 +1,14 @@
 # DNA and RNA from the same water, on the same morning
 
-`experiments/dna_rna_pair.py`, one 200,000-pair block per library (seed 1; seeds 2-5
-queued — **nothing here is a headline result yet** under this repo's five-seed rule).
+`experiments/dna_rna_pair.py`, one 200,000-pair block per library.
+
+**Five seeds have now run, and [`TABLES.md`](TABLES.md) is the five-seed version of every
+table below** — built by `experiments/report_pair.py` from the committed per-seed JSONs,
+with the mean and the seed-to-seed range for each figure. The numbers in the prose here are
+seed 1 and are kept as written so the reading can be checked against the run it came from;
+where the two differ, TABLES.md is the result. All five seeds carry the same
+`script_sha256`, which is what pins them: three ran while other files in the tree were being
+edited, so their commit names HEAD rather than the code.
 
 Every figure this project has published comes from one library: SRR23973193, Berlin,
 2021-10-13, RNA. PRJNA948850 turns out to hold 24 `GENOMIC` libraries beside its 215 RNA
