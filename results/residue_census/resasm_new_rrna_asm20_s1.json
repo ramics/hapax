@@ -1,0 +1,81 @@
+{
+ "seed": 1,
+ "preset": "asm20",
+ "operating_point": "minimap2 sr against SILVA 138.2 SSU+LSU NR99; the contig split called a contig ribosomal at >=100 matching bases",
+ "query_contigs_excluded_from_control_pools": 2832,
+ "length_bins_unfilled": {},
+ "piles": {
+  "resasm_new": {
+   "n": 2832,
+   "p50": 0.0,
+   "p90": 0.0,
+   "mean": 0.0,
+   "frac_0": 1.0,
+   "frac_ge_40": 0.0,
+   "frac_ge_60": 0.0,
+   "frac_ge_100": 0.0,
+   "frac_ge_150": 0.0
+  },
+  "unidentified_lenmatched": {
+   "n": 2832,
+   "p50": 0.0,
+   "p90": 0.0,
+   "mean": 0.0,
+   "frac_0": 1.0,
+   "frac_ge_40": 0.0,
+   "frac_ge_60": 0.0,
+   "frac_ge_100": 0.0,
+   "frac_ge_150": 0.0
+  },
+  "resasm_rederived": {
+   "n": 2832,
+   "p50": 0.0,
+   "p90": 0.0,
+   "mean": 0.0,
+   "frac_0": 1.0,
+   "frac_ge_40": 0.0,
+   "frac_ge_60": 0.0,
+   "frac_ge_100": 0.0,
+   "frac_ge_150": 0.0
+  },
+  "identified_norrna": {
+   "n": 2832,
+   "p50": 0.0,
+   "p90": 0.0,
+   "mean": 0.0,
+   "frac_0": 1.0,
+   "frac_ge_40": 0.0,
+   "frac_ge_60": 0.0,
+   "frac_ge_100": 0.0,
+   "frac_ge_150": 0.0
+  },
+  "rrna_contigs": {
+   "n": 2832,
+   "p50": 0.0,
+   "p90": 391.9000000000001,
+   "mean": 166.39159604519773,
+   "frac_0": 0.504590395480226,
+   "frac_ge_40": 0.495409604519774,
+   "frac_ge_60": 0.495409604519774,
+   "frac_ge_100": 0.495409604519774,
+   "frac_ge_150": 0.495409604519774
+  }
+ },
+ "manifest": {
+  "script": "experiments/top_contig_rrna_check.py",
+  "git_sha": "0fe3ade32d05c5438b390c844e1f7e36829f3b62-dirty",
+  "tree_dirty": true,
+  "script_sha256": "2d457bada0c7c0b4",
+  "parameters": {
+   "seed": "1",
+   "top": "/home/user/hapax/results/residue_census/top_unidentifiable_contigs.tsv",
+   "query_fa": "data/work/resasm/resasm_new.fa",
+   "tag": "resasm_new",
+   "preset": "asm20",
+   "own_all": "/home/user/hapax/data/work/sample_contigs_all.fa",
+   "sets": "/home/user/hapax/data/geo/sets",
+   "silva_mmi": "/home/user/hapax/data/work/silva.mmi",
+   "out": "/home/user/hapax/results/residue_census"
+  }
+ }
+}

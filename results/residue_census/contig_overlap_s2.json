@@ -1,0 +1,57 @@
+{
+ "seed": 2,
+ "operating_point": "minimap2 sr, union of alignment intervals",
+ "residue_contigs_vs_own_assembly": {
+  "n": 3695,
+  "mean": 0.17191705284641717,
+  "p50": 0.0,
+  "frac_ge_0.5": 0.17591339648173207,
+  "frac_ge_0.9": 0.10527740189445196,
+  "frac_lt_0.1": 0.7664411366711773
+ },
+ "residue_contigs": {
+  "n": 3695,
+  "bases": 1306995
+ },
+ "shuffled_null": {
+  "n": 3695,
+  "mean": 0.0,
+  "p50": 0.0,
+  "frac_ge_0.5": 0.0,
+  "frac_ge_0.9": 0.0,
+  "frac_lt_0.1": 1.0
+ },
+ "own_unidentified_vs_rest_of_own_assembly": {
+  "n": 2000,
+  "mean": 0.00334863898506564,
+  "p50": 0.0,
+  "frac_ge_0.5": 0.0035,
+  "frac_ge_0.9": 0.003,
+  "frac_lt_0.1": 0.9965
+ },
+ "residue_mass_on_unidentifiable_contigs": {
+  "mate_observations": 1480103,
+  "contig_len_p50": 490.0,
+  "contig_cov_p50": 4.210396,
+  "frac_on_contigs_ge500nt_and_2x": 0.42628452209069234,
+  "frac_on_contigs_ge500nt": 0.48765525101969254,
+  "frac_on_contigs_ge1kb": 0.18615866598473213,
+  "distinct_contigs": 46157
+ },
+ "manifest": {
+  "script": "experiments/residue_contig_overlap.py",
+  "git_sha": "7ccc0f82090d5b4cbd14da7490108e221cee485a",
+  "tree_dirty": false,
+  "script_sha256": "a9ba9bf22232e7d2",
+  "parameters": {
+   "seed": "2",
+   "resasm": "/home/user/hapax/data/work/resasm/final.contigs.fa",
+   "own_all": "/home/user/hapax/data/work/sample_contigs_all.fa",
+   "own_unident": "/home/user/hapax/data/geo/sets/sample_contigs_unidentified.fa",
+   "labels": "/home/user/hapax/data/work/library_labels.npz",
+   "classes": "/home/user/hapax/data/work/library_label_classes.npz",
+   "control_n": "2000",
+   "out": "/home/user/hapax/results/residue_census"
+  }
+ }
+}

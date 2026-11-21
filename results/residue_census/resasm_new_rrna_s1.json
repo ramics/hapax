@@ -1,0 +1,79 @@
+{
+ "seed": 1,
+ "operating_point": "minimap2 sr against SILVA 138.2 SSU+LSU NR99; the contig split called a contig ribosomal at >=100 matching bases",
+ "query_contigs_excluded_from_control_pools": 2832,
+ "length_bins_unfilled": {},
+ "piles": {
+  "resasm_new": {
+   "n": 2832,
+   "p50": 0.0,
+   "p90": 0.0,
+   "mean": 0.6514830508474576,
+   "frac_0": 0.9911723163841808,
+   "frac_ge_40": 0.00423728813559322,
+   "frac_ge_60": 0.0031779661016949155,
+   "frac_ge_100": 0.00211864406779661,
+   "frac_ge_150": 0.0014124293785310734
+  },
+  "unidentified_lenmatched": {
+   "n": 2832,
+   "p50": 0.0,
+   "p90": 0.0,
+   "mean": 0.3855932203389831,
+   "frac_0": 0.9943502824858758,
+   "frac_ge_40": 0.005296610169491525,
+   "frac_ge_60": 0.003884180790960452,
+   "frac_ge_100": 0.0,
+   "frac_ge_150": 0.0
+  },
+  "resasm_rederived": {
+   "n": 2832,
+   "p50": 0.0,
+   "p90": 0.0,
+   "mean": 1.7002118644067796,
+   "frac_0": 0.9883474576271186,
+   "frac_ge_40": 0.007768361581920904,
+   "frac_ge_60": 0.007768361581920904,
+   "frac_ge_100": 0.005296610169491525,
+   "frac_ge_150": 0.00423728813559322
+  },
+  "identified_norrna": {
+   "n": 2832,
+   "p50": 0.0,
+   "p90": 0.0,
+   "mean": 0.5949858757062146,
+   "frac_0": 0.9918785310734464,
+   "frac_ge_40": 0.007062146892655367,
+   "frac_ge_60": 0.006002824858757062,
+   "frac_ge_100": 0.0,
+   "frac_ge_150": 0.0
+  },
+  "rrna_contigs": {
+   "n": 2832,
+   "p50": 262.0,
+   "p90": 398.0,
+   "mean": 270.961511299435,
+   "frac_0": 0.0,
+   "frac_ge_40": 1.0,
+   "frac_ge_60": 1.0,
+   "frac_ge_100": 1.0,
+   "frac_ge_150": 0.89795197740113
+  }
+ },
+ "manifest": {
+  "script": "experiments/top_contig_rrna_check.py",
+  "git_sha": "0fe3ade32d05c5438b390c844e1f7e36829f3b62-dirty",
+  "tree_dirty": true,
+  "script_sha256": "c8b9812510a1342e",
+  "parameters": {
+   "seed": "1",
+   "top": "/home/user/hapax/results/residue_census/top_unidentifiable_contigs.tsv",
+   "query_fa": "data/work/resasm/resasm_new.fa",
+   "tag": "resasm_new",
+   "own_all": "/home/user/hapax/data/work/sample_contigs_all.fa",
+   "sets": "/home/user/hapax/data/geo/sets",
+   "silva_mmi": "/home/user/hapax/data/work/silva.mmi",
+   "out": "/home/user/hapax/results/residue_census"
+  }
+ }
+}

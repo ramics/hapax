@@ -1,0 +1,134 @@
+{
+ "seed": 1,
+ "window": 100000,
+ "library_pairs": 8731224,
+ "classes": {
+  "none": {
+   "whole_library": 0.15713959463186375,
+   "binomial_sd": 0.0011508550839736396,
+   "windows": 87,
+   "between_window_sd": 0.0012566830170304291,
+   "inflation_all_windows": 1.0919559156756644,
+   "inflation_from_5_blocks_only": 1.1514506385984435,
+   "lag1_autocorrelation": -0.016544024152476616,
+   "five_block_mean": 0.157576,
+   "five_block_minus_whole_pct_points": 0.04364053681362445,
+   "mate1": {
+    "whole_library": 0.18229849560611433,
+    "inflation_all_windows": 1.1480687224396648
+   },
+   "mate2": {
+    "whole_library": 0.19653464393995618,
+    "inflation_all_windows": 1.0864907742565417
+   }
+  },
+  "rrna": {
+   "whole_library": 0.3944372518675503,
+   "binomial_sd": 0.0015454983215996223,
+   "windows": 87,
+   "between_window_sd": 0.0022298400288803736,
+   "inflation_all_windows": 1.4427967974578217,
+   "inflation_from_5_blocks_only": 0.6506860047950723,
+   "lag1_autocorrelation": 0.24484429538940192,
+   "five_block_mean": 0.39288,
+   "five_block_minus_whole_pct_points": -0.1557251867550291,
+   "mate1": {
+    "whole_library": 0.3875999516219032,
+    "inflation_all_windows": 1.4299012561592117
+   },
+   "mate2": {
+    "whole_library": 0.38063701034356695,
+    "inflation_all_windows": 1.4266766756524645
+   }
+  },
+  "identified": {
+   "whole_library": 0.3489432867602526,
+   "binomial_sd": 0.0015072553512434604,
+   "windows": 87,
+   "between_window_sd": 0.0024249904471574965,
+   "inflation_all_windows": 1.608878313257883,
+   "inflation_from_5_blocks_only": 0.4412516712142116,
+   "lag1_autocorrelation": 0.29624905272923757,
+   "five_block_mean": 0.34966400000000003,
+   "five_block_minus_whole_pct_points": 0.07207132397474281,
+   "mate1": {
+    "whole_library": 0.3332299114076102,
+    "inflation_all_windows": 1.5709795198989132
+   },
+   "mate2": {
+    "whole_library": 0.32744114685409514,
+    "inflation_all_windows": 1.4893818996715278
+   }
+  },
+  "unident": {
+   "whole_library": 0.09302269647417132,
+   "binomial_sd": 0.0009185285755753357,
+   "windows": 87,
+   "between_window_sd": 0.0011418362416183339,
+   "inflation_all_windows": 1.2431145551493874,
+   "inflation_from_5_blocks_only": 0.6242426233319872,
+   "lag1_autocorrelation": -0.00655164969773244,
+   "five_block_mean": 0.093512,
+   "five_block_minus_whole_pct_points": 0.048930352582868264,
+   "mate1": {
+    "whole_library": 0.08674511156740453,
+    "inflation_all_windows": 1.1312421991546282
+   },
+   "mate2": {
+    "whole_library": 0.08256058944312962,
+    "inflation_all_windows": 1.3898638621401291
+   }
+  },
+  "other_ctg": {
+   "whole_library": 0.006457170266161995,
+   "binomial_sd": 0.00025328788400387,
+   "windows": 87,
+   "between_window_sd": 0.00032414347478865283,
+   "inflation_all_windows": 1.2797433089365626,
+   "inflation_from_5_blocks_only": 0.5401800072276886,
+   "lag1_autocorrelation": 0.1303339506218383,
+   "five_block_mean": 0.006368,
+   "five_block_minus_whole_pct_points": -0.008917026616199475,
+   "mate1": {
+    "whole_library": 0.010126529796967756,
+    "inflation_all_windows": 1.2796316830156589
+   },
+   "mate2": {
+    "whole_library": 0.012826609419252101,
+    "inflation_all_windows": 1.1259616338473835
+   }
+  }
+ },
+ "unident_subdefinitions": {
+  "unident_either_mate": {
+   "whole_library": 0.09302269647417132,
+   "inflation_all_windows": 1.2431145551493874
+  },
+  "unident_both_mates": {
+   "whole_library": 0.0690359106581162,
+   "inflation_all_windows": 1.2307186590328523
+  },
+  "unident_one_mate_with_none": {
+   "whole_library": 0.021347636940708428,
+   "inflation_all_windows": 1.1839255081515219
+  },
+  "none_or_unident": {
+   "whole_library": 0.25016229110603505,
+   "inflation_all_windows": 1.1036433509996288
+  }
+ },
+ "reading": "Widen a binomial interval on rrna or identified by its inflation_all_windows factor; the residue classes (none, unident) are near 1 and barely move. Never take the factor from 5 blocks: that column is a 5-sample variance and reads below 1 where the truth is 1.6.",
+ "manifest": {
+  "script": "experiments/block_dispersion.py",
+  "git_sha": "e3c7749c9f0fee96df98dc541af82e1a438272c3-dirty",
+  "tree_dirty": true,
+  "script_sha256": "107e8adba2d02b93",
+  "parameters": {
+   "seed": "1",
+   "classes": "/home/user/hapax/data/work/library_label_classes.npz",
+   "window": "100000",
+   "block_stride": "1500000",
+   "out": "/home/user/hapax/results/residue_census"
+  }
+ }
+}
