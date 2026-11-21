@@ -1,0 +1,20 @@
+{
+  "file": "residue_names_core_nt_pilot_s1.txt",
+  "contains": "pairs still unidentified after the tier-1 cascade PLUS core_nt_pilot; cumulative, not a delta",
+  "rung": "core_nt_pilot",
+  "block": 1,
+  "program": "blastn",
+  "db_version": "2026-10-22-01-05-01",
+  "min_pident": 90.0,
+  "min_aln_bases": 40,
+  "min_bitscore": 0.0,
+  "pair_rule": "a pair is identified if EITHER mate clears the operating point",
+  "count": 461,
+  "residue_pairs_in": 500,
+  "removed_by_this_rung": 39,
+  "name_drift_vs_committed_list": null,
+  "source_files": [
+    "bi2_rows_pilot_core_nt.jsonl"
+  ],
+  "truncated_rows_dropped": 0
+}

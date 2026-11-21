@@ -1,0 +1,74 @@
+{
+  "rung": "core_nt_pilot",
+  "block": 1,
+  "rows": 500,
+  "truncated_rows_dropped": 0,
+  "distributions": {
+    "residue": {
+      "queries": 500,
+      "any_hit": 0.868,
+      "any_hit_ci95": [
+        0.8355045607103054,
+        0.8948837200509497
+      ],
+      "strong": 0.102,
+      "strong_ci95": [
+        0.07843397139617729,
+        0.1316352249544218
+      ],
+      "identity_bins": {
+        "70-80": 34,
+        "80-90": 211,
+        "90-95": 115,
+        "95-100": 47,
+        ">=100": 27
+      },
+      "aln_frac_bins": {
+        "0.0-0.25": 15,
+        "0.25-0.5": 298,
+        "0.5-0.75": 52,
+        "0.75-1.01": 68,
+        ">=1.01": 1
+      },
+      "median_pident": 88.62,
+      "median_aln_frac": 0.3738,
+      "identified_at_operating_point": 0.078
+    }
+  },
+  "residue_per_mate": {
+    "1": {
+      "queries": 500,
+      "identified": 0.078,
+      "ci95": [
+        0.05758107181952422,
+        0.10485410622055823
+      ]
+    }
+  },
+  "operating_point": {
+    "file": "residue_names_core_nt_pilot_s1.txt",
+    "contains": "pairs still unidentified after the tier-1 cascade PLUS core_nt_pilot; cumulative, not a delta",
+    "rung": "core_nt_pilot",
+    "block": 1,
+    "program": "blastn",
+    "db_version": "2026-10-22-01-05-01",
+    "min_pident": 90.0,
+    "min_aln_bases": 40,
+    "min_bitscore": 0.0,
+    "pair_rule": "a pair is identified if EITHER mate clears the operating point",
+    "count": 461,
+    "residue_pairs_in": 500,
+    "removed_by_this_rung": 39,
+    "name_drift_vs_committed_list": null,
+    "source_files": [
+      "bi2_rows_pilot_core_nt.jsonl"
+    ],
+    "truncated_rows_dropped": 0
+  },
+  "limits": [
+    "identity is the identity of the ALIGNED PART only, so it is read beside aln_frac and never alone: a third of a read at 95% is not a 95% match",
+    "the control pile is the cascade's already-identified reads, which is a contrast rather than a ground truth: a database this size has its own gaps",
+    "one block is one seed; the repo rule is five, and the run adds blocks only while they fit its measured rate, so the seed count is whatever ran"
+  ],
+  "wall_seconds": 0.0027141250029671937
+}
