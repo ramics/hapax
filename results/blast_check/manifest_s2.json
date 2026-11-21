@@ -1,6 +1,8 @@
 {
   "script": "experiments/remote_blast_check.py",
-  "git_sha": "a755a58fb6f4b50dfde672a235e4f55814495088",
+  "git_sha": "6487b3c8b40b9299d37807d3da97d7d205d94343-dirty",
+  "tree_dirty": true,
+  "script_sha256": "8ca2c15a20579a33",
   "parameters": {
     "seed": 2,
     "pairs": 20000,
@@ -8,6 +10,7 @@
     "batch": 15,
     "poll": 20,
     "max_wait": 1200,
+    "batch_attempts": 2,
     "between_batches": 10,
     "programs": [
       "blastn"
@@ -32,7 +35,7 @@
     "work": "/tmp/claude-0/wk/blastchk",
     "out": "results/blast_check"
   },
-  "wall_seconds": 6963.931477623,
+  "wall_seconds": 1386.012248733001,
   "python": "3.13.18",
   "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39",
   "note": "queries are public SRA sequence; no contact details are sent to NCBI"

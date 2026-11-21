@@ -25,10 +25,6 @@
     "tier2_contigs": 60
   },
   "blast": {
-    "errors": [
-      "blastn batch 9: JSONDecodeError: Expecting property name enclosed in double quotes: line 2 column 9 (char 10)",
-      "blastn batch 13: JSONDecodeError: Expecting property name enclosed in double quotes: line 2 column 9 (char 10)"
-    ],
     "blastn": {
       "database": "nt",
       "per_class": {
@@ -263,34 +259,34 @@
           }
         },
         "selfasm_identified": {
-          "n": 45,
-          "dropped_failed_batch": 15,
-          "any_hit": 43,
-          "any_hit_frac": 0.9555555555555556,
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 56,
+          "any_hit_frac": 0.9333333333333333,
           "any_hit_ci95": [
-            0.8517,
-            0.9877
+            0.8407,
+            0.9738
           ],
           "pident": {
-            "n": 43,
+            "n": 56,
             "min": 74.03,
-            "p25": 86.49,
+            "p25": 85.37,
             "median": 90.91,
-            "p75": 96.43,
+            "p75": 96.55,
             "max": 100.0
           },
           "query_cov": {
-            "n": 43,
+            "n": 56,
             "min": 0.2243,
             "p25": 0.3019,
-            "median": 0.3714,
-            "p75": 0.7333,
+            "median": 0.3774,
+            "p75": 0.7075,
             "max": 1.0
           },
           "top_names": [
             [
               "Picornavirales sp.",
-              6
+              7
             ],
             [
               "Limisphaerales bacterium",
@@ -298,6 +294,10 @@
             ],
             [
               "Caudoviricetes sp.",
+              2
+            ],
+            [
+              "Cucumber green mottle mosaic virus",
               2
             ],
             [
@@ -315,26 +315,22 @@
             [
               "Tringa nebularia",
               1
-            ],
-            [
-              "Tritrichomonas foetus",
-              1
             ]
           ],
           "aln_len": {
-            "n": 43,
+            "n": 56,
             "min": 24,
             "p25": 32,
             "median": 41,
-            "p75": 77,
+            "p75": 75,
             "max": 107
           },
           "bitscore": {
-            "n": 43,
+            "n": 56,
             "min": 42.7638,
             "p25": 46.3705,
             "median": 49.0756,
-            "p75": 68.0109,
+            "p75": 60.7975,
             "max": 194.247
           },
           "top_titles": [
@@ -363,52 +359,64 @@
               1
             ]
           ],
-          "strong_hit_frac": 0.17777777777777778,
+          "strong_hit_frac": 0.16666666666666666,
           "strong_hit_ci95": [
-            0.0929,
-            0.3133
+            0.0931,
+            0.2803
           ],
           "pident_x_qcov": {
-            "n": 43,
+            "n": 56,
             "min": 0.2243,
             "p25": 0.27358178,
-            "median": 0.32411989999999996,
-            "p75": 0.57540975,
+            "median": 0.3324894,
+            "p75": 0.54576,
             "max": 1.0
           }
         },
         "residue_assembled": {
-          "n": 45,
-          "dropped_failed_batch": 15,
-          "any_hit": 36,
-          "any_hit_frac": 0.8,
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 49,
+          "any_hit_frac": 0.8166666666666667,
           "any_hit_ci95": [
-            0.6618,
-            0.891
+            0.7008,
+            0.8944
           ],
           "pident": {
-            "n": 36,
-            "min": 78.33,
-            "p25": 86.84,
-            "median": 88.89,
-            "p75": 96.88,
+            "n": 49,
+            "min": 76.39,
+            "p25": 85.71,
+            "median": 88.57,
+            "p75": 93.55,
             "max": 100.0
           },
           "query_cov": {
-            "n": 36,
+            "n": 49,
             "min": 0.2243,
-            "p25": 0.3208,
-            "median": 0.3585,
-            "p75": 0.8879,
+            "p25": 0.3271,
+            "median": 0.3645,
+            "p75": 0.6168,
             "max": 1.0
           },
           "top_names": [
+            [
+              "Mus musculus",
+              3
+            ],
             [
               "Hepelivirales sp.",
               2
             ],
             [
-              "Mus musculus",
+              "Acidobacteriaceae bacterium",
+              2
+            ],
+            [
+              "ssRNA phage SRR7976299_5",
+              2
+            ],
+            [
+              "Gongronemopsis tenacissima",
               2
             ],
             [
@@ -422,39 +430,35 @@
             [
               "Brachyhypopomus gauderio",
               1
-            ],
-            [
-              "ssRNA phage SRR5466727_4",
-              1
-            ],
-            [
-              "Ammodytes marinus",
-              1
-            ],
-            [
-              "Acidobacteriaceae bacterium",
-              1
             ]
           ],
           "aln_len": {
-            "n": 36,
+            "n": 49,
             "min": 24,
-            "p25": 34,
+            "p25": 35,
             "median": 39,
-            "p75": 95,
+            "p75": 66,
             "max": 106
           },
           "bitscore": {
-            "n": 36,
+            "n": 49,
             "min": 44.5672,
             "p25": 45.4688,
             "median": 47.2722,
-            "p75": 79.7328,
+            "p75": 51.7806,
             "max": 192.443
           },
           "top_titles": [
             [
               "Hepelivirales sp. strain MR644-18E/449 nonstructural polyprotein and putative structural p",
+              2
+            ],
+            [
+              "SsRNA phage SRR7976299_5 genomic sequence",
+              2
+            ],
+            [
+              "Mus musculus targeted non-conditional, lacZ-tagged mutant allele Wdfy3:tm1e(KOMP)Ucd; tran",
               2
             ],
             [
@@ -468,27 +472,19 @@
             [
               "Mus musculus BAC clone RP24-225G4 from 14, complete sequence",
               1
-            ],
-            [
-              "PREDICTED: Brachyhypopomus gauderio potassium voltage-gated channel subfamily A regulatory",
-              1
-            ],
-            [
-              "SsRNA phage SRR5466727_4 genomic sequence",
-              1
             ]
           ],
-          "strong_hit_frac": 0.1111111111111111,
+          "strong_hit_frac": 0.1,
           "strong_hit_ci95": [
-            0.0484,
-            0.235
+            0.0466,
+            0.2015
           ],
           "pident_x_qcov": {
-            "n": 36,
+            "n": 49,
             "min": 0.2243,
-            "p25": 0.28931414000000005,
-            "median": 0.31770797,
-            "p75": 0.7263796499999999,
+            "p25": 0.28971247,
+            "median": 0.31773,
+            "p75": 0.47835418,
             "max": 0.9907
           }
         },
@@ -725,5 +721,5 @@
       }
     }
   },
-  "wall_seconds": 3560.2431345549994
+  "wall_seconds": 2268.7018782010055
 }

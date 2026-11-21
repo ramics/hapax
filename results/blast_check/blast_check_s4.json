@@ -25,9 +25,6 @@
     "tier2_contigs": 60
   },
   "blast": {
-    "errors": [
-      "blastn batch 10: JSONDecodeError: Expecting property name enclosed in double quotes: line 2 column 9 (char 10)"
-    ],
     "blastn": {
       "database": "nt",
       "per_class": {
@@ -262,31 +259,35 @@
           }
         },
         "selfasm_identified": {
-          "n": 45,
-          "dropped_failed_batch": 15,
-          "any_hit": 39,
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 52,
           "any_hit_frac": 0.8666666666666667,
           "any_hit_ci95": [
-            0.7382,
-            0.9374
+            0.7583,
+            0.9309
           ],
           "pident": {
-            "n": 39,
+            "n": 52,
             "min": 75.68,
-            "p25": 86.49,
-            "median": 93.1,
-            "p75": 99.07,
+            "p25": 87.18,
+            "median": 93.33,
+            "p75": 99.04,
             "max": 100.0
           },
           "query_cov": {
-            "n": 39,
+            "n": 52,
             "min": 0.2617,
-            "p25": 0.3271,
-            "median": 0.5701,
-            "p75": 0.972,
+            "p25": 0.3333,
+            "median": 0.7075,
+            "p75": 0.9811,
             "max": 1.0
           },
           "top_names": [
+            [
+              "Picornavirales sp.",
+              5
+            ],
             [
               "Cucumber green mottle mosaic virus",
               3
@@ -300,7 +301,7 @@
               2
             ],
             [
-              "Picornavirales sp.",
+              "Leviviridae sp.",
               2
             ],
             [
@@ -314,26 +315,22 @@
             [
               "Pseudomonas danubii",
               1
-            ],
-            [
-              "Tobacco mild green mosaic virus",
-              1
             ]
           ],
           "aln_len": {
-            "n": 39,
+            "n": 52,
             "min": 28,
-            "p25": 35,
-            "median": 61,
+            "p25": 36,
+            "median": 75,
             "p75": 104,
             "max": 108
           },
           "bitscore": {
-            "n": 39,
+            "n": 52,
             "min": 44.5672,
             "p25": 46.3705,
-            "median": 53.584,
-            "p75": 179.82,
+            "median": 70.716,
+            "p75": 170.803,
             "max": 194.247
           },
           "top_titles": [
@@ -343,6 +340,10 @@
             ],
             [
               "SsRNA phage SRR7976299_5 genomic sequence",
+              2
+            ],
+            [
+              "MAG: Picornavirales sp. isolate HPLV-59 genomic sequence",
               2
             ],
             [
@@ -356,23 +357,19 @@
             [
               "Pseudomonas danubii strain JDS10PS014 chromosome, complete genome",
               1
-            ],
-            [
-              "Tobacco mild green mosaic virus isolate WZLX-lw1 126 kDa protein gene, partial cds; 183 kD",
-              1
             ]
           ],
-          "strong_hit_frac": 0.24444444444444444,
+          "strong_hit_frac": 0.25,
           "strong_hit_ci95": [
-            0.1424,
-            0.3867
+            0.1578,
+            0.3723
           ],
           "pident_x_qcov": {
-            "n": 39,
+            "n": 52,
             "min": 0.252301,
-            "p25": 0.29520380999999996,
-            "median": 0.47666061000000004,
-            "p75": 0.9439,
+            "p25": 0.29985257000000004,
+            "median": 0.5848902500000001,
+            "p75": 0.93334815,
             "max": 1.0
           }
         },
@@ -724,5 +721,5 @@
       }
     }
   },
-  "wall_seconds": 9891.760794008002
+  "wall_seconds": 7439.0995590620005
 }
