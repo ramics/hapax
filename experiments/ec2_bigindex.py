@@ -315,8 +315,14 @@ def main(argv: list[str] | None = None) -> int:
     # projection against that ceiling and on demand needs no special pleading when it is
     # cheap. The projection uses the dead-man timer rather than the stage budgets, because
     # the timer is the only bound that does not depend on the run working.
+    # --attach launches nothing, so it must not be gated: the instance it watches was
+    # approved when it was launched, and refusing to WATCH a running box would leave it
+    # billing unobserved, which is the opposite of what a spend gate is for. Caught by this
+    # gate refusing an --attach immediately after a successful launch.
     cost, cost_note = projected_cost(args.instance_type, args.hard_stop_minutes,
                                      not args.no_spot, args.volume_size)
+    if args.attach:
+        cost, cost_note = 0.0, f"watching {args.attach}; this launches nothing"
     print(f"projected worst case: {cost_note}")
     if not (cost == cost):                                   # NaN: unknown instance type
         raise SystemExit(cost_note)
