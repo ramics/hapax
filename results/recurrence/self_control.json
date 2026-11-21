@@ -1,0 +1,212 @@
+{
+ "seed": 1,
+ "piles": {
+  "identified": {
+   "mate1": {
+    "n": 45577,
+    "mean": 1.0,
+    "median": 1.0,
+    "frac_fully_witnessed": 1.0,
+    "min": 1.0,
+    "max": 1.0
+   },
+   "mate2": {
+    "n": 45577,
+    "mean": 1.0,
+    "median": 1.0,
+    "frac_fully_witnessed": 1.0,
+    "min": 1.0,
+    "max": 1.0
+   }
+  },
+  "other_ctg": {
+   "mate1": {
+    "n": 4457,
+    "mean": 1.0,
+    "median": 1.0,
+    "frac_fully_witnessed": 1.0,
+    "min": 1.0,
+    "max": 1.0
+   },
+   "mate2": {
+    "n": 4457,
+    "mean": 1.0,
+    "median": 1.0,
+    "frac_fully_witnessed": 1.0,
+    "min": 1.0,
+    "max": 1.0
+   }
+  },
+  "rrna": {
+   "mate1": {
+    "n": 28609,
+    "mean": 1.0,
+    "median": 1.0,
+    "frac_fully_witnessed": 1.0,
+    "min": 1.0,
+    "max": 1.0
+   },
+   "mate2": {
+    "n": 28606,
+    "mean": 1.0,
+    "median": 1.0,
+    "frac_fully_witnessed": 1.0,
+    "min": 1.0,
+    "max": 1.0
+   }
+  },
+  "shuffled-identified": {
+   "mate1": {
+    "n": 10000,
+    "mean": 0.0,
+    "median": 0.0,
+    "frac_fully_witnessed": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "mate2": {
+    "n": 10000,
+    "mean": 0.000825,
+    "median": 0.0,
+    "frac_fully_witnessed": 0.0007,
+    "min": 0.0,
+    "max": 1.0
+   }
+  },
+  "shuffled-other_ctg": {
+   "mate1": {
+    "n": 4457,
+    "mean": 0.0,
+    "median": 0.0,
+    "frac_fully_witnessed": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "mate2": {
+    "n": 4457,
+    "mean": 0.015979,
+    "median": 0.0,
+    "frac_fully_witnessed": 0.014808,
+    "min": 0.0,
+    "max": 1.0
+   }
+  },
+  "shuffled-rrna": {
+   "mate1": {
+    "n": 10000,
+    "mean": 0.0,
+    "median": 0.0,
+    "frac_fully_witnessed": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "mate2": {
+    "n": 10000,
+    "mean": 0.001737,
+    "median": 0.0,
+    "frac_fully_witnessed": 0.0009,
+    "min": 0.0,
+    "max": 1.0
+   }
+  },
+  "shuffled-unident_contig": {
+   "mate1": {
+    "n": 10000,
+    "mean": 0.0,
+    "median": 0.0,
+    "frac_fully_witnessed": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "mate2": {
+    "n": 9998,
+    "mean": 4.7e-05,
+    "median": 0.0,
+    "frac_fully_witnessed": 0.0,
+    "min": 0.0,
+    "max": 0.4355
+   }
+  },
+  "shuffled-unplaced": {
+   "mate1": {
+    "n": 9946,
+    "mean": 0.0,
+    "median": 0.0,
+    "frac_fully_witnessed": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "mate2": {
+    "n": 9911,
+    "mean": 1.3e-05,
+    "median": 0.0,
+    "frac_fully_witnessed": 0.0,
+    "min": 0.0,
+    "max": 0.1311
+   }
+  },
+  "unident_contig": {
+   "mate1": {
+    "n": 43052,
+    "mean": 1.0,
+    "median": 1.0,
+    "frac_fully_witnessed": 1.0,
+    "min": 1.0,
+    "max": 1.0
+   },
+   "mate2": {
+    "n": 43050,
+    "mean": 1.0,
+    "median": 1.0,
+    "frac_fully_witnessed": 1.0,
+    "min": 1.0,
+    "max": 1.0
+   }
+  },
+  "unplaced": {
+   "mate1": {
+    "n": 32005,
+    "mean": 1.0,
+    "median": 1.0,
+    "frac_fully_witnessed": 1.0,
+    "min": 1.0,
+    "max": 1.0
+   },
+   "mate2": {
+    "n": 31833,
+    "mean": 1.0,
+    "median": 1.0,
+    "frac_fully_witnessed": 1.0,
+    "min": 1.0,
+    "max": 1.0
+   }
+  }
+ },
+ "verdict": {
+  "lowest_real_pile_mean": 1.0,
+  "highest_null_pile_mean": 0.0,
+  "dynamic_range": 1.0,
+  "reading": "a real read must be fully witnessed in its own library and a shuffle hardly at all; the two ends must be at OPPOSITE extremes, because the same extreme on both is this repo's signature for a bug"
+ },
+ "manifest": {
+  "script": "experiments/recurrence_self_control.py",
+  "git_sha": "e3721c8250be6dc0761d21208fbb51cb8c87aa27",
+  "tree_dirty": false,
+  "script_sha256": "a27faa47b5813ec5",
+  "parameters": {
+   "seed": "1",
+   "queries": "/home/user/hapax/results/recurrence/queries_s1-5.tsv",
+   "r1": "/home/user/hapax/data/berlin/SRR23973193_1.fastq.gz",
+   "r2": "/home/user/hapax/data/berlin/SRR23973193_2.fastq.gz",
+   "trim_r2": "14",
+   "tool": "/home/user/hapax/experiments/kmer_coverage/target/release/kmer_coverage",
+   "work": "/tmp/claude-0/wk/recurrence",
+   "out": "/home/user/hapax/results/recurrence"
+  },
+  "seconds": 0.0,
+  "operating_points": {
+   "k": 31,
+   "trim_r2": 14
+  }
+ }
+}

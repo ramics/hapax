@@ -1,0 +1,496 @@
+{
+ "seed": 1,
+ "group_by": "water",
+ "dimensions": 84,
+ "piles": {
+  "unplaced|s1": {
+   "n": 4000,
+   "occupancy_mean": 24.5285,
+   "frac_vectors_informative": 0.7915,
+   "entropy_bits_of_informative_vectors": 73.232995596701,
+   "max_possible_bits": 84.0,
+   "mate_control": {
+    "usable_pairs": 3107,
+    "k": 10,
+    "own_mate_in_topk": 0.45188284518828453,
+    "chance": 0.0032185387833923397,
+    "own_mate_in_topk_curveball_null": 0.018667524943675573,
+    "multiplier_over_chance": 140.4,
+    "multiplier_over_null": 24.206896551724135,
+    "pairs_with_disjoint_mates": 1980,
+    "frac_pairs_with_disjoint_mates": 0.6372706791116833,
+    "disjoint_k": 10,
+    "disjoint_own_mate_in_topk": 0.30757575757575756,
+    "disjoint_chance": 0.005050505050505051,
+    "disjoint_own_mate_in_topk_curveball_null": 0.01818181818181818,
+    "disjoint_multiplier_over_chance": 60.89999999999999,
+    "disjoint_multiplier_over_null": 16.916666666666668
+   },
+   "structure": {
+    "n": 3166,
+    "k": 10,
+    "mean_knn_jaccard": 0.591733992099762,
+    "mean_knn_jaccard_null": 0.5542274117469788,
+    "excess": 0.0375065803527832
+   }
+  },
+  "unplaced|s2": {
+   "n": 4000,
+   "occupancy_mean": 23.6515,
+   "frac_vectors_informative": 0.8,
+   "entropy_bits_of_informative_vectors": 72.26266546574503,
+   "max_possible_bits": 84.0,
+   "mate_control": {
+    "usable_pairs": 3103,
+    "k": 10,
+    "own_mate_in_topk": 0.4505317434740574,
+    "chance": 0.003222687721559781,
+    "own_mate_in_topk_curveball_null": 0.01675797615211086,
+    "multiplier_over_chance": 139.8,
+    "multiplier_over_null": 26.884615384615387,
+    "pairs_with_disjoint_mates": 1976,
+    "frac_pairs_with_disjoint_mates": 0.6368030937802127,
+    "disjoint_k": 10,
+    "disjoint_own_mate_in_topk": 0.3016194331983806,
+    "disjoint_chance": 0.005060728744939271,
+    "disjoint_own_mate_in_topk_curveball_null": 0.015182186234817813,
+    "disjoint_multiplier_over_chance": 59.6,
+    "disjoint_multiplier_over_null": 19.866666666666667
+   },
+   "structure": {
+    "n": 3200,
+    "k": 10,
+    "mean_knn_jaccard": 0.6014373898506165,
+    "mean_knn_jaccard_null": 0.5644158720970154,
+    "excess": 0.037021517753601074
+   }
+  },
+  "unplaced|s3": {
+   "n": 4000,
+   "occupancy_mean": 23.93225,
+   "frac_vectors_informative": 0.81075,
+   "entropy_bits_of_informative_vectors": 72.71803979545264,
+   "max_possible_bits": 84.0,
+   "mate_control": {
+    "usable_pairs": 3152,
+    "k": 10,
+    "own_mate_in_topk": 0.462246192893401,
+    "chance": 0.0031725888324873096,
+    "own_mate_in_topk_curveball_null": 0.015545685279187817,
+    "multiplier_over_chance": 145.70000000000002,
+    "multiplier_over_null": 29.73469387755102,
+    "pairs_with_disjoint_mates": 2015,
+    "frac_pairs_with_disjoint_mates": 0.6392766497461929,
+    "disjoint_k": 10,
+    "disjoint_own_mate_in_topk": 0.31910669975186107,
+    "disjoint_chance": 0.004962779156327543,
+    "disjoint_own_mate_in_topk_curveball_null": 0.011910669975186104,
+    "disjoint_multiplier_over_chance": 64.30000000000001,
+    "disjoint_multiplier_over_null": 26.791666666666668
+   },
+   "structure": {
+    "n": 3243,
+    "k": 10,
+    "mean_knn_jaccard": 0.5949397683143616,
+    "mean_knn_jaccard_null": 0.5565744638442993,
+    "excess": 0.038365304470062256
+   }
+  },
+  "unplaced|s4": {
+   "n": 4000,
+   "occupancy_mean": 22.8905,
+   "frac_vectors_informative": 0.79375,
+   "entropy_bits_of_informative_vectors": 71.43710599914964,
+   "max_possible_bits": 84.0,
+   "mate_control": {
+    "usable_pairs": 3057,
+    "k": 10,
+    "own_mate_in_topk": 0.47726529277069024,
+    "chance": 0.0032711808963035655,
+    "own_mate_in_topk_curveball_null": 0.01701014066077854,
+    "multiplier_over_chance": 145.9,
+    "multiplier_over_null": 28.05769230769231,
+    "pairs_with_disjoint_mates": 1959,
+    "frac_pairs_with_disjoint_mates": 0.6408243375858685,
+    "disjoint_k": 10,
+    "disjoint_own_mate_in_topk": 0.3409903011740684,
+    "disjoint_chance": 0.005104645227156712,
+    "disjoint_own_mate_in_topk_curveball_null": 0.021949974476773864,
+    "disjoint_multiplier_over_chance": 66.80000000000001,
+    "disjoint_multiplier_over_null": 15.534883720930234
+   },
+   "structure": {
+    "n": 3175,
+    "k": 10,
+    "mean_knn_jaccard": 0.587491512298584,
+    "mean_knn_jaccard_null": 0.5443444848060608,
+    "excess": 0.04314702749252319
+   }
+  },
+  "unplaced|s5": {
+   "n": 4000,
+   "occupancy_mean": 23.183,
+   "frac_vectors_informative": 0.80875,
+   "entropy_bits_of_informative_vectors": 71.474593452748,
+   "max_possible_bits": 84.0,
+   "mate_control": {
+    "usable_pairs": 3132,
+    "k": 10,
+    "own_mate_in_topk": 0.47956577266922096,
+    "chance": 0.0031928480204342275,
+    "own_mate_in_topk_curveball_null": 0.018518518518518517,
+    "multiplier_over_chance": 150.2,
+    "multiplier_over_null": 25.896551724137932,
+    "pairs_with_disjoint_mates": 1937,
+    "frac_pairs_with_disjoint_mates": 0.6184546615581098,
+    "disjoint_k": 10,
+    "disjoint_own_mate_in_topk": 0.32369643779039753,
+    "disjoint_chance": 0.005162622612287042,
+    "disjoint_own_mate_in_topk_curveball_null": 0.016520392359318535,
+    "disjoint_multiplier_over_chance": 62.7,
+    "disjoint_multiplier_over_null": 19.59375
+   },
+   "structure": {
+    "n": 3235,
+    "k": 10,
+    "mean_knn_jaccard": 0.5885100960731506,
+    "mean_knn_jaccard_null": 0.5434674620628357,
+    "excess": 0.04504263401031494
+   }
+  },
+  "unident_contig|s1": {
+   "n": 4000,
+   "occupancy_mean": 59.7765,
+   "frac_vectors_informative": 0.842,
+   "entropy_bits_of_informative_vectors": 72.02099685088469,
+   "max_possible_bits": 84.0,
+   "mate_control": {
+    "usable_pairs": 3946,
+    "k": 10,
+    "own_mate_in_topk": 0.29472883933096805,
+    "chance": 0.002534211860111505,
+    "own_mate_in_topk_curveball_null": 0.012924480486568676,
+    "multiplier_over_chance": 116.3,
+    "multiplier_over_null": 22.80392156862745,
+    "pairs_with_disjoint_mates": 2900,
+    "frac_pairs_with_disjoint_mates": 0.7349214394323366,
+    "disjoint_k": 10,
+    "disjoint_own_mate_in_topk": 0.22482758620689655,
+    "disjoint_chance": 0.0034482758620689655,
+    "disjoint_own_mate_in_topk_curveball_null": 0.011724137931034483,
+    "disjoint_multiplier_over_chance": 65.2,
+    "disjoint_multiplier_over_null": 19.176470588235293
+   },
+   "structure": {
+    "n": 3368,
+    "k": 10,
+    "mean_knn_jaccard": 0.7848976254463196,
+    "mean_knn_jaccard_null": 0.7439641952514648,
+    "excess": 0.040933430194854736
+   }
+  },
+  "unident_contig|s2": {
+   "n": 4000,
+   "occupancy_mean": 59.5915,
+   "frac_vectors_informative": 0.854,
+   "entropy_bits_of_informative_vectors": 71.47408204703927,
+   "max_possible_bits": 84.0,
+   "mate_control": {
+    "usable_pairs": 3926,
+    "k": 10,
+    "own_mate_in_topk": 0.29266428935303107,
+    "chance": 0.0025471217524197657,
+    "own_mate_in_topk_curveball_null": 0.016046867040244522,
+    "multiplier_over_chance": 114.89999999999999,
+    "multiplier_over_null": 18.23809523809524,
+    "pairs_with_disjoint_mates": 2833,
+    "frac_pairs_with_disjoint_mates": 0.7215995924605196,
+    "disjoint_k": 10,
+    "disjoint_own_mate_in_topk": 0.21990822449699965,
+    "disjoint_chance": 0.0035298270384751147,
+    "disjoint_own_mate_in_topk_curveball_null": 0.011648429226967879,
+    "disjoint_multiplier_over_chance": 62.3,
+    "disjoint_multiplier_over_null": 18.87878787878788
+   },
+   "structure": {
+    "n": 3416,
+    "k": 10,
+    "mean_knn_jaccard": 0.7914087772369385,
+    "mean_knn_jaccard_null": 0.7495686411857605,
+    "excess": 0.04184013605117798
+   }
+  },
+  "unident_contig|s3": {
+   "n": 4000,
+   "occupancy_mean": 59.60375,
+   "frac_vectors_informative": 0.85675,
+   "entropy_bits_of_informative_vectors": 71.76031183712365,
+   "max_possible_bits": 84.0,
+   "mate_control": {
+    "usable_pairs": 3945,
+    "k": 10,
+    "own_mate_in_topk": 0.2922686945500634,
+    "chance": 0.0025348542458808617,
+    "own_mate_in_topk_curveball_null": 0.013181242078580482,
+    "multiplier_over_chance": 115.30000000000001,
+    "multiplier_over_null": 22.173076923076923,
+    "pairs_with_disjoint_mates": 2913,
+    "frac_pairs_with_disjoint_mates": 0.7384030418250951,
+    "disjoint_k": 10,
+    "disjoint_own_mate_in_topk": 0.23171987641606592,
+    "disjoint_chance": 0.0034328870580157913,
+    "disjoint_own_mate_in_topk_curveball_null": 0.014418125643666324,
+    "disjoint_multiplier_over_chance": 67.5,
+    "disjoint_multiplier_over_null": 16.071428571428573
+   },
+   "structure": {
+    "n": 3427,
+    "k": 10,
+    "mean_knn_jaccard": 0.7881147265434265,
+    "mean_knn_jaccard_null": 0.7462533116340637,
+    "excess": 0.04186141490936279
+   }
+  },
+  "unident_contig|s4": {
+   "n": 4000,
+   "occupancy_mean": 59.45525,
+   "frac_vectors_informative": 0.8485,
+   "entropy_bits_of_informative_vectors": 72.16035998803775,
+   "max_possible_bits": 84.0,
+   "mate_control": {
+    "usable_pairs": 3938,
+    "k": 10,
+    "own_mate_in_topk": 0.30192991366175725,
+    "chance": 0.0025393600812595226,
+    "own_mate_in_topk_curveball_null": 0.01218892839004571,
+    "multiplier_over_chance": 118.9,
+    "multiplier_over_null": 24.770833333333332,
+    "pairs_with_disjoint_mates": 2949,
+    "frac_pairs_with_disjoint_mates": 0.7488572879634332,
+    "disjoint_k": 10,
+    "disjoint_own_mate_in_topk": 0.24855883350288233,
+    "disjoint_chance": 0.00339097999321804,
+    "disjoint_own_mate_in_topk_curveball_null": 0.012207527975584944,
+    "disjoint_multiplier_over_chance": 73.3,
+    "disjoint_multiplier_over_null": 20.36111111111111
+   },
+   "structure": {
+    "n": 3394,
+    "k": 10,
+    "mean_knn_jaccard": 0.783207356929779,
+    "mean_knn_jaccard_null": 0.741725742816925,
+    "excess": 0.041481614112854004
+   }
+  },
+  "unident_contig|s5": {
+   "n": 4000,
+   "occupancy_mean": 59.51025,
+   "frac_vectors_informative": 0.85525,
+   "entropy_bits_of_informative_vectors": 71.71235047419574,
+   "max_possible_bits": 84.0,
+   "mate_control": {
+    "usable_pairs": 3937,
+    "k": 10,
+    "own_mate_in_topk": 0.2987045974091948,
+    "chance": 0.00254000508001016,
+    "own_mate_in_topk_curveball_null": 0.010668021336042673,
+    "multiplier_over_chance": 117.6,
+    "multiplier_over_null": 27.999999999999996,
+    "pairs_with_disjoint_mates": 2908,
+    "frac_pairs_with_disjoint_mates": 0.7386334772669545,
+    "disjoint_k": 10,
+    "disjoint_own_mate_in_topk": 0.23796423658872076,
+    "disjoint_chance": 0.0034387895460797797,
+    "disjoint_own_mate_in_topk_curveball_null": 0.01031636863823934,
+    "disjoint_multiplier_over_chance": 69.2,
+    "disjoint_multiplier_over_null": 23.066666666666666
+   },
+   "structure": {
+    "n": 3421,
+    "k": 10,
+    "mean_knn_jaccard": 0.7862553000450134,
+    "mean_knn_jaccard_null": 0.7468986511230469,
+    "excess": 0.03935664892196655
+   }
+  },
+  "identified|s1": {
+   "n": 4000,
+   "occupancy_mean": 65.989,
+   "frac_vectors_informative": 0.8425,
+   "entropy_bits_of_informative_vectors": 62.71576168734592,
+   "max_possible_bits": 84.0,
+   "mate_control": {
+    "usable_pairs": 3975,
+    "k": 10,
+    "own_mate_in_topk": 0.25660377358490566,
+    "chance": 0.0025157232704402514,
+    "own_mate_in_topk_curveball_null": 0.013333333333333334,
+    "multiplier_over_chance": 102.0,
+    "multiplier_over_null": 19.245283018867923,
+    "pairs_with_disjoint_mates": 3071,
+    "frac_pairs_with_disjoint_mates": 0.7725786163522013,
+    "disjoint_k": 10,
+    "disjoint_own_mate_in_topk": 0.2022142624552263,
+    "disjoint_chance": 0.0032562683165092803,
+    "disjoint_own_mate_in_topk_curveball_null": 0.014001953760989906,
+    "disjoint_multiplier_over_chance": 62.1,
+    "disjoint_multiplier_over_null": 14.441860465116278
+   },
+   "structure": {
+    "n": 3370,
+    "k": 10,
+    "mean_knn_jaccard": 0.8449015617370605,
+    "mean_knn_jaccard_null": 0.8096261620521545,
+    "excess": 0.035275399684906006
+   }
+  },
+  "identified|s2": {
+   "n": 4000,
+   "occupancy_mean": 66.3655,
+   "frac_vectors_informative": 0.84325,
+   "entropy_bits_of_informative_vectors": 61.60814322341074,
+   "max_possible_bits": 84.0,
+   "mate_control": {
+    "usable_pairs": 3974,
+    "k": 10,
+    "own_mate_in_topk": 0.2551585304479114,
+    "chance": 0.0025163563160543532,
+    "own_mate_in_topk_curveball_null": 0.014091595369904378,
+    "multiplier_over_chance": 101.4,
+    "multiplier_over_null": 18.107142857142858,
+    "pairs_with_disjoint_mates": 3061,
+    "frac_pairs_with_disjoint_mates": 0.7702566683442376,
+    "disjoint_k": 10,
+    "disjoint_own_mate_in_topk": 0.20156811499509963,
+    "disjoint_chance": 0.003266906239790918,
+    "disjoint_own_mate_in_topk_curveball_null": 0.016987912446912775,
+    "disjoint_multiplier_over_chance": 61.699999999999996,
+    "disjoint_multiplier_over_null": 11.865384615384613
+   },
+   "structure": {
+    "n": 3373,
+    "k": 10,
+    "mean_knn_jaccard": 0.8485956788063049,
+    "mean_knn_jaccard_null": 0.8146480321884155,
+    "excess": 0.033947646617889404
+   }
+  },
+  "identified|s3": {
+   "n": 4000,
+   "occupancy_mean": 65.964,
+   "frac_vectors_informative": 0.84125,
+   "entropy_bits_of_informative_vectors": 62.43017726306553,
+   "max_possible_bits": 84.0,
+   "mate_control": {
+    "usable_pairs": 3967,
+    "k": 10,
+    "own_mate_in_topk": 0.24930678094277792,
+    "chance": 0.0025207965717166624,
+    "own_mate_in_topk_curveball_null": 0.01209982354423998,
+    "multiplier_over_chance": 98.9,
+    "multiplier_over_null": 20.604166666666664,
+    "pairs_with_disjoint_mates": 3066,
+    "frac_pairs_with_disjoint_mates": 0.7728762288883287,
+    "disjoint_k": 10,
+    "disjoint_own_mate_in_topk": 0.2045009784735812,
+    "disjoint_chance": 0.0032615786040443573,
+    "disjoint_own_mate_in_topk_curveball_null": 0.007501630789302022,
+    "disjoint_multiplier_over_chance": 62.7,
+    "disjoint_multiplier_over_null": 27.26086956521739
+   },
+   "structure": {
+    "n": 3365,
+    "k": 10,
+    "mean_knn_jaccard": 0.844933271408081,
+    "mean_knn_jaccard_null": 0.8105174899101257,
+    "excess": 0.03441578149795532
+   }
+  },
+  "identified|s4": {
+   "n": 4000,
+   "occupancy_mean": 66.1545,
+   "frac_vectors_informative": 0.8415,
+   "entropy_bits_of_informative_vectors": 62.26267847982952,
+   "max_possible_bits": 84.0,
+   "mate_control": {
+    "usable_pairs": 3975,
+    "k": 10,
+    "own_mate_in_topk": 0.2420125786163522,
+    "chance": 0.0025157232704402514,
+    "own_mate_in_topk_curveball_null": 0.013333333333333334,
+    "multiplier_over_chance": 96.2,
+    "multiplier_over_null": 18.150943396226413,
+    "pairs_with_disjoint_mates": 3073,
+    "frac_pairs_with_disjoint_mates": 0.7730817610062893,
+    "disjoint_k": 10,
+    "disjoint_own_mate_in_topk": 0.19297103807354377,
+    "disjoint_chance": 0.0032541490400260333,
+    "disjoint_own_mate_in_topk_curveball_null": 0.01366742596810934,
+    "disjoint_multiplier_over_chance": 59.3,
+    "disjoint_multiplier_over_null": 14.119047619047619
+   },
+   "structure": {
+    "n": 3366,
+    "k": 10,
+    "mean_knn_jaccard": 0.844321608543396,
+    "mean_knn_jaccard_null": 0.811021625995636,
+    "excess": 0.03329998254776001
+   }
+  },
+  "identified|s5": {
+   "n": 4000,
+   "occupancy_mean": 65.77225,
+   "frac_vectors_informative": 0.827,
+   "entropy_bits_of_informative_vectors": 63.35019587947454,
+   "max_possible_bits": 84.0,
+   "mate_control": {
+    "usable_pairs": 3971,
+    "k": 10,
+    "own_mate_in_topk": 0.2518257365902795,
+    "chance": 0.0025182573659027953,
+    "own_mate_in_topk_curveball_null": 0.013094938302694535,
+    "multiplier_over_chance": 99.99999999999999,
+    "multiplier_over_null": 19.23076923076923,
+    "pairs_with_disjoint_mates": 3029,
+    "frac_pairs_with_disjoint_mates": 0.7627801561319567,
+    "disjoint_k": 10,
+    "disjoint_own_mate_in_topk": 0.19247276328821394,
+    "disjoint_chance": 0.003301419610432486,
+    "disjoint_own_mate_in_topk_curveball_null": 0.009904258831297457,
+    "disjoint_multiplier_over_chance": 58.300000000000004,
+    "disjoint_multiplier_over_null": 19.433333333333337
+   },
+   "structure": {
+    "n": 3308,
+    "k": 10,
+    "mean_knn_jaccard": 0.8403273224830627,
+    "mean_knn_jaccard_null": 0.8055875301361084,
+    "excess": 0.034739792346954346
+   }
+  }
+ },
+ "manifest": {
+  "script": "experiments/recurrence_grouping.py",
+  "git_sha": "c4beb5176a109cab90be4551511a45f8938562e9",
+  "tree_dirty": false,
+  "script_sha256": "2b192ac9aba6ca2e",
+  "parameters": {
+   "seed": "1",
+   "run_dir": "/tmp/claude-0/wk/recurrence/full",
+   "panel": "/home/user/hapax/results/recurrence/panel.tsv",
+   "group_by": "water",
+   "piles": "['unplaced', 'unident_contig', 'identified']",
+   "k": "10",
+   "max_reads": "4000",
+   "queries": "/home/user/hapax/results/recurrence/queries_s1-5.tsv",
+   "out": "/tmp/claude-0/wk/recurrence/clean",
+   "label": "grouping"
+  },
+  "operating_points": {
+   "presence": "at least one shared 31-mer",
+   "k": 31,
+   "topk": 10
+  },
+  "seconds": 74.8
+ }
+}
