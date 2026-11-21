@@ -68,6 +68,24 @@ def main() -> None:
                 win.append(float((pair[m] == code).mean()))
         w = np.array(win)
         wc = w - w.mean()
+        # Per mate as well as pair level: CLAUDE.md's rule, and it is load-bearing here.
+        # The companion thread and this script first disagreed on the unidentifiable class
+        # (1.13 against 1.24) and the cause was that it scored mate 1 alone - that class has
+        # the widest mate split of any here, so the pooled figure sits between the two mates
+        # and is not comparable with either.
+        per_mate = {}
+        for m, cm in ((1, c1), (2, c2)):
+            wm = float((cm == code).mean())
+            bm = float(np.sqrt(wm * (1 - wm) / n))
+            Wm = []
+            for lo in range(0, int(spot.max()) - n, n):
+                mk = (spot > lo) & (spot <= lo + n)
+                if mk.sum() >= n * 0.9:
+                    Wm.append(float((cm[mk] == code).mean()))
+            Wma = np.array(Wm)
+            per_mate[f"mate{m}"] = {"whole_library": wm,
+                                    "inflation_all_windows": float(Wma.std(ddof=1) / bm)}
+
         five = np.array([float((pair[(spot > s * args.block_stride)
                                     & (spot <= s * args.block_stride + n)] == code).mean())
                          for s in range(5)])
@@ -79,6 +97,7 @@ def main() -> None:
             "lag1_autocorrelation": float((wc[:-1] * wc[1:]).sum() / (wc * wc).sum()),
             "five_block_mean": float(five.mean()),
             "five_block_minus_whole_pct_points": float((five.mean() - whole) * 100),
+            **per_mate,
         }
     # The companion thread reads 1.13 for its unidentifiable-contig class where this reads
     # 1.24, so the factor for that class ships as a range. These sub-definitions test whether
@@ -113,8 +132,9 @@ def main() -> None:
     print(f"{'class':11s} {'whole':>8s} {'nwin':>4s} {'inflation':>9s} {'from 5 blk':>10s} {'lag1':>6s} {'5blk-whole':>10s}")
     for name, v in out["classes"].items():
         print(f"{name:11s} {v['whole_library']*100:7.3f}% {v['windows']:4d} "
-              f"{v['inflation_all_windows']:9.2f} {v['inflation_from_5_blocks_only']:10.2f} "
-              f"{v['lag1_autocorrelation']:+6.2f} {v['five_block_minus_whole_pct_points']:+10.3f}")
+              f"{v['inflation_all_windows']:9.3f} {v['inflation_from_5_blocks_only']:10.2f} "
+              f"{v['lag1_autocorrelation']:+6.2f} {v['five_block_minus_whole_pct_points']:+10.3f} "
+              f"  m1 {v['mate1']['inflation_all_windows']:.3f} m2 {v['mate2']['inflation_all_windows']:.3f}")
 
 
 if __name__ == "__main__":

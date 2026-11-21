@@ -12,7 +12,15 @@
    "inflation_from_5_blocks_only": 1.1514506385984435,
    "lag1_autocorrelation": -0.016544024152476616,
    "five_block_mean": 0.157576,
-   "five_block_minus_whole_pct_points": 0.04364053681362445
+   "five_block_minus_whole_pct_points": 0.04364053681362445,
+   "mate1": {
+    "whole_library": 0.18229849560611433,
+    "inflation_all_windows": 1.1480687224396648
+   },
+   "mate2": {
+    "whole_library": 0.19653464393995618,
+    "inflation_all_windows": 1.0864907742565417
+   }
   },
   "rrna": {
    "whole_library": 0.3944372518675503,
@@ -23,7 +31,15 @@
    "inflation_from_5_blocks_only": 0.6506860047950723,
    "lag1_autocorrelation": 0.24484429538940192,
    "five_block_mean": 0.39288,
-   "five_block_minus_whole_pct_points": -0.1557251867550291
+   "five_block_minus_whole_pct_points": -0.1557251867550291,
+   "mate1": {
+    "whole_library": 0.3875999516219032,
+    "inflation_all_windows": 1.4299012561592117
+   },
+   "mate2": {
+    "whole_library": 0.38063701034356695,
+    "inflation_all_windows": 1.4266766756524645
+   }
   },
   "identified": {
    "whole_library": 0.3489432867602526,
@@ -34,7 +50,15 @@
    "inflation_from_5_blocks_only": 0.4412516712142116,
    "lag1_autocorrelation": 0.29624905272923757,
    "five_block_mean": 0.34966400000000003,
-   "five_block_minus_whole_pct_points": 0.07207132397474281
+   "five_block_minus_whole_pct_points": 0.07207132397474281,
+   "mate1": {
+    "whole_library": 0.3332299114076102,
+    "inflation_all_windows": 1.5709795198989132
+   },
+   "mate2": {
+    "whole_library": 0.32744114685409514,
+    "inflation_all_windows": 1.4893818996715278
+   }
   },
   "unident": {
    "whole_library": 0.09302269647417132,
@@ -45,7 +69,15 @@
    "inflation_from_5_blocks_only": 0.6242426233319872,
    "lag1_autocorrelation": -0.00655164969773244,
    "five_block_mean": 0.093512,
-   "five_block_minus_whole_pct_points": 0.048930352582868264
+   "five_block_minus_whole_pct_points": 0.048930352582868264,
+   "mate1": {
+    "whole_library": 0.08674511156740453,
+    "inflation_all_windows": 1.1312421991546282
+   },
+   "mate2": {
+    "whole_library": 0.08256058944312962,
+    "inflation_all_windows": 1.3898638621401291
+   }
   },
   "other_ctg": {
    "whole_library": 0.006457170266161995,
@@ -56,7 +88,15 @@
    "inflation_from_5_blocks_only": 0.5401800072276886,
    "lag1_autocorrelation": 0.1303339506218383,
    "five_block_mean": 0.006368,
-   "five_block_minus_whole_pct_points": -0.008917026616199475
+   "five_block_minus_whole_pct_points": -0.008917026616199475,
+   "mate1": {
+    "whole_library": 0.010126529796967756,
+    "inflation_all_windows": 1.2796316830156589
+   },
+   "mate2": {
+    "whole_library": 0.012826609419252101,
+    "inflation_all_windows": 1.1259616338473835
+   }
   }
  },
  "unident_subdefinitions": {
@@ -80,9 +120,9 @@
  "reading": "Widen a binomial interval on rrna or identified by its inflation_all_windows factor; the residue classes (none, unident) are near 1 and barely move. Never take the factor from 5 blocks: that column is a 5-sample variance and reads below 1 where the truth is 1.6.",
  "manifest": {
   "script": "experiments/block_dispersion.py",
-  "git_sha": "628449eb1ce87bddaddad6f99d4afd32799e590e-dirty",
+  "git_sha": "e3c7749c9f0fee96df98dc541af82e1a438272c3-dirty",
   "tree_dirty": true,
-  "script_sha256": "34ff3561adb1a43f",
+  "script_sha256": "107e8adba2d02b93",
   "parameters": {
    "seed": "1",
    "classes": "/home/user/hapax/data/work/library_label_classes.npz",

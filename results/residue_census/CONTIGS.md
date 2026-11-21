@@ -138,13 +138,21 @@ established that the cascade's "five seeds" are five contiguous regions of one f
 (`results/block_position_bias/`). Re-derived here from the whole-library label table as a
 second instrument, over all 87 non-overlapping 100,000-pair windows:
 
-| pair class | whole library | between-window SD / binomial SD | lag-1 autocorrelation |
-|---|---|---|---|
-| none (unplaced) | 15.714% | **1.09** | -0.02 |
-| unidentifiable contig | 9.302% | **1.24** | -0.01 |
-| rRNA | 39.444% | **1.44** | +0.24 |
-| identified | 34.894% | **1.61** | +0.30 |
-| outside the split | 0.646% | 1.28 | +0.13 |
+| pair class | whole library | mate 1 | mate 2 | either mate | lag-1 autocorrelation |
+|---|---|---|---|---|---|
+| none (unplaced) | 15.714% | 1.148 | 1.086 | **1.092** | -0.02 |
+| unidentifiable contig | 9.302% | 1.131 | 1.390 | **1.243** | -0.01 |
+| rRNA | 39.444% | 1.430 | 1.427 | **1.443** | +0.24 |
+| identified | 34.894% | 1.571 | 1.489 | **1.609** | +0.30 |
+| outside the split | 0.646% | 1.280 | 1.126 | 1.280 | +0.13 |
+
+Per mate as well as pooled, because the rule earns its place here: this script and the
+companion thread's first disagreed on the unidentifiable class, 1.24 against 1.13, and the
+cause was that one of them scored mate 1 alone — **the class we happened to disagree on is
+the one with the widest mate split of any here (1.131 against 1.390)**, so the pooled figure
+sits between the mates and is not comparable with either. Every per-mate figure above now
+reproduces the companion thread's to three digits from independent labels. Use the either-mate
+column for cascade removal, since a pair is removed when either mate matches.
 
 It reproduces the companion thread's factors and its conclusion: **the positional structure
 is in the abundant material, not in the residue.** The five blocks' means sit within 0.16
