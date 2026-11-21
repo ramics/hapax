@@ -171,6 +171,10 @@ def main() -> None:
     ap.add_argument("--keep-tsv", action="store_true",
                     help="keep the tool's raw output per subject; off by default because it "
                          "is ~10 MB per subject of what the npz already holds")
+    ap.add_argument("--timings-name", default="pass_timings.json",
+                    help="the progress file's name. Shards write their own: one shared file "
+                         "would have each shard's write erase the others' progress, and the "
+                         "run would look like it had done a fraction of what it had")
     ap.add_argument("--budget-hours", type=float, default=0.0,
                     help="stop starting new subjects after this long. 0 means no limit; the "
                          "pilot sets it so the measurement of the rate cannot itself run "
@@ -227,7 +231,7 @@ def main() -> None:
                 else:
                     shutil.rmtree(leftover, ignore_errors=True)
         timings[acc] = t
-        (args.out / "pass_timings.json").write_text(json.dumps(
+        (args.out / args.timings_name).write_text(json.dumps(
             {"queries": len(names), "subjects_done": done, "timings": timings,
              "seconds_elapsed": round(time.perf_counter() - t_start, 1)}, indent=2) + "\n")
 

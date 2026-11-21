@@ -138,6 +138,12 @@ def main(argv: list[str] | None = None) -> int:
                          "rather than a dead run")
     ap.add_argument("--trim-r2", type=int, default=14)
     ap.add_argument("--threads", type=int, default=8)
+    ap.add_argument("--shards", type=int, default=1,
+                    help="how many subjects to process at once. The scan is one "
+                         "single-threaded sweep per library, so one subject at a time "
+                         "leaves most of eight vCPU idle; each shard also holds its own "
+                         "copy of the k-mer table and its own FASTQ on disk, which is what "
+                         "bounds this rather than the cores")
     ap.add_argument("--volume-size", type=int, default=DEFAULT_VOLUME_GB)
     ap.add_argument("--volume-throughput", type=int, default=DEFAULT_VOLUME_THROUGHPUT)
     ap.add_argument("--volume-iops", type=int, default=DEFAULT_VOLUME_IOPS)
@@ -192,6 +198,12 @@ def main(argv: list[str] | None = None) -> int:
         CODE_KEY_NAME=Path(code_key).name, QUERY_SET=args.query_set,
         QUERY_RUN=args.query_run, SUBJECT_COUNT=args.subjects,
         BUDGET_HOURS=args.budget_hours, TRIM_R2=args.trim_r2, THREADS=args.threads,
+        SHARDS=args.shards,
+        # fasterq-dump is the only threaded step, so the threads are divided between the
+        # shards rather than each shard asking for all of them. The reference project lost a
+        # fourteen-hour ceiling to eight workers each asking for three threads on eight
+        # cores, with nothing in the launcher able to notice (ec2_common.py).
+        SHARD_THREADS=max(1, args.threads // max(1, args.shards)),
         SRA_VERSION=SRA_VERSION, VDB_GUID=VDB_GUID,
     )
     run_script = render(TEMPLATE, None, **tokens)

@@ -115,6 +115,13 @@ def main() -> None:
     pile = np.array([x.split("|")[0] for x in names])
     dbin = np.array([x.split("|")[1] for x in names])
     own_depth = np.array([int(x.split("|")[2]) for x in names])
+    # The five seeds are five flow-cell blocks of this library scanned in ONE query file,
+    # because the cost of this pass is one scan per subject and is independent of how many
+    # queries that scan carries. So the seed travels in the read's name and the spread across
+    # seeds is computed here rather than by five runs of the instrument (CLAUDE.md: a
+    # headline number reports its spread, and five runs would also be five different passes).
+    seed_of = np.array([x.split("|")[4] if len(x.split("|")) > 4 else f"s{args.seed}"
+                        for x in names])
 
     # ---------------------------------------------------------------- the three denominators
     groups = {"runs": [[i] for i in range(len(runs))], "waters": None, "dates": None}
@@ -171,7 +178,26 @@ def main() -> None:
                         key = f"{p}|{b}|mate{mate}|{point}|{gname}"
                         depth_here = med[mate][:, sel]
                         seen = depth_here[present[:, sel]]
+                        # Per-seed, so a cell's headline numbers carry their spread across
+                        # the five blocks rather than one pooled figure.
+                        per_seed = {}
+                        for s in sorted(set(seed_of[sel])):
+                            m = sel & (seed_of == s)
+                            if m.sum() < 20:
+                                continue
+                            w = occ[m].astype(float)
+                            per_seed[s] = {"n": int(m.sum()),
+                                           "occupancy_p50": float(np.median(w)),
+                                           "occupancy_mean": float(w.mean()),
+                                           "frac_in_none": float((w == 0).mean()),
+                                           "frac_in_all": float((w == total).mean())}
                         out["cells"][key] = {
+                            "per_seed": per_seed,
+                            "seed_spread": {
+                                field: [round(min(x[field] for x in per_seed.values()), 4),
+                                        round(max(x[field] for x in per_seed.values()), 4)]
+                                for field in ("occupancy_mean", "frac_in_none",
+                                              "frac_in_all")} if per_seed else {},
                             "n": int(sel.sum()),
                             "own_depth_median": float(np.median(own_depth[sel])),
                             "denominator": total,

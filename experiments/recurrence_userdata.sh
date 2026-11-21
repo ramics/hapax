@@ -124,19 +124,52 @@ test -s /opt/hapax/subjects.txt || die "no subjects were selected"
 wc -l < /opt/hapax/subjects.txt
 cp /opt/hapax/subjects.txt /opt/hapax/out/subjects.txt
 
-# ---------------------------------------------------------------- the pass
+# ---------------------------------------------------------------- the pass, in shards
+# WHY SHARDS AND NOT THREADS. The scan is one single-threaded sweep of a library's reads,
+# and `fasterq-dump` is the only threaded step, so one subject at a time leaves most of
+# eight vCPU idle. Shards are whole subjects handed to separate processes, which parallelises
+# both steps without touching the tool. Each shard gets its own work directory, because they
+# delete their own FASTQ as they go and a shared directory would have one shard's cleanup
+# remove another's input.
+#
+# ROUND ROBIN, NOT CONTIGUOUS BLOCKS. The subject list is ordered by date, so contiguous
+# blocks would put one season in each shard and a shard that died would remove a season
+# rather than a sample of the panel. Interleaving makes a partial run a thinner panel
+# instead of a biased one.
 mkdir -p /opt/hapax/work
+"$PYBIN" - <<PY || die "the shards could not be built"
+from pathlib import Path
+subs = Path("/opt/hapax/subjects.txt").read_text().split()
+n = max(1, @@SHARDS@@)
+for i in range(n):
+    Path(f"/opt/hapax/shard{i}.txt").write_text("\n".join(subs[i::n]) + "\n")
+    print(f"shard {i}: {len(subs[i::n])} subjects")
+PY
+
 set +e
-"$PYBIN" experiments/recurrence_pass.py \
-  --queries /opt/hapax/queries.tsv \
-  --subjects $(cat /opt/hapax/subjects.txt) \
-  --trim-r2 @@TRIM_R2@@ --threads @@THREADS@@ \
-  --tool "$TOOL" --work /opt/hapax/work --out /opt/hapax/out \
-  --budget-hours @@BUDGET_HOURS@@ > /opt/hapax/log-pass.txt 2>&1
-RC=$?
+PIDS=""
+for i in $(seq 0 $(( @@SHARDS@@ - 1 ))); do
+  mkdir -p "/opt/hapax/work/shard$i"
+  "$PYBIN" experiments/recurrence_pass.py \
+    --queries /opt/hapax/queries.tsv \
+    --subjects $(cat "/opt/hapax/shard$i.txt") \
+    --trim-r2 @@TRIM_R2@@ --threads @@SHARD_THREADS@@ \
+    --tool "$TOOL" --work "/opt/hapax/work/shard$i" --out /opt/hapax/out \
+    --timings-name "pass_timings_shard$i.json" \
+    --budget-hours @@BUDGET_HOURS@@ > "/opt/hapax/log-pass$i.txt" 2>&1 &
+  PIDS="$PIDS $!"
+done
+RC=0
+for p in $PIDS; do wait "$p" || RC=$?; done
 set -e
-tail -40 /opt/hapax/log-pass.txt || true
-cp /opt/hapax/log-pass.txt /opt/hapax/out/ || true
-[ "$RC" -eq 0 ] || die "the recurrence pass exited $RC" "$RC"
+for i in $(seq 0 $(( @@SHARDS@@ - 1 ))); do
+  tail -15 "/opt/hapax/log-pass$i.txt" || true
+  cp "/opt/hapax/log-pass$i.txt" /opt/hapax/out/ || true
+done
+# A shard that failed is reported and does not discard the shards that worked: the output is
+# one npz per subject, so a short panel is a smaller denominator and not a broken table.
+[ "$RC" -eq 0 ] || echo "=== at least one shard exited $RC; see the per-shard logs ==="
+ls /opt/hapax/out/witness_*.npz | wc -l > /opt/hapax/out/subjects_scored.txt
+[ -s /opt/hapax/out/subjects_scored.txt ] || die "no subject was scored"
 
 die "the recurrence pass finished" 0

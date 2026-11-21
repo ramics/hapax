@@ -1,8 +1,8 @@
 {
   "script": "experiments/recurrence_queries.py",
-  "git_sha": "909c834e98f7bda1fafb8e6f8a56248bbe87c83f",
-  "tree_dirty": false,
-  "script_sha256": "37dea58d89457ddc",
+  "git_sha": "9ef0f40e75fa0a90aa70b9b0d9140e63e59d91ef-dirty",
+  "tree_dirty": true,
+  "script_sha256": "d00f5154152c2a60",
   "parameters": {
     "seed": "1",
     "r1": "/home/user/hapax/data/berlin/SRR23973193_1.fastq.gz",
@@ -91,7 +91,7 @@
     "trim_r2": 14
   },
   "timings": {
-    "depth_pass_seconds": 79.6,
-    "total_seconds": 81.1
+    "depth_pass_seconds": 0.0,
+    "total_seconds": 2.1
   }
 }

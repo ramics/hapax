@@ -231,12 +231,12 @@ def main() -> None:
         if sp not in wanted:
             continue
         pile, dbin = wanted[sp]
-        rows.append((f"{pile}|{dbin}|{depth[sp]}|{sp}", s1, s2))
+        rows.append((f"{pile}|{dbin}|{depth[sp]}|{sp}|s{args.seed}", s1, s2))
         # The null is drawn from the same reads rather than from a separate sample, so it
         # carries the same composition, the same length and the same error content.
         if null_quota[pile] < args.null_per_pile:
             null_quota[pile] += 1
-            rows.append((f"shuffled-{pile}|{dbin}|{depth[sp]}|{sp}",
+            rows.append((f"shuffled-{pile}|{dbin}|{depth[sp]}|{sp}|s{args.seed}",
                          shuffled(s1, rng), shuffled(s2, rng)))
 
     if len(rows) < 0.5 * len(wanted):
