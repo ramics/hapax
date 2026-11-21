@@ -40,7 +40,8 @@ that nothing can name is not a hidden coding virus. **A profile search on the de
 residue contigs does not find a virus, and the reason is not that the contigs were too
 short.**
 
-**And it is not ribosomal either, which this report first said and had to withdraw.** The
+**And it is not ribosomal at the cascade's operating point either, which this report
+first stated the other way and had to withdraw.** The
 Rfam excess above is six LSU/SSU hits against two in the control, and six is not a
 mechanism. The residue thread put the reading to a direct test
 (`experiments/top_contig_rrna_check.py`, `results/residue_census/top_contig_rrna_s*.json`,
@@ -52,7 +53,11 @@ ribosomal - reads a median of 464 and clears the threshold on every single one. 
 are not near the line; they are nowhere near it.
 
 So the honest statement is the stronger one: **the deepest unnameable sequence here is
-non-coding AND non-ribosomal.** That makes the anti-correlation below more interesting
+non-coding, and not ribosomal at the threshold that defines the rest of this pipeline.**
+That instrument is minimap2 `sr`, which answers whether the split's threshold nearly
+caught a contig and cannot see divergent ribosomal RNA, so it does not license "not
+ribosomal at all"; its `asm20` sensitivity arm failed as an instrument, with the
+known-positive falling from 100% to 49.5% over the line. That makes the anti-correlation below more interesting
 rather than less, because the easy explanation for it has been excluded by measurement.
 
 ## Pile two: the 2,832 genuinely new contigs from unplaced pairs
@@ -102,13 +107,31 @@ assembly at all.
    carry a Pfam family at the curators' own threshold, from reads that four nucleotide and
    two protein indexes did not place. That is consistent with the holdout ladder, where
    nucleotide identification dies at 20% divergence and protein is last standing.
-3. **Rfam's excess on the new contigs is one point and unexplained.** It fires on 2.1%
-   of new contigs (59 of 2,832) against 0.94% of the control, mostly large-subunit rRNA.
-   At that count it is above noise where the top-200's six hits were not, but it has not
-   had the direct SILVA test the top 200 got, and it sits oddly: those contigs were built
-   from pairs that had no SILVA match at 40 bases in the first place. So it is either
-   divergent ribosomal sequence or Rfam reading through, and this report does not know
-   which. It is written down as an open question, not as a measured annotation gap.
+3. **Rfam's excess on the new contigs is a property of the assembly, not of novelty.**
+   Splitting the Rfam column by model answers more than the column did. The ribosomal
+   covariance models fire on **1.80%** of new contigs against **0.62%** of identified
+   non-ribosomal contigs and **0.54%** of unidentifiable ones - so roughly 0.6% is what
+   those models read on real, length-matched, non-ribosomal sequence, and the dinucleotide
+   shuffle reads 0.00%, which is the pair of calibrations this field was missing. The
+   residue is about three times that floor, on 51 counts against 17.
+   **But the re-derived arm reads 2.51%, higher than the residue itself** - and those
+   contigs are sequence already in our own assembly, assembled the same way from the same
+   read class. So whatever produces the excess tracks *assembled from shallow unplaced
+   pairs*, not *new*, and it cannot be read as an annotation gap in the cascade.
+   The mechanism is still open, and two measurements bound it. The residue thread ran the
+   split's own SILVA threshold over this pile
+   (`results/residue_census/resasm_new_rrna_s*.json`, 5 seeds): 99.1% have zero matching
+   bases, 0.4% reach 40 and 0.2% reach 100, while the known-positive rRNA arm reads a
+   median 263-270 and clears every threshold on every contig. So there are about five
+   times as many covariance-model hits as there is sequence similarity minimap2 `sr` can
+   see. That instrument answers "would the cascade's own threshold nearly have caught
+   this" and cannot see divergent ribosomal RNA, and its `asm20` sensitivity arm failed as
+   an instrument - the known-positive fell to 49.5% over the line, so the control moved
+   with the test. Settling structural reach against a model false-positive rate needs a
+   sensitive identity search neither container has, or the models run against SILVA
+   records for a calibration. **Claimed here only at that scope: not ribosomal at the
+   cascade's operating point, excess present equally in already-seen sequence, mechanism
+   open.**
 4. **Rfam is otherwise close to silent on the residue**, which closes part of the
    non-coding ladder left open in `results/README.md`: at these contig lengths, Rfam adds
    about one point over its own control and nothing like a new family. Whatever the deep
