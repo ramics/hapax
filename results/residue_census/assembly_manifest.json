@@ -1,0 +1,28 @@
+{
+  "script": "experiments/residue_assembly.py",
+  "git_sha": "f1cf87785f4b424768af5c19276dcfb16a921680",
+  "tree_dirty": false,
+  "script_sha256": "81daa8ce299175e7",
+  "parameters": {
+    "seed": "1",
+    "r1": "/home/user/hapax/data/berlin/SRR23973193_1.fastq.gz",
+    "r2": "/home/user/hapax/data/berlin/SRR23973193_2.fastq.gz",
+    "classes": "/home/user/hapax/data/work/library_label_classes.npz",
+    "trim_r2": "14",
+    "megahit": "/home/user/tools/MEGAHIT-1.2.9-Linux-x86_64-static/bin/megahit",
+    "threads": "4",
+    "work": "/home/user/hapax/data/work"
+  },
+  "pairs_in": 1372021,
+  "pairs_in_frac_of_library": 0.15713959463186375,
+  "contigs": 3695,
+  "bases": 1306995,
+  "len_p50": 331.0,
+  "ge500": 288,
+  "ge1000": 7,
+  "max": 1385,
+  "seconds_extract": 29.16384962200027,
+  "seconds_assemble": 869.2980446810002,
+  "peak_rss_bytes": 204779520,
+  "megahit": "MEGAHIT v1.2.9"
+}

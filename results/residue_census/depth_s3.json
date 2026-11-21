@@ -1,0 +1,135 @@
+{
+ "seed": 3,
+ "block_pairs": 100000,
+ "piles": {
+  "identified_other": {
+   "mate1": {
+    "n": 37722,
+    "median_depth_p50": 90.0,
+    "median_depth_p10": 2.0,
+    "median_depth_p90": 3660.0,
+    "frac_depth_0": 0.04572928264673135,
+    "frac_depth_lt_5": 0.17819839881236413,
+    "frac_depth_ge_50": 0.5660887545729283,
+    "unwitnessed_kmer_frac_mean": NaN
+   },
+   "mate2": {
+    "n": 37722,
+    "median_depth_p50": 70.0,
+    "median_depth_p10": 1.0,
+    "median_depth_p90": 2659.9000000000015,
+    "frac_depth_0": 0.05681034939822915,
+    "frac_depth_lt_5": 0.20351519007475743,
+    "frac_depth_ge_50": 0.5383065585069721,
+    "unwitnessed_kmer_frac_mean": 0.06920440061502572
+   }
+  },
+  "identified_rrna": {
+   "mate1": {
+    "n": 39344,
+    "median_depth_p50": 3162.0,
+    "median_depth_p10": 46.0,
+    "median_depth_p90": 31607.0,
+    "frac_depth_0": 0.006862545750305002,
+    "frac_depth_lt_5": 0.02750101667344449,
+    "frac_depth_ge_50": 0.8955368035786905,
+    "unwitnessed_kmer_frac_mean": 0.022348411447742984
+   },
+   "mate2": {
+    "n": 39344,
+    "median_depth_p50": 2571.0,
+    "median_depth_p10": 31.0,
+    "median_depth_p90": 32941.0,
+    "frac_depth_0": 0.012428832858885725,
+    "frac_depth_lt_5": 0.03637149247661651,
+    "frac_depth_ge_50": 0.8783296055307035,
+    "unwitnessed_kmer_frac_mean": 0.02199734139894266
+   }
+  },
+  "residue_on_unident_contig": {
+   "mate1": {
+    "n": 8470,
+    "median_depth_p50": 6.0,
+    "median_depth_p10": 0.0,
+    "median_depth_p90": 684.0,
+    "frac_depth_0": 0.10731995277449823,
+    "frac_depth_lt_5": 0.45194805194805193,
+    "frac_depth_ge_50": 0.27992916174734356,
+    "unwitnessed_kmer_frac_mean": 0.12201505312868949
+   },
+   "mate2": {
+    "n": 8470,
+    "median_depth_p50": 5.0,
+    "median_depth_p10": 0.0,
+    "median_depth_p90": 676.0,
+    "frac_depth_0": 0.12278630460448642,
+    "frac_depth_lt_5": 0.48158205430932705,
+    "frac_depth_ge_50": 0.27367178276269183,
+    "unwitnessed_kmer_frac_mean": 0.13157245572609208
+   }
+  },
+  "residue_on_unsplit_contig": {
+   "mate1": {
+    "n": 473,
+    "median_depth_p50": 5086.0,
+    "median_depth_p10": 1.2000000000000028,
+    "median_depth_p90": 21594.0,
+    "frac_depth_0": 0.0613107822410148,
+    "frac_depth_lt_5": 0.1733615221987315,
+    "frac_depth_ge_50": 0.7610993657505285,
+    "unwitnessed_kmer_frac_mean": 0.08165158562367865
+   },
+   "mate2": {
+    "n": 473,
+    "median_depth_p50": 7036.0,
+    "median_depth_p10": 2.0,
+    "median_depth_p90": 19416.0,
+    "frac_depth_0": 0.07399577167019028,
+    "frac_depth_lt_5": 0.160676532769556,
+    "frac_depth_ge_50": 0.7695560253699789,
+    "unwitnessed_kmer_frac_mean": 0.08217610993657506
+   }
+  },
+  "residue_unplaced": {
+   "mate1": {
+    "n": 13991,
+    "median_depth_p50": 1.0,
+    "median_depth_p10": 0.0,
+    "median_depth_p90": 4.0,
+    "frac_depth_0": 0.32420841969837755,
+    "frac_depth_lt_5": 0.9113001215066828,
+    "frac_depth_ge_50": 0.003287827889357444,
+    "unwitnessed_kmer_frac_mean": 0.3283584518619112
+   },
+   "mate2": {
+    "n": 13991,
+    "median_depth_p50": 1.0,
+    "median_depth_p10": 0.0,
+    "median_depth_p90": 4.0,
+    "frac_depth_0": 0.336502037023801,
+    "frac_depth_lt_5": 0.9126581373740261,
+    "frac_depth_ge_50": 0.004145522121363734,
+    "unwitnessed_kmer_frac_mean": 0.33343915374169103
+   }
+  }
+ },
+ "manifest": {
+  "script": "experiments/residue_depth.py",
+  "git_sha": "63f90818254ee2cf1c80bbcbbf02072b19356fd0-dirty",
+  "tree_dirty": true,
+  "script_sha256": "a5a503915be0ec1a",
+  "parameters": {
+   "seed": "3",
+   "cov": "/home/user/hapax/data/work/cov_blocks5.tsv",
+   "block": "0",
+   "classes": "/home/user/hapax/data/work/library_label_classes.npz",
+   "recut": "/home/user/hapax/data/recut",
+   "out": "/home/user/hapax/results/residue_census"
+  },
+  "instrument": "experiments/kmer_coverage, exact canonical 31-mers over all 8,731,224 pairs, each pair's own occurrences subtracted",
+  "operating_points": {
+   "class_split": "40 matching bases, SILVA or own contig",
+   "depth": "median over a mate's scorable 31-mers"
+  }
+ }
+}
