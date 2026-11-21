@@ -1,0 +1,82 @@
+{
+  "script": "experiments/bigindex_queries.py",
+  "git_sha": "cd8f0851c29196703672cb4f5fdb66ffaffb67f6-dirty",
+  "tree_dirty": true,
+  "script_sha256": "69ec10b1f659e825",
+  "parameters": {
+    "seed": 1,
+    "blocks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "cascade_work": "/tmp/claude-0/wk/recut",
+    "pilot": 500,
+    "scan_probe": 10,
+    "nr_sample": 500,
+    "per_block_sample": 3000,
+    "mate1_only": true,
+    "out": "/tmp/claude-0/wk/bigindex_queries_v3",
+    "manifest_out": "/tmp/claude-0/wk/bigindex_queries_v3"
+  },
+  "files": {
+    "block_s1.fa": {
+      "sequences": 6000,
+      "residue": 3000,
+      "identified": 3000,
+      "bytes": 824563,
+      "sha256_16": "bfa5b207bb063aa2"
+    },
+    "block_s2.fa": {
+      "sequences": 6000,
+      "residue": 3000,
+      "identified": 3000,
+      "bytes": 836857,
+      "sha256_16": "2e0787db821f3162"
+    },
+    "block_s3.fa": {
+      "sequences": 6000,
+      "residue": 3000,
+      "identified": 3000,
+      "bytes": 836188,
+      "sha256_16": "6b088a8a7f06e333"
+    },
+    "block_s4.fa": {
+      "sequences": 6000,
+      "residue": 3000,
+      "identified": 3000,
+      "bytes": 836318,
+      "sha256_16": "0b75168a746c6453"
+    },
+    "block_s5.fa": {
+      "sequences": 6000,
+      "residue": 3000,
+      "identified": 3000,
+      "bytes": 836496,
+      "sha256_16": "3c7069447c69f81c"
+    },
+    "pilot.fa": {
+      "sequences": 500,
+      "bytes": 68609,
+      "sha256_16": "7654eaa75eccd6f8"
+    },
+    "scan_probe.fa": {
+      "sequences": 10,
+      "bytes": 1386,
+      "sha256_16": "8fdcf402f13f71d2"
+    },
+    "nr_sample.fa": {
+      "sequences": 1000,
+      "bytes": 138640,
+      "sha256_16": "42215f33cfa8d191"
+    }
+  },
+  "total_sequences": 31510,
+  "total_bytes": 4379057,
+  "note": "the block files carry both mates and both piles; pilot and nr_sample are mate 1 only. Class is the part of each name before the pipe.",
+  "wall_seconds": 0.3414053359956597,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}

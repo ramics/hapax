@@ -89,6 +89,13 @@ def main() -> None:
     ap.add_argument("--pilot", type=int, default=2000,
                     help="sequences in the timed pilot. Big enough that the rate is not "
                          "all database scan, small enough that the pilot is minutes")
+    ap.add_argument("--scan-probe", type=int, default=10,
+                    help="a query set small enough that its search time IS the database "
+                         "scan. BLAST streams the whole subject database per invocation, "
+                         "so this plus the pilot are two query counts against one database "
+                         "and the difference between them is the marginal cost per read - "
+                         "the split that a single rate cannot show and that this project "
+                         "has already once got wrong by reading one")
     ap.add_argument("--nr-sample", type=int, default=3000,
                     help="sequences per pile for the blastx-against-nr pass. nr is only "
                          "readable by blastx, which is far slower per read than DIAMOND, "
@@ -168,6 +175,11 @@ def main() -> None:
     p = args.out / "pilot.fa"
     files["pilot.fa"] = {"sequences": write_fasta(p, pilot), "bytes": p.stat().st_size,
                          "sha256_16": digest(p)}
+
+    sp = args.out / "scan_probe.fa"
+    files["scan_probe.fa"] = {
+        "sequences": write_fasta(sp, pooled_residue[:args.scan_probe]),
+        "bytes": sp.stat().st_size, "sha256_16": digest(sp)}
 
     nr = pooled_residue[args.pilot:args.pilot + args.nr_sample] + \
         pooled_control[:args.nr_sample]

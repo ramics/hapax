@@ -194,6 +194,14 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--volume-throughput", type=int, default=DEFAULT_VOLUME_THROUGHPUT)
     ap.add_argument("--volume-iops", type=int, default=DEFAULT_VOLUME_IOPS)
     ap.add_argument("--hard-stop-minutes", type=int, default=DEFAULT_HARD_STOP_MINUTES)
+    ap.add_argument("--chunk", type=int, default=400,
+                    help="queries per core_nt chunk. Small because spot "
+                         "reclaimed two instances in four hours and a reclaim "
+                         "loses the chunk it is in, not the run")
+    ap.add_argument("--chunk-target-seconds", type=float, default=1500.0,
+                    help="how long one chunk should take. The instance sizes "
+                         "the chunk itself from its own measured scan and "
+                         "marginal cost, because the right answer depends on a split nobody here has measured before tonight")
     ap.add_argument("--nr-chunk", type=int, default=500,
                     help="queries per blastx-against-nr chunk. Small, because nothing in "
                          "this project has ever measured that rate and the first chunk is "
@@ -250,6 +258,7 @@ def main(argv: list[str] | None = None) -> int:
         NCBI_BUCKET=NCBI_BUCKET, NCBI_PREFIX=NCBI_PREFIX,
         FULL_QUERIES=full_queries, FULL_BUDGET_HOURS=args.full_budget_hours,
         NR_CHUNK=args.nr_chunk, NR_BUDGET_HOURS=args.nr_budget_hours,
+        CHUNK=args.chunk, CHUNK_TARGET_SECONDS=args.chunk_target_seconds,
         FAST_BUDGET_HOURS=args.fast_budget_hours,
     )
     script = render_user_data(**tokens)

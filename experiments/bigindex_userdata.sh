@@ -1,23 +1,16 @@
 #!/bin/bash
-# The whole run. There is no SSH, no SSM and no inbound access to this instance, so this
-# script is the only thing that will ever happen on it and there is no second attempt that
-# does not cost another launch and another approval.
+# The whole run: no SSH, no SSM, no inbound access, so this script is the only thing that
+# will ever happen on the instance and a second attempt costs another launch and another
+# approval. It lives in the repo rather than in the launcher's Python because it is the
+# artefact worth reviewing before launch; `--print-user-data` renders it. Tokens are
+# upper-case names between double at-signs, so every brace below is bash's own.
 #
-# It lives in the repo rather than inside the launcher's Python because it is the artefact
-# worth reviewing before launch: `experiments/ec2_bigindex.py --print-user-data` renders it
-# with its tokens filled in, and that rendering is what gets read line by line. A token is
-# an upper-case name between double at-signs rather than Python's {braces}, so that every
-# brace below is bash's own and the renderer can refuse a token it failed to replace.
-#
-# ORDER IS THE SAFETY PROPERTY, from Imo's launch guide:
-#   1. the dead man's switch first, before anything that can fail;
-#   2. a heartbeat to S3, because console output is unreliable and was empty or truncated
-#      every time the reference project needed it;
-#   3. one exit helper on every path, which cancels the pending timer before shutting down
-#      because `shutdown -h now` is a no-op while a timer is scheduled;
-#   4. python3.12 by name, since this AMI's python3 is 3.9;
-#   5. `test -f` every input, because `aws s3 cp --recursive` over an empty prefix exits 0
-#      and the workers would then start on nothing.
+# ORDER IS THE SAFETY PROPERTY, from Imo's launch guide: the dead man's switch first,
+# before anything that can fail; a heartbeat to S3, because console output is unreliable;
+# one exit helper on every path, cancelling the pending timer first because `shutdown -h
+# now` is a no-op while one is scheduled; python3.12 by name, since this AMI's python3 is
+# 3.9; and `test -f` on every input, because `aws s3 cp --recursive` over an empty prefix
+# exits 0 and the searches would start on nothing.
 set -xeuo pipefail
 mkdir -p /opt/hapax/out
 exec > >(tee /dev/console /opt/hapax/log-userdata.txt) 2>&1
@@ -165,70 +158,105 @@ if stage_on core_nt; then
 fi
 
 # ---------------------------------------------------------------- pilot
+# TWO query counts against the same database, because one rate cannot be read. BLAST
+# streams the whole subject database per invocation, so a tiny query set measures the SCAN
+# and nothing else; the difference between it and the 500-read pilot is the marginal cost
+# per read. That split is the number this run exists to produce - and it is also what sizes
+# the chunks, since a chunk pays the scan again and a reclaim costs a chunk.
 if stage_on pilot; then
+  search scan_probe blastn /opt/hapax/db/core_nt "@@NCBI_PREFIX@@" \
+    /opt/hapax/queries/scan_probe.fa
   search pilot_core_nt blastn /opt/hapax/db/core_nt "@@NCBI_PREFIX@@" \
     /opt/hapax/queries/pilot.fa
-  cat /opt/hapax/out/timing_pilot_core_nt.json
-  # Reported, not enforced: the whole set not fitting is a scope answer, and the per-block
-  # gate below is what acts on it. A pilot that cannot even project is a different thing,
-  # and `search` has already died by then.
-  fits pilot_core_nt @@FULL_QUERIES@@ @@FULL_BUDGET_HOURS@@ \
-    || echo "=== the full @@FULL_QUERIES@@-query pass does not fit; blocks will be added while they fit ==="
+  "$PYBIN" - @@CHUNK_TARGET_SECONDS@@ > /opt/hapax/chunk.txt <<'SIZE'
+import json, sys
+target = float(sys.argv[1])
+s = json.load(open("/opt/hapax/out/timing_scan_probe.json"))
+p = json.load(open("/opt/hapax/out/timing_pilot_core_nt.json"))
+scan = s["seconds"]
+marginal = max((p["seconds"] - scan) / p["queries"], 1e-6)
+chunk = int(max(100, min(8000, (target - scan) / marginal)))
+print(chunk)
+print(f"=== scan {scan:.0f}s on {s['queries']} queries; marginal {marginal:.3f}s/read "
+      f"from {p['queries']} queries; chunk {chunk} to fill {target:.0f}s ===",
+      file=sys.stderr)
+SIZE
+  CHUNK=$(head -1 /opt/hapax/chunk.txt)
+  echo "=== chunk size $CHUNK ==="
+  cp /opt/hapax/out/timing_scan_probe.json /opt/hapax/out/timing_pilot_core_nt.json /opt/hapax/ || true
 fi
+CHUNK="${CHUNK:-@@CHUNK@@}"
 
-# ---------------------------------------------------------------- full core_nt pass
-# One block at a time, each gated on the time left, so the run ends with whole blocks
-# rather than a truncated one. A block is a self-contained measurement - its own residue
-# and its own identified control - so three blocks is a three-seed result and this repo
-# reports spread across what it actually ran.
-if stage_on core_nt_full; then
-  BUDGET=@@FULL_BUDGET_HOURS@@
-  START=$SECONDS
-  for q in /opt/hapax/queries/block_*.fa; do
-    label="core_nt_$(basename "$q" .fa)"
-    n=$(grep -c '^>' "$q" || echo 0)
-    left=$("$PYBIN" -c "import sys;print(max(0.0,float(sys.argv[1])-float(sys.argv[2])/3600))" \
-      "$BUDGET" "$((SECONDS - START))")
-    if ! fits pilot_core_nt "$n" "$left"; then
-      echo "=== stopping before $label: $n queries do not fit the ${left}h left ==="
-      echo "stopped before $label with ${left}h left of a ${BUDGET}h budget" \
-        > /opt/hapax/log-scope.txt
-      break
-    fi
-    search "$label" blastn /opt/hapax/db/core_nt "@@NCBI_PREFIX@@" "$q"
-  done
-fi
+# ------------------------------------------------- the passes, in small chunks
+# CHUNKS, NOT BLOCKS, AND SPOT IS THE REASON. Two instances were reclaimed in four hours on
+# 2026-11-21 (`Server.SpotInstanceTermination`), the second of them 2.4 hours into a
+# 6,000-read block, which left nothing: `search` uploads a block's rows when the block
+# finishes, so a reclaim mid-block loses every read in it. The fix is the unit of work. A
+# few hundred reads is ten to twenty minutes, so a reclaim now costs one chunk, and the
+# chunk's rows are in the store before the next one starts.
+#
+# The chunks are cut from the block files, which interleave residue and identified control
+# (bigindex_queries.py), so a run that stops early is a smaller sample of BOTH piles rather
+# than all of one - the property that makes a partial run still a measurement.
+split_blocks() {  # chunk_size
+  mkdir -p /opt/hapax/queries/chunks
+  "$PYBIN" - "$1" <<'SPLITB'
+import sys
+from pathlib import Path
+size = int(sys.argv[1])
+for src in sorted(Path("/opt/hapax/queries").glob("block_*.fa")):
+    recs = [r for r in src.read_text().split(">") if r.strip()]
+    stem = src.stem
+    for i in range(0, len(recs), size):
+        out = Path(f"/opt/hapax/queries/chunks/{stem}_c{i // size:03d}.fa")
+        out.write_text("".join(">" + r for r in recs[i:i + size]))
+    print(f"=== {stem}: {len(recs)} queries in {(len(recs) + size - 1) // size} chunk(s) ===")
+SPLITB
+}
 
-# ---------------------------------------------------------------- the cheap task, same reads
-# `dc-megablast` on the SAME reads the sensitive task saw. The pilot measured the sensitive
-# blastn at about a second per 107 nt read, which puts a whole sample's residue past 500
-# hours and therefore outside any production tool - so the task stops being a fixed choice
-# and becomes a measured axis. Running both says what the cheap one FAILS to find, which is
-# this project's own cost-versus-completeness curve applied to itself. It runs second
-# because if only one of the two finishes, the sensitive one is the one worth having.
-if stage_on core_nt_fast; then
-  FASTBUDGET=@@FAST_BUDGET_HOURS@@
-  FASTSTART=$SECONDS
-  for q in /opt/hapax/queries/block_*.fa; do
-    label="fast_$(basename "$q" .fa)"
+# label_prefix budget_hours extra_args...
+chunked_pass() {
+  local tag="$1" budget="$2"; shift 2
+  local start=$SECONDS first_label=""
+  for q in /opt/hapax/queries/chunks/*.fa; do
+    local label="${tag}_$(basename "$q" .fa)" n
     n=$(grep -c '^>' "$q" || echo 0)
-    if [ -f /opt/hapax/out/timing_fast_block_s1.json ]; then
+    if [ -n "$first_label" ]; then
+      local left
       left=$("$PYBIN" -c "import sys;print(max(0.0,float(sys.argv[1])-float(sys.argv[2])/3600))" \
-        "$FASTBUDGET" "$((SECONDS - FASTSTART))")
-      fits fast_block_s1 "$n" "$left" || { echo "=== stopping fast pass before $label ==="; break; }
+        "$budget" "$((SECONDS - start))")
+      if ! fits "$first_label" "$n" "$left"; then
+        echo "=== stopping $tag before $label: ${left}h left of ${budget}h ==="
+        echo "$tag stopped before $label with ${left}h left" >> /opt/hapax/log-scope.txt
+        break
+      fi
     fi
-    search "$label" blastn /opt/hapax/db/core_nt "@@NCBI_PREFIX@@" "$q" \
-      --blastn-task dc-megablast
+    search "$label" blastn /opt/hapax/db/core_nt "@@NCBI_PREFIX@@" "$q" "$@"
+    [ -n "$first_label" ] || first_label="$label"
   done
+}
+
+if stage_on core_nt_full || stage_on core_nt_fast; then
+  split_blocks "$CHUNK"
+fi
+
+# The sensitive task first: if only one of the two finishes, it is the one worth having.
+if stage_on core_nt_full; then
+  chunked_pass core_nt @@FULL_BUDGET_HOURS@@
+fi
+
+# `dc-megablast` on the SAME reads. It is built for cross-species nucleotide matching and is
+# far cheaper, so running both says what the cheap one FAILS to find - this project's own
+# cost-versus-completeness curve applied to itself.
+if stage_on core_nt_fast; then
+  chunked_pass fast @@FAST_BUDGET_HOURS@@ --blastn-task dc-megablast
 fi
 
 # ---------------------------------------------------------------- nr, on a subsample
-# nr is a BLAST protein database, so the only thing that reads it is blastx, which is far
-# slower per read than DIAMOND. The question nr has to answer - does a 100 GB UniRef100
-# index see what a 928 GB nr sees - is a comparison of identity DISTRIBUTIONS, and a few
-# thousand reads per pile answers that at percentage resolution. So this pass is
-# deliberately a subsample, which is also what makes "thousands per class instead of 60"
-# true rather than aspirational.
+# nr is a BLAST protein database, so only blastx reads it, far slower per read than
+# DIAMOND. The question - does a 100 GB UniRef100 index see what a 928 GB nr sees - is a
+# comparison of identity DISTRIBUTIONS, which a few thousand reads per pile settles at
+# percentage resolution. So this pass is deliberately a subsample.
 if stage_on nr; then
   aws s3 cp "s3://@@NCBI_BUCKET@@/@@NCBI_PREFIX@@/" /opt/hapax/db/ --recursive \
     --no-sign-request --exclude "*" --include "nr.*" \
