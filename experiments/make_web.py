@@ -301,6 +301,11 @@ PAGE = """<title>Hapax run viewer</title>
   --ok: #3f7d55; --warn: #a2622a;
   --g-phage: #78889a; --g-plant: #4f8a46; --g-fungal: #8168a6; --g-invert: #2f877f;
   --g-vert: #b07d22; --g-human: #c0392b; --g-unknown: #9aa39e;
+  /* Chart slots, validated with the dataviz skill's checker in both modes under
+     --pairs all: all checks pass, with one light-mode contrast WARN on --v3 that
+     obliges the visible direct labels every ranked row and donut legend carries. */
+  --v1: #2a78d6; --v2: #eb6834; --v3: #1baf7a;
+  --v2-soft: #f6c3ac; --v-mute: #9aa39e; --v-faint: #e4e8e3;
   --sans: "IBM Plex Sans", system-ui, -apple-system, Segoe UI, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
@@ -310,6 +315,8 @@ PAGE = """<title>Hapax run viewer</title>
   --ok: #67b183; --warn: #d39354; color-scheme: dark;
   --g-phage: #93a3b4; --g-plant: #74b069; --g-fungal: #a68cc8; --g-invert: #4fa89f;
   --g-vert: #d2a04a; --g-human: #e0695c; --g-unknown: #68756f;
+  --v1: #3987e5; --v2: #d95926; --v3: #199e70;
+  --v2-soft: #7d3f26; --v-mute: #68756f; --v-faint: #222b27;
 } }
 :root[data-theme="dark"] {
   --bg: #101513; --panel: #171e1b; --edge: #2a332f; --fg: #e6ebe8; --dim: #97a39d;
@@ -317,6 +324,8 @@ PAGE = """<title>Hapax run viewer</title>
   --ok: #67b183; --warn: #d39354; color-scheme: dark;
   --g-phage: #93a3b4; --g-plant: #74b069; --g-fungal: #a68cc8; --g-invert: #4fa89f;
   --g-vert: #d2a04a; --g-human: #e0695c; --g-unknown: #68756f;
+  --v1: #3987e5; --v2: #d95926; --v3: #199e70;
+  --v2-soft: #7d3f26; --v-mute: #68756f; --v-faint: #222b27;
 }
 body { background: var(--bg); color: var(--fg); font-family: var(--sans);
   font-size: 15px; line-height: 1.5; }
@@ -439,6 +448,13 @@ details > summary { cursor: pointer; font-size: 13px; color: var(--dim); }
 .tbar { height: 9px; background: var(--edge); border-radius: 2px; overflow: hidden; }
 .tbar span { display: block; height: 100%; }
 .tnum, .tpct { text-align: right; font-family: var(--mono); font-size: 0.75rem; }
+@media (max-width: 680px) {
+  /* A taxon name clipped to "Tobamovirus..." identifies nothing, and every row in a
+     genus reads the same. On a phone the name takes its own line and wraps. */
+  .trow { grid-template-columns: 1fr auto; }
+  .tname { white-space: normal; overflow: visible; text-overflow: clip;
+    grid-column: 1 / -1; overflow-wrap: anywhere; }
+}
 .tpct { color: var(--dim); }
 .drows { display: flex; flex-direction: column; gap: 0.25rem; margin: 0.6rem 0; }
 .drow { display: grid; grid-template-columns: 1fr 160px 58px 1.1fr; gap: 0.6rem;
@@ -486,6 +502,78 @@ details > summary { cursor: pointer; font-size: 13px; color: var(--dim); }
   font-feature-settings: "tnum"; }
 .biglab { font-size: 12.5px; color: var(--dim); margin-top: 0.25rem; }
 .lede { font-size: 15px; max-width: 70ch; line-height: 1.55; }
+/* ---- public-health front page: verdict heroes, ranked lists, donuts ---------
+   Every ranked row and every donut slice carries a direct text label, because the
+   validator's one light-mode contrast warning on --v3 is an obligation, not a note:
+   identity here is never colour alone. */
+.verdict { margin: 1rem 0 0.4rem; padding: 0.95rem 1.05rem; border-radius: 8px;
+  background: var(--v-faint); border-left: 3px solid var(--v2); }
+.verdict .vmain { font-size: 1.15rem; line-height: 1.35; text-wrap: balance; }
+.verdict .vmain b { font-weight: 650; }
+.verdict .vsub { font-size: 12.5px; color: var(--dim); margin-top: 0.4rem;
+  max-width: 68ch; }
+.ranked { display: flex; flex-direction: column; gap: 0.3rem; margin: 0.9rem 0 0.2rem; }
+.rrow { display: grid; grid-template-columns: 1.6rem minmax(12rem, 24rem) 1fr auto;
+  gap: 0.55rem; align-items: center; font-size: 13px; }
+.rno { font-family: var(--mono); font-size: 0.72rem; color: var(--dim);
+  text-align: right; }
+.rno.wide { font-size: 0.78rem; color: var(--fg); }
+.rrow:has(.rno.wide) { grid-template-columns: 3.2rem minmax(12rem, 24rem) 1fr auto; }
+.rname { overflow-wrap: anywhere; }
+.rname .rtag { font-size: 0.68rem; color: var(--dim); margin-left: 0.35rem; }
+.rbar { height: 9px; min-width: 0; background: var(--v-faint); border-radius: 4px; }
+.rbar > i { display: block; height: 100%; border-radius: 0 4px 4px 0;
+  background: var(--v2); transition: width 500ms ease-out; }
+.rval { font-family: var(--mono); font-size: 0.74rem; text-align: right;
+  font-variant-numeric: tabular-nums; white-space: nowrap; }
+.chip { display: inline-block; font-size: 0.66rem; padding: 0.05rem 0.35rem;
+  border-radius: 3px; border: 1px solid var(--edge); color: var(--dim);
+  margin-left: 0.35rem; vertical-align: 1px; }
+.chip.strong { border-color: var(--v2); color: var(--v2); }
+.more { margin: 0.5rem 0 0; }
+.more > summary { font-size: 12.5px; }
+.misses { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.5rem; }
+.miss { font-size: 11.5px; color: var(--dim); border: 1px solid var(--edge);
+  border-radius: 3px; padding: 0.1rem 0.4rem; }
+.donuts { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.2rem; margin: 1rem 0 0.3rem; }
+.donut { text-align: center; }
+.donut svg { width: 100%; max-width: 200px; height: auto; }
+.donut .dhero { font-family: var(--mono); font-weight: 500; }
+.dcap { font-size: 12.5px; color: var(--dim); margin-top: 0.35rem; }
+.donutlg { display: flex; flex-direction: column; gap: 0.25rem; margin-top: 0.6rem;
+  font-size: 12px; text-align: left; max-width: 15rem; margin-inline: auto; }
+.donutlg > div { display: grid; grid-template-columns: 0.7rem 1fr auto; gap: 0.45rem;
+  align-items: center; }
+.donutlg i { display: block; width: 0.7rem; height: 0.7rem; border-radius: 2px; }
+.donutlg span.v { font-family: var(--mono); font-size: 0.72rem;
+  font-variant-numeric: tabular-nums; }
+.split { display: flex; height: 26px; border-radius: 4px; overflow: hidden;
+  margin: 1.1rem 0 0.8rem; gap: 2px; background: var(--v-faint); }
+.split > i { display: block; min-width: 2px; transform-origin: left;
+  animation: splitin 520ms ease-out both; }
+@keyframes splitin { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .split > i { animation: none; } }
+.splitlg { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 0.6rem 1rem; font-size: 12.5px; }
+.splitlg > div { display: grid; grid-template-columns: 0.7rem 1fr; gap: 0.5rem; }
+.splitlg i { display: block; width: 0.7rem; height: 0.7rem; border-radius: 2px;
+  margin-top: 0.25rem; }
+.splitlg .dim { font-size: 11.5px; margin-top: 0.1rem; }
+.arc { stroke-dasharray: var(--len) var(--gap);
+  stroke-dashoffset: calc(var(--off) + var(--len));
+  animation: arcin 700ms ease-out forwards; animation-delay: var(--d, 0ms); }
+@keyframes arcin { to { stroke-dashoffset: var(--off); } }
+@media (prefers-reduced-motion: reduce) {
+  .arc { animation: none; stroke-dashoffset: var(--off); }
+}
+@media (max-width: 680px) {
+  .rrow, .rrow:has(.rno.wide) { grid-template-columns: 2.6rem minmax(0, 1fr) auto;
+    row-gap: 0.15rem; margin-bottom: 0.35rem; }
+  .rrow .rname { grid-column: 2 / -1; }
+  .rrow .rbar { grid-column: 2 / 3; }
+  .donutlg { max-width: none; }
+}
 a { color: var(--identified); }
 :focus-visible { outline: 2px solid var(--identified); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -2152,18 +2240,18 @@ function interval(iv) {
   app.append(p);
 })();
 
-// ---------- public health: what we screened for
-// The first thing a public-health reader asks of a sewage sample is not what is novel in
-// it. It is whether anything they watch for is present, and what was looked for and not
-// found. An empty row is a result here, so every panel entry is drawn whether or not it
-// was seen.
+// ---------- public health: what is here that we watch for
+// THE FIRST QUESTION, and the only one on this page a reader might act on. It is
+// answered with a ranked list and a level, not a table of everything: 27 of the 44
+// watchlist taxa were not seen, and 27 rows of "not found" at the top of a page is a
+// list nobody reads. They are all still here, one toggle away, because a taxon looked
+// for and not found is a result.
 (function () {
   const P = D.profile;
-  const p = panel('What we screened for',
-    'A committed list of organisms a public-health reader would want asked about, every ' +
-    'one reported whether it was found or not. Found means reads in this library share ' +
-    'enough k-mers with a reference for the classifier to place them there. It is not a ' +
-    'diagnosis, not a viable organism, and not a case.');
+  const p = panel('What we watch for, and what is here',
+    'The organisms a public-health reader asks a sewage sample about, ranked by how ' +
+    'much of the library they account for. A level is reads, not cases: it says this ' +
+    'sequence is in the water, not that anyone is ill.');
   if (!P) {
     p.append(el('div', 'absent', 'public_health_profile_s*.json absent: run ' +
       'experiments/public_health_profile.py over this library'));
@@ -2172,28 +2260,16 @@ function interval(iv) {
   const CONF = '0.1';
   const at = P.at_confidence[CONF] || {};
   const rows = at.panel || [];
-  const hit = rows.filter(r => r.detected);
+  const strictRows = {};
+  ((P.at_confidence['0.2'] || {}).panel || []).forEach(r => { strictRows[r.name] = r; });
+  const hit = rows.filter(r => r.detected).sort((a, b) => b.pairs - a.pairs);
   const miss = rows.filter(r => !r.detected);
-  const lo = (P.at_confidence['0.2'] || {}).panel || [];
-  const hi = (P.at_confidence['0.0'] || {}).panel || [];
-  const byName = l => { const m = {}; l.forEach(r => { m[r.name] = r; }); return m; };
-  const LO = byName(lo), HI = byName(hi);
-
   const nul = P.shuffled_null || {};
-  const head = el('div', 'callout');
-  head.innerHTML = '<b>' + hit.length + ' of ' + rows.length + ' found, ' + miss.length +
-    ' not found</b>, over ' + (at.pairs || 0).toLocaleString() + ' read pairs at ' +
-    'classifier confidence ' + CONF + '. <b>That threshold is not a preference, it is ' +
-    'the calibration:</b> the same panel run over this library with every read shuffled ' +
-    'lights up ' + ((nul['0.0'] || {}).panel_rows_detected) + ' of ' + rows.length +
-    ' rows at confidence 0 and ' + ((nul[CONF] || {}).panel_rows_detected) + ' at ' +
-    CONF + '. Counts at all three thresholds are on every found row, smallest last; a ' +
-    'detection that survives the strictest one is the strongest claim here.';
-  p.append(head);
+  const top = hit[0];
 
-  // One in N, not a percentage. Every rate on this panel is of the order of one pair in
-  // a million, where a percentage to two places prints 0.00% for everything and a reader
-  // learns nothing. One in N is also the unit this project talks in.
+  // The headline is a LEVEL, because that is what separates a finding from a trace and
+  // it is the thing a reader has to carry away. Written as one in N: every rate here is
+  // around one pair in a million, where a percentage prints 0.00% and says nothing.
   const oneIn = x => {
     if (!x) return '-';
     const n = 1 / x;
@@ -2201,89 +2277,139 @@ function interval(iv) {
          : n >= 1e3 ? '1 in ' + Math.round(n / 1e3) + ',000'
          : '1 in ' + Math.round(n);
   };
-  const grid = el('div', 'panelgrid');
-  // The panel file's own order, which groups the enteric viruses wastewater
-  // surveillance was built on before the organisms it was later extended to. Sorting by
-  // how many were found would put the sample in charge of the running order.
-  const groups = [];
-  rows.slice().sort((a, b) => rows.indexOf(a) - rows.indexOf(b))
-    .forEach(r => { if (groups.indexOf(r.group) < 0) groups.push(r.group); });
-  groups.forEach(g => {
-    const mine = rows.filter(r => r.group === g);
-    const sec = el('div', 'pgroup');
-    sec.append(el('div', 'pghead', esc(g) + ' <span class="dim">' +
-      mine.filter(r => r.detected).length + ' of ' + mine.length + '</span>'));
-    mine.forEach(r => {
-      const row = el('div', 'prow' + (r.detected ? ' found' : ''));
-      const strict = (LO[r.name] || {}).pairs || 0;
-      if (r.detected) {
-        const sweep = [(HI[r.name] || {}).pairs || 0, r.pairs, strict];
-        row.innerHTML = '<div class="pname"><b>' + esc(r.name) + '</b>' +
-          (strict ? ' <span class="chip">holds at 0.2</span>' : '') + '</div>' +
-          '<div class="pval"><span class="mono">' + r.pairs.toLocaleString() +
-          '</span> pair' + (r.pairs === 1 ? '' : 's') + ', ' + oneIn(r.fraction) +
-          '<span class="dim mono"> &nbsp;' + sweep.join(' / ') + '</span></div>';
-      } else {
-        row.innerHTML = '<div class="pname">' + esc(r.name) + '</div>' +
-          '<div class="pval dim">not found, under ' +
-          oneIn(r.upper_bound_if_absent) + '</div>';
-      }
-      row.title = r.why_on_the_panel;
-      sec.append(row);
-    });
-    grid.append(sec);
+  const hero = el('div', 'verdict');
+  hero.innerHTML =
+    '<div class="vmain">' + (top
+      ? 'The highest anything on the watchlist reaches is <b>' + esc(top.name) +
+        '</b>, at <b>' + oneIn(top.fraction) + ' read pairs</b>.'
+      : 'Nothing on the watchlist was seen at all.') + '</div>' +
+    '<div class="vsub">' + hit.length + ' of ' + rows.length + ' seen, ' + miss.length +
+    ' not. Everything here is a trace: no watchlist organism reaches one pair in ' +
+    '100,000, and this is an untargeted library, which is a blunt instrument for ' +
+    'finding a pathogen at wastewater concentrations.</div>';
+  p.append(hero);
+
+  const rank = el('div', 'ranked');
+  const maxv = (top && top.fraction) || 1;
+  hit.forEach((r, i) => {
+    const holds = ((strictRows[r.name] || {}).pairs || 0) > 0;
+    const row = el('div', 'rrow');
+    row.innerHTML =
+      '<div class="rno mono">' + (i + 1) + '</div>' +
+      '<div class="rname"><b>' + esc(r.name) + '</b> <span class="dim">' +
+        esc(r.group) + '</span>' + (holds
+          ? '<span class="chip strong">holds at the strictest threshold</span>'
+          : '<span class="chip">trace</span>') + '</div>' +
+      // One hue for every bar. Length is the level and the chip is the operating
+      // point; colouring the bar by robustness as well put the two encodings in
+      // conflict, with the longest bars drawn palest.
+      '<div class="rbar"><i style="width:' +
+        Math.max(2, 100 * r.fraction / maxv).toFixed(1) + '%"></i></div>' +
+      '<div class="rval mono">' + oneIn(r.fraction) + '</div>';
+    row.title = r.pairs.toLocaleString() + ' read pairs. ' + r.why_on_the_panel;
+    rank.append(row);
   });
-  p.append(grid);
-  const foot = el('div', 'note');
-  foot.innerHTML = '<b>What a not-found row does not mean.</b> ' + esc(P.panel_note);
-  p.append(foot);
+  p.append(rank);
+
+  const more = el('details', 'more');
+  const sum = document.createElement('summary');
+  sum.innerHTML = 'the ' + miss.length + ' we looked for and did not find';
+  more.append(sum);
+  const mgrid = el('div', 'misses');
+  miss.forEach(r => {
+    const m = el('div', 'miss');
+    m.innerHTML = '<b>' + esc(r.name) + '</b><span class="dim"> under ' +
+      oneIn(r.upper_bound_if_absent) + '</span>';
+    m.title = r.why_on_the_panel;
+    mgrid.append(m);
+  });
+  more.append(mgrid);
+  more.append(el('p', 'note',
+    'Not found is not absent. The bound is what this sequencing could have seen, not ' +
+    'what is in the catchment, and an untargeted library is reported in the literature ' +
+    'as insensitive for human pathogens at these concentrations. A targeted assay ' +
+    'answers this question and this does not.'));
+  p.append(more);
+
+  const cal = el('div', 'callout');
+  cal.innerHTML = '<b>Why these rows and not twice as many.</b> Run the same panel over ' +
+    'this library with every read shuffled, and at the loosest threshold <b>' +
+    ((nul['0.0'] || {}).panel_rows_detected) + ' of ' + rows.length + ' rows light up ' +
+    'on sequence that carries no information at all</b>. At the threshold used here, ' +
+    ((nul[CONF] || {}).panel_rows_detected) + '. That is what the threshold is for. It ' +
+    'does not control the other way a row can be wrong, which is one organism matching ' +
+    'a close relative, and nothing in this run does: read a one-pair row as a reason ' +
+    'for a targeted test, never as a detection.';
+  p.append(cal);
   app.append(p);
 })();
 
-// ---------- public health: composition, with the threshold as a control
+// ---------- public health: what this water is
 (function () {
   const P = D.profile;
-  const p = panel('What one reference index can name',
-    'This is the REACH OF ONE INDEX, not the composition of the water. Every read pair ' +
-    'put in the broadest group Kraken2 can place it in, against one database at one ' +
-    'threshold. Move the threshold and watch the picture move: that movement is the ' +
-    'single most important thing to understand about any number like this one.');
-  if (!P) {
-    p.append(el('div', 'absent', 'public_health_profile_s*.json absent'));
-    app.append(p); return;
-  }
-  const COL = {Viruses: 'var(--g-phage)', Bacteria: 'var(--g-vert)',
-    Archaea: 'var(--g-fungal)', Eukaryota: 'var(--g-plant)',
-    unclassified: 'var(--null)', 'classified, above superkingdom': 'var(--g-unknown)'};
-  // "Unclassified" is the classifier's word and it reads, to anyone who is not holding
-  // the classifier in their head, as "unknown sequence". It is not: it is sequence this
-  // one database could not place at this one threshold. The page renames it on the way
-  // in, because the mislabel is what made a reader take the 93% for the water.
-  const GLABEL = g => g === 'unclassified' ? 'not named by this index at this threshold'
-                    : g === 'classified, but above any of these groups'
-                      ? 'named, but no deeper than these groups is defined' : g;
+  const p = panel('What this water is',
+    'What the sequence in this library turns out to be. Only a small part of it can be ' +
+    'put on a named organism at all, so the first circle is how much, and the second ' +
+    'is what that part is made of.');
+  if (!P) { p.append(el('div', 'absent', 'public_health_profile_s*.json absent'));
+    app.append(p); return; }
+
   const confs = Object.keys(P.at_confidence).sort();
   const ctl = el('div', 'controls');
   const sel = document.createElement('select');
   confs.forEach(c => { const o = document.createElement('option');
-    o.value = c; o.textContent = 'confidence ' + c; sel.append(o); });
+    o.value = c;
+    o.textContent = c === '0.0' ? 'loose (0)' : c === '0.2' ? 'strict (0.2)'
+                  : 'working (' + c + ')';
+    sel.append(o); });
   sel.value = confs.indexOf('0.1') >= 0 ? '0.1' : confs[0];
-  ctl.append(el('span', 'dim', 'classifier threshold'), sel);
+  ctl.append(el('span', 'dim', 'how sure the classifier has to be'), sel);
   p.append(ctl);
 
-  const bar = el('div', 'bar big');
-  const lg = el('div', 'legend');
-  // The whole library is mostly unclassified at any usable threshold, so a single bar
-  // is one grey block and tells a reader nothing about the part that was placed. The
-  // second bar renormalises over the classified part alone and is labelled as such:
-  // it answers "of what we could name, how much is viral", which is the question, and
-  // it must never be read as a share of the library.
-  const bar2 = el('div', 'bar big');
-  const lg2 = el('div', 'legend');
-  const cols = el('div', 'twocol');
-  p.append(el('div', 'pghead', 'every read pair in the library'), bar, lg,
-           el('div', 'pghead', 'the classified part alone, renormalised'), bar2, lg2,
-           cols);
+  // Two donuts, because there are two part-to-whole questions here and putting them on
+  // one ring would mean a 93% slice that hides everything else. The left is the whole
+  // library; the right renormalises over the part that got a name, which is the only
+  // honest way to show the bacteria-to-virus split and is labelled as such.
+  const GROUPS = [
+    ['Bacteria', 'bacteria', 'var(--v1)'],
+    ['Viruses', 'viruses', 'var(--v2)'],
+    ['other living things', 'other living things', 'var(--v3)'],
+    ['shallow', 'named, but only to a broad group', 'var(--v-mute)'],
+  ];
+  const wrap = el('div', 'donuts');
+  p.append(wrap);
+  const taxaBox = el('div', 'twocol');
+  p.append(taxaBox);
+
+  function donut(slices, centre, centreSub, caption) {
+    const R = 54, SW = 22, C = 2 * Math.PI * R;
+    const box = el('div', 'donut');
+    let off = 0, g = '';
+    const tot = slices.reduce((a, s) => a + s.v, 0) || 1;
+    slices.forEach((s, i) => {
+      const len = C * s.v / tot;
+      // A 2px surface gap between fills, so adjacent slices never touch.
+      // The dash geometry is handed to CSS as custom properties, not as presentation
+      // attributes: the reveal animation sets stroke-dashoffset, and a keyframe beats
+      // an attribute, so an attribute here would be overwritten and every slice would
+      // start at twelve o'clock on top of the others. Drawn once that way.
+      const drawn = Math.max(0, len - 2);   // 2px surface gap between fills
+      g += '<circle class="arc" r="' + R + '" cx="70" cy="70" fill="none" stroke="' +
+        s.col + '" stroke-width="' + SW + '" style="--len:' + drawn.toFixed(2) +
+        ';--gap:' + (C - drawn).toFixed(2) + ';--off:' + (-off).toFixed(2) +
+        ';--d:' + (90 * i) + 'ms"><title>' + esc(s.lab + ': ' + s.pct) +
+        '</title></circle>';
+      off += len;
+    });
+    box.innerHTML = '<svg viewBox="0 0 140 140" role="img" aria-label="' + esc(caption) +
+      '"><g transform="rotate(-90 70 70)">' + g + '</g>' +
+      '<text x="70" y="68" text-anchor="middle" font-size="21" font-weight="600" ' +
+      'fill="var(--fg)">' + esc(centre) + '</text>' +
+      '<text x="70" y="84" text-anchor="middle" font-size="9.5" fill="var(--dim)">' +
+      esc(centreSub) + '</text></svg>' +
+      '<div class="dcap">' + esc(caption) + '</div>';
+    return box;
+  }
 
   function taxaList(title, list, total, col) {
     const box = el('div', 'tcol');
@@ -2293,143 +2419,86 @@ function interval(iv) {
       return box;
     }
     const top = list[0].pairs || 1;
-    list.slice(0, 12).forEach(t => {
-      const r = el('div', 'trow');
-      const b = el('div', 'tbar');
-      const f = document.createElement('span');
-      f.style.width = (100 * t.pairs / top) + '%';
-      f.style.background = col;
-      b.append(f);
-      // Counts, with a percentage whose precision follows the value. A column of
-      // "0.00%" is what a fixed two places does to a profile whose tail is most of it.
+    const draw = (t, hidden) => {
+      const r = el('div', 'trow' + (hidden ? ' hid' : ''));
       const pc = 100 * t.pairs / total;
-      const sig = pc >= 1 ? pc.toFixed(2)
-                : pc >= 0.01 ? pc.toFixed(3) : pc.toExponential(1);
-      r.append(el('div', 'tname', esc(t.name)), b,
-        el('div', 'tnum', t.pairs.toLocaleString()),
-        el('div', 'tpct dim', sig + '%'));
-      r.title = t.pairs.toLocaleString() + ' pairs of ' + total.toLocaleString();
-      box.append(r);
-    });
+      r.innerHTML = '<div class="tname">' + esc(t.name) + '</div>' +
+        '<div class="tbar"><span style="width:' +
+        Math.max(2, 100 * t.pairs / top).toFixed(1) + '%;background:' + col +
+        '"></span></div>' +
+        '<div class="tnum mono">' + t.pairs.toLocaleString() + '</div>';
+      r.title = t.pairs.toLocaleString() + ' pairs of ' + total.toLocaleString() +
+        ' (' + (pc >= 0.01 ? pc.toFixed(3) : pc.toExponential(1)) + '%)';
+      return r;
+    };
+    list.slice(0, 8).forEach(t => box.append(draw(t, false)));
+    if (list.length > 8) {
+      const d = el('details', 'more');
+      const s2 = document.createElement('summary');
+      s2.textContent = (list.length - 8) + ' more';
+      d.append(s2);
+      list.slice(8).forEach(t => d.append(draw(t, false)));
+      box.append(d);
+    }
     return box;
   }
 
   function draw() {
     const a = P.at_confidence[sel.value] || {};
     const total = a.pairs || 1;
-    bar.innerHTML = '';
-    (a.by_superkingdom || []).forEach(g => {
-      const sp = document.createElement('span');
-      sp.style.width = (100 * g.fraction) + '%';
-      sp.style.background = COL[g.group] || 'var(--null)';
-      sp.title = GLABEL(g.group) + ': ' + g.pairs.toLocaleString() + ' pairs (' +
-        (100 * g.fraction).toFixed(2) + '%)';
-      bar.append(sp);
-    });
-    const cl = (a.by_superkingdom || []).filter(g => g.group !== 'unclassified');
-    const clTot = cl.reduce((x, g) => x + g.pairs, 0) || 1;
-    bar2.innerHTML = '';
-    cl.forEach(g => {
-      const sp = document.createElement('span');
-      sp.style.width = (100 * g.pairs / clTot) + '%';
-      sp.style.background = COL[g.group] || 'var(--null)';
-      sp.title = g.group + ': ' + (100 * g.pairs / clTot).toFixed(2) +
-        '% of the classified part';
-      bar2.append(sp);
-    });
-    lg2.innerHTML = cl.map(g =>
-      '<span><i style="background:' + (COL[g.group] || 'var(--null)') + '"></i>' +
-      esc(GLABEL(g.group)) + ' <b>' + (100 * g.pairs / clTot).toFixed(1) + '%</b></span>')
-      .join('') + '<span class="dim">of the ' + clTot.toLocaleString() +
-      ' pairs placed at all</span>';
-    lg.innerHTML = (a.by_superkingdom || []).map(g =>
-      '<span><i style="background:' + (COL[g.group] || 'var(--null)') + '"></i>' +
-      esc(GLABEL(g.group)) + ' <b>' + (100 * g.fraction).toFixed(2) + '%</b> <span class="dim ' +
-      'mono">' + g.pairs.toLocaleString() + '</span></span>').join('');
-    cols.innerHTML = '';
-    cols.append(taxaList('viruses, most reads first', (a.top_taxa || {}).Viruses, total,
-                         COL.Viruses),
-                taxaList('bacteria, most reads first', (a.top_taxa || {}).Bacteria, total,
-                         COL.Bacteria));
+    const by = {};
+    (a.by_superkingdom || []).forEach(g => { by[g.group] = g.pairs; });
+    const unnamed = by.unclassified || 0;
+    const named = total - unnamed;
+    const shallow = by['classified, but above any of these groups'] || 0;
+    const other = (by.Eukaryota || 0) + (by.Archaea || 0);
+    wrap.innerHTML = '';
+    wrap.append(donut(
+      [{lab: 'put on a named organism', v: named, col: 'var(--v1)',
+        pct: (100 * named / total).toFixed(2) + '% of the library'},
+       {lab: 'nothing in this reference could name it', v: unnamed,
+        col: 'var(--v-faint)', pct: (100 * unnamed / total).toFixed(2) + '%'}],
+      (100 * named / total).toFixed(1) + '%', 'can be named',
+      'of all ' + total.toLocaleString() + ' read pairs, how much any reference names'));
+    const inner = [
+      {lab: 'bacteria', v: by.Bacteria || 0, col: 'var(--v1)'},
+      {lab: 'viruses', v: by.Viruses || 0, col: 'var(--v2)'},
+      {lab: 'other living things', v: other, col: 'var(--v3)'},
+      {lab: 'named only to a broad group', v: shallow, col: 'var(--v-mute)'},
+    ].filter(s => s.v > 0);
+    inner.forEach(s => { s.pct = (100 * s.v / (named || 1)).toFixed(1) + '% of the named part'; });
+    const d2 = donut(inner,
+      (100 * (by.Viruses || 0) / (named || 1)).toFixed(0) + '%', 'of that is viral',
+      'and what that named part is');
+    // The legend sits under its own donut, never off to the side, and every slice is
+    // named in text: one of these three hues carries a contrast warning against the
+    // light surface, which obliges a visible label rather than colour alone.
+    const lg = el('div', 'donutlg');
+    lg.innerHTML = inner.map(s => '<div><i style="background:' + s.col + '"></i>' +
+      '<span>' + esc(s.lab) + '</span><span class="v">' + s.pct.split(' ')[0] +
+      '</span></div>').join('');
+    d2.append(lg);
+    wrap.append(d2);
+
+    taxaBox.innerHTML = '';
+    taxaBox.append(
+      taxaList('the viruses, most reads first', (a.top_taxa || {}).Viruses, total,
+               'var(--v2)'),
+      taxaList('the bacteria, most reads first', (a.top_taxa || {}).Bacteria, total,
+               'var(--v1)'));
   }
   sel.onchange = draw; draw();
 
-  // THE COMPARISON A READER NEEDS AT EXACTLY THIS POINT. Left alone, the 93% above
-  // reads as "93% of this water is unknown", which is what happened, and it sits next
-  // to a residue figure of 11% and looks like a contradiction. It is not one: the two
-  // numbers come from instruments with different jobs. Drawing the cascade's own
-  // removal beside this index, on one scale, with the tiers split by whether they can
-  // produce a NAME, is the only version of this that cannot be misread.
-  //
-  // Which tiers can name is a property of the tier, declared here and visible: a
-  // Kraken2 or DIAMOND hit carries a taxon or an accession, while an artefact filter, a
-  // SILVA match and a match to a contig assembled from this very sample tell you the
-  // sequence has been seen before and nothing about what it is.
-  const CAN_NAME = {k2_viral: 1, k2_standard08: 1, k2_pluspf08: 1, k2_pluspf16: 1,
-                    prot_viral: 1, prot_sprot: 1};
-  const WHY = {artefact: 'adapter and low complexity, removed and not named',
-               rrna: 'matches SILVA ribosomal RNA, which says it is a ribosome and not ' +
-                     'whose',
-               selfasm_sample_contigs_rrna: 'matches this sample own ribosomal contigs',
-               selfasm_sample_contigs_identified_norrna:
-                 'matches a contig assembled from this very sample'};
-  const curve = (D.tier_table || {}).curve || [];
-  const brk = (D.tier_table || {}).breakdown;
-  if (curve.length && brk) {
-    let named = 0, unnamed = 0;
-    const unnamedRows = [];
-    curve.forEach(c => {
-      const m = c.marginal_removed || 0;
-      if (CAN_NAME[c.tier]) { named += m; } else {
-        unnamed += m;
-        if (m > 0.002) unnamedRows.push([c.tier, m]);
-      }
-    });
-    const a01 = P.at_confidence['0.1'] || {};
-    const k2here = 1 - ((a01.by_superkingdom || [])
-      .filter(g => g.group === 'unclassified')[0] || {}).fraction;
-    const box = el('div', 'cmp');
-    box.append(el('div', 'pghead',
-                  'the same library, by the two instruments on this page'));
-    const rowbar = (lab, v, col, sub) => {
-      const r = el('div', 'crow');
-      r.innerHTML = '<div class="clab">' + lab + '</div>' +
-        '<div class="cbar"><span style="width:' + (100 * v).toFixed(2) + '%;background:' +
-        col + '"></span></div>' +
-        '<div class="cnum mono">' + pct(v) + '</div>' +
-        '<div class="csub dim">' + sub + '</div>';
-      box.append(r);
-    };
-    rowbar('<b>named</b> by this index', k2here, 'var(--g-phage)',
-      'Kraken2, PlusPF-08, confidence 0.1, whole library. A taxon you can act on.');
-    rowbar('<b>named</b> by the whole cascade', named, 'var(--g-phage)',
-      'every cascade tier that returns a taxon or an accession, added up. That it lands ' +
-      'beside the figure above is the cross-check.');
-    rowbar('<b>recognised but not named</b>', unnamed, 'var(--identified)',
-      unnamedRows.map(r => (WHY[r[0]] || r[0]) + ', ' + pct(r[1])).join('; ') + '.');
-    rowbar('left over after everything', brk.residual.point, 'var(--residue)',
-      'the pile the rest of this page is about, plus ' +
-      pct((brk.assembled_unidentified || {}).point) + ' that assembles into contigs ' +
-      'nothing can name.');
-    const cnote = el('div', 'callout');
-    cnote.innerHTML = '<b>93% unnamed and 11% left over are both true, and they are not ' +
-      'the same measurement.</b> Naming a read means putting a taxon on it, which one ' +
-      'reference index does for ' + pct(k2here) + ' of pairs and the whole cascade for ' +
-      pct(named) + '. Recognising a read means matching it to sequence we have seen ' +
-      'before, which is a far weaker requirement and covers ' + pct(unnamed) + ' more: ' +
-      'mostly ribosomal RNA and contigs assembled from this very sample, neither of ' +
-      'which tells you what the organism is. <b>Most of what this pipeline removes as ' +
-      'known, it removes by matching sequence nobody has named.</b> The scopes differ ' +
-      'too: the index figure is the whole library, the cascade figures are its ' +
-      ((D.parameters || {}).pairs || 0).toLocaleString() + '-pair block.';
-    p.append(box, cnote);
-  }
-
   const note = el('div', 'callout');
-  // The JSON fields are sentences without terminators, so the page supplies them
-  // rather than the files carrying page punctuation.
-  note.innerHTML = '<b>This is RNA, not organisms.</b> ' + esc(P.reading) +
-    '. <b>And the threshold is the measurement.</b> ' + esc(P.bias) + '.';
+  note.innerHTML = '<b>Three things this picture is not.</b> It is not the organisms in ' +
+    'the water: this is RNA, and a bacterium with a thousand ribosomes contributes a ' +
+    'thousand times what its cell count would. It is not stable: move the control ' +
+    'above and the named fraction swings between ' +
+    pct(1 - (((P.at_confidence['0.0'] || {}).by_superkingdom || [])
+      .filter(g => g.group === 'unclassified')[0] || {}).fraction) + ' and ' +
+    pct(1 - (((P.at_confidence['0.2'] || {}).by_superkingdom || [])
+      .filter(g => g.group === 'unclassified')[0] || {}).fraction) +
+    ' on one parameter. And the unnamed part is not novelty: see below.';
   p.append(note);
   app.append(p);
 })();
@@ -2437,45 +2506,63 @@ function interval(iv) {
 // ---------- public health: known viruses, reference or drifted
 (function () {
   const S = D.strain_divergence;
-  const p = panel('Known viruses: the reference, or a drifted strain',
-    'For each virus this sample assembled, how far its own sequence has drifted from the ' +
-    'closest reference protein. Low identity over a LONG alignment is a divergent strain ' +
-    'and is the row worth attention; low identity over a short one says nothing and is ' +
-    'marked unreadable rather than scored.');
+  const p = panel('The viruses here, and how far from the reference',
+    'Where this sample assembled enough of a virus to compare it with the closest ' +
+    'reference, how far it has drifted. Most divergent first, because that is the row ' +
+    'worth attention: a known virus that no longer looks like the reference is what ' +
+    'wastewater surveillance exists to notice early.');
   if (!S) {
     p.append(el('div', 'absent', 'known_strain_divergence_s*.json absent: run ' +
       'experiments/known_strain_divergence.py'));
     app.append(p); return;
   }
-  const taxa = (S.taxa || []).filter(t => t.median_identity_percent != null);
-  const head = el('div', 'callout');
+  const taxa = (S.taxa || []).filter(t => t.median_identity_percent != null)
+    .sort((a, b) => a.median_identity_percent - b.median_identity_percent);
   const div = taxa.filter(t => t.median_identity_percent < 90);
-  head.innerHTML = '<b>' + taxa.length + ' taxa have an alignment long enough to read an ' +
-    'identity from, and ' + div.length + ' of them sit below 90% identity to their ' +
-    'closest reference protein.</b> This measures drift from the DATABASE. It is blind ' +
-    'to strain mixtures inside the sample, because an assembler fuses lineages below ' +
-    'about 3.8% divergence at any depth.';
-  p.append(head);
-  // Most drifted first. The file is ordered by assembled mass, which is the right
-  // order for an archive and the wrong one here: a reader opening this panel is asking
-  // which of the things we recognise has moved furthest from the reference.
-  const list = el('div', 'drows');
-  taxa.slice().sort((a, b) => a.median_identity_percent - b.median_identity_percent)
-    .slice(0, 24).forEach(t => {
-    const r = el('div', 'drow');
-    const far = t.median_identity_percent < 90;
-    r.innerHTML = '<div class="dname"><b>' + esc(t.name) + '</b>' +
-      (t.on_the_panel ? ' <span class="chip">on the panel</span>' : '') + '</div>' +
-      '<div class="dbar"><span style="width:' + t.median_identity_percent + '%;' +
-      'background:' + (far ? 'var(--residue)' : 'var(--identified)') + '"></span></div>' +
-      '<div class="dnum mono">' + num(t.median_identity_percent, 1) + '%</div>' +
-      '<div class="dmeta dim">over ' + t.median_aligned_aa + ' aa, ' + t.contigs +
-      ' contig' + (t.contigs === 1 ? '' : 's') + ', longest ' +
-      t.longest_nt.toLocaleString() + ' nt</div>';
+  const hero = el('div', 'verdict');
+  hero.innerHTML = '<div class="vmain"><b>' + div.length + ' of ' + taxa.length +
+    '</b> viruses this sample assembled sit <b>below 90% identity</b> to the closest ' +
+    'protein anyone has published.</div><div class="vsub">Drift from the database, ' +
+    'measured over alignments long enough to mean something. It cannot see strain ' +
+    'mixtures inside the sample, because assembly fuses lineages that close.</div>';
+  p.append(hero);
+
+  const rank = el('div', 'ranked');
+  // The bar spans the range these taxa actually occupy, from the most divergent one
+  // down to the reference. A fixed 40-point span clipped every row in this run to the
+  // same full-width bar, which is a scale saying nothing.
+  const spread = Math.max(5, 100 - (taxa[0] || {}).median_identity_percent);
+  const draw = t => {
+    const r = el('div', 'rrow');
+    const id = t.median_identity_percent;
+    // Sequential by distance from the reference: one hue, light to dark, because this
+    // is a magnitude and not an identity. The band stops at 100 and starts at 60, the
+    // range these alignments actually occupy.
+    const k = Math.max(0, Math.min(1, (100 - id) / spread));
+    r.innerHTML =
+      '<div class="rno mono wide">' + num(id, 1) + '%</div>' +
+      '<div class="rname"><b>' + esc(t.name) + '</b>' +
+      (t.on_the_panel ? '<span class="chip strong">on the watchlist</span>' : '') +
+      '</div>' +
+      '<div class="rbar"><i style="width:' + Math.max(2, 100 * k).toFixed(1) +
+      '%;background:var(--v2);opacity:' + (0.35 + 0.65 * k).toFixed(2) + '"></i></div>' +
+      '<div class="rval dim">over ' + t.median_aligned_aa + ' aa, ' + t.contigs +
+      ' contig' + (t.contigs === 1 ? '' : 's') + '</div>';
     r.title = t.reading;
-    list.append(r);
-  });
-  p.append(list);
+    return r;
+  };
+  taxa.slice(0, 10).forEach(t => rank.append(draw(t)));
+  p.append(rank);
+  if (taxa.length > 10) {
+    const d = el('details', 'more');
+    const s2 = document.createElement('summary');
+    s2.textContent = 'the other ' + (taxa.length - 10) + ', closer to their references';
+    d.append(s2);
+    const r2 = el('div', 'ranked');
+    taxa.slice(10).forEach(t => r2.append(draw(t)));
+    d.append(r2);
+    p.append(d);
+  }
   const bs = el('div', 'note');
   bs.innerHTML = '<b>What this cannot see.</b> ' +
     (S.blind_spots || []).map(b => esc(b)).join('. ') + '.';
@@ -2483,53 +2570,137 @@ function interval(iv) {
   app.append(p);
 })();
 
-// ---------- public health: the part nothing could name
-// The whole of the rest of this page is about this pile. On the front page it gets one
-// panel and a number, because a public-health reader needs to know it exists and how big
-// it is before they need to know how it was characterised.
+// ---------- public health: the part nobody can name
 (function () {
   const R = D.ranking, K = R && R.kind_summary, b = (D.tier_table || {}).breakdown;
-  if (!K || !b) return;
-  const p = panel('What nothing could name',
-    'The reads no index places, which on this library is most of them. This is the ' +
-    'research question the rest of this page is about; here it is as one number and ' +
-    'what is known about it.');
-  const big = el('div', 'cards3');
-  const card = (v, l, c) => {
-    const d = el('div');
-    const n = el('div', 'bignum', v); if (c) n.style.color = c;
-    d.append(n); d.append(el('div', 'biglab', l));
-    return d;
-  };
-  big.append(
-    card(pct(b.residual.point), 'of the library survives every index the cascade runs',
-         'var(--residue)'),
-    card(pct(1 - (K.named / (K.searched || 1))),
-         'of those reads point at nothing nameable even in protein', 'var(--residue)'),
-    card(pct((b.identified || {}).point), 'identifiable, which is what gets subtracted',
-         'var(--identified)'));
-  p.append(big);
-  // The reconciliation itself lives in the index panel above, where a reader first
-  // meets the number that needs it. Repeating it here would be the same paragraph
-  // twice; a pointer is enough, and it carries the one figure this panel needs.
   const cur = (D.tier_table || {}).curve || [];
-  const own = (cur.filter(c => c.tier === 'selfasm_sample_contigs_identified_norrna')[0]
-               || {}).marginal_removed;
-  if (own != null) {
-    const rec = el('div', 'note');
-    rec.innerHTML = 'Identifiable is not the same as named: ' + pct(own) + ' of this ' +
-      'library is removed purely by matching contigs assembled from the sample itself, ' +
-      'which carry no name at all. The panel above puts the two side by side.';
-    p.append(rec);
-  }
+  const tier = k => (cur.filter(c => c.tier === k)[0] || {});
+  if (!K || !b) return;
+  const p = panel('The part nobody can name',
+    'What is left when every reference has had its turn. This is most of the library, ' +
+    'and it is the part this project is really about.');
+  const own = tier('selfasm_sample_contigs_identified_norrna').marginal_removed;
+  const rr = tier('rrna').tier_alone_removed;
+
+  const hero = el('div', 'verdict');
+  hero.innerHTML = '<div class="vmain"><b>' +
+    pct(1 - (K.named / (K.searched || 1))) + '</b> of the leftover reads match nothing ' +
+    'anyone has named, in any protein database we can run.</div>' +
+    '<div class="vsub">And it is not that they are unlike anything: ' + pct(own) +
+    ' of this library is sequence we have seen in this very sample before, assembled ' +
+    'into contigs that nobody has ever named. Another ' + pct(rr) + ' is ribosomal RNA, ' +
+    'which tells you it is a ribosome and not whose.</div>';
+  p.append(hero);
+
+  // One picture of the whole library, split by WHAT WE CAN SAY about each part rather
+  // than by which tier fired. The two middle bands are the honest answer to "removed
+  // because there is an unknown contig": that sequence is recognised and still
+  // nameless, which is a different thing from both named and left over.
+  (function () {
+    const brk = (D.tier_table || {}).breakdown, curve = (D.tier_table || {}).curve || [];
+    if (!brk || !curve.length) return;
+    const CAN_NAME = {k2_viral: 1, k2_standard08: 1, k2_pluspf08: 1, k2_pluspf16: 1,
+                      prot_viral: 1, prot_sprot: 1};
+    let named = 0;
+    curve.forEach(c => { if (CAN_NAME[c.tier]) named += c.marginal_removed || 0; });
+    const ident = brk.identified.point;
+    const bands = [
+      {lab: 'named', v: named, col: 'var(--v1)',
+       sub: 'a taxon or an accession came back'},
+      {lab: 'ribosomal RNA', v: rr, col: 'var(--v1)', op: 0.45,
+       sub: 'a ribosome, and not whose'},
+      {lab: 'seen here before, never named', v: Math.max(0, ident - named - rr),
+       col: 'var(--v-mute)', sub: 'mostly a contig assembled from this very sample (' +
+         pct(own) + '), the rest adapter and low complexity'},
+      {lab: 'assembles, nothing names it', v: brk.assembled_unidentified.point,
+       col: 'var(--v2-soft)', sub: 'real recurring sequence, median depth 6'},
+      {lab: 'left over', v: brk.residual.point, col: 'var(--v2)',
+       sub: 'median depth 1, seen once and never again'},
+    ].filter(b => b.v > 0);
+    const tot = bands.reduce((a, b) => a + b.v, 0) || 1;
+    const bar = el('div', 'split');
+    bar.innerHTML = bands.map((b, i) =>
+      '<i title="' + esc(b.lab + ': ' + pct(b.v)) + '" style="flex:' +
+      (b.v / tot).toFixed(5) + ';background:' + b.col +
+      (b.op ? ';opacity:' + b.op : '') + ';animation-delay:' + (i * 110) +
+      'ms"></i>').join('');
+    p.append(bar);
+    const lg = el('div', 'splitlg');
+    lg.innerHTML = bands.map(b =>
+      '<div><i style="background:' + b.col + (b.op ? ';opacity:' + b.op : '') +
+      '"></i><div><b>' + esc(b.lab) + '</b> <span class="mono">' + pct(b.v) +
+      '</span><div class="dim">' + esc(b.sub) + '</div></div></div>').join('');
+    p.append(lg);
+  })();
 
   const note = el('div', 'callout');
-  note.innerHTML = '<b>Unnamed is not novel.</b> An index can say whether something is ' +
-    'already known; it cannot say whether it is new, because any score built from a ' +
-    'search tracks distance to the database. What is measured instead, in the detail ' +
-    'below: this pile is not artefact, holds no abundant hidden genome, and sits at a ' +
-    'median depth of one read, which is below every instrument that needs a second copy.';
+  note.innerHTML = '<b>Unnamed is not novel, and this is the one place on the page ' +
+    'where that matters most.</b> An index can say whether something is already known; ' +
+    'it cannot say whether it is new, because any score built from a search tracks ' +
+    'distance to the database rather than novelty. What is measured instead, in the ' +
+    'detail below: this pile is not laboratory artefact, it holds no abundant hidden ' +
+    'genome, and it sits at a median depth of one read, which is below every instrument ' +
+    'that needs to see a molecule twice.';
   p.append(note);
+  app.append(p);
+})();
+
+// ---------- detail: naming against recognising
+// NOT on the front page. A public-health reader does not care which tier fired, and
+// "removed because it matched an unknown contig" is a fact about our plumbing. It stays
+// in the page because it is the reconciliation between two figures that otherwise look
+// like a contradiction, and because somebody asked the question once and will again.
+(function () {
+  const P = D.profile, curve = (D.tier_table || {}).curve || [];
+  const brk = (D.tier_table || {}).breakdown;
+  if (!P || !curve.length || !brk) return;
+  const p = panel('Naming something against recognising it',
+    'Why this run can say 7% of the library is named and 77% of it is identifiable, ' +
+    'with no contradiction between them.');
+  // Which tiers can name is a property of the tier, declared here where it can be read.
+  // A Kraken2 or DIAMOND hit carries a taxon or an accession; an artefact filter, a
+  // SILVA match and a match to a contig from this very sample tell you the sequence has
+  // been seen before and nothing about what it is.
+  const CAN_NAME = {k2_viral: 1, k2_standard08: 1, k2_pluspf08: 1, k2_pluspf16: 1,
+                    prot_viral: 1, prot_sprot: 1};
+  const WHY = {artefact: 'adapter and low complexity, removed and not named',
+               rrna: 'matches ribosomal RNA, which says it is a ribosome and not whose',
+               selfasm_sample_contigs_rrna: 'matches this sample own ribosomal contigs',
+               selfasm_sample_contigs_identified_norrna:
+                 'matches a contig assembled from this very sample, which nobody named'};
+  let named = 0, unnamed = 0; const unnamedRows = [];
+  curve.forEach(c => {
+    const m = c.marginal_removed || 0;
+    if (CAN_NAME[c.tier]) { named += m; }
+    else { unnamed += m; if (m > 0.002) unnamedRows.push([c.tier, m]); }
+  });
+  const k2here = 1 - (((P.at_confidence['0.1'] || {}).by_superkingdom || [])
+    .filter(g => g.group === 'unclassified')[0] || {}).fraction;
+  const box = el('div', 'cmp');
+  const rowbar = (lab, v, col, sub) => {
+    const r = el('div', 'crow');
+    r.innerHTML = '<div class="clab">' + lab + '</div>' +
+      '<div class="cbar"><span style="width:' + (100 * v).toFixed(2) + '%;background:' +
+      col + '"></span></div><div class="cnum mono">' + pct(v) + '</div>' +
+      '<div class="csub dim">' + sub + '</div>';
+    box.append(r);
+  };
+  rowbar('<b>named</b> by one index', k2here, 'var(--v1)',
+    'Kraken2, PlusPF-08, confidence 0.1, whole library.');
+  rowbar('<b>named</b> by the whole cascade', named, 'var(--v1)',
+    'every cascade tier that returns a taxon or an accession, added up. That it lands ' +
+    'beside the figure above is the cross-check.');
+  rowbar('<b>recognised but not named</b>', unnamed, 'var(--v-mute)',
+    unnamedRows.map(r => (WHY[r[0]] || r[0]) + ', ' + pct(r[1])).join('; ') + '.');
+  rowbar('left over after everything', brk.residual.point, 'var(--v2)',
+    'plus ' + pct((brk.assembled_unidentified || {}).point) + ' that assembles into ' +
+    'contigs nothing can name.');
+  p.append(box);
+  p.append(el('p', 'note',
+    'Most of what this pipeline removes as known, it removes by matching sequence ' +
+    'nobody has named. The scopes differ too: the index figure is the whole library, ' +
+    'the cascade figures its ' + ((D.parameters || {}).pairs || 0).toLocaleString() +
+    '-pair block.'));
   app.append(p);
 })();
 // ---------- summary and detail
@@ -2541,9 +2712,9 @@ function interval(iv) {
   // them. Everything else on this page is how those answers were arrived at, and goes
   // below the fold: it was all on the front page before, and the front page was a
   // method report wearing a sample report's clothes.
-  const SUMMARY = ['What we screened for', 'What one reference index can name',
-                   'Known viruses: the reference, or a drifted strain',
-                   'What nothing could name'];
+  const SUMMARY = ['What we watch for, and what is here', 'What this water is',
+                   'The viruses here, and how far from the reference',
+                   'The part nobody can name'];
   const panels = Array.prototype.filter.call(app.children,
     n => n.tagName === 'SECTION' && n.classList.contains('panel'));
   const detail = panels.filter(n => {
