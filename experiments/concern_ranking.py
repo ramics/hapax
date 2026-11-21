@@ -69,6 +69,10 @@ IDENTITY_NONE = 40.0
 ALIGN_FULL = 60.0
 ALIGN_NONE = 20.0
 
+#: The significance threshold every count here is taken at. Never quote an identity
+#: without it: the chance band reads identically on residue and already-identified reads.
+SIGNIFICANT_EVALUE = 1e-5
+
 #: Design effect on the residue's counts, from results/block_position_bias/. The reads are
 #: a contiguous block of the FASTQ and a Wilson interval assumes a random sample.
 RESIDUE_DESIGN_EFFECT = 1.09
@@ -93,7 +97,7 @@ def wilson(k: int, n: int, z: float = 1.96, design: float = 1.0) -> dict:
             "k": k, "n": n, "design_effect": design}
 
 
-def classify(text: str, table: dict) -> tuple[str, str | None]:
+def classify(text: str, table: dict, index: str | None = None) -> tuple[str, str | None]:
     """First matching rule wins, and the matched keyword is returned so the page can show
     why a row was grouped as it was. A grouping a reader cannot audit is a grouping a
     reader has to take on trust, which is not what this project does.
@@ -110,6 +114,8 @@ def classify(text: str, table: dict) -> tuple[str, str | None]:
     printed.
     """
     for rule in table["rules"]:
+        if rule.get("only_if_index") and rule["only_if_index"] != index:
+            continue
         for kw in rule.get("any", ()):
             if re.search(r"(?<![A-Za-z])" + re.escape(kw), text, re.IGNORECASE):
                 return rule["group"], kw
@@ -118,6 +124,127 @@ def classify(text: str, table: dict) -> tuple[str, str | None]:
                          text, re.IGNORECASE):
                 return rule["group"], kw
     return "unknown_host", None
+
+
+def _hit(kw: str, text: str, word: bool = False) -> bool:
+    pat = r"(?<![A-Za-z])" + re.escape(kw) + (r"(?![A-Za-z])" if word else "")
+    return re.search(pat, text, re.IGNORECASE) is not None
+
+
+def sequence_kind(text: str, index: str | None, table: dict) -> tuple[str, str | None]:
+    """What KIND of thing the matched record is: a phage, some other virus, or something
+    living. This is a different question from the host group, which says what the record
+    INFECTS, and a row needs both - a phage record has a bacterial host and is not itself
+    a bacterium.
+
+    The split phage-against-bacterial is the hardest of the three and the honest reason is
+    biological, not a limit of this table: prophages live inside bacterial genomes, so one
+    protein can truthfully be both. At the identities this residue reaches - a few dozen
+    amino acids at about half identity - nothing here settles that, so these buckets
+    describe the RECORD that was matched and never the read.
+    """
+    kr = table["kind_rules"]
+    if index in kr["viral_indexes"]:
+        for kw in kr["phage_name_words"]:
+            if _hit(kw, text):
+                return "putative_phage", kw
+        return "virus_no_phage_signal", None
+    # A cellular index can still hold a viral entry, so check before assuming.
+    if _hit("virus", text) or _hit("phage", text):
+        for kw in kr["phage_name_words"]:
+            if _hit(kw, text):
+                return "putative_phage", kw
+        return "virus_no_phage_signal", None
+    for kw in kr["prokaryote_genera"]:
+        if _hit(kw, text, word=True):
+            return "putative_bacterial", kw
+    for kw in kr.get("eukaryote_genera", ()):
+        if _hit(kw, text, word=True):
+            return "putative_eukaryotic", kw
+    return "cellular_kind_not_placed", None
+
+
+CELLULAR_KINDS = ("putative_bacterial", "putative_eukaryotic", "cellular_kind_not_placed")
+
+
+def pile_counts(rundir) -> dict:
+    """How many of the scored mates have a significant named relative at all, per pile.
+
+    The denominator matters more than the numerator here and had been wrong: shares were
+    being taken over the residual PAIRS of the whole cascade block while the numerator
+    counted MATES among the sample the per-read report actually searched. Two different
+    units and a factor of about 1.8. Counted here from reads.jsonl so both come from one
+    file, and the known pile is counted in the same pass because a share of the residue
+    without its control says nothing.
+    """
+    path = rundir / "reads.jsonl"
+    if not path.exists():
+        return {}
+    out: dict[str, dict] = {}
+    with path.open() as fh:
+        for line in fh:
+            d = json.loads(line)
+            pile = out.setdefault(d.get("set") or "unknown",
+                                  {"scored": 0, "searched": 0, "significant": 0})
+            pile["scored"] += 1
+            best = None
+            for h in (d.get("closest_viral"), d.get("closest_sprot")):
+                if h and h.get("evalue") is not None:
+                    best = h["evalue"] if best is None else min(best, h["evalue"])
+            if best is not None:
+                pile["searched"] += 1
+                if best < SIGNIFICANT_EVALUE:
+                    pile["significant"] += 1
+    return out
+
+
+def kind_summary(rows: list[dict], piles: dict, table: dict) -> dict:
+    """The three piles Imo asked for, in READS rather than subjects, with the pile that
+    matters most beside them: the mates that point at nothing significant at all.
+
+    Subject counts and read counts answer different questions and the read count is the
+    one a reader wants - 201 of 243 subjects being phage is not the same claim as most of
+    the residue's named reads being phage. Both ship.
+
+    The known pile is carried in the same structure, because a share of the residue with
+    no control beside it is the mistake this repo keeps catching itself making.
+    """
+    res = piles.get("residue") or {}
+    searched = res.get("searched") or 0
+    kinds = table["kind_rules"]["kinds"]
+    by_kind = {k: {"subjects": 0, "reads": 0, "label": v["label"],
+                   "reading": v["reading"]} for k, v in kinds.items()}
+    for r in rows:
+        b = by_kind[r["sequence_kind"]]
+        b["subjects"] += 1
+        b["reads"] += r["residue_reads"] or 0
+    named = sum(b["reads"] for b in by_kind.values())
+    for b in by_kind.values():
+        b["share_of_searched"] = (wilson(b["reads"], searched,
+                                         design=RESIDUE_DESIGN_EFFECT)
+                                  if searched else None)
+    known = piles.get("known") or {}
+    return {
+        "unit": "residue MATES with a significant named relative, at E < "
+                f"{SIGNIFICANT_EVALUE:g}",
+        "searched": searched,
+        "named": named,
+        "no_significant_relative": searched - named,
+        "share_named": wilson(named, searched, design=RESIDUE_DESIGN_EFFECT)
+        if searched else None,
+        "by_kind": by_kind,
+        "known_pile_control": {
+            "searched": known.get("searched"),
+            "significant": known.get("significant"),
+            "share": wilson(known.get("significant") or 0, known.get("searched") or 0,
+                            design=RESIDUE_DESIGN_EFFECT) if known.get("searched") else None,
+            "reading": "the same count on reads the cascade already identified. It is the "
+                       "scale the residue's figure is read against: these are reads with "
+                       "a known relative by construction, and even they do not all have a "
+                       "significant one at this threshold",
+        },
+        "caveat": table["kind_rules"]["_the_hard_split"],
+    }
 
 
 def main() -> None:
@@ -138,18 +265,31 @@ def main() -> None:
 
     tt = (json.loads((args.rundir / "tier_table.json").read_text())
           if (args.rundir / "tier_table.json").exists() else {})
-    residue_pairs = None
-    br = (tt.get("breakdown") or {}).get("residual")
-    if br:
-        residue_pairs = br.get("k")
-    n_denom = residue_pairs or (tt.get("pairs") or 0)
+    # The share's denominator is the residue mates the per-read report actually SEARCHED,
+    # counted from the same file as the numerator. It used to be the residual pairs of the
+    # whole cascade block, which is both a different unit and about 1.8x larger, so every
+    # share was understated by that factor. Numerator and denominator now come from one
+    # pass over one file, which is the only way this stays true when either changes.
+    piles = pile_counts(args.rundir)
+    n_denom = (piles.get("residue") or {}).get("searched") or 0
+    denom_note = ("residue mates searched by the per-read report (reads.jsonl), not the "
+                  "residual pairs of the cascade block: the numerator counts mates in that "
+                  "same sample")
 
     rows, unplaced = [], 0
     for r in S.get("subjects", []):
         subj = r["subject"]
         nm = names.get(subj) or {}
         text = " ".join(x for x in [nm.get("organism"), nm.get("name"), subj] if x)
-        group, kw = classify(text, table)
+        kind, kindkw = sequence_kind(text, r.get("index"), table)
+        group, kw = classify(text, table, r.get("index"))
+        # A cellular record has no host: it IS the organism. Letting the host rules speak
+        # here is a category error, and a live one - it had turned a Bacillus subtilis
+        # transporter into a bacteriophage and an Arabidopsis kinase into a plant virus.
+        # The row keeps the unknown weight rather than a guess, and says why on its face.
+        host_na = kind in CELLULAR_KINDS
+        if host_na:
+            group, kw = "unknown_host", None
         if group == "unknown_host":
             unplaced += 1
         ident = r.get("median_identity_percent")
@@ -176,7 +316,15 @@ def main() -> None:
             "host_group": group,
             "host_group_matched_keyword": kw,
             "host_group_label": groups[group].get("label", group.replace("_", " ")),
-            "host_group_reading": groups[group]["reading"],
+            "host_group_reading": (
+                "not applicable: the matched record is not a virus, so it has no host. "
+                "Weighted as unknown rather than as safe."
+                if host_na else groups[group]["reading"]),
+            "host_group_not_applicable": host_na,
+            "sequence_kind": kind,
+            "sequence_kind_label": table["kind_rules"]["kinds"][kind]["label"],
+            "sequence_kind_reading": table["kind_rules"]["kinds"][kind]["reading"],
+            "sequence_kind_matched_keyword": kindkw,
             "host_confidence": round(conf, 4),
             "host_term": round(host_term, 4),
             "distance": round(distance, 4),
@@ -242,6 +390,11 @@ def main() -> None:
                        "subjects_total": len(rows),
                        "coverage_note": "an unplaced name is grouped unknown_host and "
                                         "weighted in the middle, never at zero"},
+        # The whole split in one block, with its control beside it. This is what the page
+        # draws as its summary, so it is computed here and never recomputed in the page.
+        "kind_summary": kind_summary(rows, piles, table),
+        "piles": piles,
+        "denominator_note": denom_note,
         "interval_note": f"shares of the residue carry a Wilson interval widened by "
                          f"{RESIDUE_DESIGN_EFFECT}x, the measured design effect of "
                          f"reading a contiguous block of the FASTQ "

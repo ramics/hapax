@@ -321,6 +321,16 @@ details > summary { cursor: pointer; font-size: 13px; color: var(--dim); }
   gap: 0.9rem; }
 .hero > div { border: 1px solid var(--edge); border-radius: 6px; padding: 0.85rem 0.9rem; }
 .hero .bignum { font-size: 34px; }
+.stack { display: flex; flex-direction: column; gap: 0.9rem; }
+.barlab { font-size: 12px; color: var(--dim); font-family: var(--mono);
+  margin-bottom: 0.25rem; }
+.ditem { border-top: 1px solid var(--edge); padding: 0.55rem 0; }
+.ditem > summary { font-size: 13.5px; color: var(--fg); padding: 0.15rem 0; }
+.ditem > summary b { font-weight: 600; }
+.ditem > summary .dim { font-weight: 400; }
+.ditem[open] > summary { margin-bottom: 0.5rem; }
+.inner { display: flex; flex-direction: column; gap: 0.8rem; min-width: 0;
+  padding: 0.2rem 0 0.9rem; }
 .big { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 0.9rem; margin: 1rem 0 0.4rem; }
 .bignum { font-size: 30px; font-weight: 650; line-height: 1.1;
@@ -548,6 +558,103 @@ function interval(iv) {
   app.append(p);
 })();
 
+// ---------- phage, virus, or something living
+// The split Imo asked for, in READS and with its control beside it. Subject counts and
+// read counts answer different questions - 204 of 243 subjects being phage is not the
+// claim that most of the residue's named reads are phage - so the picture is drawn in
+// reads and the subject count rides along in the tooltip.
+(function () {
+  const R = D.ranking, K = R && R.kind_summary;
+  const p = panel('Phage, virus, or something living',
+    'Of the leftover reads, the few that have a named relative at all, and what kind of ' +
+    'thing that relative is.');
+  if (!K) { p.append(el('div', 'absent', 'no kind summary in ranking.json'));
+    app.append(p); return; }
+  const KCOL = {putative_phage: 'var(--g-phage)',
+    virus_no_phage_signal: 'var(--residue)',
+    putative_bacterial: 'var(--g-vert)',
+    putative_eukaryotic: 'var(--g-plant)',
+    cellular_kind_not_placed: 'var(--g-unknown)'};
+
+  // Two bars at ONE scale: the residue, and the already-named pile it is read against.
+  // Drawn first and together, because 5.8% means nothing until you see 23.8% beside it.
+  function scaleBar(label, named, total, sub) {
+    const row = el('div');
+    row.append(el('div', 'barlab', esc(label)));
+    const bar = el('div', 'bar');
+    const a = document.createElement('span');
+    a.style.width = (100 * named / total) + '%';
+    a.style.background = 'var(--identified)';
+    a.title = named + ' of ' + total;
+    const b = document.createElement('span');
+    b.style.flex = '1';
+    b.style.background = 'var(--null)';
+    b.style.opacity = '0.28';
+    bar.append(a, b);
+    row.append(bar);
+    row.append(el('div', 'note', sub));
+    return row;
+  }
+  const g = el('div', 'stack');
+  g.append(scaleBar('the leftovers', K.named, K.searched,
+    '<b>' + pct(K.share_named.point) + '</b> of ' + K.searched.toLocaleString() +
+    ' searched mates have a significant relative. ' +
+    (K.searched - K.named).toLocaleString() + ' have none.'));
+  const C = K.known_pile_control;
+  if (C && C.searched) g.append(scaleBar('reads the cascade already named, the control',
+    C.significant, C.searched,
+    '<b>' + pct(C.share.point) + '</b> of ' + C.searched.toLocaleString() +
+    ' searched mates. These have a known relative by construction, and even they do ' +
+    'not all clear the same threshold.'));
+  p.append(g);
+
+  // Then the sliver, magnified. Labelled as magnified, on its own scale, because a
+  // breakdown drawn at the scale above would be four invisible slices.
+  const kinds = Object.keys(K.by_kind).filter(k => K.by_kind[k].reads > 0)
+    .sort((a, b) => K.by_kind[b].reads - K.by_kind[a].reads);
+  p.append(el('div', 'barlab',
+    'those ' + K.named + ' reads, magnified: what kind of record they point at'));
+  const bar = el('div', 'bar');
+  kinds.forEach(k => {
+    const v = K.by_kind[k];
+    const sp = document.createElement('span');
+    sp.style.width = (100 * v.reads / K.named) + '%';
+    sp.style.background = KCOL[k] || 'var(--null)';
+    sp.title = v.label + ': ' + v.reads + ' reads across ' + v.subjects + ' records';
+    bar.append(sp);
+  });
+  p.append(bar);
+  const lg = el('div', 'legend');
+  lg.innerHTML = kinds.map(k => {
+    const v = K.by_kind[k];
+    return '<span><i style="background:' + (KCOL[k] || 'var(--null)') + '"></i>' +
+      esc(v.label) + ' <b>' + v.reads + '</b> reads, ' + v.subjects + ' records ' +
+      '<span class="mono">(' + pct(v.share_of_searched.point) + ' of all leftovers)' +
+      '</span></span>';
+  }).join('');
+  p.append(lg);
+
+  const big = el('div', 'hero');
+  function card(v, lab, col) { const d = el('div');
+    const n = el('div', 'bignum', v); if (col) n.style.color = col;
+    d.append(n); d.append(el('div', 'biglab', lab)); big.append(d); }
+  card(pct(1 - K.share_named.point), 'of the leftovers point at nothing we can name',
+    'var(--null)');
+  kinds.slice(0, 3).forEach(k => card(pct(K.by_kind[k].share_of_searched.point),
+    K.by_kind[k].label, KCOL[k]));
+  p.append(big);
+
+  const det = el('details');
+  det.innerHTML = '<summary>what these three buckets can and cannot tell you</summary>';
+  const dd = el('div', 'note');
+  dd.innerHTML = '<p><b>' + esc(K.caveat) + '</b></p>' +
+    kinds.map(k => '<p><b>' + esc(K.by_kind[k].label) + '</b> &mdash; ' +
+      esc(K.by_kind[k].reading) + '</p>').join('') +
+    '<p>' + esc(K.unit) + '. Denominator: ' + esc(R.denominator_note || '') + '.</p>';
+  det.append(dd); p.append(det);
+  app.append(p);
+})();
+
 // ---------- worth a second look
 (function () {
   const R = D.ranking;
@@ -584,6 +691,10 @@ function interval(iv) {
   // "vertebrate non human" read as "human" at a glance on a narrow card, which is the
   // one misreading this panel cannot afford.
   const GLAB = g => ((R.host_table.groups[g] || {}).label) || g.replace(/_/g, ' ');
+  const KCOL2 = {putative_phage: 'var(--g-phage)',
+    virus_no_phage_signal: 'var(--residue)', putative_bacterial: 'var(--g-vert)',
+    putative_eukaryotic: 'var(--g-plant)',
+    cellular_kind_not_placed: 'var(--g-unknown)'};
 
   const ctl = el('div', 'controls');
   const sel = el('select');
@@ -597,7 +708,14 @@ function interval(iv) {
   const gnames = ['every group'].concat(Object.keys(R.host_table.groups));
   gnames.forEach(g => { const o = document.createElement('option'); o.value = g;
     o.textContent = g === 'every group' ? g : GLAB(g); gsel.append(o); });
-  ctl.append(el('span', 'dim', 'order by'), sel, el('span', 'dim', 'show'), gsel);
+  const ksel = el('select');
+  const kinds = (R.kind_summary && R.kind_summary.by_kind) || {};
+  [['every kind', 'phage, virus and cellular together']].concat(
+    Object.keys(kinds).filter(k => kinds[k].subjects > 0)
+      .map(k => [k, kinds[k].label])).forEach(([v, t]) => {
+    const o = document.createElement('option'); o.value = v; o.textContent = t;
+    ksel.append(o); });
+  ctl.append(el('span', 'dim', 'order by'), sel, el('span', 'dim', 'show'), ksel, gsel);
   p.append(ctl);
 
   // The group mix as one bar, because 201 of 243 being phage is the single most
@@ -622,8 +740,9 @@ function interval(iv) {
 
   const grid = el('div', 'cards');
   function draw() {
-    const v = sel.value, g = gsel.value;
+    const v = sel.value, g = gsel.value, k = ksel.value;
     const list = (R.subjects || [])
+      .filter(r => k === 'every kind' || r.sequence_kind === k)
       .filter(r => g === 'every group' || r.host_group === g)
       .slice().sort((a, b) =>
         v === 'distance' ? b.distance - a.distance :
@@ -643,11 +762,19 @@ function interval(iv) {
         '<div class="rankno">#' + r.rank + '</div>' +
         '<div class="ctitle">' + esc(r.organism || r.subject) + '</div>' +
         (r.protein ? '<div class="csub">' + esc(r.protein) + '</div>' : '') +
+        '<div class="tag" style="border-color:' + (KCOL2[r.sequence_kind] ||
+            'var(--edge)') + ';color:' + (KCOL2[r.sequence_kind] || 'var(--dim)') + '">' +
+          esc(r.sequence_kind_label || '') +
+          (r.sequence_kind_matched_keyword ? ' &middot; "' +
+            esc(r.sequence_kind_matched_keyword) + '"' : '') +
+        '</div> ' +
         '<div class="tag" style="border-color:' + (GCOL[r.host_group] || 'var(--edge)') +
           ';color:' + (GCOL[r.host_group] || 'var(--dim)') + '">' +
-          esc(r.host_group_label || GLAB(r.host_group)) +
-          (r.host_group_matched_keyword ? ' &middot; "' +
-            esc(r.host_group_matched_keyword) + '"' : ' &middot; no rule matched') +
+          (r.host_group_not_applicable
+            ? 'host: not applicable, it is the organism'
+            : esc(r.host_group_label || GLAB(r.host_group)) +
+              (r.host_group_matched_keyword ? ' &middot; "' +
+                esc(r.host_group_matched_keyword) + '"' : ' &middot; no rule matched')) +
         '</div>' +
         axis('how far', r.distance, 'var(--residue)',
              num(r.median_identity_percent, 1) + '% id') +
@@ -660,9 +787,10 @@ function interval(iv) {
         ' &middot; ' + r.median_aligned_aa + ' aa &middot; ' + esc(r.subject) + '</div>';
       grid.append(c);
     });
-    if (!list.length) grid.innerHTML = '<div class="absent">no subject in that group</div>';
+    if (!list.length) grid.innerHTML =
+      '<div class="absent">no subject in that combination</div>';
   }
-  sel.onchange = draw; gsel.onchange = draw; draw();
+  sel.onchange = draw; gsel.onchange = draw; ksel.onchange = draw; draw();
   p.append(grid);
 
   const det = el('details');
@@ -1445,6 +1573,49 @@ function interval(iv) {
   d.append(el('pre', 'mono note scroll', esc(JSON.stringify(r.stages || [], null, 1))));
   p.append(d);
   app.append(p);
+})();
+// ---------- summary and detail
+// Runs last, after every panel has rendered. It reorganises rather than regenerates: the
+// detail panels keep the markup they were built with and are only moved inside a
+// disclosure, so a figure can never disagree with the summary that cites it.
+(function () {
+  const SUMMARY = ['What is in the water', 'Phage, virus, or something living',
+                   'Worth a second look', 'Where the relatives sit'];
+  const panels = Array.prototype.filter.call(app.children,
+    n => n.tagName === 'SECTION' && n.classList.contains('panel'));
+  const detail = panels.filter(n => {
+    const h = n.querySelector('h2');
+    return h && SUMMARY.indexOf(h.textContent) < 0;
+  });
+  if (!detail.length) return;
+  const firstSentence = t => {
+    const whole = String(t || '').replace(/\s+/g, ' ').trim();
+    const m = whole.match(/^.*?\.(?=\s|$)/);
+    let out = m ? m[0] : whole;
+    if (out.length > 130) out = out.slice(0, 130).replace(/\s+\S*$/, '') + '...';
+    return out;
+  };
+  const wrap = el('section', 'panel');
+  wrap.append(el('h2', null, 'Detail'));
+  wrap.append(el('p', 'note',
+    'Every measurement the summary above is read from, one section each, closed by ' +
+    'default. Nothing here is a different number from the summary: the summary is ' +
+    'drawn from these same files.'));
+  detail.forEach(n => {
+    const d = el('details', 'ditem');
+    const h = n.querySelector('h2');
+    const note = n.querySelector('p.note');
+    const sum = document.createElement('summary');
+    sum.innerHTML = '<b>' + esc(h.textContent) + '</b> <span class="dim">' +
+      esc(note ? firstSentence(note.textContent) : '') + '</span>';
+    h.remove();
+    n.classList.remove('panel');
+    n.classList.add('inner');
+    d.append(sum);
+    d.append(n);
+    wrap.append(d);
+  });
+  app.append(wrap);
 })();
 </script>
 """
