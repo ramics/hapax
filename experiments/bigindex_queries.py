@@ -119,7 +119,7 @@ def main() -> None:
                     help="rows from an earlier pass. With it, an eyeball.fa is written: the "
                          "reads whose alignments are to be rendered against the reference "
                          "they matched, stratified by E-value rather than sampled at "
-                         "random. Proportionally the pile is ~90% chance matches, which is "
+                         "random. Proportionally the pile is ~90%% chance matches, which is "
                          "the true composition and the wrong file - the populations worth "
                          "looking at are the small ones")
     ap.add_argument("--eyeball-n", type=int, default=1000)
