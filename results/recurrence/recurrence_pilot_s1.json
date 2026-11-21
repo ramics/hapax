@@ -24949,11 +24949,471 @@
   "spearman_with_subject_read_count": -0.023809523809523815,
   "reading": "occupancy mixes recurrence with how deeply each subject was sequenced; a high rho means the per-read occupancy is partly a property of the panel rather than of the molecule"
  },
+ "mate_absence": {
+  "identified|d0": {
+   "n": 1185,
+   "both_mates_unwitnessed": 0.02278481012658228,
+   "exactly_one_mate_unwitnessed": 0.05569620253164557,
+   "neither_unwitnessed": 0.9215189873417722,
+   "both_over_one": 0.4090909090909091,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "identified|d1-2": {
+   "n": 2000,
+   "both_mates_unwitnessed": 0.024,
+   "exactly_one_mate_unwitnessed": 0.0535,
+   "neither_unwitnessed": 0.9225,
+   "both_over_one": 0.4485981308411215,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "identified|d10-99": {
+   "n": 2000,
+   "both_mates_unwitnessed": 0.0265,
+   "exactly_one_mate_unwitnessed": 0.0135,
+   "neither_unwitnessed": 0.96,
+   "both_over_one": 1.962962962962963,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "identified|d100+": {
+   "n": 2000,
+   "both_mates_unwitnessed": 0.016,
+   "exactly_one_mate_unwitnessed": 0.0155,
+   "neither_unwitnessed": 0.9685,
+   "both_over_one": 1.032258064516129,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "identified|d3-9": {
+   "n": 2000,
+   "both_mates_unwitnessed": 0.015,
+   "exactly_one_mate_unwitnessed": 0.03,
+   "neither_unwitnessed": 0.955,
+   "both_over_one": 0.5,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "other_ctg|d100+": {
+   "n": 719,
+   "both_mates_unwitnessed": 0.0,
+   "exactly_one_mate_unwitnessed": 0.0,
+   "neither_unwitnessed": 1.0,
+   "both_over_one": Infinity,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "rrna|d0": {
+   "n": 285,
+   "both_mates_unwitnessed": 0.0035087719298245615,
+   "exactly_one_mate_unwitnessed": 0.0456140350877193,
+   "neither_unwitnessed": 0.9508771929824561,
+   "both_over_one": 0.07692307692307691,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "rrna|d1-2": {
+   "n": 490,
+   "both_mates_unwitnessed": 0.0,
+   "exactly_one_mate_unwitnessed": 0.04693877551020408,
+   "neither_unwitnessed": 0.9530612244897959,
+   "both_over_one": 0.0,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "rrna|d10-99": {
+   "n": 2000,
+   "both_mates_unwitnessed": 0.0,
+   "exactly_one_mate_unwitnessed": 0.005,
+   "neither_unwitnessed": 0.995,
+   "both_over_one": 0.0,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "rrna|d100+": {
+   "n": 2000,
+   "both_mates_unwitnessed": 0.0,
+   "exactly_one_mate_unwitnessed": 0.0015,
+   "neither_unwitnessed": 0.9985,
+   "both_over_one": 0.0,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "rrna|d3-9": {
+   "n": 939,
+   "both_mates_unwitnessed": 0.0,
+   "exactly_one_mate_unwitnessed": 0.026624068157614485,
+   "neither_unwitnessed": 0.9733759318423855,
+   "both_over_one": 0.0,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-identified|d0": {
+   "n": 279,
+   "both_mates_unwitnessed": 1.0,
+   "exactly_one_mate_unwitnessed": 0.0,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": Infinity,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-identified|d1-2": {
+   "n": 433,
+   "both_mates_unwitnessed": 1.0,
+   "exactly_one_mate_unwitnessed": 0.0,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": Infinity,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-identified|d10-99": {
+   "n": 445,
+   "both_mates_unwitnessed": 0.9955056179775281,
+   "exactly_one_mate_unwitnessed": 0.0044943820224719105,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": 221.5,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-identified|d100+": {
+   "n": 415,
+   "both_mates_unwitnessed": 1.0,
+   "exactly_one_mate_unwitnessed": 0.0,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": Infinity,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-identified|d3-9": {
+   "n": 428,
+   "both_mates_unwitnessed": 1.0,
+   "exactly_one_mate_unwitnessed": 0.0,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": Infinity,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-other_ctg|d100+": {
+   "n": 719,
+   "both_mates_unwitnessed": 0.9972183588317107,
+   "exactly_one_mate_unwitnessed": 0.0027816411682892906,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": 358.5,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-rrna|d0": {
+   "n": 79,
+   "both_mates_unwitnessed": 0.9873417721518988,
+   "exactly_one_mate_unwitnessed": 0.012658227848101266,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": 78.0,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-rrna|d1-2": {
+   "n": 175,
+   "both_mates_unwitnessed": 1.0,
+   "exactly_one_mate_unwitnessed": 0.0,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": Infinity,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-rrna|d10-99": {
+   "n": 724,
+   "both_mates_unwitnessed": 0.9986187845303868,
+   "exactly_one_mate_unwitnessed": 0.0013812154696132596,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": 723.0,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-rrna|d100+": {
+   "n": 715,
+   "both_mates_unwitnessed": 0.9986013986013986,
+   "exactly_one_mate_unwitnessed": 0.0013986013986013986,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": 714.0,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-rrna|d3-9": {
+   "n": 307,
+   "both_mates_unwitnessed": 0.993485342019544,
+   "exactly_one_mate_unwitnessed": 0.006514657980456026,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": 152.5,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-unident_contig|d0": {
+   "n": 226,
+   "both_mates_unwitnessed": 1.0,
+   "exactly_one_mate_unwitnessed": 0.0,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": Infinity,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-unident_contig|d1-2": {
+   "n": 414,
+   "both_mates_unwitnessed": 1.0,
+   "exactly_one_mate_unwitnessed": 0.0,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": Infinity,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-unident_contig|d10-99": {
+   "n": 435,
+   "both_mates_unwitnessed": 1.0,
+   "exactly_one_mate_unwitnessed": 0.0,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": Infinity,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-unident_contig|d100+": {
+   "n": 475,
+   "both_mates_unwitnessed": 1.0,
+   "exactly_one_mate_unwitnessed": 0.0,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": Infinity,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-unident_contig|d3-9": {
+   "n": 448,
+   "both_mates_unwitnessed": 1.0,
+   "exactly_one_mate_unwitnessed": 0.0,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": Infinity,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-unplaced|d0": {
+   "n": 661,
+   "both_mates_unwitnessed": 1.0,
+   "exactly_one_mate_unwitnessed": 0.0,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": Infinity,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-unplaced|d1-2": {
+   "n": 609,
+   "both_mates_unwitnessed": 0.9983579638752053,
+   "exactly_one_mate_unwitnessed": 0.0016420361247947454,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": 608.0,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-unplaced|d10-99": {
+   "n": 110,
+   "both_mates_unwitnessed": 1.0,
+   "exactly_one_mate_unwitnessed": 0.0,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": Infinity,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "shuffled-unplaced|d3-9": {
+   "n": 599,
+   "both_mates_unwitnessed": 1.0,
+   "exactly_one_mate_unwitnessed": 0.0,
+   "neither_unwitnessed": 0.0,
+   "both_over_one": Infinity,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "unident_contig|d0": {
+   "n": 1041,
+   "both_mates_unwitnessed": 0.07973102785782901,
+   "exactly_one_mate_unwitnessed": 0.08165225744476465,
+   "neither_unwitnessed": 0.8386167146974063,
+   "both_over_one": 0.9764705882352942,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "unident_contig|d1-2": {
+   "n": 1841,
+   "both_mates_unwitnessed": 0.07930472569255839,
+   "exactly_one_mate_unwitnessed": 0.07984790874524715,
+   "neither_unwitnessed": 0.8408473655621944,
+   "both_over_one": 0.9931972789115646,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "unident_contig|d10-99": {
+   "n": 1699,
+   "both_mates_unwitnessed": 0.04532077692760447,
+   "exactly_one_mate_unwitnessed": 0.03649205414949971,
+   "neither_unwitnessed": 0.9181871689228959,
+   "both_over_one": 1.2419354838709677,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "unident_contig|d100+": {
+   "n": 2000,
+   "both_mates_unwitnessed": 0.018,
+   "exactly_one_mate_unwitnessed": 0.0085,
+   "neither_unwitnessed": 0.9735,
+   "both_over_one": 2.117647058823529,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "unident_contig|d3-9": {
+   "n": 2000,
+   "both_mates_unwitnessed": 0.0605,
+   "exactly_one_mate_unwitnessed": 0.069,
+   "neither_unwitnessed": 0.8705,
+   "both_over_one": 0.8768115942028984,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "unplaced|d0": {
+   "n": 1952,
+   "both_mates_unwitnessed": 0.42520491803278687,
+   "exactly_one_mate_unwitnessed": 0.13780737704918034,
+   "neither_unwitnessed": 0.4369877049180328,
+   "both_over_one": 3.0855018587360594,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "unplaced|d1-2": {
+   "n": 1989,
+   "both_mates_unwitnessed": 0.3941679235796883,
+   "exactly_one_mate_unwitnessed": 0.15535444947209653,
+   "neither_unwitnessed": 0.4504776269482152,
+   "both_over_one": 2.5372168284789645,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "unplaced|d10-99": {
+   "n": 387,
+   "both_mates_unwitnessed": 0.031007751937984496,
+   "exactly_one_mate_unwitnessed": 0.015503875968992248,
+   "neither_unwitnessed": 0.9534883720930233,
+   "both_over_one": 2.0,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  },
+  "unplaced|d3-9": {
+   "n": 1999,
+   "both_mates_unwitnessed": 0.304152076038019,
+   "exactly_one_mate_unwitnessed": 0.10605302651325663,
+   "neither_unwitnessed": 0.5897948974487244,
+   "both_over_one": 2.867924528301887,
+   "reading": "error predicts exactly one; a molecule the panel does not hold predicts both. A high both/one ratio is absence, not error"
+  }
+ },
+ "temporal": {
+  "identified|occ2-3": {
+   "n": 854,
+   "span_days": {
+    "p10": 118.0,
+    "p50": 279.0,
+    "p90": 415.0,
+    "mean": 254.99882903981265
+   },
+   "distinct_months": {
+    "p10": 2.0,
+    "p50": 3.0,
+    "p90": 3.0,
+    "mean": 2.572599531615925
+   },
+   "frac_within_14_days": 0.0,
+   "reading": "a burst (small span, one month) is transient material; a wide span across months is resident material under the limit"
+  },
+  "identified|occ4-8": {
+   "n": 7681,
+   "span_days": {
+    "p10": 395.0,
+    "p50": 469.0,
+    "p90": 469.0,
+    "mean": 438.82983986460096
+   },
+   "distinct_months": {
+    "p10": 5.0,
+    "p50": 7.0,
+    "p90": 8.0,
+    "mean": 6.488608254133577
+   },
+   "frac_within_14_days": 0.0,
+   "reading": "a burst (small span, one month) is transient material; a wide span across months is resident material under the limit"
+  },
+  "other_ctg|occ4-8": {
+   "n": 810,
+   "span_days": {
+    "p10": 469.0,
+    "p50": 469.0,
+    "p90": 469.0,
+    "mean": 464.12098765432097
+   },
+   "distinct_months": {
+    "p10": 7.0,
+    "p50": 8.0,
+    "p90": 8.0,
+    "mean": 7.506172839506172
+   },
+   "frac_within_14_days": 0.0,
+   "reading": "a burst (small span, one month) is transient material; a wide span across months is resident material under the limit"
+  },
+  "rrna|occ4-8": {
+   "n": 5634,
+   "span_days": {
+    "p10": 469.0,
+    "p50": 469.0,
+    "p90": 469.0,
+    "mean": 467.75825346112885
+   },
+   "distinct_months": {
+    "p10": 8.0,
+    "p50": 8.0,
+    "p90": 8.0,
+    "mean": 7.880724174653887
+   },
+   "frac_within_14_days": 0.0,
+   "reading": "a burst (small span, one month) is transient material; a wide span across months is resident material under the limit"
+  },
+  "unident_contig|occ2-3": {
+   "n": 975,
+   "span_days": {
+    "p10": 86.0,
+    "p50": 309.0,
+    "p90": 415.0,
+    "mean": 270.4307692307692
+   },
+   "distinct_months": {
+    "p10": 2.0,
+    "p50": 3.0,
+    "p90": 3.0,
+    "mean": 2.5076923076923077
+   },
+   "frac_within_14_days": 0.0,
+   "reading": "a burst (small span, one month) is transient material; a wide span across months is resident material under the limit"
+  },
+  "unident_contig|occ4-8": {
+   "n": 6499,
+   "span_days": {
+    "p10": 329.0,
+    "p50": 469.0,
+    "p90": 469.0,
+    "mean": 434.89352208032005
+   },
+   "distinct_months": {
+    "p10": 4.0,
+    "p50": 7.0,
+    "p90": 8.0,
+    "mean": 6.389444529927681
+   },
+   "frac_within_14_days": 0.0,
+   "reading": "a burst (small span, one month) is transient material; a wide span across months is resident material under the limit"
+  },
+  "unplaced|occ2-3": {
+   "n": 1068,
+   "span_days": {
+    "p10": 50.0,
+    "p50": 279.0,
+    "p90": 415.0,
+    "mean": 253.67883895131087
+   },
+   "distinct_months": {
+    "p10": 2.0,
+    "p50": 2.0,
+    "p90": 3.0,
+    "mean": 2.4138576779026217
+   },
+   "frac_within_14_days": 0.0,
+   "reading": "a burst (small span, one month) is transient material; a wide span across months is resident material under the limit"
+  },
+  "unplaced|occ4-8": {
+   "n": 1791,
+   "span_days": {
+    "p10": 329.0,
+    "p50": 415.0,
+    "p90": 469.0,
+    "mean": 417.3757677275265
+   },
+   "distinct_months": {
+    "p10": 4.0,
+    "p50": 6.0,
+    "p90": 8.0,
+    "mean": 5.824120603015075
+   },
+   "frac_within_14_days": 0.0,
+   "reading": "a burst (small span, one month) is transient material; a wide span across months is resident material under the limit"
+  }
+ },
  "manifest": {
   "script": "experiments/recurrence_report.py",
-  "git_sha": "37f636cb1a8c669d6d7d23a7998485a944cd7ed1",
-  "tree_dirty": false,
-  "script_sha256": "a8e2aabda5bf1228",
+  "git_sha": "79eb0dd14adf6231a4b42f9e9caef71bb4031edb-dirty",
+  "tree_dirty": true,
+  "script_sha256": "2a784cec428b4b25",
   "parameters": {
    "seed": "1",
    "run_dir": "/tmp/claude-0/wk/recurrence/pilot",

@@ -46,6 +46,7 @@ import csv
 import json
 import sys
 from collections import defaultdict
+from datetime import date
 from pathlib import Path
 
 import numpy as np
@@ -210,6 +211,76 @@ def main() -> None:
                             "occupancy_histogram": np.bincount(
                                 v, minlength=total + 1).tolist(),
                         }
+
+    # ---------------------------------------------------------------- is absence just error?
+    # THE PAIR SETTLES IT, AND THE ARITHMETIC ONLY BOUNDS IT. Presence needs one shared
+    # 31-mer of ~77, and one substitution destroys at most 31 consecutive ones, so a read
+    # sharing NOTHING with the panel cannot be common material with an error in it. The
+    # sharper test is that errors strike the two mates independently while a missing molecule
+    # takes both: error predicts EXACTLY ONE mate unwitnessed, absence predicts BOTH. Same
+    # instrument as the mate-disagreement error floor already in the repo.
+    both_ok = scorable[1] & scorable[2]
+    any1 = frac[1] >= POINTS["any"]
+    any2 = frac[2] >= POINTS["any"]
+    unwit1, unwit2 = ~any1.any(axis=0), ~any2.any(axis=0)
+    out["mate_absence"] = {}
+    for p in sorted(set(pile)):
+        for b in sorted(set(dbin[pile == p])):
+            sel = (pile == p) & (dbin == b) & both_ok
+            if sel.sum() < 50:
+                continue
+            a, c = unwit1[sel], unwit2[sel]
+            both = float((a & c).mean())
+            one = float((a ^ c).mean())
+            out["mate_absence"][f"{p}|{b}"] = {
+                "n": int(sel.sum()), "both_mates_unwitnessed": both,
+                "exactly_one_mate_unwitnessed": one,
+                "neither_unwitnessed": float((~a & ~c).mean()),
+                "both_over_one": (both / one) if one else float("inf"),
+                "reading": "error predicts exactly one; a molecule the panel does not hold "
+                           "predicts both. A high both/one ratio is absence, not error",
+            }
+
+    # ---------------------------------------------------------------- burst or season?
+    # Imo's question, 2026-11-21: where would never-witnessed molecules come from -
+    # transience? The never-witnessed reads cannot answer it (that is what never-witnessed
+    # means), but their neighbours can: transient material - one household's infection, one
+    # day's industrial input - should be caught in a BURST of nearby dates, while a resident
+    # population below the detection limit most weeks should scatter across seasons. Reported
+    # at MATCHED occupancy, because a read witnessed in more samples spans more days for
+    # arithmetic reasons.
+    date_of = {}
+    for i, run in enumerate(runs):
+        date_of[i] = panel[run]["date"]
+    uniq_dates = sorted(set(date_of.values()))
+    day = {d: (date(*map(int, d.split("-"))) - date(2021, 1, 1)).days for d in uniq_dates}
+    date_cols = [[i for i in range(len(runs)) if date_of[i] == d] for d in uniq_dates]
+    date_present = np.stack([any1[c].any(axis=0) for c in date_cols])      # dates x queries
+    occ_dates = date_present.sum(axis=0)
+
+    out["temporal"] = {}
+    days_arr = np.array([day[d] for d in uniq_dates], dtype=float)
+    for p in sorted(set(pile)):
+        for band, lo, hi in (("occ2-3", 2, 3), ("occ4-8", 4, 8), ("occ9-20", 9, 20)):
+            sel = np.flatnonzero((pile == p) & scorable[1] &
+                                 (occ_dates >= lo) & (occ_dates <= hi))
+            if sel.size < 50:
+                continue
+            spans, months, tight = [], [], []
+            for i in sel:
+                ds = days_arr[date_present[:, i]]
+                spans.append(float(ds.max() - ds.min()))
+                months.append(len({uniq_dates[j][:7] for j in
+                                   np.flatnonzero(date_present[:, i])}))
+                tight.append(float(ds.max() - ds.min()) <= 14)
+            out["temporal"][f"{p}|{band}"] = {
+                "n": int(sel.size),
+                "span_days": quantiles(np.array(spans)),
+                "distinct_months": quantiles(np.array(months, dtype=float)),
+                "frac_within_14_days": float(np.mean(tight)),
+                "reading": "a burst (small span, one month) is transient material; a wide "
+                           "span across months is resident material under the limit",
+            }
 
     out["manifest"] = {"script": "experiments/recurrence_report.py", **provenance(__file__),
                        "parameters": {k: str(v) for k, v in vars(args).items()},
