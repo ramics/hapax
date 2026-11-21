@@ -279,8 +279,8 @@ class Run:
                 "--r1", str(a.r1), "--r2", str(a.r2), "--threads", str(a.threads),
                 "--work", str(self.work / "calibration_work")]
         return self.call("calibration", "spike_holdout.py", argv,
-                         {"calibration_ladder.json": out / f"spike_holdout_s{a.seed}.json"},
-                         out / f"spike_holdout_s{a.seed}.json")
+                         {"calibration_ladder.json": out / f"spike_s{a.seed}.json"},
+                         out / f"spike_s{a.seed}.json")
 
     # -- assembled-but-unidentifiable ----------------------------------------
     def contigs(self) -> dict:
