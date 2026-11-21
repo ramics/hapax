@@ -153,3 +153,18 @@ Intermediates written to the gitignored `data/residue_structure/`: `coverage.tsv
 read names taken from `results/subtract_recut/residue_rows_s{1..5}.jsonl`. The points the
 figure plots are committed to `results/residue_structure/joint_points_s1.json` so the figure
 has provenance without the intermediates.
+
+## The matched DNA/RNA pair (experiments/dna_rna_pair.py)
+
+Fetched 2026-11-21 into the gitignored `data/berlin_pair/`, from ENA, each file verified
+against the MD5 ENA publishes for it because ENA's FTP front end has served this project
+truncated gzip before.
+
+| Purpose | Accession | Downloaded | Notes |
+|---|---|---|---|
+| matched DNA library | SRR23973375 (`DNA_220616_20-22hmix_cer_BIOMcombi`, GSM7117187) | 2026-11-21 | PRJNA948850, `library_source=GENOMIC`, `library_strategy=OTHER`; 11,311,548 pairs / 2.37 Gbp; NovaSeq 6000. Measured to be a VIROME rather than a metagenome (0.01% rRNA, top taxon *Darmviridae*) - see `results/dna_rna_pair/REPORT.md` |
+| matched RNA library | SRR23973265 (`RNA_WW_220616_20-22hmix`, GSM7117161) | 2026-11-21 | Same plant, same date, same 20-22h composite, same extraction and prep as the DNA member; 11,627,981 pairs / 2.42 Gbp. Same `RNA_WW_` naming series as our calibration sample, eight months later |
+
+The project holds 239 runs in all, 215 `TRANSCRIPTOMIC` and 24 `GENOMIC`, and 22 of the 24
+DNA libraries have an RNA library of the same date and collection window. The DNA set spans
+2022-05-25 to 2022-07-19, so there is no DNA library for our 2021-10-13 calibration sample.

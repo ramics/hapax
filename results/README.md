@@ -52,6 +52,12 @@ outputs and are listed separately because each answers a question of its own.
 | [`cov_step_join/`](cov_step_join/), [`cov_step_conservation/`](cov_step_conservation/) | Whether a within-read depth step marks a junction. **It does not** (+0.011 against contig depth ratios, CI −0.054 to +0.075); it marks sequence shared between molecules (+0.577 with the number of distinct contigs a read aligns to, holding inside every coverage quartile, and not ribosomal conservation). So the whole coverage-shape family has **familiarity polarity**: 0.78 AUC that means *already seen*, not *new*. | live; a prediction made and killed the same day |
 | [`quality_profile/`](quality_profile/) | The library's error rate measured **reference-free**, from the 26–27% of pairs that overlap their own mate: 0.00068 along the body and 0.0019 at the final base, against 0.00206 implied by the Q strings. So [`berlin_quality/`](berlin_quality/)'s figures are Q-derived upper bounds, conservative by about 2.6×, and the quality ramp along the read is real but weak. | live; supersedes the error rates in `berlin_quality/` |
 
+## A second library, and a second nucleic acid
+
+| directory | what it measured | status |
+|---|---|---|
+| [`dna_rna_pair/`](dna_rna_pair/REPORT.md) | DNA and RNA extracted from the same water on the same morning, plus our own 2021 library through the same code as the control. **The DNA member is a virome, not a metagenome** (0.01% rRNA against 38-67%, top taxon *Darmviridae*, viral proteins identifying 7.5x what cellular ones do) and **99.1% of it is unidentified** at the cascade's operating point, where 0.24 GB of viral protein beats a 16 GB nucleotide index by 8.5x. Separately, **the same plant's rRNA fraction went 38.0% to 67.1% in eight months** and its identifiable fraction 22.7% to 40.7%, so a removal figure describes one sample on one day rather than wastewater. | first pass, 1 seed of 5; the instrument reproduces this repo's published 21.7% Kraken2 figure as 22.65% |
+
 ## Strain separation
 
 | directory | what it measured | status |

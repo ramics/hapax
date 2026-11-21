@@ -49,6 +49,7 @@ import json
 import math
 import platform
 import statistics as st
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -57,17 +58,26 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from berlin_io import read_pairs
 from subtract_known import (_mm_index, _silva_to_dna, dir_bytes, kraken2, map_filter,
-                            provenance, write_fastq)
+                            provenance, write_fasta, write_fastq)
 
 ROOT = Path(__file__).resolve().parents[1]
 
 #: The pair. Both are `cer` extraction and `BIOMcombi` library prep, 2022-06-16, the 20-22h
 #: composite, from the same plant - the only pair-level difference is DNA against RNA.
+#: The third entry is not part of the pair. It is the project's own calibration library,
+#: run through the same code and the same index in the same pass, because every figure here
+#: is otherwise being compared against a number produced by a DIFFERENT instrument - the
+#: published 34.5% rRNA came from exact 31-mer matching, this measures alignment of >=40
+#: bases, and the second is deliberately more permissive. Without it in the same run, a
+#: drift and an instrument change cannot be told apart. It cost one extra pass to find that
+#: the 2022 RNA library really is twice as ribosomal.
 LIBRARIES = {
     "dna": {"run": "SRR23973375", "title": "DNA_220616_20-22hmix_cer_BIOMcombi",
-            "source": "GENOMIC"},
-    "rna": {"run": "SRR23973265", "title": "RNA_WW_220616_20-22hmix", "source":
-            "TRANSCRIPTOMIC"},
+            "source": "GENOMIC", "dir": "data/berlin_pair", "role": "pair"},
+    "rna": {"run": "SRR23973265", "title": "RNA_WW_220616_20-22hmix",
+            "source": "TRANSCRIPTOMIC", "dir": "data/berlin_pair", "role": "pair"},
+    "rna_2021": {"run": "SRR23973193", "title": "RNA_WW_211013_20-22hmix (calibration)",
+                 "source": "TRANSCRIPTOMIC", "dir": "data/berlin", "role": "reference"},
 }
 
 
@@ -141,7 +151,8 @@ def profile_library(name: str, r1: Path, r2: Path, args, work: Path) -> dict:
     seen = collections.Counter((a[:50], b[:50]) for a, b in zip(s1, s2))
     dup = sum(v - 1 for v in seen.values() if v > 1)
     return {"run": LIBRARIES[name]["run"], "title": LIBRARIES[name]["title"],
-            "source": LIBRARIES[name]["source"], "pairs": len(raw),
+            "source": LIBRARIES[name]["source"], "role": LIBRARIES[name]["role"],
+            "pairs": len(raw),
             "modal_length": {"r1": mode1, "r2": mode2},
             "length_spread": {"r1": dict(len1.most_common(4)),
                               "r2": dict(len2.most_common(4))},
@@ -160,7 +171,9 @@ def main() -> None:
     ap.add_argument("--pairs", type=int, default=200_000)
     ap.add_argument("--block", type=int, default=1_500_000,
                     help="pairs skipped per seed, as in subtract_known.py")
-    ap.add_argument("--data", type=Path, default=ROOT / "data/berlin_pair")
+    ap.add_argument("--pair-only", action="store_true",
+                    help="skip the 2021 calibration library. Off by default: it is the "
+                         "control that separates drift from an instrument change")
     ap.add_argument("--silva", type=Path, nargs="*",
                     default=[ROOT / "data/silva/SSU.fa.gz", ROOT / "data/silva/LSU.fa.gz"])
     ap.add_argument("--k2-db", type=Path, default=ROOT / "data/k2_pluspf16")
@@ -170,6 +183,15 @@ def main() -> None:
     ap.add_argument("--classify-bin", type=Path,
                     default=Path("/home/user/tools/k2pkg/root/share/kraken2-2.17.2/"
                                  "libexec/classify"))
+    ap.add_argument("--dmnd", type=Path, nargs="*",
+                    default=[ROOT / "data/prot/viral.dmnd", ROOT / "data/prot/sprot.dmnd"])
+    ap.add_argument("--diamond-bin", type=Path, default=Path("/home/user/tools/diamond"))
+    ap.add_argument("--diamond-sensitivity", default="--sensitive")
+    ap.add_argument("--diamond-bitscore", type=float, default=50.0)
+    ap.add_argument("--protein-pairs", type=int, default=20_000,
+                    help="pairs per library for the protein tier. Smaller than the "
+                         "nucleotide rungs because a sensitive DIAMOND blastx is 10-14x the "
+                         "cost of default and the readout is a proportion")
     ap.add_argument("--min-mlen", type=int, default=40)
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--work", type=Path, default=Path("/tmp/claude-0/wk/dnarna"))
@@ -182,9 +204,12 @@ def main() -> None:
     timings: dict[str, float] = {}
 
     libs: dict[str, dict] = {}
-    for name, meta in LIBRARIES.items():
-        r1 = args.data / f"{meta['run']}_1.fastq.gz"
-        r2 = args.data / f"{meta['run']}_2.fastq.gz"
+    wanted = [n for n in LIBRARIES
+              if LIBRARIES[n]["role"] == "pair" or not args.pair_only]
+    for name in wanted:
+        meta = LIBRARIES[name]
+        r1 = ROOT / meta["dir"] / f"{meta['run']}_1.fastq.gz"
+        r2 = ROOT / meta["dir"] / f"{meta['run']}_2.fastq.gz"
         for p in (r1, r2):
             if not p.exists():
                 raise SystemExit(f"{p} is missing")
@@ -234,19 +259,73 @@ def main() -> None:
                                    args.work / f"{name}.k2", args.k2_confidence)
         timings[f"kraken2_{name}"] = time.perf_counter() - t
         n = len(rows)
+        # `kraken2()` returns a row for EVERY read, unclassified ones carrying taxid 0, so
+        # the classified set is the non-zero taxids. Counting the dict is counting the
+        # library: the first run of this script reported 1.0000 for both libraries, which is
+        # this repo's own tell - an identical extreme number in a pile and its control is a
+        # bug, not a finding - and the guard below now refuses it outright.
+        hit = {k for k, tx in calls.items() if tx != 0}
+        if n and len(hit) / n >= 0.999:
+            raise SystemExit(
+                f"{name}: {len(hit)}/{n} classified, which is not a measurement. Either "
+                f"taxid 0 is being counted as a call or the classifier was handed the "
+                f"wrong file.")
         lib["kraken2"] = {"db": str(args.k2_db), "db_bytes": dir_bytes(args.k2_db),
                           "confidence": args.k2_confidence,
-                          "classified": len(calls), "frac": len(calls) / n,
-                          "ci95": wilson(len(calls), n),
+                          "classified": len(hit), "frac": len(hit) / n,
+                          "ci95": wilson(len(hit), n),
+                          "unclassified": n - len(hit),
                           "wall_seconds": wall, "peak_rss_kb": rss}
-        lib["_taxa"] = collections.Counter(calls.values())
-        print(f"{name}: identified {len(calls) / n:.4f} at confidence "
+        lib["_taxa"] = collections.Counter(tx for tx in calls.values() if tx != 0)
+        print(f"{name}: identified {len(hit) / n:.4f} at confidence "
               f"{args.k2_confidence} against {args.k2_db.name}", flush=True)
         fq1.unlink(missing_ok=True)
         fq2.unlink(missing_ok=True)
 
+    # ---- the protein tier, which on every previous measurement here identifies several
+    # times what a nucleotide index does, and which is the only instrument that can say what
+    # a phage-dominated library IS. Same databases, bitscore and sensitivity as the cascade's
+    # own rung, on a subsample because the question is a proportion at percentage resolution.
+    for name, lib in libs.items():
+        pre = lib["nontemplate_prefix"]["r2"]["prefix_len"]
+        rows = [(r[0], r[1], r[2][pre:], r[3], r[4][pre:])
+                for r in lib["_pairs"][:args.protein_pairs]]
+        fa = args.work / f"{name}_prot.fa"
+        write_fasta(fa, rows)
+        lib["protein"] = {}
+        for db in args.dmnd:
+            if not db.exists():
+                print(f"skipping {db}: missing", flush=True)
+                continue
+            tsv = args.work / f"{name}_{db.stem}.tsv"
+            t = time.perf_counter()
+            subprocess.run([str(args.diamond_bin), "blastx", "--db", str(db),
+                            "--query", str(fa), "--out", str(tsv),
+                            "--threads", str(args.threads), "--outfmt", "6", "qseqid",
+                            "sseqid", "pident", "length", "evalue", "bitscore",
+                            "--max-target-seqs", "1", "--evalue", "10",
+                            args.diamond_sensitivity, "--quiet"], check=True)
+            timings[f"diamond_{name}_{db.stem}"] = time.perf_counter() - t
+            best: dict[str, float] = {}
+            with open(tsv) as h:
+                for line in h:
+                    f = line.split("\t")
+                    pair = f[0].rsplit("/", 1)[0]
+                    best[pair] = max(best.get(pair, 0.0), float(f[5]))
+            k = sum(1 for v in best.values() if v >= args.diamond_bitscore)
+            n = len(rows)
+            lib["protein"][db.stem] = {
+                "db_bytes": dir_bytes(db), "pairs": n, "any_hit": len(best) / n,
+                "identified": k / n, "ci95": wilson(k, n),
+                "bitscore": args.diamond_bitscore,
+                "sensitivity": args.diamond_sensitivity}
+            print(f"{name}: protein {db.stem} any hit {len(best) / n:.4f}, "
+                  f"bitscore>={args.diamond_bitscore:.0f} {k / n:.4f}", flush=True)
+            tsv.unlink(missing_ok=True)
+        fa.unlink(missing_ok=True)
+
     # ---- do the two nucleic acids see the same organisms?
-    tdna, trna = libs["dna"]["_taxa"], libs["rna"]["_taxa"]
+    tdna, trna = libs["dna"]["_taxa"], libs["rna"]["_taxa"]  # the pair, not the reference
     shared = set(tdna) & set(trna)
     def weighted(c, keys):
         tot = sum(c.values()) or 1
