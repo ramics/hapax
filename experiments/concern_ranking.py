@@ -98,14 +98,24 @@ def classify(text: str, table: dict) -> tuple[str, str | None]:
     why a row was grouped as it was. A grouping a reader cannot audit is a grouping a
     reader has to take on trust, which is not what this project does.
 
-    Keywords match only at a word boundary. A plain substring test put `Bastrovirus` into
-    the human-associated group because `Astrovir` occurs inside it, which is the exact
-    failure mode of a keyword table and was caught on the first run by reading the matched
-    keyword printed beside the row - which is why it is printed.
+    Two kinds of keyword, because the table needs both and conflating them is how it goes
+    wrong. `any` entries are PREFIXES anchored at the left only, so `Picornavir` catches
+    `Picornaviridae`; most virus-family keywords have to work that way. `word` entries are
+    anchored at both ends, for host words that are substrings of ordinary English -
+    `bat` must not fire on `battery`, and a prefix rule cannot express that.
+
+    A plain substring test put `Bastrovirus` into the human-associated group because
+    `Astrovir` occurs inside it: the exact failure mode of a keyword table, caught on the
+    first run by reading the matched keyword printed beside the row, which is why it is
+    printed.
     """
     for rule in table["rules"]:
-        for kw in rule["any"]:
+        for kw in rule.get("any", ()):
             if re.search(r"(?<![A-Za-z])" + re.escape(kw), text, re.IGNORECASE):
+                return rule["group"], kw
+        for kw in rule.get("word", ()):
+            if re.search(r"(?<![A-Za-z])" + re.escape(kw) + r"(?![A-Za-z])",
+                         text, re.IGNORECASE):
                 return rule["group"], kw
     return "unknown_host", None
 
@@ -165,6 +175,7 @@ def main() -> None:
             "index": r.get("index"),
             "host_group": group,
             "host_group_matched_keyword": kw,
+            "host_group_label": groups[group].get("label", group.replace("_", " ")),
             "host_group_reading": groups[group]["reading"],
             "host_confidence": round(conf, 4),
             "host_term": round(host_term, 4),

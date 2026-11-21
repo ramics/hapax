@@ -5,45 +5,298 @@
   "_damping": "Every weight is damped towards unknown by how far the match is. A relative at 95% identity over 100 amino acids transfers its host group; a relative at 40% over 30 does not. The damping is in concern_ranking.py and is shown on every card, because distance raises novelty interest and lowers host confidence at the same time and a score that hid that would be the project's own mistake in a new costume.",
   "groups": {
     "bacteriophage": {
+      "label": "bacteriophage",
       "concern": 0.05,
       "reading": "infects bacteria. The expected background of a wastewater RNA virome and the dominant signal in this library."
     },
     "plant": {
+      "label": "plant",
       "concern": 0.1,
       "reading": "infects plants. Abundant in sewage from diet and runoff."
     },
     "fungal_or_protist": {
+      "label": "fungal or protist",
       "concern": 0.1,
       "reading": "infects fungi, amoebae or other protists."
     },
     "invertebrate": {
+      "label": "invertebrate",
       "concern": 0.25,
       "reading": "infects insects or other invertebrates. Worth noting because arbovirus relatives sit here and because an insect virus in sewage is ordinary."
     },
     "vertebrate_non_human": {
+      "label": "non-human vertebrate",
       "concern": 0.6,
       "reading": "infects vertebrates other than humans. Livestock and wildlife viruses, which is where most spillover ancestry sits."
     },
     "human_associated": {
+      "label": "human-associated",
       "concern": 1.0,
       "reading": "a family that includes viruses infecting humans. The group a person should look at first, and the one where the damping below matters most."
     },
     "unknown_host": {
+      "label": "host not placed",
       "concern": 0.3,
       "reading": "the table could not place this record's name. Weighted in the middle on purpose: an unplaceable name is not evidence of safety, and weighting it at zero would hide exactly the rows this project exists to find."
     }
   },
   "rules": [
-    {"group": "bacteriophage", "any": ["phage", "Leviviridae", "Levi_coat", "RNA_replicase_B", "Microviridae", "Inoviridae", "Siphoviridae", "Myoviridae", "Podoviridae", "crAss", "Caudovir", "prophage", "Qbeta", "Enterobacteria virus", "Escherichia virus", "Pseudomonas virus", "Salmonella virus", "Bacillus virus", "Mycobacterium virus", "Streptococcus virus", "Staphylococcus virus", "Lactococcus virus", "Vibrio virus", "Synechococcus virus", "Prochlorococcus virus", "cyanophage"]},
-    {"group": "plant", "any": ["mosaic virus", "Tobamovirus", "Potyvir", "Tombusvir", "Virgavir", "Bromovir", "Closterovir", "Luteovir", "Secovir", "Tymovir", "Betaflexivir", "Alphaflexivir", "Nepovirus", "Sobemovir", "Carmovirus", "necrosis virus", "yellows virus", "leaf curl virus", "ringspot virus", "Primula", "Pepper mild mottle", "Tobacco", "Cucumber", "Tomato", "Potato virus", "Barley", "Wheat", "Rice stripe", "Maize"]},
-    {"group": "fungal_or_protist", "any": ["mycovirus", "Totivir", "Chrysovir", "Partitivir", "Narnavir", "Mitovir", "Endornavir", "mimivirus", "Pandoravirus", "Tupanvirus", "Marseillevirus", "Pithovirus", "Molliviruscp", "Yasminevirus", "Fadolivirus", "Cotonvirus", "Acanthamoeba", "Saccharomyces", "Schizosaccharomyces", "Aspergillus", "Candida", "Neurospora", "Kluyveromyces", "Eremothecium", "Dictyostelium", "yeast"]},
-    {"group": "invertebrate", "any": ["Culex", "Aedes", "Anopheles", "mosquito", "Drosophila", "Caenorhabditis", "Dicistrovir", "Iflavir", "Nodavir", "Baculovir", "Densovir", "Nudivir", "bee virus", "shrimp", "Penaeus", "Bombyx", "insect virus", "Apis mellifera"]},
-    {"group": "human_associated", "any": ["Homo sapiens", "Picornavir", "Enterovirus", "Rhinovirus", "Norovirus", "Sapovirus", "Rotavirus", "Astrovir", "Hepatitis", "Adenovir", "Coronavir", "Influenza", "Respirovirus", "Pneumovir", "Paramyxovir", "Orthomyxovir", "Reovir", "Caliciviridae", "Flavivir", "Dengue", "dengue", "Zika", "West Nile", "Hepacivir", "Pegivirus", "Retrovir", "Lentivir", "Papillomavir", "Polyomavir", "Herpesvir", "Parvovir", "Bocavirus", "Cardiovirus", "Parechovirus", "Cosavirus", "Salivirus", "Aichivirus", "Mamastrovirus", "Orthohepevirus", "Hepevirus", "poliovirus", "Coxsackievirus", "Echovirus", "Measles", "Mumps", "Rubella", "Smallpox", "Monkeypox", "Vaccinia", "Mononeg_RNA_pol", "Flavi_NS5"]},
-    {"group": "vertebrate_non_human", "any": ["Mus musculus", "Rattus", "Bos taurus", "Sus scrofa", "Gallus gallus", "Danio rerio", "Xenopus", "bovine", "porcine", "avian", "canine", "feline", "equine", "murine", "bat ", "Chiroptera", "Rhabdovir", "Arterivir", "Bunyavir", "Peribunyavir", "Nairovir", "Phenuivir", "Hantavir", "Birnavir", "Circovir", "Anellovir", "Bastrovirus", "Hepelivirales"]},
-    {"group": "fungal_or_protist", "any": ["Plasmodium", "Leishmania", "Trypanosoma", "Toxoplasma", "Tetrahymena", "Paramecium", "Chlamydomonas"]},
-    {"group": "bacteriophage", "any": ["Escherichia coli", "Bacillus subtilis", "Haemophilus", "Streptomyces", "Synechocystis", "Mycolicibacterium", "Pseudomonas", "Clavibacter", "Rhodococcus", "Rheinheimera", "Rhodobacter", "Acidovorax", "Enterobacteria"]},
-    {"group": "plant", "any": ["Arabidopsis", "Oryza sativa", "Zea mays", "Nicotiana", "Solanum", "Glycine max", "Hordeum"]}
+    {
+      "group": "bacteriophage",
+      "any": [
+        "phage",
+        "Leviviridae",
+        "Levi_coat",
+        "RNA_replicase_B",
+        "Microviridae",
+        "Inoviridae",
+        "Siphoviridae",
+        "Myoviridae",
+        "Podoviridae",
+        "crAss",
+        "Caudovir",
+        "prophage",
+        "Qbeta",
+        "Enterobacteria virus",
+        "Escherichia virus",
+        "Pseudomonas virus",
+        "Salmonella virus",
+        "Bacillus virus",
+        "Mycobacterium virus",
+        "Streptococcus virus",
+        "Staphylococcus virus",
+        "Lactococcus virus",
+        "Vibrio virus",
+        "Synechococcus virus",
+        "Prochlorococcus virus",
+        "cyanophage"
+      ]
+    },
+    {
+      "group": "plant",
+      "any": [
+        "mosaic virus",
+        "Tobamovirus",
+        "Potyvir",
+        "Tombusvir",
+        "Virgavir",
+        "Bromovir",
+        "Closterovir",
+        "Luteovir",
+        "Secovir",
+        "Tymovir",
+        "Betaflexivir",
+        "Alphaflexivir",
+        "Nepovirus",
+        "Sobemovir",
+        "Carmovirus",
+        "necrosis virus",
+        "yellows virus",
+        "leaf curl virus",
+        "ringspot virus",
+        "Primula",
+        "Pepper mild mottle",
+        "Tobacco",
+        "Cucumber",
+        "Tomato",
+        "Potato virus",
+        "Barley",
+        "Wheat",
+        "Rice stripe",
+        "Maize"
+      ]
+    },
+    {
+      "group": "fungal_or_protist",
+      "any": [
+        "mycovirus",
+        "Totivir",
+        "Chrysovir",
+        "Partitivir",
+        "Narnavir",
+        "Mitovir",
+        "Endornavir",
+        "mimivirus",
+        "Pandoravirus",
+        "Tupanvirus",
+        "Marseillevirus",
+        "Pithovirus",
+        "Molliviruscp",
+        "Yasminevirus",
+        "Fadolivirus",
+        "Cotonvirus",
+        "Acanthamoeba",
+        "Saccharomyces",
+        "Schizosaccharomyces",
+        "Aspergillus",
+        "Candida",
+        "Neurospora",
+        "Kluyveromyces",
+        "Eremothecium",
+        "Dictyostelium",
+        "yeast"
+      ]
+    },
+    {
+      "group": "invertebrate",
+      "any": [
+        "Culex",
+        "Aedes",
+        "Anopheles",
+        "mosquito",
+        "Drosophila",
+        "Caenorhabditis",
+        "Dicistrovir",
+        "Iflavir",
+        "Nodavir",
+        "Baculovir",
+        "Densovir",
+        "Nudivir",
+        "bee virus",
+        "shrimp",
+        "Penaeus",
+        "Bombyx",
+        "insect virus",
+        "Apis mellifera"
+      ]
+    },
+    {
+      "group": "human_associated",
+      "any": [
+        "Homo sapiens",
+        "Picornavir",
+        "Enterovirus",
+        "Rhinovirus",
+        "Norovirus",
+        "Sapovirus",
+        "Rotavirus",
+        "Astrovir",
+        "Hepatitis",
+        "Adenovir",
+        "Coronavir",
+        "Influenza",
+        "Respirovirus",
+        "Pneumovir",
+        "Paramyxovir",
+        "Orthomyxovir",
+        "Reovir",
+        "Caliciviridae",
+        "Flavivir",
+        "Dengue",
+        "dengue",
+        "Zika",
+        "West Nile",
+        "Hepacivir",
+        "Pegivirus",
+        "Retrovir",
+        "Lentivir",
+        "Papillomavir",
+        "Polyomavir",
+        "Herpesvir",
+        "Parvovir",
+        "Bocavirus",
+        "Cardiovirus",
+        "Parechovirus",
+        "Cosavirus",
+        "Salivirus",
+        "Aichivirus",
+        "Mamastrovirus",
+        "Orthohepevirus",
+        "Hepevirus",
+        "poliovirus",
+        "Coxsackievirus",
+        "Echovirus",
+        "Measles",
+        "Mumps",
+        "Rubella",
+        "Smallpox",
+        "Monkeypox",
+        "Vaccinia",
+        "Mononeg_RNA_pol",
+        "Flavi_NS5"
+      ]
+    },
+    {
+      "group": "vertebrate_non_human",
+      "any": [
+        "Mus musculus",
+        "Rattus",
+        "Bos taurus",
+        "Sus scrofa",
+        "Gallus gallus",
+        "Danio rerio",
+        "Xenopus",
+        "bovine",
+        "porcine",
+        "avian",
+        "canine",
+        "feline",
+        "equine",
+        "murine",
+        "Chiroptera",
+        "Rhabdovir",
+        "Arterivir",
+        "Bunyavir",
+        "Peribunyavir",
+        "Nairovir",
+        "Phenuivir",
+        "Hantavir",
+        "Birnavir",
+        "Circovir",
+        "Anellovir",
+        "Hepelivirales"
+      ],
+      "word": [
+        "bat",
+        "bats",
+        "Bat"
+      ]
+    },
+    {
+      "group": "fungal_or_protist",
+      "any": [
+        "Plasmodium",
+        "Leishmania",
+        "Trypanosoma",
+        "Toxoplasma",
+        "Tetrahymena",
+        "Paramecium",
+        "Chlamydomonas"
+      ]
+    },
+    {
+      "group": "bacteriophage",
+      "any": [
+        "Escherichia coli",
+        "Bacillus subtilis",
+        "Haemophilus",
+        "Streptomyces",
+        "Synechocystis",
+        "Mycolicibacterium",
+        "Pseudomonas",
+        "Clavibacter",
+        "Rhodococcus",
+        "Rheinheimera",
+        "Rhodobacter",
+        "Acidovorax",
+        "Enterobacteria"
+      ]
+    },
+    {
+      "group": "plant",
+      "any": [
+        "Arabidopsis",
+        "Oryza sativa",
+        "Zea mays",
+        "Nicotiana",
+        "Solanum",
+        "Glycine max",
+        "Hordeum"
+      ]
+    }
   ],
   "_rule_order": "Rules are tried in order and the first match wins, so the specific lines sit above the generic ones. A record naming both a bacterial genus and a phage is caught by the phage line first, which is the intended reading: 'Pseudomonas phage PaP2' infects Pseudomonas and is not Pseudomonas.",
-  "_coverage_is_reported": "concern_ranking.py counts how many subjects no rule placed and writes it into ranking.json, because a table's blind spot is part of its result. A reader who sees a large unknown_host fraction should trust the ordering less, and the page prints it."
+  "_coverage_is_reported": "concern_ranking.py counts how many subjects no rule placed and writes it into ranking.json, because a table's blind spot is part of its result. A reader who sees a large unknown_host fraction should trust the ordering less, and the page prints it.",
+  "_why_bastrovirus_is_not_a_keyword": "Bastroviruses are reported from human stool AND from bats, pigs and rats, so the genus name says nothing about a host and no single group is right for it. It is therefore not a keyword at all: a bastrovirus record is placed by the host word in its own name (Bat, Culex, Homo sapiens) or, failing that, by unknown_host, which is the honest answer. The name was briefly a vertebrate keyword as part of fixing the Astrovir substring bug; that overcorrected, because the fix the bug needed was the word boundary, not a reassignment.",
+  "_two_keyword_kinds": "'any' entries are prefixes anchored at the left only, so Picornavir catches Picornaviridae. 'word' entries are anchored at both ends, for host words that are substrings of ordinary English: bat must not fire on battery."
 }

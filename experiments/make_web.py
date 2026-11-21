@@ -576,6 +576,15 @@ function interval(iv) {
     'the references can answer.';
   p.append(warn);
 
+  const GCOL = {bacteriophage: 'var(--g-phage)', plant: 'var(--g-plant)',
+    fungal_or_protist: 'var(--g-fungal)', invertebrate: 'var(--g-invert)',
+    vertebrate_non_human: 'var(--g-vert)', human_associated: 'var(--g-human)',
+    unknown_host: 'var(--g-unknown)'};
+  // The table's own display label, never the key with its underscores stripped:
+  // "vertebrate non human" read as "human" at a glance on a narrow card, which is the
+  // one misreading this panel cannot afford.
+  const GLAB = g => ((R.host_table.groups[g] || {}).label) || g.replace(/_/g, ' ');
+
   const ctl = el('div', 'controls');
   const sel = el('select');
   [['second_look', 'overall, worth a second look'],
@@ -587,14 +596,9 @@ function interval(iv) {
   const gsel = el('select');
   const gnames = ['every group'].concat(Object.keys(R.host_table.groups));
   gnames.forEach(g => { const o = document.createElement('option'); o.value = g;
-    o.textContent = g.replace(/_/g, ' '); gsel.append(o); });
+    o.textContent = g === 'every group' ? g : GLAB(g); gsel.append(o); });
   ctl.append(el('span', 'dim', 'order by'), sel, el('span', 'dim', 'show'), gsel);
   p.append(ctl);
-
-  const GCOL = {bacteriophage: 'var(--g-phage)', plant: 'var(--g-plant)',
-    fungal_or_protist: 'var(--g-fungal)', invertebrate: 'var(--g-invert)',
-    vertebrate_non_human: 'var(--g-vert)', human_associated: 'var(--g-human)',
-    unknown_host: 'var(--g-unknown)'};
 
   // The group mix as one bar, because 201 of 243 being phage is the single most
   // informative picture on this page and a table buries it.
@@ -613,7 +617,7 @@ function interval(iv) {
   const mlg = el('div', 'legend');
   mlg.innerHTML = Object.keys(R.host_table.groups).filter(g => mix[g]).map(g =>
     '<span><i style="background:' + (GCOL[g] || 'var(--null)') + '"></i>' +
-    esc(g.replace(/_/g, ' ')) + ' ' + mix[g] + '</span>').join('');
+    esc(GLAB(g)) + ' ' + mix[g] + '</span>').join('');
   p.append(mlg);
 
   const grid = el('div', 'cards');
@@ -641,7 +645,7 @@ function interval(iv) {
         (r.protein ? '<div class="csub">' + esc(r.protein) + '</div>' : '') +
         '<div class="tag" style="border-color:' + (GCOL[r.host_group] || 'var(--edge)') +
           ';color:' + (GCOL[r.host_group] || 'var(--dim)') + '">' +
-          esc(r.host_group.replace(/_/g, ' ')) +
+          esc(r.host_group_label || GLAB(r.host_group)) +
           (r.host_group_matched_keyword ? ' &middot; "' +
             esc(r.host_group_matched_keyword) + '"' : ' &middot; no rule matched') +
         '</div>' +
