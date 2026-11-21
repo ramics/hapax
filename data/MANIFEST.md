@@ -132,3 +132,12 @@ Intermediates written to the gitignored `data/residue_structure/`: `coverage.tsv
 read names taken from `results/subtract_recut/residue_rows_s{1..5}.jsonl`. The points the
 figure plots are committed to `results/residue_structure/joint_points_s1.json` so the figure
 has provenance without the intermediates.
+
+## Profile reach and depth rarefaction (experiments/profile_reach.py, depth_rarefaction.py)
+
+| Purpose | Accession / source | Downloaded | Notes |
+|---|---|---|---|
+| clean holdout genome | D00239, human rhinovirus A1B, ENA fasta | 2026-11-21 | **7,133 nt as ENA serves it**, against 7,152 recorded for the same accession by the mate-width thread; the difference is noted rather than reconciled, and nothing here depends on the last 19 bases |
+| profile index | Pfam-A.hmm, EBI `Pfam/current_release` | 2026-11-21 | 53,275 models, HMMER3/f, model dates to June 2026; `Pfam.version` is absent from that directory so the release number is not recorded and the file itself is the provenance |
+| translated-search index | RefSeq `viral.1.protein.faa.gz` + UniProt Swiss-Prot `uniprot_sprot.fasta.gz` | 2026-11-21 | the same pair the mate-width thread used, re-fetched into a fresh container |
+| Berlin wastewater reads | SRR23973193 (PRJNA948850) via ENA fastq | 2026-11-21 | re-fetched; byte sizes match the figures recorded above (404,863,127 and 419,810,100), so it is the same file as the earlier threads used |

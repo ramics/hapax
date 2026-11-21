@@ -204,7 +204,7 @@ than a reason to hide it.
 | `repetitive` | recurring 16-mers, tandem period | separates "no information" from "information we cannot place" |
 | `artefact` | adapter, primer dimer, homopolymer, N content | residue is enriched for these by construction |
 | `chimaera` | split-mapping evidence | **26% false positives on known background** — reported, never used for a call |
-| `motif` | Pfam-A profile hits, six frames, per-domain E-value | the one field that can reach a relative too divergent for DIAMOND |
+| `motif` | Pfam-A profile hits, six frames, per-domain E-value | **not** a longer reach than DIAMOND — measured weaker at every rung (`results/profile_reach/`); reported at the families' gathering thresholds, which unlike an E-value cut are stable between runs |
 | `mean_error_prob` | from the quality string | lets an unexplainable read read as "probably instrument" |
 | `recurrence` | occurrences across the run and the other 115 samples | sketch only overstates, so "rare" is safe |
 
@@ -237,9 +237,23 @@ independent between mates; organism-level absence is shared. That orthogonality 
 a detection rule (no pair rule approaches one per million) but it measures *this sample's*
 noise floor for free, which is exactly what the calibration requirement in §6 needs.
 
-**5. Profile reach.** Pfam-A profiles are the only axis still alive past 20% divergence,
-where DIAMOND and every nucleotide index read zero (§7). The gap between "no sequence hit"
-and "yes profile hit" is itself a distance measurement.
+**5. Profile reach — MEASURED AND WITHDRAWN.** This axis read: *Pfam-A profiles are the
+only axis still alive past 20% divergence, where DIAMOND and every nucleotide index read
+zero; the gap between "no sequence hit" and "yes profile hit" is itself a distance
+measurement.* Both halves are false, measured on the spike ladder with its own controls in
+the same pass (`results/profile_reach/`). Pfam-A is **weaker than translated search at
+every rung** (91.5% against 39.9% at 0% divergence, 61.3% against 18.6% at 10%, 10.0%
+against 5.8% at 20%), and DIAMOND does not read zero past 20% — it recognises 39.9% at 20%
+and 5.7% at 30% at a bitscore floor of 40. The "reads zero" belief came from reading
+`results/spike_holdout/`'s *cascade removal* table as a search's reach; the cascade's
+operating point is chosen so a false removal is expensive, which is a different question.
+And the gap carries nothing: 3.8% (2.2–4.8) on the holdout at its best rung against 2.6%
+(2.2–3.1) on reads the cascade already identifies, ranges overlapping.
+
+**What replaces it.** The profile field stays in §4.1 as a reported `motif` field with its
+calibration — its shuffled null is clean, so it measures structure rather than
+composition — and loses its claim to reach. The axis that does extend reach is the pair:
+see §4.3.
 
 **First experiment, before any of this is built into the tool:** take the residue rows
 already on disk and ask whether they are *structured* or *diffuse* in that joint space — do
@@ -247,6 +261,34 @@ clusters appear that behave like a genome (consistent coverage, GC, mate linkage
 co-recurrence), or is it a featureless cloud behaving like error? Five seeds, data already
 committed, and a clean negative if the answer is cloud. Nothing downstream should be built
 until that question has an answer.
+
+### 4.3 Merge the mates before anything clever runs
+
+A pair is one molecule of ~194 nt median insert, not two independent 107 nt and 93 nt
+reads, and the mates of a short-insert pair overlap: 35.1% of this library's pairs merge
+into a single read. Measured on the spike ladder against mate 1 **of the same molecule**,
+with the shuffled null searched at the merged length so a fixed bitscore floor cannot be
+cleared by chance (`results/profile_reach/` §2):
+
+| divergence | merged (~140 nt) | mate 1 (~105 nt) |
+|---|---|---|
+| 10% | 75.5 (72.0–78.9) | 59.6 (55.7–64.3) |
+| 20% | 38.4 (33.2–43.5) | 10.5 (8.9–11.6) |
+| 30% | 7.1 (5.1–9.2) | 0.0 (0.0–0.2) |
+| real library reads | 16.0 (14.1–17.7) | 8.9 (7.2–10.6) |
+| shuffled null, both lengths | 0.0 | 0.0 |
+
+**So part of the 10-20% recognition wall in §7 is a read-length wall, not an index wall.**
+That is the one wall this project has found that moves without new sequencing, new indexes
+or new money: the information is already in about a third of the pairs of the library we
+have. Merging runs before the cascade, and every read-level number is reported for the
+merged read where one exists and per mate where it does not.
+
+Two limits travel with it. The merged reads measured here carry no error-correction credit
+for their overlap — we have a measured error rate but no quality model, and awarding
+merging an accuracy benefit we cannot falsify would be worse than leaving it out — so the
+gain is a lower bound against a real merger. And it is one genome, a picornavirus with a
+single long polyprotein ORF, which is favourable to a translated search.
 
 ---
 
@@ -306,9 +348,14 @@ Read-level homology gives 8–10% sensitivity at 93,478 flags per million at bit
 codon usage, GC — all lack novelty polarity (PR #8). The pair is a multiplier on aggregation,
 not a rule: no pair rule reaches one per million either.
 
-**Recognition stops between 10% and 20% divergence.** The holdout spike — three real genomes
-simulated into this library's own measured insert distribution (median 194, p95 363) and error
-rates (0.00089 R1, 0.00117 R2), walked away from themselves, pushed through every index:
+**Recognition stops between 10% and 20% divergence — partly because of read length.** The
+table below is a *cascade removal* ladder at the cascade's operating point, and §4.3 shows
+that merging the mates moves it: at 20% divergence a merged read is recognised 3.7x more
+often than its own mate 1, and at 30% it goes from nothing to 7.1%. So read this wall as a
+property of the cascade AND of the 107 nt read, not of the indexes alone. The holdout spike
+— three real genomes simulated into this library's own measured insert distribution (median
+194, p95 363) and error rates (0.00089 R1, 0.00117 R2), walked away from themselves, pushed
+through every index:
 
 | divergence | spike pairs surviving tier 1 |
 |---|---|
