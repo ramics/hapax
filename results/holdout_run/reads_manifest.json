@@ -27,6 +27,28 @@
   "background_s5": 2000,
   "shuffled_s5": 2000
  },
+ "shuffle_losses": {
+  "s1": {
+   "failed": 0,
+   "returned_input": 0
+  },
+  "s2": {
+   "failed": 0,
+   "returned_input": 0
+  },
+  "s3": {
+   "failed": 0,
+   "returned_input": 0
+  },
+  "s4": {
+   "failed": 0,
+   "returned_input": 0
+  },
+  "s5": {
+   "failed": 0,
+   "returned_input": 0
+  }
+ },
  "fastq": "/tmp/claude-0/-home-user/091726aa-0c4a-5e0b-a85c-99f5c136bf59/scratchpad/reads/SRR23421544.fastq.gz",
  "candidate": "OQ722337.1",
  "leak": "OQ722330.1"

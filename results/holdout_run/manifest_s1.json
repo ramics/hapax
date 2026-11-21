@@ -1,0 +1,36 @@
+{
+ "script": "holdout_run.py",
+ "script_sha256": "bd25024c184603f4bf1521f317d06d172085e273b5e096cf17510c661478822b",
+ "git_sha": "d1b79c55a6b39f4818baaeb26a6ceba49ba5ed85-dirty",
+ "argv": {
+  "outdir": "results/holdout_run",
+  "seeds": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "stages": "search,report",
+  "blastbin": "/tmp/claude-0/-home-user/091726aa-0c4a-5e0b-a85c-99f5c136bf59/scratchpad/blastpkg/ncbi-blast-2.17.0+/bin",
+  "nt_fa": "",
+  "prot_fa": "",
+  "src_map": "",
+  "src_dates": "",
+  "full_nt_db": "/tmp/claude-0/-home-user/091726aa-0c4a-5e0b-a85c-99f5c136bf59/scratchpad/db/refseq_viral_nt",
+  "full_prot_db": "/tmp/claude-0/-home-user/091726aa-0c4a-5e0b-a85c-99f5c136bf59/scratchpad/db/refseq_viral_prot_full",
+  "cutoff": "2022-05-10",
+  "prot_parent": "",
+  "candfa": "results/holdout_candidates/candidates.fa",
+  "fastq": "",
+  "candidate": "OQ722337.1",
+  "leak": "OQ722330.1",
+  "n_reads": 2000
+ },
+ "timings_s": {
+  "search": 3934.8,
+  "report": 0.2,
+  "total": 3935.1
+ },
+ "run_utc": "2026-11-21T23:09:36Z"
+}

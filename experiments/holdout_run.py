@@ -158,28 +158,94 @@ def stage_holdout(out, nt_fa, prot_fa, src_map, src_dates, cutoff, prot_parent,
 
 
 # --------------------------------------------------------------- stage: reads
-def dinuc_shuffle(seq, rng):
-    """Shuffle preserving dinucleotide composition (Altschul-Erikson style walk).
+def dinuc_shuffle(seq, rng, tries=200):
+    """Shuffle preserving dinucleotide composition (Altschul-Erikson).
 
     A mononucleotide shuffle destroys stop-codon density, which is a
     dinucleotide property, so it inflates open reading frames and makes the null
     easier to beat than it should be.
+
+    The naive version of this walk - shuffle each vertex's out-edges, then walk -
+    dead-ends on most real reads, because an Eulerian path only exists if, for
+    every vertex but the terminal one, the LAST edge taken out of it leads
+    (transitively) to the terminal vertex. Altschul and Erikson's fix is to
+    choose those last edges first and reject the draw unless they form a tree
+    rooted at the terminal vertex. The first version of this function omitted
+    that and fell back to returning the input sequence unchanged on failure:
+    70.4% of the shuffled arm was then unshuffled candidate reads, and the null
+    read the same as the test. It now returns None on failure and the caller
+    counts those, because a control that silently becomes a copy of the test is
+    worse than no control.
     """
     if len(seq) < 4:
-        return seq
+        return None
     edges = defaultdict(list)
     for a, b in zip(seq, seq[1:]):
         edges[a].append(b)
-    for k in edges:
-        rng.shuffle(edges[k])
+    term = seq[-1]
+    verts = [v for v in edges if v != term]
+    chosen = None
+    for _ in range(tries):
+        pick = {v: rng.choice(edges[v]) for v in verts}
+        ok = True
+        for v in verts:                        # every vertex must reach term
+            seen, cur = set(), v
+            while cur != term:
+                if cur in seen or cur not in pick:
+                    ok = False
+                    break
+                seen.add(cur)
+                cur = pick[cur]
+            if not ok:
+                break
+        if ok:
+            chosen = pick
+            break
+    if chosen is None:
+        return None
+    order = {}
+    for v, lst in edges.items():
+        rest = list(lst)
+        if v in chosen:
+            rest.remove(chosen[v])
+            rng.shuffle(rest)
+            rest.append(chosen[v])             # the reserved last edge
+        else:
+            rng.shuffle(rest)
+        order[v] = rest
+    at = {v: 0 for v in order}
     cur, outl = seq[0], [seq[0]]
     for _ in range(len(seq) - 1):
-        if not edges[cur]:
-            break
-        nxt = edges[cur].pop()
+        lst = order.get(cur)
+        if lst is None or at[cur] >= len(lst):
+            return None
+        nxt = lst[at[cur]]
+        at[cur] += 1
         outl.append(nxt)
         cur = nxt
-    return "".join(outl) if len(outl) == len(seq) else seq
+    return "".join(outl) if len(outl) == len(seq) else None
+
+
+def shuffle_arm(take, rng):
+    """Shuffle every read of the candidate subsample, and say what was lost.
+
+    The shuffled arm is the SAME subsample as the candidate arm, not an
+    independent draw from the same pool: the control's job is to say what the
+    identity readout reports on these reads carrying no information, which a
+    different set of reads cannot answer. Reads whose shuffle fails, or whose
+    composition is degenerate enough that the shuffle returns the input, are
+    DROPPED and counted rather than passed through.
+    """
+    outl, failed, identical = [], 0, 0
+    for nm, sq in take:
+        sh = dinuc_shuffle(sq, rng)
+        if sh is None:
+            failed += 1
+        elif sh == sq:
+            identical += 1
+        else:
+            outl.append((nm + "_shuf", sh))
+    return outl, failed, identical
 
 
 def stage_reads(out, candfa, fastq, candidate, leak, n_reads, seeds):
@@ -210,23 +276,26 @@ def stage_reads(out, candfa, fastq, candidate, leak, n_reads, seeds):
     log(f"  {nreads} reads scanned; " +
         ", ".join(f"{k}={len(v)}" for k, v in pools.items()))
 
-    counts = {}
+    counts, cand_take, shuffle_losses = {}, {}, {}
     for seed in seeds:
         rng = random.Random(seed)
         for arm, pool in pools.items():
             take = pool if len(pool) <= n_reads else rng.sample(pool, n_reads)
+            if arm == "candidate":
+                cand_take[seed] = take
             with open(os.path.join(out, f"reads_{arm}_s{seed}.fa"), "w") as f:
                 for nm, sq in take:
                     f.write(f">{nm}\n{sq}\n")
             counts[f"{arm}_s{seed}"] = len(take)
+        shuf, nfail, nsame = shuffle_arm(cand_take[seed], rng)
         with open(os.path.join(out, f"reads_shuffled_s{seed}.fa"), "w") as f:
-            pool = pools["candidate"]
-            take = pool if len(pool) <= n_reads else rng.sample(pool, n_reads)
-            for nm, sq in take:
-                f.write(f">{nm}_shuf\n{dinuc_shuffle(sq, rng)}\n")
-        counts[f"shuffled_s{seed}"] = len(take)
+            for nm, sq in shuf:
+                f.write(f">{nm}\n{sq}\n")
+        counts[f"shuffled_s{seed}"] = len(shuf)
+        shuffle_losses[f"s{seed}"] = dict(failed=nfail, returned_input=nsame)
     json.dump(dict(reads_scanned=nreads, pool_sizes={k: len(v) for k, v in pools.items()},
-                   subsampled=counts, fastq=fastq, candidate=candidate, leak=leak),
+                   subsampled=counts, shuffle_losses=shuffle_losses,
+                   fastq=fastq, candidate=candidate, leak=leak),
               open(os.path.join(out, "reads_manifest.json"), "w"), indent=1)
     return counts
 
