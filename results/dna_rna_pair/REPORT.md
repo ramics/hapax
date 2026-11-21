@@ -113,6 +113,54 @@ Read this one with caution: the DNA library has only 1,736 classified reads in 2
 its 268 taxa are a thin sample and the Jaccard is as much a statement about depth as about
 biology. The read-weighted columns are the defensible half.
 
+## 6. Does either library explain the other's unidentified reads?
+
+This is the question a matched pair is actually for. If the DNA library held the molecules
+our RNA residue cannot account for, a second extraction from the same water would be a
+cheaper subtrahend than any public database — which is what this project's thesis predicts
+for sample-local data, since 1.4 MB of the sample's own rRNA contigs beat all 272 MB of
+SILVA.
+
+`experiments/cross_library_witness.py`. 20,000 pairs of the 2022 RNA library, split by
+whether Kraken2 identified them, scored against two whole libraries with
+`experiments/kmer_coverage/`. The readout is the fraction of a pair's exact canonical
+31-mers occurring at least once in the subject — deliberately the weakest criterion, because
+the question is presence, not depth.
+
+| subject library | library pairs | identified | unidentified | gap | unidentified sharing nothing |
+|---|---|---|---|---|---|
+| DNA virome, same water, same morning | 11,311,548 | 16.5% | **13.3%** | −3.1 | **60.7%** |
+| our 2021 RNA library, same plant, 8 months earlier | 8,731,224 | 96.6% | **71.2%** | −25.4 | 14.1% |
+
+**The DNA library does not hold our residue.** It is the larger of the two subjects and
+accounts for almost none of the RNA library either way, and the gap runs the wrong
+direction: unidentified reads are witnessed *less* than identified ones, which is what rarer
+material does. **A second extraction from the same water is not a cheap subtrahend**, and
+the DNA side is its own residue problem rather than a key to ours. That is a negative, and
+it is the answer to whether sequencing both is worth it for this purpose.
+
+**Nucleic acid separates these libraries far more than eight months does.** 71.2% of the
+*unidentified* 2022 reads have most of their 31-mers present in a different sample of the
+same plant from eight months earlier, and only 14.1% share nothing with it. This is the
+recurrence axis measured directly rather than inferred: the residue is not one-off sequence,
+it recurs across samples of one catchment at exact 31-mer identity. It is also a warning —
+reads we describe as absent from everything are mostly not absent from the same plant in a
+different season.
+
+**Bias, stated rather than corrected:** the query reads are RNA, so the RNA subject shares
+ribosomal sequence with them that a virome cannot. That inflates the second row, and 71.2%
+is therefore an upper bound on the recurrence of non-ribosomal material. Correcting it needs
+a third library this project does not have.
+
+**Two bugs, both caught by the control.** The first version read the coverage table by
+hard-coded column index, one off, and produced a fraction present of −0.71; an impossible
+value is the cheapest bug report available and a plausible one would have shipped. The
+header is now parsed into a name map, asserted against the tool's own header line, and every
+fraction checked to lie in [0, 1]. Second, the tool's own library blocks cannot serve as the
+control: it subtracts a library pair's own occurrences and does not do so for the
+query-only path, so a library read is scored more harshly than a foreign one and the control
+moves against the test. Both subjects here are scored through the identical query-only path.
+
 ## What is not measured here
 
 - **One seed.** Five are queued. No figure above should be quoted until they land.
