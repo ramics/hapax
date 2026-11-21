@@ -87,6 +87,28 @@ DEFAULT_HARD_STOP_MINUTES = 2880
 
 HEARTBEAT_SECONDS = 300
 
+#: Seconds. CHUNK TARGET, AND WHY IT FOLLOWS THE MARKET RATHER THAN THE WORK.
+#:
+#: Chunking exists for one reason: spot reclaimed two instances in four hours, rows upload
+#: only when a search finishes, so a reclaim costs whatever chunk it lands in. 1500 s was
+#: chosen to make that loss about twenty-five minutes.
+#:
+#: But a chunk pays the database scan again, and the scan is the dominant term. Measured on
+#: this box, core_nt at 318.8 GB over 8 threads: scan 1082 s fixed, marginal 1.973 s/read.
+#: At a 1500 s target that sizes a chunk to 211 reads, so 72% of every chunk is re-scanning
+#: a database whose contents have not changed, and the effective rate is 7.11 s/read against
+#: a marginal 1.97. At a three-hour target the chunk is ~4,900 reads, re-scan is 10%, and the
+#: effective rate is 2.19 s/read - 3.2x the reads for the same money.
+#:
+#: On demand is not reclaimed, so that 3.2x buys nothing but exposure to our own hard stop,
+#: which the budget gate already handles. Paying the spot insurance premium on an on-demand
+#: box is simply a 3.2x bill, and that is what the first on-demand launch did: it was given
+#: 1500 s because the flag defaulted on the work rather than on the market. Hence the default
+#: is resolved from --no-spot below, and the overriding flag stays for a measurement that
+#: deliberately wants small chunks.
+ON_DEMAND_CHUNK_TARGET_SECONDS = 10_800.0
+SPOT_CHUNK_TARGET_SECONDS = 1_500.0
+
 #: Everything the instance runs. Derived by hand and checked by the PRECHECK block in the
 #: UserData, because the reference project twice added a module to a tool's imports and not
 #: to a list like this, and the instance died on an ImportError having read nothing.
@@ -210,10 +232,11 @@ def main(argv: list[str] | None = None) -> int:
                     help="queries per core_nt chunk. Small because spot "
                          "reclaimed two instances in four hours and a reclaim "
                          "loses the chunk it is in, not the run")
-    ap.add_argument("--chunk-target-seconds", type=float, default=1500.0,
-                    help="how long one chunk should take. The instance sizes "
-                         "the chunk itself from its own measured scan and "
-                         "marginal cost, because the right answer depends on a split nobody here has measured before tonight")
+    ap.add_argument("--chunk-target-seconds", type=float, default=None,
+                    help="how long one chunk should take; default 1500 on spot and "
+                         f"{ON_DEMAND_CHUNK_TARGET_SECONDS:.0f} on demand. The instance "
+                         "sizes the chunk itself from its own measured scan and marginal "
+                         "cost. See CHUNK_TARGET for why the default follows the market")
     ap.add_argument("--nr-chunk", type=int, default=500,
                     help="queries per blastx-against-nr chunk. Small, because nothing in "
                          "this project has ever measured that rate and the first chunk is "
@@ -252,6 +275,12 @@ def main(argv: list[str] | None = None) -> int:
             "refusing to launch on demand: the $25 Imo approved is a spot figure "
             "(r6i.2xlarge at $0.29/h). On demand is 3-4x that, which is a new approval, "
             "not a flag. Pass --allow-price-change once he has given one.")
+
+    if args.chunk_target_seconds is None:
+        args.chunk_target_seconds = (ON_DEMAND_CHUNK_TARGET_SECONDS if args.no_spot
+                                     else SPOT_CHUNK_TARGET_SECONDS)
+        print(f"chunk target {args.chunk_target_seconds:.0f}s "
+              f"({'on demand, not reclaimed' if args.no_spot else 'spot, reclaim-sized'})")
 
     commit, shipped_dirty, tree_dirty = git_head(ROOT)
     if shipped_dirty and not args.allow_dirty:

@@ -59,7 +59,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from berlin_io import read_pairs
-from subtract_known import _mm_index, dir_bytes, git_sha, kraken2, map_filter
+from subtract_known import _mm_index, dir_bytes, kraken2, map_filter, provenance
 
 ROOT = Path(__file__).resolve().parents[1]
 BLAST_URL = "https://blast.ncbi.nlm.nih.gov/Blast.cgi"
@@ -368,7 +368,7 @@ def main() -> None:
             h.write(json.dumps(r) + "\n")
     (args.out / f"manifest_s{args.seed}.json").write_text(json.dumps({
         "script": "experiments/remote_blast_check.py",
-        "git_sha": git_sha(),
+        **provenance(__file__),
         "parameters": {k: (str(v) if isinstance(v, Path) else
                            [str(x) for x in v] if isinstance(v, list) else v)
                        for k, v in vars(args).items()},
