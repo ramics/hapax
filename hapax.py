@@ -822,6 +822,11 @@ DESIGN_EFFECT = {
             "which assumes a simple random sample of the library, is too narrow",
     "_control": "uniform random samples of the same size read 0.92-1.10 on the same "
                 "statistic, so the instrument is sound and the blocks are the finding",
+    "_never_from_seeds": "these come from all 87 windows of the library and must never be "
+                         "re-estimated from a run's own five seeds: computed that way the "
+                         "same statistic reads 0.65 and 0.44 and reverses its sign, "
+                         "because five numbers cannot measure a variance. Reproduced "
+                         "independently at 1.44 and 1.61 by experiments/block_dispersion.py",
 }
 
 SIGNIFICANCE_EVALUE = 1e-5

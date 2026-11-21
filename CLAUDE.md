@@ -77,7 +77,18 @@ Record them and say so rather than tuning a simulator until it looks good.
   Every manifest therefore carries a content hash of the script beside the SHA
   (`script_sha256`), which pins the code whatever the tree looked like. File timestamps
   answer the same question only while the container lives, which is not long enough.
+  **The hash is taken when the manifest is written, not when the run starts**, so editing a
+  script while a run of it is in flight stamps the new hash onto the old code's output and
+  destroys exactly what the hash exists to protect. Finish the run or kill it; this has now
+  cost two restarts.
 - Any reported number is reproducible from a committed script plus a seed.
+- **Five seeds give an honest range and a useless variance.** The min-max this repo reports
+  is an observed spread, not an estimate of dispersion: the sampling error of a five-sample
+  standard deviation swamps the effect it would be measuring. Measured, and it reverses the
+  sign - the inflation that reads 1.44 and 1.61 over the whole library's 87 windows reads
+  0.65 and 0.44 off the same five seeds, which would have been reported as *narrower* than
+  random sampling (`results/block_position_bias/`). Any correction factor comes from the
+  full series, never from the run's own seeds.
 - Headline results run across at least 5 seeds, reporting spread. A single-seed conclusion
   from simulated data is noise.
 - **The two mates are not interchangeable, and any field computed symmetrically over a pair

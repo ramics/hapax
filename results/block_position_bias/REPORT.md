@@ -69,6 +69,29 @@ spatial structure along a flow cell looks like. **The two residue classes do not
 autocorrelation is within noise of zero and their overdispersion is 1.13-1.15x, so a block
 is very nearly a random sample for exactly the classes this project is about.
 
+## Reproduced independently, and one trap worth more than the result
+
+The residue thread re-derived this from the same label table with its own script
+(`experiments/block_dispersion.py`, `results/residue_census/block_dispersion.json`). Over
+the same 87 windows it reads 1.44 and 1.61 on `rrna` and `identified` against the 1.43 and
+1.57 here, with the autocorrelation splitting the same way, and five-block means within
+0.16 points of the library. One figure differs: `unident` reads 1.24 there against 1.13
+here, so treat that class's factor as 1.1-1.25 rather than a point value. Everything the
+conclusion rests on is reproduced.
+
+**The trap.** Computed from the five cascade blocks alone rather than from all 87 windows,
+the same statistic reads **0.65 for `rrna` and 0.44 for `identified`** - "no inflation, if
+anything less" - where the full series says 1.44 and 1.61. Five numbers cannot measure a
+variance: the sampling error of a five-sample standard deviation swamps the effect and here
+it reverses its sign.
+
+That bears directly on this repo's convention. A headline is reported as a min-max across
+five seeds, and that five-sample spread is **an honest observed range and a useless
+dispersion estimate**. Any correction factor must come from the window series over the
+whole library, which is where `hapax.py`'s `DESIGN_EFFECT` takes it from. A tool that
+estimated its own design effect from its own five seeds would have confidently reported
+that block sampling made its intervals too *wide*.
+
 ## What to do with it
 
 1. **Do not switch the cascade to random sampling.** The location bias it would remove is
@@ -77,7 +100,8 @@ is very nearly a random sample for exactly the classes this project is about.
 2. **Widen the intervals by the design effect, per class**, or state it. 1.15x on the
    residue, 1.43-1.57x on rRNA and identified. This is a correction that can be applied
    to numbers already published without re-running anything, which is why it was worth
-   measuring this way.
+   measuring this way. Take the factor from the full window series and never from a run's
+   own seeds, for the reason above.
 3. **A five-seed spread across blocks is not five independent draws.** With adjacent-block
    autocorrelation at +0.28 on `identified`, five blocks spaced 1.5 M pairs apart are
    closer to independent than adjacent ones would be, but the spread they report is still
