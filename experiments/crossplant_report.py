@@ -14,8 +14,8 @@ plants is not a difference in library size.
    SRR23973193 as the held-out library.
 3. Growth: reads whose 31-mer count in their own library is far above that read's count in
    every panel library, which is reported instead of subtracted. Count ratios are comparable
-   because depth is fixed. A library query's own count includes the read itself, so 1 is
-   taken off it.
+   because depth is fixed. Library queries come from spots outside the subject subset, so the
+   own-library count excludes the read itself and is not size-biased by the draw.
 """
 
 from __future__ import annotations
@@ -37,6 +37,8 @@ from subtract_known import provenance  # noqa: E402
 QUERY_RUN = "SRR23973193"
 KS = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
 SEEDS = [1, 2, 3, 4, 5]
+#: A read counts as background if both mates are witnessed in this share of the panel.
+BACKGROUND_MIN = 0.10
 
 
 def load(packed: Path):
@@ -206,7 +208,8 @@ def saturation(subs, info, mats, lib, berlin):
 
 def growth(names, subs, info, meds, mats, lib, top: int):
     """Own-library count against the panel's spread for the same read, both mates."""
-    out, summary = [], {}
+    out, summary, n_all = [], {}, {"real": 0, "null": 0}
+    swaps = {"real": [], "null": []}
     for kind in ("real", "null"):
         ratios = []
         for a_j, a in enumerate(subs):
@@ -217,19 +220,35 @@ def growth(names, subs, info, meds, mats, lib, top: int):
                 idx = lib.get((a, seed, kind))
                 if idx is None:
                     continue
-                g, own, pan = [], [], []
+                g, own, pan, gs = [], [], [], []
+                # Exchangeability control: a random panel library standing in for the own
+                # library, scored against the rest of the panel the same way. If the own
+                # library were just another panel draw, this is what growth would read.
+                swap = random.Random(f"swap|{a}|{seed}").choice(range(len(P)))
+                rest = [j for t, j in enumerate(P) if t != swap]
                 for m in ("1", "2"):
-                    o = meds[f"med{m}"][a_j, idx].astype(float) - 1.0
+                    o = meds[f"med{m}"][a_j, idx].astype(float)
                     panel = meds[f"med{m}"][P][:, idx].astype(float)
                     p99 = np.percentile(panel, 99, axis=0)
-                    g.append((np.maximum(o, 0) + 1) / (p99 + 1))
+                    g.append((o + 1) / (p99 + 1))
+                    o_s = meds[f"med{m}"][P[swap], idx].astype(float)
+                    p99_s = np.percentile(meds[f"med{m}"][rest][:, idx].astype(float), 99, axis=0)
+                    gs.append((o_s + 1) / (p99_s + 1))
                     own.append(o)
                     pan.append((np.median(panel, axis=0), p99, panel.max(axis=0)))
                 gmin = np.minimum(g[0], g[1])
-                ratios.append(gmin)
+                # Only reads that ARE background can outgrow it: witnessed (most, both
+                # mates) in at least BACKGROUND_MIN of the panel.
+                occ = mats["any1"][P][:, idx].sum(axis=0)
+                bg = ((mats["most1"][P][:, idx] & mats["most2"][P][:, idx]).mean(axis=0)
+                      >= BACKGROUND_MIN)
+                ratios.append(gmin[bg])
+                swaps[kind].append(np.minimum(gs[0], gs[1])[bg])
+                n_all[kind] += len(idx)
                 if kind == "real":
-                    occ = mats["any1"][P][:, idx].sum(axis=0)
                     for t, qi in enumerate(idx):
+                        if not bg[t]:
+                            continue
                         out.append({"query": names[qi], "library": a,
                                     "plant": info[a]["key"], "date": info[a]["date"],
                                     "seed": seed, "growth": round(float(gmin[t]), 2),
@@ -239,11 +258,12 @@ def growth(names, subs, info, meds, mats, lib, top: int):
                                     "panel_max1": int(pan[0][2][t]),
                                     "panel_libraries_any1": int(occ[t]),
                                     "panel_size": len(P)})
-        r = np.concatenate(ratios) if ratios else np.array([])
-        summary[kind] = {"n": int(r.size),
-                         **{f"frac_ge_{t}": round(float((r >= t).mean()), 6) if r.size else None
-                            for t in (2, 5, 10, 100)},
-                         "p99": round(float(np.percentile(r, 99)), 2) if r.size else None}
+        for label, parts in ((kind, ratios), (f"{kind}_swap_control", swaps[kind])):
+            r = np.concatenate(parts) if parts else np.array([])
+            summary[label] = {"queries": n_all[kind], "background_reads": int(r.size),
+                              **{f"frac_ge_{t}": round(float((r >= t).mean()), 6)
+                                 if r.size else None for t in (2, 5, 10, 100)},
+                              "p99": round(float(np.percentile(r, 99)), 2) if r.size else None}
     out.sort(key=lambda d: -d["growth"])
     return out[:top], summary
 
@@ -295,7 +315,7 @@ def main() -> None:
     top, gsum = growth(names, subs, info, meds, mats, lib, args.top)
     write(args.out / "growth_top.tsv", top)
     write(args.out / "composition_5p.tsv", composition(args.run_dir / "sample"))
-    controls = {"self_min_over_libraries": self_rates([s for s in subs if s in info], mats, lib),
+    controls = {"own_library_other_spots_min_over_libraries": self_rates([s for s in subs if s in info], mats, lib),
                 "shuffled_in_other_libraries": null_rates([s for s in subs if s in info],
                                                           mats, lib),
                 "growth": gsum,
@@ -303,6 +323,7 @@ def main() -> None:
     (args.out / "controls.json").write_text(json.dumps(controls, indent=2) + "\n")
     manifest = {"script": "experiments/crossplant_report.py", **provenance(__file__),
                 "parameters": {"run_dir": str(args.run_dir), "seeds": SEEDS, "ks": KS,
+                               "background_min": BACKGROUND_MIN,
                                "top": args.top},
                 "subjects": len(subs), "queries": len(names),
                 "seconds": round(time.time() - t0, 1)}

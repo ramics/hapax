@@ -112,7 +112,7 @@ test -s /opt/hapax/panel.tsv || die "the panel is empty"
 "$PYBIN" - <<'PY' > /opt/hapax/subjects.txt || die "the subject list could not be built"
 import csv
 rows = [r for r in csv.DictReader(open("/opt/hapax/panel.tsv"), delimiter="\t")
-        if r["paired"] == "1" and int(r["read_count"]) >= @@DEPTH@@]
+        if r["paired"] == "1" and int(r["read_count"]) >= @@DEPTH@@ + 200000]
 rows.sort(key=lambda r: (r["project"], r["date"], r["run"]))
 n = @@SUBJECT_COUNT@@
 if n and n < len(rows):

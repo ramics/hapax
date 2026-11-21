@@ -2,7 +2,9 @@
 
 Per library: the first `--depth` spots as split FASTQ (the subject, kept for phase 2), the
 5' base composition of each mate (to check the trim from data), and per seed a sample of
-query pairs, adapter-cut, R2-trimmed by the library's kit rule and truncated to `--qlen` per
+query pairs drawn from the next `--pool` spots, which are never in the subject. Drawing
+queries from outside the subject keeps the own-library count free of the read itself and of
+size-biased selection, so growth against the panel compares like with like. Queries are adapter-cut, R2-trimmed by the library's kit rule and truncated to `--qlen` per
 mate so every query offers the same number of 31-mers whatever the read length. A
 mononucleotide shuffle of part of each seed's draw rides along as the null.
 """
@@ -13,7 +15,6 @@ import argparse
 import gzip
 import json
 import random
-import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -83,6 +84,7 @@ def main() -> None:
     ap.add_argument("--acc", required=True)
     ap.add_argument("--trim-r2", type=int, required=True)
     ap.add_argument("--depth", type=int, default=2_000_000)
+    ap.add_argument("--pool", type=int, default=200_000)
     ap.add_argument("--per-seed", type=int, default=200)
     ap.add_argument("--null-per-seed", type=int, default=20)
     ap.add_argument("--seeds", default="1,2,3,4,5")
@@ -100,7 +102,7 @@ def main() -> None:
         print(f"= {acc} already sampled")
         return
 
-    r1, r2 = dump(acc, args.depth, args.work)
+    r1, r2 = dump(acc, args.depth + args.pool, args.work)
     comp = {m: [[0] * 5 for _ in range(COMP_POS)] for m in ("r1", "r2")}
     lens = {"r1": 0, "r2": 0}
     pairs = []
@@ -111,13 +113,14 @@ def main() -> None:
                 comp[m][i]["ACGTN".find(b) if b in "ACGT" else 4] += 1
         pairs.append((s1, s2))
     n = len(pairs)
-    if n < args.depth:
-        sys.exit(f"{acc}: only {n} spots, under the {args.depth} depth floor")
+    if n < args.depth + args.pool:
+        sys.exit(f"{acc}: only {n} spots, under the {args.depth + args.pool} floor")
+    subject, pairs = pairs[: args.depth], pairs[args.depth:]
 
     rows = []
     for seed in (int(s) for s in args.seeds.split(",")):
         rng = random.Random(f"{acc}|{seed}")
-        order = list(range(n))
+        order = list(range(len(pairs)))
         rng.shuffle(order)
         got = 0
         for i in order:
@@ -125,7 +128,7 @@ def main() -> None:
             q2 = clean(pairs[i][1], args.trim_r2, args.qlen)
             if q1 is None or q2 is None:
                 continue
-            rows.append((f"lib|{acc}|{i}|s{seed}", q1, q2))
+            rows.append((f"lib|{acc}|{args.depth + i}|s{seed}", q1, q2))
             if got < args.null_per_seed:
                 rows.append((f"shuffled-lib|{acc}|{i}|s{seed}", shuffled(q1, rng),
                              shuffled(q2, rng)))
@@ -139,11 +142,14 @@ def main() -> None:
         for r in rows:
             fh.write("\t".join(r) + "\n")
     for src, mate in ((r1, 1), (r2, 2)):
-        with open(src, "rb") as i, gzip.open(args.subjects / f"{acc}_{mate}.fastq.gz",
-                                             "wb", compresslevel=1) as o:
-            shutil.copyfileobj(i, o)
+        with open(src) as i, gzip.open(args.subjects / f"{acc}_{mate}.fastq.gz", "wt",
+                                       compresslevel=1) as o:
+            for _ in range(4 * args.depth):
+                o.write(i.readline())
         src.unlink()
-    done.write_text(json.dumps({"acc": acc, "spots": n, "trim_r2": args.trim_r2,
+    del subject
+    done.write_text(json.dumps({"acc": acc, "spots": n, "subject_spots": args.depth,
+                                "query_pool_spots": len(pairs), "trim_r2": args.trim_r2,
                                 "mean_len": {m: round(v / n, 1) for m, v in lens.items()},
                                 "queries": len(rows), "composition_5p": comp}) + "\n")
     print(f"+ {acc} sampled {n} spots, {len(rows)} query rows")
