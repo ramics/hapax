@@ -324,6 +324,34 @@ details > summary { cursor: pointer; font-size: 13px; color: var(--dim); }
 .stack { display: flex; flex-direction: column; gap: 0.9rem; }
 .barlab { font-size: 12px; color: var(--dim); font-family: var(--mono);
   margin-bottom: 0.25rem; }
+/* Dynamism, kept to two behaviours so it reads as one page and not as effects:
+   a bar grows from nothing the first time it is scrolled into view, and hovering any
+   split desaturates the slices you are not pointing at. Both are suppressed under
+   prefers-reduced-motion, and the grow is a no-op if the observer never fires, so the
+   page is correct with JavaScript half-done. */
+.bar > span, .axbar > i { transition: width 520ms cubic-bezier(.22,.61,.36,1); }
+.bar:hover > span, .bites:hover .bbar > i, .flowwrap:hover .flowseg {
+  filter: saturate(0.2); transition: filter 140ms linear; }
+.bar > span:hover, .bite:hover .bbar > i, .flowseg:hover { filter: none; }
+.bar > span, .flowseg, .bbar > i { cursor: default; }
+@media (prefers-reduced-motion: reduce) {
+  .bar > span, .axbar > i, .bbar > i { transition: none !important; }
+}
+.bites { display: flex; flex-direction: column; gap: 0.3rem; }
+.bite { display: grid; grid-template-columns: 15rem 1fr 6rem 5rem; gap: 0.6rem;
+  align-items: center; font-size: 12px; }
+.bname { overflow-wrap: anywhere; }
+.bbar { display: flex; height: 14px; border-radius: 3px; background: var(--edge);
+  overflow: hidden; min-width: 0; }
+.bbar > i { display: block; height: 100%; transition: width 420ms ease-out; }
+.bbar > .before { background: var(--identified); opacity: 0.22; }
+.bbar > .mine { background: var(--identified); }
+.bnum, .bsize { text-align: right; font-variant-numeric: tabular-nums; }
+@media (max-width: 680px) {
+  .bite { grid-template-columns: 1fr 4.5rem; grid-template-areas: "n n" "b b" "v s"; }
+  .bname { grid-area: n; } .bbar { grid-area: b; }
+  .bnum { grid-area: v; text-align: left; } .bsize { grid-area: s; }
+}
 .ditem { border-top: 1px solid var(--edge); padding: 0.55rem 0; }
 .ditem > summary { font-size: 13.5px; color: var(--fg); padding: 0.15rem 0; }
 .ditem > summary b { font-weight: 600; }
@@ -555,6 +583,172 @@ function interval(iv) {
     li.className = 'lede'; li.style.marginBottom = '0.5rem'; li.innerHTML = t2;
     ul.append(li); });
   p.append(ul);
+  app.append(p);
+})();
+
+// ---------- how the library splits
+// The whole instrument as one picture: three bars at three scales, joined by wedges that
+// state their own magnification. A single-scale flow would be a lie twice over - the
+// residue is a ninth of the library and the named part a seventeenth of that, so both
+// would vanish - and the second wedge also changes the UNIT, from read pairs of the whole
+// block to the mates the per-read report actually searched. The wedge says so on its face
+// rather than in a footnote, because that is the join a reader would otherwise assume.
+(function () {
+  const t = D.tier_table, b = (t && t.breakdown) || {};
+  const R = D.ranking, K = R && R.kind_summary;
+  if (!b.identified || !K) return;
+  const p = panel('How the library splits',
+    'Every read pair in this run, taken apart in three steps. Each panel is the ' +
+    'highlighted slice of the one before it, blown up to full height.');
+
+  const COL = {identified: 'var(--identified)', assembled_unidentified: 'var(--tier2)',
+    residual: 'var(--residue)', named: 'var(--identified)', none: 'var(--null)',
+    putative_phage: 'var(--g-phage)', virus_no_phage_signal: 'var(--residue)',
+    putative_bacterial: 'var(--g-vert)', putative_eukaryotic: 'var(--g-plant)',
+    cellular_kind_not_placed: 'var(--g-unknown)'};
+
+  const W = 920, H = 430, top = 34, bot = 46, bw = 96;
+  const X = [26, 392, 800];            // left edge of each bar
+  const inner = H - top - bot;
+
+  // Each stage: a list of [key, value, label], the key of the slice the next stage zooms
+  // into, and the caption printed on the wedge that leaves it.
+  const st1 = [["identified", b.identified.point, "identified outright"],
+               ["assembled_unidentified", (b.assembled_unidentified || {}).point || 0,
+                "assembled, nothing could name it"],
+               ["residual", b.residual.point, "no name, no contig"]];
+  const kinds = Object.keys(K.by_kind).filter(k => K.by_kind[k].reads > 0)
+    .sort((a, c) => K.by_kind[c].reads - K.by_kind[a].reads);
+  const st2 = [["named", K.named, "has a named relative"],
+               ["none", K.searched - K.named, "points at nothing we can name"]];
+  const st3 = kinds.map(k => [k, K.by_kind[k].reads, K.by_kind[k].label]);
+
+  function layout(items) {
+    const tot = items.reduce((a, c) => a + c[1], 0) || 1;
+    let y = top;
+    return items.map(([k, v, lab]) => {
+      const h = inner * v / tot;
+      const o = {k: k, v: v, lab: lab, y: y, h: h, frac: v / tot};
+      y += h;
+      return o;
+    });
+  }
+  const L = [layout(st1), layout(st2), layout(st3)];
+  const seg = (i, k) => L[i].filter(o => o.k === k)[0];
+
+  let g = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="how the ' +
+    'library splits: ' + st1.map(x => x[2]).join(', ') + ', then ' +
+    st2.map(x => x[2]).join(' against ') + ', then ' +
+    st3.map(x => x[2]).join(', ') + '">';
+
+  // The wedges go down first so the bars sit on top of them.
+  function wedge(i, k, caption, zoom) {
+    const a = seg(i, k), x1 = X[i] + bw, x2 = X[i + 1];
+    g += '<path d="M' + x1 + ' ' + a.y.toFixed(1) + ' L' + x2 + ' ' + top +
+      ' L' + x2 + ' ' + (top + inner) + ' L' + x1 + ' ' + (a.y + a.h).toFixed(1) +
+      ' Z" fill="' + (COL[k] || 'var(--null)') + '" opacity="0.10"/>';
+    g += '<text x="' + ((x1 + x2) / 2) + '" y="' + (top - 16) + '" text-anchor="middle" ' +
+      'font-size="11" fill="var(--dim)">' + esc(caption) + '</text>';
+    g += '<text x="' + ((x1 + x2) / 2) + '" y="' + (H - bot + 28) + '" ' +
+      'text-anchor="middle" font-size="11" fill="var(--dim)" ' +
+      'font-family="var(--mono)">blown up ' + zoom + '</text>';
+  }
+  wedge(0, 'residual', 'the leftovers, on their own scale',
+        '&times;' + (1 / seg(0, 'residual').frac).toFixed(1));
+  wedge(1, 'named', 'the few with a relative, on their own scale',
+        '&times;' + (1 / seg(1, 'named').frac).toFixed(1));
+
+  const TITLE = ['every read pair in the run', 'the leftover mates that were searched',
+                 'the ones with a named relative'];
+  const TOT = [t.pairs, K.searched, K.named];
+  L.forEach((col, i) => {
+    g += '<text x="' + (X[i] + bw / 2) + '" y="' + (top - 16) + '" text-anchor="middle" ' +
+      'font-size="11.5" fill="var(--fg)" font-weight="500">' +
+      (TOT[i] || 0).toLocaleString() + '</text>';
+    g += '<text x="' + (X[i] + bw / 2) + '" y="' + (H - bot + 28) + '" ' +
+      'text-anchor="middle" font-size="11" fill="var(--dim)">' + esc(TITLE[i]) + '</text>';
+    col.forEach(o => {
+      if (o.h <= 0) return;
+      g += '<rect class="flowseg" data-k="' + o.k + '" x="' + X[i] + '" y="' +
+        o.y.toFixed(1) + '" width="' + bw + '" height="' + Math.max(1, o.h - 1.5)
+        .toFixed(1) + '" rx="2" fill="' + (COL[o.k] || 'var(--null)') + '" opacity="' +
+        (o.k === 'identified' || o.k === 'none' ? '0.34' : '0.95') + '"><title>' +
+        esc(o.lab + ': ' + o.v.toLocaleString() + ' (' + (100 * o.frac).toFixed(2) +
+            '% of this panel)') + '</title></rect>';
+      // Only label a slice tall enough to carry one, and never over a wedge.
+      if (o.h >= 17) {
+        // The last column's labels run leftwards: there is no room to its right and a
+        // clipped label is worse than none.
+        const lastCol = i === L.length - 1;
+        g += '<text x="' + (lastCol ? X[i] - 8 : X[i] + bw + 8) + '" y="' +
+          (o.y + o.h / 2 + 4).toFixed(1) + '" font-size="11" fill="var(--dim)" ' +
+          'text-anchor="' + (lastCol ? 'end' : 'start') + '">' + esc(o.lab) +
+          ' <tspan font-family="var(--mono)" fill="var(--fg)">' +
+          (100 * o.frac).toFixed(o.frac < 0.1 ? 2 : 1) + '%</tspan></text>';
+      }
+    });
+  });
+  g += '</svg>';
+  const holder = el('div', 'scroll flowwrap'); holder.innerHTML = g; p.append(holder);
+  p.append(el('p', 'note',
+    '<b>The second join changes the unit and the sample, and that is marked on it.</b> ' +
+    'The first two panels are read PAIRS over the whole block this run read. The third ' +
+    'and fourth are MATES, and only the ' + K.searched.toLocaleString() + ' of them the ' +
+    'per-read report searched, so the wedge between them is a re-basing and not a ' +
+    'subdivision. Reading a percentage straight across the whole figure would be wrong, ' +
+    'which is why none is drawn that way.'));
+  app.append(p);
+})();
+
+// ---------- each index takes a bite
+// The cascade as a column of splits rather than a table. One row per index, in the order
+// they actually ran: pale is what earlier indexes had already removed, saturated is this
+// index's OWN marginal bite, and the rest is what was still left after it. Marginal and
+// not standalone, because the standalone figures overlap and a reader who adds them up
+// gets more than the library.
+(function () {
+  const t = D.tier_table, curve = (t && t.curve) || [];
+  if (!curve.length) return;
+  const p = panel('Each index takes a bite',
+    'The cascade, one row per index, in the order they ran. The dark slice is what that ' +
+    'index removed that nothing before it had already taken.');
+  const rows = el('div', 'bites');
+  curve.forEach((c, i) => {
+    const before = c.cumulative_removed - c.marginal_removed;
+    const r = el('div', 'bite');
+    r.innerHTML =
+      '<div class="bname mono">' + esc(c.tier) + '</div>' +
+      '<div class="bbar">' +
+        '<i class="before" style="width:' + (100 * before).toFixed(3) + '%"></i>' +
+        '<i class="mine" style="width:' + (100 * c.marginal_removed).toFixed(3) + '%">' +
+        '</i></div>' +
+      '<div class="bnum mono">' +
+        (c.marginal_removed >= 0.0005
+          ? '+' + (100 * c.marginal_removed).toFixed(2) + ' pts'
+          : '<span class="dim">nothing new</span>') +
+      '</div>' +
+      '<div class="bsize mono dim">' + gb(c.index_bytes) + '</div>';
+    r.title = c.tier + ': removed ' + (100 * c.tier_alone_removed).toFixed(2) +
+      '% on its own, ' + (100 * c.marginal_removed).toFixed(2) +
+      ' points that nothing before it had taken, leaving ' +
+      (100 * c.residue).toFixed(2) + '% of the library';
+    rows.append(r);
+  });
+  p.append(rows);
+  const last = curve[curve.length - 1];
+  p.append(el('p', 'note',
+    'Two things this shape says that the numbers alone do not. <b>The sample\\'s own ' +
+    'assembly is the biggest single bite in the cascade</b> at ' +
+    num(100 * (curve.filter(c => /selfasm_sample_contigs_identified/.test(c.tier))[0]
+      || {marginal_removed: 0}).marginal_removed, 1) +
+    ' points from ' + gb((curve.filter(c => /selfasm_sample_contigs_identified/
+      .test(c.tier))[0] || {}).index_bytes) +
+    ', while the largest index here is tens of gigabytes and buys fractions of a point. ' +
+    'And <b>several rows take nothing at all</b>: by the time they run, everything they ' +
+    'could name has already been named by something smaller. ' +
+    'Everything left after the last row is ' + pct(last.residue) +
+    ' of the library, which is the subject of this page.'));
+  p.append(opChips((t || {}).operating_point || {}));
   app.append(p);
 })();
 
@@ -1579,7 +1773,9 @@ function interval(iv) {
 // detail panels keep the markup they were built with and are only moved inside a
 // disclosure, so a figure can never disagree with the summary that cites it.
 (function () {
-  const SUMMARY = ['What is in the water', 'Phage, virus, or something living',
+  const SUMMARY = ['What is in the water', 'How the library splits',
+                   'Each index takes a bite',
+                   'Phage, virus, or something living',
                    'Worth a second look', 'Where the relatives sit'];
   const panels = Array.prototype.filter.call(app.children,
     n => n.tagName === 'SECTION' && n.classList.contains('panel'));
@@ -1589,10 +1785,10 @@ function interval(iv) {
   });
   if (!detail.length) return;
   const firstSentence = t => {
-    const whole = String(t || '').replace(/\s+/g, ' ').trim();
-    const m = whole.match(/^.*?\.(?=\s|$)/);
+    const whole = String(t || '').replace(/\\s+/g, ' ').trim();
+    const m = whole.match(/^.*?\\.(?=\\s|$)/);
     let out = m ? m[0] : whole;
-    if (out.length > 130) out = out.slice(0, 130).replace(/\s+\S*$/, '') + '...';
+    if (out.length > 130) out = out.slice(0, 130).replace(/\\s+\\S*$/, '') + '...';
     return out;
   };
   const wrap = el('section', 'panel');
@@ -1616,6 +1812,44 @@ function interval(iv) {
     wrap.append(d);
   });
   app.append(wrap);
+})();
+// ---------- reveal
+// Grow every split from nothing the first time it is scrolled into view. The width that
+// is animated TO is the one the panel already wrote, so this cannot change a figure: if
+// the observer never runs, or motion is reduced, the bars are simply already correct.
+(function () {
+  const reduce = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce || !window.IntersectionObserver) return;
+  const bars = Array.prototype.slice.call(
+    document.querySelectorAll('.bar, .bbar, .axbar'));
+  const stash = [];
+  bars.forEach(bar => {
+    const parts = Array.prototype.slice.call(bar.children).map(c => [c, c.style.width]);
+    if (!parts.length) return;
+    parts.forEach(([c]) => { c.style.width = '0%'; });
+    stash.push([bar, parts]);
+  });
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      io.unobserve(e.target);
+      const hit = stash.filter(x => x[0] === e.target)[0];
+      if (!hit) return;
+      hit[1].forEach(([c, w], i) => {
+        window.setTimeout(() => { c.style.width = w || ''; }, 40 * i);
+      });
+    });
+  }, {rootMargin: '0px 0px -8% 0px'});
+  stash.forEach(([bar]) => io.observe(bar));
+  // Belt and braces: whatever happens to the observer - a panel inside a closed
+  // disclosure, a browser that never fires it, a thumbnail capture - every bar is back
+  // at its true width a few seconds in. The animation is decoration; the width is data.
+  window.setTimeout(() => {
+    stash.forEach(([bar, parts]) => parts.forEach(([c, w]) => {
+      if (!c.style.width || c.style.width === '0%') c.style.width = w || '';
+    }));
+  }, 2500);
 })();
 </script>
 """
