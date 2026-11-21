@@ -767,7 +767,7 @@ function interval(iv) {
 (function () {
   const t = D.tier_table, b = (t && t.breakdown) || {};
   if (!b.identified || !b.residual) return;
-  const p = panel('What is in the water',
+  const p = panel('Library partition, one square per percent',
     'Each square is one percent of the read pairs in this run. Pale squares were named ' +
     'by searching; the dark ones are what no search could name.');
   const frac = {identified: b.identified.point,
@@ -854,7 +854,7 @@ function interval(iv) {
 // of the page reads, so it cannot drift from the panels below it.
 (function () {
   const t = D.tier_table, S = D.strains, L = D.linkage, C = D.census;
-  const p = panel('In plain words',
+  const p = panel('Run summary',
     'What this run did, and what came out of it.');
   const b = (t && t.breakdown) || {};
   const lede = el('p', 'lede',
@@ -921,7 +921,7 @@ function interval(iv) {
   const t = D.tier_table, b = (t && t.breakdown) || {};
   const R = D.ranking, K = R && R.kind_summary;
   if (!b.identified || !K) return;
-  const p = panel('How the library splits',
+  const p = panel('Cascade partition, nested',
     'Every read pair in this run, taken apart in three steps. Each panel is the ' +
     'highlighted slice of the one before it, blown up to full height.');
 
@@ -1044,7 +1044,7 @@ function interval(iv) {
 (function () {
   const t = D.tier_table, curve = (t && t.curve) || [];
   if (!curve.length) return;
-  const p = panel('Each index takes a bite',
+  const p = panel('Marginal removal per index',
     'The cascade, one row per index, in the order they ran. The dark slice is what that ' +
     'index removed that nothing before it had already taken.');
   const rows = el('div', 'bites');
@@ -1094,7 +1094,7 @@ function interval(iv) {
 // reads and the subject count rides along in the tooltip.
 (function () {
   const R = D.ranking, K = R && R.kind_summary;
-  const p = panel('Phage, virus, or something living',
+  const p = panel('Kind assignment of matched subjects',
     'Of the leftover reads, the few that have a named relative at all, and what kind of ' +
     'thing that relative is.');
   if (!K) { p.append(el('div', 'absent', 'no kind summary in ranking.json'));
@@ -1195,7 +1195,7 @@ function interval(iv) {
 // ---------- worth a second look
 (function () {
   const R = D.ranking;
-  const p = panel('Worth a second look',
+  const p = panel('Subject ranking, four axes',
     'The named relatives the leftover reads point at, ordered by how much of a person\\'s ' +
     'attention each one deserves. Four measured things go in and all four are shown on ' +
     'every row, so the order can be argued with one row at a time.');
@@ -1375,7 +1375,7 @@ function interval(iv) {
   const R = D.ranking;
   if (!R || !(R.subjects || []).length) return;
   const pn = R.points_note;
-  const p = panel('Where the relatives sit',
+  const p = panel('Identity against read support, per subject',
     'The named relatives at once: how far the reads are from each one, against how many ' +
     'reads point at it. One picture of what the leftovers are related to, and how ' +
     'distantly.' + (pn ? ' Drawn from a seeded sample of ' + pn.drawn.toLocaleString() +
@@ -1472,7 +1472,7 @@ function interval(iv) {
 // ---------- the breakdown
 (function () {
   const t = D.tier_table;
-  const p = panel('The breakdown',
+  const p = panel('Class fractions with intervals',
     'One bar over the library: what was identified, what assembled without being ' +
     'identified, and what is left. Each segment carries the interval from this run\\'s ' +
     'own counts.');
@@ -1529,7 +1529,7 @@ function interval(iv) {
 // ---------- the cascade, with the sweep live
 (function () {
   const t = D.tier_table;
-  const p = panel('The cascade',
+  const p = panel('Tier removal and threshold sweep',
     'Each index in turn: what it removes alone, what it adds, and what is left. The ' +
     'slider is the tier\\'s own threshold sweep, because the threshold moves a tier by ' +
     'more than a database\\'s size does.');
@@ -1583,7 +1583,7 @@ function interval(iv) {
 // ---------- cost curve
 (function () {
   const t = D.tier_table;
-  const p = panel('What each index costs',
+  const p = panel('Removal against index size',
     'Removal against bytes consulted, measured points only. The far end is not ' +
     'extrapolated: where the curve stops is where the measurement stops.');
   if (!t) { p.append(el('div', 'absent', 'tier_table.json absent')); app.append(p); return; }
@@ -1629,7 +1629,7 @@ function interval(iv) {
 // ---------- mate linkage
 (function () {
   const L = D.linkage;
-  const p = panel('Can a read find a read it is related to?',
+  const p = panel('Mate recovery in the joint space',
     'Each mate is a point in the per-mate joint space, and the question is whether a ' +
     'read\\'s own mate is among its nearest neighbours. It is the only label-free ground ' +
     'truth for "same molecule" a real library carries, and it is an upper bound on ' +
@@ -1685,7 +1685,7 @@ function interval(iv) {
 // ---------- layers
 (function () {
   const L = D.layers;
-  const p = panel('The residue in layers, most to least worth a look',
+  const p = panel('Residue layers, ordered, with controls',
     'A layer is a sort order with its evidence attached, not a score. Each is laid ' +
     'beside the same rule applied to reads the cascade did identify, and where that ' +
     'control was never computed the page says so instead of showing a separation.');
@@ -1721,7 +1721,7 @@ function interval(iv) {
 (function () {
   const F = D.fields || {};
   const fields = F.fields || {};
-  const p = panel('Every field beside its calibration',
+  const p = panel('Field calibration: null and known-positive',
     'A null says what the field reads on sequence carrying no information. A ' +
     'known-positive says whether it reads differently on sequence the cascade identified. ' +
     '"Cannot discriminate here" is a value in this table, not a blank.');
@@ -1761,7 +1761,7 @@ function interval(iv) {
 // ---------- the linkage census
 (function () {
   const C = D.census;
-  const p = panel('What the residue sits next to',
+  const p = panel('Insert-adjacency labels of residue reads',
     'A paired library answers adjacency for free. For each residue read, the other reads ' +
     'covering the same sequence are found and THEIR other mates are labelled: each is ' +
     'sequence one insert away from something the read also covers. That separates reads ' +
@@ -1798,7 +1798,7 @@ function interval(iv) {
 // ---------- new strains of known viruses
 (function () {
   const S = D.strains;
-  const p = panel('New strains of known viruses',
+  const p = panel('Candidate divergent strains, grouped by subject',
     'Grouped by the relative the reads are nearest to, because a new strain is a subject ' +
     'several residue reads point at from a distance, not a read with a low score. ' +
     'Subjects are ordered by how many reads point at them and never by identity: ' +
@@ -1880,7 +1880,7 @@ function interval(iv) {
 // ---------- the joint space
 (function () {
   const S = D.scatter || {};
-  const p = panel('The joint space',
+  const p = panel('Joint-space density, residue against identified',
     'Each surviving read a point, with the already-identified reads drawn underneath as ' +
     'the reference cloud. This is where signal against noise is read off, and it replaces ' +
     'the panel that would have shown a novelty score. It is drawn as a density and never ' +
@@ -1974,7 +1974,7 @@ function interval(iv) {
 // ---------- divergence ladder
 (function () {
   const C = D.calibration_ladder;
-  const p = panel('This run\\'s divergence ladder',
+  const p = panel('Holdout spike, divergence ladder',
     'A holdout genome spiked at known divergence and pushed through the same cascade. It ' +
     'is the only positive control the tool has, and the rungs are ordinal.');
   if (!C) {
@@ -2064,7 +2064,7 @@ function interval(iv) {
 // ---------- the residue table
 (function () {
   const T = D.table;
-  const p = panel('The residue, read by read',
+  const p = panel('Per-read residue table, un-thresholded',
     'One row per surviving pair, un-thresholded. The closest relative is printed with its ' +
     'E-value every time: an identity without one is the claim this project has already had ' +
     'to withdraw, because a 107 nt query against a large database finds about 40 bases at ' +
@@ -2122,8 +2122,7 @@ function interval(iv) {
 (function () {
   const B = D.blind_spots;
   const p = panel('Blind spots',
-    'A fixed panel, not a footnote. Each names the measurement that established it, so it ' +
-    'can be checked rather than taken.');
+    'Each entry names the measurement that established it.');
   if (!B) { p.append(el('div', 'absent', 'blind_spots.json absent from the run directory'));
     app.append(p); return; }
   const g = el('div', 'grid2');
@@ -2157,7 +2156,7 @@ function interval(iv) {
 (function () {
   const C = D.census, r = C && C.result;
   if (!r || !r.residue || !r.identified) return;
-  const p = panel('What a leftover read sits next to',
+  const p = panel('Coverage-neighbour labels, residue against identified',
     'Take a leftover pair, find every other read in the library that covers the same ' +
     'sequence, and ask what those neighbours were called. The same question asked of ' +
     'reads the cascade already named is the row underneath, and it is the row to read ' +
@@ -2200,7 +2199,7 @@ function interval(iv) {
 (function () {
   const L = D.layers;
   if (!L || !L.counts || !L.counts.residue) return;
-  const p = panel('Layering the leftovers',
+  const p = panel('Layer assignment against the identified control',
     'Each leftover read put in the most interesting layer it qualifies for, most ' +
     'interesting first. The same rule run over reads the cascade already named is ' +
     'underneath: a layer that fills up equally on both is a layer that is describing ' +
@@ -2648,7 +2647,7 @@ function interval(iv) {
   const P = D.profile, curve = (D.tier_table || {}).curve || [];
   const brk = (D.tier_table || {}).breakdown;
   if (!P || !curve.length || !brk) return;
-  const p = panel('Named against recognised',
+  const p = panel('Named against recognised: cascade reconciliation',
     'Reconciling 7% named against 77% identifiable.');
   // Which tiers can name is a property of the tier, declared here where it can be read.
   // A Kraken2 or DIAMOND hit carries a taxon or an accession; an artefact filter, a
