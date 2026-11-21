@@ -1,0 +1,729 @@
+{
+  "seed": 3,
+  "pairs_labelled": 20000,
+  "class_sizes_in_block": {
+    "rrna": 7618,
+    "public_nucleotide": 544,
+    "selfasm_identified": 6864,
+    "residue_assembled": 1737,
+    "residue_missing": 3237
+  },
+  "class_fracs_in_block": {
+    "rrna": 0.3809,
+    "public_nucleotide": 0.0272,
+    "selfasm_identified": 0.3432,
+    "residue_assembled": 0.08685,
+    "residue_missing": 0.16185
+  },
+  "tier2_contig_candidates": 1784,
+  "sampled_per_class": {
+    "rrna": 60,
+    "public_nucleotide": 60,
+    "selfasm_identified": 60,
+    "residue_assembled": 60,
+    "residue_missing": 60,
+    "tier2_contigs": 60
+  },
+  "blast": {
+    "errors": [
+      "blastn batch 9: JSONDecodeError: Expecting property name enclosed in double quotes: line 2 column 9 (char 10)",
+      "blastn batch 13: JSONDecodeError: Expecting property name enclosed in double quotes: line 2 column 9 (char 10)"
+    ],
+    "blastn": {
+      "database": "nt",
+      "per_class": {
+        "rrna": {
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 60,
+          "any_hit_frac": 1.0,
+          "any_hit_ci95": [
+            0.9398,
+            1.0
+          ],
+          "pident": {
+            "n": 60,
+            "min": 89.41,
+            "p25": 99.01,
+            "median": 100.0,
+            "p75": 100.0,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 60,
+            "min": 0.6449,
+            "p25": 0.9623,
+            "median": 0.9813,
+            "p75": 1.0,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "uncultured bacterium",
+              7
+            ],
+            [
+              "Aliarcobacter cryaerophilus",
+              3
+            ],
+            [
+              "Aeromonas salmonicida subsp. salmonicida",
+              2
+            ],
+            [
+              "Acinetobacter calcoaceticus",
+              2
+            ],
+            [
+              "Segatella copri",
+              2
+            ],
+            [
+              "Bacteroides uniformis",
+              2
+            ],
+            [
+              "uncultured eukaryote",
+              2
+            ],
+            [
+              "Pseudomonadota bacterium",
+              2
+            ]
+          ],
+          "aln_len": {
+            "n": 60,
+            "min": 69,
+            "p25": 102,
+            "median": 105,
+            "p75": 106,
+            "max": 107
+          },
+          "bitscore": {
+            "n": 60,
+            "min": 113.997,
+            "p25": 178.918,
+            "median": 187.033,
+            "p75": 192.443,
+            "max": 194.247
+          },
+          "top_titles": [
+            [
+              "Acinetobacter calcoaceticus strain SDH15 chromosome, complete genome",
+              2
+            ],
+            [
+              "MAG: uncultured Fusobacterium sp. isolate SHD1_0661 genome assembly, chromosome: 1",
+              1
+            ],
+            [
+              "Uncultured bacterium clone F5K2Q4C04JU3CM 23S ribosomal RNA gene, partial sequence",
+              1
+            ],
+            [
+              "Phocaeicola vulgatus strain RSZYD15080438_A genome assembly, chromosome: 1",
+              1
+            ],
+            [
+              "Aeromonas salmonicida subsp. salmonicida isolate CAE1927 genome assembly, chromosome: 1",
+              1
+            ],
+            [
+              "Helicobacter enhydrae strain MIT 01-6242 chromosome, complete genome",
+              1
+            ]
+          ],
+          "strong_hit_frac": 0.9,
+          "strong_hit_ci95": [
+            0.7985,
+            0.9534
+          ],
+          "pident_x_qcov": {
+            "n": 60,
+            "min": 0.6449,
+            "p25": 0.94336728,
+            "median": 0.9813,
+            "p75": 1.0,
+            "max": 1.0
+          }
+        },
+        "public_nucleotide": {
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 60,
+          "any_hit_frac": 1.0,
+          "any_hit_ci95": [
+            0.9398,
+            1.0
+          ],
+          "pident": {
+            "n": 60,
+            "min": 93.88,
+            "p25": 100.0,
+            "median": 100.0,
+            "p75": 100.0,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 60,
+            "min": 0.7619,
+            "p25": 0.9533,
+            "median": 0.9906,
+            "p75": 1.0,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "Tomato brown rugose fruit virus",
+              33
+            ],
+            [
+              "Tobamovirus sp.",
+              3
+            ],
+            [
+              "uncultured bacterium",
+              3
+            ],
+            [
+              "Cucumber green mottle mosaic virus",
+              2
+            ],
+            [
+              "Homo sapiens",
+              2
+            ],
+            [
+              "Streptobacillus moniliformis",
+              1
+            ],
+            [
+              "Aeromonas hydrophila",
+              1
+            ],
+            [
+              "ssRNA phage SRR5208570_3",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 60,
+            "min": 47,
+            "p25": 102,
+            "median": 105,
+            "p75": 107,
+            "max": 107
+          },
+          "bitscore": {
+            "n": 60,
+            "min": 83.3396,
+            "p25": 184.328,
+            "median": 189.738,
+            "p75": 192.443,
+            "max": 194.247
+          },
+          "top_titles": [
+            [
+              "Tomato brown rugose fruit virus isolate S90_ToBRFV, complete genome",
+              18
+            ],
+            [
+              "Tomato brown rugose fruit virus isolate S74_ToBRFV, complete genome",
+              3
+            ],
+            [
+              "Tomato brown rugose fruit virus isolate S64_ToBRFV, complete genome",
+              3
+            ],
+            [
+              "Tomato brown rugose fruit virus isolate S84_ToBRFV, complete genome",
+              2
+            ],
+            [
+              "Tomato brown rugose fruit virus isolate S89_ToBRFV, complete genome",
+              2
+            ],
+            [
+              "Tomato brown rugose fruit virus isolate S71_ToBRFV, complete genome",
+              1
+            ]
+          ],
+          "strong_hit_frac": 0.9333333333333333,
+          "strong_hit_ci95": [
+            0.8407,
+            0.9738
+          ],
+          "pident_x_qcov": {
+            "n": 60,
+            "min": 0.7460524800000001,
+            "p25": 0.9533,
+            "median": 0.98138742,
+            "p75": 1.0,
+            "max": 1.0
+          }
+        },
+        "selfasm_identified": {
+          "n": 45,
+          "dropped_failed_batch": 15,
+          "any_hit": 43,
+          "any_hit_frac": 0.9555555555555556,
+          "any_hit_ci95": [
+            0.8517,
+            0.9877
+          ],
+          "pident": {
+            "n": 43,
+            "min": 74.03,
+            "p25": 86.49,
+            "median": 90.91,
+            "p75": 96.43,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 43,
+            "min": 0.2243,
+            "p25": 0.3019,
+            "median": 0.3714,
+            "p75": 0.7333,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "Picornavirales sp.",
+              6
+            ],
+            [
+              "Limisphaerales bacterium",
+              3
+            ],
+            [
+              "Caudoviricetes sp.",
+              2
+            ],
+            [
+              "Hepelivirales sp.",
+              2
+            ],
+            [
+              "Candidatus Acidiferrum sp.",
+              1
+            ],
+            [
+              "Rosa rugosa",
+              1
+            ],
+            [
+              "Tringa nebularia",
+              1
+            ],
+            [
+              "Tritrichomonas foetus",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 43,
+            "min": 24,
+            "p25": 32,
+            "median": 41,
+            "p75": 77,
+            "max": 107
+          },
+          "bitscore": {
+            "n": 43,
+            "min": 42.7638,
+            "p25": 46.3705,
+            "median": 49.0756,
+            "p75": 68.0109,
+            "max": 194.247
+          },
+          "top_titles": [
+            [
+              "MAG: Limisphaerales bacterium isolate MFD15127.bin.s.44 genome assembly, chromosome: 1",
+              2
+            ],
+            [
+              "MAG: Picornavirales sp. isolate HPLV-59 genomic sequence",
+              2
+            ],
+            [
+              "Hepelivirales sp. strain MR644-18E/449 nonstructural polyprotein and putative structural p",
+              2
+            ],
+            [
+              "MAG: Candidatus Acidiferrum sp. isolate MFD15115.bin.c.178 genome assembly, chromosome: 1",
+              1
+            ],
+            [
+              "PREDICTED: Rosa rugosa receptor-like protein 2 (LOC133734893), mRNA",
+              1
+            ],
+            [
+              "MAG: Picornavirales sp. isolate TC-PLV-176 MR233-17E/600 genomic sequence",
+              1
+            ]
+          ],
+          "strong_hit_frac": 0.17777777777777778,
+          "strong_hit_ci95": [
+            0.0929,
+            0.3133
+          ],
+          "pident_x_qcov": {
+            "n": 43,
+            "min": 0.2243,
+            "p25": 0.27358178,
+            "median": 0.32411989999999996,
+            "p75": 0.57540975,
+            "max": 1.0
+          }
+        },
+        "residue_assembled": {
+          "n": 45,
+          "dropped_failed_batch": 15,
+          "any_hit": 36,
+          "any_hit_frac": 0.8,
+          "any_hit_ci95": [
+            0.6618,
+            0.891
+          ],
+          "pident": {
+            "n": 36,
+            "min": 78.33,
+            "p25": 86.84,
+            "median": 88.89,
+            "p75": 96.88,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 36,
+            "min": 0.2243,
+            "p25": 0.3208,
+            "median": 0.3585,
+            "p75": 0.8879,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "Hepelivirales sp.",
+              2
+            ],
+            [
+              "Mus musculus",
+              2
+            ],
+            [
+              "Latimeria chalumnae",
+              1
+            ],
+            [
+              "Actinomycetes bacterium",
+              1
+            ],
+            [
+              "Brachyhypopomus gauderio",
+              1
+            ],
+            [
+              "ssRNA phage SRR5466727_4",
+              1
+            ],
+            [
+              "Ammodytes marinus",
+              1
+            ],
+            [
+              "Acidobacteriaceae bacterium",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 36,
+            "min": 24,
+            "p25": 34,
+            "median": 39,
+            "p75": 95,
+            "max": 106
+          },
+          "bitscore": {
+            "n": 36,
+            "min": 44.5672,
+            "p25": 45.4688,
+            "median": 47.2722,
+            "p75": 79.7328,
+            "max": 192.443
+          },
+          "top_titles": [
+            [
+              "Hepelivirales sp. strain MR644-18E/449 nonstructural polyprotein and putative structural p",
+              2
+            ],
+            [
+              "PREDICTED: Latimeria chalumnae solute carrier family 24 member 3 (SLC24A3), mRNA",
+              1
+            ],
+            [
+              "MAG: Actinomycetes bacterium isolate MFD15169.bin.c.16 genome assembly, chromosome: 1",
+              1
+            ],
+            [
+              "Mus musculus BAC clone RP24-225G4 from 14, complete sequence",
+              1
+            ],
+            [
+              "PREDICTED: Brachyhypopomus gauderio potassium voltage-gated channel subfamily A regulatory",
+              1
+            ],
+            [
+              "SsRNA phage SRR5466727_4 genomic sequence",
+              1
+            ]
+          ],
+          "strong_hit_frac": 0.1111111111111111,
+          "strong_hit_ci95": [
+            0.0484,
+            0.235
+          ],
+          "pident_x_qcov": {
+            "n": 36,
+            "min": 0.2243,
+            "p25": 0.28931414000000005,
+            "median": 0.31770797,
+            "p75": 0.7263796499999999,
+            "max": 0.9907
+          }
+        },
+        "residue_missing": {
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 55,
+          "any_hit_frac": 0.9166666666666666,
+          "any_hit_ci95": [
+            0.8193,
+            0.9639
+          ],
+          "pident": {
+            "n": 55,
+            "min": 71.29,
+            "p25": 81.25,
+            "median": 85.37,
+            "p75": 93.33,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 55,
+            "min": 0.2547,
+            "p25": 0.3208,
+            "median": 0.4434,
+            "p75": 0.785,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "Caudoviricetes sp.",
+              4
+            ],
+            [
+              "uncultured Caudovirales phage",
+              2
+            ],
+            [
+              "Devosia sp. SD17-2",
+              1
+            ],
+            [
+              "uncultured Devosia sp.",
+              1
+            ],
+            [
+              "Chitinophagaceae bacterium",
+              1
+            ],
+            [
+              "Flavobacteriaceae bacterium UJ101",
+              1
+            ],
+            [
+              "Leviviridae sp.",
+              1
+            ],
+            [
+              "Myriapora truncata",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 55,
+            "min": 26,
+            "p25": 34,
+            "median": 48,
+            "p75": 85,
+            "max": 107
+          },
+          "bitscore": {
+            "n": 55,
+            "min": 43.6655,
+            "p25": 46.3705,
+            "median": 49.9773,
+            "p75": 63.5025,
+            "max": 192.443
+          },
+          "top_titles": [
+            [
+              "uncultured Caudovirales phage genome assembly",
+              2
+            ],
+            [
+              "Devosia sp. SD17-2 chromosome, complete genome",
+              1
+            ],
+            [
+              "MAG: uncultured Devosia sp. isolate 095-US2-13.bin.1.147 genome assembly, chromosome: 1",
+              1
+            ],
+            [
+              "MAG: Chitinophagaceae bacterium isolate MFD15182.bin.c.108 genome assembly, chromosome: 1",
+              1
+            ],
+            [
+              "Flavobacteriaceae bacterium UJ101 chromosome, complete genome",
+              1
+            ],
+            [
+              "MAG: Caudoviricetes sp. isolate KCR_vOTU_05249 genomic sequence",
+              1
+            ]
+          ],
+          "strong_hit_frac": 0.06666666666666667,
+          "strong_hit_ci95": [
+            0.0262,
+            0.1593
+          ],
+          "pident_x_qcov": {
+            "n": 55,
+            "min": 0.24527609999999997,
+            "p25": 0.28307392,
+            "median": 0.36444261,
+            "p75": 0.6095525,
+            "max": 0.9907
+          }
+        },
+        "tier2_contigs": {
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 60,
+          "any_hit_frac": 1.0,
+          "any_hit_ci95": [
+            0.9398,
+            1.0
+          ],
+          "pident": {
+            "n": 60,
+            "min": 69.03,
+            "p25": 82.46,
+            "median": 87.18,
+            "p75": 91.18,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 60,
+            "min": 0.0261,
+            "p25": 0.0493,
+            "median": 0.0613,
+            "p75": 0.0812,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "Acidobacteriota bacterium",
+              3
+            ],
+            [
+              "Caudoviricetes sp.",
+              3
+            ],
+            [
+              "Burkholderiales bacterium",
+              2
+            ],
+            [
+              "Mus musculus",
+              2
+            ],
+            [
+              "Actinomycetes bacterium",
+              2
+            ],
+            [
+              "Acidobacteriaceae bacterium",
+              2
+            ],
+            [
+              "Leviviricetes sp.",
+              1
+            ],
+            [
+              "uncultured Caudovirales phage",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 60,
+            "min": 26,
+            "p25": 38,
+            "median": 44,
+            "p75": 62,
+            "max": 962
+          },
+          "bitscore": {
+            "n": 60,
+            "min": 46.3705,
+            "p25": 49.0756,
+            "median": 50.8789,
+            "p75": 55.3874,
+            "max": 1731.62
+          },
+          "top_titles": [
+            [
+              "MAG: Acidobacteriota bacterium isolate MFD15043.bin.2.861 genome assembly, chromosome: 1",
+              1
+            ],
+            [
+              "MAG: Leviviricetes sp. isolate 121-583 genomic sequence",
+              1
+            ],
+            [
+              "uncultured Caudovirales phage genome assembly",
+              1
+            ],
+            [
+              "Apteryx australis mantelli genome assembly AptMant0, scaffold scaffold17",
+              1
+            ],
+            [
+              "MAG: Terriglobia bacterium isolate MFD15192.bin.c.127 genome assembly, chromosome: 1",
+              1
+            ],
+            [
+              "Thalassiosira pseudonana CCMP1335 predicted protein partial mRNA",
+              1
+            ]
+          ],
+          "strong_hit_frac": 0.05,
+          "strong_hit_ci95": [
+            0.0171,
+            0.137
+          ],
+          "pident_x_qcov": {
+            "n": 60,
+            "min": 0.024416550000000002,
+            "p25": 0.0421,
+            "median": 0.05425279,
+            "p75": 0.06695833,
+            "max": 0.9986
+          }
+        }
+      }
+    }
+  },
+  "wall_seconds": 3560.2431345549994
+}

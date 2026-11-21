@@ -1,0 +1,40 @@
+{
+  "script": "experiments/remote_blast_check.py",
+  "git_sha": "9d37d1272510431dea237ae687ea70cd6b6d8e6b",
+  "parameters": {
+    "seed": 5,
+    "pairs": 20000,
+    "per_class": 60,
+    "batch": 15,
+    "poll": 20,
+    "max_wait": 1200,
+    "batch_attempts": 2,
+    "between_batches": 10,
+    "programs": [
+      "blastn"
+    ],
+    "megablast": "off",
+    "only_classes": null,
+    "r1": "/home/user/hapax/data/berlin/SRR23973193_1.fastq.gz",
+    "r2": "/home/user/hapax/data/berlin/SRR23973193_2.fastq.gz",
+    "silva_mmi": "/tmp/claude-0/wk/subtract/silva.mmi",
+    "silva": "/home/user/hapax/data/silva/silva_dna.fa",
+    "strong_pident": 95.0,
+    "strong_qcov": 0.8,
+    "identified": "/home/user/hapax/data/geo/sample_contigs_identified.fa",
+    "unidentified": "/home/user/hapax/data/geo/sample_contigs_unidentified.fa",
+    "k2_db": "/home/user/hapax/data/k2_pluspf16",
+    "classify_bin": "/home/user/tools/k2pkg/root/share/kraken2-2.17.2/libexec/classify",
+    "k2_confidence": 0.1,
+    "min_mlen": 40,
+    "contig_min_len": 500,
+    "contig_min_cov": 2.0,
+    "threads": 4,
+    "work": "/tmp/claude-0/wk/blastchk",
+    "out": "results/blast_check"
+  },
+  "wall_seconds": 6301.043514251,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39",
+  "note": "queries are public SRA sequence; no contact details are sent to NCBI"
+}
