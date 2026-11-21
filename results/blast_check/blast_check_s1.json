@@ -26,13 +26,14 @@
   },
   "blast": {
     "errors": [
-      "blastn batch 8: JSONDecodeError: Expecting property name enclosed in double quotes: line 2 column 9 (char 10)"
+      "blastn batch 22: URLError: <urlopen error [Errno 104] Connection reset by peer>"
     ],
     "blastn": {
       "database": "nt",
       "per_class": {
         "rrna": {
           "n": 60,
+          "dropped_failed_batch": 0,
           "any_hit": 60,
           "any_hit_frac": 1.0,
           "any_hit_ci95": [
@@ -132,6 +133,10 @@
             ]
           ],
           "strong_hit_frac": 0.8833333333333333,
+          "strong_hit_ci95": [
+            0.7782,
+            0.9423
+          ],
           "pident_x_qcov": {
             "n": 60,
             "min": 0.65414997,
@@ -143,6 +148,7 @@
         },
         "public_nucleotide": {
           "n": 60,
+          "dropped_failed_batch": 0,
           "any_hit": 60,
           "any_hit_frac": 1.0,
           "any_hit_ci95": [
@@ -242,6 +248,10 @@
             ]
           ],
           "strong_hit_frac": 0.9333333333333333,
+          "strong_hit_ci95": [
+            0.8407,
+            0.9738
+          ],
           "pident_x_qcov": {
             "n": 60,
             "min": 0.5794,
@@ -253,32 +263,41 @@
         },
         "selfasm_identified": {
           "n": 60,
-          "any_hit": 40,
-          "any_hit_frac": 0.6666666666666666,
+          "dropped_failed_batch": 0,
+          "any_hit": 53,
+          "any_hit_frac": 0.8833333333333333,
           "any_hit_ci95": [
-            0.5406,
-            0.7727
+            0.7782,
+            0.9423
           ],
           "pident": {
-            "n": 40,
+            "n": 53,
             "min": 71.26,
-            "p25": 88.89,
-            "median": 96.19,
-            "p75": 99.07,
+            "p25": 88.0,
+            "median": 91.59,
+            "p75": 99.02,
             "max": 100.0
           },
           "query_cov": {
-            "n": 40,
+            "n": 53,
             "min": 0.2243,
-            "p25": 0.3645,
-            "median": 0.9533,
-            "p75": 1.0,
+            "p25": 0.3364,
+            "median": 0.6449,
+            "p75": 0.9813,
             "max": 1.0
           },
           "top_names": [
             [
               "Picornavirales sp.",
               7
+            ],
+            [
+              "Cucumber green mottle mosaic virus",
+              3
+            ],
+            [
+              "Leviviridae sp.",
+              2
             ],
             [
               "Tomato brown rugose fruit virus",
@@ -289,40 +308,32 @@
               2
             ],
             [
-              "Cucumber green mottle mosaic virus",
-              2
-            ],
-            [
               "Scomber australasicus",
               2
             ],
             [
-              "Planctomycetota bacterium",
+              "Leviviricetes sp. 1",
               1
             ],
             [
-              "Myoviridae sp. ctXho31",
-              1
-            ],
-            [
-              "Dryas octopetala",
+              "ssRNA phage Esthiorhiza.1_1",
               1
             ]
           ],
           "aln_len": {
-            "n": 40,
+            "n": 53,
             "min": 24,
-            "p25": 39,
-            "median": 102,
-            "p75": 106,
+            "p25": 36,
+            "median": 69,
+            "p75": 105,
             "max": 108
           },
           "bitscore": {
-            "n": 40,
+            "n": 53,
             "min": 44.5672,
-            "p25": 47.2722,
-            "median": 118.505,
-            "p75": 186.132,
+            "p25": 46.3705,
+            "median": 60.7975,
+            "p75": 177.115,
             "max": 194.247
           },
           "top_titles": [
@@ -331,38 +342,43 @@
               3
             ],
             [
+              "Cucumber green mottle mosaic virus isolate CG25, complete genome",
+              2
+            ],
+            [
               "MAG: StochSlu_10 levi-like virus isolate SluRVP22_08, partial genome",
               2
             ],
             [
-              "MAG: Planctomycetota bacterium isolate MFD15108.bin.c.40 genome assembly, chromosome: 1",
+              "MAG: Leviviricetes sp. 1 isolate levi_14 genomic sequence",
               1
             ],
             [
-              "MAG TPA_asm: Myoviridae sp. ctXho31, partial genome",
+              "SsRNA phage Esthiorhiza.1_1 genomic sequence",
               1
             ],
             [
-              "PREDICTED: Dryas octopetala NC domain-containing protein-like protein (LOC147286000), mRNA",
-              1
-            ],
-            [
-              "Tomato brown rugose fruit virus isolate S90_ToBRFV, complete genome",
+              "Kitasatospora sp. NBC_00039 chromosome, complete genome",
               1
             ]
           ],
-          "strong_hit_frac": 0.26666666666666666,
+          "strong_hit_frac": 0.2833333333333333,
+          "strong_hit_ci95": [
+            0.1851,
+            0.4077
+          ],
           "pident_x_qcov": {
-            "n": 40,
+            "n": 53,
             "min": 0.2243,
-            "p25": 0.32074994999999995,
-            "median": 0.7476624,
-            "p75": 0.9811,
+            "p25": 0.29902596,
+            "median": 0.51404979,
+            "p75": 0.9440064,
             "max": 1.0
           }
         },
         "residue_assembled": {
           "n": 60,
+          "dropped_failed_batch": 0,
           "any_hit": 49,
           "any_hit_frac": 0.8166666666666667,
           "any_hit_ci95": [
@@ -462,6 +478,10 @@
             ]
           ],
           "strong_hit_frac": 0.05,
+          "strong_hit_ci95": [
+            0.0171,
+            0.137
+          ],
           "pident_x_qcov": {
             "n": 49,
             "min": 0.2308,
@@ -473,6 +493,7 @@
         },
         "residue_missing": {
           "n": 60,
+          "dropped_failed_batch": 0,
           "any_hit": 52,
           "any_hit_frac": 0.8666666666666667,
           "any_hit_ci95": [
@@ -572,6 +593,10 @@
             ]
           ],
           "strong_hit_frac": 0.05,
+          "strong_hit_ci95": [
+            0.0171,
+            0.137
+          ],
           "pident_x_qcov": {
             "n": 52,
             "min": 0.2336,
@@ -582,40 +607,33 @@
           }
         },
         "tier2_contigs": {
-          "n": 60,
-          "any_hit": 58,
-          "any_hit_frac": 0.9666666666666667,
+          "n": 45,
+          "dropped_failed_batch": 15,
+          "any_hit": 43,
+          "any_hit_frac": 0.9555555555555556,
           "any_hit_ci95": [
-            0.8864,
-            0.9908
+            0.8517,
+            0.9877
           ],
           "pident": {
-            "n": 58,
+            "n": 43,
             "min": 65.75,
             "p25": 83.33,
             "median": 86.67,
-            "p75": 90.24,
-            "max": 100.0
+            "p75": 90.0,
+            "max": 99.06
           },
           "query_cov": {
-            "n": 58,
+            "n": 43,
             "min": 0.0176,
-            "p25": 0.0559,
-            "median": 0.0684,
-            "p75": 0.0904,
-            "max": 1.0
+            "p25": 0.0489,
+            "median": 0.066,
+            "p75": 0.0844,
+            "max": 0.9728
           },
           "top_names": [
             [
-              "Picornavirales sp.",
-              4
-            ],
-            [
               "Actinomycetes bacterium",
-              2
-            ],
-            [
-              "Caudoviricetes sp.",
               2
             ],
             [
@@ -623,7 +641,7 @@
               2
             ],
             [
-              "ssRNA phage SRR7976299_5",
+              "Picornavirales sp.",
               2
             ],
             [
@@ -637,29 +655,33 @@
             [
               "Dehalococcoidia bacterium",
               1
+            ],
+            [
+              "ssRNA phage Gerhypos.4_51",
+              1
+            ],
+            [
+              "Cellulophaga lytica",
+              1
             ]
           ],
           "aln_len": {
-            "n": 58,
+            "n": 43,
             "min": 28,
-            "p25": 39,
-            "median": 48,
-            "p75": 75,
-            "max": 1546
+            "p25": 38,
+            "median": 46,
+            "p75": 59,
+            "max": 1091
           },
           "bitscore": {
-            "n": 58,
+            "n": 43,
             "min": 46.3705,
             "p25": 49.9773,
             "median": 52.6823,
-            "p75": 66.2076,
-            "max": 2192.38
+            "p75": 58.9941,
+            "max": 1006.66
           },
           "top_titles": [
-            [
-              "SsRNA phage SRR7976299_5 genomic sequence",
-              2
-            ],
             [
               "MAG: Chthoniobacteraceae bacterium isolate MFD15007.bin.2.4 genome assembly, chromosome: 1",
               1
@@ -679,20 +701,28 @@
             [
               "Cellulophaga lytica strain DSMZ 7489 chromosome, complete genome",
               1
+            ],
+            [
+              "MAG: Actinomycetes bacterium isolate MFD15180.bin.2.2985 genome assembly, chromosome: 1",
+              1
             ]
           ],
-          "strong_hit_frac": 0.08333333333333333,
+          "strong_hit_frac": 0.044444444444444446,
+          "strong_hit_ci95": [
+            0.0123,
+            0.1483
+          ],
           "pident_x_qcov": {
-            "n": 58,
+            "n": 43,
             "min": 0.0159632,
-            "p25": 0.048299999999999996,
-            "median": 0.06092906999999999,
-            "p75": 0.07372608,
-            "max": 1.0
+            "p25": 0.04561139,
+            "median": 0.05697,
+            "p75": 0.07020671999999999,
+            "max": 0.9635566200000001
           }
         }
       }
     }
   },
-  "wall_seconds": 2385.1666057799994
+  "wall_seconds": 6054.292264107004
 }

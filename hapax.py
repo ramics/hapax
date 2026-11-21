@@ -173,7 +173,7 @@ class Run:
         if a.contigs:
             argv += ["--selfasm", *[str(c) for c in a.contigs]]
         if a.unidentified_contigs:
-            argv += ["--observe", str(a.unidentified_contigs)]
+            argv += ["--observe", *[str(c) for c in a.unidentified_contigs]]
         return self.call("cascade", "subtract_known.py", argv,
                          {"tiers.json": out / f"subtract_s{a.seed}.json",
                           "stages/cascade_manifest.json": out / f"manifest_s{a.seed}.json",
@@ -250,7 +250,9 @@ class Run:
                 "--threads", str(a.threads),
                 "--work", str(self.work / "census_work"), "--out", str(out)]
         if a.unidentified_contigs:
-            argv += ["--unidentified-contigs", str(a.unidentified_contigs)]
+            # The census labels a neighbour against the contigs that assembled without
+            # being identified, so it takes the first of these sets only.
+            argv += ["--unidentified-contigs", str(a.unidentified_contigs[0])]
         return self.call("census", "linkage_census.py", argv,
                          {"census.json": out / f"linkage_census_s{a.seed}.json"},
                          out / f"linkage_census_s{a.seed}.json")
@@ -294,7 +296,7 @@ class Run:
             return self.record("contigs", "skipped",
                                reason="--unidentified-contigs not given, so tier 2 has no "
                                       "population in this run")
-        p = Path(a.unidentified_contigs)
+        p = Path(a.unidentified_contigs[0])
         if not p.exists():
             return self.record("contigs", "skipped", reason=f"{p} is absent")
         rows = self.dir / "contigs.jsonl"
@@ -820,9 +822,10 @@ def main() -> int:
                         "nothing identified would remove the tier 2 population into tier "
                         "1 and inflate every removal figure. Measured here: the whole "
                         "contig set removes 85.9% against 77.0% for the identified half")
-    r.add_argument("--unidentified-contigs", type=Path, default=None,
+    r.add_argument("--unidentified-contigs", type=Path, nargs="+", default=None,
                    help="contigs that assembled but nothing identified: tier 2's "
-                        "population, observed and never subtracted")
+                        "population, OBSERVED and never subtracted. Subtracting these "
+                        "would move tier 2 into tier 1 and inflate every removal figure")
     r.add_argument("--k2-dbs", type=Path, nargs="+",
                    default=[ROOT / "data/k2_viral", ROOT / "data/k2_standard08",
                             ROOT / "data/k2_pluspf08", ROOT / "data/k2_pluspf16"])
