@@ -84,7 +84,59 @@ TRIM_R2 = 14
 LIB_PAIRS = 8_731_224          # SRR23973193, from data/MANIFEST.md
 
 
-def write_subsamples(r1: Path, r2: Path, outdir: Path, query_idx: set[int], seed: int,
+PILE_PRIORITY = ("rrna", "identified", "other_ctg", "tier2", "unplaced")
+
+
+def pile_masks(classes: Path):
+    """Pair-level piles from the shared per-mate label table.
+
+    The table (`library_label_classes.npz`, from the residue thread) holds one class per
+    MATE: none / rrna / identified / unident / other_ctg, against SILVA 138.2 and this
+    sample's own 82,947 contigs at the cascade's 40-base operating point. A pair needs one
+    class, and the assignment here is by priority — rrna, then identified, then a contig
+    outside the three-way split, then an unidentifiable contig, then nothing — which is
+    stated because the pair rule is this script's choice and not the table's.
+
+    VALIDATED BEFORE USE, as the house rule requires: `unplaced` (both mates `none`) comes
+    out at 1,372,021 pairs, 15.71% of the library, which is `results/residue_census/` §2's
+    figure to the pair. The five piles partition the library exactly.
+
+    STATED BIAS: the table holds no read-level Kraken2 or DIAMOND, so `unplaced`
+    over-counts against the cascade's residue — it errs toward calling material unplaced.
+    Direction: the unplaced pile measured here is slightly more generous than the
+    cascade's, and any rescue rate on it is therefore closer to the library average than
+    the true residue's would be.
+    """
+    import numpy as np
+    z = np.load(classes, allow_pickle=False)
+    codes = [str(c) for c in z["class_codes"]]
+    idx = {name: codes.index(name) for name in
+           ("none", "rrna", "identified", "unident", "other_ctg")}
+    c1, c2 = z["class1"], z["class2"]
+    has = lambda c: (c1 == c) | (c2 == c)
+    rrna = has(idx["rrna"])
+    ident = has(idx["identified"]) & ~rrna
+    other = has(idx["other_ctg"]) & ~rrna & ~has(idx["identified"])
+    tier2 = (has(idx["unident"]) & ~rrna & ~has(idx["identified"])
+             & ~has(idx["other_ctg"]))
+    unplaced = (c1 == idx["none"]) & (c2 == idx["none"])
+    masks = {"rrna": rrna, "identified": ident, "other_ctg": other,
+             "tier2": tier2, "unplaced": unplaced}
+    total = np.zeros_like(rrna)
+    for m in masks.values():
+        if (total & m).any():
+            raise SystemExit("piles overlap: the priority rule is wrong")
+        total = total | m
+    if not total.all():
+        raise SystemExit("piles do not partition the library")
+    if int(unplaced.sum()) != 1_372_021:
+        raise SystemExit(
+            f"unplaced pile is {int(unplaced.sum()):,} pairs, not the 1,372,021 that "
+            f"results/residue_census/ §2 measured — the table or the rule has changed")
+    return masks
+
+
+def write_subsamples(r1: Path, r2: Path, outdir: Path, query_idx, seed: int,
                      log) -> tuple[dict[float, tuple[Path, Path]], Path, int]:
     """One streaming pass writing every nested level plus the query block.
 
@@ -115,7 +167,8 @@ def write_subsamples(r1: Path, r2: Path, outdir: Path, query_idx: set[int], seed
                 a = s1.strip()
                 b = s2.strip()[TRIM_R2:]
                 if "N" not in a and "N" not in b:
-                    qfh.write(f"q{n}\t{a}\t{b}\n")
+                    pile = query_idx[n] if isinstance(query_idx, dict) else "all"
+                    qfh.write(f"{pile}|q{n}\t{a}\t{b}\n")
                     nq += 1
                 n += 1
                 continue
@@ -250,7 +303,13 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", default="1,2,3,4,5")
     ap.add_argument("--out", default="results/depth_rarefaction")
-    ap.add_argument("--query-pairs", type=int, default=10_000)
+    ap.add_argument("--query-pairs", type=int, default=10_000,
+                    help="query pairs per seed when no --classes table is given")
+    ap.add_argument("--classes", default=None,
+                    help="shared library_label_classes.npz; draws an equal query block "
+                         "from each pair-level pile instead of one random block")
+    ap.add_argument("--per-pile", type=int, default=4_000,
+                    help="query pairs per pile per seed, with --classes")
     ap.add_argument("--work", default=None)
     ap.add_argument("--keep-libs", action="store_true",
                     help="keep the intermediate subsample fastqs (they are large)")
@@ -278,13 +337,34 @@ def main() -> int:
     work = Path(args.work) if args.work else outdir / "work"
     work.mkdir(parents=True, exist_ok=True)
 
+    masks = pile_masks(Path(args.classes)) if args.classes else None
+    if masks is not None:
+        log("pile sizes validated against results/residue_census/ §2: " + ", ".join(
+            f"{k} {int(v.sum()):,}" for k, v in masks.items()))
+
     t_start = time.time()
     timings = {}
     per_seed: dict[int, dict] = {}
     for seed in seeds:
         sdir = work / f"s{seed}"
         sdir.mkdir(exist_ok=True)
-        qidx = set(random.Random(seed).sample(range(LIB_PAIRS), args.query_pairs))
+        if masks is None:
+            qidx = {i: "all" for i in
+                    random.Random(seed).sample(range(LIB_PAIRS), args.query_pairs)}
+        else:
+            import numpy as np
+            rs = np.random.default_rng(seed)
+            qidx = {}
+            for pile in PILE_PRIORITY:
+                where = np.flatnonzero(masks[pile])
+                take = rs.choice(where, size=min(args.per_pile, where.size),
+                                 replace=False)
+                for i in take.tolist():
+                    qidx[int(i)] = pile
+            log(f"seed {seed}: {len(qidx):,} query pairs over "
+                f"{len(PILE_PRIORITY)} piles, drawn at random across the whole library "
+                f"(the label table shows the file order is spatially structured, so a "
+                f"contiguous block would not be a sample of the library)")
         log(f"seed {seed}: writing nested subsamples")
         libs, qpath, n_seen = write_subsamples(r1, r2, sdir, qidx, seed, log)
         if n_seen != LIB_PAIRS:
@@ -302,16 +382,26 @@ def main() -> int:
                     p.unlink(missing_ok=True)
             log(f"  seed {seed}: intermediate libraries removed")
 
-    report = curve_report(per_seed, log)
-    with open(outdir / "curve.json", "w") as fh:
-        json.dump(report, fh, indent=1)
+    if masks is None:
+        report = curve_report(per_seed, log)
+        with open(outdir / "curve.json", "w") as fh:
+            json.dump(report, fh, indent=1)
+    else:
+        # A curve pooled over piles whose depths differ by three orders of magnitude is
+        # not a curve of anything, so it is not written. The per-pile analysis is
+        # experiments/report_depth_piles.py, reading the committed TSVs.
+        log("piles mode: no pooled curve written; see experiments/report_depth_piles.py")
 
     manifest = {
         "script": "experiments/depth_rarefaction.py",
         "script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "git_sha": git_sha(),
         "seeds": seeds,
-        "params": {"levels": list(LEVELS), "query_pairs": args.query_pairs,
+        "params": {"levels": list(LEVELS),
+                   "query_pairs": args.query_pairs if masks is None else None,
+                   "per_pile": args.per_pile if masks is not None else None,
+                   "classes_table": args.classes,
+                   "piles": list(PILE_PRIORITY) if masks is not None else None,
                    "trim_r2": TRIM_R2, "k": 31,
                    "query_excluded_from_library": True,
                    "library_pairs_expected": LIB_PAIRS},

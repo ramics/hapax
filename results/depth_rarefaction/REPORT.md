@@ -79,12 +79,13 @@ The full list with directions is in `TABLES.md`. The three that matter:
 2. **Duplicates read as depth.** A read rescued by a PCR duplicate of its own molecule has
    gained confirmation that it is not an error, but no new sequence. Direction: inflates
    the rescue rate as a measure of assembly gain, honest as a measure of "seen twice".
-3. **A random query block is not the residue.** These are real library reads of every
-   kind, so the ladder describes the library. The unplaced residue sits at the bottom of
-   this distribution by definition, and its own rescue rate will be lower than the library
-   average. The ladder bounds the shape; it does not give that pile's value. Measuring the
-   residue's own transition needs the cascade's residue read list, which lives with the
-   pipeline thread.
+3. **A random query block is not the residue** — **now closed.** These are real library
+   reads of every kind, so the ladder describes the library. That limit has since been
+   measured away in [`../depth_rarefaction_piles/`](../depth_rarefaction_piles/REPORT.md),
+   which runs the same instrument with the query block drawn per pair-level pile: **the
+   unplaced residue's own rescue rate is 41.0% (39.5–42.8) against the 44.0% below**, so
+   the library figure was three points optimistic, in the direction predicted here. The
+   0.3% reaching depth >= 5 is unchanged on the residue's own pile.
 
 ## Provenance
 
@@ -100,3 +101,10 @@ extended without invalidating the manifest's hash of the code that produced the 
 
 The run shared the machine with the `profile_reach` searches, so the timings in
 `manifest.json` are operational rather than benchmarks.
+
+`manifest.json`'s `script_sha256` pins the generator **as it ran for this result**. The
+generator has since gained a `--classes` option for
+[`../depth_rarefaction_piles/`](../depth_rarefaction_piles/REPORT.md), so that hash no
+longer matches the file at HEAD. That is the hash doing its job rather than rot: it
+records what produced these numbers, and the levels, seeds and query-block logic used here
+are untouched.

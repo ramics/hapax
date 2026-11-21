@@ -1,0 +1,97 @@
+{
+ "script": "experiments/depth_rarefaction.py",
+ "script_sha256": "2163ca17d074b4fc0d10ffb85babae3df66f634a02572b9afae789c627db5a79",
+ "git_sha": "9c8736ce44d6b7f78382c4adac3d2a0c2949abd3-dirty",
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5
+ ],
+ "params": {
+  "levels": [
+   0.125,
+   0.25,
+   0.5,
+   1.0
+  ],
+  "query_pairs": null,
+  "per_pile": 4000,
+  "classes_table": "/mnt/project-files/shared/resasm/library_label_classes.npz",
+  "piles": [
+   "rrna",
+   "identified",
+   "other_ctg",
+   "tier2",
+   "unplaced"
+  ],
+  "trim_r2": 14,
+  "k": 31,
+  "query_excluded_from_library": true,
+  "library_pairs_expected": 8731224
+ },
+ "timings_s": {
+  "s1_f0.125": {
+   "seconds": 9.090005159378052
+  },
+  "s1_f0.25": {
+   "seconds": 18.278564929962158
+  },
+  "s1_f0.5": {
+   "seconds": 33.30696439743042
+  },
+  "s1_f1.0": {
+   "seconds": 65.78523468971252
+  },
+  "s2_f0.125": {
+   "seconds": 9.611793994903564
+  },
+  "s2_f0.25": {
+   "seconds": 18.290607213974
+  },
+  "s2_f0.5": {
+   "seconds": 35.431312084198
+  },
+  "s2_f1.0": {
+   "seconds": 65.60795831680298
+  },
+  "s3_f0.125": {
+   "seconds": 8.742792129516602
+  },
+  "s3_f0.25": {
+   "seconds": 17.38201642036438
+  },
+  "s3_f0.5": {
+   "seconds": 35.4711639881134
+  },
+  "s3_f1.0": {
+   "seconds": 68.04781365394592
+  },
+  "s4_f0.125": {
+   "seconds": 8.338974475860596
+  },
+  "s4_f0.25": {
+   "seconds": 15.9863920211792
+  },
+  "s4_f0.5": {
+   "seconds": 31.84839963912964
+  },
+  "s4_f1.0": {
+   "seconds": 62.80233287811279
+  },
+  "s5_f0.125": {
+   "seconds": 8.97270655632019
+  },
+  "s5_f0.25": {
+   "seconds": 17.05412483215332
+  },
+  "s5_f0.5": {
+   "seconds": 33.229843616485596
+  },
+  "s5_f1.0": {
+   "seconds": 64.63457489013672
+  }
+ },
+ "total_s": 1252.6851694583893
+}
