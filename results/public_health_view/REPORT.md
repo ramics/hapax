@@ -79,6 +79,29 @@ operating point does not transfer to contigs. This script therefore assigns at
 confidence 0 and requires a protein alignment before a row exists: Kraken2 proposes, the
 alignment disposes.
 
+## Two numbers that look like a contradiction, and the split that resolves them
+
+A reader met "93% unclassified at confidence 0.1" and took it for the composition of the
+water, which sat beside an 11% residue and looked like a contradiction. It is not one,
+and the fix was more than a label: the page now splits the cascade's own removal by
+whether a tier can produce a NAME, drawn on one scale beside the index.
+
+| | of the library |
+|---|---|
+| named by Kraken2 PlusPF-08 at 0.1 (whole library) | 6.88% |
+| named by every cascade tier that returns a taxon or accession | 7.49% |
+| recognised but NOT named | 69.54% |
+| left over after everything | 11.07% |
+
+The two naming figures landing a point apart, from different instruments on different
+scopes, is the cross-check. The 69.54% is where the confusion lived: 37.90% is a SILVA
+ribosomal match, which says it is a ribosome and not whose, and 30.30% is a match to a
+contig assembled from this very sample, which says the sequence was seen here before and
+nothing else.
+
+**Most of what this pipeline removes as known, it removes by matching sequence nobody has
+named.**
+
 ## Two numbers that look like a contradiction
 
 The classifier names 6.88% of the library; the cascade calls 77.03% of it identifiable.

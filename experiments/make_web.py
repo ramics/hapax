@@ -450,6 +450,14 @@ details > summary { cursor: pointer; font-size: 13px; color: var(--dim); }
 .dmeta { font-size: 0.76rem; }
 .cards3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   gap: 0.8rem; margin: 0.7rem 0; }
+.cmp { margin: 1.1rem 0 0.6rem; }
+.crow { display: grid; grid-template-columns: 210px 1fr 62px; gap: 0.6rem;
+  align-items: center; padding: 0.3rem 0 0; font-size: 0.84rem; }
+.crow .clab { text-align: right; }
+.cbar { height: 14px; background: var(--edge); border-radius: 2px; overflow: hidden; }
+.cbar span { display: block; height: 100%; }
+.cnum { text-align: right; font-family: var(--mono); font-size: 0.8rem; }
+.crow .csub { grid-column: 2 / 4; font-size: 0.74rem; padding-bottom: 0.3rem; }
 .bites { display: flex; flex-direction: column; gap: 0.3rem; }
 .bite { display: grid; grid-template-columns: 15rem 1fr 6rem 5rem; gap: 0.6rem;
   align-items: center; font-size: 12px; }
@@ -2235,10 +2243,11 @@ function interval(iv) {
 // ---------- public health: composition, with the threshold as a control
 (function () {
   const P = D.profile;
-  const p = panel('What the water is made of',
-    'Every read pair in the library, put in the broadest group the classifier can place ' +
-    'it in. Move the threshold and watch the picture move: that movement is the single ' +
-    'most important thing to understand about any number like this one.');
+  const p = panel('What one reference index can name',
+    'This is the REACH OF ONE INDEX, not the composition of the water. Every read pair ' +
+    'put in the broadest group Kraken2 can place it in, against one database at one ' +
+    'threshold. Move the threshold and watch the picture move: that movement is the ' +
+    'single most important thing to understand about any number like this one.');
   if (!P) {
     p.append(el('div', 'absent', 'public_health_profile_s*.json absent'));
     app.append(p); return;
@@ -2246,6 +2255,13 @@ function interval(iv) {
   const COL = {Viruses: 'var(--g-phage)', Bacteria: 'var(--g-vert)',
     Archaea: 'var(--g-fungal)', Eukaryota: 'var(--g-plant)',
     unclassified: 'var(--null)', 'classified, above superkingdom': 'var(--g-unknown)'};
+  // "Unclassified" is the classifier's word and it reads, to anyone who is not holding
+  // the classifier in their head, as "unknown sequence". It is not: it is sequence this
+  // one database could not place at this one threshold. The page renames it on the way
+  // in, because the mislabel is what made a reader take the 93% for the water.
+  const GLABEL = g => g === 'unclassified' ? 'not named by this index at this threshold'
+                    : g === 'classified, but above any of these groups'
+                      ? 'named, but no deeper than these groups is defined' : g;
   const confs = Object.keys(P.at_confidence).sort();
   const ctl = el('div', 'controls');
   const sel = document.createElement('select');
@@ -2306,7 +2322,7 @@ function interval(iv) {
       const sp = document.createElement('span');
       sp.style.width = (100 * g.fraction) + '%';
       sp.style.background = COL[g.group] || 'var(--null)';
-      sp.title = g.group + ': ' + g.pairs.toLocaleString() + ' pairs (' +
+      sp.title = GLABEL(g.group) + ': ' + g.pairs.toLocaleString() + ' pairs (' +
         (100 * g.fraction).toFixed(2) + '%)';
       bar.append(sp);
     });
@@ -2323,12 +2339,12 @@ function interval(iv) {
     });
     lg2.innerHTML = cl.map(g =>
       '<span><i style="background:' + (COL[g.group] || 'var(--null)') + '"></i>' +
-      esc(g.group) + ' <b>' + (100 * g.pairs / clTot).toFixed(1) + '%</b></span>')
+      esc(GLABEL(g.group)) + ' <b>' + (100 * g.pairs / clTot).toFixed(1) + '%</b></span>')
       .join('') + '<span class="dim">of the ' + clTot.toLocaleString() +
       ' pairs placed at all</span>';
     lg.innerHTML = (a.by_superkingdom || []).map(g =>
       '<span><i style="background:' + (COL[g.group] || 'var(--null)') + '"></i>' +
-      esc(g.group) + ' <b>' + (100 * g.fraction).toFixed(2) + '%</b> <span class="dim ' +
+      esc(GLABEL(g.group)) + ' <b>' + (100 * g.fraction).toFixed(2) + '%</b> <span class="dim ' +
       'mono">' + g.pairs.toLocaleString() + '</span></span>').join('');
     cols.innerHTML = '';
     cols.append(taxaList('viruses, most reads first', (a.top_taxa || {}).Viruses, total,
@@ -2337,6 +2353,77 @@ function interval(iv) {
                          COL.Bacteria));
   }
   sel.onchange = draw; draw();
+
+  // THE COMPARISON A READER NEEDS AT EXACTLY THIS POINT. Left alone, the 93% above
+  // reads as "93% of this water is unknown", which is what happened, and it sits next
+  // to a residue figure of 11% and looks like a contradiction. It is not one: the two
+  // numbers come from instruments with different jobs. Drawing the cascade's own
+  // removal beside this index, on one scale, with the tiers split by whether they can
+  // produce a NAME, is the only version of this that cannot be misread.
+  //
+  // Which tiers can name is a property of the tier, declared here and visible: a
+  // Kraken2 or DIAMOND hit carries a taxon or an accession, while an artefact filter, a
+  // SILVA match and a match to a contig assembled from this very sample tell you the
+  // sequence has been seen before and nothing about what it is.
+  const CAN_NAME = {k2_viral: 1, k2_standard08: 1, k2_pluspf08: 1, k2_pluspf16: 1,
+                    prot_viral: 1, prot_sprot: 1};
+  const WHY = {artefact: 'adapter and low complexity, removed and not named',
+               rrna: 'matches SILVA ribosomal RNA, which says it is a ribosome and not ' +
+                     'whose',
+               selfasm_sample_contigs_rrna: 'matches this sample own ribosomal contigs',
+               selfasm_sample_contigs_identified_norrna:
+                 'matches a contig assembled from this very sample'};
+  const curve = (D.tier_table || {}).curve || [];
+  const brk = (D.tier_table || {}).breakdown;
+  if (curve.length && brk) {
+    let named = 0, unnamed = 0;
+    const unnamedRows = [];
+    curve.forEach(c => {
+      const m = c.marginal_removed || 0;
+      if (CAN_NAME[c.tier]) { named += m; } else {
+        unnamed += m;
+        if (m > 0.002) unnamedRows.push([c.tier, m]);
+      }
+    });
+    const a01 = P.at_confidence['0.1'] || {};
+    const k2here = 1 - ((a01.by_superkingdom || [])
+      .filter(g => g.group === 'unclassified')[0] || {}).fraction;
+    const box = el('div', 'cmp');
+    box.append(el('div', 'pghead',
+                  'the same library, by the two instruments on this page'));
+    const rowbar = (lab, v, col, sub) => {
+      const r = el('div', 'crow');
+      r.innerHTML = '<div class="clab">' + lab + '</div>' +
+        '<div class="cbar"><span style="width:' + (100 * v).toFixed(2) + '%;background:' +
+        col + '"></span></div>' +
+        '<div class="cnum mono">' + pct(v) + '</div>' +
+        '<div class="csub dim">' + sub + '</div>';
+      box.append(r);
+    };
+    rowbar('<b>named</b> by this index', k2here, 'var(--g-phage)',
+      'Kraken2, PlusPF-08, confidence 0.1, whole library. A taxon you can act on.');
+    rowbar('<b>named</b> by the whole cascade', named, 'var(--g-phage)',
+      'every cascade tier that returns a taxon or an accession, added up. That it lands ' +
+      'beside the figure above is the cross-check.');
+    rowbar('<b>recognised but not named</b>', unnamed, 'var(--identified)',
+      unnamedRows.map(r => (WHY[r[0]] || r[0]) + ', ' + pct(r[1])).join('; ') + '.');
+    rowbar('left over after everything', brk.residual.point, 'var(--residue)',
+      'the pile the rest of this page is about, plus ' +
+      pct((brk.assembled_unidentified || {}).point) + ' that assembles into contigs ' +
+      'nothing can name.');
+    const cnote = el('div', 'callout');
+    cnote.innerHTML = '<b>93% unnamed and 11% left over are both true, and they are not ' +
+      'the same measurement.</b> Naming a read means putting a taxon on it, which one ' +
+      'reference index does for ' + pct(k2here) + ' of pairs and the whole cascade for ' +
+      pct(named) + '. Recognising a read means matching it to sequence we have seen ' +
+      'before, which is a far weaker requirement and covers ' + pct(unnamed) + ' more: ' +
+      'mostly ribosomal RNA and contigs assembled from this very sample, neither of ' +
+      'which tells you what the organism is. <b>Most of what this pipeline removes as ' +
+      'known, it removes by matching sequence nobody has named.</b> The scopes differ ' +
+      'too: the index figure is the whole library, the cascade figures are its ' +
+      ((D.parameters || {}).pairs || 0).toLocaleString() + '-pair block.';
+    p.append(box, cnote);
+  }
 
   const note = el('div', 'callout');
   // The JSON fields are sentences without terminators, so the page supplies them
@@ -2422,31 +2509,17 @@ function interval(iv) {
     card(pct((b.identified || {}).point), 'identifiable, which is what gets subtracted',
          'var(--identified)'));
   p.append(big);
-  // TWO NUMBERS ON THIS PAGE LOOK LIKE A CONTRADICTION AND ARE NOT. The panel above
-  // classifies 6.9% of the library; the cascade calls 77% of it identifiable. A reader
-  // who meets both and is not told why will not trust either, so the reconciliation is
-  // computed here from the same tier table rather than left as an exercise.
+  // The reconciliation itself lives in the index panel above, where a reader first
+  // meets the number that needs it. Repeating it here would be the same paragraph
+  // twice; a pointer is enough, and it carries the one figure this panel needs.
   const cur = (D.tier_table || {}).curve || [];
-  const tier = k => (cur.filter(c => c.tier === k)[0] || {});
-  const rr = tier('rrna').tier_alone_removed;
-  const own = tier('selfasm_sample_contigs_identified_norrna').marginal_removed;
-  const k2 = tier('k2_pluspf08').tier_alone_removed;
-  const P2 = D.profile;
-  if (rr != null && own != null) {
-    const rec = el('div', 'callout');
-    rec.innerHTML = '<b>Why this page says both 6.9% classified and ' +
-      pct((D.tier_table.breakdown || {}).identified.point) + ' identifiable.</b> They ' +
-      'are different questions. Naming a read means placing it on a taxon, which the ' +
-      'classifier does for ' +
-      (P2 ? pct(1 - (P2.at_confidence['0.1'].by_superkingdom
-        .filter(g => g.group === 'unclassified')[0] || {}).fraction) : '-') +
-      ' of pairs. Recognising a read means matching it to sequence we have seen, which ' +
-      'is a much weaker requirement and covers far more: ' + pct(rr) + ' of this ' +
-      'library matches ribosomal RNA and a further ' + pct(own) + ' matches contigs ' +
-      'assembled from this very sample. Neither of those carries a name. <b>Most of ' +
-      'what we can remove as known, we remove by matching sequence nobody has named.</b> ' +
-      'The two instruments agree where they overlap: the same Kraken2 index removes ' +
-      pct(k2) + ' inside the cascade.';
+  const own = (cur.filter(c => c.tier === 'selfasm_sample_contigs_identified_norrna')[0]
+               || {}).marginal_removed;
+  if (own != null) {
+    const rec = el('div', 'note');
+    rec.innerHTML = 'Identifiable is not the same as named: ' + pct(own) + ' of this ' +
+      'library is removed purely by matching contigs assembled from the sample itself, ' +
+      'which carry no name at all. The panel above puts the two side by side.';
     p.append(rec);
   }
 
@@ -2468,7 +2541,7 @@ function interval(iv) {
   // them. Everything else on this page is how those answers were arrived at, and goes
   // below the fold: it was all on the front page before, and the front page was a
   // method report wearing a sample report's clothes.
-  const SUMMARY = ['What we screened for', 'What the water is made of',
+  const SUMMARY = ['What we screened for', 'What one reference index can name',
                    'Known viruses: the reference, or a drifted strain',
                    'What nothing could name'];
   const panels = Array.prototype.filter.call(app.children,
