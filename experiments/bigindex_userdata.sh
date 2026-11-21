@@ -214,9 +214,9 @@ for src in sorted(Path("/opt/hapax/queries").glob("block_*.fa")):
 SPLITB
 }
 
-# label_prefix budget_hours extra_args...
+# label_prefix budget_hours db extra_args...
 chunked_pass() {
-  local tag="$1" budget="$2"; shift 2
+  local tag="$1" budget="$2" db="$3"; shift 3
   local start=$SECONDS first_label=""
   for q in /opt/hapax/queries/chunks/*.fa; do
     local label="${tag}_$(basename "$q" .fa)" n
@@ -231,7 +231,7 @@ chunked_pass() {
         break
       fi
     fi
-    search "$label" blastn /opt/hapax/db/core_nt "@@NCBI_PREFIX@@" "$q" "$@"
+    search "$label" blastn "$db" "@@NCBI_PREFIX@@" "$q" "$@"
     [ -n "$first_label" ] || first_label="$label"
   done
 }
@@ -242,14 +242,46 @@ fi
 
 # The sensitive task first: if only one of the two finishes, it is the one worth having.
 if stage_on core_nt_full; then
-  chunked_pass core_nt @@FULL_BUDGET_HOURS@@
+  chunked_pass core_nt @@FULL_BUDGET_HOURS@@ /opt/hapax/db/core_nt
 fi
 
 # `dc-megablast` on the SAME reads. It is built for cross-species nucleotide matching and is
 # far cheaper, so running both says what the cheap one FAILS to find - this project's own
 # cost-versus-completeness curve applied to itself.
 if stage_on core_nt_fast; then
-  chunked_pass fast @@FAST_BUDGET_HOURS@@ --blastn-task dc-megablast
+  chunked_pass fast @@FAST_BUDGET_HOURS@@ /opt/hapax/db/core_nt --blastn-task dc-megablast
+fi
+
+# ------------------------------------------------- nt_viruses, the targeted database
+# 69.8 GB against core_nt's 318.8, so the scan floor drops from ~18 min to ~4 and the same
+# 40-base match gets a materially better E-value: against a database 4.5x smaller, chance
+# alignments are 4.5x rarer. It cannot say a read is bacterial, so it is not a replacement -
+# it is the other end of the cost/completeness curve this project exists to publish, and the
+# pair of passes on the SAME reads is the measurement.
+if stage_on nt_viruses; then
+  mkdir -p /opt/hapax/db
+  aws s3 cp "s3://@@NCBI_BUCKET@@/@@NCBI_PREFIX@@/" /opt/hapax/db/ --recursive \
+    --no-sign-request --exclude "*" --include "nt_viruses.*" \
+    --include "nt_viruses-nucl-metadata.json" --region "$REGION" \
+    || die "nt_viruses did not stage"
+  test -f /opt/hapax/db/nt_viruses.nal || test -f /opt/hapax/db/nt_viruses.nsq \
+    || die "nt_viruses staged without an alias or volume file"
+  split_blocks "$CHUNK"
+  chunked_pass viral @@VIRAL_BUDGET_HOURS@@ /opt/hapax/db/nt_viruses
+fi
+
+# ------------------------------------------------- alignments, for reading by eye
+# The taxonomy volume has to be staged or `sscinames` resolves to N/A without erroring,
+# which would produce a file of alignments against anonymous accessions - the one thing this
+# pass exists to avoid, since the question is WHAT the read matched.
+if stage_on alignment; then
+  aws s3 cp "s3://@@NCBI_BUCKET@@/@@NCBI_PREFIX@@/taxdb.btd" /opt/hapax/db/ \
+    --no-sign-request --region "$REGION" || die "taxdb.btd did not stage"
+  aws s3 cp "s3://@@NCBI_BUCKET@@/@@NCBI_PREFIX@@/taxdb.bti" /opt/hapax/db/ \
+    --no-sign-request --region "$REGION" || die "taxdb.bti did not stage"
+  test -f /opt/hapax/queries/eyeball.fa || die "no eyeball.fa in the query sets"
+  search alignment blastn /opt/hapax/db/core_nt "@@NCBI_PREFIX@@" \
+    /opt/hapax/queries/eyeball.fa --with-alignment --max-targets 1
 fi
 
 # ---------------------------------------------------------------- nr, on a subsample

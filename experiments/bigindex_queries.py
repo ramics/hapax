@@ -115,6 +115,20 @@ def main() -> None:
                          "survival set: a pair survives a rung only if neither mate is "
                          "identified, so a name list built from mate 1 alone invents "
                          "residue. Use it for identity distributions, not for the lists")
+    ap.add_argument("--eyeball-rows", type=Path, default=None,
+                    help="rows from an earlier pass. With it, an eyeball.fa is written: the "
+                         "reads whose alignments are to be rendered against the reference "
+                         "they matched, stratified by E-value rather than sampled at "
+                         "random. Proportionally the pile is ~90% chance matches, which is "
+                         "the true composition and the wrong file - the populations worth "
+                         "looking at are the small ones")
+    ap.add_argument("--eyeball-n", type=int, default=1000)
+    ap.add_argument("--eyeball-reads", type=Path, default=None,
+                    help="the FASTA those rows were computed from. Required in practice: "
+                         "this script re-samples its blocks every time it runs, so the "
+                         "reads it would otherwise draw from share only a handful of names "
+                         "with rows from an earlier set - which is how a 45-read selection "
+                         "silently became 4")
     ap.add_argument("--out", type=Path, default=Path("/tmp/claude-0/wk/bigindex_queries"))
     ap.add_argument("--manifest-out", type=Path,
                     default=ROOT / "results/subtract_known")
@@ -189,6 +203,31 @@ def main() -> None:
                              "sha256_16": digest(q)}
     print(f"pilot.fa: {len(pilot)} residue mate-1; nr_sample.fa: {len(nr)} "
           f"({args.nr_sample} per pile)", flush=True)
+
+    if args.eyeball_rows and args.eyeball_rows.exists():
+        # The selection rule lives in partial_alignment_eyeball.py, which renders the
+        # result, so it is imported rather than restated: two copies of a stratification
+        # drift, and the stratum labels in the file have to mean what the quotas meant.
+        from partial_alignment_eyeball import pick as eyeball_pick
+        rows = [json.loads(l) for l in open(args.eyeball_rows)]
+        if args.eyeball_reads:
+            pooled = {n.split("|", 1)[-1]: sq
+                      for n, sq in read_fasta(args.eyeball_reads)}
+        else:
+            pooled = {n.split("|", 1)[-1]: sq
+                      for n, sq in pooled_residue + pooled_control}
+        covered = sum(1 for r in rows if r.get("read") in pooled)
+        if covered < 0.9 * len(rows):
+            raise SystemExit(
+                f"only {covered} of {len(rows)} rows name a read in the eyeball read set; "
+                f"pass --eyeball-reads pointing at the FASTA those rows came from")
+        names, avail = eyeball_pick(rows, pooled, args.eyeball_n, 30, 1e-5, 0.05, rng)
+        eb = args.out / "eyeball.fa"
+        files["eyeball.fa"] = {
+            "sequences": write_fasta(eb, [(f"residue|{n}", pooled[n]) for n in names]),
+            "bytes": eb.stat().st_size, "sha256_16": digest(eb),
+            "available_per_stratum": avail, "from_rows": str(args.eyeball_rows)}
+        print(f"eyeball.fa: {len(names)} reads, strata available {avail}", flush=True)
 
     manifest = {
         "script": "experiments/bigindex_queries.py", **provenance(__file__),

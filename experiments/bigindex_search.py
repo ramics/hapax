@@ -44,10 +44,21 @@ from pathlib import Path
 #: be debugged interactively.
 FIELDS = ("qseqid", "sseqid", "pident", "length", "qlen", "evalue", "bitscore")
 
+#: Appended by `--with-alignment`, and only then, because they multiply the output size by
+#: roughly the read length and are useless to a distribution. They exist for one job: showing
+#: a read beside the reference it matched, which is what tells a real partial alignment from
+#: the best chance match in a large database. `sscinames` needs the taxonomy volume staged
+#: next to the database or it silently resolves to `N/A`, so the caller has to stage `taxdb`;
+#: `slen` is here because the distance from the match to the end of the record is what says
+#: whether an alignment stopped because the reference ran out.
+ALIGNMENT_FIELDS = ("qstart", "qend", "sstart", "send", "slen", "sstrand",
+                    "sscinames", "staxids", "qseq", "sseq", "stitle")
+
 
 def command(program: str, db: Path, query: Path, out: Path, threads: int,
             max_targets: int, sensitive: bool, blast_bin: Path,
-            diamond_bin: Path, blastn_task: str = "blastn") -> list[str]:
+            diamond_bin: Path, blastn_task: str = "blastn",
+            with_alignment: bool = False) -> list[str]:
     """The search, as the exact argument list that will be recorded in the manifest.
 
     `blastn` defaults to the plain task rather than megablast, matching
@@ -67,7 +78,7 @@ def command(program: str, db: Path, query: Path, out: Path, threads: int,
     DIAMOND's `--sensitive` is not a free switch - measured in this repo it costs 10-14x
     default - so it is a flag, and which was used goes in the manifest beside the timing.
     """
-    fmt = list(FIELDS)
+    fmt = list(FIELDS) + (list(ALIGNMENT_FIELDS) if with_alignment else [])
     if program == "blastn":
         return [str(blast_bin / "blastn"), "-task", blastn_task, "-db", str(db),
                 "-query", str(query), "-out", str(out), "-num_threads", str(threads),
@@ -116,6 +127,17 @@ def best_rows(hits: Path, queries: Path) -> list[dict]:
                        "qlen": int(qlen), "evalue": float(ev), "bitscore": float(bits)}
             except ValueError:
                 continue
+            # The alignment columns are carried through verbatim when they are present.
+            # Parsed by position against the same tuple the outfmt was built from, so a
+            # field added in one place and not the other cannot shift a column silently.
+            if len(f) >= len(FIELDS) + len(ALIGNMENT_FIELDS):
+                extra = dict(zip(ALIGNMENT_FIELDS, f[len(FIELDS):]))
+                for k in ("qstart", "qend", "sstart", "send", "slen"):
+                    try:
+                        extra[k] = int(extra[k])
+                    except (ValueError, KeyError):
+                        pass
+                row.update(extra)
             row["aln_frac"] = row["aln_len"] / row["qlen"] if row["qlen"] else 0.0
             prev = best.get(q)
             if prev is None or row["bitscore"] > prev["bitscore"]:
@@ -155,6 +177,10 @@ def main() -> None:
     ap.add_argument("--threads", type=int, default=8)
     ap.add_argument("--max-targets", type=int, default=5)
     ap.add_argument("--sensitive", action="store_true")
+    ap.add_argument("--with-alignment", action="store_true",
+                    help="also record the aligned sequences, coordinates, subject length "
+                         "and scientific name. For inspection by eye, not for a "
+                         "distribution: it multiplies the row size by about the read length")
     ap.add_argument("--blastn-task", default="blastn",
                     choices=["blastn", "dc-megablast", "megablast"],
                     help="which nucleotide task. Recorded in the timing file, because the "
@@ -169,7 +195,7 @@ def main() -> None:
     n_q = count_queries(args.query)
     cmd = command(args.program, args.db, args.query, hits, args.threads,
                   args.max_targets, args.sensitive, args.blast_bin, args.diamond_bin,
-                  args.blastn_task)
+                  args.blastn_task, args.with_alignment)
 
     # The timing file is written BEFORE the search and rewritten after, so a run killed by
     # the dead man's switch still leaves behind what it was doing and with what arguments.
@@ -178,6 +204,7 @@ def main() -> None:
               "db_version": args.db_version, "queries": n_q, "threads": args.threads,
               "blastn_task": args.blastn_task if args.program == "blastn" else None,
               "sensitive": bool(args.sensitive), "command": cmd,
+              "with_alignment": bool(args.with_alignment),
               "started": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
               "finished": None, "seconds": None, "exit_code": None,
               "platform": platform.platform(), "python": platform.python_version(),

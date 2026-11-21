@@ -32,6 +32,7 @@ number is recorded here so the difference is visible rather than silent.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import io
 import json
 import subprocess
@@ -47,6 +48,11 @@ import ec2_common as ec2lib
 
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = Path(__file__).resolve().parent / "bigindex_userdata.sh"
+
+#: What actually goes in UserData. EC2 caps that at 16,384 bytes and the run script passed
+#: 15,100 with four stages, so the run script is uploaded to our own prefix and this fetches
+#: it. See the comment at the top of the bootstrap for what the split costs.
+BOOTSTRAP = Path(__file__).resolve().parent / "bigindex_bootstrap.sh"
 
 #: The pinned NCBI copy. `latest-dir` in that bucket read `2026-10-22-01-05-01` on
 #: 2026-11-20; pinning it rather than following `latest-dir` is what makes a number from
@@ -86,24 +92,30 @@ HEARTBEAT_SECONDS = 300
 #: to a list like this, and the instance died on an ImportError having read nothing.
 PAYLOAD_MODULES = ("experiments/bigindex_search.py",)
 
-STAGES = ("core_nt", "pilot", "core_nt_full", "core_nt_fast", "nr")
+STAGES = ("core_nt", "pilot", "core_nt_full", "core_nt_fast", "nt_viruses",
+          "alignment", "nr")
 
 
-def render_user_data(**tokens: Any) -> str:
-    """The UserData, with @@TOKENS@@ filled in. Every token must be consumed.
+def render(template: Path, limit: int | None, **tokens: Any) -> str:
+    """One template with @@TOKENS@@ filled in. Every token must be consumed.
 
     An unreplaced token is a bash line that silently does the wrong thing - `--region
     @@REGION@@` would be a literal - and on an instance nobody can log into, that is a
     wasted launch. So this refuses rather than renders a template with a token left in it.
+
+    `limit` is EC2's UserData cap and applies only to the bootstrap now. The run script is
+    fetched from S3, so it has no ceiling - which is the whole reason for the split, since
+    the alternative was deleting the reasoning from the artefact that gets reviewed.
     """
-    text = TEMPLATE.read_text()
+    text = template.read_text()
     for key, value in tokens.items():
         text = text.replace(f"@@{key}@@", str(value))
     leftover = sorted({t.split("@@")[0] for t in text.split("@@")[1::2]})
     if leftover:
-        raise SystemExit(f"UserData still has unreplaced tokens: {leftover}")
-    if len(text.encode()) > 16_384:
-        raise SystemExit(f"UserData is {len(text.encode())} bytes; EC2's limit is 16,384")
+        raise SystemExit(f"{template.name} still has unreplaced tokens: {leftover}")
+    if limit is not None and len(text.encode()) > limit:
+        raise SystemExit(f"{template.name} is {len(text.encode())} bytes; the limit "
+                         f"is {limit:,}")
     return text
 
 
@@ -226,6 +238,10 @@ def main(argv: list[str] | None = None) -> int:
                          "only by its own timer; this session's background jobs cannot "
                          "outlive a run measured in hours, and a watcher killed mid-wait "
                          "would fire its finally and terminate a healthy instance")
+    ap.add_argument("--viral-budget-hours", type=float, default=3.0,
+                    help="budget for the nt_viruses pass. Smaller than core_nt's because "
+                         "the database is 69.8 GB against 318.8, so the scan floor is "
+                         "about four minutes rather than eighteen")
     ap.add_argument("--allow-dirty", action="store_true")
     ap.add_argument("--dry-run", action="store_true", help="authorize only, launch nothing")
     ap.add_argument("--print-user-data", action="store_true")
@@ -260,12 +276,24 @@ def main(argv: list[str] | None = None) -> int:
         NR_CHUNK=args.nr_chunk, NR_BUDGET_HOURS=args.nr_budget_hours,
         CHUNK=args.chunk, CHUNK_TARGET_SECONDS=args.chunk_target_seconds,
         FAST_BUDGET_HOURS=args.fast_budget_hours,
+        VIRAL_BUDGET_HOURS=args.viral_budget_hours,
     )
-    script = render_user_data(**tokens)
+    # The run script is content-addressed by the commit AND by a hash of its own rendered
+    # text, because two launches off one commit can differ in their stages and budgets, and
+    # a key that collided would silently hand the second launch the first one's script. The
+    # bucket has no delete, so a collision could not be repaired either.
+    run_script = render(TEMPLATE, None, **tokens)
+    run_key = (f"{prefix}/code/bigindex-run-{commit[:12]}-"
+               f"{hashlib.sha256(run_script.encode()).hexdigest()[:12]}.sh")
+    script = render(BOOTSTRAP, 16_384, COMMIT=commit, BUCKET=bucket, REGION=ec2lib.REGION,
+                    HARD_STOP_MINUTES=args.hard_stop_minutes, RUN_SCRIPT_KEY=run_key)
 
     if args.print_user_data:
         print(script)
-        print(f"\n### {len(script.encode())} bytes of UserData; "
+        print(f"\n### ---- run script, fetched from s3://{bucket}/{run_key} ----\n")
+        print(run_script)
+        print(f"\n### {len(script.encode())} bytes of UserData, "
+              f"{len(run_script.encode()):,} of run script; "
               f"{full_queries:,} queries in the full pass", file=sys.stderr)
         return 0
 
@@ -286,6 +314,8 @@ def main(argv: list[str] | None = None) -> int:
     if not args.dry_run:
         s3.put_object(Bucket=bucket, Key=code_key, Body=build_payload(ROOT))
         print(f"payload at s3://{bucket}/{code_key}", flush=True)
+        s3.put_object(Bucket=bucket, Key=run_key, Body=run_script.encode())
+        print(f"run script at s3://{bucket}/{run_key}", flush=True)
         if not args.skip_query_upload:
             n = upload_queries(s3, bucket, prefix, args.query_dir, args.query_set)
             print(f"{n} query file(s) uploaded as set {args.query_set}", flush=True)
