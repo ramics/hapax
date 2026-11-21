@@ -309,6 +309,107 @@ class Run:
                                      "assembled_at_run_time": False,
                                      "note": "supplied contig set; see assembly.json"})
 
+    # -- new strains of known viruses ----------------------------------------
+    def strains(self) -> dict:
+        """Group the residue by the relative it is nearest to, which is where a new strain
+        of a known virus shows up.
+
+        THE SHAPE OF THE ANSWER. A new strain is not a read with a low score; it is a
+        SUBJECT that several residue reads point at, at an identity too low for the
+        nucleotide tiers to have removed them, covering enough of the read to mean
+        something. So the unit here is the subject, not the read, and the three numbers that
+        make it readable travel together: how many residue reads point at it, how far they
+        are from it, and how much of each read the alignment covers.
+
+        WHY THIS IS NOT A NOVELTY SCORE. Ordering subjects by identity would order them by
+        database proximity, which this project has measured repeatedly and refuses to do.
+        What is reported is a distance with its coverage and its E-value, per subject, and
+        the already-identified pile's count on the same subject beside it. A subject that
+        the identified pile also points at is a virus that is present and partly removed;
+        one that only the residue points at is a relative of something in the database and
+        nothing more until it assembles.
+
+        EVERY SUBJECT CARRIES ITS E-VALUE DISTRIBUTION. A 107 nt query against a large
+        index finds about 40 bases at about 88% by chance, and the chance band reads
+        identically on residue and identified reads, so a subject built out of chance hits
+        would look exactly like a divergent strain without one.
+        """
+        p = self.dir / "reads.jsonl"
+        if not p.exists():
+            return self.record("strains", "skipped", reason="reads.jsonl is absent")
+        by: dict[str, dict] = {}
+        for line in open(p):
+            r = json.loads(line)
+            pile = "residue" if r.get("set", "residue") == "residue" else "known"
+            best = None
+            for k, v in r.items():
+                if k.startswith("closest_") and isinstance(v, dict) \
+                        and v.get("evalue") is not None:
+                    if best is None or v["evalue"] < best["evalue"]:
+                        best = {**v, "index": k[len("closest_"):]}
+            if best is None or best["evalue"] >= SIGNIFICANCE_EVALUE:
+                continue
+            s = by.setdefault(best["subject"], {
+                "subject": best["subject"], "index": best["index"],
+                "residue_reads": 0, "known_reads": 0,
+                "pident": [], "aln_len": [], "evalue": [], "bitscore": []})
+            s[f"{pile}_reads"] += 1
+            if pile == "residue":
+                for f in ("pident", "aln_len", "evalue", "bitscore"):
+                    if best.get(f) is not None:
+                        s[f].append(best[f])
+        # Whether the control pile was searched at all decides what a zero in its column
+        # means, so it is counted rather than assumed. The same check saved the layer
+        # table from reporting a separation nobody had measured.
+        known_searched = 0
+        for line in open(p):
+            r = json.loads(line)
+            if r.get("set") == "known" and any(k.startswith("closest_") and r[k]
+                                               for k in r):
+                known_searched += 1
+        rows = []
+        for s in by.values():
+            if not s["pident"]:
+                continue
+            def med(xs, sig=False):
+                v = sorted(xs)[len(xs) // 2]
+                return float(f"{v:.3g}") if sig else round(v, 4)
+            rows.append({
+                "subject": s["subject"], "index": s["index"],
+                "residue_reads": s["residue_reads"], "known_reads": s["known_reads"],
+                "median_identity_percent": med(s["pident"]),
+                "identity_range": [min(s["pident"]), max(s["pident"])],
+                "median_aligned_aa": med(s["aln_len"]),
+                "median_evalue": med(s["evalue"], sig=True),
+                "worst_evalue": float(f"{max(s['evalue']):.3g}"),
+                "reading": ("present and partly identified: the already-subtracted pile "
+                            "points at this subject too" if s["known_reads"] else
+                            "only the residue points here, which is a relative in the "
+                            "database and not an identification" if known_searched else
+                            "not comparable in this run: the already-subtracted pile was "
+                            "not searched, so its zero is absence and not a measurement"),
+            })
+        rows.sort(key=lambda d: (-d["residue_reads"], d["median_identity_percent"]))
+        out = {
+            "significance_evalue": SIGNIFICANCE_EVALUE,
+            "subjects": rows[:500],
+            "subjects_total": len(rows),
+            "known_pile_searched_reads": known_searched,
+            "unit": "one row per subject, not per read",
+            "not_a_score": "subjects are not ordered by novelty. Identity is a distance "
+                           "from a database and score ordering tracks database proximity, "
+                           "so the ordering here is by how many residue reads point at the "
+                           "subject",
+            "caveat": "a 107 nt query against a large index finds about 40 bases at about "
+                      "88% by chance and the chance band reads identically on residue and "
+                      "identified reads, so every row carries its worst E-value as well as "
+                      "its median",
+        }
+        (self.dir / "strains.json").write_text(json.dumps(out, indent=2))
+        multi = [r for r in rows if r["residue_reads"] >= 3]
+        return self.record("strains", "ok", subjects=len(rows),
+                           subjects_with_3_or_more_reads=len(multi))
+
     # -- derived views --------------------------------------------------------
     def intervals(self) -> dict:
         """Attach a Wilson interval and an operating point to every tier row.
@@ -576,9 +677,17 @@ class Run:
                        "r1_bytes": a.r1.stat().st_size if a.r1.exists() else None,
                        "r2_bytes": a.r2.stat().st_size if a.r2.exists() else None,
                        "trim_r2": a.trim_r2,
-                       "trim_note": "measured, not detected; the non-template prefix is a "
-                                    "distribution with mode 14 - see "
-                                    "results/nontemplate_prefix/"},
+                       "trim_note": (
+                           "measured, not detected: the non-template prefix is a "
+                           "distribution with mode 14 (results/nontemplate_prefix/). The "
+                           "trim is TWO operating points and this run uses one. 14 is "
+                           "right for anything that reads sequence, because those bases "
+                           "are real template; 16 is the better Kraken2 setting, because "
+                           "confidence is a fraction of a read's minimizers, and it "
+                           "identifies 1.03-1.11 points more on this library and "
+                           "1.60-1.84 more on the 2022 one (5 seeds each). Passing 14 "
+                           "everywhere therefore costs about a point of identification, "
+                           "recorded here rather than left implicit.")},
             "parameters": {k: (str(v) if isinstance(v, Path) else
                                [str(x) for x in v] if isinstance(v, list) else v)
                            for k, v in vars(a).items()},
@@ -648,7 +757,7 @@ LAYER_FIELDS = {
 }
 
 STAGE_ORDER = ["cascade", "contigs", "reads", "linkage", "calibration",
-               "intervals", "layers"]
+               "intervals", "layers", "strains"]
 
 
 def main() -> int:

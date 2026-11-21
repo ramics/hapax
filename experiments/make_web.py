@@ -138,6 +138,7 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int) -> d
         "layers": load(rundir / "layers.json"),
         "fields": load(rundir / "fields.json"),
         "linkage": load(rundir / "linkage.json"),
+        "strains": load(rundir / "strains.json"),
         "calibration_ladder": load(rundir / "calibration_ladder.json"),
         "blind_spots": (load(rundir / "blind_spots.json") or {}).get("blind_spots"),
         "axes": [{"key": k, "label": l} for k, l, _f in SCATTER_AXES],
@@ -558,6 +559,43 @@ function interval(iv) {
       'That is why a read-level chimaera call is not made on this page.'));
   }
   p.append(el('p', 'note', esc((D.run || {}).known_positive_note || '')));
+  app.append(p);
+})();
+
+// ---------- new strains of known viruses
+(function () {
+  const S = D.strains;
+  const p = panel('New strains of known viruses',
+    'Grouped by the relative the reads are nearest to, because a new strain is a subject ' +
+    'several residue reads point at from a distance, not a read with a low score. ' +
+    'Subjects are ordered by how many reads point at them and never by identity: ' +
+    'identity is a distance from a database, and ordering by it would order by database ' +
+    'proximity.');
+  if (!S) { p.append(el('div', 'absent',
+    'strains.json absent: the per-read report did not run in this directory'));
+    app.append(p); return; }
+  const sc = el('div', 'scroll');
+  const tb = el('table');
+  tb.innerHTML = '<thead><tr><th>subject</th><th>index</th><th>residue reads</th>' +
+    '<th>identified reads</th><th>median identity</th><th>aligned</th>' +
+    '<th>median E</th><th>worst E</th><th>reading</th></tr></thead>';
+  const body = el('tbody');
+  (S.subjects || []).slice(0, 120).forEach(r => {
+    const tr = el('tr');
+    tr.innerHTML = '<td class="mono">' + esc(r.subject) + '</td><td class="dim">' +
+      esc(r.index) + '</td><td class="mono">' + r.residue_reads + '</td><td class="mono">' +
+      (S.known_pile_searched_reads ? r.known_reads :
+        '<span class="absent">not searched</span>') + '</td><td class="mono">' +
+      num(r.median_identity_percent, 1) + '%</td><td class="mono">' +
+      r.median_aligned_aa + ' aa</td><td class="mono">' + r.median_evalue +
+      '</td><td class="mono">' + r.worst_evalue + '</td><td class="dim" ' +
+      'style="white-space:normal;text-align:left;max-width:28ch">' + esc(r.reading) +
+      '</td>';
+    body.append(tr);
+  });
+  tb.append(body); sc.append(tb); p.append(sc);
+  p.append(el('p', 'note', S.subjects_total + ' subjects at E < ' +
+    S.significance_evalue + ', the top 120 by read count shown. ' + esc(S.caveat)));
   app.append(p);
 })();
 

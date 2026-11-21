@@ -154,3 +154,46 @@ minus and R2 almost entirely plus, as mates of one fragment must.
 - **The bias runs one way.** Adapter read-through clips 3' ends and inflates the within-read
   control, which can only make a real 5' excess harder to see. Divergence from the SILVA
   entry clips both ends and cancels in the difference.
+
+## The trim is an operating point, and 16 beats the measured 14
+
+`experiments/trim_sensitivity.py`, 5 seeds per library, 100,000 pairs per seed, Kraken2
+PlusPF-16 at confidence 0.1, mate 1 untouched at every rung. Mean across seeds
+(min–max), as a percentage of read pairs identified.
+
+| mate 2 trimmed by | RNA 2021-10-13 (ours) | RNA 2022-06-16 |
+|---|---|---|
+| 0 (untrimmed) | 19.93 (19.89–20.02) | 35.86 (35.74–35.95) |
+| 10 nt | 21.83 (21.79–21.87) | 39.29 (39.02–39.45) |
+| 12 nt | 21.67 (21.63–21.69) | 39.00 (38.71–39.16) |
+| 14 nt | 21.67 (21.63–21.73) | 38.86 (38.58–39.04) |
+| 16 nt | 22.74 (22.71–22.78) | 40.59 (40.39–40.73) |
+| 18 nt | 22.33 (22.30–22.37) | 39.84 (39.58–39.97) |
+| 20 nt | 21.91 (21.85–21.97) | 39.12 (38.85–39.24) |
+| 24 nt | 21.44 (21.39–21.47) | 38.23 (38.03–38.31) |
+
+**The best rung is 16 in 5 of 5 seeds in both libraries**, and the ladder spans 2.7–2.9
+points on the 2021 library and 4.65–4.92 on the 2022 one. Moving from the measured prefix
+mode of 14 to 16 buys 1.03–1.11 points here and 1.60–1.84 points there.
+
+This is the measurement behind §1a's withdrawal. The prefix is a distribution with mode 14,
+so 14 is the right answer to "how long is the prefix" and the wrong answer to "what should
+Kraken2 be given": confidence is a fraction of a read's minimizers, so the residual
+non-template bases left by a modal trim lower every read's confidence, and cutting two
+template bases costs less than leaving two non-template ones. Over-trimming past 16 does
+turn around, as it must.
+
+**So the trim is two operating points, not one.** Anything that reads SEQUENCE — coverage,
+composition, folding, the per-read fields — takes 14, because those two bases are real
+template. Anything that reads a CLASSIFIER's confidence takes 16. `hapax run` currently
+passes 14 to everything, which costs about one point of Kraken2 identification on this
+library and is recorded in every run manifest rather than left implicit.
+
+**The ladder is not monotonic on either side of the peak**, and that is in the data rather
+than in the noise: trim 10 reads 21.83% against 12 and 14 at 21.67%, a gap of 0.16 points
+with a seed-to-seed range under 0.06. Minimizers are selected in windows, so two bases can
+move whether a window's minimizer is template or not, and the effect need not be smooth in
+the trim. It means the peak must be found by sweeping rather than reasoned to, which is
+what this experiment is for, and it means a trim chosen on one library should be re-swept
+on the next.
+
