@@ -84,6 +84,52 @@ def load(run_dir: Path, panel: Path, group_by: str) -> tuple[list[str], dict, np
     return names, present, np.array(keys)
 
 
+def canon_kmers(seq: str, k: int = 31) -> set[str]:
+    """Canonical k-mers of one read, as the witnessing tool counts them."""
+    comp = str.maketrans("ACGTN", "TGCAN")
+    out = set()
+    for i in range(len(seq) - k + 1):
+        f = seq[i:i + k]
+        if "N" in f:
+            continue
+        r = f.translate(comp)[::-1]
+        out.add(min(f, r))
+    return out
+
+
+def mates_disjoint(queries: Path, names: list[str]) -> np.ndarray:
+    """Per query, True when the two mates share NO canonical 31-mer.
+
+    THE BIAS THIS REMOVES IS THE WHOLE RESULT'S CREDIBILITY. The median insert here is 194 nt
+    against 107 + 93 = 200 nt of read, so a large share of pairs OVERLAP: their mates are
+    partly the same bases, so they are witnessed by the same k-mers and their occupancy
+    vectors are identical for a trivial reason. An own-mate-finding rate computed over those
+    pairs measures overlap, not co-occurrence - the same failure as a chimaera test whose
+    query sits inside its reference. `results/mate_friends/` handled it by reporting the
+    subset sharing no 31-mer, so the same subset is reported here and the two are comparable.
+    """
+    want = {}
+    for i, n in enumerate(names):
+        want[n] = i
+    flag = np.zeros(len(names), dtype=bool)
+    seen = np.zeros(len(names), dtype=bool)
+    with open(queries) as fh:
+        for line in fh:
+            parts = line.rstrip("\n").split("\t")
+            if len(parts) != 3:
+                continue
+            i = want.get(parts[0])
+            if i is None:
+                continue
+            flag[i] = not (canon_kmers(parts[1]) & canon_kmers(parts[2]))
+            seen[i] = True
+    if not seen.all():
+        raise SystemExit(f"{int((~seen).sum())} of {len(names)} query names absent from "
+                         f"{queries}: the overlap control cannot be computed for them, and "
+                         f"a partial control is worse than none")
+    return flag
+
+
 def curveball(mat: np.ndarray, rng: np.random.Generator, rounds: int = 8) -> np.ndarray:
     """A presence-absence matrix with both marginals preserved (Strona et al. 2014).
 
@@ -150,12 +196,16 @@ def main() -> None:
                     help="per pile per seed. The similarity matrix is quadratic, and the "
                          "control's chance rate depends on this, so it is recorded with "
                          "every number rather than tuned")
+    ap.add_argument("--queries", type=Path,
+                    default=ROOT / "results/recurrence/queries_s1-5.tsv",
+                    help="the query set the run scored, needed for the mate-overlap control")
     ap.add_argument("--out", type=Path, default=ROOT / "results/recurrence")
     ap.add_argument("--label", default="grouping")
     args = ap.parse_args()
 
     t0 = time.perf_counter()
     names, present, keys = load(args.run_dir, args.panel, args.group_by)
+    disjoint = mates_disjoint(args.queries, names)
     pile = np.array([x.split("|")[0] for x in names])
     dbin = np.array([x.split("|")[1] for x in names])
     seed_of = np.array([x.split("|")[4] if len(x.split("|")) > 4 else "s1" for x in names])
@@ -208,6 +258,32 @@ def main() -> None:
                     "multiplier_over_null": hit / hit_null if hit_null else float("inf"),
                 })
 
+                # THE OVERLAP CONTROL, read before the number above. Pairs whose mates
+                # share a 31-mer are partly the same bases, so their occupancy vectors
+                # agree for free. Candidates are restricted to the same subset, so chance
+                # moves with it and the two rates are read against their own chance.
+                dj = disjoint[sel][ok]
+                res_control["pairs_with_disjoint_mates"] = int(dj.sum())
+                res_control["frac_pairs_with_disjoint_mates"] = float(dj.mean())
+                if dj.sum() >= 200:
+                    qd, cd = q[dj], c[dj]
+                    kd = min(args.k, cd.shape[0] - 1)
+                    topd, _ = jaccard_topk(qd, cd, kd)
+                    ownd = np.arange(int(dj.sum()))[:, None]
+                    hitd = float((topd == ownd).any(axis=1).mean())
+                    cnd = curveball(cd, rng)
+                    topdn, _ = jaccard_topk(qd, cnd, kd)
+                    hitdn = float((topdn == ownd).any(axis=1).mean())
+                    res_control.update({
+                        "disjoint_k": kd,
+                        "disjoint_own_mate_in_topk": hitd,
+                        "disjoint_chance": kd / int(dj.sum()),
+                        "disjoint_own_mate_in_topk_curveball_null": hitdn,
+                        "disjoint_multiplier_over_chance": hitd / (kd / int(dj.sum())),
+                        "disjoint_multiplier_over_null": (hitd / hitdn if hitdn
+                                                          else float("inf")),
+                    })
+
             # STRUCTURE: how similar is a read to its ten nearest neighbours, against the
             # marginal-preserving null on the same reads.
             res_struct: dict = {}
@@ -253,7 +329,12 @@ def main() -> None:
               f"(chance {c.get('chance', float('nan')):.4f}, "
               f"null {c.get('own_mate_in_topk_curveball_null', float('nan')):.4f})  "
               f"knn J={s.get('mean_knn_jaccard', float('nan')):.3f} vs null "
-              f"{s.get('mean_knn_jaccard_null', float('nan')):.3f}")
+              f"{s.get('mean_knn_jaccard_null', float('nan')):.3f}\n"
+              f"{'':26s} disjoint mates {c.get('frac_pairs_with_disjoint_mates', float('nan'))*100:4.1f}% "
+              f"of pairs: mate@{c.get('disjoint_k', 0)}="
+              f"{c.get('disjoint_own_mate_in_topk', float('nan')):.4f} "
+              f"(chance {c.get('disjoint_chance', float('nan')):.4f}, "
+              f"null {c.get('disjoint_own_mate_in_topk_curveball_null', float('nan')):.4f})")
     print(f"\n{path}")
 
 
