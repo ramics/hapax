@@ -1,0 +1,59 @@
+{
+  "seed": 3,
+  "pairs": 20000,
+  "read_block": [
+    800000,
+    820000
+  ],
+  "min_hits": 3,
+  "subsample_rate": 0.125,
+  "k": 31,
+  "index": {
+    "files": {
+      "LSURef_NR99.fasta.gz": {
+        "sequences": 95286,
+        "bases": 279545413
+      },
+      "SSURef_NR99.fasta.gz": {
+        "sequences": 510508,
+        "bases": 747391099
+      }
+    },
+    "total_bp": 1026936512,
+    "sequences": 605794,
+    "kmers_retained": 15821248,
+    "subsample_rate": 0.125
+  },
+  "rrna_fraction": {
+    "mate1": 0.34635,
+    "mate2": 0.33585
+  },
+  "rrna_fraction_all_reads": 0.3411,
+  "hit_count_histogram": {
+    "0": 25218,
+    "1": 487,
+    "2": 651,
+    "3": 775,
+    "4": 1117,
+    "5": 1415,
+    "6": 1650,
+    "7": 1824,
+    "8": 1783,
+    "9": 1662,
+    "10": 1216,
+    "11": 856,
+    "12": 598,
+    "13": 336,
+    "14": 192,
+    "15": 91,
+    "16": 60,
+    "17": 32,
+    "18": 21,
+    "19": 9,
+    "20": 4,
+    "23": 1,
+    "24": 1,
+    "62": 1
+  },
+  "note": "a LOWER BOUND: exact k=31 against a 99%-clustered reference misses divergent environmental rRNA lineages"
+}

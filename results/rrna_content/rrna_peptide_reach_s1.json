@@ -1,0 +1,113 @@
+{
+  "seed": 1,
+  "k_aa": 10,
+  "reference": "SSURef_NR99.fasta.gz",
+  "real_rrna": {
+    "sequences": 8000,
+    "peptide_kmer_occurrences": 14910090,
+    "distinct_peptide_kmers": 4248725,
+    "reach_distribution": {
+      "occurrence_weighted_percentiles": {
+        "p10": 1.0,
+        "p25": 2.0,
+        "p50": 26.0,
+        "p75": 278.0,
+        "p90": 1106.0,
+        "p99": 4438.0,
+        "p99.9": 5425.0
+      },
+      "per_distinct_kmer_percentiles": {
+        "p50": 1.0,
+        "p90": 3.0,
+        "p99": 37.0,
+        "p99.9": 332.0
+      },
+      "distinct_kmers_reaching_at_least": {
+        "1pc_of_sequences": 0.00467693249151216,
+        "10pc_of_sequences": 0.00023348180924865695,
+        "50pc_of_sequences": 1.5063342532171416e-05
+      },
+      "occurrences_from_kmers_reaching_at_least": {
+        "1pc_of_sequences": 0.385976006851736,
+        "10pc_of_sequences": 0.12103407826512114,
+        "50pc_of_sequences": 0.019317187220197866
+      },
+      "head_share": {
+        "top_1_kmers_share_of_occurrences": 0.0003646523931109738,
+        "top_10_kmers_share_of_occurrences": 0.0034683895268237818,
+        "top_100_kmers_share_of_occurrences": 0.02840693785215247,
+        "top_1000_kmers_share_of_occurrences": 0.12146244590072897
+      }
+    },
+    "per_distinct_kmer": {
+      "mean_sequence_reach": 3.508698256535784,
+      "median_sequence_reach": 1.0,
+      "fraction_reaching_one_sequence": 0.7623489399761105,
+      "p99_sequence_reach": 37.0,
+      "max_sequence_reach": 5436
+    },
+    "occurrence_weighted": {
+      "mean_sequence_reach": 389.8097886062391,
+      "median_sequence_reach": 26.0,
+      "fraction_reaching_one_sequence": 0.21727990910852987,
+      "mean_group_reach": 6.985697001158276,
+      "median_group_reach": 1.0,
+      "groups_available": 82
+    }
+  },
+  "composition_shuffled_control": {
+    "sequences": 8000,
+    "peptide_kmer_occurrences": 15083939,
+    "distinct_peptide_kmers": 15083755,
+    "reach_distribution": {
+      "occurrence_weighted_percentiles": {
+        "p10": 1.0,
+        "p25": 1.0,
+        "p50": 1.0,
+        "p75": 1.0,
+        "p90": 1.0,
+        "p99": 1.0,
+        "p99.9": 1.0
+      },
+      "per_distinct_kmer_percentiles": {
+        "p50": 1.0,
+        "p90": 1.0,
+        "p99": 1.0,
+        "p99.9": 1.0
+      },
+      "distinct_kmers_reaching_at_least": {
+        "1pc_of_sequences": 0.0,
+        "10pc_of_sequences": 0.0,
+        "50pc_of_sequences": 0.0
+      },
+      "occurrences_from_kmers_reaching_at_least": {
+        "1pc_of_sequences": 0.0,
+        "10pc_of_sequences": 0.0,
+        "50pc_of_sequences": 0.0
+      },
+      "head_share": {
+        "top_1_kmers_share_of_occurrences": 1.325913609170655e-07,
+        "top_10_kmers_share_of_occurrences": 1.325913609170655e-06,
+        "top_100_kmers_share_of_occurrences": 1.325913609170655e-05,
+        "top_1000_kmers_share_of_occurrences": 7.836149430198571e-05
+      }
+    },
+    "per_distinct_kmer": {
+      "mean_sequence_reach": 1.000012065961029,
+      "median_sequence_reach": 1.0,
+      "fraction_reaching_one_sequence": 0.999987934038971,
+      "p99_sequence_reach": 1.0,
+      "max_sequence_reach": 2
+    },
+    "occurrence_weighted": {
+      "mean_sequence_reach": 1.000024131627687,
+      "median_sequence_reach": 1.0,
+      "fraction_reaching_one_sequence": 0.9999758683723131,
+      "mean_group_reach": 1.000020949435025,
+      "median_group_reach": 1.0,
+      "groups_available": 82
+    }
+  },
+  "conservation_multiplier": 389.8003820885463,
+  "note": "reach is the number of distinct sequences or taxonomy groups a peptide 10-mer occurs in, which is the number of lineages one spurious database entry derived from a ribosomal locus would match reads from"
+}

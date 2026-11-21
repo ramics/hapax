@@ -1,0 +1,61 @@
+{
+  "source": "/tmp/claude-0/-home-user/a867eaf3-6d43-5b13-b359-2c9d7eee65d8/scratchpad/mr2",
+  "source_branch": "claude/project-thread-clcuow (PR #10)",
+  "source_files": [
+    "s1.npz",
+    "s2.npz",
+    "s3.npz",
+    "s4.npz",
+    "s5.npz"
+  ],
+  "index_arm": "plus_sample_assembly",
+  "pairs_per_seed": 39928,
+  "seeds": 5,
+  "background_fully_absent_single_read": {
+    "mean": 0.2342858465131739,
+    "min": 0.23123074225306245,
+    "max": 0.23597615947110087,
+    "sd": 0.0018515219675797386
+  },
+  "background_fully_absent_both_mates": {
+    "mean": 0.16077430189220288,
+    "min": 0.1573686715599088,
+    "max": 0.16331897415347627,
+    "sd": 0.002243144272106661
+  },
+  "mate_correlation_unconditional": {
+    "mean": 0.6500072340818903,
+    "min": 0.6433047766479285,
+    "max": 0.6523527202494589,
+    "sd": 0.0038121220534973973
+  },
+  "thresholds": [
+    {
+      "threshold_kmers": 16,
+      "score_fraction": 0.6153846153846154,
+      "single_read_rate_per_million": 419011.4390372118,
+      "both_mates_rate_per_million": 305708.4032050944,
+      "independence_would_give_per_million": 175570.5860440351,
+      "excess_over_independence": 1.7412279020838906,
+      "over_budget_factor_vs_1_per_million": 305708.4032050944
+    },
+    {
+      "threshold_kmers": 21,
+      "score_fraction": 0.8076923076923077,
+      "single_read_rate_per_million": 319915.75672296586,
+      "both_mates_rate_per_million": 226856.56116451367,
+      "independence_would_give_per_million": 102346.09139962787,
+      "excess_over_independence": 2.216563017328266,
+      "over_budget_factor_vs_1_per_million": 226856.56116451367
+    },
+    {
+      "threshold_kmers": 26,
+      "score_fraction": 1.0,
+      "single_read_rate_per_million": 221967.08929459937,
+      "both_mates_rate_per_million": 160774.30189220287,
+      "independence_would_give_per_million": 49269.38872991665,
+      "excess_over_independence": 3.2631681869148057,
+      "over_budget_factor_vs_1_per_million": 160774.30189220287
+    }
+  ]
+}

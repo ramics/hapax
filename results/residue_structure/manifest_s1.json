@@ -1,0 +1,21 @@
+{
+  "script": "experiments/residue_structure_analyse.py",
+  "git_sha": "f8170f33dfab8aee835b291182bfa2265eb55a73-dirty",
+  "tree_dirty": true,
+  "script_sha256": "b6742da24b8f7f21",
+  "parameters": {
+    "seed": 1,
+    "work": "/home/user/hapax/data/residue_structure",
+    "out": "/home/user/hapax/results/residue_structure",
+    "k_max": 20,
+    "knn": 10,
+    "planted_only": false,
+    "subtracted_sample": 20000
+  },
+  "inputs": {
+    "coverage": "/home/user/hapax/data/residue_structure/coverage.tsv",
+    "composition": "/home/user/hapax/data/residue_structure/composition.tsv",
+    "residue_membership": "results/subtract_recut/residue_rows_s{1..5}.jsonl (claude/project-thread-eswrkj)"
+  },
+  "wall_seconds": 753.6
+}

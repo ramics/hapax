@@ -1,0 +1,22 @@
+{
+  "script": "experiments/rrna_content.py",
+  "accession": "SRR23973193",
+  "reference": "SILVA 138.1 SSURef_NR99 + LSURef_NR99",
+  "git_sha": "56607c1105acbaee7e98a59b44b252f12d9a000d",
+  "parameters": {
+    "seed": 3,
+    "pairs": 20000,
+    "block": 400000,
+    "trim_mate2": 14,
+    "subsample_log2": 3,
+    "min_hits": 3,
+    "silva": "/home/user/hapax/data/silva",
+    "reads": "/home/user/hapax/data/berlin",
+    "index_cache": "/home/user/hapax/data/silva/index_k31.npy",
+    "out": "/home/user/hapax/results/rrna_content"
+  },
+  "wall_seconds": 7.408595888000036,
+  "python": "3.13.18",
+  "numpy": "2.5.3",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}

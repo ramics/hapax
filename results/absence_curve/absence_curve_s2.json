@@ -1,0 +1,89 @@
+{
+  "seed": 2,
+  "git_sha": "ed380e8a12afde412b385e379200c72d058362af",
+  "k": 10,
+  "pairs": 20000,
+  "query_kmers": 3634436,
+  "query_kmers_unique": 1703881,
+  "levels": [
+    {
+      "level": "viral",
+      "db_kmers_cumulative": 168528565,
+      "fully_absent_single_read": 0.882,
+      "mean_absence": 0.9375,
+      "both_mates_fully_absent": 0.8454,
+      "either_mate_fully_absent": 0.9185,
+      "excess_over_independence": 1.087,
+      "r_mates_continuous": 0.8812,
+      "fully_absent_complex_kmers_only": 0.8847,
+      "mean_absence_complex_kmers_only": 0.9386,
+      "seconds": 60.7
+    },
+    {
+      "level": "+sprot",
+      "db_kmers_cumulative": 372505967,
+      "fully_absent_single_read": 0.8613,
+      "mean_absence": 0.9331,
+      "both_mates_fully_absent": 0.8104,
+      "either_mate_fully_absent": 0.9123,
+      "excess_over_independence": 1.092,
+      "r_mates_continuous": 0.8653,
+      "fully_absent_complex_kmers_only": 0.8654,
+      "mean_absence_complex_kmers_only": 0.9344,
+      "seconds": 104.9
+    },
+    {
+      "level": "+uniref50_1pct",
+      "db_kmers_cumulative": 496027102,
+      "fully_absent_single_read": 0.8004,
+      "mean_absence": 0.9197,
+      "both_mates_fully_absent": 0.7133,
+      "either_mate_fully_absent": 0.8875,
+      "excess_over_independence": 1.113,
+      "r_mates_continuous": 0.8133,
+      "fully_absent_complex_kmers_only": 0.8057,
+      "mean_absence_complex_kmers_only": 0.9212,
+      "seconds": 136.6
+    },
+    {
+      "level": "+uniref50_10pct",
+      "db_kmers_cumulative": 1730997465,
+      "fully_absent_single_read": 0.6334,
+      "mean_absence": 0.8702,
+      "both_mates_fully_absent": 0.4975,
+      "either_mate_fully_absent": 0.7694,
+      "excess_over_independence": 1.24,
+      "r_mates_continuous": 0.6754,
+      "fully_absent_complex_kmers_only": 0.6437,
+      "mean_absence_complex_kmers_only": 0.8724,
+      "seconds": 421.4
+    },
+    {
+      "level": "+sample_nonrrna",
+      "db_kmers_cumulative": 1738300922,
+      "fully_absent_single_read": 0.213,
+      "mean_absence": 0.4901,
+      "both_mates_fully_absent": 0.1303,
+      "either_mate_fully_absent": 0.2958,
+      "excess_over_independence": 2.871,
+      "r_mates_continuous": 0.6557,
+      "fully_absent_complex_kmers_only": 0.2194,
+      "mean_absence_complex_kmers_only": 0.492,
+      "seconds": 425.2
+    },
+    {
+      "level": "+sample_rrna_contigs",
+      "db_kmers_cumulative": 1738316554,
+      "fully_absent_single_read": 0.1996,
+      "mean_absence": 0.4676,
+      "both_mates_fully_absent": 0.122,
+      "either_mate_fully_absent": 0.2772,
+      "excess_over_independence": 3.061,
+      "r_mates_continuous": 0.6383,
+      "fully_absent_complex_kmers_only": 0.2059,
+      "mean_absence_complex_kmers_only": 0.4695,
+      "seconds": 426.9
+    }
+  ],
+  "seconds": 427.0
+}

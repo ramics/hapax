@@ -1,0 +1,21 @@
+{
+  "script": "experiments/mate_rho.py",
+  "git_sha": "e534e880c82866a73c4c149db3d86bdb8e667aff",
+  "seed": 3,
+  "params": {
+    "seed": "3",
+    "r1": "data/ww_berlin/SRR23973193_1.fastq.gz",
+    "r2": "data/ww_berlin/SRR23973193_2.fastq.gz",
+    "ref": "data/ww_berlin/spades_sample_1kb.fa",
+    "pairs": "40000",
+    "block": "2000000",
+    "trim_r2": "14",
+    "k": "10",
+    "faa": "[PosixPath('data/prot/viral.1.protein.faa.gz'), PosixPath('data/prot/uniprot_sprot.fasta.gz')]",
+    "gpff": "data/prot/viral.1.protein.gpff.gz",
+    "cache": "data/pepidx",
+    "quantiles": "[0.9, 0.99, 0.999]",
+    "out": "results/mate_rho/viral_sprot"
+  },
+  "wall_s": 123.0
+}

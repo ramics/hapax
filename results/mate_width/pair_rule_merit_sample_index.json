@@ -1,0 +1,262 @@
+{
+  "per_read_sens_on_novel_read": 0.5,
+  "rho_fp_source": "results/mate_rho/plus_sample_assembly/mate_rho_s1.json",
+  "rho_fp_measured": {
+    "gap_0_halves_of_mate1": 0.5613,
+    "insert_107_150": 0.8697,
+    "insert_150_200": 0.675,
+    "insert_200_250": 0.5636,
+    "insert_250_300": 0.4329,
+    "insert_300_400": 0.3508,
+    "insert_400_600": 0.3799,
+    "all_insert_measured": 0.6283,
+    "all_pairs": 0.6524,
+    "nonsaturated_either_mate": 0.4849,
+    "nonsaturated_either_mate_shuffled": 0.0058,
+    "nonsaturated_both_mates": 0.5012,
+    "nonsaturated_both_mates_shuffled": 0.0048,
+    "gap_infinity_shuffled_pairing": -0.0097
+  },
+  "rows": [
+    {
+      "accession": "K03455.1",
+      "insert": 107,
+      "rho_true_novelty": 0.9663,
+      "p_either_novel": 0.7041,
+      "per_read_fp": 1e-05,
+      "rho_fp": 0.8697,
+      "either_rule": {
+        "pair_sens": 0.358,
+        "pair_fp_per_million": 11.303,
+        "meets_target": false
+      },
+      "both_rule": {
+        "pair_sens": 0.3461,
+        "pair_fp_per_million": 8.697,
+        "meets_target": false,
+        "fp_reduction_vs_single_read": 1.15,
+        "merit": 1.13
+      }
+    },
+    {
+      "accession": "K03455.1",
+      "insert": 300,
+      "rho_true_novelty": 0.5364,
+      "p_either_novel": 0.809,
+      "per_read_fp": 1e-05,
+      "rho_fp": 0.3508,
+      "either_rule": {
+        "pair_sens": 0.4983,
+        "pair_fp_per_million": 16.492,
+        "meets_target": false
+      },
+      "both_rule": {
+        "pair_sens": 0.3107,
+        "pair_fp_per_million": 3.508,
+        "meets_target": false,
+        "fp_reduction_vs_single_read": 2.85,
+        "merit": 2.19
+      }
+    },
+    {
+      "accession": "K03455.1",
+      "insert": 500,
+      "rho_true_novelty": 0.2518,
+      "p_either_novel": 0.8754,
+      "per_read_fp": 1e-05,
+      "rho_fp": 0.3799,
+      "either_rule": {
+        "pair_sens": 0.6014,
+        "pair_fp_per_million": 16.201,
+        "meets_target": false
+      },
+      "both_rule": {
+        "pair_sens": 0.274,
+        "pair_fp_per_million": 3.799,
+        "meets_target": false,
+        "fp_reduction_vs_single_read": 2.63,
+        "merit": 1.65
+      }
+    },
+    {
+      "accession": "NC_001542.1",
+      "insert": 107,
+      "rho_true_novelty": 0.9774,
+      "p_either_novel": 0.244,
+      "per_read_fp": 1e-05,
+      "rho_fp": 0.8697,
+      "either_rule": {
+        "pair_sens": 0.1234,
+        "pair_fp_per_million": 11.303,
+        "meets_target": false
+      },
+      "both_rule": {
+        "pair_sens": 0.1206,
+        "pair_fp_per_million": 8.697,
+        "meets_target": false,
+        "fp_reduction_vs_single_read": 1.15,
+        "merit": 1.14
+      }
+    },
+    {
+      "accession": "NC_001542.1",
+      "insert": 300,
+      "rho_true_novelty": 0.5784,
+      "p_either_novel": 0.3185,
+      "per_read_fp": 1e-05,
+      "rho_fp": 0.3508,
+      "either_rule": {
+        "pair_sens": 0.1928,
+        "pair_fp_per_million": 16.492,
+        "meets_target": false
+      },
+      "both_rule": {
+        "pair_sens": 0.1257,
+        "pair_fp_per_million": 3.508,
+        "meets_target": false,
+        "fp_reduction_vs_single_read": 2.85,
+        "merit": 2.25
+      }
+    },
+    {
+      "accession": "NC_001542.1",
+      "insert": 500,
+      "rho_true_novelty": 0.348,
+      "p_either_novel": 0.367,
+      "per_read_fp": 1e-05,
+      "rho_fp": 0.3799,
+      "either_rule": {
+        "pair_sens": 0.2433,
+        "pair_fp_per_million": 16.201,
+        "meets_target": false
+      },
+      "both_rule": {
+        "pair_sens": 0.1237,
+        "pair_fp_per_million": 3.799,
+        "meets_target": false,
+        "fp_reduction_vs_single_read": 2.63,
+        "merit": 1.77
+      }
+    },
+    {
+      "accession": "NC_001943.1",
+      "insert": 107,
+      "rho_true_novelty": 0.9856,
+      "p_either_novel": 0.6246,
+      "per_read_fp": 1e-05,
+      "rho_fp": 0.8697,
+      "either_rule": {
+        "pair_sens": 0.3145,
+        "pair_fp_per_million": 11.303,
+        "meets_target": false
+      },
+      "both_rule": {
+        "pair_sens": 0.3101,
+        "pair_fp_per_million": 8.697,
+        "meets_target": false,
+        "fp_reduction_vs_single_read": 1.15,
+        "merit": 1.14
+      }
+    },
+    {
+      "accession": "NC_001943.1",
+      "insert": 300,
+      "rho_true_novelty": 0.7523,
+      "p_either_novel": 0.6712,
+      "per_read_fp": 1e-05,
+      "rho_fp": 0.3508,
+      "either_rule": {
+        "pair_sens": 0.3772,
+        "pair_fp_per_million": 16.492,
+        "meets_target": false
+      },
+      "both_rule": {
+        "pair_sens": 0.294,
+        "pair_fp_per_million": 3.508,
+        "meets_target": false,
+        "fp_reduction_vs_single_read": 2.85,
+        "merit": 2.5
+      }
+    },
+    {
+      "accession": "NC_001943.1",
+      "insert": 500,
+      "rho_true_novelty": 0.6101,
+      "p_either_novel": 0.6967,
+      "per_read_fp": 1e-05,
+      "rho_fp": 0.3799,
+      "either_rule": {
+        "pair_sens": 0.4163,
+        "pair_fp_per_million": 16.201,
+        "meets_target": false
+      },
+      "both_rule": {
+        "pair_sens": 0.2804,
+        "pair_fp_per_million": 3.799,
+        "meets_target": false,
+        "fp_reduction_vs_single_read": 2.63,
+        "merit": 2.12
+      }
+    },
+    {
+      "accession": "NC_045512.2",
+      "insert": 107,
+      "rho_true_novelty": 0.9928,
+      "p_either_novel": 0.7605,
+      "per_read_fp": 1e-05,
+      "rho_fp": 0.8697,
+      "either_rule": {
+        "pair_sens": 0.3816,
+        "pair_fp_per_million": 11.303,
+        "meets_target": false
+      },
+      "both_rule": {
+        "pair_sens": 0.3789,
+        "pair_fp_per_million": 8.697,
+        "meets_target": false,
+        "fp_reduction_vs_single_read": 1.15,
+        "merit": 1.15
+      }
+    },
+    {
+      "accession": "NC_045512.2",
+      "insert": 300,
+      "rho_true_novelty": 0.7969,
+      "p_either_novel": 0.8016,
+      "per_read_fp": 1e-05,
+      "rho_fp": 0.3508,
+      "either_rule": {
+        "pair_sens": 0.4415,
+        "pair_fp_per_million": 16.492,
+        "meets_target": false
+      },
+      "both_rule": {
+        "pair_sens": 0.3601,
+        "pair_fp_per_million": 3.508,
+        "meets_target": false,
+        "fp_reduction_vs_single_read": 2.85,
+        "merit": 2.56
+      }
+    },
+    {
+      "accession": "NC_045512.2",
+      "insert": 500,
+      "rho_true_novelty": 0.6801,
+      "p_either_novel": 0.8192,
+      "per_read_fp": 1e-05,
+      "rho_fp": 0.3799,
+      "either_rule": {
+        "pair_sens": 0.4751,
+        "pair_fp_per_million": 16.201,
+        "meets_target": false
+      },
+      "both_rule": {
+        "pair_sens": 0.3441,
+        "pair_fp_per_million": 3.799,
+        "meets_target": false,
+        "fp_reduction_vs_single_read": 2.63,
+        "merit": 2.21
+      }
+    }
+  ]
+}

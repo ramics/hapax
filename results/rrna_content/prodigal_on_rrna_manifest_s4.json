@@ -1,0 +1,16 @@
+{
+  "script": "experiments/prodigal_on_rrna.py",
+  "git_sha": "836da7ee33f62583fb13a56b079bb42ce65e3dfa",
+  "parameters": {
+    "seed": 4,
+    "sequences": 3000,
+    "min_length": 500,
+    "silva": "/home/user/hapax/data/silva",
+    "out": "/home/user/hapax/results/rrna_content"
+  },
+  "wall_seconds": 20.70901846699985,
+  "python": "3.13.18",
+  "pyrodigal": "3.7.1",
+  "numpy": "2.5.3",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}

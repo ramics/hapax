@@ -1,0 +1,16 @@
+{
+  "script": "experiments/rrna_peptide_reach.py",
+  "git_sha": "639850d7cd1dc21260727e420bdf9de9027af78a",
+  "parameters": {
+    "seed": 5,
+    "sequences": 8000,
+    "min_length": 1200,
+    "group_depth": 2,
+    "silva": "/home/user/hapax/data/silva/SSURef_NR99.fasta.gz",
+    "out": "/home/user/hapax/results/rrna_content"
+  },
+  "wall_seconds": 83.12519525699997,
+  "python": "3.13.18",
+  "numpy": "2.5.3",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}

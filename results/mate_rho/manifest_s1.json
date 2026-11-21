@@ -1,0 +1,21 @@
+{
+  "script": "experiments/mate_rho.py",
+  "git_sha": "8dad837c1462d241e049ab118d44684a153fc308",
+  "seed": 1,
+  "params": {
+    "seed": "1",
+    "r1": "data/ww_berlin/SRR23973193_1.fastq.gz",
+    "r2": "data/ww_berlin/SRR23973193_2.fastq.gz",
+    "ref": "data/ww_berlin/spades_sample_1kb.fa",
+    "pairs": "40000",
+    "block": "2000000",
+    "trim_r2": "14",
+    "k": "10",
+    "faa": "data/prot/viral.1.protein.faa.gz",
+    "gpff": "data/prot/viral.1.protein.gpff.gz",
+    "cache": "data/pepidx",
+    "quantiles": "[0.9, 0.99, 0.999]",
+    "out": "results/mate_rho"
+  },
+  "wall_s": 51.3
+}

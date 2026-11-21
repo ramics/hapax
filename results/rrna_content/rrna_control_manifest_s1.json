@@ -1,0 +1,27 @@
+{
+  "script": "experiments/rrna_control.py",
+  "reference": "SILVA 138.1 SSURef_NR99 + LSURef_NR99",
+  "git_sha": "836da7ee33f62583fb13a56b079bb42ce65e3dfa",
+  "parameters": {
+    "seed": 1,
+    "holdout_every": 50,
+    "reads": 20000,
+    "length": 107,
+    "error_rate": 0.001,
+    "subsample_log2": 3,
+    "min_hits": [
+      1,
+      2,
+      3,
+      5,
+      8
+    ],
+    "silva": "/home/user/hapax/data/silva",
+    "negatives": "/home/user/hapax/data/peptide_noise",
+    "out": "/home/user/hapax/results/rrna_content"
+  },
+  "wall_seconds": 340.50165598599983,
+  "python": "3.13.18",
+  "numpy": "2.5.3",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}
