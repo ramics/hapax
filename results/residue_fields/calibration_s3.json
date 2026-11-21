@@ -1,0 +1,335 @@
+{
+  "pairs_scored": 6000,
+  "fields": {
+    "gc": {
+      "residue": {
+        "mean": 0.50497485,
+        "min": 0.1726,
+        "max": 0.79,
+        "sd": 0.09229046778632234,
+        "n": 6000
+      },
+      "shuffled_null": {
+        "mean": 0.50497485,
+        "min": 0.1726,
+        "max": 0.79,
+        "sd": 0.09229046778632234,
+        "n": 6000
+      }
+    },
+    "entropy3": {
+      "residue": {
+        "mean": 0.8732814166666667,
+        "min": 0.5311,
+        "max": 0.953,
+        "sd": 0.03630147144581393,
+        "n": 6000
+      },
+      "shuffled_null": {
+        "mean": 0.88229325,
+        "min": 0.5995,
+        "max": 0.988,
+        "sd": 0.03099350398044184,
+        "n": 6000
+      }
+    },
+    "longest_orf_aa": {
+      "residue": {
+        "mean": 58.86933333333333,
+        "min": 18,
+        "max": 67,
+        "sd": 9.80125520819476,
+        "n": 6000
+      },
+      "shuffled_null": {
+        "mean": 54.54566666666667,
+        "min": 19,
+        "max": 67,
+        "sd": 10.989678948728283,
+        "n": 6000
+      }
+    },
+    "frame_identifiable_frac": {
+      "residue": 0.26366666666666666,
+      "shuffled_null": 0.21816666666666668
+    },
+    "kmer16_duplicate_frac": {
+      "residue": {
+        "mean": 0.0028307,
+        "min": 0.0,
+        "max": 0.9647,
+        "sd": 0.03604708628421439,
+        "n": 6000
+      },
+      "shuffled_null": {
+        "mean": 0.0,
+        "min": 0.0,
+        "max": 0.0,
+        "sd": 0.0,
+        "n": 6000
+      }
+    },
+    "closest_viral": {
+      "any_hit_frac": 0.7833333333333333,
+      "bitscore": {
+        "mean": 29.70372340425532,
+        "min": 21.9,
+        "max": 49.7,
+        "sd": 6.2088360934503735,
+        "n": 4700
+      },
+      "pident": {
+        "mean": 52.950489361702125,
+        "min": 29.4,
+        "max": 92.3,
+        "sd": 10.333265896974062,
+        "n": 4700
+      },
+      "bitscore_sweep": {
+        "30": 0.21766666666666667,
+        "40": 0.0825,
+        "50": 0.0,
+        "60": 0.0,
+        "80": 0.0,
+        "100": 0.0
+      },
+      "subtracted_reads_any_hit_frac": 0.7408333333333333,
+      "subtracted_reads_bitscore": {
+        "mean": 36.77842519685039,
+        "min": 22.3,
+        "max": 88.6,
+        "sd": 15.550222061446616,
+        "n": 4445
+      }
+    },
+    "closest_sprot": {
+      "any_hit_frac": 0.8016666666666666,
+      "bitscore": {
+        "mean": 27.395031185031186,
+        "min": 22.7,
+        "max": 48.5,
+        "sd": 2.9533593253974515,
+        "n": 4810
+      },
+      "pident": {
+        "mean": 51.42806652806653,
+        "min": 25.0,
+        "max": 92.3,
+        "sd": 9.918381948793904,
+        "n": 4810
+      },
+      "bitscore_sweep": {
+        "30": 0.08083333333333333,
+        "40": 0.0095,
+        "50": 0.0,
+        "60": 0.0,
+        "80": 0.0,
+        "100": 0.0
+      },
+      "subtracted_reads_any_hit_frac": 0.8048333333333333,
+      "subtracted_reads_bitscore": {
+        "mean": 32.146469248291574,
+        "min": 22.7,
+        "max": 88.6,
+        "sd": 12.506304063215467,
+        "n": 4829
+      }
+    },
+    "closest_uniref50_10pct": {
+      "any_hit_frac": 0.984,
+      "bitscore": {
+        "mean": 30.79932249322493,
+        "min": 24.3,
+        "max": 76.6,
+        "sd": 4.806935621345221,
+        "n": 5904
+      },
+      "pident": {
+        "mean": 52.770528455284555,
+        "min": 30.0,
+        "max": 100.0,
+        "sd": 10.103891397411997,
+        "n": 5904
+      },
+      "bitscore_sweep": {
+        "30": 0.4191666666666667,
+        "40": 0.056666666666666664,
+        "50": 0.012333333333333333,
+        "60": 0.0025,
+        "80": 0.0,
+        "100": 0.0
+      },
+      "subtracted_reads_any_hit_frac": 0.9951666666666666,
+      "subtracted_reads_bitscore": {
+        "mean": 39.810936191592695,
+        "min": 24.6,
+        "max": 82.8,
+        "sd": 11.765159904665978,
+        "n": 5971
+      }
+    }
+  },
+  "artefact_rates": {
+    "adapter": 0.0,
+    "primer_dimer": 0.0,
+    "low_entropy_0.5": 0.0
+  },
+  "motif_rate": 0.0495,
+  "library_abundance": {
+    "library_pairs_counted": 400000,
+    "sketch_bits": 28,
+    "kmers_added": 55260038,
+    "counter_saturation_frac": 5.844235420227051e-05,
+    "residue_median_count": {
+      "mean": 8.235833333333334,
+      "min": 0,
+      "max": 255,
+      "sd": 36.62638572569567,
+      "n": 6000
+    },
+    "subtracted_median_count": {
+      "mean": 91.25108586702305,
+      "min": 0,
+      "max": 255,
+      "sd": 106.24117015190058,
+      "n": 5986
+    },
+    "residue_recurrence_sweep": {
+      "1": 0.17166666666666666,
+      "2": 0.13666666666666666,
+      "3": 0.1215,
+      "5": 0.10533333333333333,
+      "10": 0.08283333333333333,
+      "20": 0.0665,
+      "50": 0.04416666666666667
+    },
+    "wall_seconds": 96.50547597299737
+  },
+  "crispr": {
+    "spacer_file": "/home/user/hapax/data/crispr/all_arrays_spacers.fa",
+    "spacers": 25,
+    "spacer_bases": 905,
+    "distinct_20mers": 676,
+    "expected_chance_matches_per_read": 5.4104020819067955e-08,
+    "residue_hit_frac": 0.0,
+    "subtracted_hit_frac": 0.0
+  },
+  "rfam": {
+    "evalue": 0.001,
+    "models": 4227,
+    "residue_hit_frac": 0.013666666666666667,
+    "shuffled_control_hit_frac": 0.0003333333333333333,
+    "subtracted_hit_frac": 0.5133333333333333,
+    "top_models": [
+      [
+        "LSU_rRNA_eukarya",
+        19
+      ],
+      [
+        "LSU_rRNA_bacteria",
+        16
+      ],
+      [
+        "5S_rRNA",
+        11
+      ],
+      [
+        "LSU_rRNA_archaea",
+        7
+      ],
+      [
+        "tRNA",
+        6
+      ],
+      [
+        "SSU_rRNA_eukarya",
+        5
+      ],
+      [
+        "abiF",
+        2
+      ],
+      [
+        "c4-a1b1",
+        2
+      ],
+      [
+        "tmRNA",
+        2
+      ],
+      [
+        "SSU_rRNA_bacteria",
+        2
+      ]
+    ],
+    "wall_seconds": 1279.4295310870002
+  },
+  "dinucleotide": {
+    "CpG_oe_residue": {
+      "mean": 0.9642075,
+      "min": 0.0,
+      "max": 2.6251,
+      "sd": 0.3141079689901449,
+      "n": 6000
+    },
+    "UpA_oe_residue": {
+      "mean": 0.77308795,
+      "min": 0.0,
+      "max": 2.2648,
+      "sd": 0.31519185145505924,
+      "n": 6000
+    }
+  },
+  "folding": {
+    "mfe_residue": {
+      "mean": -27.349846666666668,
+      "min": -75.2,
+      "max": 0.0,
+      "sd": 9.489704714008864,
+      "n": 6000
+    },
+    "z_residue": {
+      "mean": -0.5231785,
+      "min": -9.563,
+      "max": 1.87,
+      "sd": 0.9023303090529113,
+      "n": 6000
+    },
+    "frac_z_under_minus2": 0.059166666666666666
+  },
+  "cross_sample_recurrence": {
+    "reference": "/home/user/hapax/data/geo/all_contigs_1kb.fa",
+    "min_matching_bases": 50,
+    "residue_distinct_samples": {
+      "mean": 4.9375,
+      "min": 0,
+      "max": 40,
+      "sd": 9.260213406939227,
+      "n": 6000
+    },
+    "subtracted_distinct_samples": {
+      "mean": 21.651166666666665,
+      "min": 0,
+      "max": 42,
+      "sd": 11.470443633606658,
+      "n": 6000
+    },
+    "residue_sweep": {
+      "1": 0.43766666666666665,
+      "2": 0.354,
+      "3": 0.31083333333333335,
+      "5": 0.2565,
+      "10": 0.17166666666666666
+    },
+    "subtracted_sweep": {
+      "1": 0.9673333333333334,
+      "2": 0.943,
+      "3": 0.9255,
+      "5": 0.8786666666666667,
+      "10": 0.7871666666666667
+    },
+    "wall_seconds": 10.391646097996272
+  },
+  "chimaera_split_rate": 0.035166666666666666,
+  "chimaera_split_rate_on_subtracted_reads": 0.39216666666666666
+}

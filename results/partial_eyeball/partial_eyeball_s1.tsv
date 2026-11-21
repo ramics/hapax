@@ -1,0 +1,5 @@
+read	stratum	sciname	accession	molecule	pident	align_len	q_start	q_stop	read_len	s_start	s_stop	strand	subject_len	to_record_end	window_clipped_by_record	evalue	bitscore	title
+SRR23973193.1528013/1	high_identity	Floronia bucculenta	OZ582909	genomic	100.0	31	10	40	106	20890325	20890295	minus	86969954	20890294	False	0.000467318	57.1907	Floronia bucculenta genome assembly, chromosome: 3
+SRR23973193.3095257/1	ordinary	Pseudomonas coronafaciens	CP050260	genomic	83.33333333333333	42	26	67	107	4699204	4699163	minus	5661408	4699162	False	2.99184	45.4688	Pseudomonas coronafaciens strain X-1 chromosome, complete genome
+SRR23973193.4573598/1	ordinary	Pan troglodytes	AC183832	genomic	91.17647058823529	34	37	69	106	119680	119713	plus	179012	59299	False	2.9491	45.4688	Pan troglodytes BAC clone CH251-260G12 from chromosome 7, complete sequence
+SRR23973193.6058298/1	ordinary	Microbulbifer mixtoriginis (SeqCode)	CP174285	genomic	83.33333333333333	54	16	69	106	2666520	2666470	minus	4927283	2666469	False	0.0016311	56.2891	Microbulbifer mixtoriginis (SeqCode) strain PSTR4-B chromosome, complete genome

@@ -1,0 +1,100 @@
+{
+  "seed": 4,
+  "by_set": {
+    "residue": {
+      "reads": 800,
+      "with_protein_hit": 601,
+      "aligned_fraction": {
+        "mean": 0.31229416183215186,
+        "min": 0.036539269214615706,
+        "max": 0.9683168316831683,
+        "sd": 0.17046855585764142,
+        "n": 601
+      },
+      "pident": {
+        "mean": 35.073710482529115,
+        "min": 21.8,
+        "max": 95.0,
+        "sd": 8.861903917483342,
+        "n": 601
+      },
+      "partial_reads": 510,
+      "partial_frac_of_hits": 0.848585690515807,
+      "categories": {
+        "D_short_true_homology": 0.9921568627450981,
+        "B_divergent_continuation": 0.00392156862745098,
+        "C_artefact_end": 0.00392156862745098
+      },
+      "category_counts": {
+        "D_short_true_homology": 506,
+        "B_divergent_continuation": 2,
+        "C_artefact_end": 2
+      }
+    },
+    "known": {
+      "reads": 800,
+      "with_protein_hit": 798,
+      "aligned_fraction": {
+        "mean": 0.5751475796161012,
+        "min": 0.06715165081141578,
+        "max": 0.9965753424657534,
+        "sd": 0.25188242311465414,
+        "n": 798
+      },
+      "pident": {
+        "mean": 41.04022556390977,
+        "min": 21.3,
+        "max": 97.9,
+        "sd": 12.324977381406988,
+        "n": 798
+      },
+      "partial_reads": 531,
+      "partial_frac_of_hits": 0.6654135338345865,
+      "categories": {
+        "D_short_true_homology": 0.9661016949152542,
+        "C_artefact_end": 0.007532956685499058,
+        "B_divergent_continuation": 0.02448210922787194,
+        "A_chimaera": 0.0018832391713747645
+      },
+      "category_counts": {
+        "D_short_true_homology": 513,
+        "C_artefact_end": 4,
+        "B_divergent_continuation": 13,
+        "A_chimaera": 1
+      }
+    }
+  },
+  "verdict": {
+    "A_chimaera": {
+      "residue": 0.0,
+      "known_control": 0.0018832391713747645,
+      "ratio": 0.0,
+      "discriminating": false
+    },
+    "B_divergent_continuation": {
+      "residue": 0.00392156862745098,
+      "known_control": 0.02448210922787194,
+      "ratio": 0.16018099547511314,
+      "discriminating": false
+    },
+    "C_artefact_end": {
+      "residue": 0.00392156862745098,
+      "known_control": 0.007532956685499058,
+      "ratio": 0.5205882352941177,
+      "discriminating": false
+    },
+    "D_short_true_homology": {
+      "residue": 0.9921568627450981,
+      "known_control": 0.9661016949152542,
+      "ratio": 1.0269693842449261,
+      "discriminating": false
+    }
+  },
+  "thresholds": {
+    "partial_lo": 0.15,
+    "partial_hi": 0.75,
+    "min_seg": 30,
+    "seg_evalue": 1000.0
+  },
+  "wall_seconds": 571.820446583999
+}

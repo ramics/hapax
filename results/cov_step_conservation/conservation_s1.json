@@ -1,0 +1,320 @@
+{
+  "seed": 1,
+  "residue_pairs": 22839,
+  "high_step_pairs": 4290,
+  "pooled": {
+    "silva_mlen": {
+      "cov_step": {
+        "n": 22839,
+        "spearman": 0.0296,
+        "ci95": [
+          0.0166,
+          0.0426
+        ],
+        "shuffled": -0.0002
+      },
+      "cov_spread": {
+        "n": 22839,
+        "spearman": 0.0394,
+        "ci95": [
+          0.0265,
+          0.0524
+        ],
+        "shuffled": 0.0134
+      },
+      "mate_disagree": {
+        "n": 22839,
+        "spearman": 0.013,
+        "ci95": [
+          0.0,
+          0.026
+        ],
+        "shuffled": -0.0029
+      },
+      "zero_frac": {
+        "n": 22839,
+        "spearman": -0.0136,
+        "ci95": [
+          -0.0266,
+          -0.0006
+        ],
+        "shuffled": 0.0113
+      },
+      "log_cov": {
+        "n": 22839,
+        "spearman": 0.0342,
+        "ci95": [
+          0.0213,
+          0.0472
+        ],
+        "shuffled": 0.0097
+      }
+    },
+    "distinct_contigs": {
+      "cov_step": {
+        "n": 22839,
+        "spearman": 0.5773,
+        "ci95": [
+          0.5686,
+          0.5859
+        ],
+        "shuffled": -0.0058
+      },
+      "cov_spread": {
+        "n": 22839,
+        "spearman": 0.5801,
+        "ci95": [
+          0.5714,
+          0.5886
+        ],
+        "shuffled": 0.0142
+      },
+      "mate_disagree": {
+        "n": 22839,
+        "spearman": 0.5643,
+        "ci95": [
+          0.5554,
+          0.5731
+        ],
+        "shuffled": -0.005
+      },
+      "zero_frac": {
+        "n": 22839,
+        "spearman": -0.1961,
+        "ci95": [
+          -0.2085,
+          -0.1836
+        ],
+        "shuffled": -0.0003
+      },
+      "log_cov": {
+        "n": 22839,
+        "spearman": 0.5654,
+        "ci95": [
+          0.5566,
+          0.5742
+        ],
+        "shuffled": -0.0028
+      }
+    },
+    "second_contig_mlen": {
+      "cov_step": {
+        "n": 22839,
+        "spearman": 0.3237,
+        "ci95": [
+          0.312,
+          0.3353
+        ],
+        "shuffled": -0.0023
+      },
+      "cov_spread": {
+        "n": 22839,
+        "spearman": 0.3082,
+        "ci95": [
+          0.2964,
+          0.3199
+        ],
+        "shuffled": -0.0093
+      },
+      "mate_disagree": {
+        "n": 22839,
+        "spearman": 0.3135,
+        "ci95": [
+          0.3017,
+          0.3251
+        ],
+        "shuffled": 0.0095
+      },
+      "zero_frac": {
+        "n": 22839,
+        "spearman": -0.1279,
+        "ci95": [
+          -0.1406,
+          -0.1151
+        ],
+        "shuffled": -0.0138
+      },
+      "log_cov": {
+        "n": 22839,
+        "spearman": 0.3892,
+        "ci95": [
+          0.3781,
+          0.4001
+        ],
+        "shuffled": -0.0045
+      }
+    }
+  },
+  "within_log_cov_quartiles": {
+    "silva_mlen": {
+      "cov_step": [
+        {
+          "n": 5949,
+          "spearman": 0.0284,
+          "ci95": [
+            0.003,
+            0.0538
+          ],
+          "shuffled": -0.0108
+        },
+        {
+          "n": 7545,
+          "spearman": 0.0042,
+          "ci95": [
+            -0.0183,
+            0.0268
+          ],
+          "shuffled": -0.0062
+        },
+        {
+          "n": 3785,
+          "spearman": -0.0019,
+          "ci95": [
+            -0.0338,
+            0.0299
+          ],
+          "shuffled": -0.0016
+        },
+        {
+          "n": 5560,
+          "spearman": -0.0011,
+          "ci95": [
+            -0.0274,
+            0.0252
+          ],
+          "shuffled": 0.0053
+        }
+      ]
+    },
+    "distinct_contigs": {
+      "cov_step": [
+        {
+          "n": 5949,
+          "spearman": 0.4469,
+          "ci95": [
+            0.4263,
+            0.467
+          ],
+          "shuffled": -0.015
+        },
+        {
+          "n": 7545,
+          "spearman": 0.3894,
+          "ci95": [
+            0.3701,
+            0.4084
+          ],
+          "shuffled": 0.0037
+        },
+        {
+          "n": 3785,
+          "spearman": 0.3915,
+          "ci95": [
+            0.3642,
+            0.4182
+          ],
+          "shuffled": -0.019
+        },
+        {
+          "n": 5560,
+          "spearman": 0.2421,
+          "ci95": [
+            0.2172,
+            0.2667
+          ],
+          "shuffled": 0.0173
+        }
+      ]
+    },
+    "second_contig_mlen": {
+      "cov_step": [
+        {
+          "n": 5949,
+          "spearman": 0.1585,
+          "ci95": [
+            0.1336,
+            0.1832
+          ],
+          "shuffled": -0.0207
+        },
+        {
+          "n": 7545,
+          "spearman": 0.1166,
+          "ci95": [
+            0.0943,
+            0.1388
+          ],
+          "shuffled": 0.0147
+        },
+        {
+          "n": 3785,
+          "spearman": 0.1151,
+          "ci95": [
+            0.0836,
+            0.1465
+          ],
+          "shuffled": -0.0156
+        },
+        {
+          "n": 5560,
+          "spearman": 0.2138,
+          "ci95": [
+            0.1886,
+            0.2388
+          ],
+          "shuffled": 0.0005
+        }
+      ]
+    }
+  },
+  "high_vs_low_step": {
+    "silva_mlen": {
+      "high": {
+        "n": 4290,
+        "mean": 0.1569,
+        "median": 0.0,
+        "frac_nonzero": 0.0044
+      },
+      "low": {
+        "n": 18549,
+        "mean": 0.0768,
+        "median": 0,
+        "frac_nonzero": 0.0023
+      }
+    },
+    "distinct_contigs": {
+      "high": {
+        "n": 4290,
+        "mean": 2.2322,
+        "median": 1.0,
+        "frac_nonzero": 0.7841
+      },
+      "low": {
+        "n": 18549,
+        "mean": 0.6482,
+        "median": 0,
+        "frac_nonzero": 0.2978
+      }
+    },
+    "second_contig_mlen": {
+      "high": {
+        "n": 4290,
+        "mean": 19.6522,
+        "median": 0.0,
+        "frac_nonzero": 0.241
+      },
+      "low": {
+        "n": 18549,
+        "mean": 3.5043,
+        "median": 0,
+        "frac_nonzero": 0.0414
+      }
+    }
+  },
+  "interpretation_rules": [
+    "the hypothesis passes only if cov_step rises with sharing INSIDE the log_cov quartiles; a correlation that exists pooled and vanishes within strata is abundance, which cov_step is known to track",
+    "silva_mlen is weak ribosomal similarity by construction: every read matching SILVA over 40 bases was already removed to form the residue, so this field can only see conserved segments shorter than that",
+    "distinct_contigs counts molecules rather than alignments, and is still a property of the assembly: a shared segment whose other copies never assembled is invisible here, which biases the test towards finding nothing"
+  ],
+  "wall_seconds": 21.598541703999217
+}

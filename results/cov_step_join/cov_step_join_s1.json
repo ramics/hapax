@@ -1,0 +1,159 @@
+{
+  "seed": 1,
+  "axes_rows": 22839,
+  "pairs_both_mates_mapped": 6834,
+  "pairs_mates_on_different_contigs": 938,
+  "depth_ratio_summary": {
+    "all_median": 0.0,
+    "different_contig_median": 1.2557
+  },
+  "correlations": {
+    "all_mapped_pairs": {
+      "cov_step": {
+        "n": 6834,
+        "spearman": 0.1598,
+        "ci95": [
+          0.1367,
+          0.1829
+        ],
+        "shuffled": -0.0012
+      },
+      "cov_spread": {
+        "n": 6834,
+        "spearman": 0.1591,
+        "ci95": [
+          0.1359,
+          0.1821
+        ],
+        "shuffled": -0.0184
+      },
+      "mate_disagree": {
+        "n": 6834,
+        "spearman": 0.1278,
+        "ci95": [
+          0.1045,
+          0.1511
+        ],
+        "shuffled": -0.0188
+      },
+      "zero_frac": {
+        "n": 6834,
+        "spearman": -0.1026,
+        "ci95": [
+          -0.126,
+          -0.0791
+        ],
+        "shuffled": -0.0032
+      },
+      "log_cov": {
+        "n": 6834,
+        "spearman": 0.3829,
+        "ci95": [
+          0.3625,
+          0.403
+        ],
+        "shuffled": -0.0275
+      }
+    },
+    "mates_on_different_contigs": {
+      "cov_step": {
+        "n": 938,
+        "spearman": 0.0105,
+        "ci95": [
+          -0.0535,
+          0.0745
+        ],
+        "shuffled": -0.0287
+      },
+      "cov_spread": {
+        "n": 938,
+        "spearman": 0.0163,
+        "ci95": [
+          -0.0477,
+          0.0802
+        ],
+        "shuffled": 0.0219
+      },
+      "mate_disagree": {
+        "n": 938,
+        "spearman": -0.1033,
+        "ci95": [
+          -0.1662,
+          -0.0395
+        ],
+        "shuffled": 0.0148
+      },
+      "zero_frac": {
+        "n": 938,
+        "spearman": -0.1347,
+        "ci95": [
+          -0.197,
+          -0.0713
+        ],
+        "shuffled": -0.0127
+      },
+      "log_cov": {
+        "n": 938,
+        "spearman": 0.4469,
+        "ci95": [
+          0.3941,
+          0.4967
+        ],
+        "shuffled": 0.0479
+      }
+    },
+    "mates_on_same_contig": {
+      "cov_step": {
+        "n": 5896,
+        "spearman": 0.0,
+        "ci95": [
+          -0.0255,
+          0.0255
+        ],
+        "shuffled": 0.0
+      },
+      "cov_spread": {
+        "n": 5896,
+        "spearman": 0.0,
+        "ci95": [
+          -0.0255,
+          0.0255
+        ],
+        "shuffled": 0.0
+      },
+      "mate_disagree": {
+        "n": 5896,
+        "spearman": 0.0,
+        "ci95": [
+          -0.0255,
+          0.0255
+        ],
+        "shuffled": 0.0
+      },
+      "zero_frac": {
+        "n": 5896,
+        "spearman": 0.0,
+        "ci95": [
+          -0.0255,
+          0.0255
+        ],
+        "shuffled": 0.0
+      },
+      "log_cov": {
+        "n": 5896,
+        "spearman": 0.0,
+        "ci95": [
+          -0.0255,
+          0.0255
+        ],
+        "shuffled": 0.0
+      }
+    }
+  },
+  "interpretation_rules": [
+    "the prediction passes only if cov_step's interval is clear of zero AND larger than the same correlation for the control fields; a correlation shared by every field is a property of the mapping, not of cov_step",
+    "the shuffled column is the null for each cell",
+    "only pairs where BOTH mates map and both contigs carry a SPAdes cov_ field enter, which selects towards the assembled part of the residue - the rarest molecules are absent from this test by construction"
+  ],
+  "wall_seconds": 1.3890586889974657
+}

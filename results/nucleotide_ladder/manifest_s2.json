@@ -1,0 +1,33 @@
+{
+  "script": "experiments/nucleotide_ladder.py",
+  "git_sha": "77a66b3582e682ee11e1a7311b3ccb8db9ec97b0-dirty",
+  "parameters": {
+    "seed": 2,
+    "pairs": 100000,
+    "fractions": [
+      0.003,
+      0.01,
+      0.03,
+      0.1,
+      0.3,
+      0.5,
+      1.0
+    ],
+    "confidence": [
+      0.0,
+      0.1
+    ],
+    "r1": "/home/user/hapax/data/berlin/SRR23973193_1.fastq.gz",
+    "r2": "/home/user/hapax/data/berlin/SRR23973193_2.fastq.gz",
+    "db": "/home/user/hapax/data/k2_pluspf16",
+    "classify_bin": "/home/user/tools/k2pkg/root/share/kraken2-2.17.2/libexec/classify",
+    "silva": "/home/user/hapax/data/silva/silva_dna.fa",
+    "min_mlen": 40,
+    "threads": 4,
+    "work": "/tmp/claude-0/wk/nucladder",
+    "out": "/home/user/hapax/results/nucleotide_ladder"
+  },
+  "wall_seconds": 44.8168126620003,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}

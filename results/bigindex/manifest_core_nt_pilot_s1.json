@@ -1,0 +1,26 @@
+{
+  "script": "experiments/bigindex_report.py",
+  "git_sha": "8f24ef43fcb74b267cc6d555cda750c3e30213ee-dirty",
+  "tree_dirty": true,
+  "script_sha256": "12095e478b473ec5",
+  "parameters": {
+    "rows": [
+      "results/bigindex/rows_pilot_core_nt_i-0b42267a.jsonl"
+    ],
+    "rung": "core_nt_pilot",
+    "block": 1,
+    "db_version": "",
+    "program": "",
+    "min_pident": 90.0,
+    "min_aln": 40,
+    "min_bitscore": 0.0,
+    "strong_pident": 80.0,
+    "strong_aln_frac": 0.8,
+    "significant": 1e-05,
+    "residue_names": null,
+    "out": "results/bigindex"
+  },
+  "wall_seconds": 0.01225174700084608,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}

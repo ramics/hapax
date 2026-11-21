@@ -1,0 +1,1223 @@
+{
+  "seed": 5,
+  "genomes": {
+    "NC_003630.1": 6357,
+    "NC_001943.1": 6813,
+    "NC_038311.1": 7137
+  },
+  "spike_pairs_per_rung": 2000,
+  "insert_quantiles": [
+    [
+      0.5,
+      194
+    ],
+    [
+      0.75,
+      246
+    ],
+    [
+      0.95,
+      363
+    ],
+    [
+      0.99,
+      485
+    ],
+    [
+      1.0,
+      600
+    ]
+  ],
+  "error_rates": [
+    0.00089,
+    0.00117
+  ],
+  "rungs": [
+    {
+      "divergence": 0.0,
+      "genomes": {
+        "NC_003630.1": {
+          "survival": {
+            "pairs": 2000,
+            "removed_by_tier": {
+              "rrna": 0.0,
+              "selfasm_identified": 1.0,
+              "selfasm_unidentified": 0.0,
+              "cross_sample": 1.0,
+              "k2_viral": 1.0,
+              "k2_pluspf16": 0.637,
+              "prot_viral": 0.994,
+              "prot_sprot": 0.994
+            },
+            "tier1_removed": 1.0,
+            "survives_tier1": 0.0,
+            "survivor_maps_unidentified_contig": 0.0,
+            "protein_bitscore_of_best_hit": {
+              "n": 3991,
+              "min": 25.8,
+              "median": 75.1,
+              "max": 85.9
+            },
+            "protein_pident_of_best_hit": {
+              "n": 3991,
+              "min": 40.7,
+              "median": 100.0,
+              "max": 100.0
+            }
+          },
+          "ladder_on_survivors": null
+        },
+        "NC_001943.1": {
+          "survival": {
+            "pairs": 2000,
+            "removed_by_tier": {
+              "rrna": 0.0,
+              "selfasm_identified": 0.9645,
+              "selfasm_unidentified": 0.0,
+              "cross_sample": 0.9915,
+              "k2_viral": 1.0,
+              "k2_pluspf16": 0.581,
+              "prot_viral": 0.993,
+              "prot_sprot": 0.993
+            },
+            "tier1_removed": 1.0,
+            "survives_tier1": 0.0,
+            "survivor_maps_unidentified_contig": 0.0,
+            "protein_bitscore_of_best_hit": {
+              "n": 4000,
+              "min": 32.3,
+              "median": 76.3,
+              "max": 85.5
+            },
+            "protein_pident_of_best_hit": {
+              "n": 4000,
+              "min": 59.4,
+              "median": 100.0,
+              "max": 100.0
+            }
+          },
+          "ladder_on_survivors": null
+        },
+        "NC_038311.1": {
+          "survival": {
+            "pairs": 2000,
+            "removed_by_tier": {
+              "rrna": 0.0,
+              "selfasm_identified": 0.0,
+              "selfasm_unidentified": 0.0,
+              "cross_sample": 0.0,
+              "k2_viral": 1.0,
+              "k2_pluspf16": 0.6795,
+              "prot_viral": 0.9375,
+              "prot_sprot": 0.9375
+            },
+            "tier1_removed": 1.0,
+            "survives_tier1": 0.0,
+            "survivor_maps_unidentified_contig": 0.0,
+            "protein_bitscore_of_best_hit": {
+              "n": 3913,
+              "min": 25.8,
+              "median": 77.0,
+              "max": 88.2
+            },
+            "protein_pident_of_best_hit": {
+              "n": 3913,
+              "min": 32.1,
+              "median": 100.0,
+              "max": 100.0
+            }
+          },
+          "ladder_on_survivors": null
+        }
+      }
+    },
+    {
+      "divergence": 0.05,
+      "genomes": {
+        "NC_003630.1": {
+          "survival": {
+            "pairs": 2000,
+            "removed_by_tier": {
+              "rrna": 0.0,
+              "selfasm_identified": 0.9625,
+              "selfasm_unidentified": 0.0,
+              "cross_sample": 0.9735,
+              "k2_viral": 0.9045,
+              "k2_pluspf16": 0.0875,
+              "prot_viral": 0.961,
+              "prot_sprot": 0.961
+            },
+            "tier1_removed": 0.9985,
+            "survives_tier1": 0.0014999999999999458,
+            "survivor_maps_unidentified_contig": 0.0,
+            "protein_bitscore_of_best_hit": {
+              "n": 3953,
+              "min": 25.8,
+              "median": 66.2,
+              "max": 79.3
+            },
+            "protein_pident_of_best_hit": {
+              "n": 3953,
+              "min": 43.5,
+              "median": 91.4,
+              "max": 100.0
+            }
+          },
+          "ladder_on_survivors": {
+            "n": 3,
+            "gc": {
+              "mean": 0.4891333333333333,
+              "min": 0.472,
+              "max": 0.5234,
+              "sd": 0.029675803836346767,
+              "n": 3
+            },
+            "entropy3": {
+              "mean": 0.9250333333333333,
+              "min": 0.9166,
+              "max": 0.9337,
+              "sd": 0.00855238758086497,
+              "n": 3
+            },
+            "longest_orf_aa": {
+              "mean": 72,
+              "min": 72,
+              "max": 72,
+              "sd": 0.0,
+              "n": 3
+            },
+            "frame_identifiable_frac": 0.0,
+            "kmer16_duplicate_frac": {
+              "mean": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "sd": 0.0,
+              "n": 3
+            },
+            "CpG_oe": {
+              "mean": 1.0906666666666667,
+              "min": 1.0118,
+              "max": 1.2484,
+              "sd": 0.13660107369026542,
+              "n": 3
+            },
+            "UpA_oe": {
+              "mean": 0.7048333333333333,
+              "min": 0.674,
+              "max": 0.7627,
+              "sd": 0.05015000830840744,
+              "n": 3
+            },
+            "fold_z": {
+              "mean": -0.35633333333333334,
+              "min": -0.73,
+              "max": -0.113,
+              "sd": 0.3285001268391434,
+              "n": 3
+            }
+          }
+        },
+        "NC_001943.1": {
+          "survival": {
+            "pairs": 2000,
+            "removed_by_tier": {
+              "rrna": 0.0,
+              "selfasm_identified": 0.6715,
+              "selfasm_unidentified": 0.0,
+              "cross_sample": 0.768,
+              "k2_viral": 0.8825,
+              "k2_pluspf16": 0.048,
+              "prot_viral": 0.964,
+              "prot_sprot": 0.965
+            },
+            "tier1_removed": 0.998,
+            "survives_tier1": 0.0020000000000000018,
+            "survivor_maps_unidentified_contig": 0.0,
+            "protein_bitscore_of_best_hit": {
+              "n": 3994,
+              "min": 31.2,
+              "median": 68.6,
+              "max": 84.3
+            },
+            "protein_pident_of_best_hit": {
+              "n": 3994,
+              "min": 57.1,
+              "median": 91.4,
+              "max": 100.0
+            }
+          },
+          "ladder_on_survivors": {
+            "n": 4,
+            "gc": {
+              "mean": 0.495325,
+              "min": 0.472,
+              "max": 0.5327,
+              "sd": 0.02669361659023868,
+              "n": 4
+            },
+            "entropy3": {
+              "mean": 0.8919,
+              "min": 0.8745,
+              "max": 0.9104,
+              "sd": 0.01642579272566977,
+              "n": 4
+            },
+            "longest_orf_aa": {
+              "mean": 72,
+              "min": 72,
+              "max": 72,
+              "sd": 0.0,
+              "n": 4
+            },
+            "frame_identifiable_frac": 0.0,
+            "kmer16_duplicate_frac": {
+              "mean": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "sd": 0.0,
+              "n": 4
+            },
+            "CpG_oe": {
+              "mean": 0.660125,
+              "min": 0.4864,
+              "max": 0.9275,
+              "sd": 0.18803140473513105,
+              "n": 4
+            },
+            "UpA_oe": {
+              "mean": 0.827525,
+              "min": 0.695,
+              "max": 0.9792,
+              "sd": 0.12880189892492527,
+              "n": 4
+            },
+            "fold_z": {
+              "mean": -0.125,
+              "min": -0.546,
+              "max": 0.398,
+              "sd": 0.40238455901454934,
+              "n": 4
+            }
+          }
+        },
+        "NC_038311.1": {
+          "survival": {
+            "pairs": 2000,
+            "removed_by_tier": {
+              "rrna": 0.0,
+              "selfasm_identified": 0.0,
+              "selfasm_unidentified": 0.0,
+              "cross_sample": 0.0,
+              "k2_viral": 0.9,
+              "k2_pluspf16": 0.031,
+              "prot_viral": 0.8955,
+              "prot_sprot": 0.8955
+            },
+            "tier1_removed": 0.995,
+            "survives_tier1": 0.0050000000000000044,
+            "survivor_maps_unidentified_contig": 0.0,
+            "protein_bitscore_of_best_hit": {
+              "n": 3893,
+              "min": 25.4,
+              "median": 67.8,
+              "max": 85.5
+            },
+            "protein_pident_of_best_hit": {
+              "n": 3893,
+              "min": 31.3,
+              "median": 91.4,
+              "max": 100.0
+            }
+          },
+          "ladder_on_survivors": {
+            "n": 10,
+            "gc": {
+              "mean": 0.41683,
+              "min": 0.3271,
+              "max": 0.5234,
+              "sd": 0.058286782378168714,
+              "n": 10
+            },
+            "entropy3": {
+              "mean": 0.89108,
+              "min": 0.8503,
+              "max": 0.9151,
+              "sd": 0.02137572870752664,
+              "n": 10
+            },
+            "longest_orf_aa": {
+              "mean": 72,
+              "min": 72,
+              "max": 72,
+              "sd": 0.0,
+              "n": 10
+            },
+            "frame_identifiable_frac": 0.0,
+            "kmer16_duplicate_frac": {
+              "mean": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "sd": 0.0,
+              "n": 10
+            },
+            "CpG_oe": {
+              "mean": 0.45409,
+              "min": 0.228,
+              "max": 1.0531,
+              "sd": 0.23784343800071506,
+              "n": 10
+            },
+            "UpA_oe": {
+              "mean": 0.94093,
+              "min": 0.8266,
+              "max": 1.1618,
+              "sd": 0.09632973522692194,
+              "n": 10
+            },
+            "fold_z": {
+              "mean": -0.3962,
+              "min": -1.764,
+              "max": 0.7,
+              "sd": 0.88169039665608,
+              "n": 10
+            }
+          }
+        }
+      }
+    },
+    {
+      "divergence": 0.1,
+      "genomes": {
+        "NC_003630.1": {
+          "survival": {
+            "pairs": 2000,
+            "removed_by_tier": {
+              "rrna": 0.0,
+              "selfasm_identified": 0.538,
+              "selfasm_unidentified": 0.0,
+              "cross_sample": 0.5475,
+              "k2_viral": 0.325,
+              "k2_pluspf16": 0.001,
+              "prot_viral": 0.7685,
+              "prot_sprot": 0.7685
+            },
+            "tier1_removed": 0.8505,
+            "survives_tier1": 0.14949999999999997,
+            "survivor_maps_unidentified_contig": 0.0,
+            "protein_bitscore_of_best_hit": {
+              "n": 3902,
+              "min": 25.4,
+              "median": 57.8,
+              "max": 78.2
+            },
+            "protein_pident_of_best_hit": {
+              "n": 3902,
+              "min": 32.4,
+              "median": 82.9,
+              "max": 100.0
+            }
+          },
+          "ladder_on_survivors": {
+            "n": 299,
+            "gc": {
+              "mean": 0.43781705685618727,
+              "min": 0.3318,
+              "max": 0.528,
+              "sd": 0.04332059444096114,
+              "n": 299
+            },
+            "entropy3": {
+              "mean": 0.8861411371237459,
+              "min": 0.7817,
+              "max": 0.9364,
+              "sd": 0.031729838179817046,
+              "n": 299
+            },
+            "longest_orf_aa": {
+              "mean": 72,
+              "min": 72,
+              "max": 72,
+              "sd": 0.0,
+              "n": 299
+            },
+            "frame_identifiable_frac": 0.0,
+            "kmer16_duplicate_frac": {
+              "mean": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "sd": 0.0,
+              "n": 299
+            },
+            "CpG_oe": {
+              "mean": 0.8241889632107023,
+              "min": 0.1667,
+              "max": 1.4334,
+              "sd": 0.23130227552494034,
+              "n": 299
+            },
+            "UpA_oe": {
+              "mean": 0.8282996655518394,
+              "min": 0.2389,
+              "max": 1.2478,
+              "sd": 0.19238504289947125,
+              "n": 299
+            },
+            "fold_z": {
+              "mean": -0.09635117056856186,
+              "min": -4.098,
+              "max": 2.111,
+              "sd": 0.8908553391689396,
+              "n": 299
+            }
+          }
+        },
+        "NC_001943.1": {
+          "survival": {
+            "pairs": 2000,
+            "removed_by_tier": {
+              "rrna": 0.0,
+              "selfasm_identified": 0.228,
+              "selfasm_unidentified": 0.0,
+              "cross_sample": 0.277,
+              "k2_viral": 0.3255,
+              "k2_pluspf16": 0.0,
+              "prot_viral": 0.8285,
+              "prot_sprot": 0.833
+            },
+            "tier1_removed": 0.903,
+            "survives_tier1": 0.09699999999999998,
+            "survivor_maps_unidentified_contig": 0.0,
+            "protein_bitscore_of_best_hit": {
+              "n": 3974,
+              "min": 25.4,
+              "median": 58.2,
+              "max": 74.3
+            },
+            "protein_pident_of_best_hit": {
+              "n": 3974,
+              "min": 33.3,
+              "median": 80.0,
+              "max": 97.1
+            }
+          },
+          "ladder_on_survivors": {
+            "n": 194,
+            "gc": {
+              "mean": 0.481429381443299,
+              "min": 0.3598,
+              "max": 0.5748,
+              "sd": 0.050321393102342495,
+              "n": 194
+            },
+            "entropy3": {
+              "mean": 0.890689175257732,
+              "min": 0.8296,
+              "max": 0.9265,
+              "sd": 0.01837617110829266,
+              "n": 194
+            },
+            "longest_orf_aa": {
+              "mean": 72,
+              "min": 72,
+              "max": 72,
+              "sd": 0.0,
+              "n": 194
+            },
+            "frame_identifiable_frac": 0.0,
+            "kmer16_duplicate_frac": {
+              "mean": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "sd": 0.0,
+              "n": 194
+            },
+            "CpG_oe": {
+              "mean": 0.6034592783505155,
+              "min": 0.1754,
+              "max": 1.1042,
+              "sd": 0.19474983831794349,
+              "n": 194
+            },
+            "UpA_oe": {
+              "mean": 0.7288948453608247,
+              "min": 0.2393,
+              "max": 1.2811,
+              "sd": 0.2431831480522614,
+              "n": 194
+            },
+            "fold_z": {
+              "mean": -0.25778350515463916,
+              "min": -2.941,
+              "max": 2.532,
+              "sd": 0.7463873229019143,
+              "n": 194
+            }
+          }
+        },
+        "NC_038311.1": {
+          "survival": {
+            "pairs": 2000,
+            "removed_by_tier": {
+              "rrna": 0.0,
+              "selfasm_identified": 0.0,
+              "selfasm_unidentified": 0.0,
+              "cross_sample": 0.0,
+              "k2_viral": 0.3385,
+              "k2_pluspf16": 0.001,
+              "prot_viral": 0.81,
+              "prot_sprot": 0.8135
+            },
+            "tier1_removed": 0.862,
+            "survives_tier1": 0.138,
+            "survivor_maps_unidentified_contig": 0.0,
+            "protein_bitscore_of_best_hit": {
+              "n": 3879,
+              "min": 25.4,
+              "median": 58.5,
+              "max": 79.3
+            },
+            "protein_pident_of_best_hit": {
+              "n": 3879,
+              "min": 36.4,
+              "median": 80.0,
+              "max": 97.1
+            }
+          },
+          "ladder_on_survivors": {
+            "n": 276,
+            "gc": {
+              "mean": 0.401361231884058,
+              "min": 0.2991,
+              "max": 0.5841,
+              "sd": 0.063289632503886,
+              "n": 276
+            },
+            "entropy3": {
+              "mean": 0.8818673913043478,
+              "min": 0.8058,
+              "max": 0.9252,
+              "sd": 0.022164721069281502,
+              "n": 276
+            },
+            "longest_orf_aa": {
+              "mean": 72,
+              "min": 72,
+              "max": 72,
+              "sd": 0.0,
+              "n": 276
+            },
+            "frame_identifiable_frac": 0.0,
+            "kmer16_duplicate_frac": {
+              "mean": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "sd": 0.0,
+              "n": 276
+            },
+            "CpG_oe": {
+              "mean": 0.3493108695652174,
+              "min": 0.0,
+              "max": 1.0777,
+              "sd": 0.22840284879127137,
+              "n": 276
+            },
+            "UpA_oe": {
+              "mean": 0.8131898550724638,
+              "min": 0.3261,
+              "max": 1.209,
+              "sd": 0.20439728757846437,
+              "n": 276
+            },
+            "fold_z": {
+              "mean": -0.11939492753623188,
+              "min": -3.634,
+              "max": 2.194,
+              "sd": 0.8717851193810184,
+              "n": 276
+            }
+          }
+        }
+      }
+    },
+    {
+      "divergence": 0.2,
+      "genomes": {
+        "NC_003630.1": {
+          "survival": {
+            "pairs": 2000,
+            "removed_by_tier": {
+              "rrna": 0.0,
+              "selfasm_identified": 0.0,
+              "selfasm_unidentified": 0.0,
+              "cross_sample": 0.0,
+              "k2_viral": 0.0,
+              "k2_pluspf16": 0.0,
+              "prot_viral": 0.1135,
+              "prot_sprot": 0.111
+            },
+            "tier1_removed": 0.1135,
+            "survives_tier1": 0.8865,
+            "survivor_maps_unidentified_contig": 0.0,
+            "protein_bitscore_of_best_hit": {
+              "n": 3759,
+              "min": 25.4,
+              "median": 42.7,
+              "max": 59.7
+            },
+            "protein_pident_of_best_hit": {
+              "n": 3759,
+              "min": 28.1,
+              "median": 65.6,
+              "max": 87.5
+            }
+          },
+          "ladder_on_survivors": {
+            "n": 500,
+            "gc": {
+              "mean": 0.4483762,
+              "min": 0.3551,
+              "max": 0.5327,
+              "sd": 0.03402979735137356,
+              "n": 500
+            },
+            "entropy3": {
+              "mean": 0.8997812,
+              "min": 0.8248,
+              "max": 0.9404,
+              "sd": 0.02054099490051555,
+              "n": 500
+            },
+            "longest_orf_aa": {
+              "mean": 72,
+              "min": 72,
+              "max": 72,
+              "sd": 0.0,
+              "n": 500
+            },
+            "frame_identifiable_frac": 0.0,
+            "kmer16_duplicate_frac": {
+              "mean": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "sd": 0.0,
+              "n": 500
+            },
+            "CpG_oe": {
+              "mean": 0.9374818,
+              "min": 0.3268,
+              "max": 1.7103,
+              "sd": 0.23649496846440085,
+              "n": 500
+            },
+            "UpA_oe": {
+              "mean": 0.8811626,
+              "min": 0.3627,
+              "max": 1.3914,
+              "sd": 0.16691568096000053,
+              "n": 500
+            },
+            "fold_z": {
+              "mean": -0.23136,
+              "min": -5.853,
+              "max": 2.281,
+              "sd": 0.948041088884034,
+              "n": 500
+            }
+          }
+        },
+        "NC_001943.1": {
+          "survival": {
+            "pairs": 2000,
+            "removed_by_tier": {
+              "rrna": 0.0,
+              "selfasm_identified": 0.0,
+              "selfasm_unidentified": 0.0,
+              "cross_sample": 0.0,
+              "k2_viral": 0.0,
+              "k2_pluspf16": 0.0,
+              "prot_viral": 0.1575,
+              "prot_sprot": 0.157
+            },
+            "tier1_removed": 0.1585,
+            "survives_tier1": 0.8415,
+            "survivor_maps_unidentified_contig": 0.0,
+            "protein_bitscore_of_best_hit": {
+              "n": 3736,
+              "min": 25.8,
+              "median": 42.4,
+              "max": 66.2
+            },
+            "protein_pident_of_best_hit": {
+              "n": 3736,
+              "min": 30.3,
+              "median": 65.7,
+              "max": 85.3
+            }
+          },
+          "ladder_on_survivors": {
+            "n": 500,
+            "gc": {
+              "mean": 0.4604034,
+              "min": 0.3505,
+              "max": 0.5748,
+              "sd": 0.04066369191453527,
+              "n": 500
+            },
+            "entropy3": {
+              "mean": 0.8987516,
+              "min": 0.8364,
+              "max": 0.94,
+              "sd": 0.017257006286489667,
+              "n": 500
+            },
+            "longest_orf_aa": {
+              "mean": 72,
+              "min": 72,
+              "max": 72,
+              "sd": 0.0,
+              "n": 500
+            },
+            "frame_identifiable_frac": 0.0,
+            "kmer16_duplicate_frac": {
+              "mean": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "sd": 0.0,
+              "n": 500
+            },
+            "CpG_oe": {
+              "mean": 0.7566158,
+              "min": 0.286,
+              "max": 1.2669,
+              "sd": 0.20409403430781625,
+              "n": 500
+            },
+            "UpA_oe": {
+              "mean": 0.8500372,
+              "min": 0.3026,
+              "max": 1.2931,
+              "sd": 0.194291499839751,
+              "n": 500
+            },
+            "fold_z": {
+              "mean": -0.299906,
+              "min": -7.029,
+              "max": 3.334,
+              "sd": 0.9221714121521993,
+              "n": 500
+            }
+          }
+        },
+        "NC_038311.1": {
+          "survival": {
+            "pairs": 2000,
+            "removed_by_tier": {
+              "rrna": 0.0,
+              "selfasm_identified": 0.0,
+              "selfasm_unidentified": 0.0,
+              "cross_sample": 0.0,
+              "k2_viral": 0.0,
+              "k2_pluspf16": 0.0,
+              "prot_viral": 0.193,
+              "prot_sprot": 0.1955
+            },
+            "tier1_removed": 0.1955,
+            "survives_tier1": 0.8045,
+            "survivor_maps_unidentified_contig": 0.0,
+            "protein_bitscore_of_best_hit": {
+              "n": 3725,
+              "min": 25.0,
+              "median": 42.4,
+              "max": 61.6
+            },
+            "protein_pident_of_best_hit": {
+              "n": 3725,
+              "min": 32.3,
+              "median": 64.7,
+              "max": 90.9
+            }
+          },
+          "ladder_on_survivors": {
+            "n": 500,
+            "gc": {
+              "mean": 0.4071516,
+              "min": 0.2944,
+              "max": 0.5327,
+              "sd": 0.03976005509808563,
+              "n": 500
+            },
+            "entropy3": {
+              "mean": 0.88879,
+              "min": 0.8268,
+              "max": 0.9285,
+              "sd": 0.019605571066247145,
+              "n": 500
+            },
+            "longest_orf_aa": {
+              "mean": 72,
+              "min": 72,
+              "max": 72,
+              "sd": 0.0,
+              "n": 500
+            },
+            "frame_identifiable_frac": 0.0,
+            "kmer16_duplicate_frac": {
+              "mean": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "sd": 0.0,
+              "n": 500
+            },
+            "CpG_oe": {
+              "mean": 0.689014,
+              "min": 0.1045,
+              "max": 1.7064,
+              "sd": 0.30157540598495425,
+              "n": 500
+            },
+            "UpA_oe": {
+              "mean": 0.8978358,
+              "min": 0.4147,
+              "max": 1.5617,
+              "sd": 0.18390423222868812,
+              "n": 500
+            },
+            "fold_z": {
+              "mean": -0.21948600000000001,
+              "min": -5.865,
+              "max": 2.549,
+              "sd": 0.9073153829911763,
+              "n": 500
+            }
+          }
+        }
+      }
+    },
+    {
+      "divergence": 0.3,
+      "genomes": {
+        "NC_003630.1": {
+          "survival": {
+            "pairs": 2000,
+            "removed_by_tier": {
+              "rrna": 0.0,
+              "selfasm_identified": 0.0,
+              "selfasm_unidentified": 0.0,
+              "cross_sample": 0.0,
+              "k2_viral": 0.0,
+              "k2_pluspf16": 0.0,
+              "prot_viral": 0.0125,
+              "prot_sprot": 0.0125
+            },
+            "tier1_removed": 0.0125,
+            "survives_tier1": 0.9875,
+            "survivor_maps_unidentified_contig": 0.0,
+            "protein_bitscore_of_best_hit": {
+              "n": 2940,
+              "min": 25.4,
+              "median": 30.8,
+              "max": 52.8
+            },
+            "protein_pident_of_best_hit": {
+              "n": 2940,
+              "min": 31.3,
+              "median": 55.6,
+              "max": 84.6
+            }
+          },
+          "ladder_on_survivors": {
+            "n": 500,
+            "gc": {
+              "mean": 0.4551532,
+              "min": 0.3458,
+              "max": 0.5748,
+              "sd": 0.03954133640038811,
+              "n": 500
+            },
+            "entropy3": {
+              "mean": 0.89822,
+              "min": 0.805,
+              "max": 0.942,
+              "sd": 0.018705235943537485,
+              "n": 500
+            },
+            "longest_orf_aa": {
+              "mean": 72,
+              "min": 72,
+              "max": 72,
+              "sd": 0.0,
+              "n": 500
+            },
+            "frame_identifiable_frac": 0.0,
+            "kmer16_duplicate_frac": {
+              "mean": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "sd": 0.0,
+              "n": 500
+            },
+            "CpG_oe": {
+              "mean": 0.9628352,
+              "min": 0.3572,
+              "max": 1.6881,
+              "sd": 0.24007715977629465,
+              "n": 500
+            },
+            "UpA_oe": {
+              "mean": 0.8557318,
+              "min": 0.3313,
+              "max": 1.3438,
+              "sd": 0.18853156805444052,
+              "n": 500
+            },
+            "fold_z": {
+              "mean": -0.086734,
+              "min": -3.001,
+              "max": 3.604,
+              "sd": 0.8404404246934567,
+              "n": 500
+            }
+          }
+        },
+        "NC_001943.1": {
+          "survival": {
+            "pairs": 2000,
+            "removed_by_tier": {
+              "rrna": 0.0,
+              "selfasm_identified": 0.0,
+              "selfasm_unidentified": 0.0,
+              "cross_sample": 0.0,
+              "k2_viral": 0.0,
+              "k2_pluspf16": 0.0,
+              "prot_viral": 0.013,
+              "prot_sprot": 0.0175
+            },
+            "tier1_removed": 0.0175,
+            "survives_tier1": 0.9825,
+            "survivor_maps_unidentified_contig": 0.0,
+            "protein_bitscore_of_best_hit": {
+              "n": 2987,
+              "min": 25.4,
+              "median": 31.2,
+              "max": 53.9
+            },
+            "protein_pident_of_best_hit": {
+              "n": 2987,
+              "min": 27.3,
+              "median": 53.8,
+              "max": 83.3
+            }
+          },
+          "ladder_on_survivors": {
+            "n": 500,
+            "gc": {
+              "mean": 0.4702612,
+              "min": 0.3224,
+              "max": 0.5841,
+              "sd": 0.04652491536865081,
+              "n": 500
+            },
+            "entropy3": {
+              "mean": 0.9005186,
+              "min": 0.8512,
+              "max": 0.937,
+              "sd": 0.015133292673250871,
+              "n": 500
+            },
+            "longest_orf_aa": {
+              "mean": 72,
+              "min": 72,
+              "max": 72,
+              "sd": 0.0,
+              "n": 500
+            },
+            "frame_identifiable_frac": 0.0,
+            "kmer16_duplicate_frac": {
+              "mean": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "sd": 0.0,
+              "n": 500
+            },
+            "CpG_oe": {
+              "mean": 0.8313192,
+              "min": 0.2801,
+              "max": 1.4931,
+              "sd": 0.22664965148969632,
+              "n": 500
+            },
+            "UpA_oe": {
+              "mean": 0.8807504,
+              "min": 0.3692,
+              "max": 1.3475,
+              "sd": 0.18753072624616166,
+              "n": 500
+            },
+            "fold_z": {
+              "mean": -0.21816,
+              "min": -4.224,
+              "max": 2.712,
+              "sd": 0.7727196501419068,
+              "n": 500
+            }
+          }
+        },
+        "NC_038311.1": {
+          "survival": {
+            "pairs": 2000,
+            "removed_by_tier": {
+              "rrna": 0.0,
+              "selfasm_identified": 0.0,
+              "selfasm_unidentified": 0.0,
+              "cross_sample": 0.0,
+              "k2_viral": 0.0,
+              "k2_pluspf16": 0.0,
+              "prot_viral": 0.0,
+              "prot_sprot": 0.0
+            },
+            "tier1_removed": 0.0,
+            "survives_tier1": 1.0,
+            "survivor_maps_unidentified_contig": 0.0,
+            "protein_bitscore_of_best_hit": {
+              "n": 2755,
+              "min": 24.6,
+              "median": 29.3,
+              "max": 45.1
+            },
+            "protein_pident_of_best_hit": {
+              "n": 2755,
+              "min": 29.4,
+              "median": 52.2,
+              "max": 90.0
+            }
+          },
+          "ladder_on_survivors": {
+            "n": 500,
+            "gc": {
+              "mean": 0.4149066,
+              "min": 0.3178,
+              "max": 0.514,
+              "sd": 0.03962528969745476,
+              "n": 500
+            },
+            "entropy3": {
+              "mean": 0.895091,
+              "min": 0.847,
+              "max": 0.9396,
+              "sd": 0.01543267942349535,
+              "n": 500
+            },
+            "longest_orf_aa": {
+              "mean": 72,
+              "min": 72,
+              "max": 72,
+              "sd": 0.0,
+              "n": 500
+            },
+            "frame_identifiable_frac": 0.0,
+            "kmer16_duplicate_frac": {
+              "mean": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "sd": 0.0,
+              "n": 500
+            },
+            "CpG_oe": {
+              "mean": 0.9271538,
+              "min": 0.2635,
+              "max": 1.887,
+              "sd": 0.2856941981126506,
+              "n": 500
+            },
+            "UpA_oe": {
+              "mean": 0.9416278,
+              "min": 0.5088,
+              "max": 1.5559,
+              "sd": 0.18690926020467932,
+              "n": 500
+            },
+            "fold_z": {
+              "mean": -0.021050000000000003,
+              "min": -6.222,
+              "max": 3.189,
+              "sd": 0.9276585126716967,
+              "n": 500
+            }
+          }
+        }
+      }
+    }
+  ],
+  "background_ladder": {
+    "n": 500,
+    "gc": {
+      "mean": 0.4937628,
+      "min": 0.2626,
+      "max": 0.74,
+      "sd": 0.07412660442193647,
+      "n": 500
+    },
+    "entropy3": {
+      "mean": 0.8811032,
+      "min": 0.3671,
+      "max": 0.9412,
+      "sd": 0.04132562891197108,
+      "n": 500
+    },
+    "longest_orf_aa": {
+      "mean": 66.19,
+      "min": 19,
+      "max": 67,
+      "sd": 4.085987099975026,
+      "n": 500
+    },
+    "frame_identifiable_frac": 0.0,
+    "kmer16_duplicate_frac": {
+      "mean": 0.0028269999999999997,
+      "min": 0.0,
+      "max": 0.568,
+      "sd": 0.030240356633787855,
+      "n": 500
+    },
+    "CpG_oe": {
+      "mean": 0.9422554,
+      "min": 0.0,
+      "max": 1.8781,
+      "sd": 0.29973598340930085,
+      "n": 500
+    },
+    "UpA_oe": {
+      "mean": 0.8732848,
+      "min": 0.0,
+      "max": 2.2915,
+      "sd": 0.26931774279115783,
+      "n": 500
+    },
+    "fold_z": {
+      "mean": -0.497828,
+      "min": -4.941,
+      "max": 1.563,
+      "sd": 0.9931389310104489,
+      "n": 500
+    }
+  },
+  "abundance_at_real_rate": {
+    "real_rate": 1e-06,
+    "library_pairs_in_sketch": 400000,
+    "spike_pairs_in_sketch": 1,
+    "spike_median_31mer_count": {
+      "mean": 17,
+      "min": 17,
+      "max": 17,
+      "sd": 0.0,
+      "n": 1
+    },
+    "note": "a spike at this rate recurs about as often as a sequencing singleton, which is the field's limit rather than its failure"
+  },
+  "one_in_a_million_arithmetic": {
+    "run_pairs": 8731224,
+    "expected_spike_pairs_in_run": 8.731224,
+    "note": "per-read survival from the rungs above times this expectation gives the expected number of surviving spike pairs in one run; nothing here was measured at this rate directly"
+  },
+  "wall_seconds": 443.51809092499934
+}

@@ -1,0 +1,19 @@
+{
+  "instance_id": "i-02e76104598299792",
+  "commit": "4b96914bd8aa0607798ab294c1cf0ad6604dfdc5",
+  "shipped_dirty": false,
+  "wider_tree_dirty": false,
+  "instance_type": "c6i.2xlarge",
+  "query_set": "s1-5",
+  "query_run": "SRR23973193",
+  "subjects": 0,
+  "budget_hours": 4.0,
+  "volume_gb": 150,
+  "spot": false,
+  "hard_stop_minutes": 300,
+  "projected_usd": 1.78,
+  "sra_toolkit": "3.1.1",
+  "launched": "2026-11-21T09:35:59Z",
+  "results_prefix": "s3://amazebio-corpora-897641797669/corpora/results/hapax-bigindex/results/recurrence/i-02e76104598299792/",
+  "logs_prefix": "s3://amazebio-corpora-897641797669/corpora/results/hapax-bigindex/logs/recurrence-i-02e76104598299792/"
+}

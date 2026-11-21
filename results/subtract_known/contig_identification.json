@@ -1,0 +1,131 @@
+{
+  "contigs_file": "/home/user/hapax/data/geo/sample_contigs.fa",
+  "contigs": 82947,
+  "bases": 29771358,
+  "operating_point": {
+    "kraken2_confidence": 0.1,
+    "diamond_bitscore": 50.0,
+    "kraken2_db": "k2_pluspf16",
+    "protein_dbs": [
+      "sprot",
+      "uniref50_10pct"
+    ]
+  },
+  "kraken2_confidence_sweep": {
+    "0.00": 0.1756663893811711,
+    "0.05": 0.10759882816738399,
+    "0.10": 0.07344448864937853,
+    "0.20": 0.02852423836907905
+  },
+  "protein_bitscore_sweep": {
+    "sprot": {
+      "30": 0.36839186468467816,
+      "40": 0.14333248942095556,
+      "50": 0.10680313935404535,
+      "60": 0.08266724534944,
+      "80": 0.05176799643145623,
+      "100": 0.03589038783801705
+    },
+    "uniref50_10pct": {
+      "30": 0.8298431528566435,
+      "40": 0.3738772951402703,
+      "50": 0.27231846841959323,
+      "60": 0.2041303482946942,
+      "80": 0.11620673442077471,
+      "100": 0.07070780136713806
+    }
+  },
+  "identified_frac": 0.34776423499342957,
+  "identified_bases_frac": 0.49132041608582316,
+  "route_nucleotide_only": 0.05728959456038193,
+  "route_protein_only": 0.2630354322639758,
+  "all": {
+    "contigs": 82947,
+    "bases": 29771358,
+    "len_median": 248,
+    "len_p90": 568,
+    "len_max": 10133,
+    "cov_median": 1.271429,
+    "frac_over_500nt": 0.1238622252763813,
+    "frac_over_2x": 0.2855317250774591,
+    "frac_over_500nt_and_2x": 0.07229917899381533
+  },
+  "identified": {
+    "contigs": 28846,
+    "bases": 14627276,
+    "len_median": 271.0,
+    "len_p90": 1037,
+    "len_max": 10133,
+    "cov_median": 1.7030775,
+    "frac_over_500nt": 0.22876655342161825,
+    "frac_over_2x": 0.4402343479165222,
+    "frac_over_500nt_and_2x": 0.1460514456077099
+  },
+  "rrna_contigs": {
+    "contigs": 3637,
+    "bases": 1172785,
+    "len_median": 223,
+    "len_p90": 632,
+    "len_max": 7269,
+    "cov_median": 44.706745,
+    "frac_over_500nt": 0.13885070112730272,
+    "frac_over_2x": 0.8625240582897993,
+    "frac_over_500nt_and_2x": 0.1372009898267803
+  },
+  "rrna_contig_frac": 0.04384727597140343,
+  "rrna_bases_frac": 0.039393063628471364,
+  "identified_excluding_rrna": {
+    "contigs": 25209,
+    "bases": 13454491,
+    "len_median": 280,
+    "len_p90": 1112,
+    "len_max": 10133,
+    "cov_median": 1.504098,
+    "frac_over_500nt": 0.24173906144630886,
+    "frac_over_2x": 0.3793089769526756,
+    "frac_over_500nt_and_2x": 0.1473283351184101
+  },
+  "unidentified": {
+    "contigs": 54101,
+    "bases": 15144082,
+    "len_median": 241,
+    "len_p90": 431,
+    "len_max": 6010,
+    "cov_median": 1.159574,
+    "frac_over_500nt": 0.0679285040941942,
+    "frac_over_2x": 0.20304615441489066,
+    "frac_over_500nt_and_2x": 0.03297536089905917
+  },
+  "tier2_population": {
+    "contigs": 46157,
+    "bases": 14293591,
+    "len_median": 254,
+    "len_p90": 458,
+    "len_max": 6010,
+    "cov_median": 1.12426,
+    "frac_over_500nt": 0.07961955933011244,
+    "frac_over_2x": 0.13631735164763742,
+    "frac_over_500nt_and_2x": 0.03865069220269948
+  },
+  "tier2_min_len": 200,
+  "files": {
+    "identified": "/home/user/hapax/data/geo/sample_contigs_identified.fa",
+    "identified_excluding_rrna": "/home/user/hapax/data/geo/sample_contigs_identified_norrna.fa",
+    "rrna_contigs": "/home/user/hapax/data/geo/sample_contigs_rrna.fa",
+    "unidentified_tier2": "/home/user/hapax/data/geo/sample_contigs_unidentified.fa"
+  },
+  "index_bytes": {
+    "kraken2": 16000000032,
+    "sprot": 294430316,
+    "uniref50_10pct": 1823091927
+  },
+  "timings_seconds": {
+    "silva_contigs": 8.153510073999769,
+    "kraken2_conf0.0": 29.430791666000005,
+    "kraken2_conf0.05": 19.94467688399982,
+    "kraken2_conf0.1": 18.666494523999972,
+    "kraken2_conf0.2": 17.35475351900004,
+    "diamond_sprot": 114.61693712799979,
+    "diamond_uniref50_10pct": 603.9622156240002
+  }
+}

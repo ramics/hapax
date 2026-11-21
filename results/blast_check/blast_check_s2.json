@@ -1,0 +1,725 @@
+{
+  "seed": 2,
+  "pairs_labelled": 20000,
+  "class_sizes_in_block": {
+    "rrna": 7554,
+    "public_nucleotide": 509,
+    "selfasm_identified": 6947,
+    "residue_assembled": 1778,
+    "residue_missing": 3212
+  },
+  "class_fracs_in_block": {
+    "rrna": 0.3777,
+    "public_nucleotide": 0.02545,
+    "selfasm_identified": 0.34735,
+    "residue_assembled": 0.0889,
+    "residue_missing": 0.1606
+  },
+  "tier2_contig_candidates": 1784,
+  "sampled_per_class": {
+    "rrna": 60,
+    "public_nucleotide": 60,
+    "selfasm_identified": 60,
+    "residue_assembled": 60,
+    "residue_missing": 60,
+    "tier2_contigs": 60
+  },
+  "blast": {
+    "blastn": {
+      "database": "nt",
+      "per_class": {
+        "rrna": {
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 60,
+          "any_hit_frac": 1.0,
+          "any_hit_ci95": [
+            0.9398,
+            1.0
+          ],
+          "pident": {
+            "n": 60,
+            "min": 83.93,
+            "p25": 99.02,
+            "median": 99.07,
+            "p75": 100.0,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 60,
+            "min": 0.5333,
+            "p25": 0.9811,
+            "median": 0.9907,
+            "p75": 1.0,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "uncultured bacterium",
+              9
+            ],
+            [
+              "Zoogloea resiniphila",
+              4
+            ],
+            [
+              "uncultured organism",
+              2
+            ],
+            [
+              "Acinetobacter calcoaceticus",
+              2
+            ],
+            [
+              "Aliarcobacter cryaerophilus",
+              2
+            ],
+            [
+              "Thauera aminoaromatica",
+              2
+            ],
+            [
+              "Pseudomonadota bacterium",
+              2
+            ],
+            [
+              "Flavobacterium sp. IMCC34518",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 60,
+            "min": 56,
+            "p25": 104,
+            "median": 106,
+            "p75": 107,
+            "max": 108
+          },
+          "bitscore": {
+            "n": 60,
+            "min": 61.6992,
+            "p25": 181.623,
+            "median": 187.935,
+            "p75": 190.64,
+            "max": 194.247
+          },
+          "top_titles": [
+            [
+              "Zoogloea resiniphila isolate ena-SAMPLE-TAB-29-06-2026-11:56:32:076-476338 genome assembly",
+              4
+            ],
+            [
+              "Acinetobacter calcoaceticus strain SDH15 chromosome, complete genome",
+              2
+            ],
+            [
+              "Thauera sp. MZ1T, complete genome",
+              2
+            ],
+            [
+              "Uncultured organism clone UniqueSequence174 23S ribosomal RNA gene, partial sequence",
+              1
+            ],
+            [
+              "Flavobacterium sp. IMCC34518 chromosome, complete genome",
+              1
+            ],
+            [
+              "Fusobacterium polymorphum strain KCOM1271 chromosome, complete genome",
+              1
+            ]
+          ],
+          "strong_hit_frac": 0.8833333333333333,
+          "strong_hit_ci95": [
+            0.7782,
+            0.9423
+          ],
+          "pident_x_qcov": {
+            "n": 60,
+            "min": 0.44759869,
+            "p25": 0.9626,
+            "median": 0.9813,
+            "p75": 0.9906999999999999,
+            "max": 1.0
+          }
+        },
+        "public_nucleotide": {
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 60,
+          "any_hit_frac": 1.0,
+          "any_hit_ci95": [
+            0.9398,
+            1.0
+          ],
+          "pident": {
+            "n": 60,
+            "min": 95.24,
+            "p25": 100.0,
+            "median": 100.0,
+            "p75": 100.0,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 60,
+            "min": 0.4828,
+            "p25": 0.9626,
+            "median": 0.9907,
+            "p75": 1.0,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "Tomato brown rugose fruit virus",
+              30
+            ],
+            [
+              "Cucumber green mottle mosaic virus",
+              5
+            ],
+            [
+              "Pepper mild mottle virus",
+              4
+            ],
+            [
+              "Acinetobacter nectaris",
+              3
+            ],
+            [
+              "uncultured bacterium",
+              2
+            ],
+            [
+              "Pinus tabuliformis",
+              1
+            ],
+            [
+              "Acinetobacter variabilis",
+              1
+            ],
+            [
+              "Acinetobacter johnsonii",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 60,
+            "min": 42,
+            "p25": 103,
+            "median": 106,
+            "p75": 107,
+            "max": 107
+          },
+          "bitscore": {
+            "n": 60,
+            "min": 77.0278,
+            "p25": 185.23,
+            "median": 190.64,
+            "p75": 194.247,
+            "max": 194.247
+          },
+          "top_titles": [
+            [
+              "Tomato brown rugose fruit virus isolate S90_ToBRFV, complete genome",
+              15
+            ],
+            [
+              "Pepper mild mottle virus 126 kDa protein and 183 kDa protein genes, partial cds",
+              3
+            ],
+            [
+              "Tomato brown rugose fruit virus isolate S64_ToBRFV, complete genome",
+              3
+            ],
+            [
+              "Acinetobacter nectaris UT841 DNA, complete genome",
+              3
+            ],
+            [
+              "Tomato brown rugose fruit virus isolate S74_ToBRFV, complete genome",
+              2
+            ],
+            [
+              "Tomato brown rugose fruit virus isolate NX_HSB, complete genome",
+              2
+            ]
+          ],
+          "strong_hit_frac": 0.9666666666666667,
+          "strong_hit_ci95": [
+            0.8864,
+            0.9908
+          ],
+          "pident_x_qcov": {
+            "n": 60,
+            "min": 0.4828,
+            "p25": 0.9623,
+            "median": 0.9904999999999999,
+            "p75": 1.0,
+            "max": 1.0
+          }
+        },
+        "selfasm_identified": {
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 55,
+          "any_hit_frac": 0.9166666666666666,
+          "any_hit_ci95": [
+            0.8193,
+            0.9639
+          ],
+          "pident": {
+            "n": 55,
+            "min": 78.5,
+            "p25": 87.18,
+            "median": 96.3,
+            "p75": 100.0,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 55,
+            "min": 0.2243,
+            "p25": 0.2804,
+            "median": 0.4112,
+            "p75": 0.9904,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "Picornavirales sp.",
+              9
+            ],
+            [
+              "Cucumber green mottle mosaic virus",
+              2
+            ],
+            [
+              "Hepelivirales sp.",
+              2
+            ],
+            [
+              "Tomato brown rugose fruit virus",
+              2
+            ],
+            [
+              "Terriglobales bacterium",
+              2
+            ],
+            [
+              "Candidatus Poribacteria bacterium",
+              1
+            ],
+            [
+              "Trichoplusia ni",
+              1
+            ],
+            [
+              "Micromonospora schwarzwaldensis",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 55,
+            "min": 24,
+            "p25": 30,
+            "median": 44,
+            "p75": 105,
+            "max": 107
+          },
+          "bitscore": {
+            "n": 55,
+            "min": 42.7638,
+            "p25": 45.4688,
+            "median": 49.9773,
+            "p75": 180.721,
+            "max": 194.247
+          },
+          "top_titles": [
+            [
+              "MAG: Picornavirales sp. isolate HPLV-59 genomic sequence",
+              3
+            ],
+            [
+              "MAG: Picornavirales sp. isolate HPLV-55 genomic sequence",
+              2
+            ],
+            [
+              "Hepelivirales sp. strain MR644-18E/449 nonstructural polyprotein and putative structural p",
+              2
+            ],
+            [
+              "MAG: Picornavirales sp. isolate HPLV-54 genomic sequence",
+              2
+            ],
+            [
+              "Cucumber green mottle mosaic virus strain MR644-18E/367 nonstructural polyprotein p183, no",
+              1
+            ],
+            [
+              "MAG: Candidatus Poribacteria bacterium genome assembly, chromosome: 1",
+              1
+            ]
+          ],
+          "strong_hit_frac": 0.3,
+          "strong_hit_ci95": [
+            0.199,
+            0.4251
+          ],
+          "pident_x_qcov": {
+            "n": 55,
+            "min": 0.2243,
+            "p25": 0.26416080000000003,
+            "median": 0.34577808,
+            "p75": 0.9533,
+            "max": 1.0
+          }
+        },
+        "residue_assembled": {
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 51,
+          "any_hit_frac": 0.85,
+          "any_hit_ci95": [
+            0.7389,
+            0.919
+          ],
+          "pident": {
+            "n": 51,
+            "min": 80.77,
+            "p25": 88.06,
+            "median": 93.1,
+            "p75": 98.1,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 51,
+            "min": 0.2243,
+            "p25": 0.271,
+            "median": 0.3271,
+            "p75": 0.4766,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "Hepelivirales sp.",
+              6
+            ],
+            [
+              "Leviviridae sp.",
+              2
+            ],
+            [
+              "Fibrobacterota bacterium",
+              1
+            ],
+            [
+              "Vitis vinifera",
+              1
+            ],
+            [
+              "Mus musculus",
+              1
+            ],
+            [
+              "Tepidisphaeraceae bacterium",
+              1
+            ],
+            [
+              "Serratia marcescens",
+              1
+            ],
+            [
+              "Castellaniella ginsengisoli",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 51,
+            "min": 24,
+            "p25": 29,
+            "median": 35,
+            "p75": 52,
+            "max": 107
+          },
+          "bitscore": {
+            "n": 51,
+            "min": 44.5672,
+            "p25": 44.5672,
+            "median": 46.3705,
+            "p75": 55.3874,
+            "max": 189.738
+          },
+          "top_titles": [
+            [
+              "Hepelivirales sp. strain MR644-18E/449 nonstructural polyprotein and putative structural p",
+              6
+            ],
+            [
+              "MAG: Leviviridae sp. isolate 142-k141_332400 RNA dependent RNA polymerase gene, partial cd",
+              2
+            ],
+            [
+              "Fibrobacteres bacterium isolate Fred_18-Q3-R57-64_MAXAC.109_cln chromosome, complete genom",
+              1
+            ],
+            [
+              "Vitis vinifera contig VV78X119013.4, whole genome shotgun sequence",
+              1
+            ],
+            [
+              "Mus musculus strain C57BL/6J chromosome 10 clone rp23-395k5, complete sequence",
+              1
+            ],
+            [
+              "MAG: Tepidisphaeraceae bacterium isolate MFD15122.bin.s.154 genome assembly, chromosome: 1",
+              1
+            ]
+          ],
+          "strong_hit_frac": 0.11666666666666667,
+          "strong_hit_ci95": [
+            0.0577,
+            0.2218
+          ],
+          "pident_x_qcov": {
+            "n": 51,
+            "min": 0.2243,
+            "p25": 0.252301,
+            "median": 0.29075919,
+            "p75": 0.392532,
+            "max": 0.9906999999999999
+          }
+        },
+        "residue_missing": {
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 53,
+          "any_hit_frac": 0.8833333333333333,
+          "any_hit_ci95": [
+            0.7782,
+            0.9423
+          ],
+          "pident": {
+            "n": 53,
+            "min": 77.97,
+            "p25": 84.48,
+            "median": 89.74,
+            "p75": 93.55,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 53,
+            "min": 0.2523,
+            "p25": 0.3069,
+            "median": 0.3774,
+            "p75": 0.6304,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "Caudoviricetes sp.",
+              2
+            ],
+            [
+              "Timema shepardi",
+              2
+            ],
+            [
+              "Picornavirales sp.",
+              2
+            ],
+            [
+              "Acidobacteriota bacterium",
+              2
+            ],
+            [
+              "Telopea speciosissima",
+              1
+            ],
+            [
+              "Hepelivirales sp.",
+              1
+            ],
+            [
+              "Promicromonospora sp. CA-294714",
+              1
+            ],
+            [
+              "Janthinobacterium sp. 1_2014MBL_MicDiv",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 53,
+            "min": 27,
+            "p25": 32,
+            "median": 40,
+            "p75": 59,
+            "max": 107
+          },
+          "bitscore": {
+            "n": 53,
+            "min": 40.9604,
+            "p25": 46.3705,
+            "median": 49.9773,
+            "p75": 59.8958,
+            "max": 189.738
+          },
+          "top_titles": [
+            [
+              "2_Tsi_b3v08",
+              2
+            ],
+            [
+              "MAG: Acidobacteriota bacterium isolate MFD15054.bin.c.228 genome assembly, chromosome: 1",
+              2
+            ],
+            [
+              "PREDICTED: Telopea speciosissima GDSL esterase/lipase At5g62930 (LOC122657120), mRNA",
+              1
+            ],
+            [
+              "Hepelivirales sp. strain MR233-17E/11756 nonstructural polyprotein and hypothetical protei",
+              1
+            ],
+            [
+              "MAG: Caudoviricetes sp. isolate KCR_vOTU_07987 genomic sequence",
+              1
+            ],
+            [
+              "Promicromonospora sp. CA-294714 chromosome, complete genome",
+              1
+            ]
+          ],
+          "strong_hit_frac": 0.06666666666666667,
+          "strong_hit_ci95": [
+            0.0262,
+            0.1593
+          ],
+          "pident_x_qcov": {
+            "n": 53,
+            "min": 0.2429649,
+            "p25": 0.28036644,
+            "median": 0.330225,
+            "p75": 0.52693484,
+            "max": 0.9906999999999999
+          }
+        },
+        "tier2_contigs": {
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 59,
+          "any_hit_frac": 0.9833333333333333,
+          "any_hit_ci95": [
+            0.9114,
+            0.9971
+          ],
+          "pident": {
+            "n": 59,
+            "min": 65.18,
+            "p25": 83.67,
+            "median": 87.5,
+            "p75": 91.67,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 59,
+            "min": 0.025,
+            "p25": 0.0474,
+            "median": 0.0613,
+            "p75": 0.0949,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "Acidobacteriota bacterium",
+              2
+            ],
+            [
+              "Actinomycetes bacterium",
+              2
+            ],
+            [
+              "Deltaproteobacteria bacterium",
+              1
+            ],
+            [
+              "Aleucis distinctata",
+              1
+            ],
+            [
+              "Gulo gulo luscus",
+              1
+            ],
+            [
+              "Felis catus",
+              1
+            ],
+            [
+              "Octadecabacter temperatus",
+              1
+            ],
+            [
+              "Dehalococcoidia bacterium",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 59,
+            "min": 25,
+            "p25": 36,
+            "median": 42,
+            "p75": 59,
+            "max": 1860
+          },
+          "bitscore": {
+            "n": 59,
+            "min": 46.3705,
+            "p25": 48.1739,
+            "median": 50.8789,
+            "p75": 57.1907,
+            "max": 3122.02
+          },
+          "top_titles": [
+            [
+              "MAG: Acidobacteriota bacterium isolate MFD15043.bin.2.861 genome assembly, chromosome: 1",
+              1
+            ],
+            [
+              "MAG: Deltaproteobacteria bacterium isolate MFD15008.bin.c.120 genome assembly, chromosome:",
+              1
+            ],
+            [
+              "Aleucis distinctata genome assembly, chromosome: 11",
+              1
+            ],
+            [
+              "Gulo gulo luscus MACROD2 (MACROD2) gene, complete cds",
+              1
+            ],
+            [
+              "Felis catus clone RP86-523H23, complete sequence",
+              1
+            ],
+            [
+              "Octadecabacter temperatus strain SB1, complete genome",
+              1
+            ]
+          ],
+          "strong_hit_frac": 0.1,
+          "strong_hit_ci95": [
+            0.0466,
+            0.2015
+          ],
+          "pident_x_qcov": {
+            "n": 59,
+            "min": 0.0241675,
+            "p25": 0.04311105,
+            "median": 0.05531712,
+            "p75": 0.07831484999999999,
+            "max": 1.0
+          }
+        }
+      }
+    }
+  },
+  "wall_seconds": 1386.0029104900023
+}

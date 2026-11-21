@@ -1,0 +1,32 @@
+=== SRR23973193.1528013/1  (high_identity)
+    subject OZ582909  [Floronia bucculenta]  genomic
+    Floronia bucculenta genome assembly, chromosome: 3
+    match 31 nt at 100.0%, read 10-40 of 106, subject 20890325-20890295 (minus), 20890294 nt of record past the match
+  read GCAAATATTATTATTAGAAATGGATAAATAA
+       |||||||||||||||||||||||||||||||
+  subj GCAAATATTATTATTAGAAATGGATAAATAA
+
+=== SRR23973193.3095257/1  (ordinary)
+    subject CP050260  [Pseudomonas coronafaciens]  genomic
+    Pseudomonas coronafaciens strain X-1 chromosome, complete genome
+    match 42 nt at 83.3%, read 26-67 of 107, subject 4699204-4699163 (minus), 4699162 nt of record past the match
+  read GCGACGGCAATTGAGACCGTCACAGGTTTTTCCACAGTACCG
+       ||||| || || | ||||||||||| ||| ||||| ||||||
+  subj GCGACAGCGATGGCGACCGTCACAGCTTTCTCCACCGTACCG
+
+=== SRR23973193.4573598/1  (ordinary)
+    subject AC183832  [Pan troglodytes]  genomic
+    Pan troglodytes BAC clone CH251-260G12 from chromosome 7, complete sequence
+    match 34 nt at 91.2%, read 37-69 of 106, subject 119680-119713 (plus), 59299 nt of record past the match
+  read GAATCACATCACCTGTAAGC-GAGCCGAGGAATA
+       ||||||||||||||||| || ||||| |||||||
+  subj GAATCACATCACCTGTATGCTGAGCCCAGGAATA
+
+=== SRR23973193.6058298/1  (ordinary)
+    subject CP174285  [Microbulbifer mixtoriginis (SeqCode)]  genomic
+    Microbulbifer mixtoriginis (SeqCode) strain PSTR4-B chromosome, complete genome
+    match 54 nt at 83.3%, read 16-69 of 106, subject 2666520-2666470 (minus), 2666469 nt of record past the match
+  read TGTCGAATGTGTTATTTGTTATGTGTCAGCATGTGTTAGTTGTTATTTGTTATT
+       ||| |||| ||||||||||||| |||    || ||||| |||||||||||||||
+  subj TGTAGAATTTGTTATTTGTTATTTGT---TATTTGTTATTTGTTATTTGTTATT
+

@@ -1,0 +1,353 @@
+<title>Subtract the Known</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one vertical scroll of stacked panels; each panel is a measurement, labelled with the index that produced it. */
+:root {
+  --bg: #f6f5f2;
+  --panel: #fffefb;
+  --ink: #16150f;
+  --ink-soft: #5d5a4e;
+  --rule: #d8d4c6;
+  --known: #7a8b6f;      /* removed: the known */
+  --known-soft: #c3cdb9;
+  --self: #c2762f;        /* the sample's own assembly */
+  --residue: #2f4f6b;     /* what survives */
+  --residue-soft: #9fb6c9;
+  --dead: #a33b3b;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12130f;
+    --panel: #1b1d18;
+    --ink: #eceadf;
+    --ink-soft: #a0a093;
+    --rule: #333528;
+    --known: #9fb48f;
+    --known-soft: #4a5742;
+    --self: #e09a53;
+    --residue: #7fb0d6;
+    --residue-soft: #35505f;
+    --dead: #e07a7a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12130f; --panel: #1b1d18; --ink: #eceadf; --ink-soft: #a0a093; --rule: #333528;
+  --known: #9fb48f; --known-soft: #4a5742; --self: #e09a53; --residue: #7fb0d6;
+  --residue-soft: #35505f; --dead: #e07a7a; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-sans);
+  font-size: 16px; line-height: 1.55; margin: 0;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 4rem;
+}
+.wrap { max-width: 1080px; margin: 0 auto; }
+h1 { font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.02; margin: 0 0 .6rem; letter-spacing: -.02em; text-wrap: balance; }
+h2 { font-size: clamp(1.15rem, 2.4vw, 1.5rem); margin: 0 0 .35rem; letter-spacing: -.01em; }
+h3 { font-size: .95rem; margin: 0 0 .3rem; }
+p { margin: 0 0 .8rem; max-width: 68ch; }
+.lede { font-size: clamp(1rem, 1.9vw, 1.2rem); color: var(--ink-soft); max-width: 60ch; }
+.eyebrow { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 .5rem; }
+header.hero { padding-block: 3.2rem 2rem; border-bottom: 1px solid var(--rule); }
+section { padding-block: 2.4rem; border-bottom: 1px solid var(--rule); }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.grid { display: grid; gap: 1.2rem; }
+@media (min-width: 760px) { .cols-2 { grid-template-columns: 1fr 1fr; } .cols-3 { grid-template-columns: repeat(3, 1fr); } }
+.card { background: var(--panel); border: 1px solid var(--rule); border-radius: 3px; padding: 1rem 1.1rem; min-width: 0; }
+.fig { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: clamp(1.6rem, 4vw, 2.3rem); line-height: 1; letter-spacing: -.02em; }
+.fig small { font-size: .42em; letter-spacing: 0; color: var(--ink-soft); }
+.note { font-size: .85rem; color: var(--ink-soft); max-width: 62ch; }
+.scroller { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .87rem; }
+th, td { text-align: left; padding: .4rem .5rem; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); font-weight: 500; }
+td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; }
+.bar { height: .55rem; background: var(--known-soft); border-radius: 1px; position: relative; overflow: hidden; }
+.bar > span { position: absolute; inset: 0 auto 0 0; background: var(--known); }
+.pill { display: inline-block; font-family: var(--font-mono); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; padding: .12rem .45rem; border: 1px solid currentColor; border-radius: 2px; }
+.pill.live { color: var(--known); }
+.pill.dead { color: var(--dead); }
+.pill.limit { color: var(--self); }
+svg { display: block; width: 100%; height: auto; max-width: 100%; }
+figcaption { font-size: .82rem; color: var(--ink-soft); margin-top: .5rem; max-width: 66ch; }
+ul { margin: 0 0 .8rem; padding-left: 1.1rem; max-width: 66ch; }
+li { margin-bottom: .3rem; }
+.kicker { color: var(--self); font-weight: 600; }
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <p class="eyebrow">Berlin wastewater · SRR23973193 · 5 seeds × 100,000 read pairs</p>
+  <h1>Subtract the known,<br>score the unknown</h1>
+  <p class="lede">Every index is priced in bytes. The cheapest index in the cascade is the sample's own assembly, and it removes more of this library than 16 GB of public reference does.</p>
+</header>
+<div id="app"></div>
+</div>
+
+<script>
+const D = /*HAPAX_DATA*/null/*END*/;
+const pct = (x, d = 2) => x.toFixed(d) + "%";
+const el = (h) => { const t = document.createElement("template"); t.innerHTML = h.trim(); return t.content; };
+
+function cascade() {
+  const rows = D.cascade.map(r => `<tr>
+    <td>${r.tier}</td>
+    <td class="num">${r.gb < 0.01 ? r.gb.toFixed(3) : r.gb.toFixed(2)}</td>
+    <td class="num">${r.alone.toFixed(2)}</td>
+    <td class="num"><strong>${r.marginal.toFixed(2)}</strong></td>
+    <td class="num">${r.cumulative.toFixed(2)}</td>
+    <td style="width:22%"><div class="bar"><span style="width:${r.cumulative}%"></span></div></td>
+  </tr>`).join("");
+  return `<section>
+    <p class="eyebrow">01 · the cascade</p>
+    <h2>What each index removes, cheapest first</h2>
+    <p>Tiers run independently, so the table reads three ways: alone, as a union, and as what the next index adds in this order. Thresholds are swept, not fixed; the operating point here is ≥40 matching bases for alignment, Kraken2 confidence 0.1, DIAMOND bitscore ≥50.</p>
+    <div class="scroller"><table>
+      <thead><tr><th>index</th><th class="num">GB</th><th class="num">alone %</th><th class="num">marginal %</th><th class="num">cumulative %</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+    <p class="note">Union ${pct(D.union.mean)} of read pairs (${pct(D.union.min)}–${pct(D.union.max)} across seeds). Percentages are of read pairs — the occurrence-weighted unit — never averages over distinct k-mers, which for conserved sequence differ by two orders of magnitude.</p>
+  </section>`;
+}
+
+function efficiency() {
+  // The artefact tier is excluded: it needs no index at all, so removal per gigabyte is
+  // a division by ~zero and would set the scale for every other row.
+  const pts = D.cascade.filter(r => r.gb > 0.001).map(r => ({ ...r, perGB: r.marginal / r.gb }));
+  const max = Math.max(...pts.map(p => p.perGB));
+  const rows = pts.sort((a, b) => b.perGB - a.perGB).map(p => `<tr>
+    <td>${p.tier}</td><td class="num">${p.gb < 0.01 ? p.gb.toFixed(3) : p.gb.toFixed(2)}</td>
+    <td class="num">${p.perGB >= 100 ? Math.round(p.perGB) : p.perGB.toFixed(1)}</td>
+    <td style="width:40%"><div class="bar"><span style="width:${Math.max(0.4, 100 * p.perGB / max)}%;background:${p.self ? "var(--self)" : "var(--known)"}"></span></div></td>
+  </tr>`).join("");
+  return `<section>
+    <p class="eyebrow">02 · efficiency</p>
+    <h2>Removal per gigabyte of index</h2>
+    <p><span class="kicker">The sample's own assembly wins by four orders of magnitude.</span> 1.4 MB of ribosomal contigs assembled from this very sample removes ${pct(D.selfRrnaAlone)} alone — slightly more than all 272 MB of SILVA. Known-to-a-database and known-here are different questions, and the cheap one is the second.</p>
+    <div class="scroller"><table>
+      <thead><tr><th>index</th><th class="num">GB</th><th class="num">marginal % per GB</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+    <p class="note">The artefact tier is left out of this table: it uses no index, so its removal per gigabyte is a division by zero. It removes ${pct(D.cascade[0].marginal)} for free.</p>
+    <p class="note">Thresholds dominate database size: Kraken2 PlusPF-16 removes ${pct(D.thresholds.conf0)} of the library at confidence 0, ${pct(D.thresholds.conf01)} at 0.1 and ${pct(D.thresholds.conf02)} at 0.2 — a factor of twelve inside one database, against a factor of 1.01 between 8 GB and 16 GB at a fixed threshold.</p>
+  </section>`;
+}
+
+function contigs() {
+  const c = D.contigs;
+  const w = 900, h = 120;
+  const total = c.total;
+  const seg = [
+    { label: "identified", n: c.identified, fill: "var(--known)" },
+    { label: "rRNA", n: c.rrna, fill: "var(--known-soft)" },
+    { label: "unidentifiable (tier 2)", n: c.tier2, fill: "var(--residue)" },
+  ];
+  let x = 0;
+  const bars = seg.map(s => {
+    const wd = w * s.n / total; const r = `<rect x="${x.toFixed(1)}" y="0" width="${wd.toFixed(1)}" height="46" fill="${s.fill}"/>`;
+    const tx = x + wd / 2; x += wd;
+    return r + `<text x="${tx.toFixed(1)}" y="70" fill="var(--ink)" font-size="15" font-family="var(--font-mono)" text-anchor="middle">${s.n.toLocaleString()}</text>`
+      + `<text x="${tx.toFixed(1)}" y="92" fill="var(--ink-soft)" font-size="13" text-anchor="middle">${s.label}</text>`;
+  }).join("");
+  return `<section>
+    <p class="eyebrow">03 · the assembly</p>
+    <h2>Contigs: identified, ribosomal, unidentifiable</h2>
+    <figure>
+      <svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Contig split">${bars}</svg>
+      <figcaption>${c.total.toLocaleString()} contigs, ${(c.bases / 1e6).toFixed(1)} Mb, from this sample alone. Identification reverses the read-level picture: protein-only identifies ${pct(100 * c.routeProtein, 1)} of contigs, nucleotide-only ${pct(100 * c.routeNucleotide, 1)}.</figcaption>
+    </figure>
+    <div class="grid cols-3" style="margin-top:1.2rem">
+      <div class="card"><h3>Tier 2 is real but thin</h3><p class="fig">${c.tier2Scorable.toLocaleString()}<small> of ${c.tier2.toLocaleString()}</small></p><p class="note">clear both 500 nt and 2× — the depth where assembly and classification start to work at all. The rest are median ${c.tier2MedianLen} nt at ${c.tier2MedianCov}× coverage.</p></div>
+      <div class="card"><h3>Ribosomal contigs</h3><p class="fig">${pct(100 * c.rrna / c.total, 1)}<small> of contigs</small></p><p class="note">at median ${c.rrnaMedianCov}× against ${c.allMedianCov}× overall. So the sample's-own-assembly step is not ribosomal leakage wearing a different hat.</p></div>
+      <div class="card"><h3>Ordering is a requirement</h3><p class="note">rRNA must be removed with a <em>nucleotide</em> index before any protein index is consulted. Against a large protein index, ribosomal reads stop looking novel faster than anything else — public entries annotated automatically that are really translated ribosomal sequence. Skip the ordering and a third of this library's score measures annotation quality.</p></div>
+    </div>
+  </section>`;
+}
+
+function residue() {
+  const r = D.residue;
+  return `<section>
+    <p class="eyebrow">04 · the residue</p>
+    <h2>What is left, and what it is made of</h2>
+    <div class="grid cols-3">
+      <div class="card"><h3>Residue</h3><p class="fig">${pct(r.total)}</p><p class="note">of read pairs survive every index that fits on this disk.</p></div>
+      <div class="card"><h3>Abundant but unplaceable</h3><p class="fig" style="color:var(--self)">${pct(r.assembled)}</p><p class="note">maps a contig this sample assembled but nothing can identify. Tier 2's read-level population.</p></div>
+      <div class="card"><h3>Genuinely missing</h3><p class="fig" style="color:var(--residue)">${pct(r.missing)}</p><p class="note">nothing in public databases, nothing in this sample's own assembly, nothing in the other 115 samples. Rare <em>and</em> unsequenced.</p></div>
+    </div>
+    <p class="note" style="margin-top:1rem">Subtracting the sample's own data is what turns the residue from <em>merely undeposited</em> into <em>genuinely rare</em>. The catch is that a novel virus at 1 in a million sits on the same side of that feature as the irreducible background — a limit of the architecture, not of the implementation.</p>
+  </section>`;
+}
+
+function blast() {
+  const w = 760, h = 300, pad = { l: 54, r: 14, t: 14, b: 44 };
+  const iw = w - pad.l - pad.r, ih = h - pad.t - pad.b;
+  const X = v => pad.l + iw * v;                      // query coverage 0..1
+  const Y = v => pad.t + ih * (1 - (v - 80) / 22);    // identity 80..102
+  const gx = [0, .25, .5, .75, 1].map(v => `<line x1="${X(v)}" y1="${pad.t}" x2="${X(v)}" y2="${pad.t + ih}" stroke="var(--rule)" stroke-width="1"/><text x="${X(v)}" y="${pad.t + ih + 18}" font-size="11" fill="var(--ink-soft)" text-anchor="middle" font-family="var(--font-mono)">${(v * 100).toFixed(0)}%</text>`).join("");
+  const gy = [80, 85, 90, 95, 100].map(v => `<line x1="${pad.l}" y1="${Y(v)}" x2="${pad.l + iw}" y2="${Y(v)}" stroke="var(--rule)" stroke-width="1"/><text x="${pad.l - 8}" y="${Y(v) + 4}" font-size="11" fill="var(--ink-soft)" text-anchor="end" font-family="var(--font-mono)">${v}</text>`).join("");
+  // Two classes sit on the same point (whole-length alignment at 100% identity), so
+  // labels are nudged apart vertically rather than drawn on top of each other.
+  const used = [];
+  const pts = D.blast.slice().sort((a, b) => b.pident - a.pident).map(b => {
+    const cx = X(b.qcov), cy = Y(b.pident);
+    const anchor = b.qcov > 0.6 ? "end" : "start";
+    const dx = b.qcov > 0.6 ? -11 : 11;
+    let ly = cy + 4;
+    while (used.some(u => Math.abs(u.y - ly) < 15 && Math.abs(u.x - cx) < 150)) ly += 16;
+    used.push({ x: cx, y: ly });
+    const leader = Math.abs(ly - (cy + 4)) > 6
+      ? `<line x1="${cx.toFixed(1)}" y1="${cy.toFixed(1)}" x2="${(cx + dx * 0.55).toFixed(1)}" y2="${(ly - 4).toFixed(1)}" stroke="var(--rule)" stroke-width="1"/>` : "";
+    return `${leader}<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="7" fill="${b.fill}" fill-opacity="0.85" stroke="var(--panel)" stroke-width="1.5"/>
+      <text x="${(cx + dx).toFixed(1)}" y="${ly.toFixed(1)}" font-size="12" fill="var(--ink)" text-anchor="${anchor}">${b.label}</text>`;
+  }).join("");
+  return `<section>
+    <p class="eyebrow">05 · ground truth</p>
+    <h2>An actual BLAST, against a database 70× larger than anything local</h2>
+    <p>60 reads per class, labelled locally by the cascade's own references, submitted to NCBI blastn against core_nt (133 M sequences, 1.1 Tbase). <span class="kicker">The residue is not matchless.</span> 87% of residue reads hit something. What separates the classes is not whether they hit but how much of the read aligns at what identity.</p>
+    <figure>
+      <svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Median identity against median query coverage, by class">
+        ${gx}${gy}${pts}
+        <text x="${pad.l + iw / 2}" y="${h - 6}" font-size="12" fill="var(--ink-soft)" text-anchor="middle">median query coverage</text>
+        <text x="14" y="${pad.t + ih / 2}" font-size="12" fill="var(--ink-soft)" text-anchor="middle" transform="rotate(-90 14 ${pad.t + ih / 2})">median identity (%)</text>
+      </svg>
+      <figcaption>A ribosomal read aligns over its whole length at 100% identity. A residue read aligns over a third of itself at 89% — the distant, partial-homology signature. That is why the per-read report gives closest relative as a continuous field and never thresholds it.</figcaption>
+    </figure>
+  </section>`;
+}
+
+function spike() {
+  if (!D.spike) return "";
+  const w = 760, h = 300, pad = { l: 54, r: 18, t: 16, b: 44 };
+  const iw = w - pad.l - pad.r, ih = h - pad.t - pad.b;
+  const maxd = Math.max(...D.spike.rungs.map(r => r.divergence));
+  const X = v => pad.l + iw * v / maxd;
+  const Y = v => pad.t + ih * (1 - v);
+  const gy = [0, .25, .5, .75, 1].map(v => `<line x1="${pad.l}" y1="${Y(v)}" x2="${pad.l + iw}" y2="${Y(v)}" stroke="var(--rule)"/><text x="${pad.l - 8}" y="${Y(v) + 4}" font-size="11" fill="var(--ink-soft)" text-anchor="end" font-family="var(--font-mono)">${(v * 100).toFixed(0)}%</text>`).join("");
+  const gx = D.spike.rungs.map(r => `<text x="${X(r.divergence)}" y="${pad.t + ih + 18}" font-size="11" fill="var(--ink-soft)" text-anchor="middle" font-family="var(--font-mono)">${(r.divergence * 100).toFixed(0)}%</text>`).join("");
+  const line = (key, color, dash) => {
+    const pts = D.spike.rungs.map(r => `${X(r.divergence).toFixed(1)},${Y(r[key]).toFixed(1)}`).join(" ");
+    const dots = D.spike.rungs.map(r => `<circle cx="${X(r.divergence).toFixed(1)}" cy="${Y(r[key]).toFixed(1)}" r="4" fill="${color}"/>`).join("");
+    return `<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2.5"${dash ? ` stroke-dasharray="${dash}"` : ""}/>${dots}`;
+  };
+  return `<section>
+    <p class="eyebrow">06 · the positive control</p>
+    <h2>How divergent must a virus be before the cascade stops recognising it?</h2>
+    <p>Three real genomes, simulated into this library's measured insert and error profile, then walked away from themselves by uniform substitution. A spike removed at tier 1 by a public database would be a false negative of the whole architecture, so this is the number that matters most.</p>
+    <figure>
+      <svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Spike survival against divergence">
+        ${gy}${gx}
+        ${line("survives_tier1", "var(--residue)")}
+        ${line("tier1_removed", "var(--known)", "5 4")}
+        <text x="${pad.l + iw / 2}" y="${h - 6}" font-size="12" fill="var(--ink-soft)" text-anchor="middle">nucleotide divergence from the deposited genome</text>
+      </svg>
+      <figcaption><span style="color:var(--residue)">■</span> survives tier 1 and reaches the per-read report &nbsp; <span style="color:var(--known)">▦</span> removed as already known. ${D.spike.caption}</figcaption>
+    </figure>
+    <div class="grid cols-2" style="margin-top:1rem">
+      <div class="card"><h3>At 1 in a million</h3><p class="note">${D.spike.arithmetic}</p></div>
+      <div class="card"><h3>Divergence is an ordinal model here</h3><p class="note">Uniform substitution is not how real families differ — selection shapes it, codon structure constrains it, synonymous sites carry most of it. More divergence means less identifiable; the percentage is not a family distance.</p></div>
+    </div>
+  </section>`;
+}
+
+function anatomy() {
+  if (!D.anatomy) return "";
+  const a = D.anatomy;
+  const bar = (v, max, color) => {
+    const w = Math.max(1, (v / max) * 100);
+    return `<div style="height:10px;border-radius:5px;background:${color};width:${w}%"></div>`;
+  };
+  const max = Math.max(...a.categories.map(c => Math.max(c.residue, c.known)));
+  const rows = a.categories.map(c => `<tr>
+    <td>${c.name}</td>
+    <td class="mono">${c.residue.toFixed(2)}%</td>
+    <td style="min-width:90px">${bar(c.residue, max, "var(--residue)")}</td>
+    <td class="mono">${c.known.toFixed(2)}%</td>
+    <td style="min-width:90px">${bar(c.known, max, "var(--known)")}</td>
+  </tr>`).join("");
+  return `<section>
+    <p class="eyebrow">07 · half a match</p>
+    <h2>When part of a sequence matches well and the rest does not</h2>
+    <p><span class="kicker">It is not a chimaera.</span> ${a.seeds} seeds, ${a.contigs.toLocaleString()} unidentifiable contigs of 500 nt and up with the same number of <em>identified</em> contigs as a control. The test that would show a chimaera — does the unmatched piece align to a different molecule assembled in this very sample — fires on a few parts in a thousand of both piles, and if anything more often in the control, where a mis-assembly would be just as visible.</p>
+    <div class="scroller"><table>
+      <thead><tr><th>what the unmatched piece is</th><th colspan="2">unidentifiable</th><th colspan="2">identified (control)</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+    <div class="cards">
+      <div class="card"><h3>The inverted field</h3><p class="note">“Divergent continuation” — the unmatched piece returning weakly to the same protein — fires ${a.categories[1].known.toFixed(1)}% on already-identified contigs against ${a.categories[1].residue.toFixed(1)}% on unidentifiable ones. You only see a weak continuation when the subject is well represented, so it reports <em>familiarity</em>. Read as “divergent, therefore interesting” its sign is backwards.</p></div>
+      <div class="card"><h3>What does separate them</h3><p class="note">How much matches at all, continuously: unidentifiable contigs align over ${(a.alnfrac.residue * 100).toFixed(0)}% of their length at ${a.pident.residue.toFixed(1)}% identity, identified ones over ${(a.alnfrac.known * 100).toFixed(0)}% at ${a.pident.known.toFixed(1)}%. No categorical verdict carries information; the quantity does.</p></div>
+      <div class="card"><h3>And at read level, nothing</h3><p class="note">At 107 nt, once a read matches ~74% of itself the remainder is about 10 amino acids — below any protein search's floor. The discriminating test returns nothing for 99.6% of reads. This is the first field here that works on contigs and fails on reads, which is an argument about where in a pipeline the work belongs.</p></div>
+    </div>
+  </section>`;
+}
+
+function indexcost() {
+  if (!D.indexcost) return "";
+  const L = D.indexcost.ladder, S = D.indexcost.scaling;
+  const rows = L ? L.rungs.map(r => `<tr>
+    <td>+ ${r.name}</td>
+    <td class="mono">${r.gb.toFixed(2)} GB</td>
+    <td class="mono">${r.any.toFixed(1)}%</td>
+    <td class="mono">${r.strong.toFixed(2)}%</td>
+  </tr>`).join("") : "";
+  const srows = S ? S.map(s => `<tr>
+    <td>${s.db}</td><td>${s.mode}</td>
+    <td class="mono">${s.fixed.toFixed(0)} s</td>
+    <td class="mono">${s.marginal_per_1k.toFixed(2)} s</td>
+  </tr>`).join("") : "";
+  return `<section>
+    <p class="eyebrow">08 · what a bigger index buys</p>
+    <h2>Database size buys weak hits, not identifications</h2>
+    <p>The residue against four cumulative protein indexes${L ? `, ${L.seeds} seeds` : ""}. The left column is the one that looks like progress; the right column is the one that would let you say a read has been identified.</p>
+    <div class="scroller"><table>
+      <thead><tr><th>cumulative index</th><th>size</th><th>finds any hit</th><th>bitscore ≥ 50</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+    <p class="note">Any-hit flattens because it is pressed against a ceiling of 100%, which is the uninformative way to flatten. The identification-grade column is still tripling at the last rung — and still almost nothing.</p>
+    ${S ? `<h3 style="margin-top:28px">And what it would cost to search</h3>
+    <div class="scroller"><table>
+      <thead><tr><th>database</th><th>mode</th><th>fixed scan</th><th>per 1,000 reads</th></tr></thead>
+      <tbody>${srows}</tbody>
+    </table></div>
+    <p class="note">A five-fold larger database multiplies the per-read cost about fourteen-fold, in both modes. That is an exponent near 1.65 from two points, and at UniRef100's ~100 GB the linear and 1.65 laws disagree by a factor of fifteen — so no far-end figure is quoted here. A third point on real hardware is what settles it.</p>` : ""}
+  </section>`;
+}
+
+function fields() {
+  const rows = D.fields.map(f => `<tr>
+    <td>${f.name}</td>
+    <td>${f.what}</td>
+    <td><span class="pill ${f.verdict}">${f.verdict === "live" ? "reported" : f.verdict === "dead" ? "killed by calibration" : "reported with a limit"}</span></td>
+    <td class="note" style="white-space:normal;min-width:18ch">${f.calibration}</td>
+  </tr>`).join("");
+  return `<section>
+    <p class="eyebrow">09 · the per-read report</p>
+    <h2>What each surviving read is scored on</h2>
+    <p>Not another classifier. Every field is reported separately against its own null, and <em>cannot discriminate here</em> is a legitimate row. Two fields have already been killed by their own calibration and are kept in the table because a negative result is information.</p>
+    <div class="scroller"><table>
+      <thead><tr><th>field</th><th>what it measures</th><th>status</th><th>calibrated against</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+  </section>`;
+}
+
+function limits() {
+  return `<section style="border-bottom:none">
+    <p class="eyebrow">10 · limits</p>
+    <h2>Where this is one-sided</h2>
+    <ul>
+      ${D.limits.map(l => `<li>${l}</li>`).join("")}
+    </ul>
+    <p class="note">Every number on this page comes from a committed script plus a seed: <span class="mono">experiments/subtract_known.py</span>, <span class="mono">classify_contigs.py</span>, <span class="mono">remote_blast_check.py</span>, <span class="mono">spike_holdout.py</span>, <span class="mono">residue_report.py</span>, <span class="mono">nucleotide_ladder.py</span>, aggregated by <span class="mono">report_subtract.py</span>.</p>
+  </section>`;
+}
+
+document.getElementById("app").append(el(
+  cascade() + efficiency() + contigs() + residue() + blast() + spike() + anatomy() + indexcost() + fields() + limits()
+));
+</script>

@@ -1,0 +1,25 @@
+{
+  "instance_id": "i-0cb5f61d5cc746979",
+  "commit": "06e344df926f57474dbab673a5e51c9d2068847a",
+  "shipped_dirty": false,
+  "wider_tree_dirty": true,
+  "instance_type": "c6i.2xlarge",
+  "stages": [
+    "core_nt",
+    "pilot",
+    "core_nt_full",
+    "nr"
+  ],
+  "query_set": "v1",
+  "full_queries": 429004,
+  "volume_gb": 1700,
+  "spot": true,
+  "hard_stop_minutes": 2880,
+  "ncbi_prefix": "2026-10-22-01-05-01",
+  "blast": "2.17.0",
+  "diamond": "2.1.10",
+  "launched": "2026-11-20T22:43:56Z",
+  "results_prefix": "s3://amazebio-corpora-897641797669/corpora/results/hapax-bigindex/results/bigindex/i-0cb5f61d5cc746979/",
+  "logs_prefix": "s3://amazebio-corpora-897641797669/corpora/results/hapax-bigindex/logs/bigindex-i-0cb5f61d5cc746979/",
+  "note": "reconstructed after the second launch overwrote the single-file record; values from the launch output and PLAN section 7"
+}

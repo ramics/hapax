@@ -1,0 +1,32 @@
+{
+  "script": "experiments/partial_alignment_eyeball.py",
+  "git_sha": "8f24ef43fcb74b267cc6d555cda750c3e30213ee",
+  "tree_dirty": false,
+  "script_sha256": "bc1d37e435675791",
+  "parameters": {
+    "seed": 1,
+    "reads": "/tmp/claude-0/wk/bigindex_queries/pilot.fa",
+    "rows": "/home/user/hapax/results/bigindex/rows_pilot_core_nt_i-0b42267a.jsonl",
+    "n": 45,
+    "min_match": 30,
+    "high_identity_share": 0.25,
+    "database": "core_nt",
+    "batch": 15,
+    "between_batches": 10,
+    "poll": 20,
+    "max_wait": 1800,
+    "efetch_pause": 0.4,
+    "out": "/home/user/hapax/results/partial_eyeball"
+  },
+  "selected": 4,
+  "rendered": 4,
+  "dropped": 0,
+  "errors": [],
+  "strata": {
+    "ordinary": 3,
+    "high_identity": 1
+  },
+  "wall_seconds": 75.54856292399927,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}

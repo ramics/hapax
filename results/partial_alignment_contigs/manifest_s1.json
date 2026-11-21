@@ -1,0 +1,31 @@
+{
+  "script": "experiments/partial_alignment_anatomy.py",
+  "git_sha": "be7cbc4fe09b1a1a6532ddd8678481e3af738f7e-dirty",
+  "parameters": {
+    "seed": 1,
+    "residue": "data/geo/sample_contigs_unidentified.fa",
+    "known": "data/geo/sample_contigs_identified_norrna.fa",
+    "max_reads": 800,
+    "min_len": 500,
+    "refs": [
+      "/home/user/hapax/data/geo/sample_contigs.fa",
+      "/home/user/hapax/data/geo/all_contigs_1kb.fa"
+    ],
+    "dmnd": "/home/user/hapax/data/prot/uniref50_10pct.dmnd",
+    "diamond_bin": "/home/user/tools/diamond",
+    "evalue": 10.0,
+    "seg_evalue": 1000.0,
+    "partial_lo": 0.15,
+    "partial_hi": 0.75,
+    "min_seg": 30,
+    "threads": 2,
+    "work": "/tmp/claude-0/wk/anatomy",
+    "out": "results/partial_alignment_contigs"
+  },
+  "index_bytes": {
+    "/home/user/hapax/data/prot/uniref50_10pct.dmnd": 1823091927
+  },
+  "wall_seconds": 1239.8284529930006,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}

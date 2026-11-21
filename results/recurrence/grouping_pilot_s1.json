@@ -1,0 +1,99 @@
+{
+ "seed": 1,
+ "group_by": "run",
+ "dimensions": 8,
+ "piles": {
+  "unplaced|s1": {
+   "n": 4000,
+   "occupancy_mean": 2.21725,
+   "frac_vectors_informative": 0.55725,
+   "entropy_bits_of_informative_vectors": 6.788734236858539,
+   "max_possible_bits": 8.0,
+   "mate_control": {
+    "usable_pairs": 2087,
+    "k": 10,
+    "own_mate_in_topk": 0.11739338763775754,
+    "chance": 0.004791566842357451,
+    "own_mate_in_topk_curveball_null": 0.020603737422137038,
+    "multiplier_over_chance": 24.5,
+    "multiplier_over_null": 5.6976744186046515
+   },
+   "structure": {
+    "n": 2229,
+    "k": 10,
+    "mean_knn_jaccard": 0.9844388961791992,
+    "mean_knn_jaccard_null": 0.9868375658988953,
+    "excess": -0.002398669719696045
+   }
+  },
+  "unident_contig|s1": {
+   "n": 4000,
+   "occupancy_mean": 5.186,
+   "frac_vectors_informative": 0.742,
+   "entropy_bits_of_informative_vectors": 5.968468846655529,
+   "max_possible_bits": 8.0,
+   "mate_control": {
+    "usable_pairs": 3575,
+    "k": 10,
+    "own_mate_in_topk": 0.053986013986013985,
+    "chance": 0.002797202797202797,
+    "own_mate_in_topk_curveball_null": 0.008671328671328672,
+    "multiplier_over_chance": 19.3,
+    "multiplier_over_null": 6.225806451612902
+   },
+   "structure": {
+    "n": 2968,
+    "k": 10,
+    "mean_knn_jaccard": 0.9871498942375183,
+    "mean_knn_jaccard_null": 0.9863970875740051,
+    "excess": 0.0007528066635131836
+   }
+  },
+  "identified|s1": {
+   "n": 4000,
+   "occupancy_mean": 5.722,
+   "frac_vectors_informative": 0.76425,
+   "entropy_bits_of_informative_vectors": 5.3416686280770875,
+   "max_possible_bits": 8.0,
+   "mate_control": {
+    "usable_pairs": 3801,
+    "k": 10,
+    "own_mate_in_topk": 0.05419626414101552,
+    "chance": 0.002630886608787161,
+    "own_mate_in_topk_curveball_null": 0.012365167061299658,
+    "multiplier_over_chance": 20.6,
+    "multiplier_over_null": 4.382978723404255
+   },
+   "structure": {
+    "n": 3057,
+    "k": 10,
+    "mean_knn_jaccard": 0.9841151237487793,
+    "mean_knn_jaccard_null": 0.9879671931266785,
+    "excess": -0.00385206937789917
+   }
+  }
+ },
+ "manifest": {
+  "script": "experiments/recurrence_grouping.py",
+  "git_sha": "4b96914bd8aa0607798ab294c1cf0ad6604dfdc5",
+  "tree_dirty": false,
+  "script_sha256": "5afee83b006992eb",
+  "parameters": {
+   "seed": "1",
+   "run_dir": "/tmp/claude-0/wk/recurrence/pilot",
+   "panel": "/home/user/hapax/results/recurrence/panel.tsv",
+   "group_by": "run",
+   "piles": "['unplaced', 'unident_contig', 'identified']",
+   "k": "10",
+   "max_reads": "4000",
+   "out": "/home/user/hapax/results/recurrence",
+   "label": "grouping_pilot"
+  },
+  "operating_points": {
+   "presence": "at least one shared 31-mer",
+   "k": 31,
+   "topk": 10
+  },
+  "seconds": 4.8
+ }
+}

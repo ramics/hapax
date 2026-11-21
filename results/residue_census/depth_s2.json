@@ -1,0 +1,135 @@
+{
+ "seed": 2,
+ "block_pairs": 100000,
+ "piles": {
+  "identified_other": {
+   "mate1": {
+    "n": 37866,
+    "median_depth_p50": 86.0,
+    "median_depth_p10": 2.0,
+    "median_depth_p90": 3646.0,
+    "frac_depth_0": 0.042676807690276236,
+    "frac_depth_lt_5": 0.17831299846828289,
+    "frac_depth_ge_50": 0.5654677018961601,
+    "unwitnessed_kmer_frac_mean": NaN
+   },
+   "mate2": {
+    "n": 37866,
+    "median_depth_p50": 65.0,
+    "median_depth_p10": 1.0,
+    "median_depth_p90": 2556.0,
+    "frac_depth_0": 0.05390059684149369,
+    "frac_depth_lt_5": 0.20173770664976495,
+    "frac_depth_ge_50": 0.5311361115512597,
+    "unwitnessed_kmer_frac_mean": 0.06491772566418423
+   }
+  },
+  "identified_rrna": {
+   "mate1": {
+    "n": 39413,
+    "median_depth_p50": 3011.0,
+    "median_depth_p10": 45.0,
+    "median_depth_p90": 31499.800000000003,
+    "frac_depth_0": 0.006368457108060792,
+    "frac_depth_lt_5": 0.02750361555831832,
+    "frac_depth_ge_50": 0.8945779311394717,
+    "unwitnessed_kmer_frac_mean": NaN
+   },
+   "mate2": {
+    "n": 39413,
+    "median_depth_p50": 2563.0,
+    "median_depth_p10": 31.0,
+    "median_depth_p90": 31963.200000000157,
+    "frac_depth_0": 0.011290690888793038,
+    "frac_depth_lt_5": 0.03625707253951742,
+    "frac_depth_ge_50": 0.876918783142618,
+    "unwitnessed_kmer_frac_mean": 0.020662179991373406
+   }
+  },
+  "residue_on_unident_contig": {
+   "mate1": {
+    "n": 8380,
+    "median_depth_p50": 6.0,
+    "median_depth_p10": 1.0,
+    "median_depth_p90": 680.4000000000015,
+    "frac_depth_0": 0.09904534606205251,
+    "frac_depth_lt_5": 0.43484486873508355,
+    "frac_depth_ge_50": 0.2788782816229117,
+    "unwitnessed_kmer_frac_mean": 0.11565841288782816
+   },
+   "mate2": {
+    "n": 8380,
+    "median_depth_p50": 5.0,
+    "median_depth_p10": 0.0,
+    "median_depth_p90": 604.0,
+    "frac_depth_0": 0.11097852028639618,
+    "frac_depth_lt_5": 0.4741050119331742,
+    "frac_depth_ge_50": 0.27350835322195705,
+    "unwitnessed_kmer_frac_mean": 0.12095821002386634
+   }
+  },
+  "residue_on_unsplit_contig": {
+   "mate1": {
+    "n": 466,
+    "median_depth_p50": 5047.0,
+    "median_depth_p10": 1.0,
+    "median_depth_p90": 21594.0,
+    "frac_depth_0": 0.06223175965665236,
+    "frac_depth_lt_5": 0.2145922746781116,
+    "frac_depth_ge_50": 0.7253218884120172,
+    "unwitnessed_kmer_frac_mean": 0.07173841201716738
+   },
+   "mate2": {
+    "n": 466,
+    "median_depth_p50": 6234.5,
+    "median_depth_p10": 1.0,
+    "median_depth_p90": 19416.0,
+    "frac_depth_0": 0.0815450643776824,
+    "frac_depth_lt_5": 0.23605150214592274,
+    "frac_depth_ge_50": 0.703862660944206,
+    "unwitnessed_kmer_frac_mean": 0.08809270386266094
+   }
+  },
+  "residue_unplaced": {
+   "mate1": {
+    "n": 13875,
+    "median_depth_p50": 1.0,
+    "median_depth_p10": 0.0,
+    "median_depth_p90": 4.0,
+    "frac_depth_0": 0.3099099099099099,
+    "frac_depth_lt_5": 0.912,
+    "frac_depth_ge_50": 0.0030990990990990993,
+    "unwitnessed_kmer_frac_mean": NaN
+   },
+   "mate2": {
+    "n": 13875,
+    "median_depth_p50": 1.0,
+    "median_depth_p10": 0.0,
+    "median_depth_p90": 4.0,
+    "frac_depth_0": 0.32007207207207206,
+    "frac_depth_lt_5": 0.9132972972972973,
+    "frac_depth_ge_50": 0.002954954954954955,
+    "unwitnessed_kmer_frac_mean": 0.3194838702702703
+   }
+  }
+ },
+ "manifest": {
+  "script": "experiments/residue_depth.py",
+  "git_sha": "63f90818254ee2cf1c80bbcbbf02072b19356fd0-dirty",
+  "tree_dirty": true,
+  "script_sha256": "a5a503915be0ec1a",
+  "parameters": {
+   "seed": "2",
+   "cov": "/home/user/hapax/data/work/cov_blocks5.tsv",
+   "block": "0",
+   "classes": "/home/user/hapax/data/work/library_label_classes.npz",
+   "recut": "/home/user/hapax/data/recut",
+   "out": "/home/user/hapax/results/residue_census"
+  },
+  "instrument": "experiments/kmer_coverage, exact canonical 31-mers over all 8,731,224 pairs, each pair's own occurrences subtracted",
+  "operating_points": {
+   "class_split": "40 matching bases, SILVA or own contig",
+   "depth": "median over a mate's scorable 31-mers"
+  }
+ }
+}

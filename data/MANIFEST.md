@@ -40,6 +40,27 @@ ladder (PAIRS in experiments/codon_assembler/experiments/two_lineage_rung.py), f
 NCBI efetch (nuccore, fasta) on 2026-11-20: PZ227608.1, PZ227621.1, PV491557.1, PZ324370.1,
 MG458312.1, PZ227553.1, PZ227534.1, PZ227561.1, AB009663.2, AB044824.1, NC_001542.1.
 
+## Subtraction cascade (experiments/subtract_known.py, residue_report.py, subsample_uniref.py)
+
+All fetched 2026-11-20 into the gitignored `data/`. Sizes are what the index-size axis of
+`results/subtract_known/REPORT.md` prices, so they are recorded as bytes on disk, not as
+record counts alone.
+
+| Purpose | Source | Downloaded | Notes |
+|---|---|---|---|
+| Berlin wastewater reads | SRR23973193 (PRJNA948850) via ENA fastq | 2026-11-20 | 8,731,224 pairs; ENA records library_strategy=RNA-Seq, library_selection=cDNA, source TRANSCRIPTOMIC, NovaSeq 6000. No rRNA depletion is recorded, which the rRNA tier's 38% bears out |
+| rRNA reference | SILVA 138.2 SSURef_NR99 + LSURef_NR99 (ftp.arb-silva.de) | 2026-11-20 | SSU 510,495 records / 747.4 Mnt; U->T converted, headers cut to the accession |
+| Kraken2 viral | genome-idx k2_viral_20261022 | 2026-11-20 | 0.65 GB hash + taxo |
+| Kraken2 Standard-8 | genome-idx k2_standard_08_GB_20261022 | 2026-11-20 | 8.0 GB |
+| Kraken2 PlusPF-8 | genome-idx k2_pluspf_08_GB_20261022 | 2026-11-20 | 8.0 GB |
+| Kraken2 PlusPF-16 | genome-idx k2_pluspf_16_GB_20261022 | 2026-11-20 | 16.0 GB |
+| this sample's own assembly | GSE228220_Spades_RNA_all.fa.gz, records prefixed `WW_211013_20-22hmix_S5_` | 2026-11-20 | 82,947 contigs / 35.2 MB, matching the count recorded for this sample in PR #10 |
+| all 116 samples' assembly, >=1 kb | same file, every sample | 2026-11-20 | 270,626 contigs / 577 MB. **The GEO file is truncated**: it decompresses to 14,454,331 records and then ends mid-stream (`unexpected end of file`) at sample `WW_220616_20-22hmix_S65`, although the served Content-Length matches the bytes received. This sample's own contigs are complete; the all-sample tier is therefore a lower bound on what a complete file would subtract |
+| RefSeq viral proteins | refseq/release/viral/viral.1.protein.faa.gz | 2026-11-20 | DIAMOND db 0.24 GB |
+| Swiss-Prot | uniprot_sprot.fasta.gz, current release | 2026-11-20 | DIAMOND db 0.29 GB |
+| UniRef50 nested subsets | streamed from ftp.uniprot.org without storing the file (experiments/subsample_uniref.py, seed 1) | 2026-11-20 | 41,243,524 records streamed; kept 2% (823,978 records / 254.6 Maa, DIAMOND db 0.36 GB) and 10% (4,121,360 / 1,270.9 Maa, db 1.82 GB). A 25% subset (10,307,898 / 3,180.3 Maa) was written and then deleted for disk; a DIAMOND db of the full 12.7 Gaa would be ~30 GB against ~15 GB free |
+| Pfam-A | ftp.ebi.ac.uk Pfam current_release Pfam-A.hmm.gz | 2026-11-20 | 3.65 GB uncompressed, used for the motif field |
+
 ## Mate-width thread (experiments/insert_profile.py, mate_separation.py,
 ## peptide_absence.py, novelty_blocks.py, mate_rho.py)
 
@@ -133,6 +154,20 @@ read names taken from `results/subtract_recut/residue_rows_s{1..5}.jsonl`. The p
 figure plots are committed to `results/residue_structure/joint_points_s1.json` so the figure
 has provenance without the intermediates.
 
+## The matched DNA/RNA pair (experiments/dna_rna_pair.py)
+
+Fetched 2026-11-21 into the gitignored `data/berlin_pair/`, from ENA, each file verified
+against the MD5 ENA publishes for it because ENA's FTP front end has served this project
+truncated gzip before.
+
+| Purpose | Accession | Downloaded | Notes |
+|---|---|---|---|
+| matched DNA library | SRR23973375 (`DNA_220616_20-22hmix_cer_BIOMcombi`, GSM7117187) | 2026-11-21 | PRJNA948850, `library_source=GENOMIC`, `library_strategy=OTHER`; 11,311,548 pairs / 2.37 Gbp; NovaSeq 6000. Measured to be a VIROME rather than a metagenome (0.01% rRNA, top taxon *Darmviridae*) - see `results/dna_rna_pair/REPORT.md` |
+| matched RNA library | SRR23973265 (`RNA_WW_220616_20-22hmix`, GSM7117161) | 2026-11-21 | Same plant, same date, same 20-22h composite, same extraction and prep as the DNA member; 11,627,981 pairs / 2.42 Gbp. Same `RNA_WW_` naming series as our calibration sample, eight months later |
+
+The project holds 239 runs in all, 215 `TRANSCRIPTOMIC` and 24 `GENOMIC`, and 22 of the 24
+DNA libraries have an RNA library of the same date and collection window. The DNA set spans
+2022-05-25 to 2022-07-19, so there is no DNA library for our 2021-10-13 calibration sample.
 ## Profile reach and depth rarefaction (experiments/profile_reach.py, depth_rarefaction.py)
 
 | Purpose | Accession / source | Downloaded | Notes |

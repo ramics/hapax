@@ -1,0 +1,725 @@
+{
+  "seed": 4,
+  "pairs_labelled": 20000,
+  "class_sizes_in_block": {
+    "rrna": 7654,
+    "public_nucleotide": 573,
+    "selfasm_identified": 6773,
+    "residue_assembled": 1726,
+    "residue_missing": 3274
+  },
+  "class_fracs_in_block": {
+    "rrna": 0.3827,
+    "public_nucleotide": 0.02865,
+    "selfasm_identified": 0.33865,
+    "residue_assembled": 0.0863,
+    "residue_missing": 0.1637
+  },
+  "tier2_contig_candidates": 1784,
+  "sampled_per_class": {
+    "rrna": 60,
+    "public_nucleotide": 60,
+    "selfasm_identified": 60,
+    "residue_assembled": 60,
+    "residue_missing": 60,
+    "tier2_contigs": 60
+  },
+  "blast": {
+    "blastn": {
+      "database": "nt",
+      "per_class": {
+        "rrna": {
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 60,
+          "any_hit_frac": 1.0,
+          "any_hit_ci95": [
+            0.9398,
+            1.0
+          ],
+          "pident": {
+            "n": 60,
+            "min": 91.09,
+            "p25": 99.06,
+            "median": 100.0,
+            "p75": 100.0,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 60,
+            "min": 0.6729,
+            "p25": 0.9626,
+            "median": 0.9907,
+            "p75": 1.0,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "uncultured bacterium",
+              7
+            ],
+            [
+              "Oscillospiraceae bacterium",
+              2
+            ],
+            [
+              "Acinetobacter bohemicus",
+              2
+            ],
+            [
+              "Segatella copri",
+              2
+            ],
+            [
+              "Piscibacter tructae",
+              2
+            ],
+            [
+              "Acinetobacter junii",
+              2
+            ],
+            [
+              "Pseudomonas sp.",
+              1
+            ],
+            [
+              "Paracoccus marcusii",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 60,
+            "min": 72,
+            "p25": 103,
+            "median": 106,
+            "p75": 107,
+            "max": 107
+          },
+          "bitscore": {
+            "n": 60,
+            "min": 108.587,
+            "p25": 181.623,
+            "median": 187.935,
+            "p75": 192.443,
+            "max": 194.247
+          },
+          "top_titles": [
+            [
+              "uncultured bacterium partial 16S rRNA gene",
+              2
+            ],
+            [
+              "Acinetobacter bohemicus strain E2PVAC1 chromosome, complete genome",
+              2
+            ],
+            [
+              "MAG: Segatella copri isolate SHD1_0197 genome assembly, chromosome: 1",
+              2
+            ],
+            [
+              "Fusobacteriaceae bacterium 9N8 DNA, complete genome",
+              2
+            ],
+            [
+              "Acinetobacter junii strain 24AR27665 genome assembly, chromosome: 1",
+              2
+            ],
+            [
+              "Pseudomonas sp. strain BMH-11 16S ribosomal RNA gene, partial sequence",
+              1
+            ]
+          ],
+          "strong_hit_frac": 0.9333333333333333,
+          "strong_hit_ci95": [
+            0.8407,
+            0.9738
+          ],
+          "pident_x_qcov": {
+            "n": 60,
+            "min": 0.62620074,
+            "p25": 0.9533,
+            "median": 0.9813,
+            "p75": 0.9907,
+            "max": 1.0
+          }
+        },
+        "public_nucleotide": {
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 60,
+          "any_hit_frac": 1.0,
+          "any_hit_ci95": [
+            0.9398,
+            1.0
+          ],
+          "pident": {
+            "n": 60,
+            "min": 81.36,
+            "p25": 99.05,
+            "median": 100.0,
+            "p75": 100.0,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 60,
+            "min": 0.5974,
+            "p25": 0.972,
+            "median": 0.9907,
+            "p75": 1.0,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "Tomato brown rugose fruit virus",
+              32
+            ],
+            [
+              "uncultured bacterium",
+              5
+            ],
+            [
+              "Cucumber green mottle mosaic virus",
+              5
+            ],
+            [
+              "Cutibacterium acnes",
+              2
+            ],
+            [
+              "Escherichia coli",
+              1
+            ],
+            [
+              "Enterobacter bugandensis",
+              1
+            ],
+            [
+              "Bacteroides ovatus",
+              1
+            ],
+            [
+              "Steroidobacteraceae bacterium",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 60,
+            "min": 46,
+            "p25": 104,
+            "median": 106,
+            "p75": 107,
+            "max": 107
+          },
+          "bitscore": {
+            "n": 60,
+            "min": 47.2722,
+            "p25": 183.427,
+            "median": 189.738,
+            "p75": 192.443,
+            "max": 194.247
+          },
+          "top_titles": [
+            [
+              "Tomato brown rugose fruit virus isolate S90_ToBRFV, complete genome",
+              19
+            ],
+            [
+              "Cucumber green mottle mosaic virus isolate CG25, complete genome",
+              5
+            ],
+            [
+              "Tomato brown rugose fruit virus isolate S84_ToBRFV, complete genome",
+              3
+            ],
+            [
+              "Tomato brown rugose fruit virus isolate S92_ToBRFV, complete genome",
+              2
+            ],
+            [
+              "Tomato brown rugose fruit virus isolate S64_ToBRFV, complete genome",
+              2
+            ],
+            [
+              "Escherichia coli strain LD93-1 chromosome, complete genome",
+              1
+            ]
+          ],
+          "strong_hit_frac": 0.95,
+          "strong_hit_ci95": [
+            0.863,
+            0.9829
+          ],
+          "pident_x_qcov": {
+            "n": 60,
+            "min": 0.5974,
+            "p25": 0.9719776499999999,
+            "median": 0.9813,
+            "p75": 0.9907,
+            "max": 1.0
+          }
+        },
+        "selfasm_identified": {
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 52,
+          "any_hit_frac": 0.8666666666666667,
+          "any_hit_ci95": [
+            0.7583,
+            0.9309
+          ],
+          "pident": {
+            "n": 52,
+            "min": 75.68,
+            "p25": 87.18,
+            "median": 93.33,
+            "p75": 99.04,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 52,
+            "min": 0.2617,
+            "p25": 0.3333,
+            "median": 0.7075,
+            "p75": 0.9811,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "Picornavirales sp.",
+              5
+            ],
+            [
+              "Cucumber green mottle mosaic virus",
+              3
+            ],
+            [
+              "Hepelivirales sp.",
+              3
+            ],
+            [
+              "ssRNA phage SRR7976299_5",
+              2
+            ],
+            [
+              "Leviviridae sp.",
+              2
+            ],
+            [
+              "StochSev_2 levi-like virus",
+              1
+            ],
+            [
+              "Mustela erminea",
+              1
+            ],
+            [
+              "Pseudomonas danubii",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 52,
+            "min": 28,
+            "p25": 36,
+            "median": 75,
+            "p75": 104,
+            "max": 108
+          },
+          "bitscore": {
+            "n": 52,
+            "min": 44.5672,
+            "p25": 46.3705,
+            "median": 70.716,
+            "p75": 170.803,
+            "max": 194.247
+          },
+          "top_titles": [
+            [
+              "Hepelivirales sp. strain MR644-18E/449 nonstructural polyprotein and putative structural p",
+              3
+            ],
+            [
+              "SsRNA phage SRR7976299_5 genomic sequence",
+              2
+            ],
+            [
+              "MAG: Picornavirales sp. isolate HPLV-59 genomic sequence",
+              2
+            ],
+            [
+              "MAG: StochSev_2 levi-like virus isolate SevRVP22_08, complete genome",
+              1
+            ],
+            [
+              "PREDICTED: Mustela erminea BSD domain containing 1 (BSDC1), transcript variant X3, mRNA",
+              1
+            ],
+            [
+              "Pseudomonas danubii strain JDS10PS014 chromosome, complete genome",
+              1
+            ]
+          ],
+          "strong_hit_frac": 0.25,
+          "strong_hit_ci95": [
+            0.1578,
+            0.3723
+          ],
+          "pident_x_qcov": {
+            "n": 52,
+            "min": 0.252301,
+            "p25": 0.29985257000000004,
+            "median": 0.5848902500000001,
+            "p75": 0.93334815,
+            "max": 1.0
+          }
+        },
+        "residue_assembled": {
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 51,
+          "any_hit_frac": 0.85,
+          "any_hit_ci95": [
+            0.7389,
+            0.919
+          ],
+          "pident": {
+            "n": 51,
+            "min": 78.33,
+            "p25": 85.37,
+            "median": 88.57,
+            "p75": 93.55,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 51,
+            "min": 0.2336,
+            "p25": 0.3048,
+            "median": 0.3645,
+            "p75": 0.566,
+            "max": 1.0
+          },
+          "top_names": [
+            [
+              "Hepelivirales sp.",
+              5
+            ],
+            [
+              "Megamonas funiformis",
+              2
+            ],
+            [
+              "Ammodytes marinus",
+              2
+            ],
+            [
+              "StochSRVP_10 levi-like virus",
+              1
+            ],
+            [
+              "Coccinella septempunctata",
+              1
+            ],
+            [
+              "uncultured fungus",
+              1
+            ],
+            [
+              "Bordetella sp.",
+              1
+            ],
+            [
+              "Cannabis sativa",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 51,
+            "min": 25,
+            "p25": 32,
+            "median": 39,
+            "p75": 61,
+            "max": 107
+          },
+          "bitscore": {
+            "n": 51,
+            "min": 44.5672,
+            "p25": 45.4688,
+            "median": 47.2722,
+            "p75": 58.0924,
+            "max": 190.64
+          },
+          "top_titles": [
+            [
+              "Hepelivirales sp. strain MR644-18E/449 nonstructural polyprotein and putative structural p",
+              5
+            ],
+            [
+              "MAG: Megamonas funiformis isolate SHD1_0132 genome assembly, chromosome: 1",
+              2
+            ],
+            [
+              "Ammodytes marinus eukaryotic translation initiation factor 3 subunit C (eif3c), transcript",
+              2
+            ],
+            [
+              "MAG: StochSRVP_10 levi-like virus isolate SRVP22_05, complete genome",
+              1
+            ],
+            [
+              "PREDICTED: Coccinella septempunctata HEAT repeat-containing protein 1 homolog (LOC12331066",
+              1
+            ],
+            [
+              "uncultured fungus genomic DNA sequence contains 18S rRNA gene, ITS1, 5.8S rRNA gene, ITS2,",
+              1
+            ]
+          ],
+          "strong_hit_frac": 0.1,
+          "strong_hit_ci95": [
+            0.0466,
+            0.2015
+          ],
+          "pident_x_qcov": {
+            "n": 51,
+            "min": 0.2336,
+            "p25": 0.27620976,
+            "median": 0.3177711,
+            "p75": 0.45960578999999996,
+            "max": 0.9906999999999999
+          }
+        },
+        "residue_missing": {
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 53,
+          "any_hit_frac": 0.8833333333333333,
+          "any_hit_ci95": [
+            0.7782,
+            0.9423
+          ],
+          "pident": {
+            "n": 53,
+            "min": 75.68,
+            "p25": 83.64,
+            "median": 88.57,
+            "p75": 93.1,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 53,
+            "min": 0.2336,
+            "p25": 0.3178,
+            "median": 0.3679,
+            "p75": 0.5047,
+            "max": 0.9907
+          },
+          "top_names": [
+            [
+              "Numida meleagris",
+              1
+            ],
+            [
+              "Vibrio cholerae",
+              1
+            ],
+            [
+              "uncultured Hyphomonadaceae bacterium",
+              1
+            ],
+            [
+              "Bradyrhizobium sp.",
+              1
+            ],
+            [
+              "Caudoviricetes sp.",
+              1
+            ],
+            [
+              "uncultured Chitinophagaceae bacterium",
+              1
+            ],
+            [
+              "Proteiniclasticum sp.",
+              1
+            ],
+            [
+              "Cannabis sativa",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 53,
+            "min": 25,
+            "p25": 33,
+            "median": 39,
+            "p75": 55,
+            "max": 106
+          },
+          "bitscore": {
+            "n": 53,
+            "min": 42.7638,
+            "p25": 46.3705,
+            "median": 48.1739,
+            "p75": 53.584,
+            "max": 188.837
+          },
+          "top_titles": [
+            [
+              "PREDICTED: Numida meleagris beta-1,4-galactosyltransferase 7 (B4GALT7), mRNA",
+              1
+            ],
+            [
+              "Vibrio cholerae strain SP7G chromosome 2, complete sequence",
+              1
+            ],
+            [
+              "MAG: uncultured Hyphomonadaceae bacterium isolate 002-MX-07.bin.2.188 genome assembly, chr",
+              1
+            ],
+            [
+              "MAG: Bradyrhizobium sp. isolate MFD15204.bin.c.11 genome assembly, chromosome: 1",
+              1
+            ],
+            [
+              "MAG: Caudoviricetes sp. isolate KCR_vOTU_08575 genomic sequence",
+              1
+            ],
+            [
+              "MAG: uncultured Chitinophagaceae bacterium isolate 015-DE-14.bin.1.162 genome assembly, ch",
+              1
+            ]
+          ],
+          "strong_hit_frac": 0.03333333333333333,
+          "strong_hit_ci95": [
+            0.0092,
+            0.1136
+          ],
+          "pident_x_qcov": {
+            "n": 53,
+            "min": 0.2336,
+            "p25": 0.28042672,
+            "median": 0.32713784,
+            "p75": 0.41122956000000005,
+            "max": 0.9811
+          }
+        },
+        "tier2_contigs": {
+          "n": 60,
+          "dropped_failed_batch": 0,
+          "any_hit": 60,
+          "any_hit_frac": 1.0,
+          "any_hit_ci95": [
+            0.9398,
+            1.0
+          ],
+          "pident": {
+            "n": 60,
+            "min": 68.38,
+            "p25": 81.25,
+            "median": 86.67,
+            "p75": 90.91,
+            "max": 100.0
+          },
+          "query_cov": {
+            "n": 60,
+            "min": 0.0215,
+            "p25": 0.0472,
+            "median": 0.0657,
+            "p75": 0.0949,
+            "max": 0.9902
+          },
+          "top_names": [
+            [
+              "Durnavirales sp.",
+              1
+            ],
+            [
+              "Nitrospiraceae bacterium",
+              1
+            ],
+            [
+              "Schistocerca nitens",
+              1
+            ],
+            [
+              "Terriglobia bacterium",
+              1
+            ],
+            [
+              "Streptomyces europaeiscabiei",
+              1
+            ],
+            [
+              "Acronicta euphorbiae",
+              1
+            ],
+            [
+              "Qianjiang picorna-like virus 16",
+              1
+            ],
+            [
+              "Chthoniobacterales bacterium",
+              1
+            ]
+          ],
+          "aln_len": {
+            "n": 60,
+            "min": 30,
+            "p25": 37,
+            "median": 45,
+            "p75": 65,
+            "max": 1738
+          },
+          "bitscore": {
+            "n": 60,
+            "min": 46.3705,
+            "p25": 48.1739,
+            "median": 51.7806,
+            "p75": 57.1907,
+            "max": 2042.7
+          },
+          "top_titles": [
+            [
+              "Durnavirales sp. strain MR233-17E/14844 RNA-dependent RNA polymerase gene, complete cds",
+              1
+            ],
+            [
+              "MAG: Nitrospiraceae bacterium isolate bin97 chromosome",
+              1
+            ],
+            [
+              "PREDICTED: Schistocerca nitens exonuclease mut-7 homolog (LOC126256060), transcript varian",
+              1
+            ],
+            [
+              "MAG: Terriglobia bacterium isolate MFD15214.bin.3.5089 genome assembly, chromosome: 1",
+              1
+            ],
+            [
+              "Streptomyces europaeiscabiei strain NBC_00363 chromosome, complete genome",
+              1
+            ],
+            [
+              "Acronicta euphorbiae genome assembly, chromosome: 22",
+              1
+            ]
+          ],
+          "strong_hit_frac": 0.03333333333333333,
+          "strong_hit_ci95": [
+            0.0092,
+            0.1136
+          ],
+          "pident_x_qcov": {
+            "n": 60,
+            "min": 0.0184095,
+            "p25": 0.04306265,
+            "median": 0.05774763999999999,
+            "p75": 0.07337384999999999,
+            "max": 0.97854584
+          }
+        }
+      }
+    }
+  },
+  "wall_seconds": 7439.0995590620005
+}

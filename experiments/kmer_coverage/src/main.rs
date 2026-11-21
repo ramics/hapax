@@ -65,9 +65,27 @@ struct Pairs {
     trim: usize,
 }
 impl Pairs {
+    /// Opens either gzip or plain FASTQ, decided by the file's own magic bytes.
+    ///
+    /// WHY SNIFF RATHER THAN TAKE A FLAG. The cross-sample recurrence pass scans one subject
+    /// library per panel member, and every one of them arrives as plain FASTQ from
+    /// `fasterq-dump`. Re-compressing 130 GB only so this function can decompress it again
+    /// is a gzip pass per library for nothing. A flag would do, but the magic bytes cannot
+    /// be passed wrong: a plain file opened as gzip fails at the first read, and a gzip file
+    /// read as text yields no parsable record, so getting this from the file removes a way
+    /// for a 116-library run to die an hour in.
     fn open(a: &str, b: &str, trim: usize) -> Self {
         let o = |p: &str| -> Box<dyn BufRead> {
-            Box::new(BufReader::with_capacity(1 << 20, MultiGzDecoder::new(std::fs::File::open(p).unwrap())))
+            let mut probe = std::fs::File::open(p).unwrap();
+            let mut magic = [0u8; 2];
+            use std::io::Read;
+            let gz = probe.read_exact(&mut magic).is_ok() && magic == [0x1f, 0x8b];
+            let file = std::fs::File::open(p).unwrap();
+            if gz {
+                Box::new(BufReader::with_capacity(1 << 20, MultiGzDecoder::new(file)))
+            } else {
+                Box::new(BufReader::with_capacity(1 << 20, file))
+            }
         };
         Pairs { h1: o(a), h2: o(b), trim }
     }

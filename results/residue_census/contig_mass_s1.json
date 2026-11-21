@@ -1,0 +1,112 @@
+{
+ "seed": 1,
+ "contigs_in_assembly": 82947,
+ "operating_point": "mate's best own-contig match >= 40 matching bases",
+ "residue_on_unidentifiable": {
+  "mate1": {
+   "contigs_with_mass": 46056,
+   "total_mass": 757391,
+   "contigs_for_50pct": 761,
+   "contigs_for_90pct": 21952,
+   "gini": 0.7348290431112028,
+   "top10_share": 0.12568145119231677,
+   "top100_share": 0.30275775656167025
+  },
+  "mate2": {
+   "contigs_with_mass": 46068,
+   "total_mass": 720855,
+   "contigs_for_50pct": 748,
+   "contigs_for_90pct": 21878,
+   "gini": 0.7368613866561325,
+   "top10_share": 0.11313370927579056,
+   "top100_share": 0.2955601334526361
+  },
+  "pooled": {
+   "contigs_with_mass": 46157,
+   "total_mass": 1478246,
+   "contigs_for_50pct": 762,
+   "contigs_for_90pct": 22646,
+   "gini": 0.7293103070194806,
+   "top10_share": 0.11837339657945971,
+   "top100_share": 0.2981939406566972
+  },
+  "shape": {
+   "top200": {
+    "n": 200,
+    "len_p50": 660.5,
+    "cov_p50": 56.862235,
+    "mass_p50": 1461.5,
+    "mass_per_kb_p50": 2525.7018176820256,
+    "frac_ge500_and_2x": 0.705
+   },
+   "all_with_mass": {
+    "n": 46157,
+    "len_p50": 254.0,
+    "cov_p50": 1.12426,
+    "mass_p50": 10.0,
+    "mass_per_kb_p50": 37.735849056603776,
+    "frac_ge500_and_2x": 0.03865069220269948
+   }
+  }
+ },
+ "identified_contigs_control": {
+  "mate1": {
+   "contigs_with_mass": 21690,
+   "total_mass": 2909505,
+   "contigs_for_50pct": 112,
+   "contigs_for_90pct": 2040,
+   "gini": 0.9207986956193956,
+   "top10_share": 0.1934793031804379,
+   "top100_share": 0.48412736874485524
+  },
+  "mate2": {
+   "contigs_with_mass": 22009,
+   "total_mass": 2858962,
+   "contigs_for_50pct": 110,
+   "contigs_for_90pct": 1993,
+   "gini": 0.9228802725879833,
+   "top10_share": 0.19744788493166401,
+   "top100_share": 0.48790924818168274
+  },
+  "pooled": {
+   "contigs_with_mass": 22247,
+   "total_mass": 5768467,
+   "contigs_for_50pct": 112,
+   "contigs_for_90pct": 2026,
+   "gini": 0.9224212298062857,
+   "top10_share": 0.19520420243367953,
+   "top100_share": 0.48519337980090727
+  },
+  "shape": {
+   "top200": {
+    "n": 200,
+    "len_p50": 3764.5,
+    "cov_p50": 58.9269495,
+    "mass_p50": 7847.5,
+    "mass_per_kb_p50": 2238.2838619647064,
+    "frac_ge500_and_2x": 0.96
+   },
+   "all_with_mass": {
+    "n": 22247,
+    "len_p50": 304.0,
+    "cov_p50": 1.344743,
+    "mass_p50": 14.0,
+    "mass_per_kb_p50": 48.38709677419355,
+    "frac_ge500_and_2x": 0.16694385759877736
+   }
+  }
+ },
+ "manifest": {
+  "script": "experiments/residue_contig_mass.py",
+  "git_sha": "abe4ef36661d669f39d32ff6b8f22ca5acd896b5",
+  "tree_dirty": false,
+  "script_sha256": "0f171deafe16e6e3",
+  "parameters": {
+   "seed": "1",
+   "labels": "/home/user/hapax/data/work/library_labels.npz",
+   "classes": "/home/user/hapax/data/work/library_label_classes.npz",
+   "top": "200",
+   "out": "/home/user/hapax/results/residue_census"
+  }
+ }
+}

@@ -1,0 +1,102 @@
+{
+  "seed": 2,
+  "by_set": {
+    "residue": {
+      "reads": 800,
+      "with_protein_hit": 586,
+      "aligned_fraction": {
+        "mean": 0.316790827346358,
+        "min": 0.04394812680115274,
+        "max": 0.98,
+        "sd": 0.16818072849981044,
+        "n": 586
+      },
+      "pident": {
+        "mean": 34.88703071672355,
+        "min": 20.9,
+        "max": 81.5,
+        "sd": 8.469680609670243,
+        "n": 586
+      },
+      "partial_reads": 502,
+      "partial_frac_of_hits": 0.856655290102389,
+      "categories": {
+        "D_short_true_homology": 0.9920318725099602,
+        "C_artefact_end": 0.00398406374501992,
+        "A_chimaera": 0.00199203187250996,
+        "B_divergent_continuation": 0.00199203187250996
+      },
+      "category_counts": {
+        "D_short_true_homology": 498,
+        "C_artefact_end": 2,
+        "A_chimaera": 1,
+        "B_divergent_continuation": 1
+      }
+    },
+    "known": {
+      "reads": 800,
+      "with_protein_hit": 797,
+      "aligned_fraction": {
+        "mean": 0.5549174988345242,
+        "min": 0.06418800420904945,
+        "max": 0.9980842911877394,
+        "sd": 0.2501409828523233,
+        "n": 797
+      },
+      "pident": {
+        "mean": 40.99673776662485,
+        "min": 21.7,
+        "max": 97.9,
+        "sd": 12.899997639271396,
+        "n": 797
+      },
+      "partial_reads": 562,
+      "partial_frac_of_hits": 0.7051442910915935,
+      "categories": {
+        "D_short_true_homology": 0.9412811387900356,
+        "B_divergent_continuation": 0.04092526690391459,
+        "C_artefact_end": 0.017793594306049824,
+        "A_chimaera": 0.0017793594306049821
+      },
+      "category_counts": {
+        "D_short_true_homology": 529,
+        "B_divergent_continuation": 23,
+        "C_artefact_end": 10,
+        "A_chimaera": 1
+      }
+    }
+  },
+  "verdict": {
+    "A_chimaera": {
+      "residue": 0.00199203187250996,
+      "known_control": 0.0017793594306049821,
+      "ratio": 1.1195219123505977,
+      "discriminating": false
+    },
+    "B_divergent_continuation": {
+      "residue": 0.00199203187250996,
+      "known_control": 0.04092526690391459,
+      "ratio": 0.04867486575437381,
+      "discriminating": false
+    },
+    "C_artefact_end": {
+      "residue": 0.00398406374501992,
+      "known_control": 0.017793594306049824,
+      "ratio": 0.22390438247011948,
+      "discriminating": false
+    },
+    "D_short_true_homology": {
+      "residue": 0.9920318725099602,
+      "known_control": 0.9412811387900356,
+      "ratio": 1.053916658507746,
+      "discriminating": false
+    }
+  },
+  "thresholds": {
+    "partial_lo": 0.15,
+    "partial_hi": 0.75,
+    "min_seg": 30,
+    "seg_evalue": 1000.0
+  },
+  "wall_seconds": 582.7786475180001
+}

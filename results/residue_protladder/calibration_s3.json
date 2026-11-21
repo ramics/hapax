@@ -1,0 +1,250 @@
+{
+  "pairs_scored": 8000,
+  "fields": {
+    "gc": {
+      "residue": {
+        "mean": 0.504555425,
+        "min": 0.1726,
+        "max": 0.79,
+        "sd": 0.09294498629231694,
+        "n": 8000
+      },
+      "shuffled_null": {
+        "mean": 0.504555425,
+        "min": 0.1726,
+        "max": 0.79,
+        "sd": 0.09294498629231694,
+        "n": 8000
+      }
+    },
+    "entropy3": {
+      "residue": {
+        "mean": 0.8732485625,
+        "min": 0.5311,
+        "max": 0.953,
+        "sd": 0.03619333295100572,
+        "n": 8000
+      },
+      "shuffled_null": {
+        "mean": 0.88203425,
+        "min": 0.5963,
+        "max": 0.988,
+        "sd": 0.03121632676692763,
+        "n": 8000
+      }
+    },
+    "longest_orf_aa": {
+      "residue": {
+        "mean": 58.85725,
+        "min": 18,
+        "max": 67,
+        "sd": 9.782820931902679,
+        "n": 8000
+      },
+      "shuffled_null": {
+        "mean": 54.537125,
+        "min": 19,
+        "max": 67,
+        "sd": 10.96403885449497,
+        "n": 8000
+      }
+    },
+    "frame_identifiable_frac": {
+      "residue": 0.2655,
+      "shuffled_null": 0.21725
+    },
+    "kmer16_duplicate_frac": {
+      "residue": {
+        "mean": 0.0025973,
+        "min": 0.0,
+        "max": 0.9647,
+        "sd": 0.033107774174638345,
+        "n": 8000
+      },
+      "shuffled_null": {
+        "mean": 0.0,
+        "min": 0.0,
+        "max": 0.0,
+        "sd": 0.0,
+        "n": 8000
+      }
+    },
+    "closest_viral": {
+      "any_hit_frac": 0.781875,
+      "bitscore": {
+        "mean": 29.628681055155877,
+        "min": 21.9,
+        "max": 49.7,
+        "sd": 6.106586778361587,
+        "n": 6255
+      },
+      "pident": {
+        "mean": 52.7589928057554,
+        "min": 29.4,
+        "max": 92.3,
+        "sd": 10.241936868162627,
+        "n": 6255
+      },
+      "bitscore_sweep": {
+        "30": 0.212875,
+        "40": 0.07875,
+        "50": 0.0,
+        "60": 0.0,
+        "80": 0.0,
+        "100": 0.0
+      },
+      "subtracted_reads_any_hit_frac": 0.742875,
+      "subtracted_reads_bitscore": {
+        "mean": 36.85512367491166,
+        "min": 22.3,
+        "max": 88.6,
+        "sd": 15.592883884961719,
+        "n": 5943
+      }
+    },
+    "closest_sprot": {
+      "any_hit_frac": 0.80325,
+      "bitscore": {
+        "mean": 27.36072206660442,
+        "min": 22.7,
+        "max": 49.3,
+        "sd": 2.9383916893062105,
+        "n": 6426
+      },
+      "pident": {
+        "mean": 51.28165266106443,
+        "min": 25.0,
+        "max": 92.3,
+        "sd": 9.804773290396286,
+        "n": 6426
+      },
+      "bitscore_sweep": {
+        "30": 0.0815,
+        "40": 0.0095,
+        "50": 0.0,
+        "60": 0.0,
+        "80": 0.0,
+        "100": 0.0
+      },
+      "subtracted_reads_any_hit_frac": 0.806,
+      "subtracted_reads_bitscore": {
+        "mean": 32.24832506203474,
+        "min": 22.7,
+        "max": 88.6,
+        "sd": 12.677062272082866,
+        "n": 6448
+      }
+    },
+    "closest_uniref50_02pct": {
+      "any_hit_frac": 0.933875,
+      "bitscore": {
+        "mean": 28.47693749163432,
+        "min": 23.1,
+        "max": 72.8,
+        "sd": 3.867125999753091,
+        "n": 7471
+      },
+      "pident": {
+        "mean": 52.157770044170796,
+        "min": 29.4,
+        "max": 100.0,
+        "sd": 10.095936638384932,
+        "n": 7471
+      },
+      "bitscore_sweep": {
+        "30": 0.160125,
+        "40": 0.024375,
+        "50": 0.0035,
+        "60": 0.001375,
+        "80": 0.0,
+        "100": 0.0
+      },
+      "subtracted_reads_any_hit_frac": 0.95825,
+      "subtracted_reads_bitscore": {
+        "mean": 34.22080615705713,
+        "min": 23.1,
+        "max": 71.2,
+        "sd": 9.627251163231445,
+        "n": 7666
+      }
+    },
+    "closest_uniref50_10pct": {
+      "any_hit_frac": 0.98425,
+      "bitscore": {
+        "mean": 30.765798831597664,
+        "min": 24.3,
+        "max": 76.6,
+        "sd": 4.77435807855699,
+        "n": 7874
+      },
+      "pident": {
+        "mean": 52.79479298958598,
+        "min": 30.0,
+        "max": 100.0,
+        "sd": 10.065454693797179,
+        "n": 7874
+      },
+      "bitscore_sweep": {
+        "30": 0.419125,
+        "40": 0.056625,
+        "50": 0.012125,
+        "60": 0.002625,
+        "80": 0.0,
+        "100": 0.0
+      },
+      "subtracted_reads_any_hit_frac": 0.9955,
+      "subtracted_reads_bitscore": {
+        "mean": 39.91096182822702,
+        "min": 24.6,
+        "max": 82.8,
+        "sd": 11.866261495421968,
+        "n": 7964
+      }
+    }
+  },
+  "artefact_rates": {
+    "adapter": 0.0,
+    "primer_dimer": 0.0,
+    "low_entropy_0.5": 0.0
+  },
+  "motif_rate": 0.0,
+  "library_abundance": null,
+  "crispr": null,
+  "rfam": null,
+  "dinucleotide": {
+    "CpG_oe_residue": {
+      "mean": 0.9577066875,
+      "min": 0.0,
+      "max": 2.6251,
+      "sd": 0.31294543514756656,
+      "n": 8000
+    },
+    "UpA_oe_residue": {
+      "mean": 0.774886675,
+      "min": 0.0,
+      "max": 2.2648,
+      "sd": 0.31372050672053065,
+      "n": 8000
+    }
+  },
+  "folding": {
+    "mfe_residue": {
+      "mean": -27.29694875,
+      "min": -75.2,
+      "max": 0.0,
+      "sd": 9.54175373217152,
+      "n": 8000
+    },
+    "z_residue": {
+      "mean": -0.516914625,
+      "min": -9.563,
+      "max": 1.87,
+      "sd": 0.9049963091781439,
+      "n": 8000
+    },
+    "frac_z_under_minus2": 0.06
+  },
+  "cross_sample_recurrence": null,
+  "chimaera_split_rate": 0.0,
+  "chimaera_split_rate_on_subtracted_reads": null
+}

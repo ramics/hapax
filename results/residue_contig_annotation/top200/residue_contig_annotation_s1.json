@@ -1,0 +1,725 @@
+{
+ "parameters": {
+  "contigs": "/tmp/claude-0/wk/top200.fa",
+  "control_contigs": [
+   "data/geo/sample_contigs_identified_norrna.fa",
+   "data/geo/sample_contigs_unidentified.fa",
+   "/mnt/project-files/shared/resasm/resasm_rederived.fa"
+  ],
+  "seed": 1,
+  "threads": 2,
+  "max_contigs": 0,
+  "pfam_threshold": "per-family gathering (GA) cutoff",
+  "rfam_settings": "cmscan --rfam --cut_ga --nohmmonly, -Z over both piles",
+  "skip_rfam": false,
+  "length_matching": "log bins, ratio 1.25 from 200 nt, without replacement"
+ },
+ "contigs_sha256_16": "6c6270852208b21e",
+ "query_contigs_removed_from_control_pool": {
+  "sample_contigs_unidentified.fa": 200
+ },
+ "residue_pile_reused": null,
+ "length_match_shortfall": {
+  "control_unidentified": {
+   "15": {
+    "wanted": 1,
+    "available": 0
+   },
+   "16": {
+    "wanted": 2,
+    "available": 0
+   }
+  },
+  "control_resasm_rederived": {
+   "1": {
+    "wanted": 6,
+    "available": 1
+   },
+   "6": {
+    "wanted": 28,
+    "available": 22
+   },
+   "7": {
+    "wanted": 26,
+    "available": 15
+   },
+   "8": {
+    "wanted": 18,
+    "available": 5
+   },
+   "9": {
+    "wanted": 10,
+    "available": 1
+   },
+   "10": {
+    "wanted": 10,
+    "available": 0
+   },
+   "11": {
+    "wanted": 5,
+    "available": 0
+   },
+   "12": {
+    "wanted": 6,
+    "available": 0
+   },
+   "13": {
+    "wanted": 2,
+    "available": 0
+   },
+   "14": {
+    "wanted": 2,
+    "available": 0
+   },
+   "15": {
+    "wanted": 1,
+    "available": 0
+   },
+   "16": {
+    "wanted": 2,
+    "available": 0
+   }
+  }
+ },
+ "piles": {
+  "residue": {
+   "tag": "residue",
+   "contigs": 200,
+   "bases": 186859,
+   "length": {
+    "mean": 934.295,
+    "lo": 811.590450807943,
+    "hi": 1056.999549192057,
+    "median": 660.5,
+    "n": 200
+   },
+   "coding_density": {
+    "mean": 0.604026678352937,
+    "lo": 0.5539213239117765,
+    "hi": 0.6541320327940975,
+    "median": 0.7451491777922501,
+    "n": 200
+   },
+   "coding_density_above_half": {
+    "point": 0.61,
+    "lo": 0.5409361758928832,
+    "hi": 0.6749177028050861,
+    "k": 122,
+    "n": 200
+   },
+   "any_pfam": {
+    "point": 0.075,
+    "lo": 0.045974507057252416,
+    "hi": 0.12004459797332034,
+    "k": 15,
+    "n": 200
+   },
+   "rdrp": {
+    "point": 0.025,
+    "lo": 0.010724561470787711,
+    "hi": 0.05717914415161715,
+    "k": 5,
+    "n": 200
+   },
+   "reverse_transcriptase": {
+    "point": 0.0,
+    "lo": 0.0,
+    "hi": 0.018846005918320894,
+    "k": 0,
+    "n": 200
+   },
+   "any_rfam": {
+    "point": 0.03,
+    "lo": 0.013820125830748327,
+    "hi": 0.06389511973247333,
+    "k": 6,
+    "n": 200
+   },
+   "top_pfam": [
+    [
+     "Circo_capsid",
+     3
+    ],
+    [
+     "DUF24635",
+     2
+    ],
+    [
+     "Phage_mat-A",
+     2
+    ],
+    [
+     "RdRP_1",
+     2
+    ],
+    [
+     "DNMK",
+     1
+    ],
+    [
+     "DUF6948",
+     1
+    ],
+    [
+     "Levi_coat",
+     1
+    ],
+    [
+     "RdRP_2",
+     1
+    ],
+    [
+     "Vmethyltransf",
+     1
+    ],
+    [
+     "RdRP_3",
+     1
+    ],
+    [
+     "RNA_replicase_B",
+     1
+    ]
+   ],
+   "top_rfam": [
+    [
+     "LSU_rRNA_eukarya",
+     3
+    ],
+    [
+     "LSU_rRNA_bacteria",
+     3
+    ]
+   ],
+   "rdrp_contigs": [
+    "WW_211013_20-22hmix_S5_L001_NODE_1123_length_2419_cov_9.259729",
+    "WW_211013_20-22hmix_S5_L001_NODE_17253_length_369_cov_105.713376",
+    "WW_211013_20-22hmix_S5_L001_NODE_17254_length_369_cov_94.681529",
+    "WW_211013_20-22hmix_S5_L001_NODE_4022_length_911_cov_49.386682",
+    "WW_211013_20-22hmix_S5_L001_NODE_53_length_6010_cov_75.153820"
+   ],
+   "peptides": 232
+  },
+  "control_identified_norrna": {
+   "tag": "control_identified_norrna",
+   "contigs": 200,
+   "bases": 184104,
+   "length": {
+    "mean": 920.52,
+    "lo": 796.5201691633639,
+    "hi": 1044.5198308366362,
+    "median": 638.0,
+    "n": 200
+   },
+   "coding_density": {
+    "mean": 0.9191724359900378,
+    "lo": 0.898987862585231,
+    "hi": 0.9393570093948447,
+    "median": 0.9773340469922553,
+    "n": 200
+   },
+   "coding_density_above_half": {
+    "point": 0.975,
+    "lo": 0.9428208558483829,
+    "hi": 0.9892754385292123,
+    "k": 195,
+    "n": 200
+   },
+   "any_pfam": {
+    "point": 0.695,
+    "lo": 0.6280132012185453,
+    "hi": 0.7546368564733095,
+    "k": 139,
+    "n": 200
+   },
+   "rdrp": {
+    "point": 0.285,
+    "lo": 0.22694905173277297,
+    "hi": 0.3511547308121051,
+    "k": 57,
+    "n": 200
+   },
+   "reverse_transcriptase": {
+    "point": 0.0,
+    "lo": 0.0,
+    "hi": 0.018846005918320894,
+    "k": 0,
+    "n": 200
+   },
+   "any_rfam": {
+    "point": 0.01,
+    "lo": 0.0027466006037749346,
+    "hi": 0.03572248519617954,
+    "k": 2,
+    "n": 200
+   },
+   "top_pfam": [
+    [
+     "RNA_replicase_B",
+     55
+    ],
+    [
+     "Phage_mat-A",
+     35
+    ],
+    [
+     "Levi_coat",
+     7
+    ],
+    [
+     "DUF24635",
+     4
+    ],
+    [
+     "PhiCb5_coat",
+     4
+    ],
+    [
+     "RdRP_1",
+     4
+    ],
+    [
+     "Dicistro_VP4",
+     3
+    ],
+    [
+     "VapE-like_dom",
+     2
+    ],
+    [
+     "ERF",
+     2
+    ],
+    [
+     "Phage_portal",
+     2
+    ],
+    [
+     "Terminase_3",
+     2
+    ],
+    [
+     "ABC_tran",
+     1
+    ],
+    [
+     "Astro_p19",
+     1
+    ],
+    [
+     "Vmethyltransf",
+     1
+    ],
+    [
+     "DnaB_C",
+     1
+    ]
+   ],
+   "top_rfam": [
+    [
+     "LSU_rRNA_archaea",
+     1
+    ],
+    [
+     "tmRNA",
+     1
+    ]
+   ],
+   "rdrp_contigs": [
+    "WW_211013_20-22hmix_S5_L001_NODE_10234_length_501_cov_0.874439",
+    "WW_211013_20-22hmix_S5_L001_NODE_10581_length_490_cov_2.774713",
+    "WW_211013_20-22hmix_S5_L001_NODE_11388_length_469_cov_1.079710",
+    "WW_211013_20-22hmix_S5_L001_NODE_1156_length_2359_cov_2.171007",
+    "WW_211013_20-22hmix_S5_L001_NODE_1175_length_2317_cov_2.090186",
+    "WW_211013_20-22hmix_S5_L001_NODE_1184_length_2304_cov_1.672743",
+    "WW_211013_20-22hmix_S5_L001_NODE_1186_length_2300_cov_4.252561",
+    "WW_211013_20-22hmix_S5_L001_NODE_12252_length_450_cov_1.415190",
+    "WW_211013_20-22hmix_S5_L001_NODE_13927_length_417_cov_2.870166",
+    "WW_211013_20-22hmix_S5_L001_NODE_14318_length_411_cov_0.806180",
+    "WW_211013_20-22hmix_S5_L001_NODE_1488_length_1906_cov_2.250135",
+    "WW_211013_20-22hmix_S5_L001_NODE_15482_length_393_cov_0.804734",
+    "WW_211013_20-22hmix_S5_L001_NODE_1637_length_1775_cov_3.104651",
+    "WW_211013_20-22hmix_S5_L001_NODE_17971_length_361_cov_2.205882",
+    "WW_211013_20-22hmix_S5_L001_NODE_1898_length_1579_cov_2.461286",
+    "WW_211013_20-22hmix_S5_L001_NODE_1914_length_1567_cov_3.535714",
+    "WW_211013_20-22hmix_S5_L001_NODE_1959_length_1542_cov_15.694687",
+    "WW_211013_20-22hmix_S5_L001_NODE_2018_length_1507_cov_4.750000",
+    "WW_211013_20-22hmix_S5_L001_NODE_2023_length_1505_cov_4.072414",
+    "WW_211013_20-22hmix_S5_L001_NODE_2176_length_1412_cov_3.792926",
+    "WW_211013_20-22hmix_S5_L001_NODE_2408_length_1319_cov_1.469937",
+    "WW_211013_20-22hmix_S5_L001_NODE_2575_length_1257_cov_2.440932",
+    "WW_211013_20-22hmix_S5_L001_NODE_2920_length_1143_cov_35.272059",
+    "WW_211013_20-22hmix_S5_L001_NODE_3120_length_1090_cov_12.308213",
+    "WW_211013_20-22hmix_S5_L001_NODE_321_length_3822_cov_6.632864",
+    "WW_211013_20-22hmix_S5_L001_NODE_33489_length_271_cov_1.069444",
+    "WW_211013_20-22hmix_S5_L001_NODE_3363_length_1030_cov_2.720000",
+    "WW_211013_20-22hmix_S5_L001_NODE_3411_length_1019_cov_2.881743",
+    "WW_211013_20-22hmix_S5_L001_NODE_34_length_7047_cov_502.261585",
+    "WW_211013_20-22hmix_S5_L001_NODE_3651_length_977_cov_2.380694",
+    "WW_211013_20-22hmix_S5_L001_NODE_3720_length_963_cov_2.575991",
+    "WW_211013_20-22hmix_S5_L001_NODE_377_length_3762_cov_14.722147",
+    "WW_211013_20-22hmix_S5_L001_NODE_4184_length_888_cov_0.834334",
+    "WW_211013_20-22hmix_S5_L001_NODE_4314_length_871_cov_1.508578",
+    "WW_211013_20-22hmix_S5_L001_NODE_4389_length_861_cov_2.887097",
+    "WW_211013_20-22hmix_S5_L001_NODE_4624_length_830_cov_7.012903",
+    "WW_211013_20-22hmix_S5_L001_NODE_4957_length_791_cov_1.562500",
+    "WW_211013_20-22hmix_S5_L001_NODE_4970_length_789_cov_2.876022",
+    "WW_211013_20-22hmix_S5_L001_NODE_5020_length_785_cov_1.632877",
+    "WW_211013_20-22hmix_S5_L001_NODE_5031_length_784_cov_1.753086",
+    "WW_211013_20-22hmix_S5_L001_NODE_5062_length_781_cov_1.837466",
+    "WW_211013_20-22hmix_S5_L001_NODE_5199_length_768_cov_2.067321",
+    "WW_211013_20-22hmix_S5_L001_NODE_5388_length_750_cov_1.683453",
+    "WW_211013_20-22hmix_S5_L001_NODE_5869_length_709_cov_1.457187",
+    "WW_211013_20-22hmix_S5_L001_NODE_58_length_5816_cov_6.437598",
+    "WW_211013_20-22hmix_S5_L001_NODE_6003_length_698_cov_2.956454",
+    "WW_211013_20-22hmix_S5_L001_NODE_6155_length_686_cov_2.055468",
+    "WW_211013_20-22hmix_S5_L001_NODE_651_length_3441_cov_5.305080",
+    "WW_211013_20-22hmix_S5_L001_NODE_6595_length_655_cov_4.023333",
+    "WW_211013_20-22hmix_S5_L001_NODE_6779_length_645_cov_2.294915",
+    "WW_211013_20-22hmix_S5_L001_NODE_687_length_3393_cov_3.721989",
+    "WW_211013_20-22hmix_S5_L001_NODE_7177_length_622_cov_2.134039",
+    "WW_211013_20-22hmix_S5_L001_NODE_7243_length_619_cov_2.171986",
+    "WW_211013_20-22hmix_S5_L001_NODE_75_length_5065_cov_37.156088",
+    "WW_211013_20-22hmix_S5_L001_NODE_8181_length_573_cov_1.611969",
+    "WW_211013_20-22hmix_S5_L001_NODE_9041_length_540_cov_1.367010",
+    "WW_211013_20-22hmix_S5_L001_NODE_9347_length_529_cov_1.440928"
+   ],
+   "peptides": 293
+  },
+  "control_unidentified": {
+   "tag": "control_unidentified",
+   "contigs": 197,
+   "bases": 167052,
+   "length": {
+    "mean": 847.9796954314721,
+    "lo": 759.1476577432699,
+    "hi": 936.8117331196744,
+    "median": 637.0,
+    "n": 197
+   },
+   "coding_density": {
+    "mean": 0.8184654554081335,
+    "lo": 0.7839438445808451,
+    "hi": 0.852987066235422,
+    "median": 0.9230769230769231,
+    "n": 197
+   },
+   "coding_density_above_half": {
+    "point": 0.8984771573604061,
+    "lo": 0.8483955680392253,
+    "hi": 0.9333149939160669,
+    "k": 177,
+    "n": 197
+   },
+   "any_pfam": {
+    "point": 0.1116751269035533,
+    "lo": 0.07491353793022637,
+    "hi": 0.16329209277576284,
+    "k": 22,
+    "n": 197
+   },
+   "rdrp": {
+    "point": 0.01015228426395939,
+    "lo": 0.0027884936672214478,
+    "hi": 0.03625521042595447,
+    "k": 2,
+    "n": 197
+   },
+   "reverse_transcriptase": {
+    "point": 0.0,
+    "lo": 1.734723475976807e-18,
+    "hi": 0.01912751143189459,
+    "k": 0,
+    "n": 197
+   },
+   "any_rfam": {
+    "point": 0.01015228426395939,
+    "lo": 0.0027884936672214478,
+    "hi": 0.03625521042595447,
+    "k": 2,
+    "n": 197
+   },
+   "top_pfam": [
+    [
+     "Phage_mat-A",
+     2
+    ],
+    [
+     "RdRP_1",
+     2
+    ],
+    [
+     "Viral_coat",
+     2
+    ],
+    [
+     "Crass_capsid",
+     1
+    ],
+    [
+     "DDE_2",
+     1
+    ],
+    [
+     "ddrB-ParB",
+     1
+    ],
+    [
+     "DUF21428",
+     1
+    ],
+    [
+     "DUF24635",
+     1
+    ],
+    [
+     "DUF25556",
+     1
+    ],
+    [
+     "DUF27543",
+     1
+    ],
+    [
+     "DUF4472",
+     1
+    ],
+    [
+     "DUF7336",
+     1
+    ],
+    [
+     "DUF7446",
+     1
+    ],
+    [
+     "HTH_17",
+     1
+    ],
+    [
+     "PDDEXK_1",
+     1
+    ]
+   ],
+   "top_rfam": [
+    [
+     "SSU_rRNA_eukarya",
+     1
+    ],
+    [
+     "tRNA",
+     1
+    ]
+   ],
+   "rdrp_contigs": [
+    "WW_211013_20-22hmix_S5_L001_NODE_1110_length_2449_cov_4.482038",
+    "WW_211013_20-22hmix_S5_L001_NODE_3746_length_959_cov_1.882743"
+   ],
+   "peptides": 276
+  },
+  "control_resasm_rederived": {
+   "tag": "control_resasm_rederived",
+   "contigs": 128,
+   "bases": 71612,
+   "length": {
+    "mean": 559.46875,
+    "lo": 525.2375862361796,
+    "hi": 593.6999137638204,
+    "median": 544.0,
+    "n": 128
+   },
+   "coding_density": {
+    "mean": 0.8907357433117397,
+    "lo": 0.857572739813473,
+    "hi": 0.9238987468100063,
+    "median": 0.9901595294003728,
+    "n": 128
+   },
+   "coding_density_above_half": {
+    "point": 0.953125,
+    "lo": 0.9015012401106195,
+    "hi": 0.97834245110672,
+    "k": 122,
+    "n": 128
+   },
+   "any_pfam": {
+    "point": 0.3828125,
+    "lo": 0.3031848964440972,
+    "hi": 0.46926932134452193,
+    "k": 49,
+    "n": 128
+   },
+   "rdrp": {
+    "point": 0.2109375,
+    "lo": 0.1492121185502459,
+    "hi": 0.28950828532834777,
+    "k": 27,
+    "n": 128
+   },
+   "reverse_transcriptase": {
+    "point": 0.0,
+    "lo": 0.0,
+    "hi": 0.02913799589810803,
+    "k": 0,
+    "n": 128
+   },
+   "any_rfam": {
+    "point": 0.0,
+    "lo": 0.0,
+    "hi": 0.02913799589810803,
+    "k": 0,
+    "n": 128
+   },
+   "top_pfam": [
+    [
+     "RNA_replicase_B",
+     26
+    ],
+    [
+     "Phage_mat-A",
+     11
+    ],
+    [
+     "Levi_coat",
+     10
+    ],
+    [
+     "DUF24635",
+     2
+    ],
+    [
+     "PhiCb5_coat",
+     1
+    ],
+    [
+     "RdRP_1",
+     1
+    ],
+    [
+     "RNA_helicase",
+     1
+    ]
+   ],
+   "top_rfam": [],
+   "rdrp_contigs": [
+    "k119_1131",
+    "k119_1448",
+    "k119_150",
+    "k119_1546",
+    "k119_1623",
+    "k119_1754",
+    "k119_1826",
+    "k119_1828",
+    "k119_2011",
+    "k119_2144",
+    "k119_2173",
+    "k119_2257",
+    "k119_2354",
+    "k119_25",
+    "k119_324",
+    "k119_334",
+    "k119_369",
+    "k119_38",
+    "k119_495",
+    "k119_59",
+    "k119_648",
+    "k119_806",
+    "k119_845",
+    "k119_887",
+    "k119_895",
+    "k119_95",
+    "k119_951"
+   ],
+   "peptides": 149
+  },
+  "dinucleotide_shuffled_residue": {
+   "tag": "dinucleotide_shuffled_residue",
+   "contigs": 200,
+   "bases": 186859,
+   "length": {
+    "mean": 934.295,
+    "lo": 811.590450807943,
+    "hi": 1056.999549192057,
+    "median": 660.5,
+    "n": 200
+   },
+   "coding_density": {
+    "mean": 0.20274351464845078,
+    "lo": 0.17457014627933543,
+    "hi": 0.23091688301756613,
+    "median": 0.1635202135774218,
+    "n": 200
+   },
+   "coding_density_above_half": {
+    "point": 0.075,
+    "lo": 0.045974507057252416,
+    "hi": 0.12004459797332034,
+    "k": 15,
+    "n": 200
+   },
+   "any_pfam": {
+    "point": 0.0,
+    "lo": 0.0,
+    "hi": 0.018846005918320894,
+    "k": 0,
+    "n": 200
+   },
+   "rdrp": {
+    "point": 0.0,
+    "lo": 0.0,
+    "hi": 0.018846005918320894,
+    "k": 0,
+    "n": 200
+   },
+   "reverse_transcriptase": {
+    "point": 0.0,
+    "lo": 0.0,
+    "hi": 0.018846005918320894,
+    "k": 0,
+    "n": 200
+   },
+   "any_rfam": {
+    "point": 0.0,
+    "lo": 0.0,
+    "hi": 0.018846005918320894,
+    "k": 0,
+    "n": 200
+   },
+   "top_pfam": [],
+   "top_rfam": [],
+   "rdrp_contigs": [],
+   "peptides": 181
+  }
+ },
+ "timings": {
+  "residue": {
+   "prodigal_s": 0.1930856704711914,
+   "pfam_s": 34.466628074645996,
+   "rfam_s": 70.98362016677856
+  },
+  "control_identified_norrna": {
+   "prodigal_s": 0.1520242691040039,
+   "pfam_s": 30.51750135421753,
+   "rfam_s": 30.08201003074646
+  },
+  "control_unidentified": {
+   "prodigal_s": 0.20657706260681152,
+   "pfam_s": 32.4312903881073,
+   "rfam_s": 34.804452419281006
+  },
+  "control_resasm_rederived": {
+   "prodigal_s": 0.05476832389831543,
+   "pfam_s": 30.423227548599243,
+   "rfam_s": 11.086658716201782
+  },
+  "dinucleotide_shuffled_residue": {
+   "prodigal_s": 0.10996031761169434,
+   "pfam_s": 30.799811840057373,
+   "rfam_s": 26.503246307373047
+  }
+ },
+ "wall_seconds": 333.0834209918976,
+ "git_sha": "6487b3c8b40b9299d37807d3da97d7d205d94343-dirty",
+ "tree_dirty": true,
+ "script_sha256": "cb9ba5c7ec502e48"
+}
