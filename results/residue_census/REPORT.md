@@ -135,7 +135,18 @@ anything else in the residue. Folding them into either neighbour would move that
 median, which is why they have a row. They are 2% of the residue and worth someone's
 attention: highly abundant own-assembly sequence that no index identified.
 
-## 5. What this says about where signal could live
+## 5. The spreads are five-block, not random
+
+The five seeds are five contiguous regions of one flow cell, not a random sample
+(`results/block_position_bias/`, companion thread; re-derived in
+[`CONTIGS.md`](CONTIGS.md) §4 and `block_dispersion.json`). Location is unbiased - the blocks
+sit within 0.16 points of the whole library on every class - but between-block dispersion runs
+**1.44x and 1.61x** binomial on the rRNA and identified classes against **1.09x and 1.24x**
+on the residue classes. So the residue ranges above are close to a simple random sample, and
+the identified-pile ranges in §1 and §3 are narrow by about half again. No number changes and
+nothing here turns on those widths.
+
+## 6. What this says about where signal could live
 
 - **Artefact rejection is not the lever.** Under 1% of the residue is artefact by any
   signature tested, so a better artefact filter buys at most that.

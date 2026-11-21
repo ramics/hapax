@@ -1,0 +1,70 @@
+{
+ "seed": 5,
+ "operating_point": "minimap2 sr against SILVA 138.2 SSU+LSU NR99; the contig split called a contig ribosomal at >=100 matching bases",
+ "query_contigs_excluded_from_control_pools": 200,
+ "length_bins_unfilled": {
+  "unidentified_lenmatched": 6,
+  "identified_norrna": 1,
+  "rrna_contigs": 6
+ },
+ "piles": {
+  "top_mass_unidentifiable": {
+   "n": 200,
+   "p50": 0.0,
+   "p90": 0.0,
+   "mean": 1.405,
+   "frac_0": 0.975,
+   "frac_ge_40": 0.025,
+   "frac_ge_60": 0.01,
+   "frac_ge_100": 0.0,
+   "frac_ge_150": 0.0
+  },
+  "unidentified_lenmatched": {
+   "n": 194,
+   "p50": 0.0,
+   "p90": 0.0,
+   "mean": 0.0,
+   "frac_0": 1.0,
+   "frac_ge_40": 0.0,
+   "frac_ge_60": 0.0,
+   "frac_ge_100": 0.0,
+   "frac_ge_150": 0.0
+  },
+  "identified_norrna": {
+   "n": 199,
+   "p50": 0.0,
+   "p90": 0.0,
+   "mean": 0.7035175879396985,
+   "frac_0": 0.9899497487437185,
+   "frac_ge_40": 0.010050251256281407,
+   "frac_ge_60": 0.010050251256281407,
+   "frac_ge_100": 0.0,
+   "frac_ge_150": 0.0
+  },
+  "rrna_contigs": {
+   "n": 194,
+   "p50": 465.0,
+   "p90": 942.1000000000007,
+   "mean": 548.5567010309278,
+   "frac_0": 0.0,
+   "frac_ge_40": 1.0,
+   "frac_ge_60": 1.0,
+   "frac_ge_100": 1.0,
+   "frac_ge_150": 0.9278350515463918
+  }
+ },
+ "manifest": {
+  "script": "experiments/top_contig_rrna_check.py",
+  "git_sha": "562b348958e6110a48f79ebdf27b5a10265ed143",
+  "tree_dirty": false,
+  "script_sha256": "0497296496993961",
+  "parameters": {
+   "seed": "5",
+   "top": "/home/user/hapax/results/residue_census/top_unidentifiable_contigs.tsv",
+   "own_all": "/home/user/hapax/data/work/sample_contigs_all.fa",
+   "sets": "/home/user/hapax/data/geo/sets",
+   "silva_mmi": "/home/user/hapax/data/work/silva.mmi",
+   "out": "/home/user/hapax/results/residue_census"
+  }
+ }
+}
