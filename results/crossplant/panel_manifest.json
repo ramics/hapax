@@ -1,0 +1,94 @@
+{
+  "script": "experiments/crossplant_panel.py",
+  "git_sha": "d6e05cbb7e25028bb57d5e38ebde1edc2d43d454",
+  "tree_dirty": false,
+  "script_sha256": "0000bac96da5d96f",
+  "parameters": {
+    "seed": 1,
+    "berlin_panel": "results/recurrence/panel.tsv",
+    "n_comparator": 6,
+    "query_sample": "SRR23973193",
+    "dropped_projects": [
+      "PRJNA902729",
+      "PRJNA1445946"
+    ]
+  },
+  "source": "NCBI SRA runinfo + BioSample efetch",
+  "fetched": "2026-11-21T21:28:41Z",
+  "seconds": 13.2,
+  "rows": 536,
+  "summary": {
+    "PRJNA729801": {
+      "runs": 277,
+      "paired": 277,
+      "plants": 9,
+      "waters": 277,
+      "dates": 196,
+      "date_range": [
+        "2020-07-20",
+        "2021-08-03"
+      ],
+      "reads_millions": 5785.1
+    },
+    "PRJNA1543313": {
+      "runs": 26,
+      "paired": 26,
+      "plants": 7,
+      "waters": 26,
+      "dates": 17,
+      "date_range": [
+        "2022-11-01",
+        "2023-10-10"
+      ],
+      "reads_millions": 748.4
+    },
+    "PRJNA924011": {
+      "runs": 55,
+      "paired": 55,
+      "plants": 10,
+      "waters": 55,
+      "dates": 7,
+      "date_range": [
+        "2021-12-05",
+        "2022-01-09"
+      ],
+      "reads_millions": 1839.3
+    },
+    "PRJNA842541": {
+      "runs": 140,
+      "paired": 140,
+      "plants": 1,
+      "waters": 140,
+      "dates": 30,
+      "date_range": [
+        "2021-02-03",
+        "2021-04-03"
+      ],
+      "reads_millions": 2631.5
+    },
+    "PRJNA941081": {
+      "runs": 32,
+      "paired": 32,
+      "plants": 4,
+      "waters": 32,
+      "dates": 13,
+      "date_range": [
+        "2020-08-03",
+        "2020-09-18"
+      ],
+      "reads_millions": 1179.5
+    },
+    "PRJNA948850": {
+      "runs": 6,
+      "paired": 6,
+      "plants": 1,
+      "waters": 6,
+      "dates": 6,
+      "date_range": [
+        "2021-03-04",
+        "2022-07-19"
+      ],
+      "reads_millions": 75.0
+    }
+  }
+}
