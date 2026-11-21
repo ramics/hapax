@@ -130,7 +130,7 @@ than the residue itself**. The excess tracks *assembled from shallow unplaced pa
 positives on genuinely divergent rRNA is still undistinguished and needs a sensitive
 blastn-class search neither container has.
 
-## 5. Block structure: what the spreads above are, and are not
+## 4. Block structure: what the spreads above are, and are not
 
 `experiments/block_dispersion.py`, `block_dispersion.json`. Added after the companion thread
 established that the cascade's "five seeds" are five contiguous regions of one flow cell
@@ -163,7 +163,7 @@ cannot measure a variance, and this repo's `min-max across seeds` convention is 
 five-sample spread. It is honest as an observed range and must not be converted into a
 dispersion factor; the factor comes from the full window series.
 
-## 6. What this says about the deliverable
+## 5. What this says about the deliverable
 
 - **The depth-6 half is in far better shape than the depth-1 half.** 42.6% of its mass is on
   contigs a profile search can work on, and on the new pile that search returns a real signal

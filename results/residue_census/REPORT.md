@@ -139,7 +139,7 @@ attention: highly abundant own-assembly sequence that no index identified.
 
 The five seeds are five contiguous regions of one flow cell, not a random sample
 (`results/block_position_bias/`, companion thread; re-derived in
-[`CONTIGS.md`](CONTIGS.md) §5 and `block_dispersion.json`). Location is unbiased - the blocks
+[`CONTIGS.md`](CONTIGS.md) §4 and `block_dispersion.json`). Location is unbiased - the blocks
 sit within 0.16 points of the whole library on every class - but between-block dispersion runs
 **1.44x and 1.61x** binomial on the rRNA and identified classes against **1.09x and 1.24x**
 on the residue classes. So the residue ranges above are close to a simple random sample, and
