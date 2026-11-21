@@ -1,0 +1,76 @@
+{
+ "seed": 1,
+ "window": 100000,
+ "library_pairs": 8731224,
+ "classes": {
+  "none": {
+   "whole_library": 0.15713959463186375,
+   "binomial_sd": 0.0011508550839736396,
+   "windows": 87,
+   "between_window_sd": 0.0012566830170304291,
+   "inflation_all_windows": 1.0919559156756644,
+   "inflation_from_5_blocks_only": 1.1514506385984435,
+   "lag1_autocorrelation": -0.016544024152476616,
+   "five_block_mean": 0.157576,
+   "five_block_minus_whole_pct_points": 0.04364053681362445
+  },
+  "rrna": {
+   "whole_library": 0.3944372518675503,
+   "binomial_sd": 0.0015454983215996223,
+   "windows": 87,
+   "between_window_sd": 0.0022298400288803736,
+   "inflation_all_windows": 1.4427967974578217,
+   "inflation_from_5_blocks_only": 0.6506860047950723,
+   "lag1_autocorrelation": 0.24484429538940192,
+   "five_block_mean": 0.39288,
+   "five_block_minus_whole_pct_points": -0.1557251867550291
+  },
+  "identified": {
+   "whole_library": 0.3489432867602526,
+   "binomial_sd": 0.0015072553512434604,
+   "windows": 87,
+   "between_window_sd": 0.0024249904471574965,
+   "inflation_all_windows": 1.608878313257883,
+   "inflation_from_5_blocks_only": 0.4412516712142116,
+   "lag1_autocorrelation": 0.29624905272923757,
+   "five_block_mean": 0.34966400000000003,
+   "five_block_minus_whole_pct_points": 0.07207132397474281
+  },
+  "unident": {
+   "whole_library": 0.09302269647417132,
+   "binomial_sd": 0.0009185285755753357,
+   "windows": 87,
+   "between_window_sd": 0.0011418362416183339,
+   "inflation_all_windows": 1.2431145551493874,
+   "inflation_from_5_blocks_only": 0.6242426233319872,
+   "lag1_autocorrelation": -0.00655164969773244,
+   "five_block_mean": 0.093512,
+   "five_block_minus_whole_pct_points": 0.048930352582868264
+  },
+  "other_ctg": {
+   "whole_library": 0.006457170266161995,
+   "binomial_sd": 0.00025328788400387,
+   "windows": 87,
+   "between_window_sd": 0.00032414347478865283,
+   "inflation_all_windows": 1.2797433089365626,
+   "inflation_from_5_blocks_only": 0.5401800072276886,
+   "lag1_autocorrelation": 0.1303339506218383,
+   "five_block_mean": 0.006368,
+   "five_block_minus_whole_pct_points": -0.008917026616199475
+  }
+ },
+ "reading": "Widen a binomial interval on rrna or identified by its inflation_all_windows factor; the residue classes (none, unident) are near 1 and barely move. Never take the factor from 5 blocks: that column is a 5-sample variance and reads below 1 where the truth is 1.6.",
+ "manifest": {
+  "script": "experiments/block_dispersion.py",
+  "git_sha": "496f20b2a4d7d780541948912e1738fb71f3ba99",
+  "tree_dirty": false,
+  "script_sha256": "1f248e384466fe01",
+  "parameters": {
+   "seed": "1",
+   "classes": "/home/user/hapax/data/work/library_label_classes.npz",
+   "window": "100000",
+   "block_stride": "1500000",
+   "out": "/home/user/hapax/results/residue_census"
+  }
+ }
+}

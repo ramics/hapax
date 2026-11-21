@@ -130,7 +130,40 @@ than the residue itself**. The excess tracks *assembled from shallow unplaced pa
 positives on genuinely divergent rRNA is still undistinguished and needs a sensitive
 blastn-class search neither container has.
 
-## 4. What this says about the deliverable
+## 5. Block structure: what the spreads above are, and are not
+
+`experiments/block_dispersion.py`, `block_dispersion.json`. Added after the companion thread
+established that the cascade's "five seeds" are five contiguous regions of one flow cell
+(`subtract_known.py` skips (seed-1) x 1.5M pairs) rather than a random sample
+(`results/block_position_bias/`). Re-derived here from the whole-library label table as a
+second instrument, over all 87 non-overlapping 100,000-pair windows:
+
+| pair class | whole library | between-window SD / binomial SD | lag-1 autocorrelation |
+|---|---|---|---|
+| none (unplaced) | 15.714% | **1.09** | -0.02 |
+| unidentifiable contig | 9.302% | **1.24** | -0.01 |
+| rRNA | 39.444% | **1.44** | +0.24 |
+| identified | 34.894% | **1.61** | +0.30 |
+| outside the split | 0.646% | 1.28 | +0.13 |
+
+It reproduces the companion thread's factors and its conclusion: **the positional structure
+is in the abundant material, not in the residue.** The five blocks' means sit within 0.16
+percentage points of the whole library on every class, so location is unbiased; dispersion is
+what moves.
+
+**So the ranges in §1-§3 and in `REPORT.md` are five-block min-max, which for the residue
+piles is close to a random sample (1.09 and 1.24) and for the rRNA and identified control
+piles is narrow by about 1.4-1.6x.** No number here changes; the control piles' intervals
+should be read as wider than printed, and nothing in this report turns on their width.
+
+**And a caution on the estimator, because the obvious one inverts the answer.** The same
+inflation computed from the five blocks alone reads 0.65 for rRNA and 0.44 for identified -
+"no inflation, if anything less" - against 1.44 and 1.61 from all 87 windows. Five numbers
+cannot measure a variance, and this repo's `min-max across seeds` convention is exactly that
+five-sample spread. It is honest as an observed range and must not be converted into a
+dispersion factor; the factor comes from the full window series.
+
+## 6. What this says about the deliverable
 
 - **The depth-6 half is in far better shape than the depth-1 half.** 42.6% of its mass is on
   contigs a profile search can work on, and on the new pile that search returns a real signal
@@ -152,6 +185,7 @@ blastn-class search neither container has.
 | `contig_overlap_s{1..5}.json`, `covered_fraction.tsv`, `resasm_{new,partial,rederived}.fa` | `experiments/residue_contig_overlap.py` |
 | `contig_mass_s1.json`, `top_unidentifiable_contigs.tsv` | `experiments/residue_contig_mass.py` |
 | `top_mass_unidentifiable_rrna_s{1..5}.json`, `resasm_new_rrna_s{1..5}.json`, `resasm_new_rrna_asm20_s1.json` | `experiments/top_contig_rrna_check.py` |
+| `block_dispersion.json` | `experiments/block_dispersion.py` |
 
 Annotation numbers quoted in §3 are `../residue_contig_annotation/` (companion thread). Each
 result carries its seed, git SHA, dirty flag and script content hash.
