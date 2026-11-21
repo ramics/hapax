@@ -109,39 +109,79 @@ Imo's, and each is a reported field rather than a threshold:
 continuous number — bitscore, percent identity, alignment length — never thresholded into a
 call.
 
-**(ii) Reads where part aligns well and the rest does not.** This is the sharpest open
-question in the whole design, and it is not an oddity: for the residue it is the *normal
-case*. A ribosomal read aligns end to end at 100% identity; a residue read aligns over about
-a third of itself at 89% identity. What discriminates the piles is **coverage × identity**,
-not hit versus no-hit.
+**(ii) Reads where part aligns well and the rest does not.** This was written as the sharpest
+open question in the design, on the grounds that for the residue it is the *normal case* — a
+ribosomal read aligning end to end at 100% identity against a residue read aligning over
+about a third of itself at 89%.
 
-Two explanations compete and the tool must not choose between them by assertion:
+**That premise is withdrawn, and it was withdrawn because nobody had read the E-value.**
+BLAST reports to E=10 by default, so the "third of the read at 89%" was a description of
+chance matches: the median E-value in that pile is 0.24, and a 107 nt nucleotide query finds
+40 bases at 88% by chance in 318.8 GB. Demanding significance inverts the shape
+(`results/subtract_known/REPORT.md` §3.4):
 
-- a **chimaera** — and amplicon chimaera rates exceed 70% for the rarest taxa, which is this
-  residue by construction, and they form reproducibly across replicates so replicate
-  agreement cannot filter them;
-- a **genuinely divergent molecule** where only a conserved domain is still recognisable.
+| readout, at E < 1e-5 | residue reads against core_nt |
+|---|---|
+| reads with a significant hit | 73 of 500 (14.6%) |
+| median fraction of the read aligned, among those | **0.96** |
+| median identity, among those | 90.1% |
+| significant *and* partial (< 0.95 of the read) | 28 of 500 (5.6%), aligning 87 of 107 bases |
 
-Our split-mapping chimaera test cannot yet tell those apart: it fires on 26% of ordinary
-known-background reads. So this ships as a **measurement, not a label** — split-mapping
-evidence, domain boundary, and the per-sample false-positive rate printed beside it. The
-discriminating experiment is still open; it is named here rather than papered over.
+**A real relative aligns end to end. Partial alignment is the signature of a chance match
+rather than of divergence** — so at read level the shape this requirement was written about
+has almost no population, and what little it has aligns 87 of 107 bases rather than half.
+
+A second instrument reaches the same place with a control
+(`results/partial_match_subjects/REPORT.md`): among reads whose best hit covers part of them,
+the chance band is **identical between the residue and reads the cascade already identified**
+— median E 0.82 against 0.81, identity 87.8% against 87.2%, 38 matched bases against 39. A
+separator that reads the same on the residue and on known material is describing the
+database. 218 of 231 such hits cannot even be reproduced by a short-read aligner against the
+reference BLAST named.
+
+So the two competing explanations are no longer symmetric:
+
+- a **chimaera** — amplicon chimaera rates exceed 70% for the rarest taxa, and they form
+  reproducibly across replicates so replicate agreement cannot filter them. But the
+  split-mapping test fires on **0.04% of unidentifiable contigs against 0.15% of identified
+  ones**, indistinguishable from its own 26% false-positive rate on known background, and at
+  read level the question cannot be asked at all: once a 107 nt read matches ~74% of itself
+  the leftover is ~10 aa, below any search's floor;
+- a **genuinely divergent molecule** where only a conserved domain is still recognisable —
+  which is what the significant pile looks like, holding its identity into reference sequence
+  past the reported match.
+
+**Consequences for the tool.** This question moves from the read stage to **after assembly**,
+where the separator is continuous and clean: unidentifiable contigs align over 31.5% of
+themselves at 35.0% identity against 56.7% at 40.6% for identified ones, with no overlap. At
+read level the tool reports coverage and identity **with the E-value beside them** and makes
+no chimaera claim. The field name stays; the threshold never existed and now the premise
+does not either.
 
 **(iii) Evidence that no-match sequence really sits below ~80% identity.** This is the job of
 a translated search against nr, and partly discharged already by ground truth against NCBI
 core_nt (133 M sequences, 1.1 Tbase — two orders of magnitude beyond any local index):
 
-| class | % of library | any hit | median identity | median query coverage |
-|---|---|---|---|---|
-| rRNA | 37.6 | 60/60 | 100.0 | 0.99 |
-| public nucleotide (Kraken2) | 2.7 | 60/60 | 100.0 | 0.99 |
-| identified by the sample's own assembly | 34.3 | 53/60 | 91.6 | 0.64 |
-| residue, maps an unidentified contig | 9.1 | 49/60 | 90.6 | 0.34 |
-| residue, maps nothing | 16.3 | 52/60 | 88.9 | 0.38 |
+The per-class table lives in `results/blast_check/TABLES.md` and is generated from the run
+rather than typed here. **Read it at the strong-hit column, not the any-hit column**: an
+"any hit" rate against 318.8 GB counts chance matches, which is the error §(ii) above
+records. At 95% identity over 80% of the read the classes separate — rRNA 90.0%, public
+nucleotide 94.4%, identified by the sample's own assembly 25.2%, residue 9.3% and 5.6%,
+tier-2 contigs 3.9% — where at "any hit" they all read 85–100% and say nothing.
 
-This corrected our own language: **87% of residue reads do hit something.** "Matches nothing"
-always meant "matches nothing in an index that fits on this disk". The tool says the former
-and never the latter.
+This still corrected our own language in the direction that matters: **most residue reads do
+hit something, and "matches nothing" always meant "matches nothing in an index that fits on
+this disk".** The tool says the former and never the latter. But it says it with an E-value,
+because without one the sentence is true and empty.
+
+Two things sharpen (iii) rather than soften it. **14.6% of residue reads have a significant
+relative in core_nt and it is ~90% identical over their whole length** — a divergent strain,
+which is §5's business and not novelty — while **~85% have no significant relative in the
+largest nucleotide database there is**. And bigger databases buy hits, not identifications:
+across four cumulative protein indexes the residue's "any hit" runs 77.7 → 92.4 → 97.6 →
+98.9%, flat only against a ceiling, while at bitscore ≥ 50 it runs 0.00 → 0.00 → 0.36 →
+1.15% and is still tripling. **The headroom is in turning weak hits into identifications, not
+in finding more weak hits.**
 
 **What the minimal production index still needs, and it is disk.** A DIAMOND database of full
 UniRef50 is ~30 GB against ~15 GB of writable disk left here after the nucleotide indexes, so
@@ -216,10 +256,14 @@ gap — it is what honest calibration of a 107 nt read produces about half the t
 Five dimensions, each either already measured or cheap, chosen because each is continuous
 and each has a noise source whose signature differs from biology's.
 
-**1. Coverage × identity, not hit versus no-hit.** The ground truth in §2.1 already
-established this as the discriminating axis and the spec previously carried it as a caveat.
-It is a feature: a ribosomal read aligns end to end at 100%, a residue read over a third of
-itself at 89%. Two numbers per index, never collapsed to a boolean.
+**1. Coverage × identity × significance, never hit versus no-hit.** Two numbers per index,
+never collapsed to a boolean — but **three**, because coverage × identity on its own is what
+produced the withdrawn reading in §2.1. The "residue read aligning over a third of itself at
+89%" that this axis was built on was a chance match, and without the E-value beside them
+coverage and identity are a pile of noise that looks like a gradient. A ribosomal read
+aligns end to end at 100% identity at E ≈ 0; a residue read with a *significant* hit aligns
+over 0.96 of itself at 90.1%; a residue read's *median* hit is 40 bases at 88% at E = 0.24
+and means nothing. All three numbers travel together or none of them is reportable.
 
 **2. A read's trajectory across the index-size ladder.** Something recognised only by the
 largest index is further away than something caught at 0.67 GB. That is a continuous
@@ -241,12 +285,18 @@ noise floor for free, which is exactly what the calibration requirement in §6 n
 where DIAMOND and every nucleotide index read zero (§7). The gap between "no sequence hit"
 and "yes profile hit" is itself a distance measurement.
 
-**First experiment, before any of this is built into the tool:** take the residue rows
-already on disk and ask whether they are *structured* or *diffuse* in that joint space — do
-clusters appear that behave like a genome (consistent coverage, GC, mate linkage,
-co-recurrence), or is it a featureless cloud behaving like error? Five seeds, data already
-committed, and a clean negative if the answer is cloud. Nothing downstream should be built
-until that question has an answer.
+**That first experiment has been run, and the answer is cloud.** It asked whether the residue
+is *structured* or *diffuse* in the joint space — whether clusters appear that behave like a
+genome. **No cluster count beats 1 in 5/5 seeds** against a null carrying the residue's own
+mean and covariance, and multidimensionality buys **0.013 AUC** over the best single axis
+(library coverage, itself partly circular), with composition and quality fields together
+reaching 0.686.
+
+So the joint-space view ships as a **density with reference clouds, and never as a
+clustering**. The axes above stay, because a per-read report with its calibration beside it
+is the deliverable; what does not ship is any claim that the residue separates into
+populations. Nothing downstream should be built on structure that was looked for and is not
+there.
 
 ---
 
@@ -276,6 +326,29 @@ reports a fused lineage as fused rather than as a strain.
 the shuffled nulls, the subtracted-read comparisons, the chimaera false-positive rate and the
 error profile are all recomputed per sample. A threshold imported from another run is a
 threshold measuring the other run.
+
+This stopped being a precaution and became a measurement. Two RNA libraries from **the same
+plant, the same group and the same naming series, eight months apart** differ like this
+(`results/dna_rna_pair/`): rRNA **38.0% → 67.1%**, Kraken2 PlusPF-16 at confidence 0.1
+**22.7% → 40.7%**, virus-identifiable **12.0% → 6.5%** as ribosomal sequence crowds it out.
+The ribosomal fraction nearly doubled and the identifiable fraction with it. **So every
+removal percentage in this repo is a statement about one sample on one day**, and should be
+read as "on SRR23973193" rather than as a property of the method — including the holdout
+spike's survival, which rides on a quantity that moved 29 points.
+
+A second constraint follows from the same comparison: **tier order is a property of the
+library, not of the tool.** On the matched DNA library — which is a virome, 0.01% ribosomal
+and 99.1% unidentified — 0.24 GB of viral protein identifies **8.5×** what the 16 GB
+nucleotide index does, while on the RNA library of the same water the 16 GB index wins
+six-fold. A cascade tuned on one and pointed at the other spends its largest index to remove
+under one percent, so the tier order is chosen per sample by the calibration run and is not
+baked in.
+
+**Operating points include the ones that look like plumbing.** Mate 2's non-template trim
+moves the Kraken2 removal fraction by **1.7 points** between 14 and 16 bases — the size of
+effects reported here as findings — because the prefix length is a distribution and Kraken2's
+confidence is a fraction of a read's minimizers (`results/nontemplate_prefix/`). The trim
+ships as a declared parameter with its curve, like every threshold.
 
 **The sample's own assembly is versioned.** It is the most powerful thing the tool subtracts
 (30.33 marginal points from 15 MB) and it is produced at run time, so two runs of the same
