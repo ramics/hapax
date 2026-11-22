@@ -231,7 +231,19 @@ looked like a null exceeding the test was real material compared against itself.
 
 0 walk failures, 0 returned unchanged, verified length-preserving and
 dinucleotide-count-exact before the run. **So no shuffled contig produces any significant
-hit, and therefore none produces any gap at all: the gap cannot be a chance artefact.**
+hit, and therefore none produces any gap at all.**
+
+**Their corrected arm, re-run on Berlin with the fixed shuffle, agrees and is the independent
+replication:** **0 of 11,361** shuffled contigs carry a significant hit against **89.53%** of
+real ones, and the whole shuffled library produces a single 47 aa alignment at **E = 8.45e-4**,
+which clears nothing. Two libraries, two indexes, two scripts, same answer.
+
+**But zero is a bound, not a rate, and their framing is the one to carry: 0 over 11,361 bounds
+chance at roughly 1 in 11,000 rather than establishing zero** - mine at roughly 1 in 22,000 on
+22,110. A field that fires on a few hundred contigs per library needs a null measured at a
+resolution finer than that bound before "not chance" means "not chance at this shortlist's
+size", and neither arm reaches it. What both arms do establish is that the gap is not produced
+by composition alone.
 
 **This is the same failure mode, in the same repo, for the second time in two days, and a
 reader of both reports should not mistake them for independent findings.** `results/
@@ -265,6 +277,16 @@ why those three numbers now sit beside the distribution rather than behind it.
 | shuffled null | **empty** - no significant hit on any of 22,110 contigs, so no gap |
 | leak arm, 34 known contigs, same library | median, mean **and max 0.0** |
 | real contigs at or above the candidate | **292**, 1.3% of the removed pile |
+
+**And the rate on real identified background, from their corrected Berlin pass, sizes the
+shortlist rather than the effect.** Over the identified pile the gap has a **median of 0.38
+points**, **14.51%** above 10 and **5.81%** above 30 - so a 30-point threshold sits at the
+**94.2nd percentile**, and the candidate's +36.6 falls between that and the 99th. That agrees
+with my own length-matched 95.85th percentile on this library, measured independently. The
+operating consequence is blunt: **a threshold there fires on a few hundred identified contigs
+per library**, which is the same order as the ~292 the field yields here. The gap is a
+shortlist-sized filter, not a discriminator, and it should never be quoted without that number
+beside it.
 
 That is a clean negative arm on both sides and a positive set of **one**. The honest word is
 **uncontrolled from the other side rather than cleared**: what has been shown is that the
@@ -307,7 +329,9 @@ reader remembers seeing is worse than a named one:
   factor of 33"* - withdrawn. The true null is zero, so the separation is total and the
   factor is undefined rather than 33.
 - *"conditional on a hit, almost nothing about the alignment separates real from shuffled"* -
-  withdrawn. That comparison was real material against real material.
+  withdrawn, and **not replaceable**: with the fixed shuffle no shuffled contig carries a
+  significant hit at all, so there is nothing to condition on. That comparison was real
+  material against real material.
 - *"the fraction of the contig covered is the one field above chance, at 26.34%"* - withdrawn,
   and with it the one external support this report had for ordering a shortlist on coverage.
 - their per-column conserved-core result, which used a copy of the same shuffle - withdrawn.
@@ -356,20 +380,36 @@ withdrawn kill.** Its status is **untested**, not cleared: the kill against it w
 because the null that produced it was broken, which removes an argument against the field
 without supplying one for it. This library cannot supply one either - with no significant hit
 on any of 22,110 shuffled contigs, its null has nothing in it to compare against, so "the gap
-is not chance here" is as much as these data can say. It needs the corrected Berlin null,
-which is re-running in the thread that owns it, and a second positive. **No ordering should
-be built on it until then**, and nothing in this report's recommendations depends on it.
+is not chance here" is as much as these data can say. The corrected Berlin null has since
+landed and says the same thing on a second library - 0 of 11,361 - so the chance objection is
+answered twice and **the field is still untested in the way that matters**: what is missing is
+a second *positive*, and a null at a resolution finer than the few hundred contigs per library
+a 30-point threshold fires on. **No ordering should be built on it until then**, and nothing in
+this report's recommendations depends on it.
 
 So **what should order the shortlist is still open.** The coverage axis is what the ground
 truth here points at, and it now has one measurement behind it rather than two.
 
-**The honest size of that list is not yet known, and the direction is one-sided.** These
+**The shortlist survives the widest index available, and that was the open question.** These
 distances are measured against RefSeq viral plus Swiss-Prot only, which is a narrow index, so
-every identity here is a **lower bound on recognisability and an upper bound on divergence**.
-Some of the 70 will collapse to "known" against nr or core_nt - and the candidate will not,
-because its distance is identical against today's unfiltered index. That pass belongs to the
-`Subtract the known, score the unknown` thread, which owns the gene-level instrument, and its
-result decides whether the shortlist is 70 rows or 20. The joint table above was sent to it.
+every identity here is a **lower bound on recognisability and an upper bound on divergence**,
+and the obvious objection was that a shortlist built on it is a shortlist of records missing
+from a small database. The `Subtract the known, score the unknown` thread has now run the
+candidate's divergent panel-mates against **core_nt, 319 GB**, and the attrition is partial
+rather than total:
+
+| against core_nt | panel-mates |
+|---|---|
+| collapse to strain level - were only distant because the index was narrow | **25** |
+| stay under 80% identity **or** under half covered | **83** |
+| near-reference controls, same pass | **135**, median **97.55%** over **98.8%** of their length |
+
+So roughly a sixth of the panel is index artefact and the majority is not, while the control
+arm returns essentially complete matches in the same pass - which is what says the 83 are a
+property of the sequence and not of a search that was failing for everyone. **The shortlist
+shrinks by about a sixth against the largest nucleotide index there is; it does not dissolve.**
+The candidate itself does not move at all, because its distance is identical against today's
+unfiltered index. The joint table above was sent to that thread, and this is its answer.
 
 **This recommendation has since been implemented, by that thread rather than here.** `hapax.py`
 on `main` now carries a `divergent` stage over `experiments/divergent_known.py`, whose docstring
