@@ -197,10 +197,19 @@ def upload_panel(s3: Any, bucket: str, prefix: str, panel_dir: Path, name: str) 
         s3.put_object(Bucket=bucket, Key=key, Body=path.read_bytes())
         print(f"  {key}  {path.stat().st_size / 1e3:.1f} kB", flush=True)
         sent += 1
-    for required in ("panel.fa", "null.fa"):
-        if not (panel_dir / required).exists():
-            raise SystemExit(f"no {required} in {panel_dir}; the instance would start on "
-                             f"nothing, or on a panel with no control")
+    # Checked AFTER the uploads only because the uploads are idempotent under a fixed key;
+    # the point of the check is that the instance cannot be launched against a panel with no
+    # test arm or no control, and it names which of the two is missing because those are
+    # different mistakes.
+    if not (panel_dir / "panel.fa").exists():
+        raise SystemExit(f"no panel.fa in {panel_dir}; the instance would start on nothing")
+    nulls = sorted(panel_dir.glob("null_s*.fa"))
+    if not nulls:
+        raise SystemExit(
+            f"no null_s*.fa in {panel_dir}; the instance would run every arm with no "
+            f"shuffled control, which is the one thing no table here is readable without. "
+            f"`reach_queries.py` writes one pile per --null-seeds value")
+    print(f"  {len(nulls)} null pile(s): {', '.join(p.name for p in nulls)}", flush=True)
     return sent
 
 
