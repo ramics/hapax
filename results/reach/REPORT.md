@@ -2,9 +2,12 @@
 
 `experiments/reach_queries.py` builds the panel, `experiments/reach_arms.py` runs the arms on
 one EC2 instance, `experiments/report_reach.py` generates [`TABLES.md`](TABLES.md) from the
-rows. Seed 1 for the panel, five seeds for the null. Two runs: `i-0672a2ca4a782aa21`, which
-ran five arms and found three bugs, and `i-0499bf15b019eba9f`, which ran all nine. Both on
-c6i.2xlarge on demand.
+rows. Seed 1 for the panel, five seeds for the null. Three runs on c6i.2xlarge on demand,
+about $0.75 in total: `i-0672a2ca4a782aa21` and `i-0499bf15b019eba9f` were shakedowns that
+between them found five bugs, and the table ships from `i-0bf3677bc8ad09bb4`, which ran all
+nine arms under one git SHA and one script hash. The two earlier runs are described below
+rather than discarded, because four of the five bugs were in readouts rather than in tools
+and each would have produced a plausible wrong table.
 
 Imo, 2026-11-22: *"sounds good, let's try it. structure comparison also sounds fun."*
 
@@ -34,10 +37,10 @@ the sequence baseline is computed for them and their rows say so.
 
 | pile | what | n |
 |---|---|---|
-| test | the near-complete divergent *Fiersviridae* genomes of `results/divergent_contigs/` §3 — 3.0-4.5 kb, 116-467x mapped depth, polymerase 44.9-84.8% | 7 |
+| test | the near-complete divergent *Fiersviridae* genomes of `results/divergent_contigs/` §3 — 3,058-4,526 nt, 116-467x mapped depth, polymerase 44.9-84.8% | 7 |
 | ground truth | the withheld-genome contig of `results/holdout_cascade/` — 3,990 nt at ~452x, true nucleotide divergence 30.28% | 1 |
 | zero distance | its already-referenced companion from the same library, 6,383 nt at 1,188x | 1 |
-| negative | near-reference contigs from the same assembly, same family, same length band, 95.2-99.3% identity | 7 |
+| negative | near-reference contigs from the same assembly, same family, same length band (3,118-4,047 nt), polymerase 95.2-99.2% | 7 |
 | null | every record above, dinucleotide-shuffled, five seeds | 80 |
 
 **The negative arm is matched on family as well as on length**, because a plant virus at 98%
@@ -52,9 +55,9 @@ put real sequence into the null pile and manufactured two kills in two days
 the code, so it is measured here too: **0 of 16 records at every one of the five seeds.**
 
 A dinucleotide shuffle preserves stop-codon density, so the shuffled records yield few and
-short ORFs — 36 against the real pile's 54 at one seed. The null therefore calibrates
-**existence** of a significant alignment and nothing conditional on one. That is the same wall
-`results/divergent_known/` §2 reached from the other side.
+short ORFs — 21, 29, 30, 31 and 37 across the five seeds, against the real pile's 54. The
+null therefore calibrates **existence** of a significant alignment and nothing conditional
+on one. That is the same wall `results/divergent_known/` §2 reached from the other side.
 
 ## The answer to the first two arms: nothing beats the production search
 
@@ -128,11 +131,126 @@ from EBI:
 Seven polymerase identities from `results/divergent_contigs/` and the holdout's protein
 identity from `results/holdout_cascade/`, to the decimal place.
 
-## What the first run bought, which was three bugs
+## Profiles reach everything the sequence arms reach, and nothing further
 
-The first run was a shakedown and it is reported because it is where most of the correctness
-came from. Five arms ran; the two structure arms failed; three errors were found that would
-each have produced a plausible wrong table.
+hmmsearch against Pfam-A places a domain on every contig in every pile, at the curated
+gathering cutoffs and at E ≤ 10 alike, and the null stays empty at both. So the profile
+library agrees with the sequence arms about which of these contigs are recognisable, which
+is worth having as a cross-check and is not reach: there is no contig that profiles find and
+sequence search misses.
+
+The literature on this family — Callanan 2020, Rūmnieks 2026 — reports that several profiles
+per protein are needed to recover its divergent members, and this panel reads the opposite
+way round:
+
+| pile | ORFs with a domain | distinct Pfam models | ORFs carrying 2+ models | most on one ORF |
+|---|---|---|---|---|
+| divergent | 17 | 3 | **0** | 1 |
+| near_reference | 17 | 4 | 1 | 2 |
+| the withheld genome | 3 | 3 | 0 | 1 |
+| its already-referenced companion | 4 | **7** | 1 | **4** |
+
+**Profile multiplicity tracks how well represented a sequence already is, not how divergent
+it is.** The one contig in the panel whose relatives are fully in the databases carries
+seven models and reaches four on a single ORF; the divergent pile carries three models in
+total and never more than one per ORF. Read as an instrument this is the familiarity
+polarity `cov_step_conservation/` found in the coverage-shape family, one level up: a count
+of matched profiles says *already described*. It does not contradict the literature's claim,
+which is about what a curated family needs in order to be *built*; it does mean the count
+cannot be used the other way, as evidence that a contig is divergent.
+
+## Codon space: the saturation claim, measured on both bands
+
+The brief asked for the codon arm on the divergent and the near-reference band both, so that
+saturation would be measured rather than asserted. Nei-Gojobori counting with a
+Jukes-Cantor correction that returns undefined instead of clipping, over tblastn alignments
+to the RefSeq viral genomic release, taking each ORF's best-scoring alignment:
+
+| pile | median %id | dS undefined | median dS | median dN | median dN/dS |
+|---|---|---|---|---|---|
+| near_reference | 96.1 | **0 of 22** | 0.189 | 0.019 | 0.104 |
+| divergent | 52.3 | **11 of 22** | 1.164 | 0.466 | 0.109 |
+| the withheld genome | 66.9 | 0 of 3 | 1.333 | 0.271 | 0.204 |
+| its companion | 99.8 | 0 of 4 | 0.002 | 0.001 | 0.000 |
+
+**dN/dS is the same on both bands — 0.104 against 0.109 — and that is not the result.** The
+result is the column beside it: half the divergent pile's genes have no measurable
+synonymous divergence left at all, and the half that do sit at dS ≈ 1.16, six times the
+control's and close enough to saturation that the ratio's denominator is barely carrying
+information. So codon-level selection scoring works on the 95–99% band, degrades through
+the 67% band, and has lost half its measurements by the time the nearest relative is at
+52%. It orders the panel correctly — the companion at 99.8% reads dS 0.002 — and it answers
+nothing a protein alignment did not already answer, because it needs the protein alignment
+to exist first.
+
+**This arm's pooled readout was wrong before it was right, and the control is what showed
+it.** Reported over every significant alignment instead of each ORF's best, the divergent
+pile read 35.8% median identity with 73% of alignments saturated and the 95–99% control read
+36.9% with 71% — indistinguishable. A pile's alignments are dominated by its long tail of
+distant subjects rather than by its own nearest relative, so the pooled number describes the
+subject set. Both blocks are in [`TABLES.md`](TABLES.md) §7 with the pooled one marked as
+the one not to read.
+
+## The one null leak, and what it was
+
+Eight of the nine arms that ran put nothing above significance on any of the 400 shuffled
+records. The ninth did, and it is worth the space because the fix generalises.
+
+Floored on the full-sequence E-value, jackhmmer returned seven significant alignments on
+1 of 80 null records at one seed. All seven were the same 23 residues of one shuffled ORF
+against one Swiss-Prot protein, at subject positions 318, 346, 374, 402, 430, 458 and 486 —
+**a 28-residue tandem repeat, matched once per copy.** Every individual domain sat at an
+E-value between 2,000 and 2,900, which is nothing. The full-sequence value reached 1.1e-08
+by summing seven of them.
+
+A full-sequence E-value answers *does this query have a relative*; a table of alignments
+needs the value that answers *is this alignment real*, which is the domain's own. Flooring
+on that removes the leak and costs the real piles nothing — 6 of 107 hmmsearch rows and 2.7%
+of jackhmmer's go, every query on every real pile keeps its hit, and the null is 0 of 80 at
+every seed for every arm. **So this is a repeat artefact named, not a sensitivity traded**,
+and it is the same aggregate-against-per-unit shape as the three failures of 2026-11-20.
+
+It also puts a number on what iterative profile search actually bought. jackhmmer reports
+35,704 query-subject pairs the baseline never returned, which is a sixtyfold expansion —
+and they split 13,096 to 13,585 between the divergent contigs and the 95–99% control.
+Equal, so they are the marginal tail, like the exhaustive arm's. Five iterations of profile
+building expand the hit list enormously, find no nearer relative for any of the sixteen
+contigs, and are the only arm on the panel to put anything above significance on a shuffle.
+
+## What the two shakedown runs bought, which was five bugs
+
+They are reported because it is where most of this experiment's correctness came from, and
+because four of the five were in readouts rather than in tools. A tool that fails exits
+non-zero; a readout that fails returns a number.
+
+### The one that mattered: a control had replaced the test, and the run looked clean
+
+The profile-to-profile arm splits jackhmmer's concatenated Stockholm into one alignment per
+query and names each file after that query. It found the name by substring — the first ORF
+name appearing anywhere in the block. **Every shuffled record on this panel is named
+`sh<seed>_<qid>`, so a real ORF's name is a substring of its own null's name.** Block
+`sh5_ctl1__orf1` matched `ctl1__orf1`, was written to that filename, and overwrote the real
+query's alignment with its own control. 202 ORFs produced 59 files, nearly all of them
+holding a shuffle.
+
+Then the second half: a shuffled ORF has no homologs, so its alignment holds one sequence;
+`hhmake` refuses a profile built from one sequence; so the arm finished with **zero rows and
+`ok: true`**, which reads as "profile search found no relative" and is a different claim
+entirely. Nothing in the run said otherwise.
+
+The name is now parsed from jackhmmer's own `#=GF ID <query>-i<N>` line and matched exactly,
+with unknown names, absent names and collisions all raising, and an arm that builds no
+profile at all now fails rather than returning an empty table. Validated against that run's
+real 182 MB alignment: 202 of 202 blocks named, no collisions, real alignments at median
+depth 951 sequences against the nulls' 1. `tests/test_reach_hhsearch_split.py` pins it.
+
+### The codon readout pooled its piles, and the control moved with the test
+
+Described in full above. The fix is one line — take each ORF's best-scoring alignment rather
+than every alignment — and it moves the divergent pile's saturation from "indistinguishable
+from the 95–99% control" to "half its genes, against none of the control's".
+
+### Three in the tools
 
 **RefSeq names its genomic release files differently from its protein files** —
 `viral.N.1.genomic.fna.gz` against `viral.N.protein.faa.gz`. Eight 404s dropped the codon arm
@@ -150,8 +268,13 @@ side the ORF is on, and `tests/test_reach_domtbl.py` holds that run's own output
 fixture — including a 1,132 residue ORF against a 173-position profile, where every quantity
 differs so a swap cannot pass by coincidence.
 
-**Foldseek's `--prostt5-model` wants the directory, not the weights file inside it.** It
-accepted the option, echoed it back and exited 1, which cost both structure arms.
+**Foldseek's `--prostt5-model` wants the directory that its own `databases ProstT5` writes,
+and that directory is more than the weights file.** Run 1 passed the `.gguf` that was
+already in this account's S3; run 2 passed a directory holding only that `.gguf`. Both
+exited 1, and because the arm used `check=True` without capturing output, foldseek's own
+complaint was discarded both times — two runs spent on an exit code that carries nothing.
+Staging now has foldseek build the directory itself, the S3 copy is a fallback the arm also
+tries, and every attempt's stderr is kept.
 
 The codon walk was tested before it ever ran, in `tests/test_reach_codon.py`, for the same
 reason: it reconstructs a codon alignment from a gapped protein alignment, a CDS in
@@ -163,6 +286,14 @@ rather than clipped.
 
 ## Blind spots
 
+- **The control is matched on family and length but not on depth.** The test contigs sit at
+  116-467x mapped depth and the near-reference controls at 27-112x, with no overlap. Depth
+  should not reach a protein search on an assembled contig, but it does reach the contig's
+  own accuracy, so a residual difference between the piles could in principle be assembly
+  quality rather than divergence. The three arms that would be most sensitive to that - the
+  ones scoring per-residue identity - put the two piles 48 identity points apart, which is
+  far more than any plausible assembly-error term, so this is recorded rather than
+  controlled.
 - **One panel, sixteen contigs, one family.** Every test contig is an ssRNA bacteriophage
   genome with a polymerase, a coat protein and a maturation protein. "No arm beats the
   baseline" is measured on material where the baseline already finds a full-length polymerase
@@ -179,6 +310,17 @@ rather than clipped.
 - **The null cannot calibrate anything conditional on a hit**, because it contains no
   significant alignments at all. Identity, coverage and aligned length are reported for what
   they are.
+- **The profile-to-profile arm has no shuffled control, and cannot have one.** Its query
+  profile comes from jackhmmer's alignment, and all 148 shuffled ORFs produce an alignment
+  of depth 1, which `hhmake` refuses. Profile building needs homologs and shuffled sequence
+  has none, so that arm's only control is the near-reference pile. This is a property of
+  the method rather than of this panel, and it applies to any profile-based novelty claim:
+  the usual null is unavailable by construction.
+- **The query profile is shallower than the method's own recipe.** The standard build
+  iterates against UniRef30; this one iterates against Swiss-Prot plus RefSeq viral, to keep
+  the query side's subject universe identical to every other arm's. So this arm's reach is
+  a lower bound on HHsearch rather than a measurement of it, and the trade was made for
+  comparability on purpose.
 - **The exhaustive arm is exhaustive in alignment, not in scoring.** BLOSUM62 at 11/1 with
   published lambda and K: a different matrix is a different instrument and none was tried.
 - **Timings are from one instance type on one day.** Fixed and marginal cost are not

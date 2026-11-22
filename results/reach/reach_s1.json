@@ -404,8 +404,8 @@
    "median_nearest_pident": null,
    "median_most_distant_pident": null,
    "furthest_single_pident": null,
-   "median_aligned_aa": 125,
-   "median_query_coverage": 0.34
+   "median_aligned_aa": 127,
+   "median_query_coverage": 0.533
   },
   {
    "arm": "hmmsearch_open",
@@ -415,7 +415,7 @@
    "median_nearest_pident": null,
    "median_most_distant_pident": null,
    "furthest_single_pident": null,
-   "median_aligned_aa": 115,
+   "median_aligned_aa": 126,
    "median_query_coverage": 0.414
   },
   {
@@ -459,8 +459,8 @@
    "median_nearest_pident": null,
    "median_most_distant_pident": null,
    "furthest_single_pident": null,
-   "median_aligned_aa": 101,
-   "median_query_coverage": 0.184
+   "median_aligned_aa": 132,
+   "median_query_coverage": 0.262
   },
   {
    "arm": "jackhmmer",
@@ -470,8 +470,8 @@
    "median_nearest_pident": null,
    "median_most_distant_pident": null,
    "furthest_single_pident": null,
-   "median_aligned_aa": 129,
-   "median_query_coverage": 0.238
+   "median_aligned_aa": 133,
+   "median_query_coverage": 0.265
   },
   {
    "arm": "jackhmmer",
@@ -481,8 +481,8 @@
    "median_nearest_pident": null,
    "median_most_distant_pident": null,
    "furthest_single_pident": null,
-   "median_aligned_aa": 192,
-   "median_query_coverage": 0.312
+   "median_aligned_aa": 133,
+   "median_query_coverage": 0.216
   },
   {
    "arm": "jackhmmer",
@@ -492,19 +492,19 @@
    "median_nearest_pident": null,
    "median_most_distant_pident": null,
    "furthest_single_pident": null,
-   "median_aligned_aa": 108,
-   "median_query_coverage": 0.22
+   "median_aligned_aa": 94,
+   "median_query_coverage": 0.083
   },
   {
    "arm": "jackhmmer",
    "pile": "shuffled",
    "queries": 80,
-   "with_a_hit": 1,
+   "with_a_hit": 0,
    "median_nearest_pident": null,
    "median_most_distant_pident": null,
    "furthest_single_pident": null,
-   "median_aligned_aa": 23,
-   "median_query_coverage": 0.277
+   "median_aligned_aa": null,
+   "median_query_coverage": null
   },
   {
    "arm": "codon",
@@ -635,11 +635,11 @@
   },
   {
    "arm": "jackhmmer",
-   "subject": "YP_009256557.1",
+   "subject": "YP_009094186.1",
    "pident": null,
-   "aln": 192,
-   "qcov": 0.312,
-   "evalue": 6.7e-06,
+   "aln": 133,
+   "qcov": 0.216,
+   "evalue": 6.2e-06,
    "best_pident": null,
    "companion_best_pident": null
   },
@@ -735,13 +735,12 @@
   {
    "arm": "jackhmmer",
    "comparable": true,
-   "extra_pairs": 35704,
+   "extra_pairs": 34595,
    "by_pile": {
-    "divergent": 13096,
-    "near_reference": 13585,
-    "holdout": 1735,
-    "holdout_reference": 7281,
-    "shuffled": 7
+    "divergent": 12804,
+    "near_reference": 13350,
+    "holdout": 1676,
+    "holdout_reference": 6765
    },
    "most_distant_extra": null
   },
@@ -873,17 +872,17 @@
   },
   {
    "arm": "jackhmmer",
-   "null_alignments": 7,
+   "null_alignments": 0,
    "null_alignments_per_seed": {
     "1": 0,
-    "2": 7,
+    "2": 0,
     "3": 0,
     "4": 0,
     "5": 0
    },
    "null_alignments_min": 0,
-   "null_alignments_max": 7,
-   "null_queries_with_one": 1,
+   "null_alignments_max": 0,
+   "null_queries_with_one": 0,
    "null_queries": 80,
    "near_reference_with_one": 7,
    "divergent_with_one": 7
@@ -1362,6 +1361,6 @@
    "best_arm_query_coverage": 1.0
   }
  ],
- "script_sha256": "f35d7c84f59c15ecf399e93756a72e82eff5720ea5730e29d83c19e3c33735ea",
+ "script_sha256": "2dd71534635e2354ad62b088e433f7f9633c04c0d2899483d7a2b8a166915027",
  "git_sha": "15faed25a8d020978dbc6c7b0ed23d9c05a780e3"
 }

@@ -107,3 +107,64 @@ def test_missing_jackhmmer_output_names_the_arm_that_has_to_run_first(arms, tmp_
     with pytest.raises(FileNotFoundError, match="jackhmmer arm has to run before it"):
         arms.split_jackhmmer_alignments(
             tmp_path / "absent.sto", {"div1__orf1"}, tmp_path / "hhm")
+
+
+# ---------------------------------------------------------------------------------------
+# Wrapped Stockholm, which is what jackhmmer actually writes.
+
+#: Two sequences over three column blocks, the way HMMER wraps them. The query is second in
+#: the file on purpose: `hhmake -M first` takes its match states from whichever sequence
+#: leads, so the conversion has to reorder rather than preserve file order.
+WRAPPED = """\
+# STOCKHOLM 1.0
+#=GF ID q1-i5
+#=GF AU jackhmmer (HMMER 3.4)
+
+#=GS YP_1/1-9 DE [subseq from] RNA-directed RNA polymerase
+
+YP_1/1-9 MRHW
+q1       MRYW
+
+YP_1/1-9 PRPL
+q1       PR.L
+
+YP_1/1-9 AVD
+q1       AVD
+//
+"""
+
+
+def test_wrapped_blocks_are_concatenated_not_truncated(arms, tmp_path):
+    """The silent-truncation case: three column blocks must give one 11-column alignment.
+
+    Taking each sequence's first occurrence would build the profile from the first four
+    columns of eleven and never say so, which is the failure this conversion is written
+    against.
+    """
+    out = arms.stockholm_to_fasta(WRAPPED, "q1")
+    records = dict(zip(out.splitlines()[::2], out.splitlines()[1::2]))
+    assert records[">q1"] == "MRYWPR-LAVD", f"got {records['>q1']!r}"
+    assert records[">YP_1/1-9"] == "MRHWPRPLAVD"
+    assert len(records[">q1"]) == 11, "the wrapped blocks were not concatenated"
+
+
+def test_the_query_is_written_first_whatever_its_place_in_the_file(arms):
+    """`-M first` means the leading sequence decides what the profile is a profile of."""
+    assert arms.stockholm_to_fasta(WRAPPED, "q1").startswith(">q1\n")
+
+
+def test_stockholm_dots_become_dashes(arms):
+    """Stockholm writes gaps as both `.` and `-`; aligned FASTA wants one of them."""
+    assert "." not in arms.stockholm_to_fasta(WRAPPED, "q1")
+
+
+def test_an_alignment_without_its_own_query_raises(arms):
+    with pytest.raises(ValueError, match="nothing to build a profile of"):
+        arms.stockholm_to_fasta(WRAPPED, "absent_query")
+
+
+def test_a_ragged_alignment_raises_rather_than_padding(arms):
+    """Out-of-register blocks are a parse failure, and padding them would hide it."""
+    ragged = WRAPPED.replace("q1       AVD", "q1       AV")
+    with pytest.raises(ValueError, match="ragged"):
+        arms.stockholm_to_fasta(ragged, "q1")

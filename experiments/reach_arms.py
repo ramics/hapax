@@ -518,10 +518,60 @@ def split_jackhmmer_alignments(sto: Path, queries: set[str],
                 f"Writing both would silently keep only the second, which is exactly the "
                 f"failure this arm already had once.")
         seen[name] = i
-        path = hhm_dir / f"{name}.sto"
-        path.write_text(block)
+        path = hhm_dir / f"{name}.fas"
+        path.write_text(stockholm_to_fasta(block, name))
         pairs.append((name, path))
     return pairs
+
+
+def stockholm_to_fasta(block: str, query: str) -> str:
+    """One jackhmmer Stockholm block as aligned FASTA, query first.
+
+    WHY THIS CONVERSION EXISTS. `hhmake` reads A3M, A2M and aligned FASTA. It does not read
+    Stockholm, and handed a Stockholm file it exits non-zero with no useful message - which
+    on run i-0bf3677bc8ad09bb4 refused all 202 alignments including 51 real ones at a median
+    depth of 951 sequences, so the arm's failure looked like a property of the alignments
+    rather than of the format. HMMER's `esl-reformat` would do this, but it is not among the
+    binaries HMMER's `make install` leaves behind, and a conversion this small is better
+    owned here than depended on.
+
+    WHY THE PARSE IS NOT ONE LINE. jackhmmer writes WRAPPED Stockholm: each sequence appears
+    once per block of columns, up to ten times in this panel, and its alignment is the
+    concatenation of those rows in file order. Taking the first occurrence would silently
+    keep the first 60 columns of a 3,000-column alignment and build a profile from it.
+
+    The query goes first because `hhmake -M first` takes its match states from the first
+    sequence, so which sequence leads decides what the profile is a profile OF.
+    """
+    rows: dict[str, list[str]] = {}
+    order: list[str] = []
+    for line in block.splitlines():
+        line = line.rstrip("\n")
+        if not line or line.startswith("#") or line.startswith("//"):
+            continue
+        parts = line.split(None, 1)
+        if len(parts) != 2:
+            continue
+        name, chunk = parts[0], parts[1].strip()
+        if name not in rows:
+            rows[name] = []
+            order.append(name)
+        rows[name].append(chunk)
+
+    seqs = {name: "".join(chunks) for name, chunks in rows.items()}
+    if query not in seqs:
+        raise ValueError(
+            f"the alignment for {query!r} does not contain {query!r} itself, so there is "
+            f"nothing to build a profile of. Its sequences are {order[:4]}...")
+    widths = {len(s) for s in seqs.values()}
+    if len(widths) != 1:
+        raise ValueError(
+            f"{query}: the reassembled alignment is ragged ({sorted(widths)[:4]}...), which "
+            f"means the wrapped blocks were not concatenated in register.")
+
+    ordered = [query] + [n for n in order if n != query]
+    # Stockholm uses both `.` and `-` for gaps; aligned FASTA wants one of them.
+    return "".join(f">{n}\n{seqs[n].replace('.', '-')}\n" for n in ordered)
 
 
 def arm_hhsearch(bins: dict, dbs: dict, out: Path, threads: int) -> list[dict]:
@@ -554,14 +604,26 @@ def arm_hhsearch(bins: dict, dbs: dict, out: Path, threads: int) -> list[dict]:
     built = 0
     for qname, path in pairs:
         hhm = path.with_suffix(".hhm")
+        depth = path.read_text().count(">")
         try:
-            sh([bins["hhmake"], "-i", path, "-o", hhm, "-M", "first", "-v", 0])
+            sh([bins["hhmake"], "-i", path, "-o", hhm, "-M", "first", "-v", 0],
+               capture_output=True, text=True)
             built += 1
-        except subprocess.CalledProcessError:
-            # An alignment of one sequence is a profile with no information; hhmake refuses
-            # it. That is a real outcome for an ORF jackhmmer found nothing for, and it is
-            # recorded by the ORF's absence from these rows rather than by a crash.
-            print(f"    {qname}: no profile (alignment too shallow)", flush=True)
+        except subprocess.CalledProcessError as exc:
+            # TWO DIFFERENT FAILURES WORE ONE MESSAGE HERE, so they are now separated.
+            # An alignment of ONE sequence is a profile with no information and hhmake
+            # rightly refuses it: that is the real outcome for an ORF jackhmmer found
+            # nothing for, and the ORF's absence from these rows records it. A refusal of a
+            # DEEP alignment is not that - it is a format or option problem, and on run
+            # i-0bf3677bc8ad09bb4 it was: hhmake cannot read Stockholm, refused all 202
+            # alignments including 51 at a median depth of 951, and every one of them was
+            # logged as "too shallow". So a deep refusal raises, with hhmake's own words.
+            if depth >= 2:
+                raise RuntimeError(
+                    f"hhmake refused {qname}, whose alignment holds {depth} sequences, so "
+                    f"this is not an alignment too shallow to profile. hhmake's own "
+                    f"output:\n{((exc.stderr or '') + (exc.stdout or ''))[-1500:]}") from exc
+            print(f"    {qname}: no profile (alignment is one sequence)", flush=True)
             continue
         hhr = path.with_suffix(".hhr")
         sh([bins["hhsearch"], "-i", hhm, "-d", dbs["hh_pfam"], "-o", hhr,
@@ -656,38 +718,37 @@ def arm_foldseek(bins: dict, dbs: dict, out: Path, threads: int, target: str) ->
     qdb, resdb = out / f"fsq_{target}", out / f"fsr_{target}"
     tsv = out / f"foldseek_{target}.tsv"
     if not qdb.with_suffix(".dbtype").exists():
-        # WHAT `--prostt5-model` ACTUALLY WANTS, after two runs spent on it. It takes the
-        # DIRECTORY that foldseek's own `databases ProstT5` writes - and that directory is
-        # more than the weights file. Run 1 passed the `.gguf` and run 2 passed a directory
-        # holding only that `.gguf`, copied from this account's S3; both exited 1. So the
-        # staging now has foldseek build the directory itself, and the S3 copy is only a
-        # fallback. Each attempt's stderr is kept, because foldseek's exit code says
-        # nothing and two runs were spent not knowing what it objected to.
-        attempts: list[tuple[str, Path]] = [("staged directory", Path(dbs["prostt5"]))]
-        inner = next(iter(sorted(Path(dbs["prostt5"]).glob("*.gguf"))), None)
-        if inner is not None:
-            attempts.append(("weights file", inner))
-        if dbs.get("prostt5_own"):
-            attempts.insert(0, ("foldseek's own download", Path(dbs["prostt5_own"])))
-        failures = []
-        for label, model in attempts:
-            try:
-                # Captured rather than streamed, because what is wanted is the tail of
-                # foldseek's own complaint on the failing path, and `check=True` discards it.
-                done = sh([bins["foldseek"], "createdb", out / "orfs.faa", qdb,
-                           "--prostt5-model", model, "--threads", threads],
-                          capture_output=True, text=True)
-                print(f"  3Di written from the {label}\n{(done.stdout or '')[-400:]}",
-                      flush=True)
-                break
-            except subprocess.CalledProcessError as exc:
-                detail = ((exc.stderr or "") + (exc.stdout or ""))[-2000:]
-                failures.append(f"--- {label} ({model}):\n{detail}")
-        else:
+        # WHAT `--prostt5-model` ACTUALLY WANTS, now read off the source rather than
+        # guessed at. This build (9-427df8a, src/strucclustutils/structcreatedb.cpp) takes
+        # a DIRECTORY and looks in it for `model.safetensors` or `model.gguf`, optionally
+        # under a further `model/`. It recognises no other name - not even
+        # `prostt5-f16.gguf`, which is what foldseek's own release tarball ships and what
+        # this account's S3 holds. Three runs were spent on that: the weights were present
+        # and 2.4 GB and foldseek said "Could not find ProstT5 model weights" every time.
+        # Staging now writes them as `model.gguf`, so there is one path and no guessing.
+        #
+        # The output is still captured, because `check=True` discards foldseek's own
+        # complaint and the exit code carries none of it - which is why it took three runs
+        # to read one sentence.
+        model = Path(dbs["prostt5"])
+        weights = [model / "model.gguf", model / "model.safetensors",
+                   model / "model" / "model.gguf"]
+        if not any(w.exists() for w in weights):
+            raise FileNotFoundError(
+                f"{model} holds none of the names this foldseek build reads "
+                f"({', '.join(w.name for w in weights)}). Its contents are "
+                f"{sorted(q.name for q in model.glob('*'))[:6]}. Staging is what fixes "
+                f"this, not the arm: foldseek will not look for any other name.")
+        try:
+            done = sh([bins["foldseek"], "createdb", out / "orfs.faa", qdb,
+                       "--prostt5-model", model, "--threads", threads],
+                      capture_output=True, text=True)
+        except subprocess.CalledProcessError as exc:
             raise RuntimeError(
-                "foldseek createdb refused every ProstT5 model layout offered. Its own "
-                "output for each, which is the part the exit code does not carry:\n"
-                + "\n".join(failures))
+                "foldseek createdb failed with the weights present under a name it reads. "
+                "Its own output, which the exit code does not carry:\n"
+                + ((exc.stderr or "") + (exc.stdout or ""))[-2500:]) from exc
+        print((done.stdout or "")[-400:], flush=True)
     # `--exhaustive-search` skips the prefilter, which is the whole point of the arm: a
     # structural relative this far out is exactly what a k-mer prefilter would drop. It is
     # affordable only because the query set is 35 ORFs. If this build of foldseek will not
@@ -956,10 +1017,6 @@ def main(argv: list[str] | None = None) -> int:
         prot_fasta=args.db_dir / "prot.faa",
         pfam=args.db_dir / "Pfam-A.hmm",
         prostt5=args.db_dir / "prostt5",
-        # Written by `foldseek databases ProstT5` during staging when the network allowed
-        # it, and absent otherwise; the arm tries it first and falls back to the S3 copy.
-        prostt5_own=((args.db_dir / "prostt5_own").exists()
-                     and args.db_dir / "prostt5_own") or None,
         fs_afdb=args.db_dir / "fs_afdb_sprot" / "afdb_sprot",
         fs_pdb=args.db_dir / "fs_pdb" / "pdb",
         viral_nt=args.db_dir / "viral_nt",

@@ -277,24 +277,25 @@ fi
 # The structure arms. AlphaFold/Swiss-Prot is the target that makes arm 4 comparable to arms
 # 1-2: it is the same subjects, folded.
 #
-# WHERE THE ProstT5 WEIGHTS COME FROM, AND WHY TWICE WAS NOT ENOUGH. This account's S3 holds
-# the 2.4 GB `prostt5-f16.gguf`, and for two runs that file was all that was staged - once
-# passed directly, once as the only file in a directory. `foldseek createdb` exited 1 both
-# times, because `--prostt5-model` wants the directory `foldseek databases ProstT5` writes
-# and that directory is more than the weights. So foldseek now builds it itself, over the
-# network, and the S3 copy stays only as a fallback the arm will also try. Both paths are
-# handed to the arm and it reports which one produced the 3Di.
+# WHERE THE ProstT5 WEIGHTS COME FROM, AND THE NAME THAT COST THREE RUNS. `--prostt5-model`
+# takes a DIRECTORY, and this build of foldseek (9-427df8a,
+# src/strucclustutils/structcreatedb.cpp) looks inside it for exactly two names:
+# `model.safetensors` or `model.gguf`, optionally under a further `model/`. Nothing else is
+# recognised. This account's S3 holds the weights as `prostt5-f16.gguf`, which is the name
+# foldseek's own release tarball uses and which THIS version does not look for - so run 1
+# (file passed directly), run 2 (file alone in a directory) and run 3 (same, plus foldseek's
+# own download) all got "Could not find ProstT5 model weights" from a 2.4 GB file sitting
+# right where it was pointed.
+#
+# So the S3 copy is staged under the name foldseek reads. Note also that
+# `foldseek databases ProstT5` is NOT a fallback: in run 3 its download returned 17 bytes,
+# tar failed, and the command still exited 0 - so its exit code says nothing about whether
+# weights exist, and only the file test below decides.
 if [ "$SKIP_STRUCTURE" = 0 ]; then
   mkdir -p /opt/hapax/db/prostt5
-  aws s3 cp "s3://@@BUCKET@@/@@PROSTT5_KEY@@" /opt/hapax/db/prostt5/prostt5-f16.gguf \
+  aws s3 cp "s3://@@BUCKET@@/@@PROSTT5_KEY@@" /opt/hapax/db/prostt5/model.gguf \
       --region "$REGION" || true
-  if /opt/hapax/bin/foldseek databases ProstT5 /opt/hapax/db/prostt5_own \
-      /opt/hapax/db/fstmp_ptt5 --threads "$THREADS"; then
-    PROSTT5_OWN=/opt/hapax/db/prostt5_own
-  else
-    PROSTT5_OWN=
-  fi
-  if [ -n "$PROSTT5_OWN" ] || [ -s /opt/hapax/db/prostt5/prostt5-f16.gguf ]; then
+  if [ -s /opt/hapax/db/prostt5/model.gguf ]; then
     if /opt/hapax/bin/foldseek databases Alphafold/Swiss-Prot \
         /opt/hapax/db/fs_afdb_sprot/afdb_sprot /opt/hapax/db/fstmp_afdb \
         --threads "$THREADS"; then
