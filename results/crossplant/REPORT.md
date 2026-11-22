@@ -11,10 +11,15 @@ of its own plant at 55.8% and in a plant on another continent at 37.6%, a paired
 +14.3 points that holds in all 32 plants. A union of 512 other libraries removes 87.5% of a
 held-out library's reads and is **still falling at 512**, so it has not saturated — but what
 it removes is abundance, not identity: every pile loses its deep sequence to the union and
-keeps its depth-1 sequence, and *identified* reads at depth 1 survive at 70.5% against the
-unplaced residue's 79.0%. Outsize growth is measurable and well separated from its control,
-but what it finds is sequence most of the panel also carries blooming locally, not something
-leaving the background.
+keeps its depth-1 sequence. **Both operating points, because they disagree by a factor of
+four and neither travels alone**: at `most` (half a read's 31-mers) identified depth-1 reads
+survive at 70.5% against the residue's 79.0%, an 8.5-point gap that is mostly the detection
+limit; at `any` (one 31-mer, and shuffles still leave 1.0000 against 512 libraries, so it is
+specific as well as sensitive) they survive at 12.0% against the residue's 54.0%, a 42-point
+gap. The residue really is less related to other plants' water, and the strict point hides it.
+Outsize growth is measurable and well separated from its control, but what it finds is
+sequence most of the panel also carries blooming locally, not something leaving the
+background.
 
 ## 1. What was measured
 
@@ -131,6 +136,56 @@ is the read's occurrence depth in its own library.
 | unidentified contig (tier 2) | 0.1000 | 0.1750 | 0.4300 | 0.6650 | 0.7100 |
 | unplaced residue (tier 3) | **0.0000** | 0.2150 | 0.6150 | 0.7950 | **0.7900** |
 | every shuffled pile | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
+
+### The same table at the sensitive operating point, which disagrees
+
+`any` — one exact 31-mer of the read present somewhere in the union — at k=512:
+
+| pile | depth 100+ | depth 1–2 | depth 0 | vs `most` at depth 0 |
+|---|---|---|---|---|
+| rRNA | 0.0000 | 0.0100 | 0.0300 | −0.2550 |
+| identified | 0.0700 | 0.0750 | **0.1200** | **−0.5850** |
+| unidentified contig (tier 2) | 0.0300 | 0.2050 | 0.2350 | −0.4750 |
+| unplaced residue (tier 3) | 0.0000 | 0.4750 | **0.5400** | −0.2500 |
+| every shuffled pile | 1.0000 | 1.0000 | 1.0000 | 0.0000 |
+
+**The two points disagree about the thing the report is for, so both ship.** At depth 1 the
+identified-versus-unplaced gap is 8.5 points at `most` (a 1.12× ratio) and **42.0 points at
+`any` (a 4.5× ratio)**. The strict point is dominated by the detection limit — one copy is
+rarely re-observed base-for-base — and it makes known and unknown material look nearly alike.
+The sensitive point says 88% of depth-1 identified reads share at least 31 exact bases with
+some panel library against 46% of residue reads, so the residue is genuinely less related to
+other plants' water and not merely too thin to re-detect.
+
+`any` is the defensible point for "is this more or less also over there", and not because it
+is lenient: **every shuffled pile still leaves 1.0000 at `any` against a union of 512
+libraries**, more than a billion read pairs, so a single exact 31-mer match essentially never
+happens by chance. It is sensitive and specific at once. This report's first draft led on
+`most` alone; `results/recurrence/REPORT.md` was caught the same way, where the same ratio
+reads 2.5× strict and 24× sensitive.
+
+### What "absent" actually means here
+
+One substitution destroys up to 31 of a 90 nt mate's 60 31-mers, so the width of
+"more or less" is computable — the expected share of clean 31-mers is about (1−d)^31:
+
+| divergence from a panel sequence | clean 31-mers of 60 | `most` | `any` |
+|---|---|---|---|
+| 1% | 44 | passes | passes |
+| 2% | 32 | marginal | passes |
+| 3% | 23 | fails | passes |
+| 5% | 12 | fails | passes |
+| 10% | 2.3 | fails | coin flip |
+| 15% | 0.4 | fails | **reads absent** |
+
+So every "left behind" figure in this report means **no 31 exact bases shared with any of 530
+libraries**, which past roughly 10–15% divergence is not the same as having no relative there.
+Closing that gap needs translated alignment against the panel rather than exact k-mers — a
+different and far more expensive instrument, and the one place this project's prior work says
+anything survives past 20% divergence. For scale, a full search of the residue against the
+public databases found a significant named relative for only 7.82% of it
+(`results/residue_census/`), so the panel being blind above 10% is a real limit and not a
+formality.
 
 **Depth decides this, and the pile label barely matters.** Read down a column rather than
 across a row. At depth 100+ the union takes everything, including all of the abundant part
