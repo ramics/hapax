@@ -797,10 +797,20 @@ def arm_codon(bins: dict, dbs: dict, out: Path, threads: int) -> list[dict]:
 
 
 # ------------------------------------------------------------------ driver
-#: Order matters in one place only: `hhsearch` builds its query profile from the alignment
-#: `jackhmmer` writes, so it has to come after it. The driver runs them in the order given.
-ARMS = ("diamond", "blastp", "exhaustive", "hmmsearch", "jackhmmer", "hhsearch",
-        "foldseek_afdb", "foldseek_pdb", "codon")
+#: THE ORDER IS A BUDGET DECISION, NOT A LIST. The driver runs arms in this order whatever
+#: order they were requested in, because on a box with a dead-man timer the last arm is the
+#: one that does not run, and which arm that is should be chosen here rather than by however
+#: the staging script happened to accumulate its variable.
+#:
+#: Two facts set it. First, `jackhmmer` is the expensive arm by an order of magnitude: it
+#: scans the whole subject set once per iteration per query, so five iterations over 200
+#: query ORFs is hours where every other arm is minutes. Second, `hhsearch` builds its query
+#: profile from the alignment `jackhmmer` writes, so it cannot precede it. That puts the two
+#: of them at the end, and means a timeout costs the profile pair and nothing else - rather
+#: than costing structure and codon space, which is what happened on the first run.
+RUN_ORDER = ("diamond", "blastp", "hmmsearch", "exhaustive", "codon", "foldseek_afdb",
+             "foldseek_pdb", "jackhmmer", "hhsearch")
+ARMS = RUN_ORDER
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -866,7 +876,9 @@ def main(argv: list[str] | None = None) -> int:
     }
 
     failures, succeeded = {}, []
-    for arm in args.arms:
+    ordered = [a for a in RUN_ORDER if a in args.arms]
+    print(f"=== running in order: {' '.join(ordered)} ===", flush=True)
+    for arm in ordered:
         started = time.time()
         timing = dict(arm=arm, seed=args.seed, threads=args.threads,
                       host=platform.node(), cpu_count=os.cpu_count())
@@ -888,7 +900,8 @@ def main(argv: list[str] | None = None) -> int:
         (args.out / f"timing_{arm}.json").write_text(json.dumps(timing, indent=1))
 
     (args.out / "arms_manifest.json").write_text(json.dumps(dict(
-        seed=args.seed, arms_requested=args.arms, arms_ok=succeeded,
+        seed=args.seed, arms_requested=args.arms, arms_run_order=ordered,
+        arms_ok=succeeded,
         arms_failed=sorted(failures), orf_stats=orf_stats, threads=args.threads,
         min_orf_aa=MIN_ORF_AA, subject_genetic_code=SUBJECT_GENETIC_CODE,
         query_translation_table="per sequence, chosen by prodigal meta mode; recorded on "
