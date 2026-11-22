@@ -60,9 +60,14 @@ MIN_COLUMNS = 20
 # Pfam names carry the function. The map is keyword to role, applied to the family name
 # and its description, longest-match first, and anything unmatched stays "other" rather
 # than being forced into a bucket.
+# "replicase" is in this list because leaving it out cost a result. 263 of the ~290
+# domains that landed in "other" on the first full run were RNA_replicase_B, the
+# Leviviricetes polymerase, so the largest bucket on the divergent arm was a mislabelled
+# polymerase bucket. `divergent_contig_workup.py` had the word and this file did not.
 ROLE_WORDS = [
     ("rna_dep_rnapol", "polymerase"), ("rdrp", "polymerase"),
     ("rna_pol", "polymerase"), ("viral_rdrp", "polymerase"),
+    ("replicase", "polymerase"), ("movement", "movement"),
     ("helicase", "helicase"), ("peptidase", "protease"), ("protease", "protease"),
     ("capsid", "capsid"), ("coat", "capsid"), ("maturation", "maturation"),
     ("lysis", "lysis"), ("methyltransferase", "methyltransferase"),
@@ -149,30 +154,33 @@ def pfam_envelopes(orfs: list, hmm: Path, threads: int) -> dict:
 
 def blastp_with_alignment(faa: Path, db: Path, out: Path, binpath: Path, threads: int,
                           mode: str) -> dict:
-    """Best hit per ORF, carrying the aligned sequences so columns can be walked.
+    """Best hit per ORF, carrying the traceback so columns can be walked.
 
-    qseq and sseq are in the output format because the question is per-column and no
-    summary statistic can answer it. One target per query: the comparison is against the
-    nearest relative the index holds, which is what the cascade used to remove the contig.
+    btop rather than qseq and sseq: DIAMOND emits those two UNGAPPED, so zipping them
+    walks out of register at the first indel and reports nonsense. Caught on the first
+    run of this script, where divergent ORFs with a whole-ORF identity of 21% scored 5%
+    per column while the near-reference arm, which has almost no indels, looked fine.
+    btop is the alignment itself: a run of digits is that many identical columns, and a
+    pair of characters is one column of query and subject.
     """
     cmd = [str(binpath), "blastp", "-d", str(db), "-q", str(faa), "-o", str(out),
            "-p", str(threads), mode, "--quiet", "--evalue", "1e-3",
            "--max-target-seqs", "1", "--outfmt", "6",
            "qseqid", "sseqid", "pident", "length", "evalue", "bitscore",
-           "qstart", "qend", "qlen", "slen", "qseq", "sseq", "stitle"]
+           "qstart", "qend", "qlen", "slen", "btop", "stitle"]
     t0 = time.time()
     subprocess.run(cmd, check=True)
     best = {}
     with out.open() as fh:
         for line in fh:
             f = line.rstrip("\n").split("\t")
-            if len(f) < 12:
+            if len(f) < 11:
                 continue
             row = {"subject": f[1], "pident": float(f[2]), "aln_aa": int(f[3]),
                    "evalue": float(f[4]), "bitscore": float(f[5]),
                    "qstart": int(f[6]), "qend": int(f[7]), "qlen": int(f[8]),
-                   "subject_aa": int(f[9]), "qseq": f[10], "sseq": f[11],
-                   "title": (f[12] if len(f) > 12 else "")[:200]}
+                   "subject_aa": int(f[9]), "btop": f[10],
+                   "title": (f[11] if len(f) > 11 else "")[:200]}
             prev = best.get(f[0])
             if prev is None or row["bitscore"] > prev["bitscore"]:
                 best[f[0]] = row
@@ -180,19 +188,34 @@ def blastp_with_alignment(faa: Path, db: Path, out: Path, binpath: Path, threads
 
 
 def columns(hit: dict) -> list:
-    """Walk the alignment and return (query position, identical) for every aligned column.
+    """Walk the btop traceback and return (query position, identical) per aligned column.
 
-    Insertions in the query advance the query position and are columns; deletions do not
-    advance it and are dropped, because a column with no query position cannot be assigned
-    to a domain envelope. Both are counted in the totals so the two arms cannot differ by
-    how gaps were handled.
+    A column with no query position cannot be assigned to a domain envelope, so a gap in
+    the query is skipped rather than counted; a gap in the subject occupies a query
+    position and counts as non-identical. Both arms go through this same function, so
+    they cannot differ by how gaps were handled.
     """
     out = []
     q = hit["qstart"]
-    for a, b in zip(hit["qseq"], hit["sseq"]):
-        if a == "-":
+    b = hit["btop"]
+    i = 0
+    while i < len(b):
+        if b[i].isdigit():
+            j = i
+            while j < len(b) and b[j].isdigit():
+                j += 1
+            for _ in range(int(b[i:j])):
+                out.append((q, True))
+                q += 1
+            i = j
             continue
-        out.append((q, a == b and a != "-"))
+        if i + 1 >= len(b):
+            break
+        qc = b[i]
+        i += 2
+        if qc == "-":            # gap in the query: no query position to assign
+            continue
+        out.append((q, False))   # mismatch, or a gap in the subject
         q += 1
     return out
 
@@ -202,12 +225,23 @@ def inside_outside(hit: dict, envs: list) -> dict:
     marks = set()
     for e in envs:
         marks.update(range(e["env_from"], e["env_to"] + 1))
-    ins = [ok for q, ok in columns(hit) if q in marks]
-    out = [ok for q, ok in columns(hit) if q not in marks]
+    cols = columns(hit)
+    ins = [ok for q, ok in cols if q in marks]
+    out = [ok for q, ok in cols if q not in marks]
     def pct(xs):
         return round(100.0 * sum(xs) / len(xs), 2) if len(xs) >= MIN_COLUMNS else None
+    pi, po = pct(ins), pct(out)
+    # BOTH FRAMINGS, because they disagree and the difference in points has a ceiling.
+    # A near-reference ORF sits at 95% identity, so its inside arm has at most 5 points
+    # of room to beat its outside arm, while a divergent ORF at 25% has 75. Reporting
+    # only the difference in points therefore flatters the divergent arm by construction.
+    # The ratio of mismatch rates has no ceiling and is the figure to read against it.
+    ratio = None
+    if pi is not None and po is not None and pi < 100.0:
+        ratio = round((100.0 - po) / (100.0 - pi), 3)
     return {"columns_inside": len(ins), "columns_outside": len(out),
-            "identity_inside_percent": pct(ins), "identity_outside_percent": pct(out)}
+            "identity_inside_percent": pi, "identity_outside_percent": po,
+            "mismatch_rate_ratio_outside_over_inside": ratio}
 
 
 def med(xs):
@@ -236,6 +270,15 @@ def arm_rollup(rows: list) -> dict:
                                 if diffs else None),
         "median_columns_inside": med([r["columns_inside"] for r in both]),
         "median_columns_outside": med([r["columns_outside"] for r in both]),
+        "median_mismatch_rate_ratio": med(
+            [r["mismatch_rate_ratio_outside_over_inside"] for r in both]),
+        "share_ratio_above_one": (
+            round(sum(1 for r in both
+                      if (r["mismatch_rate_ratio_outside_over_inside"] or 0) > 1)
+                  / len(both), 4) if both else None),
+        "reading": ("the difference in points has a ceiling on the near-reference arm "
+                    "and none on the divergent arm, so read it beside the mismatch rate "
+                    "ratio, which has no ceiling on either"),
     }
 
 
@@ -274,6 +317,11 @@ def main() -> None:
                          "each contig is in. Reusing it keeps one definition of the two "
                          "arms rather than recomputing a second one that could differ")
     ap.add_argument("--max-per-arm", type=int, default=300)
+    ap.add_argument("--extra-fasta", type=Path, default=None,
+                    help="extra contigs to carry through the identical chain, each its "
+                         "own arm named after its record. Used for calibration contigs "
+                         "from another library, which cannot join either arm because "
+                         "they are a different water")
     ap.add_argument("--min-orf-aa", type=int, default=50)
     ap.add_argument("--pfam", type=Path, default=ROOT / "data/pfam/Pfam-A.hmm")
     ap.add_argument("--dmnd", type=Path, default=ROOT / "data/prot/viral.dmnd")
@@ -303,6 +351,10 @@ def main() -> None:
           ", ".join(f"{k} {sum(1 for v in picked.values() if v == k)}"
                     for k in sorted(arms)), file=sys.stderr)
 
+    if a.extra_fasta and a.extra_fasta.exists():
+        for n, seq in read_fasta(a.extra_fasta).items():
+            allseqs[n] = seq
+            picked[n] = "extra_" + n
     seqs = {n: allseqs[n] for n in picked}
     shuf = {n + "__shuf": dinuc_shuffle(s, rng) for n, s in seqs.items()}
 
@@ -329,6 +381,34 @@ def main() -> None:
         pf = pfam_envelopes(olist, a.pfam, a.threads) if a.pfam.exists() else {"env": {}}
         secs[f"pfam_{tag}"] = pf.get("seconds")
         results[tag] = (olist, hits, pf["env"])
+
+    # ORIENTATION AND FRAME ASSERTION. Both the Pfam envelope and the alignment are in
+    # the coordinates of the TRANSLATED ORF, which pyrodigal emits already oriented, so a
+    # contig whose gene runs on the minus strand needs no special handling here. That is
+    # an assumption until it is checked, and the shape of bug it would be is the one the
+    # labeller audit caught: 0% false mosaics forward against 65.8% reverse. So every
+    # envelope and every alignment is checked to lie inside the ORF it claims to be on,
+    # and the run fails rather than reporting columns placed in the wrong frame.
+    def check_coordinates():
+        bad = []
+        for tag in results:
+            olist, hits, env = results[tag]
+            length = {o["orf"]: o["aa_len"] for o in olist}
+            for orf, es in env.items():
+                for e in es:
+                    if e["env_from"] < 1 or e["env_to"] > length.get(orf, 0):
+                        bad.append(f"{tag} {orf} envelope {e['env_from']}-{e['env_to']} "
+                                   f"outside 1-{length.get(orf)}")
+            for orf, h in hits.items():
+                if h["qstart"] < 1 or h["qend"] > length.get(orf, 0):
+                    bad.append(f"{tag} {orf} alignment {h['qstart']}-{h['qend']} "
+                               f"outside 1-{length.get(orf)}")
+        return bad
+
+    bad_coords = check_coordinates()
+    if bad_coords:
+        raise SystemExit("coordinates outside their ORF, so columns would be placed in "
+                         "the wrong frame:\n" + "\n".join(bad_coords[:10]))
 
     def rows_for(tag):
         olist, hits, env = results[tag]
@@ -418,6 +498,9 @@ def main() -> None:
             "counts": {f"{arm} | {role}": n for (arm, role), n in which.most_common()},
             "contigs_with_two_or_more_roles": len(per_contig),
         },
+        "coordinate_check": ("every Pfam envelope and every alignment verified to lie "
+                            "inside the translated ORF it is on, so no column is placed "
+                            "in the wrong frame on a minus-strand gene"),
         "blind_spots": [
             "a Pfam domain is a statement about a family that has been curated, so the "
             "inside arm is biased towards well-studied protein families and the outside "
@@ -426,6 +509,10 @@ def main() -> None:
             "domain envelopes and alignments are both chosen to maximise a score, so some "
             "agreement between them is expected before any biology; the near-reference "
             "arm is what says how much",
+            "the difference in points is bounded by the identity the arm sits at: a "
+            "near-reference ORF at 95% has five points of room and a divergent ORF at "
+            "25% has seventy-five, so that framing favours the divergent arm by "
+            "construction and the mismatch rate ratio is reported beside it",
             "identity over a short envelope is quantised, so no percentage is reported "
             f"below {MIN_COLUMNS} columns and every figure carries its column count",
             "one best hit per ORF, so every distance is to the nearest relative the index "

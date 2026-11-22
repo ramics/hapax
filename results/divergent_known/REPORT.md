@@ -15,7 +15,7 @@ then discarded.
 11,361 of 25,209 identified non-ribosomal contigs are at least 300 nt, which is the length
 at which a 60 aa alignment can be most of the contig. DIAMOND blastx `--sensitive` against
 RefSeq viral proteins and Swiss-Prot. A hit counts at **E < 1e-5 and at least 60 aa
-aligned**. 10,170 contigs clear it. Gene level on the 600 longest divergent contigs and all
+aligned**. 10,172 contigs clear it. Gene level on the 600 longest divergent contigs and all
 301 near-reference ones: Prodigal in metagenome mode, minimum 50 aa, DIAMOND blastp, Pfam at
 the curators' gathering cutoffs. All 17,462,448 mates mapped back, mate 2 trimmed 16 nt.
 
@@ -23,13 +23,13 @@ the curators' gathering cutoffs. All 17,462,448 mates mapped back, mate 2 trimme
 
 | band | contigs | share | shuffled null |
 |---|---|---|---|
-| below 40%, no name survives | 3,350 | 32.94% | 106 |
-| 40 to 70%, family level or looser | 5,821 | 57.24% | 175 |
-| 70 to 90% | 564 | 5.55% | 16 |
-| 90 to 97%, divergent strain | 388 | 3.82% | 7 |
+| below 40%, no name survives | 3,355 | 32.98% | 106 |
+| 40 to 70%, family level or looser | 5,820 | 57.22% | 176 |
+| 70 to 90% | 563 | 5.53% | 15 |
+| 90 to 97%, divergent strain | 387 | 3.80% | 7 |
 | 97% and above, reference | 47 | 0.46% | 0 |
 
-**435 of 10,170 identified contigs, 4.3%, sit at 90% or above.** 90.2% sit below 70%, where
+**434 of 10,172 identified contigs, 4.27%, sit at 90% or above.** 90.2% sit below 70%, where
 the subject lends its name rather than establishing one. The cascade subtracts all five
 bands with the same word.
 
@@ -44,13 +44,13 @@ no record of which it was.
 Each contig was dinucleotide-shuffled, preserving length and dinucleotide composition, and
 put through the identical search in the same pass.
 
-- **Existence**: 89.52% of real contigs carry a significant alignment, against 2.68% of
+- **Existence**: 89.53% of real contigs carry a significant alignment, against 2.68% of
   shuffles. A factor of 33.
 - **Conditional on a hit existing, nothing separates them.** Median identity 45.1% real
   against 43.5% shuffled. Scored as the share of real hits above the shuffled p90, where a
-  p90 puts 10% above it by construction: identity 11.98%, alignment length 7.10%, subject
-  coverage 7.52%, bitscore 7.63%. The one field carrying anything is the fraction of the
-  contig the alignment covers, 26.34%, with real median 0.814 against shuffled 0.496.
+  p90 puts 10% above it by construction: identity 12.35%, alignment length 7.16%, subject
+  coverage 7.48%, bitscore 7.63%. The one field carrying anything is the fraction of the
+  contig the alignment covers, 26.44%, with real median 0.815 against shuffled 0.498.
 
 **Scope.** This calibrates whether a hit is real. It says nothing about whether identity
 measures the distance between a real contig and its real relative. The holdout answers that
@@ -65,7 +65,7 @@ Coverage and length floors are the only lever that moves the null, and they cost
 
 | floor | real | shuffled |
 |---|---|---|
-| none | 89.52% | 2.68% |
+| none | 89.53% | 2.68% |
 | subject coverage 0.5, 100 aa | 26.53% | 1.14% |
 | subject coverage 0.8, 150 aa | 9.96% | 0.49% |
 | subject coverage 0.9, 200 aa | 6.47% | 0.23% |
@@ -114,6 +114,40 @@ novelty.
 `subtract_known.py` now records the same quantity at read level: the identity distribution
 of what the protein tier removed, over alignments of at least 30 aa, with the shorter ones
 counted separately because identity is quantised there.
+
+## 4b. The coverage gap, and why it fails
+
+The holdout thread proposed a field and asked for the null it lacked. Two coverages of the
+same contig from the same significant HSPs: **per-subject** is the union against whichever
+single subject covers most of the contig, **any-subject** the union against all of them, and
+the **gap** between them is the part that known proteins explain only collectively. On the
+holdout library the withheld genome reads +36.6 points, the 95.85th percentile of 193
+length-matched identified contigs whose gap is median 0.1, and 34 contigs from
+already-referenced genomes read median, mean and maximum 0.0.
+
+Through the shuffle on this library the field does not survive, and the null is the higher
+of the two:
+
+| | real, 10,172 contigs | shuffled, 304 contigs |
+|---|---|---|
+| median gap | 0.38 points | 1.43 points |
+| p90 | 21.5 | 35.9 |
+| p99 | 46.2 | 49.6 |
+| above 10 points | 14.51% | 35.53% |
+| above 30 points | 5.81% | 14.47% |
+
+A shuffled contig that clears the significance bar is **more than twice as likely** as a
+real one to show a gap above 30 points. Several weak HSPs land on unrelated records in
+different places, no single one covers much, and the gap follows. The holdout thread's
+gene-count control reproduces here and does not catch it: median gap 0.0 in every
+subject-count bin up to five, on both arms.
+
+What survives is one direction of it. A gap near zero means one subject explains the contig,
+which is why 34 referenced contigs reading a maximum of 0.0 is a real statement. A large gap
+is necessary for multi-gene architecture and not sufficient for it. The version worth testing
+next, not run here, is the gap conditioned on every contributing HSP exceeding a length
+floor, since the shuffled gaps are built from short scattered alignments and the holdout
+candidate's two from 620 aa and 493 aa.
 
 ## 5. The band is a continuum, and it is not short
 

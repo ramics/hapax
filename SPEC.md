@@ -365,7 +365,7 @@ reports a fused lineage as fused rather than as a strain.
 Tier 1 removes what can be identified. Its output is one bit per contig and per read, and
 that bit is the tool's largest single information loss. Measured:
 
-- Over 10,170 identified contigs with a significant protein hit, **4.3% sit at 90% identity
+- Over 10,172 identified contigs with a significant protein hit, **4.27% sit at 90% identity
   or above and 90.2% sit below 70%** (`results/divergent_known/`). The same word subtracts
   both ends of an eighty-point range.
 - The holdout shows what that costs when it matters. A genome withheld from every index,
@@ -399,7 +399,7 @@ Three constraints on reading those distances, each measured:
   material, and the gap survives matching on gene count. Rank on the conserved gene and ship
   the spread.
 - **Identity alone does not say a hit is real.** Against a dinucleotide-preserving shuffle of
-  the same contigs, existence of a significant alignment separates at 89.52% against 2.68%,
+  the same contigs, existence of a significant alignment separates at 89.53% against 2.68%,
   while the identity of a hit that exists does not separate at all. Every distance ships with
   its aligned length and coverage.
 - **Per-read identity leans towards familiarity**, by +17.2 points below 50% query coverage

@@ -80,30 +80,41 @@ def diamond_blastx(fa: Path, db: Path, out: Path, binpath: Path, threads: int,
     `slen` and `qlen` are in the output format on purpose: an identity without the
     fraction of the subject it covers cannot distinguish a diverged full-length protein
     from a conserved fragment of one, and those are different findings.
+
+    25 targets rather than 1, and qstart/qend with them, because the best hit alone
+    cannot answer whether ONE known protein explains the contig or whether several
+    unrelated ones each explain a piece of it. The best hit is still whichever target
+    wins on bitscore; the extra targets only feed the coverage gap below.
     """
     cmd = [str(binpath), "blastx", "-d", str(db), "-q", str(fa), "-o", str(out),
            "-p", str(threads), mode, "--quiet", "--evalue", "1e-3",
-           "--max-target-seqs", "1", "--outfmt", "6",
+           "--max-target-seqs", "25", "--outfmt", "6",
            "qseqid", "sseqid", "pident", "length", "evalue", "bitscore",
-           "qlen", "slen", "stitle"]
+           "qlen", "slen", "qstart", "qend", "stitle"]
     t0 = time.time()
     subprocess.run(cmd, check=True)
-    best = {}
+    best, hsps, qlen = {}, {}, {}
     with out.open() as fh:
         for line in fh:
             f = line.rstrip("\n").split("\t")
-            if len(f) < 8:
+            if len(f) < 10:
                 continue
             row = {"subject": f[1], "pident": float(f[2]), "aln_aa": int(f[3]),
                    "evalue": float(f[4]), "bitscore": float(f[5]),
                    "contig_nt": int(f[6]), "subject_aa": int(f[7]),
-                   "title": (f[8] if len(f) > 8 else "")[:200]}
+                   "qstart": int(f[8]), "qend": int(f[9]),
+                   "title": (f[10] if len(f) > 10 else "")[:200]}
+            if row["evalue"] < SIGNIFICANT_EVALUE:
+                hsps.setdefault(f[0], {}).setdefault(row["subject"], []).append(
+                    (min(row["qstart"], row["qend"]), max(row["qstart"], row["qend"])))
+                qlen[f[0]] = row["contig_nt"]
             row["subject_coverage"] = round(row["aln_aa"] / max(1, row["subject_aa"]), 3)
             row["contig_coverage"] = round(3 * row["aln_aa"] / max(1, row["contig_nt"]), 3)
             prev = best.get(f[0])
             if prev is None or row["bitscore"] > prev["bitscore"]:
                 best[f[0]] = row
-    return {"best": best, "seconds": round(time.time() - t0, 1)}
+    return {"best": best, "hsps": hsps, "qlen": qlen,
+            "seconds": round(time.time() - t0, 1)}
 
 
 def dinuc_shuffle(seq: str, rng: random.Random) -> str:
@@ -253,6 +264,140 @@ def discrimination(sig: dict, nullsig: dict, n_contigs: int) -> dict:
     return base
 
 
+def _union(ivs) -> int:
+    out, cur = 0, None
+    for lo, hi in sorted(ivs):
+        if cur is None or lo > cur[1]:
+            if cur:
+                out += cur[1] - cur[0] + 1
+            cur = [lo, hi]
+        else:
+            cur[1] = max(cur[1], hi)
+    if cur:
+        out += cur[1] - cur[0] + 1
+    return out
+
+
+def coverage_gap(hsps: dict, qlen: dict, sig: dict,
+                 nhsps: dict, nqlen: dict, nullsig: dict) -> dict:
+    """How much more of a contig is explained by SEVERAL known proteins than by one.
+
+    Two coverages of the same contig by the same significant HSPs. Per-subject is the
+    union against whichever single subject covers most of it; any-subject is the union
+    against all of them. The gap between them is the part of the contig that known
+    proteins explain only collectively, which happens when a contig's genes land on
+    unrelated database records.
+
+    The holdout thread measured this on a library where the answer is known: the withheld
+    genome reads +36.6 points, the 95.85th percentile among 193 length-matched identified
+    contigs whose gap is median 0.1, and 34 contigs from already-referenced genomes in
+    the same library read median, mean and MAXIMUM 0.0. They also killed the obvious
+    confound: binned by number of significant subjects the median gap is 0.0 in every
+    bin, the candidate's own bin of 5 subjects included.
+
+    What that measurement lacked is a null, which is the arm this script has. Many weak
+    HSPs scattered over a shuffled contig could manufacture a gap by chance, and if they
+    do, the field is reading chance alignment density rather than gene architecture. So
+    the shuffled arm is computed identically and reported beside the real one.
+    """
+    def gaps(hs, ql, keep):
+        out = []
+        for q, subj in hs.items():
+            if q not in keep:
+                continue
+            n = max(1, ql.get(q, 1))
+            per = max((_union(iv) for iv in subj.values()), default=0) / n
+            allu = _union([iv for ivs in subj.values() for iv in ivs]) / n
+            out.append({"contig": q, "subjects": len(subj),
+                        "per_subject_coverage": round(per, 4),
+                        "any_subject_coverage": round(allu, 4),
+                        "gap_points": round(100.0 * (allu - per), 2)})
+        return out
+
+    real, null = gaps(hsps, qlen, sig), gaps(nhsps, nqlen, nullsig)
+
+    def prof(rs):
+        if not rs:
+            return {}
+        v = sorted(r["gap_points"] for r in rs)
+        at = lambda f: v[min(len(v) - 1, int(f * (len(v) - 1) + 0.5))]
+        by_n = collections.defaultdict(list)
+        for r in rs:
+            by_n[min(r["subjects"], 6)].append(r["gap_points"])
+        return {"contigs": len(rs),
+                "median_gap_points": round(at(0.50), 2),
+                "p90_gap_points": round(at(0.90), 2),
+                "p99_gap_points": round(at(0.99), 2),
+                "max_gap_points": round(v[-1], 2),
+                "share_above_10_points": round(sum(1 for x in v if x > 10) / len(v), 4),
+                "share_above_30_points": round(sum(1 for x in v if x > 30) / len(v), 4),
+                "median_by_significant_subject_count": {
+                    str(k): round(statistics.median(x), 2)
+                    for k, x in sorted(by_n.items())},
+                }
+    return {"readout": ("any-subject coverage minus per-subject coverage, in points of "
+                        "contig length. High means several unrelated known proteins each "
+                        "explain a piece and none explains the whole"),
+            "real": prof(real), "shuffled_null": prof(null),
+            "holdout_reference_point": (
+                "the withheld genome reads +36.6 points on the holdout library, the "
+                "95.85th percentile of its length-matched background, where 34 contigs "
+                "from already-referenced genomes read a maximum of 0.0")}
+
+
+COV_BANDS = [(0.0, 0.25), (0.25, 0.50), (0.50, 0.70), (0.70, 1.01)]
+ID_BANDS = [(0, 50), (50, 60), (60, 70), (70, 80), (80, 90), (90, 100.1)]
+
+
+def joint_cells(sig: dict, nullsig: dict) -> dict:
+    """Contigs per cell of contig coverage against identity, with the shuffled null.
+
+    THE CELL IS THE OUTPUT, NOT A RANKING. Two independent measurements say so. The
+    shuffled null here found coverage to be the only field reading above chance, identity
+    the weakest. And the holdout library, where the answer is known, puts its withheld
+    genome at the 93.46th percentile of identity among removed contigs - 7,104 contigs
+    are MORE divergent than the one thing that mattered - while on coverage it lands in a
+    cell holding 70 contigs, 0.92% of that pile. In the same library not one of 34 contigs
+    from already-referenced genomes falls below 80% identity at either level, so
+    recognisable material does not enter that cell: its occupants are other unnamed
+    things. The withheld genome is still not the top row of its own cell, which is why
+    this reports a cell with a count on it and no row ordering at all.
+    """
+    def cell(d):
+        g = collections.defaultdict(int)
+        for h in d.values():
+            for ci, (clo, chi) in enumerate(COV_BANDS):
+                if clo <= h["contig_coverage"] < chi:
+                    break
+            else:
+                ci = len(COV_BANDS) - 1
+            for ii, (ilo, ihi) in enumerate(ID_BANDS):
+                if ilo <= h["pident"] < ihi:
+                    break
+            else:
+                ii = len(ID_BANDS) - 1
+            g[(ci, ii)] += 1
+        return g
+    rg, ng = cell(sig), cell(nullsig)
+    tot = max(1, len(sig))
+    rows = []
+    for ci, (clo, chi) in enumerate(COV_BANDS):
+        rows.append({
+            "contig_coverage_from": clo, "contig_coverage_to": round(chi, 2),
+            "cells": [{"identity_from": ilo, "identity_to": round(ihi, 1),
+                       "contigs": rg.get((ci, ii), 0),
+                       "percent_of_pile": round(100.0 * rg.get((ci, ii), 0) / tot, 2),
+                       "shuffled_null": ng.get((ci, ii), 0)}
+                      for ii, (ilo, ihi) in enumerate(ID_BANDS)],
+        })
+    return {"readout": ("contigs per cell of contig coverage against identity. A cell "
+                        "with a count is the reportable object here; ordering rows "
+                        "inside a cell by identity would order them by database "
+                        "proximity"),
+            "denominator": len(sig),
+            "rows": rows}
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--seed", type=int, default=1)
@@ -302,7 +447,12 @@ def main() -> None:
     shuf = a.work / "identified_shuffled.fa"
     shuf.write_text("".join(f">{n}\n{dinuc_shuffle(s, rng)}\n" for n, s in seqs.items()))
 
+    # HSPs are pooled ACROSS the two indexes, because a contig whose genes land on a
+    # RefSeq viral record and a Swiss-Prot record is exactly the case the coverage gap
+    # is there to catch, and keeping the indexes apart would hide it.
     hits, secs = {}, {}
+    hsps, qlen = {}, {}
+    nullhits, nhsps, nqlen = {}, {}, {}
     for label, db in (("viral", a.dmnd), ("sprot", a.dmnd_sprot)):
         if not db.exists():
             continue
@@ -313,16 +463,20 @@ def main() -> None:
             row["index"] = label
             if q not in hits or row["bitscore"] > hits[q]["bitscore"]:
                 hits[q] = row
-    nullhits = {}
-    for label, db in (("viral", a.dmnd), ("sprot", a.dmnd_sprot)):
-        if not db.exists():
-            continue
-        r = diamond_blastx(shuf, db, a.work / f"null_{label}.tsv", a.diamond_bin,
-                           a.threads, a.diamond_mode)
-        secs[f"blastx_null_{label}"] = r["seconds"]
-        for q, row in r["best"].items():
+        for q, d in r["hsps"].items():
+            for subj, iv in d.items():
+                hsps.setdefault(q, {}).setdefault(f"{label}|{subj}", []).extend(iv)
+        qlen.update(r["qlen"])
+        rn = diamond_blastx(shuf, db, a.work / f"null_{label}.tsv", a.diamond_bin,
+                            a.threads, a.diamond_mode)
+        secs[f"blastx_null_{label}"] = rn["seconds"]
+        for q, row in rn["best"].items():
             if q not in nullhits or row["bitscore"] > nullhits[q]["bitscore"]:
                 nullhits[q] = row
+        for q, d in rn["hsps"].items():
+            for subj, iv in d.items():
+                nhsps.setdefault(q, {}).setdefault(f"{label}|{subj}", []).extend(iv)
+        nqlen.update(rn["qlen"])
 
     def significant(h):
         return h and h["evalue"] < SIGNIFICANT_EVALUE and h["aln_aa"] >= MIN_ALN_AA
@@ -486,6 +640,8 @@ def main() -> None:
             "median_real": round(statistics.median(ids), 1) if ids else None,
             "median_null": round(statistics.median(nullids), 1) if nullids else None,
         },
+        "joint_cells": joint_cells(sig, nullsig),
+        "coverage_gap": coverage_gap(hsps, qlen, sig, nhsps, nqlen, nullsig),
         "gene_count_matched_spread": matched_spread(
             [r for r in rows if r["arm"] == "divergent"],
             [r for r in rows if r["arm"] == "control_near_reference"]),

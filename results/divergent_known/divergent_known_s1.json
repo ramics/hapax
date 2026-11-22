@@ -7,10 +7,10 @@
   "contigs_in_file": 25209,
   "contigs_at_least_min_length": 11361,
   "min_contig_nt": 300,
-  "with_a_significant_protein_hit": 10170,
-  "below_divergent_threshold": 9735,
-  "at_or_above_control_threshold": 301,
-  "taken_to_gene_level": 901,
+  "with_a_significant_protein_hit": 10172,
+  "below_divergent_threshold": 9738,
+  "at_or_above_control_threshold": 302,
+  "taken_to_gene_level": 902,
   "gene_level_cap_per_arm": 600
  },
  "identity_distribution": {
@@ -19,12 +19,12 @@
    {
     "from_percent": 20,
     "to_percent": 25,
-    "contigs": 65
+    "contigs": 64
    },
    {
     "from_percent": 25,
     "to_percent": 30,
-    "contigs": 499
+    "contigs": 503
    },
    {
     "from_percent": 30,
@@ -34,22 +34,22 @@
    {
     "from_percent": 35,
     "to_percent": 40,
-    "contigs": 1571
+    "contigs": 1573
    },
    {
     "from_percent": 40,
     "to_percent": 45,
-    "contigs": 1682
+    "contigs": 1684
    },
    {
     "from_percent": 45,
     "to_percent": 50,
-    "contigs": 1421
+    "contigs": 1417
    },
    {
     "from_percent": 50,
     "to_percent": 55,
-    "contigs": 1130
+    "contigs": 1133
    },
    {
     "from_percent": 55,
@@ -64,17 +64,17 @@
    {
     "from_percent": 65,
     "to_percent": 70,
-    "contigs": 335
+    "contigs": 333
    },
    {
     "from_percent": 70,
     "to_percent": 75,
-    "contigs": 194
+    "contigs": 196
    },
    {
     "from_percent": 75,
     "to_percent": 80,
-    "contigs": 157
+    "contigs": 153
    },
    {
     "from_percent": 80,
@@ -84,17 +84,17 @@
    {
     "from_percent": 85,
     "to_percent": 90,
-    "contigs": 96
+    "contigs": 97
    },
    {
     "from_percent": 90,
     "to_percent": 95,
-    "contigs": 134
+    "contigs": 132
    },
    {
     "from_percent": 95,
     "to_percent": 100,
-    "contigs": 254
+    "contigs": 255
    },
    {
     "from_percent": 100,
@@ -131,12 +131,12 @@
    {
     "from_percent": 45,
     "to_percent": 50,
-    "contigs": 42
+    "contigs": 43
    },
    {
     "from_percent": 50,
     "to_percent": 55,
-    "contigs": 35
+    "contigs": 36
    },
    {
     "from_percent": 55,
@@ -151,7 +151,7 @@
    {
     "from_percent": 65,
     "to_percent": 70,
-    "contigs": 11
+    "contigs": 10
    },
    {
     "from_percent": 70,
@@ -161,7 +161,7 @@
    {
     "from_percent": 75,
     "to_percent": 80,
-    "contigs": 4
+    "contigs": 3
    },
    {
     "from_percent": 80,
@@ -189,9 +189,245 @@
     "contigs": 0
    }
   ],
-  "null_reading": "304 of 11361 shuffled contigs clear the same significance bar, against 10170 real",
+  "null_reading": "304 of 11361 shuffled contigs clear the same significance bar, against 10172 real",
   "median_real": 45.1,
   "median_null": 43.5
+ },
+ "joint_cells": {
+  "readout": "contigs per cell of contig coverage against identity. A cell with a count is the reportable object here; ordering rows inside a cell by identity would order them by database proximity",
+  "denominator": 10172,
+  "rows": [
+   {
+    "contig_coverage_from": 0.0,
+    "contig_coverage_to": 0.25,
+    "cells": [
+     {
+      "identity_from": 0,
+      "identity_to": 50,
+      "contigs": 152,
+      "percent_of_pile": 1.49,
+      "shuffled_null": 17
+     },
+     {
+      "identity_from": 50,
+      "identity_to": 60,
+      "contigs": 30,
+      "percent_of_pile": 0.29,
+      "shuffled_null": 3
+     },
+     {
+      "identity_from": 60,
+      "identity_to": 70,
+      "contigs": 11,
+      "percent_of_pile": 0.11,
+      "shuffled_null": 2
+     },
+     {
+      "identity_from": 70,
+      "identity_to": 80,
+      "contigs": 8,
+      "percent_of_pile": 0.08,
+      "shuffled_null": 2
+     },
+     {
+      "identity_from": 80,
+      "identity_to": 90,
+      "contigs": 0,
+      "percent_of_pile": 0.0,
+      "shuffled_null": 0
+     },
+     {
+      "identity_from": 90,
+      "identity_to": 100.1,
+      "contigs": 2,
+      "percent_of_pile": 0.02,
+      "shuffled_null": 0
+     }
+    ]
+   },
+   {
+    "contig_coverage_from": 0.25,
+    "contig_coverage_to": 0.5,
+    "cells": [
+     {
+      "identity_from": 0,
+      "identity_to": 50,
+      "contigs": 1168,
+      "percent_of_pile": 11.48,
+      "shuffled_null": 96
+     },
+     {
+      "identity_from": 50,
+      "identity_to": 60,
+      "contigs": 293,
+      "percent_of_pile": 2.88,
+      "shuffled_null": 20
+     },
+     {
+      "identity_from": 60,
+      "identity_to": 70,
+      "contigs": 121,
+      "percent_of_pile": 1.19,
+      "shuffled_null": 7
+     },
+     {
+      "identity_from": 70,
+      "identity_to": 80,
+      "contigs": 52,
+      "percent_of_pile": 0.51,
+      "shuffled_null": 2
+     },
+     {
+      "identity_from": 80,
+      "identity_to": 90,
+      "contigs": 33,
+      "percent_of_pile": 0.32,
+      "shuffled_null": 2
+     },
+     {
+      "identity_from": 90,
+      "identity_to": 100.1,
+      "contigs": 52,
+      "percent_of_pile": 0.51,
+      "shuffled_null": 3
+     }
+    ]
+   },
+   {
+    "contig_coverage_from": 0.5,
+    "contig_coverage_to": 0.7,
+    "cells": [
+     {
+      "identity_from": 0,
+      "identity_to": 50,
+      "contigs": 1301,
+      "percent_of_pile": 12.79,
+      "shuffled_null": 50
+     },
+     {
+      "identity_from": 50,
+      "identity_to": 60,
+      "contigs": 302,
+      "percent_of_pile": 2.97,
+      "shuffled_null": 10
+     },
+     {
+      "identity_from": 60,
+      "identity_to": 70,
+      "contigs": 139,
+      "percent_of_pile": 1.37,
+      "shuffled_null": 5
+     },
+     {
+      "identity_from": 70,
+      "identity_to": 80,
+      "contigs": 57,
+      "percent_of_pile": 0.56,
+      "shuffled_null": 1
+     },
+     {
+      "identity_from": 80,
+      "identity_to": 90,
+      "contigs": 32,
+      "percent_of_pile": 0.31,
+      "shuffled_null": 4
+     },
+     {
+      "identity_from": 90,
+      "identity_to": 100.1,
+      "contigs": 68,
+      "percent_of_pile": 0.67,
+      "shuffled_null": 2
+     }
+    ]
+   },
+   {
+    "contig_coverage_from": 0.7,
+    "contig_coverage_to": 1.01,
+    "cells": [
+     {
+      "identity_from": 0,
+      "identity_to": 50,
+      "contigs": 3835,
+      "percent_of_pile": 37.7,
+      "shuffled_null": 47
+     },
+     {
+      "identity_from": 50,
+      "identity_to": 60,
+      "contigs": 1230,
+      "percent_of_pile": 12.09,
+      "shuffled_null": 20
+     },
+     {
+      "identity_from": 60,
+      "identity_to": 70,
+      "contigs": 593,
+      "percent_of_pile": 5.83,
+      "shuffled_null": 5
+     },
+     {
+      "identity_from": 70,
+      "identity_to": 80,
+      "contigs": 232,
+      "percent_of_pile": 2.28,
+      "shuffled_null": 2
+     },
+     {
+      "identity_from": 80,
+      "identity_to": 90,
+      "contigs": 149,
+      "percent_of_pile": 1.46,
+      "shuffled_null": 2
+     },
+     {
+      "identity_from": 90,
+      "identity_to": 100.1,
+      "contigs": 312,
+      "percent_of_pile": 3.07,
+      "shuffled_null": 2
+     }
+    ]
+   }
+  ]
+ },
+ "coverage_gap": {
+  "readout": "any-subject coverage minus per-subject coverage, in points of contig length. High means several unrelated known proteins each explain a piece and none explains the whole",
+  "real": {
+   "contigs": 10172,
+   "median_gap_points": 0.38,
+   "p90_gap_points": 21.54,
+   "p99_gap_points": 46.23,
+   "max_gap_points": 62.01,
+   "share_above_10_points": 0.1451,
+   "share_above_30_points": 0.0581,
+   "median_by_significant_subject_count": {
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0,
+    "4": 0.0,
+    "5": 0.0,
+    "6": 0.51
+   }
+  },
+  "shuffled_null": {
+   "contigs": 304,
+   "median_gap_points": 1.43,
+   "p90_gap_points": 35.92,
+   "p99_gap_points": 49.55,
+   "max_gap_points": 51.91,
+   "share_above_10_points": 0.3553,
+   "share_above_30_points": 0.1447,
+   "median_by_significant_subject_count": {
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0,
+    "4": 0.0,
+    "5": 0.0,
+    "6": 1.7
+   }
+  },
+  "holdout_reference_point": "the withheld genome reads +36.6 points on the holdout library, the 95.85th percentile of its length-matched background, where 34 contigs from already-referenced genomes read a maximum of 0.0"
  },
  "gene_count_matched_spread": {
   "readout": "median per-contig gene identity spread at equal numbers of scorable genes. The unmatched comparison is biased towards the divergent arm, whose contigs are longer and carry more genes",
@@ -223,12 +459,12 @@
   "readout": "existence of a significant alignment, then every property of that alignment, real against a dinucleotide-preserving shuffle of the same contigs through the same search",
   "existence": {
    "contigs_searched": 11361,
-   "real_with_a_significant_hit": 10170,
-   "real_percent": 89.52,
+   "real_with_a_significant_hit": 10172,
+   "real_percent": 89.53,
    "shuffled_with_a_significant_hit": 304,
    "shuffled_percent": 2.68,
    "ratio": 33.4,
-   "reading": "89.52% of real contigs against 2.68% of shuffles. The existence of the alignment is the calibrated quantity"
+   "reading": "89.53% of real contigs against 2.68% of shuffles. The existence of the alignment is the calibrated quantity"
   },
   "conditional_on_a_hit": {
    "readout": "share of real hits above the shuffled null's p90, per field. A null p90 puts 10% above it by construction, so 10% is the no-information level and the whole table has to be read against that number",
@@ -236,70 +472,70 @@
    "fields": {
     "pident": {
      "real": {
-      "p10": 32.1,
+      "p10": 32.0,
       "median": 45.1,
       "p90": 69.6,
-      "n": 10170
+      "n": 10172
      },
      "shuffled_null": {
-      "p10": 31.0,
+      "p10": 30.9,
       "median": 43.5,
-      "p90": 66.5,
+      "p90": 65.9,
       "n": 304
      },
-     "percent_of_real_above_null_p90": 11.98
+     "percent_of_real_above_null_p90": 12.35
     },
     "aln_aa": {
      "real": {
       "p10": 88,
       "median": 143,
-      "p90": 419,
-      "n": 10170
+      "p90": 420,
+      "n": 10172
      },
      "shuffled_null": {
       "p10": 86,
-      "median": 198,
+      "median": 200,
       "p90": 493,
       "n": 304
      },
-     "percent_of_real_above_null_p90": 7.1
+     "percent_of_real_above_null_p90": 7.16
     },
     "subject_coverage": {
      "real": {
-      "p10": 0.153,
-      "median": 0.346,
-      "p90": 0.909,
-      "n": 10170
+      "p10": 0.151,
+      "median": 0.342,
+      "p90": 0.905,
+      "n": 10172
      },
      "shuffled_null": {
       "p10": 0.163,
-      "median": 0.439,
-      "p90": 0.96,
+      "median": 0.433,
+      "p90": 0.959,
       "n": 304
      },
-     "percent_of_real_above_null_p90": 7.52
+     "percent_of_real_above_null_p90": 7.48
     },
     "contig_coverage": {
      "real": {
-      "p10": 0.406,
-      "median": 0.814,
+      "p10": 0.407,
+      "median": 0.815,
       "p90": 0.987,
-      "n": 10170
+      "n": 10172
      },
      "shuffled_null": {
       "p10": 0.279,
-      "median": 0.496,
+      "median": 0.498,
       "p90": 0.945,
       "n": 304
      },
-     "percent_of_real_above_null_p90": 26.34
+     "percent_of_real_above_null_p90": 26.44
     },
     "bitscore": {
      "real": {
       "p10": 66.6,
       "median": 122.0,
       "p90": 342.0,
-      "n": 10170
+      "n": 10172
      },
      "shuffled_null": {
       "p10": 68.9,
@@ -311,7 +547,7 @@
     }
    },
    "strongest_field": "contig_coverage",
-   "reading": "cannot discriminate here. The strongest field is contig_coverage at 26.34% against a no-information level of 10%, and identity itself reads 11.98%. Once a shuffle clears the significance bar its alignment looks like a real one on every field measured, so no property of a hit may be used to argue that the hit is real"
+   "reading": "cannot discriminate here. The strongest field is contig_coverage at 26.44% against a no-information level of 10%, and identity itself reads 12.35%. Once a shuffle clears the significance bar its alignment looks like a real one on every field measured, so no property of a hit may be used to argue that the hit is real"
   },
   "at_a_stricter_operating_point": {
    "readout": "the same two piles under coverage and length floors. This is the only lever that moves the null, and it costs real hits, so the trade is reported rather than chosen here",
@@ -319,25 +555,25 @@
     {
      "subject_coverage_at_least": 0.5,
      "aln_aa_at_least": 100,
-     "real": 3014,
-     "shuffled_null": 129,
-     "real_percent_of_searched": 26.53,
-     "shuffled_percent_of_searched": 1.14
+     "real": 2990,
+     "shuffled_null": 124,
+     "real_percent_of_searched": 26.32,
+     "shuffled_percent_of_searched": 1.09
     },
     {
      "subject_coverage_at_least": 0.8,
      "aln_aa_at_least": 150,
-     "real": 1131,
+     "real": 1127,
      "shuffled_null": 56,
-     "real_percent_of_searched": 9.96,
+     "real_percent_of_searched": 9.92,
      "shuffled_percent_of_searched": 0.49
     },
     {
      "subject_coverage_at_least": 0.9,
      "aln_aa_at_least": 200,
-     "real": 735,
+     "real": 733,
      "shuffled_null": 26,
-     "real_percent_of_searched": 6.47,
+     "real_percent_of_searched": 6.45,
      "shuffled_percent_of_searched": 0.23
     }
    ]
@@ -380,21 +616,21 @@
  "summary": {
   "divergent": {
    "contigs": 600,
-   "median_pident": 41.8,
-   "median_aln_aa": 550.0,
+   "median_pident": 41.7,
+   "median_aln_aa": 553.0,
    "median_subject_coverage": 0.95,
    "contigs_with_two_or_more_scorable_genes": 550,
    "median_orf_identity_spread_points": 12.8,
    "median_mapped_depth": 43.815
   },
   "control_near_reference": {
-   "contigs": 301,
+   "contigs": 302,
    "median_pident": 97.9,
-   "median_aln_aa": 156,
-   "median_subject_coverage": 0.321,
+   "median_aln_aa": 155.0,
+   "median_subject_coverage": 0.314,
    "contigs_with_two_or_more_scorable_genes": 60,
    "median_orf_identity_spread_points": 2.45,
-   "median_mapped_depth": 8.67
+   "median_mapped_depth": 8.66
   }
  },
  "external_positive_control": {
@@ -1151,6 +1387,52 @@
   },
   {
    "arm": "divergent",
+   "contig": "WW_211013_20-22hmix_S5_L001_NODE_134_length_4330_cov_17.955088",
+   "contig_nt": 4330,
+   "pident": 26.7,
+   "aln_aa": 288,
+   "evalue": 5.01e-19,
+   "subject": "YP_010771316.1",
+   "subject_title": "YP_010771316.1 RNA-directed RNA polymerase [ssRNA phage SRR7976300_2]",
+   "subject_aa": 785,
+   "subject_coverage": 0.367,
+   "contig_coverage": 0.2,
+   "index": "viral",
+   "divergence_class": "below any band a name survives",
+   "polymerase_pident": 26.7,
+   "genes": [
+    {
+     "role": "maturation",
+     "pident": 24.7,
+     "aln_aa": 392,
+     "aa_len": 456,
+     "subject": "YP_010084024.1",
+     "title": "YP_010084024.1 head maturation protease, partial [Leviviridae sp.]",
+     "pfam": []
+    },
+    {
+     "role": "polymerase",
+     "pident": 26.7,
+     "aln_aa": 288,
+     "aa_len": 754,
+     "subject": "YP_010771316.1",
+     "title": "YP_010771316.1 RNA-directed RNA polymerase [ssRNA phage SRR7976300_2]",
+     "pfam": [
+      "RNA_replicase_B"
+     ]
+    }
+   ],
+   "orf_identity_spread_points": 2.0,
+   "read_support": {
+    "mapped_mean_depth": 65.42,
+    "mapped_median_depth": 52.0,
+    "breadth_covered": 0.9963,
+    "evenness_within_2x_of_median": 0.8002,
+    "max_depth": 275
+   }
+  },
+  {
+   "arm": "divergent",
    "contig": "WW_211013_20-22hmix_S5_L001_NODE_9_length_8954_cov_15.992808",
    "contig_nt": 8954,
    "pident": 26.8,
@@ -1656,6 +1938,55 @@
   },
   {
    "arm": "divergent",
+   "contig": "WW_211013_20-22hmix_S5_L001_NODE_397_length_3742_cov_13.057771",
+   "contig_nt": 3742,
+   "pident": 28.0,
+   "aln_aa": 585,
+   "evalue": 4.26e-48,
+   "subject": "YP_010770137.1",
+   "subject_title": "YP_010770137.1 RNA-directed RNA polymerase [ssRNA phage ESE017]",
+   "subject_aa": 585,
+   "subject_coverage": 1.0,
+   "contig_coverage": 0.469,
+   "index": "viral",
+   "divergence_class": "below any band a name survives",
+   "polymerase_pident": 34.8,
+   "genes": [
+    {
+     "role": "polymerase",
+     "pident": 34.8,
+     "aln_aa": 365,
+     "aa_len": 630,
+     "subject": "YP_010769746.1",
+     "title": "YP_010769746.1 RNA-directed RNA polymerase [ssRNA phage SRR6960803_6]",
+     "pfam": [
+      "DUF21864",
+      "RNA_replicase_B"
+     ]
+    },
+    {
+     "role": "maturation",
+     "pident": 27.3,
+     "aln_aa": 399,
+     "aa_len": 413,
+     "subject": "YP_010770067.1",
+     "title": "YP_010770067.1 maturation protein [ssRNA phage SRR6255733_3]",
+     "pfam": [
+      "Phage_mat-A"
+     ]
+    }
+   ],
+   "orf_identity_spread_points": 7.5,
+   "read_support": {
+    "mapped_mean_depth": 63.24,
+    "mapped_median_depth": 54.0,
+    "breadth_covered": 0.9963,
+    "evenness_within_2x_of_median": 0.7675,
+    "max_depth": 231
+   }
+  },
+  {
+   "arm": "divergent",
    "contig": "WW_211013_20-22hmix_S5_L001_NODE_11_length_8689_cov_18.437572",
    "contig_nt": 8689,
    "pident": 28.1,
@@ -1705,6 +2036,52 @@
     "breadth_covered": 0.9982,
     "evenness_within_2x_of_median": 0.6494,
     "max_depth": 281
+   }
+  },
+  {
+   "arm": "divergent",
+   "contig": "WW_211013_20-22hmix_S5_L001_NODE_237_length_3950_cov_6.021309",
+   "contig_nt": 3950,
+   "pident": 28.1,
+   "aln_aa": 391,
+   "evalue": 1.51e-31,
+   "subject": "YP_010770309.1",
+   "subject_title": "YP_010770309.1 RNA-directed RNA polymerase [ssRNA phage SRR5467091_13]",
+   "subject_aa": 575,
+   "subject_coverage": 0.68,
+   "contig_coverage": 0.297,
+   "index": "viral",
+   "divergence_class": "below any band a name survives",
+   "polymerase_pident": 28.1,
+   "genes": [
+    {
+     "role": "polymerase",
+     "pident": 28.1,
+     "aln_aa": 391,
+     "aa_len": 500,
+     "subject": "YP_010770309.1",
+     "title": "YP_010770309.1 RNA-directed RNA polymerase [ssRNA phage SRR5467091_13]",
+     "pfam": [
+      "RNA_replicase_B"
+     ]
+    },
+    {
+     "role": "maturation",
+     "pident": 29.8,
+     "aln_aa": 151,
+     "aa_len": 454,
+     "subject": "YP_010769132.1",
+     "title": "YP_010769132.1 maturation protein [ssRNA phage SRR6049586_1]",
+     "pfam": []
+    }
+   ],
+   "orf_identity_spread_points": 1.7,
+   "read_support": {
+    "mapped_mean_depth": 24.59,
+    "mapped_median_depth": 25.0,
+    "breadth_covered": 0.9929,
+    "evenness_within_2x_of_median": 0.8805,
+    "max_depth": 54
    }
   },
   {
@@ -2107,52 +2484,6 @@
     "breadth_covered": 0.9979,
     "evenness_within_2x_of_median": 0.6136,
     "max_depth": 322
-   }
-  },
-  {
-   "arm": "divergent",
-   "contig": "WW_211013_20-22hmix_S5_L001_NODE_237_length_3950_cov_6.021309",
-   "contig_nt": 3950,
-   "pident": 28.9,
-   "aln_aa": 395,
-   "evalue": 1.82e-31,
-   "subject": "YP_010771415.1",
-   "subject_title": "YP_010771415.1 RNA-directed RNA polymerase [ssRNA phage ESE016]",
-   "subject_aa": 594,
-   "subject_coverage": 0.665,
-   "contig_coverage": 0.3,
-   "index": "viral",
-   "divergence_class": "below any band a name survives",
-   "polymerase_pident": 28.1,
-   "genes": [
-    {
-     "role": "polymerase",
-     "pident": 28.1,
-     "aln_aa": 391,
-     "aa_len": 500,
-     "subject": "YP_010770309.1",
-     "title": "YP_010770309.1 RNA-directed RNA polymerase [ssRNA phage SRR5467091_13]",
-     "pfam": [
-      "RNA_replicase_B"
-     ]
-    },
-    {
-     "role": "maturation",
-     "pident": 29.8,
-     "aln_aa": 151,
-     "aa_len": 454,
-     "subject": "YP_010769132.1",
-     "title": "YP_010769132.1 maturation protein [ssRNA phage SRR6049586_1]",
-     "pfam": []
-    }
-   ],
-   "orf_identity_spread_points": 1.7,
-   "read_support": {
-    "mapped_mean_depth": 24.59,
-    "mapped_median_depth": 25.0,
-    "breadth_covered": 0.9929,
-    "evenness_within_2x_of_median": 0.8805,
-    "max_depth": 54
    }
   },
   {
@@ -3627,6 +3958,54 @@
   },
   {
    "arm": "divergent",
+   "contig": "WW_211013_20-22hmix_S5_L001_NODE_454_length_3678_cov_6.104333",
+   "contig_nt": 3678,
+   "pident": 30.3,
+   "aln_aa": 521,
+   "evalue": 2.29e-48,
+   "subject": "YP_010770137.1",
+   "subject_title": "YP_010770137.1 RNA-directed RNA polymerase [ssRNA phage ESE017]",
+   "subject_aa": 585,
+   "subject_coverage": 0.891,
+   "contig_coverage": 0.425,
+   "index": "viral",
+   "divergence_class": "below any band a name survives",
+   "polymerase_pident": 36.4,
+   "genes": [
+    {
+     "role": "polymerase",
+     "pident": 36.4,
+     "aln_aa": 346,
+     "aa_len": 614,
+     "subject": "YP_010769739.1",
+     "title": "YP_010769739.1 RNA-directed RNA polymerase [ssRNA phage SRR5467090_3]",
+     "pfam": [
+      "RNA_replicase_B"
+     ]
+    },
+    {
+     "role": "maturation",
+     "pident": 28.5,
+     "aln_aa": 239,
+     "aa_len": 414,
+     "subject": "YP_010770067.1",
+     "title": "YP_010770067.1 maturation protein [ssRNA phage SRR6255733_3]",
+     "pfam": [
+      "Phage_mat-A"
+     ]
+    }
+   ],
+   "orf_identity_spread_points": 7.9,
+   "read_support": {
+    "mapped_mean_depth": 28.0,
+    "mapped_median_depth": 24.0,
+    "breadth_covered": 0.9965,
+    "evenness_within_2x_of_median": 0.7349,
+    "max_depth": 84
+   }
+  },
+  {
+   "arm": "divergent",
    "contig": "WW_211013_20-22hmix_S5_L001_NODE_615_length_3503_cov_18.515371",
    "contig_nt": 3503,
    "pident": 30.3,
@@ -3849,6 +4228,43 @@
     "breadth_covered": 0.9969,
     "evenness_within_2x_of_median": 0.7786,
     "max_depth": 788
+   }
+  },
+  {
+   "arm": "divergent",
+   "contig": "WW_211013_20-22hmix_S5_L001_NODE_282_length_3874_cov_3.555381",
+   "contig_nt": 3874,
+   "pident": 30.6,
+   "aln_aa": 209,
+   "evalue": 2.45e-17,
+   "subject": "YP_009333407.1",
+   "subject_title": "YP_009333407.1 hypothetical protein 1 [Beihai picorna-like virus 100]",
+   "subject_aa": 2082,
+   "subject_coverage": 0.1,
+   "contig_coverage": 0.162,
+   "index": "viral",
+   "divergence_class": "below any band a name survives",
+   "polymerase_pident": null,
+   "genes": [
+    {
+     "role": "other",
+     "pident": 30.6,
+     "aln_aa": 209,
+     "aa_len": 1204,
+     "subject": "YP_009333407.1",
+     "title": "YP_009333407.1 hypothetical protein 1 [Beihai picorna-like virus 100]",
+     "pfam": [
+      "RNA_helicase"
+     ]
+    }
+   ],
+   "orf_identity_spread_points": null,
+   "read_support": {
+    "mapped_mean_depth": 14.66,
+    "mapped_median_depth": 13.0,
+    "breadth_covered": 0.9933,
+    "evenness_within_2x_of_median": 0.7659,
+    "max_depth": 50
    }
   },
   {
@@ -4506,6 +4922,53 @@
   },
   {
    "arm": "divergent",
+   "contig": "WW_211013_20-22hmix_S5_L001_NODE_343_length_3801_cov_2.831020",
+   "contig_nt": 3801,
+   "pident": 31.4,
+   "aln_aa": 580,
+   "evalue": 6.48e-57,
+   "subject": "YP_010770974.1",
+   "subject_title": "YP_010770974.1 RNA-directed RNA polymerase [ssRNA phage Gerhypos.1_47]",
+   "subject_aa": 600,
+   "subject_coverage": 0.967,
+   "contig_coverage": 0.458,
+   "index": "viral",
+   "divergence_class": "below any band a name survives",
+   "polymerase_pident": 31.4,
+   "genes": [
+    {
+     "role": "polymerase",
+     "pident": 31.4,
+     "aln_aa": 580,
+     "aa_len": 642,
+     "subject": "YP_010770974.1",
+     "title": "YP_010770974.1 RNA-directed RNA polymerase [ssRNA phage Gerhypos.1_47]",
+     "pfam": [
+      "DUF24635",
+      "RNA_replicase_B"
+     ]
+    },
+    {
+     "role": "maturation",
+     "pident": 25.8,
+     "aln_aa": 325,
+     "aa_len": 449,
+     "subject": "YP_010770672.1",
+     "title": "YP_010770672.1 maturation protein [ssRNA phage SRR7976310_14]",
+     "pfam": []
+    }
+   ],
+   "orf_identity_spread_points": 5.6,
+   "read_support": {
+    "mapped_mean_depth": 16.32,
+    "mapped_median_depth": 14,
+    "breadth_covered": 0.9968,
+    "evenness_within_2x_of_median": 0.7514,
+    "max_depth": 53
+   }
+  },
+  {
+   "arm": "divergent",
    "contig": "WW_211013_20-22hmix_S5_L001_NODE_494_length_3642_cov_2.758573",
    "contig_nt": 3642,
    "pident": 31.4,
@@ -4906,53 +5369,6 @@
   },
   {
    "arm": "divergent",
-   "contig": "WW_211013_20-22hmix_S5_L001_NODE_343_length_3801_cov_2.831020",
-   "contig_nt": 3801,
-   "pident": 31.8,
-   "aln_aa": 575,
-   "evalue": 6.61e-57,
-   "subject": "YP_010771145.1",
-   "subject_title": "YP_010771145.1 RNA-directed RNA polymerase [ssRNA phage Zoerhiza.2_18]",
-   "subject_aa": 601,
-   "subject_coverage": 0.957,
-   "contig_coverage": 0.454,
-   "index": "viral",
-   "divergence_class": "below any band a name survives",
-   "polymerase_pident": 31.4,
-   "genes": [
-    {
-     "role": "polymerase",
-     "pident": 31.4,
-     "aln_aa": 580,
-     "aa_len": 642,
-     "subject": "YP_010770974.1",
-     "title": "YP_010770974.1 RNA-directed RNA polymerase [ssRNA phage Gerhypos.1_47]",
-     "pfam": [
-      "DUF24635",
-      "RNA_replicase_B"
-     ]
-    },
-    {
-     "role": "maturation",
-     "pident": 25.8,
-     "aln_aa": 325,
-     "aa_len": 449,
-     "subject": "YP_010770672.1",
-     "title": "YP_010770672.1 maturation protein [ssRNA phage SRR7976310_14]",
-     "pfam": []
-    }
-   ],
-   "orf_identity_spread_points": 5.6,
-   "read_support": {
-    "mapped_mean_depth": 16.32,
-    "mapped_median_depth": 14,
-    "breadth_covered": 0.9968,
-    "evenness_within_2x_of_median": 0.7514,
-    "max_depth": 53
-   }
-  },
-  {
-   "arm": "divergent",
    "contig": "WW_211013_20-22hmix_S5_L001_NODE_482_length_3656_cov_7.585948",
    "contig_nt": 3656,
    "pident": 31.8,
@@ -4997,109 +5413,6 @@
     "breadth_covered": 0.9962,
     "evenness_within_2x_of_median": 0.6849,
     "max_depth": 592
-   }
-  },
-  {
-   "arm": "divergent",
-   "contig": "WW_211013_20-22hmix_S5_L001_NODE_71_length_5366_cov_11.071738",
-   "contig_nt": 5366,
-   "pident": 31.9,
-   "aln_aa": 430,
-   "evalue": 1.28e-57,
-   "subject": "YP_013035385.1",
-   "subject_title": "YP_013035385.1 P2ab [Mimosa mosaic virus]",
-   "subject_aa": 567,
-   "subject_coverage": 0.758,
-   "contig_coverage": 0.24,
-   "index": "viral",
-   "divergence_class": "below any band a name survives",
-   "polymerase_pident": null,
-   "genes": [
-    {
-     "role": "other",
-     "pident": 28.3,
-     "aln_aa": 205,
-     "aa_len": 838,
-     "subject": "YP_013019428.1",
-     "title": "YP_013019428.1 polyprotein P1a [Hubei sclerotinia RNA virus 1]",
-     "pfam": []
-    },
-    {
-     "role": "other",
-     "pident": 32.5,
-     "aln_aa": 403,
-     "aa_len": 432,
-     "subject": "YP_013035385.1",
-     "title": "YP_013035385.1 P2ab [Mimosa mosaic virus]",
-     "pfam": [
-      "RdRP_4"
-     ]
-    },
-    {
-     "role": "other",
-     "pident": 35.9,
-     "aln_aa": 357,
-     "aa_len": 412,
-     "subject": "YP_009333222.1",
-     "title": "YP_009333222.1 hypothetical protein 3 [Shahe isopoda virus 5]",
-     "pfam": [
-      "Peptidase_A6"
-     ]
-    }
-   ],
-   "orf_identity_spread_points": 7.6,
-   "read_support": {
-    "mapped_mean_depth": 37.21,
-    "mapped_median_depth": 30.0,
-    "breadth_covered": 0.997,
-    "evenness_within_2x_of_median": 0.6987,
-    "max_depth": 153
-   }
-  },
-  {
-   "arm": "divergent",
-   "contig": "WW_211013_20-22hmix_S5_L001_NODE_134_length_4330_cov_17.955088",
-   "contig_nt": 4330,
-   "pident": 31.9,
-   "aln_aa": 263,
-   "evalue": 4.36e-19,
-   "subject": "YP_010770168.1",
-   "subject_title": "YP_010770168.1 RNA-directed RNA polymerase [ssRNA phage SRR7976324_2]",
-   "subject_aa": 604,
-   "subject_coverage": 0.435,
-   "contig_coverage": 0.182,
-   "index": "viral",
-   "divergence_class": "below any band a name survives",
-   "polymerase_pident": 26.7,
-   "genes": [
-    {
-     "role": "maturation",
-     "pident": 24.7,
-     "aln_aa": 392,
-     "aa_len": 456,
-     "subject": "YP_010084024.1",
-     "title": "YP_010084024.1 head maturation protease, partial [Leviviridae sp.]",
-     "pfam": []
-    },
-    {
-     "role": "polymerase",
-     "pident": 26.7,
-     "aln_aa": 288,
-     "aa_len": 754,
-     "subject": "YP_010771316.1",
-     "title": "YP_010771316.1 RNA-directed RNA polymerase [ssRNA phage SRR7976300_2]",
-     "pfam": [
-      "RNA_replicase_B"
-     ]
-    }
-   ],
-   "orf_identity_spread_points": 2.0,
-   "read_support": {
-    "mapped_mean_depth": 65.42,
-    "mapped_median_depth": 52.0,
-    "breadth_covered": 0.9963,
-    "evenness_within_2x_of_median": 0.8002,
-    "max_depth": 275
    }
   },
   {
@@ -5722,6 +6035,54 @@
   },
   {
    "arm": "divergent",
+   "contig": "WW_211013_20-22hmix_S5_L001_NODE_484_length_3653_cov_5.948583",
+   "contig_nt": 3653,
+   "pident": 32.8,
+   "aln_aa": 555,
+   "evalue": 1.57e-67,
+   "subject": "YP_010769441.1",
+   "subject_title": "YP_010769441.1 RNA-directed RNA polymerase [ssRNA phage SRR7473382_2]",
+   "subject_aa": 611,
+   "subject_coverage": 0.908,
+   "contig_coverage": 0.456,
+   "index": "viral",
+   "divergence_class": "below any band a name survives",
+   "polymerase_pident": 32.8,
+   "genes": [
+    {
+     "role": "maturation",
+     "pident": 26.9,
+     "aln_aa": 391,
+     "aa_len": 421,
+     "subject": "YP_010769032.1",
+     "title": "YP_010769032.1 maturation protein [ssRNA phage ESE006]",
+     "pfam": [
+      "Phage_mat-A"
+     ]
+    },
+    {
+     "role": "polymerase",
+     "pident": 32.8,
+     "aln_aa": 555,
+     "aa_len": 625,
+     "subject": "YP_010769441.1",
+     "title": "YP_010769441.1 RNA-directed RNA polymerase [ssRNA phage SRR7473382_2]",
+     "pfam": [
+      "RNA_replicase_B"
+     ]
+    }
+   ],
+   "orf_identity_spread_points": 5.9,
+   "read_support": {
+    "mapped_mean_depth": 52.23,
+    "mapped_median_depth": 45,
+    "breadth_covered": 0.9956,
+    "evenness_within_2x_of_median": 0.8174,
+    "max_depth": 195
+   }
+  },
+  {
+   "arm": "divergent",
    "contig": "WW_211013_20-22hmix_S5_L001_NODE_271_length_3888_cov_43.116358",
    "contig_nt": 3888,
    "pident": 32.9,
@@ -6301,6 +6662,63 @@
   },
   {
    "arm": "divergent",
+   "contig": "WW_211013_20-22hmix_S5_L001_NODE_71_length_5366_cov_11.071738",
+   "contig_nt": 5366,
+   "pident": 33.5,
+   "aln_aa": 439,
+   "evalue": 8.03e-57,
+   "subject": "YP_002158813.2",
+   "subject_title": "YP_002158813.2 polyprotein P2ab [Sowbane mosaic virus]",
+   "subject_aa": 929,
+   "subject_coverage": 0.473,
+   "contig_coverage": 0.245,
+   "index": "viral",
+   "divergence_class": "below any band a name survives",
+   "polymerase_pident": null,
+   "genes": [
+    {
+     "role": "other",
+     "pident": 28.3,
+     "aln_aa": 205,
+     "aa_len": 838,
+     "subject": "YP_013019428.1",
+     "title": "YP_013019428.1 polyprotein P1a [Hubei sclerotinia RNA virus 1]",
+     "pfam": []
+    },
+    {
+     "role": "other",
+     "pident": 32.5,
+     "aln_aa": 403,
+     "aa_len": 432,
+     "subject": "YP_013035385.1",
+     "title": "YP_013035385.1 P2ab [Mimosa mosaic virus]",
+     "pfam": [
+      "RdRP_4"
+     ]
+    },
+    {
+     "role": "other",
+     "pident": 35.9,
+     "aln_aa": 357,
+     "aa_len": 412,
+     "subject": "YP_009333222.1",
+     "title": "YP_009333222.1 hypothetical protein 3 [Shahe isopoda virus 5]",
+     "pfam": [
+      "Peptidase_A6"
+     ]
+    }
+   ],
+   "orf_identity_spread_points": 7.6,
+   "read_support": {
+    "mapped_mean_depth": 37.21,
+    "mapped_median_depth": 30.0,
+    "breadth_covered": 0.997,
+    "evenness_within_2x_of_median": 0.6987,
+    "max_depth": 153
+   }
+  },
+  {
+   "arm": "divergent",
    "contig": "WW_211013_20-22hmix_S5_L001_NODE_116_length_4495_cov_6.088288",
    "contig_nt": 4495,
    "pident": 33.5,
@@ -6440,6 +6858,63 @@
     "breadth_covered": 0.9962,
     "evenness_within_2x_of_median": 0.7331,
     "max_depth": 1196
+   }
+  },
+  {
+   "arm": "divergent",
+   "contig": "WW_211013_20-22hmix_S5_L001_NODE_517_length_3621_cov_10.686483",
+   "contig_nt": 3621,
+   "pident": 33.5,
+   "aln_aa": 483,
+   "evalue": 2.36e-58,
+   "subject": "YP_010770104.1",
+   "subject_title": "YP_010770104.1 RNA-directed RNA polymerase [ssRNA phage SRR5467091_9]",
+   "subject_aa": 575,
+   "subject_coverage": 0.84,
+   "contig_coverage": 0.4,
+   "index": "viral",
+   "divergence_class": "below any band a name survives",
+   "polymerase_pident": 33.9,
+   "genes": [
+    {
+     "role": "maturation",
+     "pident": 29.6,
+     "aln_aa": 378,
+     "aa_len": 397,
+     "subject": "YP_010770102.1",
+     "title": "YP_010770102.1 maturation protein [ssRNA phage SRR5467091_9]",
+     "pfam": [
+      "Phage_mat-A"
+     ]
+    },
+    {
+     "role": "coat",
+     "pident": 51.2,
+     "aln_aa": 123,
+     "aa_len": 132,
+     "subject": "YP_010770103.1",
+     "title": "YP_010770103.1 coat protein [ssRNA phage SRR5467091_9]",
+     "pfam": []
+    },
+    {
+     "role": "polymerase",
+     "pident": 33.9,
+     "aln_aa": 448,
+     "aa_len": 539,
+     "subject": "YP_013609231.1",
+     "title": "YP_013609231.1 MAG: RNA replicase beta chain [Sanya fiers-like virus 22]",
+     "pfam": [
+      "RNA_replicase_B"
+     ]
+    }
+   ],
+   "orf_identity_spread_points": 21.6,
+   "read_support": {
+    "mapped_mean_depth": 42.03,
+    "mapped_median_depth": 35,
+    "breadth_covered": 0.9912,
+    "evenness_within_2x_of_median": 0.8235,
+    "max_depth": 163
    }
   },
   {
@@ -6627,43 +7102,6 @@
   },
   {
    "arm": "divergent",
-   "contig": "WW_211013_20-22hmix_S5_L001_NODE_282_length_3874_cov_3.555381",
-   "contig_nt": 3874,
-   "pident": 33.9,
-   "aln_aa": 189,
-   "evalue": 1.68e-17,
-   "subject": "NP_705601.1",
-   "subject_title": "NP_705601.1 putative 2C [tremovirus A1]",
-   "subject_aa": 326,
-   "subject_coverage": 0.58,
-   "contig_coverage": 0.146,
-   "index": "viral",
-   "divergence_class": "below any band a name survives",
-   "polymerase_pident": null,
-   "genes": [
-    {
-     "role": "other",
-     "pident": 30.6,
-     "aln_aa": 209,
-     "aa_len": 1204,
-     "subject": "YP_009333407.1",
-     "title": "YP_009333407.1 hypothetical protein 1 [Beihai picorna-like virus 100]",
-     "pfam": [
-      "RNA_helicase"
-     ]
-    }
-   ],
-   "orf_identity_spread_points": null,
-   "read_support": {
-    "mapped_mean_depth": 14.66,
-    "mapped_median_depth": 13.0,
-    "breadth_covered": 0.9933,
-    "evenness_within_2x_of_median": 0.7659,
-    "max_depth": 50
-   }
-  },
-  {
-   "arm": "divergent",
    "contig": "WW_211013_20-22hmix_S5_L001_NODE_327_length_3818_cov_16.908584",
    "contig_nt": 3818,
    "pident": 33.9,
@@ -6765,63 +7203,6 @@
     "breadth_covered": 0.9963,
     "evenness_within_2x_of_median": 0.7234,
     "max_depth": 88
-   }
-  },
-  {
-   "arm": "divergent",
-   "contig": "WW_211013_20-22hmix_S5_L001_NODE_517_length_3621_cov_10.686483",
-   "contig_nt": 3621,
-   "pident": 33.9,
-   "aln_aa": 448,
-   "evalue": 2.01e-56,
-   "subject": "YP_013609231.1",
-   "subject_title": "YP_013609231.1 MAG: RNA replicase beta chain [Sanya fiers-like virus 22]",
-   "subject_aa": 571,
-   "subject_coverage": 0.785,
-   "contig_coverage": 0.371,
-   "index": "viral",
-   "divergence_class": "below any band a name survives",
-   "polymerase_pident": 33.9,
-   "genes": [
-    {
-     "role": "maturation",
-     "pident": 29.6,
-     "aln_aa": 378,
-     "aa_len": 397,
-     "subject": "YP_010770102.1",
-     "title": "YP_010770102.1 maturation protein [ssRNA phage SRR5467091_9]",
-     "pfam": [
-      "Phage_mat-A"
-     ]
-    },
-    {
-     "role": "coat",
-     "pident": 51.2,
-     "aln_aa": 123,
-     "aa_len": 132,
-     "subject": "YP_010770103.1",
-     "title": "YP_010770103.1 coat protein [ssRNA phage SRR5467091_9]",
-     "pfam": []
-    },
-    {
-     "role": "polymerase",
-     "pident": 33.9,
-     "aln_aa": 448,
-     "aa_len": 539,
-     "subject": "YP_013609231.1",
-     "title": "YP_013609231.1 MAG: RNA replicase beta chain [Sanya fiers-like virus 22]",
-     "pfam": [
-      "RNA_replicase_B"
-     ]
-    }
-   ],
-   "orf_identity_spread_points": 21.6,
-   "read_support": {
-    "mapped_mean_depth": 42.03,
-    "mapped_median_depth": 35,
-    "breadth_covered": 0.9912,
-    "evenness_within_2x_of_median": 0.8235,
-    "max_depth": 163
    }
   },
   {
@@ -7144,6 +7525,43 @@
   },
   {
    "arm": "divergent",
+   "contig": "WW_211013_20-22hmix_S5_L001_NODE_302_length_3848_cov_3.285262",
+   "contig_nt": 3848,
+   "pident": 34.3,
+   "aln_aa": 364,
+   "evalue": 1.03e-41,
+   "subject": "YP_009552091.1",
+   "subject_title": "YP_009552091.1 polyprotein [Picalivirus A]",
+   "subject_aa": 2024,
+   "subject_coverage": 0.18,
+   "contig_coverage": 0.284,
+   "index": "viral",
+   "divergence_class": "below any band a name survives",
+   "polymerase_pident": null,
+   "genes": [
+    {
+     "role": "other",
+     "pident": 34.3,
+     "aln_aa": 364,
+     "aa_len": 1256,
+     "subject": "YP_009552091.1",
+     "title": "YP_009552091.1 polyprotein [Picalivirus A]",
+     "pfam": [
+      "RNA_helicase"
+     ]
+    }
+   ],
+   "orf_identity_spread_points": null,
+   "read_support": {
+    "mapped_mean_depth": 25.64,
+    "mapped_median_depth": 21.0,
+    "breadth_covered": 0.9958,
+    "evenness_within_2x_of_median": 0.7716,
+    "max_depth": 112
+   }
+  },
+  {
+   "arm": "divergent",
    "contig": "WW_211013_20-22hmix_S5_L001_NODE_603_length_3518_cov_8.072481",
    "contig_nt": 3518,
    "pident": 34.3,
@@ -7247,54 +7665,6 @@
     "breadth_covered": 0.9927,
     "evenness_within_2x_of_median": 0.855,
     "max_depth": 116
-   }
-  },
-  {
-   "arm": "divergent",
-   "contig": "WW_211013_20-22hmix_S5_L001_NODE_484_length_3653_cov_5.948583",
-   "contig_nt": 3653,
-   "pident": 34.4,
-   "aln_aa": 544,
-   "evalue": 1.3e-67,
-   "subject": "YP_010769339.1",
-   "subject_title": "YP_010769339.1 RNA-directed RNA polymerase [ssRNA phage SRR6960507_3]",
-   "subject_aa": 561,
-   "subject_coverage": 0.97,
-   "contig_coverage": 0.447,
-   "index": "viral",
-   "divergence_class": "below any band a name survives",
-   "polymerase_pident": 32.8,
-   "genes": [
-    {
-     "role": "maturation",
-     "pident": 26.9,
-     "aln_aa": 391,
-     "aa_len": 421,
-     "subject": "YP_010769032.1",
-     "title": "YP_010769032.1 maturation protein [ssRNA phage ESE006]",
-     "pfam": [
-      "Phage_mat-A"
-     ]
-    },
-    {
-     "role": "polymerase",
-     "pident": 32.8,
-     "aln_aa": 555,
-     "aa_len": 625,
-     "subject": "YP_010769441.1",
-     "title": "YP_010769441.1 RNA-directed RNA polymerase [ssRNA phage SRR7473382_2]",
-     "pfam": [
-      "RNA_replicase_B"
-     ]
-    }
-   ],
-   "orf_identity_spread_points": 5.9,
-   "read_support": {
-    "mapped_mean_depth": 52.23,
-    "mapped_median_depth": 45,
-    "breadth_covered": 0.9956,
-    "evenness_within_2x_of_median": 0.8174,
-    "max_depth": 195
    }
   },
   {
@@ -7969,6 +8339,44 @@
   },
   {
    "arm": "divergent",
+   "contig": "WW_211013_20-22hmix_S5_L001_NODE_38_length_6821_cov_11.933195",
+   "contig_nt": 6821,
+   "pident": 34.8,
+   "aln_aa": 348,
+   "evalue": 2.69e-41,
+   "subject": "YP_009337040.1",
+   "subject_title": "YP_009337040.1 hypothetical protein 2 [Changjiang tombus-like virus 21]",
+   "subject_aa": 762,
+   "subject_coverage": 0.457,
+   "contig_coverage": 0.153,
+   "index": "viral",
+   "divergence_class": "below any band a name survives",
+   "polymerase_pident": null,
+   "genes": [
+    {
+     "role": "other",
+     "pident": 34.8,
+     "aln_aa": 348,
+     "aa_len": 2151,
+     "subject": "YP_009337040.1",
+     "title": "YP_009337040.1 hypothetical protein 2 [Changjiang tombus-like virus 21]",
+     "pfam": [
+      "RdRP_1",
+      "Viral_coat"
+     ]
+    }
+   ],
+   "orf_identity_spread_points": null,
+   "read_support": {
+    "mapped_mean_depth": 38.54,
+    "mapped_median_depth": 29,
+    "breadth_covered": 0.9977,
+    "evenness_within_2x_of_median": 0.5954,
+    "max_depth": 153
+   }
+  },
+  {
+   "arm": "divergent",
    "contig": "WW_211013_20-22hmix_S5_L001_NODE_284_length_3870_cov_5.385321",
    "contig_nt": 3870,
    "pident": 34.8,
@@ -8014,55 +8422,6 @@
     "breadth_covered": 0.9959,
     "evenness_within_2x_of_median": 0.7809,
     "max_depth": 79
-   }
-  },
-  {
-   "arm": "divergent",
-   "contig": "WW_211013_20-22hmix_S5_L001_NODE_397_length_3742_cov_13.057771",
-   "contig_nt": 3742,
-   "pident": 34.8,
-   "aln_aa": 365,
-   "evalue": 1.79e-45,
-   "subject": "YP_010769746.1",
-   "subject_title": "YP_010769746.1 RNA-directed RNA polymerase [ssRNA phage SRR6960803_6]",
-   "subject_aa": 592,
-   "subject_coverage": 0.617,
-   "contig_coverage": 0.293,
-   "index": "viral",
-   "divergence_class": "below any band a name survives",
-   "polymerase_pident": 34.8,
-   "genes": [
-    {
-     "role": "polymerase",
-     "pident": 34.8,
-     "aln_aa": 365,
-     "aa_len": 630,
-     "subject": "YP_010769746.1",
-     "title": "YP_010769746.1 RNA-directed RNA polymerase [ssRNA phage SRR6960803_6]",
-     "pfam": [
-      "DUF21864",
-      "RNA_replicase_B"
-     ]
-    },
-    {
-     "role": "maturation",
-     "pident": 27.3,
-     "aln_aa": 399,
-     "aa_len": 413,
-     "subject": "YP_010770067.1",
-     "title": "YP_010770067.1 maturation protein [ssRNA phage SRR6255733_3]",
-     "pfam": [
-      "Phage_mat-A"
-     ]
-    }
-   ],
-   "orf_identity_spread_points": 7.5,
-   "read_support": {
-    "mapped_mean_depth": 63.24,
-    "mapped_median_depth": 54.0,
-    "breadth_covered": 0.9963,
-    "evenness_within_2x_of_median": 0.7675,
-    "max_depth": 231
    }
   },
   {
@@ -8371,43 +8730,6 @@
     "breadth_covered": 0.9913,
     "evenness_within_2x_of_median": 0.7385,
     "max_depth": 428
-   }
-  },
-  {
-   "arm": "divergent",
-   "contig": "WW_211013_20-22hmix_S5_L001_NODE_302_length_3848_cov_3.285262",
-   "contig_nt": 3848,
-   "pident": 35.4,
-   "aln_aa": 350,
-   "evalue": 8.47e-45,
-   "subject": "YP_009553694.1",
-   "subject_title": "YP_009553694.1 helicase [Picalivirus A]",
-   "subject_aa": 342,
-   "subject_coverage": 1.023,
-   "contig_coverage": 0.273,
-   "index": "viral",
-   "divergence_class": "below any band a name survives",
-   "polymerase_pident": null,
-   "genes": [
-    {
-     "role": "other",
-     "pident": 34.3,
-     "aln_aa": 364,
-     "aa_len": 1256,
-     "subject": "YP_009552091.1",
-     "title": "YP_009552091.1 polyprotein [Picalivirus A]",
-     "pfam": [
-      "RNA_helicase"
-     ]
-    }
-   ],
-   "orf_identity_spread_points": null,
-   "read_support": {
-    "mapped_mean_depth": 25.64,
-    "mapped_median_depth": 21.0,
-    "breadth_covered": 0.9958,
-    "evenness_within_2x_of_median": 0.7716,
-    "max_depth": 112
    }
   },
   {
@@ -9649,54 +9971,6 @@
     "breadth_covered": 0.9886,
     "evenness_within_2x_of_median": 0.5657,
     "max_depth": 128
-   }
-  },
-  {
-   "arm": "divergent",
-   "contig": "WW_211013_20-22hmix_S5_L001_NODE_454_length_3678_cov_6.104333",
-   "contig_nt": 3678,
-   "pident": 36.4,
-   "aln_aa": 346,
-   "evalue": 2.56e-43,
-   "subject": "YP_010769739.1",
-   "subject_title": "YP_010769739.1 RNA-directed RNA polymerase [ssRNA phage SRR5467090_3]",
-   "subject_aa": 632,
-   "subject_coverage": 0.547,
-   "contig_coverage": 0.282,
-   "index": "viral",
-   "divergence_class": "below any band a name survives",
-   "polymerase_pident": 36.4,
-   "genes": [
-    {
-     "role": "polymerase",
-     "pident": 36.4,
-     "aln_aa": 346,
-     "aa_len": 614,
-     "subject": "YP_010769739.1",
-     "title": "YP_010769739.1 RNA-directed RNA polymerase [ssRNA phage SRR5467090_3]",
-     "pfam": [
-      "RNA_replicase_B"
-     ]
-    },
-    {
-     "role": "maturation",
-     "pident": 28.5,
-     "aln_aa": 239,
-     "aa_len": 414,
-     "subject": "YP_010770067.1",
-     "title": "YP_010770067.1 maturation protein [ssRNA phage SRR6255733_3]",
-     "pfam": [
-      "Phage_mat-A"
-     ]
-    }
-   ],
-   "orf_identity_spread_points": 7.9,
-   "read_support": {
-    "mapped_mean_depth": 28.0,
-    "mapped_median_depth": 24.0,
-    "breadth_covered": 0.9965,
-    "evenness_within_2x_of_median": 0.7349,
-    "max_depth": 84
    }
   },
   {
@@ -11864,6 +12138,112 @@
   },
   {
    "arm": "divergent",
+   "contig": "WW_211013_20-22hmix_S5_L001_NODE_118_length_4456_cov_6.443536",
+   "contig_nt": 4456,
+   "pident": 38.5,
+   "aln_aa": 325,
+   "evalue": 2.23e-53,
+   "subject": "YP_011898535.1",
+   "subject_title": "YP_011898535.1 tape measure protein [Atrivirus PS6]",
+   "subject_aa": 1219,
+   "subject_coverage": 0.267,
+   "contig_coverage": 0.219,
+   "index": "viral",
+   "divergence_class": "below any band a name survives",
+   "polymerase_pident": null,
+   "genes": [
+    {
+     "role": "other",
+     "pident": 38.5,
+     "aln_aa": 325,
+     "aa_len": 326,
+     "subject": "YP_011898535.1",
+     "title": "YP_011898535.1 tape measure protein [Atrivirus PS6]",
+     "pfam": []
+    },
+    {
+     "role": "other",
+     "pident": 39.0,
+     "aln_aa": 118,
+     "aa_len": 114,
+     "subject": "YP_011898251.1",
+     "title": "YP_011898251.1 tail assembly chaperone protein [Ruminococcus phage phiRM10]",
+     "pfam": [
+      "DUF9939"
+     ]
+    },
+    {
+     "role": "other",
+     "pident": 47.9,
+     "aln_aa": 188,
+     "aa_len": 193,
+     "subject": "YP_010742657.1",
+     "title": "YP_010742657.1 putative tail protein [Bacillus phage vB_BanS_Athena]",
+     "pfam": []
+    },
+    {
+     "role": "other",
+     "pident": 43.3,
+     "aln_aa": 104,
+     "aa_len": 105,
+     "subject": "YP_010083089.1",
+     "title": "YP_010083089.1 hypothetical protein KMD26_gp43 [Leuconostoc phage phiMH1]",
+     "pfam": [
+      "DUF9834"
+     ]
+    },
+    {
+     "role": "other",
+     "pident": 49.6,
+     "aln_aa": 115,
+     "aa_len": 124,
+     "subject": "YP_012208550.1",
+     "title": "YP_012208550.1 putative tail completion protein [Bacillus phage B13]",
+     "pfam": [
+      "HK97-gp10_like"
+     ]
+    },
+    {
+     "role": "other",
+     "pident": 39.6,
+     "aln_aa": 96,
+     "aa_len": 100,
+     "subject": "YP_002925172.1",
+     "title": "YP_002925172.1 head-tail adaptor [Streptococcus phage PH10]",
+     "pfam": []
+    },
+    {
+     "role": "other",
+     "pident": 37.1,
+     "aln_aa": 89,
+     "aa_len": 97,
+     "subject": "YP_764478.1",
+     "title": "YP_764478.1 hypothetical protein GPGV1_gp22 [Geobacillus phage GBSV1]",
+     "pfam": []
+    },
+    {
+     "role": "other",
+     "pident": 47.8,
+     "aln_aa": 232,
+     "aa_len": 233,
+     "subject": "YP_001425603.1",
+     "title": "YP_001425603.1 major head protein [Bacillus phage 1]",
+     "pfam": [
+      "Phage_capsid"
+     ]
+    }
+   ],
+   "orf_identity_spread_points": 12.5,
+   "read_support": {
+    "mapped_mean_depth": 23.91,
+    "mapped_median_depth": 20.0,
+    "breadth_covered": 0.9964,
+    "evenness_within_2x_of_median": 0.6717,
+    "max_depth": 89
+   }
+  },
+  {
+   "arm": "divergent",
    "contig": "WW_211013_20-22hmix_S5_L001_NODE_455_length_3677_cov_7.337935",
    "contig_nt": 3677,
    "pident": 38.5,
@@ -12834,44 +13214,6 @@
     "breadth_covered": 0.9961,
     "evenness_within_2x_of_median": 0.8002,
     "max_depth": 149
-   }
-  },
-  {
-   "arm": "divergent",
-   "contig": "WW_211013_20-22hmix_S5_L001_NODE_38_length_6821_cov_11.933195",
-   "contig_nt": 6821,
-   "pident": 39.6,
-   "aln_aa": 250,
-   "evalue": 7.16e-43,
-   "subject": "YP_009551330.1",
-   "subject_title": "YP_009551330.1 capsid protein [Sewage-associated circular DNA virus-13]",
-   "subject_aa": 277,
-   "subject_coverage": 0.903,
-   "contig_coverage": 0.11,
-   "index": "viral",
-   "divergence_class": "below any band a name survives",
-   "polymerase_pident": null,
-   "genes": [
-    {
-     "role": "other",
-     "pident": 34.8,
-     "aln_aa": 348,
-     "aa_len": 2151,
-     "subject": "YP_009337040.1",
-     "title": "YP_009337040.1 hypothetical protein 2 [Changjiang tombus-like virus 21]",
-     "pfam": [
-      "RdRP_1",
-      "Viral_coat"
-     ]
-    }
-   ],
-   "orf_identity_spread_points": null,
-   "read_support": {
-    "mapped_mean_depth": 38.54,
-    "mapped_median_depth": 29,
-    "breadth_covered": 0.9977,
-    "evenness_within_2x_of_median": 0.5954,
-    "max_depth": 153
    }
   },
   {
@@ -14181,6 +14523,57 @@
   },
   {
    "arm": "divergent",
+   "contig": "WW_211013_20-22hmix_S5_L001_NODE_460_length_3673_cov_3.425926",
+   "contig_nt": 3673,
+   "pident": 40.5,
+   "aln_aa": 1058,
+   "evalue": 3.68e-219,
+   "subject": "YP_009333545.1",
+   "subject_title": "YP_009333545.1 hypothetical protein [Beihai picorna-like virus 48]",
+   "subject_aa": 2661,
+   "subject_coverage": 0.398,
+   "contig_coverage": 0.864,
+   "index": "viral",
+   "divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
+   "polymerase_pident": null,
+   "genes": [
+    {
+     "role": "other",
+     "pident": 40.4,
+     "aln_aa": 1053,
+     "aa_len": 976,
+     "subject": "YP_009333545.1",
+     "title": "YP_009333545.1 hypothetical protein [Beihai picorna-like virus 48]",
+     "pfam": [
+      "Calici_coat",
+      "Dicistro_VP4",
+      "RdRP_1",
+      "Rhv"
+     ]
+    },
+    {
+     "role": "other",
+     "pident": 51.5,
+     "aln_aa": 233,
+     "aa_len": 248,
+     "subject": "YP_009333545.1",
+     "title": "YP_009333545.1 hypothetical protein [Beihai picorna-like virus 48]",
+     "pfam": [
+      "RdRP_1"
+     ]
+    }
+   ],
+   "orf_identity_spread_points": 11.1,
+   "read_support": {
+    "mapped_mean_depth": 11.43,
+    "mapped_median_depth": 10,
+    "breadth_covered": 0.9858,
+    "evenness_within_2x_of_median": 0.7117,
+    "max_depth": 33
+   }
+  },
+  {
+   "arm": "divergent",
    "contig": "WW_211013_20-22hmix_S5_L001_NODE_548_length_3586_cov_9.060889",
    "contig_nt": 3586,
    "pident": 40.6,
@@ -14398,6 +14791,65 @@
     "breadth_covered": 0.9961,
     "evenness_within_2x_of_median": 0.8016,
     "max_depth": 59
+   }
+  },
+  {
+   "arm": "divergent",
+   "contig": "WW_211013_20-22hmix_S5_L001_NODE_636_length_3462_cov_4.293807",
+   "contig_nt": 3462,
+   "pident": 40.8,
+   "aln_aa": 549,
+   "evalue": 1.33e-95,
+   "subject": "YP_007237129.1",
+   "subject_title": "YP_007237129.1 replicase [Enterobacteria phage C-1 INW-2012]",
+   "subject_aa": 522,
+   "subject_coverage": 1.052,
+   "contig_coverage": 0.476,
+   "index": "viral",
+   "divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
+   "polymerase_pident": 42.4,
+   "genes": [
+    {
+     "role": "polymerase",
+     "pident": 42.4,
+     "aln_aa": 500,
+     "aa_len": 579,
+     "subject": "YP_007237129.1",
+     "title": "YP_007237129.1 replicase [Enterobacteria phage C-1 INW-2012]",
+     "pfam": [
+      "RNA_replicase_B"
+     ]
+    },
+    {
+     "role": "coat",
+     "pident": 58.8,
+     "aln_aa": 131,
+     "aa_len": 131,
+     "subject": "YP_007237173.1",
+     "title": "YP_007237173.1 capsid protein [Enterobacteria phage Hgal1]",
+     "pfam": [
+      "Levi_coat"
+     ]
+    },
+    {
+     "role": "maturation",
+     "pident": 47.7,
+     "aln_aa": 375,
+     "aa_len": 378,
+     "subject": "YP_013609339.1",
+     "title": "YP_013609339.1 MAG: putative maturation/attachment protein [Cunavirus faecivicinum]",
+     "pfam": [
+      "Phage_mat-A"
+     ]
+    }
+   ],
+   "orf_identity_spread_points": 16.4,
+   "read_support": {
+    "mapped_mean_depth": 31.12,
+    "mapped_median_depth": 27.0,
+    "breadth_covered": 0.996,
+    "evenness_within_2x_of_median": 0.7158,
+    "max_depth": 115
    }
   },
   {
@@ -22889,171 +23341,6 @@
   },
   {
    "arm": "divergent",
-   "contig": "WW_211013_20-22hmix_S5_L001_NODE_636_length_3462_cov_4.293807",
-   "contig_nt": 3462,
-   "pident": 47.7,
-   "aln_aa": 375,
-   "evalue": 1.51e-96,
-   "subject": "YP_013609339.1",
-   "subject_title": "YP_013609339.1 MAG: putative maturation/attachment protein [Cunavirus faecivicinum]",
-   "subject_aa": 406,
-   "subject_coverage": 0.924,
-   "contig_coverage": 0.325,
-   "index": "viral",
-   "divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
-   "polymerase_pident": 42.4,
-   "genes": [
-    {
-     "role": "polymerase",
-     "pident": 42.4,
-     "aln_aa": 500,
-     "aa_len": 579,
-     "subject": "YP_007237129.1",
-     "title": "YP_007237129.1 replicase [Enterobacteria phage C-1 INW-2012]",
-     "pfam": [
-      "RNA_replicase_B"
-     ]
-    },
-    {
-     "role": "coat",
-     "pident": 58.8,
-     "aln_aa": 131,
-     "aa_len": 131,
-     "subject": "YP_007237173.1",
-     "title": "YP_007237173.1 capsid protein [Enterobacteria phage Hgal1]",
-     "pfam": [
-      "Levi_coat"
-     ]
-    },
-    {
-     "role": "maturation",
-     "pident": 47.7,
-     "aln_aa": 375,
-     "aa_len": 378,
-     "subject": "YP_013609339.1",
-     "title": "YP_013609339.1 MAG: putative maturation/attachment protein [Cunavirus faecivicinum]",
-     "pfam": [
-      "Phage_mat-A"
-     ]
-    }
-   ],
-   "orf_identity_spread_points": 16.4,
-   "read_support": {
-    "mapped_mean_depth": 31.12,
-    "mapped_median_depth": 27.0,
-    "breadth_covered": 0.996,
-    "evenness_within_2x_of_median": 0.7158,
-    "max_depth": 115
-   }
-  },
-  {
-   "arm": "divergent",
-   "contig": "WW_211013_20-22hmix_S5_L001_NODE_118_length_4456_cov_6.443536",
-   "contig_nt": 4456,
-   "pident": 47.8,
-   "aln_aa": 232,
-   "evalue": 1.03e-53,
-   "subject": "YP_001425603.1",
-   "subject_title": "YP_001425603.1 major head protein [Bacillus phage 1]",
-   "subject_aa": 466,
-   "subject_coverage": 0.498,
-   "contig_coverage": 0.156,
-   "index": "viral",
-   "divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
-   "polymerase_pident": null,
-   "genes": [
-    {
-     "role": "other",
-     "pident": 38.5,
-     "aln_aa": 325,
-     "aa_len": 326,
-     "subject": "YP_011898535.1",
-     "title": "YP_011898535.1 tape measure protein [Atrivirus PS6]",
-     "pfam": []
-    },
-    {
-     "role": "other",
-     "pident": 39.0,
-     "aln_aa": 118,
-     "aa_len": 114,
-     "subject": "YP_011898251.1",
-     "title": "YP_011898251.1 tail assembly chaperone protein [Ruminococcus phage phiRM10]",
-     "pfam": [
-      "DUF9939"
-     ]
-    },
-    {
-     "role": "other",
-     "pident": 47.9,
-     "aln_aa": 188,
-     "aa_len": 193,
-     "subject": "YP_010742657.1",
-     "title": "YP_010742657.1 putative tail protein [Bacillus phage vB_BanS_Athena]",
-     "pfam": []
-    },
-    {
-     "role": "other",
-     "pident": 43.3,
-     "aln_aa": 104,
-     "aa_len": 105,
-     "subject": "YP_010083089.1",
-     "title": "YP_010083089.1 hypothetical protein KMD26_gp43 [Leuconostoc phage phiMH1]",
-     "pfam": [
-      "DUF9834"
-     ]
-    },
-    {
-     "role": "other",
-     "pident": 49.6,
-     "aln_aa": 115,
-     "aa_len": 124,
-     "subject": "YP_012208550.1",
-     "title": "YP_012208550.1 putative tail completion protein [Bacillus phage B13]",
-     "pfam": [
-      "HK97-gp10_like"
-     ]
-    },
-    {
-     "role": "other",
-     "pident": 39.6,
-     "aln_aa": 96,
-     "aa_len": 100,
-     "subject": "YP_002925172.1",
-     "title": "YP_002925172.1 head-tail adaptor [Streptococcus phage PH10]",
-     "pfam": []
-    },
-    {
-     "role": "other",
-     "pident": 37.1,
-     "aln_aa": 89,
-     "aa_len": 97,
-     "subject": "YP_764478.1",
-     "title": "YP_764478.1 hypothetical protein GPGV1_gp22 [Geobacillus phage GBSV1]",
-     "pfam": []
-    },
-    {
-     "role": "other",
-     "pident": 47.8,
-     "aln_aa": 232,
-     "aa_len": 233,
-     "subject": "YP_001425603.1",
-     "title": "YP_001425603.1 major head protein [Bacillus phage 1]",
-     "pfam": [
-      "Phage_capsid"
-     ]
-    }
-   ],
-   "orf_identity_spread_points": 12.5,
-   "read_support": {
-    "mapped_mean_depth": 23.91,
-    "mapped_median_depth": 20.0,
-    "breadth_covered": 0.9964,
-    "evenness_within_2x_of_median": 0.6717,
-    "max_depth": 89
-   }
-  },
-  {
-   "arm": "divergent",
    "contig": "WW_211013_20-22hmix_S5_L001_NODE_223_length_3996_cov_43.609997",
    "contig_nt": 3996,
    "pident": 47.8,
@@ -24132,57 +24419,6 @@
     "breadth_covered": 0.9961,
     "evenness_within_2x_of_median": 0.811,
     "max_depth": 136
-   }
-  },
-  {
-   "arm": "divergent",
-   "contig": "WW_211013_20-22hmix_S5_L001_NODE_460_length_3673_cov_3.425926",
-   "contig_nt": 3673,
-   "pident": 49.5,
-   "aln_aa": 745,
-   "evalue": 9.72e-232,
-   "subject": "YP_009337756.1",
-   "subject_title": "YP_009337756.1 hypothetical protein 2 [Sanxia picorna-like virus 9]",
-   "subject_aa": 840,
-   "subject_coverage": 0.887,
-   "contig_coverage": 0.608,
-   "index": "viral",
-   "divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
-   "polymerase_pident": null,
-   "genes": [
-    {
-     "role": "other",
-     "pident": 40.4,
-     "aln_aa": 1053,
-     "aa_len": 976,
-     "subject": "YP_009333545.1",
-     "title": "YP_009333545.1 hypothetical protein [Beihai picorna-like virus 48]",
-     "pfam": [
-      "Calici_coat",
-      "Dicistro_VP4",
-      "RdRP_1",
-      "Rhv"
-     ]
-    },
-    {
-     "role": "other",
-     "pident": 51.5,
-     "aln_aa": 233,
-     "aa_len": 248,
-     "subject": "YP_009333545.1",
-     "title": "YP_009333545.1 hypothetical protein [Beihai picorna-like virus 48]",
-     "pfam": [
-      "RdRP_1"
-     ]
-    }
-   ],
-   "orf_identity_spread_points": 11.1,
-   "read_support": {
-    "mapped_mean_depth": 11.43,
-    "mapped_median_depth": 10,
-    "breadth_covered": 0.9858,
-    "evenness_within_2x_of_median": 0.7117,
-    "max_depth": 33
    }
   },
   {
@@ -41562,6 +41798,31 @@
   },
   {
    "arm": "control_near_reference",
+   "contig": "WW_211013_20-22hmix_S5_L001_NODE_23636_length_315_cov_1.373077",
+   "contig_nt": 315,
+   "pident": 98.9,
+   "aln_aa": 92,
+   "evalue": 4.99e-55,
+   "subject": "YP_009067077.1",
+   "subject_title": "YP_009067077.1 polyprotein [Salivirus FHB]",
+   "subject_aa": 2365,
+   "subject_coverage": 0.039,
+   "contig_coverage": 0.876,
+   "index": "viral",
+   "divergence_class": "reference or near-reference",
+   "polymerase_pident": null,
+   "genes": [],
+   "orf_identity_spread_points": null,
+   "read_support": {
+    "mapped_mean_depth": 3.61,
+    "mapped_median_depth": 3,
+    "breadth_covered": 0.8984,
+    "evenness_within_2x_of_median": 0.8349,
+    "max_depth": 7
+   }
+  },
+  {
+   "arm": "control_near_reference",
    "contig": "WW_211013_20-22hmix_S5_L001_NODE_715_length_3342_cov_4.688774",
    "contig_nt": 3342,
    "pident": 99.0,
@@ -41959,13 +42220,13 @@
    "contig": "WW_211013_20-22hmix_S5_L001_NODE_19473_length_346_cov_2.027491",
    "contig_nt": 346,
    "pident": 99.1,
-   "aln_aa": 107,
-   "evalue": 1.75e-74,
-   "subject": "YP_009238490.1",
-   "subject_title": "YP_009238490.1 Pro [Norwalk-like virus]",
-   "subject_aa": 181,
-   "subject_coverage": 0.591,
-   "contig_coverage": 0.928,
+   "aln_aa": 110,
+   "evalue": 1.63e-69,
+   "subject": "YP_009237897.1",
+   "subject_title": "YP_009237897.1 nonstructural polyprotein [Norwalk-like virus]",
+   "subject_aa": 1699,
+   "subject_coverage": 0.065,
+   "contig_coverage": 0.954,
    "index": "viral",
    "divergence_class": "reference or near-reference",
    "polymerase_pident": null,
@@ -43302,13 +43563,13 @@
    "contig_nt": 1628,
    "pident": 100.0,
    "aln_aa": 349,
-   "evalue": 1.03e-247,
-   "subject": "sp|A0A0S2T050|RDRP_TBRFV",
-   "subject_title": "sp|A0A0S2T050|RDRP_TBRFV Replicase large subunit OS=Tomato brown rugose fruit virus (isolate TOBRFV/Tomato/Jordan/Tom1-Jo/2015) OX=2654645 PE=3 SV=1",
+   "evalue": 8.62e-248,
+   "subject": "YP_009182168.1",
+   "subject_title": "YP_009182168.1 183 kDa replicase [Tomato brown rugose fruit virus]",
    "subject_aa": 1615,
    "subject_coverage": 0.216,
    "contig_coverage": 0.643,
-   "index": "sprot",
+   "index": "viral",
    "divergence_class": "reference or near-reference",
    "polymerase_pident": 100.0,
    "genes": [
@@ -44911,16 +45172,16 @@
  ],
  "seed": 1,
  "timings_seconds": {
-  "blastx_viral": 101.1,
-  "blastx_sprot": 107.4,
-  "blastx_null_viral": 91.4,
-  "blastx_null_sprot": 105.7,
-  "blastp_viral": 82.5,
-  "blastp_sprot": 97.4,
-  "pfam": 111.4,
-  "total": 922.1
+  "blastx_viral": 103.1,
+  "blastx_null_viral": 92.5,
+  "blastx_sprot": 103.7,
+  "blastx_null_sprot": 109.9,
+  "blastp_viral": 82.7,
+  "blastp_sprot": 86.1,
+  "pfam": 108.8,
+  "total": 921.5
  },
- "git_sha": "40eb3ddc09279e4437b7aff959d2b17c63a51781-dirty",
+ "git_sha": "9b051990c036251e7d20bf3992740da2113f9512-dirty",
  "tree_dirty": true,
- "script_sha256": "519340d34a7936a8"
+ "script_sha256": "acc9a0ecc1f233d2"
 }
