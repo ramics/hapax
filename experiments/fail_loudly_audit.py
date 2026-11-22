@@ -58,16 +58,24 @@ def main() -> None:
     verdict = {}
 
     # 1. hapax.py runs (relative paths; the two index-passing bugs)
-    hx = [f for f, d in ms if d.get("tool") == "hapax run" or d["script"] == "hapax.py"]
+    hx = [(f, d) for f, d in ms if d.get("tool") == "hapax run" or d["script"] == "hapax.py"]
+    rel = [f for f, d in hx
+           if any(isinstance(v, str) and v.endswith((".gz", ".fa", ".fasta", ".dmnd"))
+                  and not v.startswith("/") for v in d["parameters"].values())]
     verdict["relative_paths_in_hapax"] = {
-        "affected": hx, "checked": "every committed manifest for a hapax run",
-        "verdict": "no committed output came from hapax.py" if not hx else "see affected"}
+        "hapax_runs": [f for f, _ in hx], "affected": rel,
+        "checked": "every committed hapax run manifest, for a relative input path",
+        "verdict": ("no committed output came from hapax.py" if not hx else
+                    "every committed hapax run was given absolute paths" if not rel
+                    else "see affected")}
 
     # 2. cascade: a requested tier missing from the curve, or Kraken2 operating
     # confidence outside the sweep (which made every Kraken2 tier remove nothing)
     casc = []
     for f, d in by["subtract_known.py"]:
-        res = Path(ROOT / f.replace("manifest_s", "subtract_s"))
+        res = (Path(ROOT / f).parents[1] / "tiers.json"
+               if f.endswith("stages/cascade_manifest.json")
+               else Path(ROOT / f.replace("manifest_s", "subtract_s")))
         if not res.exists():
             continue
         r = json.loads(res.read_text())
@@ -137,13 +145,42 @@ def main() -> None:
                    "dmnd_requested": sorted("closest_" + stem(x) for x in p["dmnd"]),
                    "pfam_index_listed_in_index_bytes": not pfam_ran and Path(
                        p["pfam"]).name in {Path(k).name for k in d.get("index_bytes", {})}})
+    # The same unmeasured zeros inside hapax run directories, whose fields.json is the
+    # per-read report's calibration file copied in.
+    for fj in sorted(glob.glob(str(ROOT / "results/**/fields.json"), recursive=True)):
+        c = json.loads(Path(fj).read_text())
+        rr.append({"manifest": os.path.relpath(fj, ROOT), "skip_fields": None,
+                   "motif_rate": c.get("motif_rate"),
+                   "motif_rate_is_unmeasured_zero": False,
+                   "closest_fields": sorted(k for k in c.get("fields", {})
+                                            if k.startswith("closest_")),
+                   "dmnd_requested": [], "pfam_index_listed_in_index_bytes": False})
+    for r in rr:
+        cal = ROOT / (r["manifest"] if r["manifest"].endswith("fields.json") else
+                      r["manifest"].replace("manifest_s", "calibration_s"))
+        c = json.loads(cal.read_text())
+        # A chimaera rate of exactly 0.0 beside a control that was never computed means
+        # the test did not run: whenever it runs on a run with a known pile, the control
+        # is computed too.
+        r["chimaera_rate_is_unmeasured_zero"] = (
+            c.get("chimaera_split_rate") == 0.0
+            and c.get("chimaera_split_rate_on_subtracted_reads") is None)
+        r["fields_silently_absent"] = sorted(
+            k for k, key in (("cross_sample", "cross_sample_recurrence"), ("rfam", "rfam"),
+                             ("crispr", "crispr"), ("abundance", "library_abundance"))
+            if c.get(key) is None and not r["skip_fields"])
     verdict["residue_report_unmeasured_zero"] = {
         "runs": rr,
-        "affected": [r["manifest"] for r in rr if r["motif_rate_is_unmeasured_zero"]],
+        "affected": [r["manifest"] for r in rr if r["motif_rate_is_unmeasured_zero"]
+                     or r["chimaera_rate_is_unmeasured_zero"]],
+        "fields_silently_absent": {r["manifest"]: r["fields_silently_absent"]
+                                   for r in rr if r["fields_silently_absent"]},
         "dmnd_dropped": [r["manifest"] for r in rr
                          if set(r["dmnd_requested"]) - set(r["closest_fields"])],
-        "verdict": "see affected: motif_rate 0.0 written where Pfam never ran"
-                   if any(r["motif_rate_is_unmeasured_zero"] for r in rr) else "none"}
+        "verdict": "see affected: a rate of 0.0 written where the test never ran (motif: "
+                   "Pfam absent or --skip-fields; chimaera: reference absent)"
+                   if any(r["motif_rate_is_unmeasured_zero"]
+                          or r["chimaera_rate_is_unmeasured_zero"] for r in rr) else "none"}
 
     # 5. divergence ladder: an index skipped because absent
     sp = []

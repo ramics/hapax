@@ -1,0 +1,200 @@
+{
+ "census": {
+  "real": {
+   "hsps": 148419,
+   "contigs_with_any_hit": 22107,
+   "contigs_with_significant_hit": 22084,
+   "best_evalue": 0.0
+  },
+  "shuffled": {
+   "hsps": 9608,
+   "contigs_with_any_hit": 5335,
+   "contigs_with_significant_hit": 0,
+   "best_evalue": 0.00055
+  }
+ },
+ "arms": {
+  "0": {
+   "real": {
+    "n": 22084,
+    "median": 0.0,
+    "p90": 1.65,
+    "p99": 39.63,
+    "max": 62.28,
+    "frac_above_10": 0.048,
+    "frac_above_30": 0.0235
+   },
+   "shuffled": {
+    "n": 0,
+    "state": "no contig in this arm has a significant hit, so the arm has no gap distribution - this is a reading, not a missing measurement; see the census block"
+   },
+   "candidate": {
+    "per_subject": 0.4624,
+    "any_subject": 0.8286,
+    "gap_points": 36.62,
+    "subjects": 10,
+    "length": 3990,
+    "real_at_or_above_candidate": 292,
+    "real_percentile": 98.68,
+    "shuffled_at_or_above_candidate": 0,
+    "shuffled_fraction_at_or_above": null
+   }
+  },
+  "50": {
+   "real": {
+    "n": 21856,
+    "median": 0.0,
+    "p90": 1.52,
+    "p99": 39.13,
+    "max": 62.28,
+    "frac_above_10": 0.0444,
+    "frac_above_30": 0.022
+   },
+   "shuffled": {
+    "n": 0,
+    "state": "no contig in this arm has a significant hit, so the arm has no gap distribution - this is a reading, not a missing measurement; see the census block"
+   },
+   "candidate": {
+    "per_subject": 0.4624,
+    "any_subject": 0.8286,
+    "gap_points": 36.62,
+    "subjects": 10,
+    "length": 3990,
+    "real_at_or_above_candidate": 274,
+    "real_percentile": 98.75,
+    "shuffled_at_or_above_candidate": 0,
+    "shuffled_fraction_at_or_above": null
+   }
+  },
+  "100": {
+   "real": {
+    "n": 18243,
+    "median": 0.0,
+    "p90": 0.91,
+    "p99": 35.41,
+    "max": 62.28,
+    "frac_above_10": 0.0319,
+    "frac_above_30": 0.0155
+   },
+   "shuffled": {
+    "n": 0,
+    "state": "no contig in this arm has a significant hit, so the arm has no gap distribution - this is a reading, not a missing measurement; see the census block"
+   },
+   "candidate": {
+    "per_subject": 0.4624,
+    "any_subject": 0.8286,
+    "gap_points": 36.62,
+    "subjects": 10,
+    "length": 3990,
+    "real_at_or_above_candidate": 155,
+    "real_percentile": 99.16,
+    "shuffled_at_or_above_candidate": 0,
+    "shuffled_fraction_at_or_above": null
+   }
+  },
+  "150": {
+   "real": {
+    "n": 9430,
+    "median": 0.0,
+    "p90": 0.91,
+    "p99": 35.25,
+    "max": 58.45,
+    "frac_above_10": 0.0343,
+    "frac_above_30": 0.016
+   },
+   "shuffled": {
+    "n": 0,
+    "state": "no contig in this arm has a significant hit, so the arm has no gap distribution - this is a reading, not a missing measurement; see the census block"
+   },
+   "candidate": {
+    "per_subject": 0.4624,
+    "any_subject": 0.8286,
+    "gap_points": 36.62,
+    "subjects": 10,
+    "length": 3990,
+    "real_at_or_above_candidate": 82,
+    "real_percentile": 99.14,
+    "shuffled_at_or_above_candidate": 0,
+    "shuffled_fraction_at_or_above": null
+   }
+  },
+  "200": {
+   "real": {
+    "n": 5397,
+    "median": 0.0,
+    "p90": 0.88,
+    "p99": 35.25,
+    "max": 58.45,
+    "frac_above_10": 0.0361,
+    "frac_above_30": 0.0176
+   },
+   "shuffled": {
+    "n": 0,
+    "state": "no contig in this arm has a significant hit, so the arm has no gap distribution - this is a reading, not a missing measurement; see the census block"
+   },
+   "candidate": {
+    "per_subject": 0.4624,
+    "any_subject": 0.8286,
+    "gap_points": 36.62,
+    "subjects": 10,
+    "length": 3990,
+    "real_at_or_above_candidate": 47,
+    "real_percentile": 99.15,
+    "shuffled_at_or_above_candidate": 0,
+    "shuffled_fraction_at_or_above": null
+   }
+  },
+  "300": {
+   "real": {
+    "n": 2153,
+    "median": 0.0,
+    "p90": 0.72,
+    "p99": 35.92,
+    "max": 58.45,
+    "frac_above_10": 0.0334,
+    "frac_above_30": 0.0181
+   },
+   "shuffled": {
+    "n": 0,
+    "state": "no contig in this arm has a significant hit, so the arm has no gap distribution - this is a reading, not a missing measurement; see the census block"
+   },
+   "candidate": {
+    "per_subject": 0.4624,
+    "any_subject": 0.8286,
+    "gap_points": 36.62,
+    "subjects": 10,
+    "length": 3990,
+    "real_at_or_above_candidate": 20,
+    "real_percentile": 99.12,
+    "shuffled_at_or_above_candidate": 0,
+    "shuffled_fraction_at_or_above": null
+   }
+  },
+  "400": {
+   "real": {
+    "n": 953,
+    "median": 0.0,
+    "p90": 0.68,
+    "p99": 35.92,
+    "max": 47.32,
+    "frac_above_10": 0.0252,
+    "frac_above_30": 0.0157
+   },
+   "shuffled": {
+    "n": 0,
+    "state": "no contig in this arm has a significant hit, so the arm has no gap distribution - this is a reading, not a missing measurement; see the census block"
+   },
+   "candidate": {
+    "per_subject": 0.4624,
+    "any_subject": 0.8286,
+    "gap_points": 36.62,
+    "subjects": 10,
+    "length": 3990,
+    "real_at_or_above_candidate": 8,
+    "real_percentile": 99.27,
+    "shuffled_at_or_above_candidate": 0,
+    "shuffled_fraction_at_or_above": null
+   }
+  }
+ }
+}
