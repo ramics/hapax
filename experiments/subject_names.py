@@ -66,6 +66,15 @@ def wanted_from_run(rundir: Path) -> set[str]:
         for row in json.loads(s.read_text()).get("subjects", []):
             if row.get("subject"):
                 want.add(row["subject"])
+    # The whole-residue search names subjects the block sample never saw - it is the
+    # reason this run has subjects at all beyond the 6,000-mate sample - so its output is
+    # a source of accessions here too, or the page would print bare accessions for exactly
+    # the rows the search was run to find.
+    for f in sorted(rundir.glob("full_residue_search_s*.json")):
+        for row in (json.loads(f.read_text()).get("piles", {})
+                    .get("residue", {}) or {}).get("subjects", []) or []:
+            if row.get("subject"):
+                want.add(row["subject"])
     r = rundir / "reads.jsonl"
     if r.exists():
         with open(r) as fh:

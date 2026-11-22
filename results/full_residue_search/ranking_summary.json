@@ -1,0 +1,193 @@
+{
+ "subjects": 41829,
+ "host_mix": {
+  "human_associated": 128,
+  "bacteriophage": 25426,
+  "unknown_host": 15700,
+  "vertebrate_non_human": 156,
+  "fungal_or_protist": 129,
+  "invertebrate": 68,
+  "plant": 222
+ },
+ "kind_mix": {
+  "virus_no_phage_signal": 2401,
+  "putative_phage": 25564,
+  "cellular_kind_not_placed": 6534,
+  "putative_eukaryotic": 3007,
+  "putative_bacterial": 4323
+ },
+ "kind_summary": {
+  "unit": "residue MATES with a significant named relative, at E < 1e-05",
+  "searched": 2744042,
+  "named": 214502,
+  "no_significant_relative": 2529540,
+  "share_named": {
+   "point": 0.07817008631792079,
+   "lo": 0.0778244718721076,
+   "hi": 0.07851688186776064,
+   "k": 214502,
+   "n": 2744042,
+   "design_effect": 1.09
+  },
+  "by_kind": {
+   "putative_phage": {
+    "subjects": 25564,
+    "reads": 166448,
+    "label": "putative phage",
+    "reading": "the matched record is a virus and its own name says phage",
+    "share_of_searched": {
+     "point": 0.060657963690060136,
+     "lo": 0.06035072553169813,
+     "hi": 0.06096643198557298,
+     "k": 166448,
+     "n": 2744042,
+     "design_effect": 1.09
+    }
+   },
+   "virus_no_phage_signal": {
+    "subjects": 2401,
+    "reads": 16530,
+    "label": "virus, nothing says phage",
+    "reading": "the matched record is a virus from the viral index, and nothing in its name marks it as a phage. An absence of evidence, not a finding that it is not one",
+    "share_of_searched": {
+     "point": 0.006023960274660519,
+     "lo": 0.005924852348283817,
+     "hi": 0.00612445131084205,
+     "k": 16530,
+     "n": 2744042,
+     "design_effect": 1.09
+    }
+   },
+   "putative_bacterial": {
+    "subjects": 4323,
+    "reads": 10628,
+    "label": "putative bacterial or archaeal",
+    "reading": "the matched record is a protein of a named prokaryote, not of a virus. A prophage protein would look exactly like this",
+    "share_of_searched": {
+     "point": 0.003873118560138657,
+     "lo": 0.0037937017840147438,
+     "hi": 0.003953924468323592,
+     "k": 10628,
+     "n": 2744042,
+     "design_effect": 1.09
+    }
+   },
+   "cellular_kind_not_placed": {
+    "subjects": 6534,
+    "reads": 13914,
+    "label": "something living, kind not placed",
+    "reading": "the record is a cellular protein and the table could not place its domain from the organism name",
+    "share_of_searched": {
+     "point": 0.005070622096892103,
+     "lo": 0.004979708041874246,
+     "hi": 0.005162921931017093,
+     "k": 13914,
+     "n": 2744042,
+     "design_effect": 1.09
+    }
+   },
+   "putative_eukaryotic": {
+    "subjects": 3007,
+    "reads": 6982,
+    "label": "putative eukaryotic",
+    "reading": "the matched record is a protein of a named plant, fungus, animal or protist. In a wastewater metatranscriptome this is diet, plant matter and the organisms living in the works, not a finding",
+    "share_of_searched": {
+     "point": 0.0025444216961693733,
+     "lo": 0.00248014139188332,
+     "hi": 0.0026100948528055157,
+     "k": 6982,
+     "n": 2744042,
+     "design_effect": 1.09
+    }
+   }
+  },
+  "known_pile_control": {
+   "searched": 400000,
+   "significant": 39992,
+   "share": {
+    "point": 0.09998,
+    "lo": 0.09897054455418033,
+    "hi": 0.10099713895618723,
+    "k": 39992,
+    "n": 400000,
+    "design_effect": 1.09
+   },
+   "reading": "the same count on reads the cascade already identified. It is the scale the residue's figure is read against: these are reads with a known relative by construction, and even they do not all have a significant one at this threshold"
+  },
+  "caveat": "phage against bacterial is the hardest of the three and the page says so. Prophages sit inside bacterial genomes, so a protein can honestly be both, and at the identities in this residue - a few dozen amino acids at around half identity - neither the record nor the alignment settles it. These buckets describe the RECORD that was matched. They are not a call on the read."
+ },
+ "host_confidence_summary": {
+  "subjects": 41829,
+  "max": 0.4,
+  "median": 0.1721,
+  "at_or_above_0.5": 0,
+  "at_or_above_0.2": 16178,
+  "best_identity_percent": 100.0,
+  "best_aligned_aa": 49,
+  "reading": "how much of the matched record's host group transfers to the reads. Built from identity and aligned length. If the maximum is low, no relative in this residue is close enough for its host to mean anything, and the host colours on this page are labels on the database rather than claims about the sample"
+ },
+ "scope": {
+  "source": "full_residue_search_s1.json",
+  "residue_pairs": 1372021,
+  "residue_mates": 2744042,
+  "control_pairs": 200000,
+  "library_pairs": 8731224,
+  "unplaced_fraction": 0.15714,
+  "operating_point": {
+   "diamond_mode": "--sensitive",
+   "reporting_evalue": 100,
+   "significance_evalue": 1e-05,
+   "max_target_seqs": 1,
+   "trim_r2": 14
+  },
+  "bias": "the pile comes from a nucleotide-only label table, so it is MORE generous than the cascade's residue and the named-relative rate here is if anything a small overestimate. One direction, not two.",
+  "wall_seconds": 899.8,
+  "script_sha256": "1d13c4673dbc4e11",
+  "git_sha": "c3fa49d22c5123cd98f239acc66fa35809632a0f",
+  "scope": "every unplaced pair in the library, not a block sample. The pile comes from a nucleotide-only label table, so it is a little more generous than the cascade's residue and the named-relative rate is if anything a small overestimate"
+ },
+ "denominator_note": "every unplaced mate in the library, all of which went through this search, so a share here is a share of the residue rather than of a sample of it",
+ "host_table_coverage": {
+  "groups": {
+   "bacteriophage": {
+    "label": "bacteriophage",
+    "concern": 0.05,
+    "reading": "infects bacteria. The expected background of a wastewater RNA virome and the dominant signal in this library."
+   },
+   "plant": {
+    "label": "plant",
+    "concern": 0.1,
+    "reading": "infects plants. Abundant in sewage from diet and runoff."
+   },
+   "fungal_or_protist": {
+    "label": "fungal or protist",
+    "concern": 0.1,
+    "reading": "infects fungi, amoebae or other protists."
+   },
+   "invertebrate": {
+    "label": "invertebrate",
+    "concern": 0.25,
+    "reading": "infects insects or other invertebrates. Worth noting because arbovirus relatives sit here and because an insect virus in sewage is ordinary."
+   },
+   "vertebrate_non_human": {
+    "label": "non-human vertebrate",
+    "concern": 0.6,
+    "reading": "infects vertebrates other than humans. Livestock and wildlife viruses, which is where most spillover ancestry sits."
+   },
+   "human_associated": {
+    "label": "human-associated",
+    "concern": 1.0,
+    "reading": "a family that includes viruses infecting humans. The group a person should look at first, and the one where the damping below matters most."
+   },
+   "unknown_host": {
+    "label": "host not placed",
+    "concern": 0.3,
+    "reading": "the table could not place this record's name. Weighted in the middle on purpose: an unplaceable name is not evidence of safety, and weighting it at zero would hide exactly the rows this project exists to find."
+   }
+  },
+  "source": "experiments/host_groups.json",
+  "subjects_no_rule_placed": 15700,
+  "subjects_total": 41829,
+  "coverage_note": "an unplaced name is grouped unknown_host and weighted in the middle, never at zero"
+ }
+}

@@ -395,6 +395,48 @@ class Run:
                                      "assembled_at_run_time": False,
                                      "note": "supplied contig set; see assembly.json"})
 
+    # -- the distance a known thing was removed at ---------------------------
+    def divergent(self) -> dict:
+        """Every identified contig, with the distance at which it was identified.
+
+        WHY THIS STAGE EXISTS AND WHY IT IS NOT `strains`. `strains` groups the RESIDUE by
+        the subject it is nearest to, which finds a divergent relative only when the
+        cascade failed to remove it. The case it cannot see is the opposite one: a contig
+        that IS removed, correctly, by a tier that recognises it, from a long way away.
+        The cascade's subtrahend is one bit, so a contig matching its reference at 99.9%
+        and one matching it at 66.5% record the same word and neither is reported again.
+
+        That is not hypothetical. A withheld genome assembles out of its library as a
+        single contig covering 96% of itself, hits the held-out reference at 66.5%
+        protein identity over 620 aa with a bitscore of 840 against the protein tier's
+        threshold of 50, and is removed in tier 1. Not a marginal removal, so **raising
+        the tier threshold cannot be the fix**; the fix is to keep the distance.
+
+        The stage is skipped rather than approximated when the identified contig set is
+        not given, like every other stage here.
+        """
+        a = self.args
+        src = getattr(a, "identified_contigs", None)
+        if not src:
+            return self.record("divergent", "skipped",
+                               reason="--identified-contigs not given, so there is no "
+                                      "identified pile to measure the distance over")
+        src = Path(src)
+        gone = self.missing("divergent", [src, a.r1, a.r2])
+        if gone:
+            return self.record("divergent", "skipped", missing=gone)
+        out = self.work / "divergent"
+        out.mkdir(parents=True, exist_ok=True)
+        argv = ["--seed", str(a.seed), "--contigs", str(src),
+                "--r1", str(a.r1), "--r2", str(a.r2),
+                "--trim-r2", str(a.trim_r2),
+                "--work", str(out / "work"),
+                "--out", str(out / f"divergent_known_s{a.seed}.json")]
+        return self.call("divergent", "divergent_known.py", argv,
+                         {f"divergent_known_s{a.seed}.json":
+                              out / f"divergent_known_s{a.seed}.json"},
+                         out / f"divergent_known_s{a.seed}.json")
+
     # -- new strains of known viruses ----------------------------------------
     def strains(self) -> dict:
         """Group the residue by the relative it is nearest to, which is where a new strain
@@ -924,7 +966,7 @@ LAYER_FIELDS = {
 }
 
 STAGE_ORDER = ["cascade", "contigs", "reads", "linkage", "census", "calibration",
-               "intervals", "layers", "strains"]
+               "intervals", "layers", "strains", "divergent"]
 
 
 def main() -> int:
@@ -981,11 +1023,18 @@ def main() -> int:
                         "IDENTIFICATION, not assembly, and subtracting contigs that "
                         "nothing identified would remove the tier 2 population into tier "
                         "1 and inflate every removal figure. Measured here: the whole "
-                        "contig set removes 85.9%% against 77.0%% for the identified half")
+                        "contig set removes 85.9%% against 77.0%% for the identified "
+                        "half")
     r.add_argument("--unidentified-contigs", type=Path, nargs="+", default=None,
                    help="contigs that assembled but nothing identified: tier 2's "
                         "population, OBSERVED and never subtracted. Subtracting these "
                         "would move tier 2 into tier 1 and inflate every removal figure")
+    r.add_argument("--identified-contigs", type=Path, default=None,
+                   help="contigs the cascade DID identify, excluding ribosomal ones. The "
+                        "`divergent` stage measures how far each one was from the "
+                        "reference that identified it, which the cascade computes and "
+                        "then discards. A ribosomal match says what the sequence is and "
+                        "not whose, so that pile is a different question")
     r.add_argument("--k2-dbs", type=Path, nargs="+",
                    default=[ROOT / "data/k2_viral", ROOT / "data/k2_standard08",
                             ROOT / "data/k2_pluspf08", ROOT / "data/k2_pluspf16"])
