@@ -1,0 +1,18 @@
+{
+ "cutoff": "2022-05-10",
+ "dropped_by_date": 439,
+ "undated_kept": 0,
+ "note": "the held-out organism has no entry of its own in viral RefSeq, so the holdout is purely the date filter",
+ "per_index": {
+  "nt": {
+   "kept": 19211,
+   "dropped": 439,
+   "unmapped_kept": 0
+  },
+  "prot": {
+   "kept": 703330,
+   "dropped": 19493,
+   "unmapped_kept": 4
+  }
+ }
+}

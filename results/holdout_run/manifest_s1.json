@@ -1,0 +1,37 @@
+{
+ "script": "holdout_run.py",
+ "script_sha256": "e976a8d39cf2767e6cec476dd9a5862fce0dfe6625225a4edf04b1ca8e4bcf25",
+ "git_sha": "888e4ed9673c30523bd98f15d335fd6b1601c039-dirty",
+ "argv": {
+  "outdir": "results/holdout_run",
+  "seeds": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "stages": "reads,search,report",
+  "blastbin": "/tmp/claude-0/-home-user/091726aa-0c4a-5e0b-a85c-99f5c136bf59/scratchpad/blastpkg/ncbi-blast-2.17.0+/bin",
+  "nt_fa": "",
+  "prot_fa": "",
+  "src_map": "",
+  "src_dates": "",
+  "full_nt_db": "/tmp/claude-0/-home-user/091726aa-0c4a-5e0b-a85c-99f5c136bf59/scratchpad/db/refseq_viral_nt",
+  "full_prot_db": "/tmp/claude-0/-home-user/091726aa-0c4a-5e0b-a85c-99f5c136bf59/scratchpad/db/refseq_viral_prot_full",
+  "cutoff": "2022-05-10",
+  "prot_parent": "",
+  "candfa": "results/holdout_candidates/candidates.fa",
+  "fastq": "/tmp/claude-0/-home-user/091726aa-0c4a-5e0b-a85c-99f5c136bf59/scratchpad/reads/SRR23421544.fastq.gz",
+  "candidate": "OQ722337.1",
+  "leak": "OQ722330.1",
+  "n_reads": 2000
+ },
+ "timings_s": {
+  "reads": 21.6,
+  "search": 5499.0,
+  "report": 0.2,
+  "total": 5520.9
+ },
+ "run_utc": "2026-11-22T00:44:29Z"
+}
