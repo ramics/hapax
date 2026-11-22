@@ -61,6 +61,41 @@ Re-run with the fixed walk, from the thread that owns that result: **0 of 11,361
 Berlin contigs produce a significant protein alignment and **0 of 932** shuffled ORFs do, the
 whole library yielding one 47 aa alignment at E=8.45e-4, which clears neither floor.
 
+### The defect is the missing tree condition, not the bare `return s`
+
+A grep for the fallback across `experiments/` finds five local copies, and **two of them are
+false positives for a reader greping on that string**. `residue_structure.py` and
+`residue_contig_annotation.py` both end with a silent `return s` after their retry loop, and
+both carry the Altschul–Erikson connectivity condition — each vertex's chosen *last* edge has
+to keep a path to the sequence's final base — which is what makes the walk succeed. The two
+broken copies lacked that condition. **The fallback made the failure silent; it did not cause
+it.** So the thing to grep for is a walk with no last-edge or tree condition, and the thing to
+check afterwards is the measured rate.
+
+Measured over 7,390 read-length windows of real sequence (one RNG seed per call, the way each
+script calls it):
+
+| implementation | has the tree condition | returned input |
+|---|---|---|
+| `residue_contig_annotation` | yes | **0 of 7,390** |
+| `residue_structure` | yes | **2 of 7,390, 0.027%** |
+
+`residue_structure` is **not** zero, and the two failures are ordinary-looking 93 and 107 nt
+reads rather than degenerate sequence. Its 50 retries cannot fix a structural failure, so for
+those sequences the fallback fires on every retry. The gene-level thread measured 0 of 5,000
+for the same function; both readings are consistent with a rate near 0.03%, which neither
+sample size pins. **No committed number from either script moves at this magnitude**, and the
+direction is the conservative one, but the file should not record it as zero, so it does not.
+
+**The hygiene fix is a decision about re-runs, not a free tidy-up.** Making either script raise
+instead of falling back, and report its own fallback count, changes its `script_sha256`, which
+under this repo's provenance rule forces re-running `results/residue_structure/` and
+`results/residue_contig_annotation/`. Folding `holdout_run.py`'s own correct copy into the
+shared module forces `results/holdout_run/` too, 92 minutes. **Recommendation, recorded rather
+than acted on: do not re-run for this.** The measured rates say nothing published moves, so the
+fix should ride along the next time each of those scripts is touched for a reason of its own,
+and the rates above are what makes that deferral readable instead of a shrug.
+
 **A mononucleotide shuffle (`rng.shuffle` of a list of bases) has no walk and no dead end, so
 it cannot hit this bug.** Neither can a permutation of labels, partners, columns or rows. Most
 of this repo's nulls are one of those, which is why the blast radius is small.
