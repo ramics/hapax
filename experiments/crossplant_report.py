@@ -103,6 +103,56 @@ def plant_matrix(subs, info, mats, lib):
     return rows
 
 
+def plant_summary(rows):
+    """The three strata question 1 actually asks, paired per query plant.
+
+    Pooling cells across the matrix mixes plants whose within-plant rate runs from 0.15 to
+    0.96, so the pooled difference is a comparison of different plants rather than of within
+    against between. Each query plant is therefore its own comparison and the paired
+    difference is what is reported, with the count of plants that agree in sign.
+    """
+    out = []
+    for op in ("most1", "most2", "any1", "any2"):
+        byq = {}
+        for r in rows:
+            if r["op"] != op or not r["witnessed"]:
+                continue
+            q, s_ = r["query_plant"], r["subject_plant"]
+            d = byq.setdefault(q, {"within": None, "same_project": [], "other_project": []})
+            v = float(r["witnessed"])
+            # `within` is an int in memory and a string once written, and this function is
+            # fed the in-memory rows: comparing against "1" silently found no plants at all.
+            if int(r["within"]) == 1:
+                d["within"] = v
+            elif q.split(":")[0] == s_.split(":")[0]:
+                d["same_project"].append(v)
+            else:
+                d["other_project"].append(v)
+        strata = {"within_plant_other_water": [d["within"] for d in byq.values()
+                                               if d["within"] is not None],
+                  "other_plant_same_project": [float(np.mean(d["same_project"]))
+                                               for d in byq.values() if d["same_project"]],
+                  "other_plant_other_project": [float(np.mean(d["other_project"]))
+                                                for d in byq.values() if d["other_project"]]}
+        for name, vals in strata.items():
+            out.append({"op": op, "stratum": name, "plants": len(vals),
+                        "witnessed_median": f"{np.median(vals):.4f}" if vals else "",
+                        "plant_min": f"{min(vals):.4f}" if vals else "",
+                        "plant_max": f"{max(vals):.4f}" if vals else ""})
+        paired = [byq[q]["within"] - float(np.mean(byq[q]["other_project"])) for q in byq
+                  if byq[q]["within"] is not None and byq[q]["other_project"]]
+        out.append({"op": op, "stratum": "paired_within_minus_other_project",
+                    "plants": len(paired),
+                    "witnessed_median": f"{np.median(paired):+.4f}" if paired else "",
+                    "plant_min": f"{min(paired):+.4f}" if paired else "",
+                    "plant_max": f"{max(paired):+.4f}" if paired else ""})
+        out.append({"op": op, "stratum": "paired_plants_positive",
+                    "plants": len(paired),
+                    "witnessed_median": sum(1 for x in paired if x > 0),
+                    "plant_min": "", "plant_max": ""})
+    return out
+
+
 def null_rates(subs, mats, lib):
     out = {}
     for op in mats:
@@ -122,14 +172,33 @@ def null_rates(subs, mats, lib):
 
 
 def self_rates(subs, mats, lib):
+    """The ceiling: a read witnessed in its OWN library, from spots outside its subject.
+
+    Reported as the distribution over query libraries, not as the minimum. The minimum alone
+    was unreadable and actively misleading: it read 0.09 at `most` while the plant matrix
+    read 0.56 within a plant, which looks like a cross-library rate above its own ceiling.
+    It is not - the worst of 95 libraries says nothing about the typical one, and a ceiling
+    has to be quoted at the same point as the thing it bounds.
+    """
     out = {}
     for op in mats:
-        vals = []
+        per_lib = {}
         for seed in SEEDS:
-            got = [mats[op][j, lib[(a, seed, "real")]].mean() for j, a in enumerate(subs)
-                   if (a, seed, "real") in lib]
-            vals.append(float(np.min(got)) if got else float("nan"))
-        out[op] = spread(vals)
+            for j, a in enumerate(subs):
+                if (a, seed, "real") in lib:
+                    per_lib.setdefault(a, []).append(
+                        float(mats[op][j, lib[(a, seed, "real")]].mean()))
+        med = {a: float(np.median(v)) for a, v in per_lib.items()}
+        vals = sorted(med.values())
+        out[op] = {"libraries": len(vals),
+                   "median_library": f"{np.median(vals):.4f}" if vals else "",
+                   "worst_library": f"{vals[0]:.4f}" if vals else "",
+                   "best_library": f"{vals[-1]:.4f}" if vals else "",
+                   "p10_library": f"{np.percentile(vals, 10):.4f}" if vals else "",
+                   "seed_spread_of_median": spread(
+                       [float(np.median([per_lib[a][i] for a in per_lib
+                                         if i < len(per_lib[a])]))
+                        for i in range(len(SEEDS))])}
     return out
 
 
@@ -210,6 +279,9 @@ def growth(names, subs, info, meds, mats, lib, top: int):
     """Own-library count against the panel's spread for the same read, both mates."""
     out, summary, n_all = [], {}, {"real": 0, "null": 0}
     swaps = {"real": [], "null": []}
+    strata = {k: {lab: {"growth": [], "swap": [], "capped": []}
+                  for lab in ("occ_lt_10pct", "occ_10_50pct", "occ_ge_50pct")}
+              for k in ("real", "null")}
     for kind in ("real", "null"):
         ratios = []
         for a_j, a in enumerate(subs):
@@ -237,6 +309,11 @@ def growth(names, subs, info, meds, mats, lib, top: int):
                     own.append(o)
                     pan.append((np.median(panel, axis=0), p99, panel.max(axis=0)))
                 gmin = np.minimum(g[0], g[1])
+                # Counts are capped at 65535 by crossplant_reduce.py, so a ratio built on a
+                # capped numerator is a lower bound and the ranking above the cap is
+                # arbitrary. Flagged rather than silently ranked.
+                capped = (own_cap := np.maximum(
+                    meds["med1"][a_j, idx], meds["med2"][a_j, idx]) >= 65535)
                 # Only reads that ARE background can outgrow it: witnessed (most, both
                 # mates) in at least BACKGROUND_MIN of the panel.
                 occ = mats["any1"][P][:, idx].sum(axis=0)
@@ -245,6 +322,19 @@ def growth(names, subs, info, meds, mats, lib, top: int):
                 ratios.append(gmin[bg])
                 swaps[kind].append(np.minimum(gs[0], gs[1])[bg])
                 n_all[kind] += len(idx)
+                # Stratified by how much of the panel carries the read at all. Imo's point
+                # is about something that STOPS being background, so the interesting cell is
+                # low occupancy with high local depth. The high-occupancy cell is a bloom of
+                # sequence everybody has, which is the "already seen" direction this repo
+                # has been caught by twice.
+                occ_frac = occ / max(1, len(P))
+                for lab, keep in (("occ_lt_10pct", occ_frac < 0.10),
+                                  ("occ_10_50pct", (occ_frac >= 0.10) & (occ_frac < 0.50)),
+                                  ("occ_ge_50pct", occ_frac >= 0.50)):
+                    m = bg & keep
+                    strata[kind][lab]["growth"].append(gmin[m])
+                    strata[kind][lab]["swap"].append(np.minimum(gs[0], gs[1])[m])
+                    strata[kind][lab]["capped"].append(capped[m])
                 if kind == "real":
                     for t, qi in enumerate(idx):
                         if not bg[t]:
@@ -257,6 +347,8 @@ def growth(names, subs, info, meds, mats, lib, top: int):
                                     "panel_p99_1": float(pan[0][1][t]),
                                     "panel_max1": int(pan[0][2][t]),
                                     "panel_libraries_any1": int(occ[t]),
+                                    "panel_occupancy": round(float(occ[t] / max(1, len(P))), 4),
+                                    "own_count_capped": int(capped[t]),
                                     "panel_size": len(P)})
         for label, parts in ((kind, ratios), (f"{kind}_swap_control", swaps[kind])):
             r = np.concatenate(parts) if parts else np.array([])
@@ -264,6 +356,18 @@ def growth(names, subs, info, meds, mats, lib, top: int):
                               **{f"frac_ge_{t}": round(float((r >= t).mean()), 6)
                                  if r.size else None for t in (2, 5, 10, 100)},
                               "p99": round(float(np.percentile(r, 99)), 2) if r.size else None}
+    for kind in strata:
+        for lab, acc in strata[kind].items():
+            gr = np.concatenate(acc["growth"]) if acc["growth"] else np.array([])
+            sw = np.concatenate(acc["swap"]) if acc["swap"] else np.array([])
+            cp = np.concatenate(acc["capped"]) if acc["capped"] else np.array([])
+            summary[f"{kind}|{lab}"] = {
+                "background_reads": int(gr.size),
+                "capped_share": round(float(cp.mean()), 6) if cp.size else None,
+                **{f"frac_ge_{t}": round(float((gr >= t).mean()), 6) if gr.size else None
+                   for t in (2, 10, 100)},
+                **{f"swap_frac_ge_{t}": round(float((sw >= t).mean()), 6) if sw.size else None
+                   for t in (2, 10, 100)}}
     out.sort(key=lambda d: -d["growth"])
     return out[:top], summary
 
@@ -310,7 +414,9 @@ def main() -> None:
     names, subs, mats, meds, pairs = load(args.run_dir / "packed")
     lib, berlin = parse(names)
     args.out.mkdir(parents=True, exist_ok=True)
-    write(args.out / "plant_matrix.tsv", plant_matrix(subs, info, mats, lib))
+    pm = plant_matrix(subs, info, mats, lib)
+    write(args.out / "plant_matrix.tsv", pm)
+    write(args.out / "plant_summary.tsv", plant_summary(pm))
     write(args.out / "saturation.tsv", saturation(subs, info, mats, lib, berlin))
     top, gsum = growth(names, subs, info, meds, mats, lib, args.top)
     write(args.out / "growth_top.tsv", top)

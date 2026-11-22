@@ -1,0 +1,176 @@
+{
+  "own_library_other_spots_min_over_libraries": {
+    "any1": {
+      "libraries": 95,
+      "median_library": "0.8050",
+      "worst_library": "0.2400",
+      "best_library": "0.9950",
+      "p10_library": "0.4820",
+      "seed_spread_of_median": [
+        "0.8050",
+        "0.8050",
+        "0.8300"
+      ]
+    },
+    "any2": {
+      "libraries": 95,
+      "median_library": "0.7950",
+      "worst_library": "0.2550",
+      "best_library": "0.9900",
+      "p10_library": "0.4720",
+      "seed_spread_of_median": [
+        "0.8000",
+        "0.7900",
+        "0.8250"
+      ]
+    },
+    "most1": {
+      "libraries": 95,
+      "median_library": "0.7100",
+      "worst_library": "0.0900",
+      "best_library": "0.9800",
+      "p10_library": "0.3690",
+      "seed_spread_of_median": [
+        "0.7150",
+        "0.6800",
+        "0.7200"
+      ]
+    },
+    "most2": {
+      "libraries": 95,
+      "median_library": "0.6800",
+      "worst_library": "0.1000",
+      "best_library": "0.9700",
+      "p10_library": "0.3280",
+      "seed_spread_of_median": [
+        "0.6750",
+        "0.6700",
+        "0.7000"
+      ]
+    }
+  },
+  "shuffled_in_other_libraries": {
+    "any1": [
+      "0.0000",
+      "0.0000",
+      "0.0000"
+    ],
+    "any2": [
+      "0.0016",
+      "0.0011",
+      "0.0026"
+    ],
+    "most1": [
+      "0.0000",
+      "0.0000",
+      "0.0000"
+    ],
+    "most2": [
+      "0.0016",
+      "0.0010",
+      "0.0025"
+    ]
+  },
+  "growth": {
+    "real": {
+      "queries": 95000,
+      "background_reads": 48716,
+      "frac_ge_2": 0.114254,
+      "frac_ge_5": 0.067391,
+      "frac_ge_10": 0.047028,
+      "frac_ge_100": 0.012193,
+      "p99": 142.15
+    },
+    "real_swap_control": {
+      "queries": 95000,
+      "background_reads": 48716,
+      "frac_ge_2": 0.001293,
+      "frac_ge_5": 0.000185,
+      "frac_ge_10": 2.1e-05,
+      "frac_ge_100": 0.0,
+      "p99": 0.96
+    },
+    "null": {
+      "queries": 9500,
+      "background_reads": 0,
+      "frac_ge_2": null,
+      "frac_ge_5": null,
+      "frac_ge_10": null,
+      "frac_ge_100": null,
+      "p99": null
+    },
+    "null_swap_control": {
+      "queries": 9500,
+      "background_reads": 0,
+      "frac_ge_2": null,
+      "frac_ge_5": null,
+      "frac_ge_10": null,
+      "frac_ge_100": null,
+      "p99": null
+    },
+    "real|occ_lt_10pct": {
+      "background_reads": 0,
+      "capped_share": null,
+      "frac_ge_2": null,
+      "frac_ge_10": null,
+      "frac_ge_100": null,
+      "swap_frac_ge_2": null,
+      "swap_frac_ge_10": null,
+      "swap_frac_ge_100": null
+    },
+    "real|occ_10_50pct": {
+      "background_reads": 2125,
+      "capped_share": 0.005176,
+      "frac_ge_2": 0.114353,
+      "frac_ge_10": 0.026353,
+      "frac_ge_100": 0.000941,
+      "swap_frac_ge_2": 0.000941,
+      "swap_frac_ge_10": 0.0,
+      "swap_frac_ge_100": 0.0
+    },
+    "real|occ_ge_50pct": {
+      "background_reads": 46591,
+      "capped_share": 0.047584,
+      "frac_ge_2": 0.11425,
+      "frac_ge_10": 0.047971,
+      "frac_ge_100": 0.012706,
+      "swap_frac_ge_2": 0.001309,
+      "swap_frac_ge_10": 2.1e-05,
+      "swap_frac_ge_100": 0.0
+    },
+    "null|occ_lt_10pct": {
+      "background_reads": 0,
+      "capped_share": null,
+      "frac_ge_2": null,
+      "frac_ge_10": null,
+      "frac_ge_100": null,
+      "swap_frac_ge_2": null,
+      "swap_frac_ge_10": null,
+      "swap_frac_ge_100": null
+    },
+    "null|occ_10_50pct": {
+      "background_reads": 0,
+      "capped_share": null,
+      "frac_ge_2": null,
+      "frac_ge_10": null,
+      "frac_ge_100": null,
+      "swap_frac_ge_2": null,
+      "swap_frac_ge_10": null,
+      "swap_frac_ge_100": null
+    },
+    "null|occ_ge_50pct": {
+      "background_reads": 0,
+      "capped_share": null,
+      "frac_ge_2": null,
+      "frac_ge_10": null,
+      "frac_ge_100": null,
+      "swap_frac_ge_2": null,
+      "swap_frac_ge_10": null,
+      "swap_frac_ge_100": null
+    }
+  },
+  "subject_pairs_min_max": [
+    2000000,
+    2000000
+  ]
+}

@@ -1,0 +1,21 @@
+op	stratum	plants	witnessed_median	plant_min	plant_max
+most1	within_plant_other_water	32	0.5577	0.1530	0.9593
+most1	other_plant_same_project	30	0.4986	0.1504	0.9212
+most1	other_plant_other_project	32	0.3761	0.0268	0.8305
+most1	paired_within_minus_other_project	32	+0.1432	+0.0500	+0.3791
+most1	paired_plants_positive	32	32		
+most2	within_plant_other_water	32	0.5497	0.1447	0.9417
+most2	other_plant_same_project	30	0.4802	0.1449	0.8962
+most2	other_plant_other_project	32	0.3620	0.0277	0.7923
+most2	paired_within_minus_other_project	32	+0.1485	+0.0574	+0.3630
+most2	paired_plants_positive	32	32		
+any1	within_plant_other_water	32	0.6803	0.2460	0.9830
+any1	other_plant_same_project	30	0.6456	0.2471	0.9708
+any1	other_plant_other_project	32	0.5265	0.0579	0.9372
+any1	paired_within_minus_other_project	32	+0.1406	+0.0068	+0.3496
+any1	paired_plants_positive	32	32		
+any2	within_plant_other_water	32	0.6705	0.2413	0.9737
+any2	other_plant_same_project	30	0.6419	0.2371	0.9605
+any2	other_plant_other_project	32	0.5202	0.0585	0.9237
+any2	paired_within_minus_other_project	32	+0.1505	+0.0099	+0.3525
+any2	paired_plants_positive	32	32		
