@@ -405,19 +405,45 @@ which is precisely why a near-reference arm cannot test the asymmetry and this h
 standing rule, is therefore the one recommendation in this report that ground truth supports
 rather than undermines.
 
-## The cascade, five seeds
+## The cascade: three seeds on the first pass, and why that is a defect not a result
 
-See `report_holdout_cascade.py` section 1 for the generated table. Five seeds here are five
-disjoint 200,000-read blocks of **one read pool**, so the spread between them is subsampling
-noise: it is not library variation, not biological variation, and narrower than either by an
-unknown factor.
+See `report_holdout_cascade.py` section 1 for the generated table. The seeds are disjoint
+200,000-read blocks of **one read pool**, so the spread between them is subsampling noise:
+not library variation, not biological variation, and narrower than either by an unknown
+factor.
 
-## Four defects found on the way, which matter beyond this experiment
+**The first pass produced three seeds, not five, and the cause is a fifth defect.**
+`subtract_known.py`'s `--block` stride - how far seed N skips into the FASTQ - defaults to
+**1,500,000**, which is the stride for SRR23973193's 8,731,224 pairs. This library has
+**4,290,429** reads, so seeds 4 and 5 start at 4.5 M and 6.0 M, read nothing, and the cascade
+exits `no pairs read`. Seeds 1-3 removed 66.31-66.94% and seeds 4-5 failed.
+
+Each seed failed loudly on its own terms, which is the system working. **What did not work is
+that the run directory still looked like a five-seed result** - five `run_s*/` directories,
+five manifests, and the absence visible only in `tiers.json` not existing for two of them. A
+reader taking the directory at face value, or a figure script globbing it, would have
+reported the spread of three seeds as the spread of five.
+
+**And `hapax run` did not expose `--block` at all**, so the orchestrator could only ever use a
+stride tuned to one library - a parameter that decides *which reads are measured*, behind a
+default. Both are fixed: `hapax run --block` now exists, and
+`experiments/holdout_cascade_run.sh` sets it to 1,000,000 (blocks at 0, 1 M, 2 M, 3 M, 4 M,
+the last ending at 4,200,000 of 4,290,429) and **refuses to start** if the arithmetic does not
+fit the library's actual read count, which it now counts rather than assumes.
+
+All five seeds are being re-run under the corrected stride. **The three-seed numbers are not
+carried forward**, because changing the stride moves every seed's block, and the convention
+does not let one directory hold results from two parameterisations.
+
+## Five defects found on the way, which matter beyond this experiment
 
 The first three are one failure mode: **an optional input is absent and the code either dies
 at the end or returns a number that reads as a measurement.** The fourth is its sibling and
 the one with the longest reach: **a provenance field the conventions require is computed and
-then not written**, so the run cannot say what code produced it.
+then not written**, so the run cannot say what code produced it. The fifth is the same shape
+again from the other end: **a parameter that decides which reads are measured was not exposed
+at all**, so it kept a default tuned to a different library - described under "The cascade"
+below, because it is what produced three seeds out of five.
 
 1. **`hapax.py` validated `--k2-dbs`, `--silva` and `--dmnd` and then never passed them.** The
    cascade fell back to `subtract_known.py`'s own default paths whatever the run was given. On
@@ -435,9 +461,28 @@ then not written**, so the run cannot say what code produced it.
    quietly not searched and had its silence read as a negative result.
 3. **`residue_report.py` bound `pf_known_rate` only inside its Pfam block.** With no profile
    database on disk, the entire 26-minute per-read pass completes and then dies on the last
-   line of the summary with nothing written. Every other optional field in that function
-   already uses an `x = None` guard. `motif_rate` also returned `0.0` when nothing had been
-   searched; both now say `not measured`.
+   line of the summary with nothing written. `motif_rate` also returned `0.0` when nothing
+   had been searched; both now say `not measured`.
+
+   **Correction, from the `Make hapax fail loudly` thread: my claim that every other optional
+   field in that function already used an `x = None` guard was wrong, and my own committed
+   runs show it.** `chimaera_split_rate` is a fraction over all rows, so with no chimaera
+   reference on disk no row carries `split_disagree`, the numerator is zero, and the field
+   reports **`0.0`** - while its own control, `chimaera_split_rate_on_subtracted_reads`,
+   correctly reports `None`. `run_s1-3/fields.json` carry exactly that pair.
+
+   **That combination is the inverse of this project's own heuristic and worth naming.** The
+   rule is *read the control first*, on the grounds that a broken measurement shows up as the
+   control moving with the test. Here the control is the honest field and the test is the
+   lying one: read the control and you see `None` and know nothing ran; read the test and you
+   see a rate. So "read the control first" catches a control that mimics the test and misses a
+   control that is absent beside a test that defaults - and only counting what was searched
+   catches both. Which is the same conclusion the shuffled-arm census reached today from the
+   other direction. `crispr`, `rfam` and `cross_sample_recurrence` are `None` rather than
+   `0.0`, so they are absent rather than false.
+
+   No number in this report reads any of those fields, and the full list is in
+   `results/fail_loudly_audit/`.
 
 4. **`subtract_known.py` defines the content hash the conventions require and never calls
    it.** `provenance()` returns `git_sha`, `tree_dirty` and `script_sha256` and carries a
