@@ -119,3 +119,99 @@ def shuffle_all(seqs: dict, rng: random.Random, allow_identical: bool = False) -
             continue
         out[name] = r
     return {"shuffled": out, "unchanged_and_dropped": unchanged}
+
+
+# ---------------------------------------------------------------------------------------
+# Everything below this line was added by the consolidation pass (2026-11-22). The two
+# functions above are byte-identical to the copy on the holdout thread's branch, so that
+# whichever lands second merges as a superset rather than a rewrite.
+# ---------------------------------------------------------------------------------------
+
+def mono_shuffle(seq: str, rng: random.Random) -> str:
+    """Return a permutation of the bases: same length, same base counts, nothing else kept.
+
+    This is the null for "is this field just base composition". It destroys dinucleotide
+    structure, so it inflates stop-codon density relative to real sequence and makes the
+    null EASIER to beat; a kill of the form "indistinguishable from a mononucleotide
+    shuffle" survives that, a claim of separation from one is weaker than it looks.
+
+    It consumes the generator exactly as every local mononucleotide copy in experiments/ does
+    (`list`, `rng.shuffle`, `join`), so a script that switches to it draws the same
+    sequence for the same seed. `tests/test_shuffle_control.py` checks that equivalence
+    against every grandfathered copy, which is what makes switching a no-op on outputs.
+
+    It cannot dead-end, so it cannot fail the way the dinucleotide walk did. It can still
+    hand back its input (a homopolymer, or by chance on a very short read), and that is
+    the caller's to count: use `shuffle_arm`, which drops and counts those.
+    """
+    chars = list(seq)
+    rng.shuffle(chars)
+    return "".join(chars)
+
+
+def _dinuc_counts(s: str) -> collections.Counter:
+    return collections.Counter(zip(s, s[1:]))
+
+
+def check_shuffle(original: str, shuffled: str, kind: str) -> None:
+    """Raise unless `shuffled` is a valid `kind` shuffle of `original` and not a copy of it.
+
+    The invariant a null is published on, checked on the sequence rather than trusted from
+    the code: same length; same base counts (mono) or same dinucleotide counts and the same
+    first and last base (dinuc, which an Eulerian walk from first to last preserves); and
+    not identical to the input. A broken walk that returned its input passed the first two
+    and failed only the third, which is why the third is not optional here.
+    """
+    o, s = original.upper(), shuffled.upper()
+    if len(o) != len(s):
+        raise ShuffleFailed(f"{kind} shuffle changed length {len(o)} -> {len(s)}")
+    if kind == "mono":
+        if collections.Counter(o) != collections.Counter(s):
+            raise ShuffleFailed("mono shuffle changed base composition")
+    elif kind == "dinuc":
+        if _dinuc_counts(o) != _dinuc_counts(s):
+            raise ShuffleFailed("dinuc shuffle changed dinucleotide composition")
+        if o[:1] != s[:1] or o[-1:] != s[-1:]:
+            raise ShuffleFailed("dinuc shuffle moved the first or last base")
+    else:
+        raise ValueError(f"unknown shuffle kind {kind!r}; expected 'mono' or 'dinuc'")
+    if o == s:
+        raise ShuffleFailed(f"{kind} shuffle returned its input unchanged")
+
+
+def shuffle_arm(seqs, rng: random.Random, kind: str = "dinuc") -> dict:
+    """Shuffle a whole control arm, validate every output, and return it with its census.
+
+    `seqs` is a dict or an iterable of (name, sequence) pairs; order is kept, so the
+    generator is consumed in the caller's order and a fixed seed gives a fixed arm.
+
+    The census is what a manifest must carry: `offered`, `shuffled`, and
+    `dropped_identical` (sequences genuinely invariant under the shuffle, such as a
+    homopolymer, or a short read whose permutation happened to come back the same). On
+    Berlin, 2.85% of contigs falling through a broken walk supplied 304 of 304 of the
+    null's significant hits, so a drop rate is not a perturbation to ignore: report it,
+    and read the null's hits against it.
+
+    A sequence the dinucleotide walk cannot shuffle raises `ShuffleFailed` out of this
+    function. That is deliberate. Skipping it would remove exactly the repetitive inputs
+    that throw chance alignments, which biases the null in a direction nobody measured.
+    A caller that wants to drop such sequences must catch the exception itself and count
+    them, in its own code, where a reader can see it.
+    """
+    if kind not in ("mono", "dinuc"):
+        raise ValueError(f"unknown shuffle kind {kind!r}; expected 'mono' or 'dinuc'")
+    items = seqs.items() if isinstance(seqs, dict) else seqs
+    fn = mono_shuffle if kind == "mono" else dinuc_shuffle
+    out, dropped, offered = {}, [], 0
+    for name, s in items:
+        offered += 1
+        r = fn(s, rng)
+        if r.upper() == s.upper():
+            dropped.append(name)
+            continue
+        check_shuffle(s, r, kind)
+        out[name] = r
+    return {"shuffled": out,
+            "census": {"kind": kind, "offered": offered, "shuffled": len(out),
+                       "dropped_identical": len(dropped)},
+            "dropped_identical": dropped}
