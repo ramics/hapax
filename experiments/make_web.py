@@ -670,6 +670,8 @@ text.ax { font-size: 11px; fill: var(--dim); font-family: var(--sans); }
   .bnum { grid-area: v; text-align: left; } .bsize { grid-area: s; }
 }
 .ditem { border-top: 1px solid var(--edge); padding: 0.55rem 0; }
+.gline { border-top: 1px solid var(--edge); padding: 0.5rem 0; line-height: 1.5; }
+.gline:first-of-type { border-top: 0; }
 .ditem > summary { font-size: 13.5px; color: var(--fg); padding: 0.15rem 0; }
 .ditem > summary b { font-weight: 600; }
 .ditem > summary .dim { font-weight: 400; }
@@ -2562,7 +2564,7 @@ function interval(iv) {
     if (asTable.checked) { host.append(drawTable(rows)); setFoot(rows); return; }
     const W = 1000, PAD_L = 54, PAD_R = 18, PAD_T = 48;
     const H_MAIN = 300, H_LANE = 92, GAP = 30;
-    const H = PAD_T + H_MAIN + GAP + H_LANE + 46;
+    const H = PAD_T + H_MAIN + GAP + H_LANE + 64;  // room for two legend rows
     const x = v => PAD_L + (Math.min(100, Math.max(20, v)) - 20) / 80 * (W - PAD_L - PAD_R);
     const dmax = 600;
     const y = d => {
@@ -2662,7 +2664,7 @@ function interval(iv) {
     s += '<text x="' + ((PAD_L + W - PAD_R) / 2) + '" y="' + (PAD_T + H_MAIN + 34) +
       '" text-anchor="middle" class="ax">identity of the conserved gene, against the ' +
       'closest protein in RefSeq viral plus Swiss-Prot</text>';
-    const LGY = H - 10;
+    const LGY = H - 28;
     let lx = PAD_L;
     s += '<text x="' + lx + '" y="' + (LGY - 1) + '" class="ax">gene covered</text>';
     lx += 78;
@@ -2679,13 +2681,14 @@ function interval(iv) {
       (LGY - 6) + '" stroke="var(--cv4)" stroke-width="2" stroke-linecap="round"/>';
     s += '<text x="' + (lx + 32) + '" y="' + (LGY - 1) + '" class="ax">' +
       'the spread between the genes of one contig</text>';
-    lx += 250;
+    lx = PAD_L;
+    const LGY2 = H - 8;
     [['var(--v3)', 'core_nt identifies it'], ['var(--v1)', 'core_nt gets closer'],
      ['var(--v2)', 'core_nt leaves it distant'],
      ['var(--warn)', 'the withheld genome']].forEach(g => {
-      s += '<circle cx="' + (lx + 6) + '" cy="' + (LGY - 6) + '" r="4.5" ' +
+      s += '<circle cx="' + (lx + 6) + '" cy="' + (LGY2 - 6) + '" r="4.5" ' +
         'fill="var(--panel)" stroke="' + g[0] + '" stroke-width="2"/>';
-      s += '<text x="' + (lx + 15) + '" y="' + (LGY - 1) + '" class="ax">' + g[1] +
+      s += '<text x="' + (lx + 15) + '" y="' + (LGY2 - 1) + '" class="ax">' + g[1] +
         '</text>';
       lx += 14 + g[1].length * 5.6;
     });
@@ -3182,9 +3185,9 @@ function interval(iv) {
 // genes themselves.
 (function () {
   const S = D.strain_divergence, W = D.contig_workup;
-  const p = panel('Assembled viruses and their divergence',
-    'Protein identity of each assembled virus to its closest published relative, gene ' +
-    'by gene, most divergent first.' + cite('contigid'));
+  const p = panel('How far the assembled viruses sit from anything published',
+    'One line. Left is far from everything known, right is a match to a published ' +
+    'genome. Every assembled virus has a place on it.' + cite('contigid'));
   if (!S) {
     p.append(el('div', 'absent', 'known_strain_divergence_s*.json absent: run ' +
       'experiments/known_strain_divergence.py'));
@@ -3193,14 +3196,10 @@ function interval(iv) {
   const taxa = (S.taxa || []).filter(t => t.median_identity_percent != null)
     .sort((a, b) => a.median_identity_percent - b.median_identity_percent);
   const belowNinety = taxa.filter(t => t.median_identity_percent < 90);
-
   const rows = W ? (W.rows || []).filter(r => r.arm === 'divergent')
     .slice().sort((a, b) => a.rank_pident - b.rank_pident) : [];
   const ctrl = W ? (W.summary || {}).control_near_reference : null;
   const dsum = W ? (W.summary || {}).divergent : null;
-  // Deep and near-full-length at once. 3 to 4.5 kb is a complete genome for this group,
-  // so a contig that is long, evenly covered and far from the database is the row with
-  // enough material behind it to be worth the next step.
   const deep = rows.filter(r => (r.read_support || {}).mapped_mean_depth >= 100
                                 && r.contig_nt >= 3000);
 
@@ -3208,143 +3207,142 @@ function interval(iv) {
   hero.innerHTML = '<div class="vmain"><b>' + belowNinety.length + ' of ' + taxa.length +
     '</b> assembled viruses sit <b>below 90% identity</b> to their closest published ' +
     'protein' + cite('contigid') +
-    (deep.length ? ', and <b>' + deep.length + '</b> of those are complete ' +
-      'genomes at over 100x read depth' + cite('depth') : '') + '.</div>' +
-    '<div class="vsub">DIAMOND blastx, alignments of at least 60 aa at E&lt;1e-5. ' +
-    'Below about 90% identity the subject is a nearest neighbour in a sparse database, ' +
-    'and the name it lends does not establish the taxon. Divergence is measured ' +
-    'against the database, at this operating point.</div>';
+    '.</div>' + (deep.length ? '<div class="vmain">Of the ' + rows.length +
+      ' worked up gene by gene, <b>' + deep.length + '</b> are complete genomes carried ' +
+      'at over 100x read depth' + cite('depth') + '.</div>' : '') +
+    '<div class="vsub">Identity here means one gene against the single closest protein ' +
+    'in the reference sets, at E&lt;1e-5 over at least 60 aa. Below about 90% that ' +
+    'protein is a nearest neighbour rather than an identification, and the name it ' +
+    'lends is borrowed.</div>';
   p.append(hero);
 
+  /* THE LINE. One quantity, one chart, no legend: everything that would need one is
+     written on the drawing itself. The three bar blocks this replaced used the same
+     orange bar for read depth, then distance, then identity, on one screen. */
+  if (rows.length) {
+    const W2 = 1000, L = 20, R = 18, TOP = 54, BOT = 46, H = TOP + 96 + BOT;
+    const x = v => L + 36 + (Math.min(100, Math.max(20, v)) - 20) / 80 *
+      (W2 - L - R - 36);
+    const BASE = TOP + 58;
+    let s = '<svg viewBox="0 0 ' + W2 + ' ' + H + '" width="100%" ' +
+      'style="min-width:660px" role="img" aria-label="assembled viruses by identity ' +
+      'to the closest published protein">';
+    // the rug: one tick per contig, stacked where they pile up
+    const bins = {};
+    rows.forEach(r => {
+      const b = Math.round(r.rank_pident * 2) / 2;
+      bins[b] = (bins[b] || 0) + 1;
+    });
+    Object.keys(bins).forEach(k => {
+      const n = bins[k], h = Math.min(46, 6 + n * 4);
+      s += '<rect x="' + (x(+k) - 2.5) + '" y="' + (BASE - h) + '" width="5" height="' +
+        h + '" rx="1.5" fill="var(--identified)" opacity="0.8"/>';
+    });
+    s += '<line x1="' + x(20) + '" y1="' + BASE + '" x2="' + x(100) + '" y2="' + BASE +
+      '" stroke="var(--fg)" stroke-width="1.5"/>';
+    for (let v = 20; v <= 100; v += 10) {
+      s += '<line x1="' + x(v) + '" y1="' + BASE + '" x2="' + x(v) + '" y2="' +
+        (BASE + 5) + '" stroke="var(--dim)" stroke-width="1"/>';
+      s += '<text x="' + x(v) + '" y="' + (BASE + 19) +
+        '" text-anchor="middle" class="ax">' + v + '%</text>';
+    }
+    s += '<text x="' + x(20) + '" y="' + (BASE + 36) + '" class="ax">' +
+      'nothing published is close enough to name it</text>';
+    s += '<text x="' + x(100) + '" y="' + (BASE + 36) +
+      '" text-anchor="end" class="ax">the same virus, already sequenced</text>';
+    // the handful worth naming
+    deep.slice().sort((a, b) => a.rank_pident - b.rank_pident).forEach((r, i) => {
+      const xx = x(r.rank_pident), yy = BASE - 54 - (i % 2) * 16;
+      s += '<line x1="' + xx + '" y1="' + yy + '" x2="' + xx + '" y2="' + (BASE - 4) +
+        '" stroke="var(--residue)" stroke-width="1" stroke-dasharray="2 3"/>';
+      s += '<circle cx="' + xx + '" cy="' + yy + '" r="4" fill="var(--residue)"><title>' +
+        esc(r.taxon) + '</title></circle>';
+    });
+    if (deep.length) {
+      s += '<text x="' + (x(Math.min.apply(null, deep.map(r => r.rank_pident))) - 10) +
+        '" y="' + (BASE - 50) + '" text-anchor="end" class="ax">' + deep.length +
+        ' finished genomes, deep enough to work on</text>';
+    }
+    s += '</svg>';
+    const host = el('div', 'scroll'); host.innerHTML = s; p.append(host);
+    p.append(el('p', 'note', 'One mark per contig, ' + rows.length + ' of them, stacked ' +
+      'where several land on the same identity. Position is the gene the row was ranked on, the polymerase ' +
+      'wherever one is called.' + cite('genespread')));
+  }
+
+  /* THE FEW THAT MATTER, written out. A sentence a reader can check beats a bar whose
+     scale they have to learn. */
   if (deep.length) {
-    const d = el('div', 'ranked');
-    d.append(el('div', 'pghead',
-      'complete genomes, deep, and far from the database. bar is read depth'));
-    deep.slice().sort((a, b) => (b.read_support.mapped_mean_depth
-                                 - a.read_support.mapped_mean_depth)).forEach((r, i) => {
-      const row = el('div', 'rrow');
-      row.innerHTML =
-        '<div class="rno mono wide">' + num(r.rank_pident, 1) + '%</div>' +
-        '<div class="rname"><b>' + esc(r.taxon) + '</b>' +
-        (r.read_support.evenness_within_2x_of_median < 0.6
-          ? '<span class="chip">uneven coverage</span>' : '') + '</div>' +
-        '<div class="rbar"><i style="width:' +
-          Math.max(2, 100 * r.read_support.mapped_mean_depth / 500).toFixed(1) +
-          '%"></i></div>' +
-        '<div class="rval mono">' + Math.round(r.read_support.mapped_mean_depth) +
-          'x, ' + (r.contig_nt / 1000).toFixed(1) + ' kb</div>';
-      row.title = r.contig;
-      d.append(row);
+    const d = el('div', 'bites');
+    d.append(el('div', 'pghead', 'the finished genomes, in words'));
+    deep.slice().sort((a, b) => a.rank_pident - b.rank_pident).forEach(r => {
+      const rs = r.read_support || {};
+      const others = (r.genes || []).map(o => o.pident)
+        .filter(v => v != null && Math.abs(v - r.rank_pident) > 0.05)
+        .sort((a, b) => b - a);
+      const line = el('div', 'gline');
+      line.innerHTML = '<b>' + esc(r.taxon) + '</b> &mdash; ' +
+        (r.contig_nt / 1000).toFixed(1) + ' kb, covered ' +
+        (rs.breadth_covered > 0.98 ? 'end to end' : pct(rs.breadth_covered) + ' of its ' +
+          'length') + ' at ' + Math.round(rs.mapped_mean_depth) + ' reads deep. Its ' +
+        (r.ranked_on === 'polymerase' ? 'polymerase' : 'best-scoring gene') + ' is <b>' +
+        num(r.rank_pident, 1) + '% identical</b> to the closest published protein' +
+        (others.length ? '; its other genes read ' +
+          others.map(v => num(v, 1) + '%').join(' and ') : '') + '. ' +
+        (rs.evenness_within_2x_of_median < 0.6
+          ? 'Its coverage is uneven, so part of it may be a different molecule. ' : '') +
+        '<span class="dim">The name is the nearest relative, not an identification.' +
+        '</span>';
+      d.append(line);
     });
     p.append(d);
-    p.append(el('p', 'note',
-      'Depth is every read in the library mapped back. The assembler coverage header ' +
-      'understates read support about fourfold on this set. Breadth is above 99% on ' +
-      'all of them.' + cite('depth')));
   }
 
-  if (!rows.length) {
-    // No workup in this run directory: fall back to the whole-contig ranking and say so.
-    const rank = el('div', 'ranked');
-    const spread = Math.max(5, 100 - (taxa[0] || {}).median_identity_percent);
-    const draw = t => {
-      const r = el('div', 'rrow');
-      const id = t.median_identity_percent;
-      const k = Math.max(0, Math.min(1, (100 - id) / spread));
-      r.innerHTML =
-        '<div class="rno mono wide">' + num(id, 1) + '%</div>' +
-        '<div class="rname"><b>' + esc(t.name) + '</b>' +
-        (t.on_the_panel ? '<span class="chip strong">on the watchlist</span>' : '') +
-        '</div>' +
-        '<div class="rbar"><i style="width:' + Math.max(2, 100 * k).toFixed(1) +
-        '%;background:var(--v2);opacity:' + (0.35 + 0.65 * k).toFixed(2) + '"></i></div>' +
-        '<div class="rval dim">over ' + t.median_aligned_aa + ' aa, ' + t.contigs +
-        ' contig' + (t.contigs === 1 ? '' : 's') + '</div>';
-      r.title = t.reading;
-      return r;
-    };
-    taxa.slice(0, 10).forEach(t => rank.append(draw(t)));
-    p.append(rank);
-    p.append(el('p', 'note',
-      'Ranked on one best hit per contig, which is whichever gene won on bitscore.' +
-      cite('genespread') +
-      ' Run experiments/divergent_contig_workup.py for the gene-level ranking.'));
-  } else {
-    const rank = el('div', 'ranked');
-    rank.append(el('div', 'pghead',
-      'every divergent contig, by its polymerase. bar is distance from the database'));
-    const spread = Math.max(5, 100 - rows[0].rank_pident);
-    const draw = r => {
-      const row = el('div', 'rrow');
-      const k = Math.max(0, Math.min(1, (100 - r.rank_pident) / spread));
-      const genes = (r.genes || []).filter(g => g.role !== 'other');
-      row.innerHTML =
-        '<div class="rno mono wide">' + num(r.rank_pident, 1) + '%</div>' +
-        '<div class="rname"><b>' + esc(r.taxon) + '</b>' +
-        (r.ranked_on === 'polymerase' ? '' :
-          '<span class="chip">no polymerase; whole contig</span>') +
-        (r.orf_identity_spread_points >= 20
-          ? '<span class="chip strong">genes differ by ' +
-            num(r.orf_identity_spread_points, 0) + ' points</span>' : '') +
-        '</div>' +
-        '<div class="rbar"><i style="width:' + Math.max(2, 100 * k).toFixed(1) +
-        '%;opacity:' + (0.35 + 0.65 * k).toFixed(2) + '"></i></div>' +
-        '<div class="rval dim">' + (r.contig_nt / 1000).toFixed(1) + ' kb, ' +
-        Math.round((r.read_support || {}).mapped_mean_depth || 0) + 'x</div>';
-      row.title = genes.map(g => g.role + ' ' + num(g.pident, 1) + '% over ' +
-                                 g.aln_aa + ' aa').join('; ') || r.contig;
-      return row;
-    };
-    rows.slice(0, 10).forEach(r => rank.append(draw(r)));
-    p.append(rank);
-    if (rows.length > 10) {
-      const d = el('details', 'more');
-      const s2 = document.createElement('summary');
-      s2.textContent = 'the other ' + (rows.length - 10);
-      d.append(s2);
-      const r2 = el('div', 'ranked');
-      rows.slice(10).forEach(r => r2.append(draw(r)));
-      d.append(r2);
-      p.append(d);
-    }
-  }
-
-  // The calibration, on the face of the panel: what each gene reads on the divergent arm
-  // against what it reads on contigs that match their reference.
-  if (dsum && ctrl && dsum.by_gene_role && ctrl.by_gene_role) {
-    const box = el('div', 'cmp');
-    box.append(el('div', 'pghead', 'by gene, against near-reference contigs'));
-    const order = ['polymerase', 'maturation', 'coat', 'lysis', 'other'];
-    order.filter(g => dsum.by_gene_role[g]).forEach(g => {
-      const a = dsum.by_gene_role[g], b = ctrl.by_gene_role[g] || {};
-      const r = el('div', 'crow');
-      r.innerHTML = '<div class="clab">' + esc(g) + '</div>' +
-        '<div class="cbar"><span style="width:' + a.median_pident.toFixed(1) +
-        '%;background:var(--v2)"></span></div>' +
-        '<div class="cnum mono">' + num(a.median_pident, 1) + '%</div>' +
-        '<div class="csub dim">' + a.orfs + ' genes on divergent contigs, against ' +
-        (b.median_pident != null ? num(b.median_pident, 1) + '% over ' + b.orfs +
-          ' on contigs that match their reference' : 'no control genes of this role') +
-        '</div>';
-      box.append(r);
+  /* EVERYTHING ELSE, as one table behind a disclosure. */
+  if (rows.length) {
+    const det = el('details', 'more');
+    const sm = document.createElement('summary');
+    sm.textContent = 'all ' + rows.length + ' divergent contigs, with their numbers';
+    det.append(sm);
+    const sc = el('div', 'scroll');
+    const tb = el('table');
+    tb.innerHTML = '<thead><tr><th>nearest named relative</th><th>identity</th>' +
+      '<th>ranked on</th><th>genes disagree by</th><th>length</th><th>depth</th>' +
+      '</tr></thead>';
+    const body = el('tbody');
+    rows.forEach(r => {
+      const tr = el('tr');
+      tr.innerHTML = '<td>' + esc(r.taxon) + '</td><td class="mono">' +
+        num(r.rank_pident, 1) + '%</td><td class="dim">' + esc(r.ranked_on) +
+        '</td><td class="mono">' + (r.orf_identity_spread_points == null
+          ? '<span class="dim">one gene</span>'
+          : num(r.orf_identity_spread_points, 1) + ' pts') +
+        '</td><td class="mono">' + (r.contig_nt / 1000).toFixed(1) + ' kb</td>' +
+        '<td class="mono">' + Math.round((r.read_support || {}).mapped_mean_depth || 0) +
+        'x</td>';
+      tr.title = r.contig;
+      body.append(tr);
     });
-    p.append(box);
+    tb.append(body); sc.append(tb); det.append(sc); p.append(det);
+  }
+
+  /* The gene-level calibration, as one sentence instead of a fourth bar chart. */
+  if (dsum && ctrl && dsum.by_gene_role && ctrl.by_gene_role) {
+    const g = dsum.by_gene_role, c = ctrl.by_gene_role;
     const cal2 = el('div', 'callout');
+    const say = k => g[k] ? k + ' ' + num(g[k].median_pident, 1) + '% against ' +
+      (c[k] ? num(c[k].median_pident, 1) + '%' : 'no control') : null;
     cal2.innerHTML =
-      'The genes on one contig disagree by a median of <b>' +
-      num(dsum.median_orf_identity_spread_points, 1) + ' points</b> on the divergent ' +
-      'arm and <b>' + num(ctrl.median_orf_identity_spread_points, 2) +
-      '</b> on the control, so one identity per contig reports whichever gene won on ' +
-      'bitscore.' + cite('genespread') +
-      ' The chimaera flag fires on ' + pct(dsum.fraction_flagged_subject_disagreement) +
-      ' of divergent contigs and ' + pct(ctrl.fraction_flagged_subject_disagreement) +
-      ' of controls, so it describes how the assembler joins genes and nothing is ' +
-      'dropped on it.' + cite('chimaera');
+      'Which gene you measure decides the answer. On these contigs the genes of one ' +
+      'contig disagree by a median of <b>' +
+      num(dsum.median_orf_identity_spread_points, 1) + ' points</b>, against <b>' +
+      num(ctrl.median_orf_identity_spread_points, 2) + '</b> on contigs that match ' +
+      'their reference, so a single identity per contig reports whichever gene won on ' +
+      'bitscore.' + cite('genespread') + ' By role, divergent against near-reference: ' +
+      ['polymerase', 'maturation', 'coat'].map(say).filter(Boolean).join(', ') + '.';
     p.append(cal2);
   }
 
-  // The blind-spot list is five sentences from the result file. It stays complete and
-  // goes behind a disclosure rather than onto the face of the panel.
   const bs = el('details', 'more');
   const bsum = document.createElement('summary');
   bsum.textContent = 'limitations of this measurement';
@@ -3353,7 +3351,7 @@ function interval(iv) {
   bl.className = 'note';
   ((S.blind_spots || []).concat((W && W.blind_spots) || [])).forEach(x => {
     const li = document.createElement('li');
-    li.textContent = String(x).replace(/\.$/, '') + '.';
+    li.textContent = String(x).replace(/\\.$/, '') + '.';
     bl.append(li);
   });
   bs.append(bl);
@@ -3518,7 +3516,7 @@ function interval(iv) {
   // below the fold: it was all on the front page before, and the front page was a
   // method report wearing a sample report's clothes.
   const SUMMARY = ['Watchlist screen', 'What this water is',
-                   'Assembled viruses and their divergence',
+                   'How far the assembled viruses sit from anything published',
                    'The unnamed remainder', 'Methods'];
   const panels = Array.prototype.filter.call(app.children,
     n => n.tagName === 'SECTION' && n.classList.contains('panel'));
