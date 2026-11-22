@@ -718,21 +718,20 @@ def arm_foldseek(bins: dict, dbs: dict, out: Path, threads: int, target: str) ->
     qdb, resdb = out / f"fsq_{target}", out / f"fsr_{target}"
     tsv = out / f"foldseek_{target}.tsv"
     if not qdb.with_suffix(".dbtype").exists():
-        # WHAT `--prostt5-model` ACTUALLY WANTS, now read off the source rather than
-        # guessed at. This build (9-427df8a, src/strucclustutils/structcreatedb.cpp) takes
-        # a DIRECTORY and looks in it for `model.safetensors` or `model.gguf`, optionally
-        # under a further `model/`. It recognises no other name - not even
-        # `prostt5-f16.gguf`, which is what foldseek's own release tarball ships and what
-        # this account's S3 holds. Three runs were spent on that: the weights were present
-        # and 2.4 GB and foldseek said "Could not find ProstT5 model weights" every time.
-        # Staging now writes them as `model.gguf`, so there is one path and no guessing.
+        # WHAT `--prostt5-model` WANTS, read off the source rather than guessed at.
+        # It takes a DIRECTORY and foldseek looks inside it for a weights file by name, and
+        # the accepted names differ between releases: 9-427df8a takes `model.safetensors` or
+        # `model.gguf` and SEGFAULTS on the f16 gguf this account holds, while 10-941cd33
+        # takes `prostt5-f16.gguf` and reads that same file. All the names are accepted here
+        # so the arm does not have to track the pin, but the pin is what makes it work and
+        # `experiments/ec2_reach.py` carries why.
         #
-        # The output is still captured, because `check=True` discards foldseek's own
-        # complaint and the exit code carries none of it - which is why it took three runs
-        # to read one sentence.
+        # The output is captured because `check=True` discards foldseek's own complaint and
+        # the exit code carries none of it. Four runs went by on an exit 1 that turned out
+        # to be a segfault, visible in two seconds once the binary was run in the container.
         model = Path(dbs["prostt5"])
-        weights = [model / "model.gguf", model / "model.safetensors",
-                   model / "model" / "model.gguf"]
+        weights = [model / "prostt5-f16.gguf", model / "model.gguf",
+                   model / "model.safetensors", model / "model" / "model.gguf"]
         if not any(w.exists() for w in weights):
             raise FileNotFoundError(
                 f"{model} holds none of the names this foldseek build reads "
@@ -766,15 +765,23 @@ def arm_foldseek(bins: dict, dbs: dict, out: Path, threads: int, target: str) ->
             "--max-seqs", 1000, "-s", 9.5])
         mode = "prefiltered -s 9.5"
     print(f"  foldseek {target}: {mode}", flush=True)
+    # NO TM-SCORE AND NO LDDT, AND THE REASON IS THE WHOLE POINT OF THE ARM. Both are
+    # superposition scores: they need C-alpha coordinates on BOTH sides. A ProstT5 query
+    # database has no coordinates at all - the model writes the 3Di alphabet straight from
+    # sequence, which is what makes this arm cost CPU instead of a GPU and a folding run.
+    # Asking for them gets "No datafile could be found for <db>_ca", found in the container
+    # in one command rather than on an instance. So this arm reports a structural-alphabet
+    # alignment with its E-value and identity, and the two numbers a structural biologist
+    # would actually want are the price of not folding anything. Folding the 54 real ORFs
+    # with ESMFold is about $4 on a GPU instance and is the way to get them.
     sh([bins["foldseek"], "convertalis", qdb, dbs[f"fs_{target}"], resdb, tsv,
         "--threads", threads, "--format-output",
-        "query,target,fident,alnlen,qlen,tlen,qstart,qend,tstart,tend,evalue,bits,"
-        "qcov,alntmscore,lddt"])
+        "query,target,fident,alnlen,qlen,tlen,qstart,qend,tstart,tend,evalue,bits,qcov"])
     rows = []
     with open(tsv) as handle:
         for line in handle:
             f = line.rstrip("\n").split("\t")
-            if len(f) < 15:
+            if len(f) < 13:
                 continue
             rows.append(dict(
                 arm=f"foldseek_{target}",
@@ -783,7 +790,7 @@ def arm_foldseek(bins: dict, dbs: dict, out: Path, threads: int, target: str) ->
                 aln=int(f[3]), qlen=int(f[4]), slen=int(f[5]),
                 qstart=int(f[6]), qend=int(f[7]), sstart=int(f[8]), send=int(f[9]),
                 evalue=float(f[10]), bitscore=float(f[11]), qcov=float(f[12]),
-                tmscore=float(f[13]), lddt=float(f[14])))
+                tmscore=None, lddt=None))
     return rows
 
 

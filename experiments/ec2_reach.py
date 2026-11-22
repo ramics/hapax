@@ -73,7 +73,21 @@ HHSUITE_VERSION = "3.3.0"
 #: a floating URL would make that number uncitable.
 HH_PFAM_URL = ("https://wwwuser.gwdg.de/~compbiol/data/hhsuite/databases/hhsuite_dbs/"
                "pfamA_35.0.tar.gz")
-FOLDSEEK_VERSION = "9-427df8a"
+#: WHY THIS VERSION AND NOT THE EARLIER PIN, which cost four runs. Release 9-427df8a reads
+#: ProstT5 weights only as `model.safetensors` or `model.gguf`, and the only gguf its own
+#: downloader ships is a q4_0 quantisation. Handed the f16 gguf this account holds - the
+#: right model, the right format, 2.4 GB - it SEGFAULTS inside the model load, which on EC2
+#: surfaced as a bare exit 1 with no message. Release 10-941cd33 looks for
+#: `prostt5-f16.gguf`, which is what that file is, and writes 3Di from it on CPU. Verified
+#: in the container against the real panel before this pin was changed, which is also why
+#: the fifth run was the first cheap one: foldseek plus the weights is a 20-second download
+#: here, so the arm is debuggable locally and never needed an instance to fail on.
+#:
+#: Foldseek's own weights distribution is not an alternative: both
+#: `prostt5-f16-safetensors.tar.gz` and `prostt5-q4_0-gguf.tar.gz` answered Cloudflare 1027
+#: (daily quota exhausted) from two networks on 2026-11-22, and a 429 body is 17 bytes that
+#: `foldseek databases ProstT5` untars, fails on, and still exits 0 for.
+FOLDSEEK_VERSION = "10-941cd33"
 
 #: Eight vCPU is the account ceiling - every `4xlarge` and larger came back
 #: `UnauthorizedOperation`, which reads exactly like having no EC2 permission at all. c6i

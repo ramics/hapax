@@ -277,25 +277,22 @@ fi
 # The structure arms. AlphaFold/Swiss-Prot is the target that makes arm 4 comparable to arms
 # 1-2: it is the same subjects, folded.
 #
-# WHERE THE ProstT5 WEIGHTS COME FROM, AND THE NAME THAT COST THREE RUNS. `--prostt5-model`
-# takes a DIRECTORY, and this build of foldseek (9-427df8a,
-# src/strucclustutils/structcreatedb.cpp) looks inside it for exactly two names:
-# `model.safetensors` or `model.gguf`, optionally under a further `model/`. Nothing else is
-# recognised. This account's S3 holds the weights as `prostt5-f16.gguf`, which is the name
-# foldseek's own release tarball uses and which THIS version does not look for - so run 1
-# (file passed directly), run 2 (file alone in a directory) and run 3 (same, plus foldseek's
-# own download) all got "Could not find ProstT5 model weights" from a 2.4 GB file sitting
-# right where it was pointed.
+# WHERE THE ProstT5 WEIGHTS COME FROM. `--prostt5-model` takes a DIRECTORY and foldseek
+# looks inside it for a weights file by name. Release 10-941cd33 looks for
+# `prostt5-f16.gguf`, which is exactly what this account's S3 holds, so the file is staged
+# under its own name and nothing is renamed. Four runs were spent on the previous pin, which
+# looked for other names and segfaulted on this file; `experiments/ec2_reach.py` carries
+# that story at the version constant.
 #
-# So the S3 copy is staged under the name foldseek reads. Note also that
-# `foldseek databases ProstT5` is NOT a fallback: in run 3 its download returned 17 bytes,
-# tar failed, and the command still exited 0 - so its exit code says nothing about whether
-# weights exist, and only the file test below decides.
+# `foldseek databases ProstT5` is not used and is not a fallback. Its download answered
+# Cloudflare 1027 on 2026-11-22, and foldseek untarred the 17-byte error body, failed, and
+# exited 0 anyway - so its exit status says nothing about whether weights exist, and only
+# the file test below decides.
 if [ "$SKIP_STRUCTURE" = 0 ]; then
   mkdir -p /opt/hapax/db/prostt5
-  aws s3 cp "s3://@@BUCKET@@/@@PROSTT5_KEY@@" /opt/hapax/db/prostt5/model.gguf \
+  aws s3 cp "s3://@@BUCKET@@/@@PROSTT5_KEY@@" /opt/hapax/db/prostt5/prostt5-f16.gguf \
       --region "$REGION" || true
-  if [ -s /opt/hapax/db/prostt5/model.gguf ]; then
+  if [ -s /opt/hapax/db/prostt5/prostt5-f16.gguf ]; then
     if /opt/hapax/bin/foldseek databases Alphafold/Swiss-Prot \
         /opt/hapax/db/fs_afdb_sprot/afdb_sprot /opt/hapax/db/fstmp_afdb \
         --threads "$THREADS"; then
