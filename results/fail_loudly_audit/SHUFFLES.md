@@ -61,6 +61,18 @@ Re-run with the fixed walk, from the thread that owns that result: **0 of 11,361
 Berlin contigs produce a significant protein alignment and **0 of 932** shuffled ORFs do, the
 whole library yielding one 47 aa alignment at E=8.45e-4, which clears neither floor.
 
+### A census, not a tell
+
+CLAUDE.md's heuristic for a bad control is **the control moving with the test**, and it caught
+the broken shuffle twice. It cannot catch this one. A 0.027% contamination moves a null by
+nothing visible, so the tell stays silent while the defect is real; what caught it was
+**counting** — sequences offered, sequences shuffled, sequences handed back unchanged. The
+generalisation is worth more than the shuffle: **a tell is a reading of the output and a census
+is a property of the run.** A rate small enough to be invisible in the first is plain in the
+second, and the two broken copies cost a night precisely because neither counted. So every null
+ships its own census beside it rather than relying on a reader to notice its control twitch.
+PR #33's `null_census` is that, for the one that caused this.
+
 ### The defect is the missing tree condition, not the bare `return s`
 
 A grep for the fallback across `experiments/` finds five local copies, and **two of them are
