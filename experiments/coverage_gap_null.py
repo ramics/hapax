@@ -16,11 +16,18 @@ ones. The mechanism is exactly the one named when the control was requested.
 
 So this measures the same thing on THIS library, where the positive control is a real
 genome at a known distance rather than a population statistic, and tests the one
-refinement that could survive: **a gap built only from long HSPs**. The shuffled gaps are
-assembled from short scattered alignments on unrelated records; the withheld genome's two
-are 620 aa and 493 aa. If conditioning every contributing HSP on a length floor separates
-them, the field survives in that form. If it does not, the field is dead and this script
-is the record of how.
+refinement proposed while that kill still stood: **a gap built only from long HSPs**. The
+withheld genome's three genes align over 620, 493 and 135 aa, so a floor high enough to
+exclude chance alignments also discards one of its real genes, and the sweep measures that
+tension rather than assuming it away.
+
+The test is still worth having now that the kill is gone, for two reasons. It fails on its
+own terms rather than through the null - a floor moves the candidate from the 98.68th to the
+99.27th percentile while discarding 96% of the real pile, which is shrinking the measurement
+rather than sharpening a contrast. And with an empty null on this library, the sweep against
+the REAL distribution is the only discriminating thing these data can offer: where the null
+holds nothing, "the candidate is not chance" is as far as it goes, and the field's status is
+UNTESTED rather than cleared.
 
 Reported either way, and the thresholds are swept rather than chosen, because a floor
 picked after seeing where one candidate sits is a threshold fitted to a positive set of
@@ -291,9 +298,21 @@ def main() -> int:
         "dmnd": [str(d) for d in a.dmnd], "aa_floors": AA_FLOORS,
         "significance_evalue": SIGNIFICANCE_EVALUE,
         "contigs_scored": len(seqs), "shuffle_failures": failed,
+        # Whether the hit tables were searched in this run or taken from --work. The
+        # searches are deterministic given the same query file and index, but a reader
+        # cannot check that from the output, so the output says which happened.
+        "reused_hits": bool(a.reuse_hits),
         "seconds": round(time.time() - t0, 1),
-        "reading": "the field survives only if a floor exists at which the candidate "
-                   "leaves the shuffled distribution; swept, not chosen",
+        "reading": "with an empty shuffled null on this library the field cannot be "
+                   "cleared here, only shown not to be chance; the floor sweep is "
+                   "against the real distribution, and the floors are swept, not chosen",
+        "note_on_the_withdrawn_kill":
+            "the Berlin kill this script was written to test was WITHDRAWN: that null "
+            "returned unshuffled input on dead-end walks, so every significant hit in it "
+            "was real material compared against itself. This arm imports the fixed walk "
+            "from holdout_run.py - 0 failures, 0 returned unchanged, 0 significant hits "
+            "on 22,110 shuffled contigs. Second occurrence of that bug in this repo in "
+            "two days; the shared module is experiments/shuffle_control.py.",
     }
     (a.out / f"coverage_gap_null_s{a.seed}.json").write_text(
         json.dumps(result, indent=1))

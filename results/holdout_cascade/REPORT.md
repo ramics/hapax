@@ -188,7 +188,9 @@ the removed pile under the first and the 50.18th under the second.
 | **the leak arm: 34 contigs of already-referenced genomes, same library** | **median 0.0, mean 0.0, max 0.0** |
 
 Not one known contig in this water has any gap at all, and the candidate is at the **95.85th
-percentile** of its length band. **It is not a gene-count artefact**: binned by number of
+percentile of its length band** - or the **98.68th percentile of the whole removed pile**,
+the two populations being different and both reported because quoting whichever is larger is
+how a field gets flattered. **It is not a gene-count artefact**: binned by number of
 significant subjects, the median gap is 0.0 in every bin, including the 5-subject bin that
 holds 4,399 of the 7,601 contigs and has a mean of 1.9 - and the candidate has 5 subjects.
 A gap requires several genes but several genes do not produce a gap.
@@ -202,117 +204,128 @@ size one, so eight rows is what favourable tuning can achieve and not a validate
 point. The two numbers that were *not* tuned are the ones to carry: the leak arm's three
 zeroes, and the 95.85th percentile.
 
-#### The shuffle control was run, and the field fails it
+#### The shuffle control: one broken arm, one clean one, and the field stands uncontrolled
 
-The control named above as missing - a union is the single statistic a pile of weak chance
-HSPs inflates without limit, because each one contributes interval - was run by the
-gene-level thread on Berlin within the hour, and **the field does not survive it. The null
-is not merely comparable; it is higher.**
+This field's control history is the most instructive thing in the report, so it is given in
+the order it happened rather than tidied into a conclusion.
 
-| gap, percentage points | real (10,172 contigs) | dinucleotide-shuffled (304 clearing the same bar) |
-|---|---|---|
-| median | 0.38 | **1.43** |
-| p90 | 21.5 | **35.9** |
-| p99 | 46.2 | 49.6 |
-| above 10 points | 14.51% | **35.53%** |
-| above 30 points | 5.81% | **14.47%** |
+**The field was reported with its missing control named** - a union is the single statistic a
+pile of weak chance HSPs inflates without limit, because each one contributes interval. The
+gene-level thread ran that arm on Berlin within the hour and reported a kill: a *shuffled*
+contig looked more than twice as likely as a real one to show a gap above 30 points, which
+would have put the candidate's +36.6 at the null's p90. I recorded that as a kill.
 
-**A shuffled contig is more than twice as likely as a real one to show a gap above 30
-points**, by exactly the mechanism named when the control was requested: several
-weak-but-significant HSPs land on unrelated records in different places, none covers much,
-and the gap follows. The candidate's +36.6 therefore sits around the **null's p90** and
-cannot carry weight on its own. My gene-count control does not catch this and theirs
-reproduces mine exactly - median gap 0.0 in every subject-count bin on *both* arms - so that
-control was answering a question that was not the one that mattered.
+**That kill has been withdrawn, and the reason is a bug this repo has already had once.**
+Their `dinuc_shuffle` built successor lists, shuffled them, walked, and **on a dead end
+returned the input unchanged** after twenty retries. That fired on 324 of 11,361 contigs, and
+of the 304 "shuffled" contigs carrying a significant hit, **all 304 came from that set. Zero
+genuinely shuffled contigs cleared significance.** The null was a copy of the test, so what
+looked like a null exceeding the test was real material compared against itself.
 
-**This is the project's own stated tell, and I missed it in the right direction but not the
-right magnitude.** The field was reported with its missing control named, which is the rule;
-what the rule did not save me from is that naming a gap in the controls is not the same as
-knowing which way it points. Recorded as a kill, not a caveat.
+**My arm on this library agrees with their corrected answer, and it is the one that stands:**
 
-**What survives, and it is not nothing.** A gap near *zero* means one subject explains the
-contig, and that direction is solid - so the leak arm reading a maximum of 0.0 across 34
-contigs remains a real statement about known material. The failure is asymmetric: a large gap
-is **necessary** for multi-gene architecture and **not sufficient** for it.
+| arm | contigs | HSPs | with a significant hit | best E-value |
+|---|---|---|---|---|
+| real | 22,107 | 148,419 | **22,084** | 0.0 |
+| dinucleotide-shuffled | 22,110 | 9,608 over 5,335 contigs | **0** | 5.5e-4 |
 
-**The one refinement that could survive** is a gap built only from long HSPs. The shuffled
-gaps are assembled from short scattered alignments; the candidate's three genes align over
-620, 493 and 135 aa - and note that the third is short enough that a length floor high
-enough to exclude chance HSPs would also discard a real gene, which is the tension the sweep
-below is measuring rather than assuming away.
-`experiments/coverage_gap_null.py` tests this on *this* library, where the positive is a
-real genome at a known distance rather than a population statistic, sweeping the length floor
-rather than choosing one - because a floor picked after seeing where a single candidate sits
-is the same mistake this field already made once.
+0 walk failures, 0 returned unchanged, verified length-preserving and
+dinucleotide-count-exact before the run. **So no shuffled contig produces any significant
+hit, and therefore none produces any gap at all: the gap cannot be a chance artefact.**
 
-**It does not rescue the field, and the reason is worth more than the attempt.** On this
-library the shuffled arm has **no significant hits at all**: 22,110 identified non-ribosomal
-contigs, dinucleotide-shuffled with 0 walk failures, returned 9,608 HSPs over 5,335 contigs
-and **0 of them below E < 1e-5**, best E-value 5.5e-4, against 22,084 of 22,107 significant
-on the real arm. That is recorded as a census beside the distribution rather than as an empty
-distribution, because an arm with no significant hits and an arm that was never searched
-produce the same empty table, and that confusion is the entire content of three bugs found
-today.
+**This is the same failure mode, in the same repo, for the second time in two days, and a
+reader of both reports should not mistake them for independent findings.** `results/
+holdout_run/` (PR #29) discarded a complete 80-job run over exactly this: naive Eulerian
+walk, dead end, fallback `return seq`, 70.4% of the shuffled arm unshuffled, and a null that
+read like the test. That was found, fixed, documented and committed two days ago - and then
+**reimplemented from scratch in another thread, where it regressed to the same fallback.**
 
-So **the mechanism that kills the field on Berlin cannot operate here**, which means this
-library cannot test it. And the floor sweep shows why the refinement is not the answer anyway:
+**Why mine was right is the whole lesson, and it is not that I was careful.**
+`coverage_gap_null.py` *imports* `dinuc_shuffle` from `holdout_run.py` instead of writing its
+own. That is the only reason this arm is correct. A control's implementation belongs in one
+place and is imported, never rewritten, because the second writer does not know which
+non-obvious condition the first one was fixing. The shuffle is now a single
+`experiments/shuffle_control.py` that raises rather than returning anything, which is the
+structural fix; "be careful" is not one. One detail recorded there because it is the kind of
+thing a reimplementation loses: the last outgoing edge must be chosen among a vertex's
+*distinct* successors, or a homopolymer vertex picks itself and poly-A contigs exhaust every
+retry.
 
-| HSP floor | real contigs still scorable | real p90 gap | candidate | its percentile | real contigs at or above it |
-|---|---|---|---|---|---|
-| 0 aa | 22,084 | 1.65 | 36.62 | 98.68 | 292 |
-| 100 aa | 18,243 | 0.91 | 36.62 | 99.16 | 155 |
-| 200 aa | 5,397 | 0.88 | 36.62 | 99.15 | 47 |
-| 400 aa | 953 | 0.68 | 36.62 | 99.27 | 8 |
+**And the explicit census is what distinguishes the two cases.** An arm with no significant
+hits and an arm that silently copied the test both produce a table that *looks* fine - theirs
+looked populated and was wrong in the direction that manufactures a kill. Counting contigs
+with any hit, contigs with a significant hit, and the best E-value separates them, which is
+why those three numbers now sit beside the distribution rather than behind it.
 
-Raising the floor barely moves the candidate - 98.68th to 99.27th percentile - while
-**discarding 96% of the real pile**. It is not sharpening a contrast; it is shrinking the
-thing being measured. And at any floor above 150 aa the candidate's own coat gene, 135 aa,
-is excluded, so the gap would then be computed from a subset of its real genes. **The field
-stays killed.**
+#### So where the field actually stands: not refuted, not established
 
-**One open discrepancy, which is theirs and mine jointly and should not be papered over.**
-Their shuffled arm has 2.68% of contigs clearing significance and produces large gaps; mine
-has **0.00%**. Same nominal procedure, opposite verdicts, and this repo's rule is never to
-compare two instruments - so the difference is a thing to resolve rather than a result either
-of us can lean on. Candidate causes, unresolved: a different E-value floor, a much larger
-protein index behind their arm, a different contig length distribution, or a shuffle applied
-to ORFs rather than to the nucleotide contig. Until that is settled, **the Berlin kill is the
-one that governs**, because a field is dead as soon as any competent null kills it, and a
-clean null elsewhere does not revive it.
+| | |
+|---|---|
+| the withheld genome | **+36.6 points**, the **98.68th percentile** of the real arm |
+| shuffled null | **empty** - no significant hit on any of 22,110 contigs, so no gap |
+| leak arm, 34 known contigs, same library | median, mean **and max 0.0** |
+| real contigs at or above the candidate | **292**, 1.3% of the removed pile |
+
+That is a clean negative arm on both sides and a positive set of **one**. The honest word is
+**uncontrolled from the other side rather than cleared**: what has been shown is that the
+gap is not chance, which was the specific objection, and what has *not* been shown is that
+it is a property of novelty rather than of multi-gene architecture. A large gap is
+**necessary** for multi-gene architecture and the leak arm says known multi-gene material in
+this water does not produce one - but those 34 contigs are a handful of single-ORF-dominated
+tobamoviruses, so that arm is thin in exactly the way that matters.
+
+**The refinement does not help, and that result is unaffected by the retraction**, because it
+was measured on my own arm throughout. Conditioning the gap on a minimum HSP length moves the
+candidate from the 98.68th to the 99.27th percentile while discarding 96% of the real pile,
+and above 150 aa it excludes the candidate's own 135 aa coat gene, so the gap would then be
+built from a subset of its real genes:
+
+| HSP floor | real contigs still scorable | real p90 gap | candidate percentile | real at or above |
+|---|---|---|---|---|
+| 0 aa | 22,084 | 1.65 | 98.68 | 292 |
+| 100 aa | 18,243 | 0.91 | 99.16 | 155 |
+| 200 aa | 5,397 | 0.88 | 99.15 | 47 |
+| 400 aa | 953 | 0.68 | 99.27 | 8 |
+
+A floor is shrinking the thing measured, not sharpening a contrast. **The shortlist the field
+yields on this library is ~292 contigs, not the 8 that favourable tuning produced**, and 292
+is the number to carry.
 
 **And the leak arm's three zeroes rest on 34 contigs from a handful of
 single-ORF-dominated tobamoviruses**, so "known material has no gap" may be partly a
 statement about which viruses happened to be already known in this water.
 
-### Corroboration and a calibration, from the gene-level thread
+### Corroboration from the gene-level thread, and what of it survives its own retraction
 
-Two results from `results/divergent_known/` (the `Subtract the known, score the unknown`
-thread), which measured the same pile with a different instrument. They are quoted here
-because one of them qualifies the table above rather than just agreeing with it.
+`results/divergent_known/` (the `Subtract the known, score the unknown` thread) measured the
+same kind of pile on Berlin with a per-gene instrument. Its shuffled arm carried the bug
+described above, so everything of theirs that rested on that arm is withdrawn and is **not**
+quoted here. Listed rather than silently dropped, because an absent corroboration that a
+reader remembers seeing is worse than a named one:
 
-**Same direction, different instrument.** Over 11,361 identified non-ribosomal contigs of at
-least 300 nt, 10,170 clear E < 1e-5 at 60 aa with a **median identity of 45.1%**, and only
-**4.3% sit at 90% or above**. That is consistent with the 40.0% median here once their
-Swiss-Prot arm and 300 nt floor are accounted for. So "the removed pile is mostly distant
-relatives" is now measured twice, independently.
+- *"existence of a significant alignment separates real from shuffled 89.52% against 2.68%, a
+  factor of 33"* - withdrawn. The true null is zero, so the separation is total and the
+  factor is undefined rather than 33.
+- *"conditional on a hit, almost nothing about the alignment separates real from shuffled"* -
+  withdrawn. That comparison was real material against real material.
+- *"the fraction of the contig covered is the one field above chance, at 26.34%"* - withdrawn,
+  and with it the one external support this report had for ordering a shortlist on coverage.
+- their per-column conserved-core result, which used a copy of the same shuffle - withdrawn.
 
-**The qualification, and it matters for which axis to trust.** They shuffled each contig
-dinucleotide-wise and ran it through the same search in the same pass. **Whether a significant
-alignment exists at all** separates real from shuffled completely - 89.52% against 2.68%, a
-factor of 33. But **conditional on a hit existing, almost nothing about the hit separates
-them**: median identity 45.1% real against 43.5% shuffled. Scored as the share of real hits
-above the shuffled p90, where 10% sit above by construction: identity 11.98%, alignment length
-7.10%, subject coverage 7.52%, bitscore 7.63% - all at or near chance. **The one field
-carrying real information is the fraction of the contig covered, at 26.34%.**
+**What survives is the half that never touched the shuffle.** Over 11,361 identified
+non-ribosomal contigs of at least 300 nt, 10,170 clear E < 1e-5 at 60 aa with a **median
+identity of 45.1%**, and only **4.3% sit at 90% or above**. That is real-arm-only and
+consistent with the 40.0% median here once their Swiss-Prot arm and 300 nt floor are
+accounted for, so **"the removed pile is mostly distant relatives" is still measured twice,
+independently.** Their per-gene role result also stands - it is an ordering within real
+contigs - and it is the ground-truth confirmation reported further down.
 
-That control is about telling a real hit from a chance one, not about the coverage-by-identity
-table above, which is on real material throughout. But the two measurements converge on the
-same axis from opposite directions, which is the reason to trust it: **their shuffle says
-coverage is the only field carrying information above chance, and our ground truth says
-coverage is the field that turns a 93rd-percentile identity into a 0.92% cell.** Identity
-conditional on a hit is weaker than it looks in both. A shortlist ordered on coverage with
-identity beside it is better supported than the reverse, and that is now two independent
-reasons rather than one preference.
+**The consequence for this report is that I now have less external support, not more.** The
+coverage axis was the one recommendation here with a second instrument behind it, and that
+instrument has withdrawn its reading. Coverage is still what the ground truth in this
+experiment points at - it is what turns a 93.46th-percentile identity into a 0.92% cell - but
+that is now **one measurement on one library with one positive**, not two converging ones.
+Stated plainly because the earlier version of this section claimed the convergence.
 
 ## So what is defensible
 
@@ -338,14 +351,17 @@ shortlist with a count on it.
 rhetorical: a 70-row list is useful and a 70-row list ordered wrongly is not, so what orders
 it is the next measurement rather than this one.
 
-**What should not order it is the coverage gap, which was the best candidate here and is
-dead.** It read zero on all 34 known contigs from the same water and +36.6 points on the one
-we know is novel, and it was the only field in this experiment that was not a restatement of
-database proximity. Its shuffle control, run the same day, put the null *above* the test. So
-the honest answer to "what orders the list" is **still open**, and the only axis with
-calibration behind it from either side remains the plain fraction of the contig covered:
-26.34% of real hits above the shuffled p90 against 7-12% for identity, alignment length,
-subject coverage and bitscore.
+**The coverage gap is not recommended for it, and that is a separate statement from the
+withdrawn kill.** Its status is **untested**, not cleared: the kill against it was withdrawn
+because the null that produced it was broken, which removes an argument against the field
+without supplying one for it. This library cannot supply one either - with no significant hit
+on any of 22,110 shuffled contigs, its null has nothing in it to compare against, so "the gap
+is not chance here" is as much as these data can say. It needs the corrected Berlin null,
+which is re-running in the thread that owns it, and a second positive. **No ordering should
+be built on it until then**, and nothing in this report's recommendations depends on it.
+
+So **what should order the shortlist is still open.** The coverage axis is what the ground
+truth here points at, and it now has one measurement behind it rather than two.
 
 **The honest size of that list is not yet known, and the direction is one-sided.** These
 distances are measured against RefSeq viral plus Swiss-Prot only, which is a narrow index, so
