@@ -226,7 +226,7 @@ def growth(subs, info, mats, meds, groups, length, top: int):
     out, summary = [], {}
     for cset in ("unident", "ident"):
         for kind in ("real", "null"):
-            ratios, swapped, by_mate = [], [], {1: [], 2: []}
+            ratios, swapped, carried, by_mate = [], [], [], {1: [], 2: []}
             for seed in SEEDS:
                 blocks = group_blocks(groups, (cset, kind, seed))
                 if blocks is None:
@@ -253,6 +253,7 @@ def growth(subs, info, mats, meds, groups, length, top: int):
                 per_s = _per_contig_median(gs, starts, widths, w)
                 ratios.append(per)
                 swapped.append(per_s)
+                carried.append(_per_contig_median(p99, starts, widths, w) >= 1.0)
                 for m, sl in ((1, slice(0, w)), (2, slice(w, 2 * w))):
                     gm, cm = g[sl], np.arange(w)
                     by_mate[m].append(np.array([
@@ -274,11 +275,14 @@ def growth(subs, info, mats, meds, groups, length, top: int):
                                     "own_mean_depth_mate1": round(float(own_med[t]), 1),
                                     "panel_p99_mean_mate1": round(float(p99_med[t]), 1),
                                     "panel_witnessed_windows": round(float(occ[t]), 4),
+                                    "panel_carries_contig": int(carried[-1][t]),
                                     "own_count_capped": int(
                                         (meds["med1"][own, cols][c] >= 65535).any())})
 
-            def agg(parts):
+            def agg(parts, mask=None):
                 a = np.concatenate(parts) if parts else np.array([])
+                if mask is not None:
+                    a = a[np.concatenate(mask)]
                 return {"contigs": int(a.size),
                         **{f"frac_ge_{t}": round(float((a >= t).mean()), 6) if a.size else None
                            for t in (2, 5, 10, 100)},
@@ -288,6 +292,17 @@ def growth(subs, info, mats, meds, groups, length, top: int):
             summary[f"{cset}|{kind}_swap_control"] = agg(swapped)
             summary[f"{cset}|{kind}_mate1"] = agg(by_mate[1])
             summary[f"{cset}|{kind}_mate2"] = agg(by_mate[2])
+            # Where the panel carries no depth at all the ratio's denominator is the +1
+            # alone, so "growth" there is own depth wearing a ratio's clothes - and that is
+            # most of the top of the list. Split it: carried contigs give a real ratio,
+            # uncarried ones are an absence result and belong with the occupancy numbers,
+            # not among the blooms. The swap control is split the same way or the comparison
+            # moves with the stratum.
+            summary[f"{cset}|{kind}_panel_carried"] = agg(ratios, carried)
+            summary[f"{cset}|{kind}_panel_carried_swap_control"] = agg(swapped, carried)
+            summary[f"{cset}|{kind}_panel_absent"] = agg(ratios, [~m for m in carried])
+            summary[f"{cset}|{kind}_panel_absent_frac"] = round(
+                float(np.concatenate([~m for m in carried]).mean()), 6) if carried else None
     out.sort(key=lambda d: -d["growth"])
     return out[:top], summary
 
