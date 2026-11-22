@@ -1,0 +1,285 @@
+{
+  "tool": "hapax run",
+  "spec": "SPEC.md 8.1",
+  "script": "hapax.py",
+  "script_sha256": "4e52eeda07642921f91c0aac4af461ed9920bef53b2a998c7ebca45e396467db",
+  "git_sha": "5134e4297494c9d9b71d316e10380969fbaf95c0",
+  "tree_dirty": true,
+  "seed": 2,
+  "inputs": {
+    "r1": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/reads/SRR23421544.fastq.gz",
+    "r2": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/reads/SRR23421544.fastq.gz",
+    "r1_bytes": 221730689,
+    "r2_bytes": 221730689,
+    "trim_r2": 0,
+    "trim_note": "measured, not detected: the non-template prefix is a distribution with mode 14 (results/nontemplate_prefix/). The trim is TWO operating points and this run uses one. 14 is right for anything that reads sequence, because those bases are real template; 16 is the better Kraken2 setting, because confidence is a fraction of a read's minimizers, and it identifies 1.03-1.11 points more on this library and 1.60-1.84 more on the 2022 one (5 seeds each). Passing 14 everywhere therefore costs about a point of identification, recorded here rather than left implicit."
+  },
+  "parameters": {
+    "command": "run",
+    "r1": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/reads/SRR23421544.fastq.gz",
+    "r2": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/reads/SRR23421544.fastq.gz",
+    "seed": 2,
+    "out": "results/holdout_cascade/run_s2",
+    "pairs": 200000,
+    "report_pairs": 2000,
+    "linkage_pairs": 20000,
+    "census_queries": 3000,
+    "trim_r2": 0,
+    "single_end": true,
+    "diamond_bin": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/bin/diamond",
+    "classify_bin": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/k2pkg/root/share/kraken2-2.17.2/libexec/classify",
+    "threads": 4,
+    "k2_no_memory_map": true,
+    "contigs": [
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_rrna.fa",
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_identified_norrna.fa"
+    ],
+    "unidentified_contigs": [
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_unidentified.fa"
+    ],
+    "k2_dbs": [
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_viral_20210517.d",
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_standard08.d",
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_pluspf08.d"
+    ],
+    "silva": [
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/SSURef_NR99_1381.fasta.gz",
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/LSURef_NR99_1381.fasta.gz"
+    ],
+    "dmnd": [
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/viral_holdout.dmnd",
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/sprot.dmnd"
+    ],
+    "spike_genome": "/home/user/hapax/data/spike/holdout.fa",
+    "calibrate": false,
+    "stages": [
+      "cascade",
+      "contigs",
+      "reads",
+      "intervals",
+      "layers",
+      "strains"
+    ],
+    "work": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared",
+    "plan": false
+  },
+  "stages": [
+    {
+      "stage": "cascade",
+      "status": "ok",
+      "script": "subtract_known.py",
+      "seconds": 510.6,
+      "argv": [
+        "--seed",
+        "2",
+        "--pairs",
+        "200000",
+        "--r1",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/reads/SRR23421544.fastq.gz",
+        "--r2",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/reads/SRR23421544.fastq.gz",
+        "--trim-r2",
+        "0",
+        "--threads",
+        "4",
+        "--rows-out",
+        "--work",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade_work",
+        "--out",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade",
+        "--k2-dbs",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_viral_20210517.d",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_standard08.d",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_pluspf08.d",
+        "--silva",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/SSURef_NR99_1381.fasta.gz",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/LSURef_NR99_1381.fasta.gz",
+        "--dmnd",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/viral_holdout.dmnd",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/sprot.dmnd",
+        "--classify-bin",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/k2pkg/root/share/kraken2-2.17.2/libexec/classify",
+        "--diamond-bin",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/bin/diamond",
+        "--no-k2-memory-map",
+        "--selfasm",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_rrna.fa",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_identified_norrna.fa",
+        "--observe",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_unidentified.fa"
+      ],
+      "provenance": {
+        "git_sha": "65520e83e9aa02b28a682a4fc897cf7da117f414-dirty",
+        "script_sha256": "absent from this stage's own manifest"
+      },
+      "outputs": {
+        "tiers.json": {
+          "bytes": 9735,
+          "sha256_16": "930b14e54e5a971c",
+          "from": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade/subtract_s2.json"
+        },
+        "stages/cascade_manifest.json": {
+          "bytes": 2687,
+          "sha256_16": "a5fb2e224724d905",
+          "from": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade/manifest_s2.json"
+        },
+        "stages/cascade_rows.jsonl": {
+          "bytes": 22693536,
+          "sha256_16": "ae2e043354d83931",
+          "from": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade/residue_rows_s2.jsonl"
+        }
+      },
+      "log": "stages/cascade.log"
+    },
+    {
+      "stage": "contigs",
+      "status": "ok",
+      "rows": 13033,
+      "outputs": {
+        "contigs.jsonl": {
+          "bytes": 6091662,
+          "rows": 13033,
+          "sha256_16": "8316afce58153311"
+        }
+      },
+      "assembly": {
+        "source": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_unidentified.fa",
+        "sha256_16": "a22aaa8313d6d2d3",
+        "assembled_at_run_time": false,
+        "note": "supplied contig set; see assembly.json"
+      }
+    },
+    {
+      "stage": "reads",
+      "status": "ok",
+      "script": "residue_report.py",
+      "seconds": 1666.7,
+      "argv": [
+        "--seed",
+        "2",
+        "--residue",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade_work/residue_s2.fa",
+        "--reads",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade_work/residue_s2.fa",
+        "--max-pairs",
+        "2000",
+        "--threads",
+        "4",
+        "--library-r1",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/reads/SRR23421544.fastq.gz",
+        "--library-r2",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/reads/SRR23421544.fastq.gz",
+        "--work",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/reads_work",
+        "--out",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/reads",
+        "--subtracted-reads",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade_work/subtracted_s2.fa",
+        "--dmnd",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/viral_holdout.dmnd",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/sprot.dmnd",
+        "--diamond-bin",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/bin/diamond",
+        "--single-end"
+      ],
+      "provenance": {
+        "git_sha": "5134e4297494c9d9b71d316e10380969fbaf95c0",
+        "tree_dirty": false,
+        "script_sha256": "11b925110f3324ce"
+      },
+      "outputs": {
+        "reads.jsonl": {
+          "bytes": 5452040,
+          "sha256_16": "757e1a2c46ea792d",
+          "from": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/reads/rows_s2.jsonl"
+        },
+        "fields.json": {
+          "bytes": 4678,
+          "sha256_16": "f72058f126c49a04",
+          "from": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/reads/calibration_s2.json"
+        }
+      },
+      "log": "stages/reads.log"
+    },
+    {
+      "stage": "linkage",
+      "status": "skipped",
+      "reason": "not selected with --stages"
+    },
+    {
+      "stage": "census",
+      "status": "skipped",
+      "reason": "not selected with --stages"
+    },
+    {
+      "stage": "calibration",
+      "status": "skipped",
+      "reason": "not selected with --stages"
+    },
+    {
+      "stage": "intervals",
+      "status": "ok",
+      "rows": 9,
+      "operating_point_complete": true
+    },
+    {
+      "stage": "layers",
+      "status": "ok",
+      "totals": {
+        "residue": 2000,
+        "known": 2000
+      },
+      "counts": {
+        "recurs_and_unplaceable": 699,
+        "undetermined": 1231,
+        "distant_relative": 69,
+        "placed": 1
+      },
+      "separating_layers": [
+        "recurs_and_unplaceable",
+        "distant_relative",
+        "placed",
+        "undetermined"
+      ]
+    },
+    {
+      "stage": "strains",
+      "status": "ok",
+      "subjects": 69,
+      "subjects_with_3_or_more_reads": 0
+    }
+  ],
+  "complete": false,
+  "incomplete_because": [
+    "linkage skipped: not selected with --stages",
+    "census skipped: not selected with --stages",
+    "calibration skipped: not selected with --stages"
+  ],
+  "field_calibration": {
+    "gc": {
+      "state": "cannot discriminate here: the null is the field itself",
+      "note": "null identical to the measurement by construction: the shuffle preserves this field, so it has no null here and cannot discriminate"
+    },
+    "entropy3": "calibrated",
+    "longest_orf_aa": "calibrated",
+    "frame_identifiable_frac": "calibrated",
+    "kmer16_duplicate_frac": "calibrated",
+    "closest_viral_holdout": "cannot discriminate here: no null in this run",
+    "closest_sprot": "cannot discriminate here: no null in this run"
+  },
+  "known_positive_rows": 2000,
+  "known_positive_note": "subtracted reads travel in reads.jsonl as the known-positive comparison; a field that reads the same on both carries no information about the residue",
+  "blind_spots": {
+    "file": "blind_spots.json",
+    "sha256_16": "0f6d0da62f26d3ee"
+  },
+  "interface_rules": [
+    "no figure without its operating point",
+    "no pile without its interval",
+    "no score without the calibration run behind it"
+  ],
+  "wall_seconds": 2258.8,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39",
+  "cpu_count": 4
+}

@@ -202,11 +202,50 @@ size one, so eight rows is what favourable tuning can achieve and not a validate
 point. The two numbers that were *not* tuned are the ones to carry: the leak arm's three
 zeroes, and the 95.85th percentile.
 
-**The control it still lacks** is the one I cannot run: a union is the single statistic that
-a pile of weak chance HSPs inflates without limit, because each one contributes interval. The
-E < 1e-5 floor is a floor and not a proof. Whether a dinucleotide-shuffled contig opens a gap
-is a question for the shuffle arm in `experiments/divergent_known.py`, and it has been sent
-there. **And the leak arm's three zeroes rest on 34 contigs from a handful of
+#### The shuffle control was run, and the field fails it
+
+The control named above as missing - a union is the single statistic a pile of weak chance
+HSPs inflates without limit, because each one contributes interval - was run by the
+gene-level thread on Berlin within the hour, and **the field does not survive it. The null
+is not merely comparable; it is higher.**
+
+| gap, percentage points | real (10,172 contigs) | dinucleotide-shuffled (304 clearing the same bar) |
+|---|---|---|
+| median | 0.38 | **1.43** |
+| p90 | 21.5 | **35.9** |
+| p99 | 46.2 | 49.6 |
+| above 10 points | 14.51% | **35.53%** |
+| above 30 points | 5.81% | **14.47%** |
+
+**A shuffled contig is more than twice as likely as a real one to show a gap above 30
+points**, by exactly the mechanism named when the control was requested: several
+weak-but-significant HSPs land on unrelated records in different places, none covers much,
+and the gap follows. The candidate's +36.6 therefore sits around the **null's p90** and
+cannot carry weight on its own. My gene-count control does not catch this and theirs
+reproduces mine exactly - median gap 0.0 in every subject-count bin on *both* arms - so that
+control was answering a question that was not the one that mattered.
+
+**This is the project's own stated tell, and I missed it in the right direction but not the
+right magnitude.** The field was reported with its missing control named, which is the rule;
+what the rule did not save me from is that naming a gap in the controls is not the same as
+knowing which way it points. Recorded as a kill, not a caveat.
+
+**What survives, and it is not nothing.** A gap near *zero* means one subject explains the
+contig, and that direction is solid - so the leak arm reading a maximum of 0.0 across 34
+contigs remains a real statement about known material. The failure is asymmetric: a large gap
+is **necessary** for multi-gene architecture and **not sufficient** for it.
+
+**The one refinement that could survive** is a gap built only from long HSPs. The shuffled
+gaps are assembled from short scattered alignments; the candidate's three genes align over
+620, 493 and 135 aa - and note that the third is short enough that a length floor high
+enough to exclude chance HSPs would also discard a real gene, which is the tension the sweep
+below is measuring rather than assuming away.
+`experiments/coverage_gap_null.py` tests this on *this* library, where the positive is a
+real genome at a known distance rather than a population statistic, sweeping the length floor
+rather than choosing one - because a floor picked after seeing where a single candidate sits
+is the same mistake this field already made once. Its result is below.
+
+**And the leak arm's three zeroes rest on 34 contigs from a handful of
 single-ORF-dominated tobamoviruses**, so "known material has no gap" may be partly a
 statement about which viruses happened to be already known in this water.
 
@@ -264,15 +303,14 @@ shortlist with a count on it.
 rhetorical: a 70-row list is useful and a 70-row list ordered wrongly is not, so what orders
 it is the next measurement rather than this one.
 
-**What should order it, on the evidence here, is the coverage gap.** It is the only field in
-this experiment that reads **zero on all 34 known contigs from the same water** and +36.6
-points on the one we know is novel, and the only one that is not a restatement of database
-proximity: it is a disagreement between two coverage definitions computed from the same
-search, so there is nothing in it for an index's reach to order. It also explains *why* this
-genome is hard - its genes have drifted onto different relatives - which an identity cannot.
-It needs the shuffle control before it ships, and on a positive set of one it is a hypothesis
-with a clean negative arm rather than a validated field. That is a specific, cheap next
-measurement rather than a direction.
+**What should not order it is the coverage gap, which was the best candidate here and is
+dead.** It read zero on all 34 known contigs from the same water and +36.6 points on the one
+we know is novel, and it was the only field in this experiment that was not a restatement of
+database proximity. Its shuffle control, run the same day, put the null *above* the test. So
+the honest answer to "what orders the list" is **still open**, and the only axis with
+calibration behind it from either side remains the plain fraction of the contig covered:
+26.34% of real hits above the shuffled p90 against 7-12% for identity, alignment length,
+subject coverage and bitscore.
 
 **The honest size of that list is not yet known, and the direction is one-sided.** These
 distances are measured against RefSeq viral plus Swiss-Prot only, which is a narrow index, so
@@ -289,15 +327,32 @@ cannot measure on the Berlin library is the ground truth: **whether the output c
 contig we know to be novel, and where in it.** That is the measurement above, and it is the
 only validation of that stage anyone can currently make.
 
-**A single whole-contig identity is the wrong unit, and this contig proves it.** Its best hit
-is an RdRp at 66.452% over 620 aa; its second is a maturation protein from the same subject at
-**52.236%** over 492 aa. So the whole-contig figure of 66.5% lands on the genome-level truth,
-but it lands there because the RdRp won on bitscore, not because the contig is homogeneous.
-That thread's calibration - a contig's genes agree to 2.35 identity points when it matches its
-reference and disagree by 17.4 when it does not - puts this contig at ~14 points of spread,
-i.e. in the disagreeing population. **This is a case with known ground truth where the
-single-number readout is right for the wrong reason**, which makes it a calibration point for
-the per-gene instrument rather than a result of its own.
+**A single whole-contig identity is the wrong unit, and this contig proves it.** Put through
+the gene-level thread's `conserved_positions.py`, the contig has **three** scorable genes,
+each with a Pfam domain, not the two my own hit table made visible:
+
+| gene | length | Pfam | identity |
+|---|---|---|---|
+| maturation | 487 aa | `Phage_mat-A` | **53.5%** over 493 aa |
+| replicase | 616 aa | `RNA_replicase_B` | **66.5%** over 620 aa |
+| coat | 135 aa | `Levi_coat` | **77.8%** over 135 aa |
+
+So the whole-contig figure of 66.5% lands on the genome-level truth of 66.45%, but it lands
+there because the replicase won on bitscore - **the spread across its genes is 24.3 points**,
+and the architecture is Leviviricetes. A single identity is right here for the wrong reason.
+
+**That ordering is a ground-truth confirmation of their asymmetry, which is worth more than
+my gap ever was.** On Berlin, across 189 divergent contigs with two or more roles, maturation
+is the most diverged role on 118 and the least diverged on 8, with polymerase running the
+other way. This genome - at a distance nobody chose, in a different library, withheld from the
+index - lands exactly on that pattern: maturation most diverged at 53.5%, coat least at 77.8%,
+replicase between. The matched control behaves too: the leak contig has four genes spanning
+99.6-100.0%, a spread of 0.4 points, so which role is "most diverged" there is a coin toss -
+which is precisely why a near-reference arm cannot test the asymmetry and this holdout can.
+
+**Rank by the conserved gene with the per-gene spread shown**, which is the project's
+standing rule, is therefore the one recommendation in this report that ground truth supports
+rather than undermines.
 
 ## The cascade, five seeds
 
