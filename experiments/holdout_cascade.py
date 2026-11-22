@@ -85,6 +85,11 @@ import sys
 import time
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from search_hits import (  # noqa: E402  the one copy of the search-output parser
+    DEFAULT_COLUMNS, SIGNIFICANCE_EVALUE, aligned_query_nt, best_per_query, coverage_gap,
+    outfmt_args, query_coverage, read_hits, union_query_coverage)
+
 ROOT = Path(__file__).resolve().parents[1]
 
 #: Minimum fraction of a contig that must align to a reference genome for the contig to be
@@ -92,7 +97,10 @@ ROOT = Path(__file__).resolve().parents[1]
 #: best hit: a chimaeric or repeat-sharing contig would otherwise be assigned to whichever
 #: genome won by a few bases. Reported per contig as well, so the threshold is visible.
 ATTRIBUTE_MIN_COVERAGE = 0.50
-SIGNIFICANCE_EVALUE = 1e-5
+#: What each of this script's two searches is, in `search_hits`' names. The name carries
+#: the units: `diamond_blastx` has a nucleotide query and an amino-acid alignment length,
+#: and every coverage computed from one of its rows knows that without being told again.
+PROGRAM = {"blastn": "blastn", "diamond": "diamond_blastx"}
 LENGTH_BINS = [(200, 500), (500, 1000), (1000, 2000), (2000, 4000), (4000, 10 ** 9)]
 
 
@@ -137,13 +145,13 @@ def diamond(binary: Path, query: Path, db: str, out: Path, threads: int,
     what the cascade knew when it removed a contig, so they are computed with what the
     cascade used.
 
-    `qlen` and `slen` are requested rather than derived: a coverage computed against a
-    length read from somewhere else is how a FASTA-parsing off-by-one becomes a claim.
+    The column list is `search_hits.DEFAULT_COLUMNS`, passed to the command and to the
+    parser from the same place, so the two cannot disagree about which position holds the
+    E-value. `qlen` and `slen` are in it rather than derived: a coverage computed against
+    a length read from somewhere else is how a FASTA-parsing off-by-one becomes a claim.
     """
     cmd = [str(binary), "blastx", "--db", db, "--query", str(query), "--out", str(out),
-           "--threads", str(threads), "--outfmt", "6", "qseqid", "sseqid", "pident",
-           "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send",
-           "evalue", "bitscore", "qlen", "slen",
+           "--threads", str(threads), *outfmt_args(DEFAULT_COLUMNS, diamond=True),
            "--max-target-seqs", "5", "--evalue", evalue, sensitivity, "--quiet"]
     subprocess.run(cmd, check=True)
     return out
@@ -153,15 +161,15 @@ def blast(binary: Path, task: str, query: Path, db: str, out: Path, threads: int
           evalue: str = "10") -> Path:
     """One BLAST call, tabular, with the columns every row in this script needs.
 
-    `qlen` and `slen` are fetched rather than derived so that coverage is computed from
-    what BLAST itself believed the lengths were. A coverage computed against a length read
-    from somewhere else is how an off-by-one in a FASTA parser becomes a biological claim.
+    The columns come from `search_hits.DEFAULT_COLUMNS`, which is also what the parser is
+    given, so the command and the unpacking share one list. `qlen` and `slen` are fetched
+    rather than derived so that coverage is computed from what BLAST itself believed the
+    lengths were. A coverage computed against a length read from somewhere else is how an
+    off-by-one in a FASTA parser becomes a biological claim.
     """
-    cols = ("qseqid sseqid pident length mismatch gapopen qstart qend sstart send "
-            "evalue bitscore qlen slen")
     cmd = [str(binary), "-query", str(query), "-db", db, "-out", str(out),
-           "-outfmt", f"6 {cols}", "-evalue", evalue, "-num_threads", str(threads),
-           "-max_target_seqs", "5"]
+           *outfmt_args(DEFAULT_COLUMNS, diamond=False),
+           "-evalue", evalue, "-num_threads", str(threads), "-max_target_seqs", "5"]
     if task == "blastn":
         cmd[0] = str(binary)
         cmd += ["-task", "blastn"]
@@ -169,156 +177,122 @@ def blast(binary: Path, task: str, query: Path, db: str, out: Path, threads: int
     return out
 
 
-def parse_best(tsv: Path, aa: bool = False) -> dict[str, dict]:
-    """Best HSP per query by bitscore, with coverage of the QUERY attached.
+def parse_best(rows: list[dict]) -> dict[str, dict]:
+    """Best HSP per query by bitscore, in the field names this script's rows use.
+
+    The parsing, the tie rule and the units now come from `search_hits`; this is the
+    rename into local field names and nothing else. It is a wrapper rather than a copy
+    because of what the copy cost: for DIAMOND blastx the query is nucleotide and
+    `length` is residues, so this function used to divide one by the other and every
+    protein best-HSP coverage capped at exactly 0.3333, which reads as a plausible low
+    coverage rather than as a bug. `search_hits.query_coverage` takes the span from
+    `qstart`/`qend`, which are query nucleotides under every program here, so the unit
+    cannot be got wrong and gaps are not counted as alignment. That makes the field
+    slightly different from the `3 * aln_aa / qlen` the previous version computed, and
+    the coordinate version is the one that is true; the union coverages, which are what
+    the report quotes, were always built from the same coordinates and do not move.
 
     Best-by-bitscore rather than best-by-identity: identity on a short alignment is
     quantised and rises as the alignment shortens, so ordering by it systematically
     prefers the least informative hit. This repo has the retraction to prove it.
-
-    `aa` SAYS WHETHER THE ALIGNMENT LENGTH IS IN AMINO ACIDS, AND IT IS NOT OPTIONAL
-    BOOKKEEPING. For DIAMOND blastx the query is nucleotide and the alignment length is
-    residues, so `aln_len / qlen` is a ratio of two different units and caps at exactly
-    1/3: every protein coverage this function produced read at most 0.3333, which looks
-    like a plausible low coverage rather than like a bug. The three-fold conversion is
-    applied here, in one place, because `divergent_known.py` computes the same quantity as
-    `3 * aln_aa / contig_nt` and two copies differing by 3x is how a number becomes
-    unreadable. `subject_coverage` needs no conversion either way, since protein alignment
-    length and protein subject length are both residues. The union coverages are also
-    unaffected, because qstart/qend are query NUCLEOTIDE coordinates even under blastx -
-    which is why they, and not this field, are what the report quotes.
     """
-    best: dict[str, dict] = {}
-    if not tsv.exists():
-        return best
-    for line in open(tsv):
-        f = line.rstrip("\n").split("\t")
-        if len(f) < 14:
-            continue
-        q, s = f[0], f[1]
-        row = {"subject": s, "pident": float(f[2]), "aln_len": int(f[3]),
-               "evalue": float(f[10]), "bitscore": float(f[11]),
-               "qlen": int(f[12]), "slen": int(f[13]),
-               "qstart": int(f[6]), "qend": int(f[7])}
-        q_nt = row["aln_len"] * 3 if aa else row["aln_len"]
-        row["aligned_query_nt"] = q_nt
-        row["query_coverage"] = round(q_nt / row["qlen"], 4) if row["qlen"] else None
-        row["subject_coverage"] = round(row["aln_len"] / row["slen"], 4) if row["slen"] else None
-        cur = best.get(q)
-        if cur is None or row["bitscore"] > cur["bitscore"]:
-            best[q] = row
-    return best
+    out: dict[str, dict] = {}
+    for q, r in best_per_query(rows).items():
+        out[q] = {"subject": r["sseqid"], "pident": r["pident"], "aln_len": r["length"],
+                  "evalue": r["evalue"], "bitscore": r["bitscore"],
+                  "qlen": r["qlen"], "slen": r["slen"],
+                  "qstart": r["qstart"], "qend": r["qend"],
+                  "aligned_query_nt": aligned_query_nt(r),
+                  "query_coverage": round(query_coverage(r), 4)}
+    return out
 
 
-def union_coverage(tsv: Path, evalue: float = SIGNIFICANCE_EVALUE) -> dict[str, dict]:
-    """Per query-subject pair, the union of SIGNIFICANT HSP intervals on the query.
+def per_subject_union(rows: list[dict]) -> dict[str, dict]:
+    """Per query, the union of SIGNIFICANT HSP intervals on the best-covering subject.
 
     A single HSP cannot cover a multi-gene genome - this project already demoted exactly
     the right candidates with a coverage flag defined on one HSP, because a levivirus's
     best blastx HSP covers about 45% of it. Attribution therefore uses the union of
     intervals, so a contig re-derived in several pieces counts as covered.
 
-    THE E-VALUE FLOOR IS NOT OPTIONAL AND ITS ABSENCE HERE PRODUCED AN IMPOSSIBLE NUMBER.
-    This function had no floor while `union_coverage_any` had one, so the two sides of the
-    "coverage gap" saw different HSPs and their difference was not a difference of
-    definitions but of filters. Any-subject coverage CONTAINS per-subject coverage under
-    matched filters, so the gap cannot be negative - and it was negative on 394 of 7,734
-    protein rows and 508 of 2,269 nucleotide rows, to -0.50. The floor is now a parameter
-    with the same default as the other function's, so a mismatch has to be written
-    deliberately rather than inherited. Attribution is unaffected either way: that pass is
-    run at `evalue="1e-10"`, so every HSP it sees already clears this floor.
+    THE E-VALUE FLOOR IS NOT OPTIONAL AND IT IS NO LONGER WRITTEN HERE. Two versions of
+    this union and the any-subject one lived side by side in this file, and both times
+    they drifted on the filter rather than on the definition: first a missing floor on one
+    side (394 of 7,734 protein rows and 508 of 2,269 nucleotide rows with a negative gap,
+    to -0.50), then `>` against `>=` on the boundary (one row of 41,271, at -0.0453). The
+    floor is now one `passes_floor` inside `search_hits`, passed one `evalue_below` by
+    both modes, so a mismatch is no longer expressible. Attribution is unaffected either
+    way: that pass runs at `evalue="1e-10"`, so every HSP it sees already clears the
+    floor.
     """
-    iv: dict[tuple[str, str], list] = {}
-    qlen: dict[str, int] = {}
-    if not tsv.exists():
-        return {}
-    for line in open(tsv):
-        f = line.rstrip("\n").split("\t")
-        if len(f) < 14:
-            continue
-        # `>= evalue`, matching union_coverage_any EXACTLY. This was `> evalue` for one
-        # commit, and the single-row difference it made is the whole lesson: an HSP at
-        # E == 1e-5 was then kept by one side of the subtraction and dropped by the other,
-        # and the gap came out at -0.0453 on exactly one contig of 41,271 cells. A filter
-        # written twice will differ on the boundary even when both authors mean the same
-        # thing, which is why the floor belongs in one shared function.
-        if float(f[10]) >= evalue:
-            continue
-        q, s = f[0], f[1]
-        a, b = sorted((int(f[6]), int(f[7])))
-        iv.setdefault((q, s), []).append((a, b))
-        qlen[q] = int(f[12])
-    out: dict[str, dict] = {}
-    for (q, s), spans in iv.items():
-        spans.sort()
-        merged = []
-        for a, b in spans:
-            if merged and a <= merged[-1][1] + 1:
-                merged[-1][1] = max(merged[-1][1], b)
-            else:
-                merged.append([a, b])
-        covered = sum(b - a + 1 for a, b in merged)
-        frac = covered / qlen[q] if qlen.get(q) else 0.0
-        cur = out.get(q)
-        if cur is None or frac > cur["covered_fraction"]:
-            out[q] = {"subject": s, "covered_bases": covered,
-                      "covered_fraction": round(frac, 4), "hsps": len(merged),
-                      "qlen": qlen[q]}
+    out = {}
+    for q, u in union_query_coverage(rows, per_subject=True,
+                                     evalue_below=SIGNIFICANCE_EVALUE).items():
+        out[q] = {"subject": u["subject"], "covered_bases": u["covered_bases"],
+                  "covered_fraction": round(u["covered_fraction"], 4),
+                  "hsps": u["blocks"], "qlen": u["qlen"]}
     return out
 
 
-def union_coverage_any(tsv: Path, evalue: float = SIGNIFICANCE_EVALUE) -> dict[str, dict]:
-    """Union of SIGNIFICANT HSP intervals on the query over *every* subject, not the best.
+def attribution_ties(rows: list[dict]) -> dict[str, dict]:
+    """Per query, which reference genomes tie for the best union coverage, if any.
+
+    WHY THIS IS A FIELD AND NOT A FOOTNOTE. `per_subject_union` keeps the single
+    best-covering subject, and when two subjects cover exactly the same bases it keeps
+    whichever the file happened to list first. Switching this script onto the shared union
+    changed that order and relabelled 12 of 35,328 contigs from one reference to the
+    other, at byte-identical covered fractions. Nothing moved - all 12 sit far below the
+    0.50 attribution threshold and stay in `background` - but a label that flips when the
+    iteration order changes is the array-order bias this repo has already withdrawn a
+    result over, and the only safe version of it is the one that says so in the row.
+
+    Built by splitting the rows by subject and unioning each subject's own intervals with
+    the shared function, so there is no second copy of the union here and both subjects
+    are measured under the same floor.
+    """
+    by_sub: dict[str, list[dict]] = {}
+    for r in rows:
+        by_sub.setdefault(r["sseqid"], []).append(r)
+    per: dict[str, dict[str, int]] = {}
+    for sub, rs in by_sub.items():
+        for q, u in union_query_coverage(rs, per_subject=False,
+                                         evalue_below=SIGNIFICANCE_EVALUE).items():
+            per.setdefault(q, {})[sub] = u["covered_bases"]
+    out = {}
+    for q, d in per.items():
+        top = max(d.values())
+        tied = sorted(s for s, v in d.items() if v == top)
+        out[q] = {"tied": len(tied) > 1, "tied_subjects": tied,
+                  "covered_bases": top}
+    return out
+
+
+def gaps_of(rows: list[dict]) -> dict[str, dict]:
+    """Both union definitions and the gap between them, from one call over one row set.
 
     WHY BOTH DEFINITIONS SHIP, and it is the ground-truth finding of this experiment. The
-    function above unions over one subject at a time and keeps whichever subject covers
-    most of the query. That answers "does a single known protein explain this contig". It
-    is the wrong question for a divergent multi-gene genome, whose genes have each drifted
-    onto a *different* nearest relative: the withheld genome's RdRp and its second gene hit
-    two different RefSeq records, so the per-subject figure caps at 0.4624 while known
-    proteins between them explain 0.8286 of the contig.
+    per-subject union keeps whichever subject covers most of the query, which answers
+    "does a single known protein explain this contig". That is the wrong question for a
+    divergent multi-gene genome, whose genes have each drifted onto a *different* nearest
+    relative: the withheld genome's RdRp and its second gene hit two different RefSeq
+    records, so the per-subject figure caps at 0.4624 while known proteins between them
+    explain 0.8286 of the contig.
 
-    The gap between the two is therefore a field in its own right, and unlike almost
-    everything else this project has tried it has a direction fixed on known material: the
-    34 contigs from already-referenced genomes in this same library have a gap of 0.0 at
-    median, mean AND max, while the withheld genome's is +36.6 points, the 95.85th
-    percentile of its length band. It is not a gene-count artefact either - binned by
-    number of significant subjects the median gap is 0.0 in every bin.
+    The gap between the two is a field in its own right, and unlike almost everything else
+    this project has tried it has a direction fixed on known material: the 34 contigs from
+    already-referenced genomes in this same library have a gap of 0.0 at median, mean AND
+    max, while the withheld genome's is +36.6 points, the 95.85th percentile of its length
+    band. It is not a gene-count artefact either - binned by number of significant
+    subjects the median gap is 0.0 in every bin.
 
-    `evalue` is a floor and not a reporting cutoff: a union is the one statistic a pile of
-    weak chance HSPs can inflate without limit, because each one adds interval. What this
-    cannot say is whether a shuffled contig produces a gap, which needs the dinucleotide
-    shuffle arm that `experiments/divergent_known.py` owns.
+    `search_hits.coverage_gap` forms both unions from the same rows under the same floor
+    and raises on a negative gap before any fraction is formed, which is the invariant this
+    file used to assert at the row writer - too late to stop a committed table, and only
+    because someone thought to look. What neither says is whether a shuffled contig
+    produces a gap, which needs the dinucleotide shuffle arm that
+    `experiments/divergent_known.py` owns.
     """
-    iv: dict[str, list] = {}
-    qlen: dict[str, int] = {}
-    subs: dict[str, set] = {}
-    if not tsv.exists():
-        return {}
-    for line in open(tsv):
-        f = line.rstrip("\n").split("\t")
-        if len(f) < 14 or float(f[10]) >= evalue:
-            continue
-        q = f[0]
-        a, b = sorted((int(f[6]), int(f[7])))
-        iv.setdefault(q, []).append((a, b))
-        subs.setdefault(q, set()).add(f[1])
-        qlen[q] = int(f[12])
-    out: dict[str, dict] = {}
-    for q, spans in iv.items():
-        spans.sort()
-        merged: list[list[int]] = []
-        for a, b in spans:
-            if merged and a <= merged[-1][1] + 1:
-                merged[-1][1] = max(merged[-1][1], b)
-            else:
-                merged.append([a, b])
-        covered = sum(b - a + 1 for a, b in merged)
-        out[q] = {"covered_bases": covered,
-                  "covered_fraction": round(covered / qlen[q], 4) if qlen.get(q) else 0.0,
-                  "blocks": len(merged), "significant_subjects": len(subs[q]),
-                  "qlen": qlen[q]}
-    return out
+    return coverage_gap(rows, evalue_below=SIGNIFICANCE_EVALUE)
 
 
 def length_bin(n: int) -> str:
@@ -413,8 +387,10 @@ def main() -> int:
                     str(a.work / "db_arm_refs"), a.work / "attribute.tsv", a.threads,
                     evalue="1e-10")
     timings["attribute"] = round(time.perf_counter() - t, 1)
-    att = union_coverage(att_tsv)
-    att_best = parse_best(att_tsv)
+    att_rows = read_hits(att_tsv, program="blastn")
+    att = per_subject_union(att_rows)
+    att_best = parse_best(att_rows)
+    att_tie = attribution_ties(att_rows)
 
     arms: dict[str, list[str]] = {"candidate": [], "leak": [], "background": []}
     for name in contigs:
@@ -452,9 +428,15 @@ def main() -> int:
         else:
             tsv = blast(a.blastbin / task, task, a.contigs, db,
                         a.work / f"hits_{label}.tsv", a.threads)
-        hits[label] = parse_best(tsv, aa=(task == "diamond"))
-        hits[label + "__union"] = union_coverage(tsv)
-        hits[label + "__anyunion"] = union_coverage_any(tsv)
+        # One read of the file, one row set, and every derived number built from it, so
+        # the best hit, the two unions and the gap cannot disagree about which HSPs the
+        # search produced. `read_hits` raises on a missing file rather than returning no
+        # hits, which is the distinction between "searched, zero hits" and "not searched"
+        # that this repo has paid for twice.
+        rows_l = read_hits(tsv, program=PROGRAM[task])
+        hits[label] = parse_best(rows_l)
+        hits[label + "__union"] = per_subject_union(rows_l)
+        hits[label + "__gap"] = gaps_of(rows_l)
         timings[f"search_{label}"] = round(time.perf_counter() - t, 1)
         log(f"  {label}: {len(hits[label])} contigs with any hit "
             f"({timings[f'search_{label}']}s)")
@@ -502,11 +484,14 @@ def main() -> int:
                        (att.get(nm) or {}).get("covered_fraction"),
                    "attributed_identity_best_hsp":
                        (att_best.get(nm) or {}).get("pident"),
+                   # True means both references cover exactly the same bases of this
+                   # contig, so `attributed_to` is iteration order and not evidence.
+                   "attributed_tie": (att_tie.get(nm) or {}).get("tied"),
                    }
             for label in dbs:
                 b = hits[label].get(nm)
                 u = hits[label + "__union"].get(nm)
-                ua = hits[label + "__anyunion"].get(nm)
+                g = hits[label + "__gap"].get(nm)
                 if b is None:
                     row[label] = {"state": "no hit at the reporting cutoff"}
                     row[f"{label}_identity"] = None
@@ -518,8 +503,8 @@ def main() -> int:
                     row[f"{label}_bitscore"] = None
                     row[f"{label}_significant"] = False
                     continue
-                cu = (u or {}).get("covered_fraction")
-                ca = (ua or {}).get("covered_fraction")
+                cu = round(g["per_subject"], 4) if g else None
+                ca = round(g["any_subject"], 4) if g else None
                 row[label] = {
                     "subject": b["subject"], "identity_percent": b["pident"],
                     "aligned": b["aln_len"], "query_coverage_best_hsp":
@@ -527,7 +512,7 @@ def main() -> int:
                     "query_coverage_union": cu,
                     "union_hsps": (u or {}).get("hsps"),
                     "query_coverage_union_any_subject": ca,
-                    "significant_subjects": (ua or {}).get("significant_subjects"),
+                    "significant_subjects": (g or {}).get("significant_subjects"),
                     "evalue": b["evalue"], "bitscore": b["bitscore"],
                     "significant": b["evalue"] < SIGNIFICANCE_EVALUE,
                 }
@@ -536,27 +521,18 @@ def main() -> int:
                 row[f"{label}_coverage_any"] = ca
                 # The gap, stored rather than left to be derived, so that a reader of the
                 # TSV cannot accidentally compare the two definitions the wrong way round.
-                gap = round(ca - cu, 4) if (ca is not None and cu is not None) else None
-                # AN INVARIANT, ASSERTED WHERE IT IS COMPUTED, BECAUSE THIS ONE SHIPPED
-                # BROKEN TWICE. The any-subject union CONTAINS the per-subject union, so
-                # the gap cannot be negative. Both failures were filter mismatches between
-                # the two functions - first a missing E-value floor on one side (394 of
-                # 7,734 protein rows and 508 of 2,269 nucleotide rows negative, to -0.50),
-                # then `>` against `>=` on the boundary (one row of 41,271, at -0.0453).
-                # Neither was visible to any tell this project uses, because the tells read
-                # distributions and nothing was plotting this column. An impossible sign is
-                # the cheapest check there is, so it raises rather than being counted: a
-                # violation here means the two unions disagree about which HSPs exist, and
-                # every number derived from either is then unreadable.
-                if gap is not None and gap < 0:
-                    raise SystemExit(
-                        f"coverage gap {gap} is negative for {nm} on {label}: "
-                        f"per-subject {cu}, any-subject {ca}. The any-subject union "
-                        f"contains the per-subject union, so the two are not applying the "
-                        f"same HSP filter. Fix the filter, do not relax this check.")
-                row[f"{label}_coverage_gap"] = gap
+                # Taken from `search_hits.coverage_gap`, which formed both unions from the
+                # same rows under one floor and already refused to return a negative one.
+                # THE INVARIANT USED TO BE ASSERTED HERE AND THAT WAS THE WRONG PLACE: a
+                # row writer sees the number after every chance to have got it wrong has
+                # been taken, and both times this shipped broken the cause was upstream -
+                # a missing E-value floor on one side (394 of 7,734 protein rows and 508
+                # of 2,269 nucleotide rows negative, to -0.50), then `>` against `>=` on
+                # the boundary (one row of 41,271, at -0.0453). An impossible sign is the
+                # cheapest check there is, and it belongs where the subtraction happens.
+                row[f"{label}_coverage_gap"] = round(g["gap"], 4) if g else None
                 row[f"{label}_significant_subjects"] = (
-                    ua or {}).get("significant_subjects")
+                    g or {}).get("significant_subjects")
                 row[f"{label}_evalue"] = b["evalue"]
                 # Bitscore as well as E-value, because the two answer different questions
                 # and only together say whether a removal was marginal. The cascade's
@@ -648,7 +624,7 @@ def main() -> int:
     with open(a.out / f"contig_rows_s{a.seed}.tsv", "w", newline="") as fh:
         cols = ["contig", "arm", "length", "length_bin", "gc", "tier",
                 "attributed_to", "attributed_covered_fraction",
-                "attributed_identity_best_hsp",
+                "attributed_identity_best_hsp", "attributed_tie",
                 "rank_by_length_all_contigs", "rank_by_length_within_tier2"]
         for label in dbs:
             cols += [f"{label}_identity", f"{label}_coverage",
@@ -677,6 +653,14 @@ def main() -> int:
                    for p in (a.contigs, a.refs) if p.exists()},
         "contigs": len(contigs),
         "arm_sizes": {k: len(v) for k, v in arms.items()},
+        # How many contigs the two references cover equally, where the attribution label
+        # is iteration order. Counted rather than described: it is 12 of 35,328 here, all
+        # below the 0.50 threshold, so none of them changes an arm.
+        "attribution_ties": sum(1 for v in att_tie.values() if v["tied"]),
+        "attribution_ties_above_threshold": sum(
+            1 for nm, v in att_tie.items()
+            if v["tied"] and (att.get(nm) or {}).get("covered_fraction", 0)
+            >= ATTRIBUTE_MIN_COVERAGE),
         "timings_s": timings,
         "run_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "python": platform.python_version(), "platform": platform.platform(),
