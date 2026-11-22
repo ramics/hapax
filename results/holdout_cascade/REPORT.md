@@ -430,6 +430,61 @@ cannot measure on the Berlin library is the ground truth: **whether the output c
 contig we know to be novel, and where in it.** That is the measurement above, and it is the
 only validation of that stage anyone can currently make.
 
+#### So it was run, and the answer is yes — with the position stated, not just the presence
+
+`divergent_known_s1.json`, that stage run blind over this library's 22,110 identified
+non-ribosomal contigs against the rolled-back indexes. **The withheld genome's contig is in the
+output**, and its row carries exactly the fields SPEC §5 now requires:
+
+| field | value |
+|---|---|
+| identity, alignment, E-value | **66.5%** over **620 aa**, E = **5.44e-282** |
+| nearest subject | `YP_010771404.1`, an RdRp, at **0.984** of the subject's length |
+| coverage of the contig | **0.466** |
+| divergence class | *family-level or looser; the subject is a nearest neighbour, not an identification* |
+| genes, with Pfam | polymerase 66.5% `RNA_replicase_B`, coat 77.8% `Levi_coat`, maturation 53.5% `Phage_mat-A` |
+| spread across genes | **24.3 points** |
+| read support | mean depth 30.9, breadth **1.0**, evenness 0.718, max 93 |
+
+**Three things make this a validation rather than a sighting.**
+
+**It got into the gene-level arm by contig LENGTH, not by identity.** The arm is capped at 600
+contigs per side and the cap is applied longest-first, so at 3,990 nt the candidate is in
+comfortably. That matters because this report measured identity ordering to be *actively
+wrong* on this very pile — 93.46th percentile, 7,104 contigs ahead of it — and a length cap
+cannot inherit that bias. Had the cap been applied by identity the candidate would have been
+at risk of falling outside it.
+
+**Its own control arm is empty where it sits.** Of the 600 gene-level rows on the divergent
+side, **321** have contig coverage below 0.5 and identity below 70%; of the 600 on the
+`control_near_reference` side, **zero** do. So the cell is not discriminating *within* the
+divergent arm — and it is perfectly discriminating against known material, which is the
+direction that was in question.
+
+**And it is not near the top, which is the honest half.** Sorted as that table sorts, by
+identity ascending, the candidate is **431 of 600**; ranked by polymerase identity among the
+120 rows that have a polymerase, **100 of 120**. The 321-row cell is *not* comparable to this
+report's 70-contig cell either: 70 is out of 7,601 contigs over the whole removed pile, while
+321 is out of 600 already selected for being below 90%. **Two denominators, and quoting the
+smaller fraction against the larger population is exactly how a shortlist gets flattered.**
+The stage's value is that the genome is *present and characterised*, not that it is ranked
+first.
+
+**The null is clean and is reported as a bound.** 0 of 22,110 dinucleotide-shuffled contigs
+carry a significant hit against **96.71%** of real ones, which bounds chance at roughly 1 in
+22,000 rather than establishing zero. That number is a correction: the first run of this
+stage reported **175 of 22,110, 0.79%**, and it is withdrawn, because `divergent_known.py`
+carried a **third local copy** of the dinucleotide shuffle whose fallback returns its input
+unchanged. It now imports `experiments/shuffle_control.py`, and the output carries a null
+census — offered, shuffled, dropped-as-invariant — so the denominator the percentage is taken
+against is visible rather than assumed. Validated before the run: 22,110 of 22,110 shuffled,
+zero length violations, zero dinucleotide-count violations, zero identical to input.
+
+**Provenance note, since this run straddles a commit.** Its manifest records `tree_dirty:
+true` with a `script_sha256` of `37aed98930b5d236`, which matches `divergent_known.py` at
+committed HEAD byte for byte; the dirt is the result files beside it. That is the case the
+content hash exists for.
+
 **A single whole-contig identity is the wrong unit, and this contig proves it.** Put through
 the gene-level thread's `conserved_positions.py`, the contig has **three** scorable genes,
 each with a Pfam domain, not the two my own hit table made visible:
