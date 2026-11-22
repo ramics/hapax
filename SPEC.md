@@ -579,6 +579,17 @@ operating point is missing from the files renders the words `operating point abs
 than rendering clean, a fraction with no interval is drawn as a bare tick, and
 `cannot discriminate here` is rendered as a value in the field table.
 
+**One generator, every sample.** The generator takes one argument, a page descriptor in
+`results/web/pages/`, and no flag that differs by sample. The descriptor holds the page
+title, one sentence on the sample, and every file outside the run directory a panel reads,
+each declared as a path or as `not_run` with its reason; an undeclared input, a declared
+path that is absent, or a descriptor whose accession is not the run's own is a refusal. A
+ground truth is only ever a declared path, never a file found by name. Methods entries are
+data (`results/web/methods.json`): rows that state a procedure are written once, rows that
+state a number are stored under the library they were measured on and print as "Not
+measured on this library" elsewhere. The build runs the page in headless Chromium and
+refuses to write it if the script throws or a rendered citation has no entry.
+
 - **The breakdown** as one stacked bar: identified / assembled-unidentifiable / residual,
   split coding and non-coding, each segment labelled with its interval and its operating
   point.
