@@ -32,9 +32,21 @@ handed back unchanged.
 | `residue_contig_annotation.dinuc_shuffle` (Altschul–Erikson, 100 retries) | `return s` | 0.00% | 0.00% |
 
 Five seeds, min–max. The fixed walk reading 0.00% is the calibration that makes the other
-rows readable. On Berlin's identified contigs the holdout thread measured 2.85% for
+rows readable. On Berlin's identified contigs the gene-level thread measured 2.85% for
 `divergent_known` — longer, more repetitive sequence dead-ends more often, so **the rate is a
 property of the input as much as of the code** and the figures here are not a universal rate.
+
+**The rate alone understates the damage, and by how much is measurable.** The sequences that
+dead-end a walk are repetitive and low-complexity, which are the same sequences that then
+produce a chance alignment, so contamination is concentrated in exactly the inputs that score.
+On Berlin identified contigs the 2.85% that fell through supplied **304 of 304** of the null's
+significant hits. So the pair of numbers to report is the return-the-input rate beside the
+share of the null's signal that came from it: 2.85% of the pile, 100% of the hits. A rate of
+1% is not a 1% perturbation of a null; here it was the whole of it.
+
+Re-run with the fixed walk, from the thread that owns that result: **0 of 11,361** shuffled
+Berlin contigs produce a significant protein alignment and **0 of 932** shuffled ORFs do, the
+whole library yielding one 47 aa alignment at E=8.45e-4, which clears neither floor.
 
 **A mononucleotide shuffle (`rng.shuffle` of a list of bases) has no walk and no dead end, so
 it cannot hit this bug.** Neither can a permutation of labels, partners, columns or rows. Most
@@ -69,7 +81,12 @@ than controlled.
 1. **Nothing is outstanding.** Every claim this bug touched sits in `divergent_known/` and
    `holdout_cascade/`, and both were re-run and corrected by the threads that own them before
    this audit reached them. The correction is on a branch, not on `main`.
-2. **`divergent_known.py` is edited by the fail-loudly pass** (required `--dmnd-sprot`, r1/r2
+2. **`divergent_known.py` is edited by the fail-loudly pass**, and the owning thread has
+   agreed the order: this branch merges first, that thread takes these hunks rather than
+   re-deriving them, and the single re-run happens afterwards. Its side is small and does not
+   conflict semantically — the local `dinuc_shuffle` deleted for an import of
+   `shuffle_control`, plus `--max-target-seqs 25` and a wider outfmt on the whole-contig
+   search. (required `--dmnd-sprot`, r1/r2
    and the diamond binary; three `if not db.exists(): continue` removed). Under the
    provenance rule that forces a re-run of its committed result, and the owning thread's
    `experiments/shuffle_control.py` replaces the shuffle in the same file, so the re-run
@@ -80,9 +97,10 @@ than controlled.
 4. **The one measurement nobody has made**: whether the dead-end rate is higher on the
    sequence classes this project cares about most — low-complexity and repetitive residue
    contigs are exactly where a walk dead-ends, and that is also where a chance alignment comes
-   from. The audit above measures it on residue assembly contigs (0.46–0.91%) and the holdout
-   thread on Berlin identified contigs (2.85%). A per-class rate would say whether any null is
-   contaminated *non-uniformly*, which is the one way this bug could survive the corrections.
+   from. The 304-of-304 concentration above establishes that the two coincide on one pile; what
+   is not measured is whether a *correct* shuffle's residual chance rate is itself concentrated
+   in the same classes, which is the one way this bug's reading could survive the corrections.
+   The control for it is the aligner's own compositional masking, still not run.
 
 ## 4. Five-seed directories: are any seeds empty, identical or short?
 
