@@ -159,3 +159,25 @@ and download dates in `data/MANIFEST.md`.
 
 The discriminating dataset is Berlin wastewater SRR23973193. The New York cryptic-lineage
 runs are a correctness fixture only.
+
+## Sample facts are data, not defaults
+
+**A value that is a property of one library never has a default.** A trim length, a block
+size and a read path are facts about a sequencing run, and they were written into roughly
+fifteen scripts as `default=14` and into five more as a bare `14` inside the call. On a
+library with no non-template prefix that deletes fourteen real bases from every mate,
+silently, in the direction of less recognition; a block sized to Berlin's 8.73 M pairs
+leaves seeds 4 and 5 of a 4.29 M-read library reading nothing, and the directory still
+looks like a five-seed result. They live in `experiments/libraries.json`, keyed by
+accession, each with how it was established, and are read through
+`experiments/library_facts.py`, which **raises for a library it does not know rather than
+falling back**. Same rule as the shuffle: the fallback is the bug.
+
+**The same applies to words.** Every plain-English claim the web view makes about biology
+is in `experiments/virus_vocabulary.json` with its basis, applied by
+`experiments/architecture_call.py`, which records the evidence that fired and declines
+with a reason rather than ever recording "not a phage". The renderer assembles sentences
+and has no vocabulary of its own. This does not make the English stop being hand-written;
+it makes it reviewable, attributable, and wrong in exactly one place. The convention that
+a figure is generated from committed files was being applied to the numbers and not to
+the claims beside them, and the claims are usually larger.

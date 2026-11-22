@@ -1,0 +1,32 @@
+{
+  "what_this_is": "Per-library facts that are properties of a sequencing run, not of this code. They were written as defaults in roughly fifteen scripts and as bare literals inside five more, one copy each, which is how a value measured on one library silently applies itself to another.",
+  "how_to_use_it": "Ask for a library by accession. A script that cannot name its library must be told the values explicitly; it must never fall back to another library's. Adding a library means adding an entry here with how each value was established.",
+  "libraries": {
+    "SRR23973193": {
+      "label": "Berlin influent, the discriminating dataset",
+      "bioproject": "PRJNA948850",
+      "layout": "paired",
+      "pairs": 8731224,
+      "trim_r2": 14,
+      "trim_r2_basis": "mate 2 carries about 14 nt of non-template 5' sequence, mapped base by base in results/nontemplate_prefix_map/. After trimming R1 is 107 nt and R2 93, which is why any field computed symmetrically over a pair has to be reported per mate.",
+      "trim_r2_for_kraken2": 16,
+      "trim_r2_for_kraken2_basis": "two further bases are trimmed before Kraken2 only, measured separately; other kits take 0.",
+      "block": 1500000,
+      "block_basis": "pairs skipped per seed so that five seeds read five distinct contiguous regions of the flow cell. Sized to this library: 5 x 1.5 M sits inside 8.73 M pairs. A larger block on a smaller library runs off the end of the file, and the five seeds are contiguous blocks rather than a random sample, which is why DESIGN_EFFECT is never re-estimated from them.",
+      "r1": "data/berlin/SRR23973193_1.fastq.gz",
+      "r2": "data/berlin/SRR23973193_2.fastq.gz"
+    },
+    "SRR23421544": {
+      "label": "the holdout library, the positive control",
+      "bioproject": "PRJNA917124",
+      "layout": "single",
+      "layout_note": "the metadata says library_layout=PAIRED and the library is single-end. Everything SPEC 4.3 gains from merging the mates is untestable here, so this instrument is weaker than production, in the direction that makes the withheld genome harder to find.",
+      "pairs": 4290429,
+      "trim_r2": 0,
+      "trim_r2_basis": "single-end: there is no mate 2 to trim, and trimming 14 nt off anything here would delete real sequence.",
+      "block": 1000000,
+      "block_basis": "5 x 1.5 M does not fit in 4.29 M reads, so the Berlin default leaves seeds 4 and 5 reading nothing. Measured, and it produced a directory that looked like a five-seed result."
+    }
+  },
+  "status": "hand-written from measurements recorded elsewhere in results/. Each value names what established it. Nothing here is derived at run time."
+}
