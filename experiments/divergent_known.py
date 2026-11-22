@@ -146,6 +146,104 @@ def histogram(values: list) -> list:
     return out
 
 
+FIELDS = ("pident", "aln_aa", "subject_coverage", "contig_coverage", "bitscore")
+
+
+def quantiles(vals: list) -> dict:
+    """p10/median/p90 rather than a mean, because every one of these fields is skewed
+    and a mean of bitscores is not a readable number."""
+    if not vals:
+        return {}
+    v = sorted(vals)
+    def at(f):
+        return v[min(len(v) - 1, int(f * (len(v) - 1) + 0.5))]
+    return {"p10": round(at(0.10), 3), "median": round(at(0.50), 3),
+            "p90": round(at(0.90), 3), "n": len(v)}
+
+
+def discrimination(sig: dict, nullsig: dict, n_contigs: int) -> dict:
+    """What separates a real identified contig from a dinucleotide shuffle of itself,
+    searched the same way, and what does not.
+
+    This block exists because the smoke run killed the obvious reading. Over 2,855
+    identified contigs the shuffled null's median whole-contig protein identity was
+    HIGHER than the real one, 42.6% against 41.3%, and its p10, p90, alignment length,
+    subject coverage and bitscore all sat inside the real spread. So a low identity is
+    not evidence of distance from the database: a chance alignment to a narrow protein
+    index lands in the same band as real distant homology, and nothing about the
+    alignment, once it exists, says which it is.
+
+    What does separate is whether a significant alignment exists at all, which the null
+    almost never produces. The direction of that bias matters: the null is a filter, not
+    a shift. So this reports the existence rate first, the per-field comparison second
+    with its honest reading, and a stricter operating point third, since the question a
+    pipeline actually has to answer is whether any threshold on coverage and length
+    empties the null while keeping the real hits.
+    """
+    base = {"readout": ("existence of a significant alignment, then every property of "
+                        "that alignment, real against a dinucleotide-preserving shuffle "
+                        "of the same contigs through the same search")}
+    rr = round(100.0 * len(sig) / max(1, n_contigs), 2)
+    nr = round(100.0 * len(nullsig) / max(1, n_contigs), 2)
+    base["existence"] = {
+        "contigs_searched": n_contigs,
+        "real_with_a_significant_hit": len(sig),
+        "real_percent": rr,
+        "shuffled_with_a_significant_hit": len(nullsig),
+        "shuffled_percent": nr,
+        "ratio": round(rr / nr, 1) if nr else None,
+        "reading": (f"{rr}% of real contigs against {nr}% of shuffles. The existence of "
+                    f"the alignment is the calibrated quantity"),
+    }
+    fields = {}
+    best = None
+    for f in FIELDS:
+        rv = [h[f] for h in sig.values() if h.get(f) is not None]
+        nv = [h[f] for h in nullsig.values() if h.get(f) is not None]
+        q, nq = quantiles(rv), quantiles(nv)
+        share = None
+        if rv and nv:
+            share = round(100.0 * sum(1 for x in rv if x > nq["p90"]) / len(rv), 2)
+        fields[f] = {"real": q, "shuffled_null": nq,
+                     "percent_of_real_above_null_p90": share}
+        if share is not None and (best is None or share > best[1]):
+            best = (f, share)
+    base["conditional_on_a_hit"] = {
+        "readout": ("share of real hits above the shuffled null's p90, per field. A null "
+                    "p90 puts 10% above it by construction, so 10% is the no-information "
+                    "level and the whole table has to be read against that number"),
+        "no_information_level_percent": 10.0,
+        "fields": fields,
+    }
+    if best:
+        base["conditional_on_a_hit"]["strongest_field"] = best[0]
+        pid = fields["pident"]["percent_of_real_above_null_p90"]
+        base["conditional_on_a_hit"]["reading"] = (
+            f"cannot discriminate here. The strongest field is {best[0]} at {best[1]}% "
+            f"against a no-information level of 10%, and identity itself reads {pid}%. "
+            f"Once a shuffle clears the significance bar its alignment looks like a real "
+            f"one on every field measured, so no property of a hit may be used to argue "
+            f"that the hit is real")
+    floors = []
+    for cov, aln in ((0.5, 100), (0.8, 150), (0.9, 200)):
+        keep = lambda d: sum(1 for h in d.values()
+                             if h["subject_coverage"] >= cov and h["aln_aa"] >= aln)
+        kr, kn = keep(sig), keep(nullsig)
+        floors.append({
+            "subject_coverage_at_least": cov, "aln_aa_at_least": aln,
+            "real": kr, "shuffled_null": kn,
+            "real_percent_of_searched": round(100.0 * kr / max(1, n_contigs), 2),
+            "shuffled_percent_of_searched": round(100.0 * kn / max(1, n_contigs), 2),
+        })
+    base["at_a_stricter_operating_point"] = {
+        "readout": ("the same two piles under coverage and length floors. This is the "
+                    "only lever that moves the null, and it costs real hits, so the "
+                    "trade is reported rather than chosen here"),
+        "floors": floors,
+    }
+    return base
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--seed", type=int, default=1)
@@ -346,6 +444,7 @@ def main() -> None:
             "median_real": round(statistics.median(ids), 1) if ids else None,
             "median_null": round(statistics.median(nullids), 1) if nullids else None,
         },
+        "discrimination": discrimination(sig, nullsig, len(seqs)),
         "operating_point": {
             "min_alignment_aa": MIN_ALN_AA,
             "significant_evalue": SIGNIFICANT_EVALUE,
@@ -372,7 +471,17 @@ def main() -> None:
                       "point rather than ground truth for a real distance."),
         },
         "blind_spots": [
-            "every identity here comes from RefSeq viral proteins plus Swiss-Prot, which "
+            "whole-contig protein identity does not separate real sequence from a "
+        "dinucleotide shuffle of it: the null's median identity is as low as the "
+        "real one, because a chance alignment to a narrow index is short and lands "
+        "wherever it lands. Read identity only beside alignment length and subject "
+        "coverage, which is what the discrimination block reports",
+        "6.1% of dinucleotide shuffles clear E<1e-5 at 60 aa, which is high for a "
+        "null. The untested candidate is low-complexity sequence, which a shuffle "
+        "preserves and which aligns to anything; the control is the aligner's own "
+        "compositional masking, not run here. Until that is measured the null rate is "
+        "an upper bound on chance and the 16x existence ratio a lower bound",
+        "every identity here comes from RefSeq viral proteins plus Swiss-Prot, which "
             "are narrow, so each is an UPPER BOUND on distance from what is known",
             "this says nothing about whether a divergent contig is a new species: "
             "demarcation criteria are per family and nothing here fetches them",
