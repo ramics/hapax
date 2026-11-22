@@ -202,6 +202,23 @@ panel collapses to a strain-level identification and 55.7% stays distant
 (`results/divergent_contigs/REPORT.md` §7). The protein equivalent against nr is still
 running.
 
+## 5b. This result has actually been reproduced
+
+Two provenance changes landed on this script on the same day - the shuffle moved into
+`experiments/shuffle_control.py`, and another thread made every named index required rather
+than skipped when absent. They were merged before re-running rather than re-run once each,
+so the result was recomputed from a materially different code state.
+
+**Every number above came back identical**, to the digit: 11,361 contigs searched, 10,172
+significant, 9,738 below 90%, 0 of 11,361 shuffles, the same identity histogram, the same
+12.8 against 2.45 gene spread and the same gene-count-matched bands. Only the manifest
+differs, which is what it is for.
+
+That is a stronger claim than "reproducible from a committed script plus a seed", and almost
+nothing in this repo can make it. It was not earned by intending to: the provenance rule in
+`CLAUDE.md` forces a re-run whenever provenance changes, and the reproduction falls out of
+that for free.
+
 ## 6. Blind spots
 
 - Both reference sets are narrow, so each identity is an upper bound on identity and each
@@ -220,7 +237,7 @@ running.
 
 ## Cost
 
-892 s wall on 4 cores: DIAMOND blastx on the real contigs and on the null, blastp at gene
+951 s wall on 4 cores: DIAMOND blastx on the real contigs and on the null, blastp at gene
 level, Pfam, and mapping 17.5 M mates. The null roughly doubles the search cost. It bought
 one number here - zero - and it cost a day, because the first version of it was wrong in a
 way that read as a passed control.

@@ -45129,16 +45129,16 @@
  ],
  "seed": 1,
  "timings_seconds": {
-  "blastx_viral": 107.6,
-  "blastx_null_viral": 88.7,
-  "blastx_sprot": 108.1,
-  "blastx_null_sprot": 101.6,
-  "blastp_viral": 79.4,
-  "blastp_sprot": 93.1,
-  "pfam": 108.4,
-  "total": 892.4
+  "blastx_viral": 109.8,
+  "blastx_null_viral": 94.7,
+  "blastx_sprot": 110.7,
+  "blastx_null_sprot": 115.9,
+  "blastp_viral": 85.5,
+  "blastp_sprot": 94.9,
+  "pfam": 116.1,
+  "total": 950.9
  },
- "git_sha": "14e33410f0198b78ca6986c11739cefa0717244f",
+ "git_sha": "5494772244178d8b8758f335ce8b71eecd79feaf",
  "tree_dirty": false,
- "script_sha256": "b4c42cb7b61e0dc3"
+ "script_sha256": "996f91af4744c65e"
 }
