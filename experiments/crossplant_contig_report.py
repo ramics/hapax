@@ -91,137 +91,203 @@ def stratum(ln: int) -> str:
     return "short"
 
 
-def per_contig_fraction(M, rows, j):
-    """Witnessed-window fraction of one contig in subject j: both windows of every pair."""
-    return (M["w1"][j, rows].sum() + M["w2"][j, rows].sum()) / (2 * len(rows))
+def group_blocks(groups, key):
+    """Query columns of one (set, kind, seed) group, grouped by contig, plus block starts.
+
+    The per-contig readouts are aggregations over a contig's window columns, and doing them
+    with a Python loop over (contig, subject) pairs is 1.7 billion iterations for this panel -
+    the first version of this report ran past forty minutes and was killed. Laying the columns
+    out contiguously per contig lets `np.add.reduceat` do all of them in one call per matrix.
+    """
+    items = sorted(groups.get(key, {}).items())
+    if not items:
+        return None
+    cols, starts, ids, widths = [], [], [], []
+    for ci, rows in items:
+        starts.append(len(cols))
+        cols.extend(rows)
+        ids.append(ci)
+        widths.append(len(rows))
+    return (np.array(cols), np.array(starts), ids, np.array(widths, dtype=float))
 
 
-def windows_view(mats, op):
-    return {"w1": mats[f"{op}1"], "w2": mats[f"{op}2"]}
+def contig_fractions(mats, op, cols, starts, widths):
+    """(subjects x contigs) witnessed-window fraction: both windows of every pair."""
+    a = np.add.reduceat(mats[f"{op}1"][:, cols], starts, axis=1)
+    b = np.add.reduceat(mats[f"{op}2"][:, cols], starts, axis=1)
+    return (a + b) / (2.0 * widths)
 
 
 def plant_table(subs, info, mats, groups, length):
     rows = []
+    plants = sorted({info[x]["key"] for x in subs if x in info})
+    cols_by_plant = {p: [j for j, x in enumerate(subs)
+                         if x in info and info[x]["key"] == p and x != QUERY_RUN]
+                     for p in plants}
     for op in ("most", "any"):
-        M = windows_view(mats, op)
-        plants = sorted({info[s]["key"] for s in subs if s in info})
         for cset in ("unident", "ident"):
             for kind in ("real", "null"):
-                for p in plants:
-                    cols = [j for j, s in enumerate(subs)
-                            if s in info and info[s]["key"] == p and s != QUERY_RUN]
-                    if not cols:
+                per_seed = {}
+                n_contigs = 0
+                for seed in SEEDS:
+                    blocks = group_blocks(groups, (cset, kind, seed))
+                    if blocks is None:
                         continue
-                    vals = []
-                    for seed in SEEDS:
-                        g = groups.get((cset, kind, seed), {})
-                        if not g:
-                            continue
-                        f = [per_contig_fraction(M, r, j) for ci, r in g.items()
-                             for j in cols]
-                        vals.append(np.mean(f) if f else float("nan"))
+                    cols, starts, ids, widths = blocks
+                    n_contigs = len(ids)
+                    F = contig_fractions(mats, op, cols, starts, widths)
+                    per_seed[seed] = F
+                for p in plants:
+                    cj = cols_by_plant[p]
+                    if not cj:
+                        continue
+                    vals = [float(F[cj].mean()) for F in per_seed.values()]
                     med, lo, hi = spread(vals)
-                    n = len(groups.get((cset, kind, SEEDS[0]), {}))
                     rows.append({"op": op, "set": cset, "kind": kind, "subject_plant": p,
-                                 "libraries": len(cols), "contigs_per_seed": n,
+                                 "libraries": len(cj), "contigs_per_seed": n_contigs,
                                  "witnessed_windows": med, "seed_min": lo, "seed_max": hi})
     return rows
 
 
 def saturation(subs, info, mats, groups, length):
-    """Leftover windows and untouched contigs against union size, by set and stratum."""
-    pool = [j for j, s in enumerate(subs) if s in info and s != QUERY_RUN]
+    """Leftover windows, untouched contigs and removed contigs against union size."""
+    pool = [j for j, x in enumerate(subs) if x in info and x != QUERY_RUN]
     rows = []
     for op in ("most", "any"):
-        M = windows_view(mats, op)
         acc = defaultdict(lambda: defaultdict(list))
         for cset in ("unident", "ident"):
             for kind in ("real", "null"):
                 for seed in SEEDS:
-                    g = groups.get((cset, kind, seed), {})
-                    if not g:
+                    blocks = group_blocks(groups, (cset, kind, seed))
+                    if blocks is None:
                         continue
+                    cols, starts, ids, widths = blocks
+                    strata = np.array([stratum(length[(cset, ci)]) for ci in ids])
                     order = list(pool)
                     random.Random(f"{cset}|{kind}|{seed}").shuffle(order)
-                    idx = np.array(sorted({i for r in g.values() for i in r}))
-                    cum1 = np.logical_or.accumulate(M["w1"][order][:, idx], axis=0)
-                    cum2 = np.logical_or.accumulate(M["w2"][order][:, idx], axis=0)
-                    pos = {q: t for t, q in enumerate(idx)}
-                    for k in [x for x in KS if x <= len(order)] + [len(order)]:
-                        left, untouched = [], []
-                        for ci, r in g.items():
-                            t = [pos[q] for q in r]
-                            seen = int(cum1[k - 1, t].sum() + cum2[k - 1, t].sum())
-                            frac = 1.0 - seen / (2 * len(r))
-                            left.append(frac)
-                            untouched.append(frac == 1.0)
-                            s = stratum(length[(cset, ci)])
-                            acc[(cset, kind, s, k, "left")][seed].append(frac)
-                            acc[(cset, kind, s, k, "untouched")][seed].append(float(frac == 1.0))
-                            acc[(cset, kind, s, k, "removed")][seed].append(
-                                float(frac <= 1 - REMOVED_AT))
-                        for field, v in (("left", left), ("untouched", untouched)):
-                            acc[(cset, kind, "all", k, field)][seed] += [float(x) for x in v]
-                        acc[(cset, kind, "all", k, "removed")][seed] += [
-                            float(x <= 1 - REMOVED_AT) for x in left]
+                    c1 = np.logical_or.accumulate(mats[f"{op}1"][order][:, cols], axis=0)
+                    c2 = np.logical_or.accumulate(mats[f"{op}2"][order][:, cols], axis=0)
+                    ks = [x for x in KS if x <= len(order)] + [len(order)]
+                    for k in ks:
+                        seen = (np.add.reduceat(c1[k - 1], starts)
+                                + np.add.reduceat(c2[k - 1], starts))
+                        left = 1.0 - seen / (2.0 * widths)
+                        for s_ in np.unique(np.append(strata, "all")):
+                            m = slice(None) if s_ == "all" else (strata == s_)
+                            v = left[m]
+                            if not len(v):
+                                continue
+                            acc[(cset, kind, str(s_), k, "left")][seed].append(float(v.mean()))
+                            acc[(cset, kind, str(s_), k, "untouched")][seed].append(
+                                float((v == 1.0).mean()))
+                            acc[(cset, kind, str(s_), k, "removed")][seed].append(
+                                float((v <= 1 - REMOVED_AT).mean()))
+                            acc[(cset, kind, str(s_), k, "contigs")][seed].append(float(len(v)))
         # Sorted on k as a number, not as text: a committed table that reads
         # 1, 16, 2, 32 is a table nobody checks against the prose.
         for key, by_seed in sorted(acc.items(),
                                    key=lambda kv: (kv[0][0], kv[0][1], kv[0][2],
                                                    kv[0][4], kv[0][3])):
-            cset, kind, s, k, field = key
-            meds = [np.mean(v) for v in by_seed.values()]
+            cset, kind, s_, k, field = key
+            if field == "contigs":
+                continue
+            meds = [float(np.mean(v)) for v in by_seed.values()]
             med, lo, hi = spread(meds)
-            rows.append({"op": op, "set": cset, "kind": kind, "stratum": s, "k": k,
-                         "field": field, "contigs": len(next(iter(by_seed.values()))),
+            n = acc[(cset, kind, s_, k, "contigs")]
+            rows.append({"op": op, "set": cset, "kind": kind, "stratum": s_, "k": k,
+                         "field": field,
+                         "contigs": int(np.mean([v[0] for v in n.values()])) if n else 0,
                          "value": med, "seed_min": lo, "seed_max": hi})
     return rows
 
 
+def _per_contig_median(v, starts, widths, w):
+    """Median over a contig's own window columns, in both mates."""
+    out = np.empty(len(starts))
+    for t, (st, wd) in enumerate(zip(starts, widths)):
+        c = np.arange(int(st), int(st + wd))
+        out[t] = np.median(v[np.r_[c, c + w]])
+    return out
+
+
 def growth(subs, info, mats, meds, groups, length, top: int):
-    pool = [j for j, s in enumerate(subs) if s in info and s != QUERY_RUN]
-    own = next((j for j, s in enumerate(subs) if s == QUERY_RUN), None)
+    """Own-assembly depth against the panel's p99 over the same windows, per contig.
+
+    Imo's third question: a background that stops being a background gets reported rather
+    than subtracted. The swap control answers the only question that makes the ratio
+    legible - what growth reads when the query library is just another panel draw - and the
+    two mates are kept apart because they are different lengths and map at different rates,
+    so a pooled ratio averages two leans (CLAUDE.md).
+    """
+    pool = [j for j, x in enumerate(subs) if x in info and x != QUERY_RUN]
+    own = next((j for j, x in enumerate(subs) if x == QUERY_RUN), None)
     if own is None:
         return [], {"note": f"{QUERY_RUN} was not among the subjects; growth needs it"}
     out, summary = [], {}
-    M = windows_view(mats, "most")
     for cset in ("unident", "ident"):
         for kind in ("real", "null"):
-            ratios, swapped = [], []
+            ratios, swapped, by_mate = [], [], {1: [], 2: []}
             for seed in SEEDS:
-                g = groups.get((cset, kind, seed), {})
-                if not g:
+                blocks = group_blocks(groups, (cset, kind, seed))
+                if blocks is None:
                     continue
-                swap = random.Random(f"swap|{cset}|{seed}").choice(range(len(pool)))
+                cols, starts, ids, widths = blocks
+                w = len(cols)
+                # One panel library stands in for the own library and is scored against the
+                # rest: the ratio a library with no local bloom returns.
+                swap = random.Random(f"swap|{cset}|{seed}").randrange(len(pool))
                 rest = [j for t, j in enumerate(pool) if t != swap]
-                for ci, r in g.items():
-                    o = np.concatenate([meds["med1"][own, r], meds["med2"][own, r]]).astype(float)
-                    panel = np.concatenate([meds["med1"][pool][:, r],
-                                            meds["med2"][pool][:, r]], axis=1).astype(float)
-                    p99 = np.percentile(panel, 99, axis=0)
-                    ratio = float(np.median((o + 1) / (p99 + 1)))
-                    o_s = np.concatenate([meds["med1"][pool[swap], r],
-                                          meds["med2"][pool[swap], r]]).astype(float)
-                    rest_p99 = np.percentile(np.concatenate(
-                        [meds["med1"][rest][:, r], meds["med2"][rest][:, r]], axis=1
-                    ).astype(float), 99, axis=0)
-                    swapped.append(float(np.median((o_s + 1) / (rest_p99 + 1))))
-                    ratios.append(ratio)
-                    occ = float(np.mean([per_contig_fraction(M, r, j) for j in pool]))
-                    if kind == "real":
+                own_d = np.concatenate([meds["med1"][own, cols],
+                                        meds["med2"][own, cols]]).astype(float)
+                p99 = np.percentile(np.concatenate(
+                    [meds["med1"][pool][:, cols], meds["med2"][pool][:, cols]],
+                    axis=1).astype(float), 99, axis=0)
+                g = (own_d + 1) / (p99 + 1)
+                swap_d = np.concatenate([meds["med1"][pool[swap], cols],
+                                         meds["med2"][pool[swap], cols]]).astype(float)
+                p99_s = np.percentile(np.concatenate(
+                    [meds["med1"][rest][:, cols], meds["med2"][rest][:, cols]],
+                    axis=1).astype(float), 99, axis=0)
+                gs = (swap_d + 1) / (p99_s + 1)
+                per = _per_contig_median(g, starts, widths, w)
+                per_s = _per_contig_median(gs, starts, widths, w)
+                ratios.append(per)
+                swapped.append(per_s)
+                for m, sl in ((1, slice(0, w)), (2, slice(w, 2 * w))):
+                    gm, cm = g[sl], np.arange(w)
+                    by_mate[m].append(np.array([
+                        np.median(gm[int(st):int(st + wd)])
+                        for st, wd in zip(starts, widths)]))
+                if kind == "real":
+                    F = contig_fractions(mats, "most", cols, starts, widths)
+                    occ = F[pool].mean(axis=0)
+                    own_med = np.add.reduceat(own_d[:w], starts) / widths
+                    p99_med = np.add.reduceat(p99[:w], starts) / widths
+                    for t, ci in enumerate(ids):
+                        c = slice(int(starts[t]), int(starts[t] + widths[t]))
                         out.append({"set": cset, "contig": ci,
                                     "length": length[(cset, ci)], "seed": seed,
-                                    "windows": 2 * len(r), "growth": round(ratio, 2),
-                                    "own_median_depth": float(np.median(o)),
-                                    "panel_p99_median": float(np.median(p99)),
-                                    "panel_witnessed_windows": round(occ, 4)})
-            for label, v in ((kind, ratios), (f"{kind}_swap_control", swapped)):
-                a = np.array(v)
-                summary[f"{cset}|{label}"] = {
-                    "contigs": int(a.size),
-                    **{f"frac_ge_{t}": round(float((a >= t).mean()), 6) if a.size else None
-                       for t in (2, 5, 10, 100)},
-                    "p99": round(float(np.percentile(a, 99)), 2) if a.size else None}
+                                    "windows": int(2 * widths[t]),
+                                    "growth": round(float(per[t]), 2),
+                                    "growth_mate1": round(float(by_mate[1][-1][t]), 2),
+                                    "growth_mate2": round(float(by_mate[2][-1][t]), 2),
+                                    "own_mean_depth_mate1": round(float(own_med[t]), 1),
+                                    "panel_p99_mean_mate1": round(float(p99_med[t]), 1),
+                                    "panel_witnessed_windows": round(float(occ[t]), 4),
+                                    "own_count_capped": int(
+                                        (meds["med1"][own, cols][c] >= 65535).any())})
+
+            def agg(parts):
+                a = np.concatenate(parts) if parts else np.array([])
+                return {"contigs": int(a.size),
+                        **{f"frac_ge_{t}": round(float((a >= t).mean()), 6) if a.size else None
+                           for t in (2, 5, 10, 100)},
+                        "p99": round(float(np.percentile(a, 99)), 2) if a.size else None}
+
+            summary[f"{cset}|{kind}"] = agg(ratios)
+            summary[f"{cset}|{kind}_swap_control"] = agg(swapped)
+            summary[f"{cset}|{kind}_mate1"] = agg(by_mate[1])
+            summary[f"{cset}|{kind}_mate2"] = agg(by_mate[2])
     out.sort(key=lambda d: -d["growth"])
     return out[:top], summary
 
@@ -229,27 +295,25 @@ def growth(subs, info, mats, meds, groups, length, top: int):
 def controls(subs, info, mats, groups):
     """The floor and the ceiling of this arm, both measured in the same pass."""
     out = {}
-    own = next((j for j, s in enumerate(subs) if s == QUERY_RUN), None)
+    own = next((j for j, x in enumerate(subs) if x == QUERY_RUN), None)
+    panel = [j for j, x in enumerate(subs) if x in info and x != QUERY_RUN]
     for op in ("most", "any"):
-        M = windows_view(mats, op)
         for cset in ("unident", "ident"):
             for kind in ("real", "null"):
-                if own is not None:
-                    vals = []
-                    for seed in SEEDS:
-                        g = groups.get((cset, kind, seed), {})
-                        if g:
-                            vals.append(np.mean([per_contig_fraction(M, r, own)
-                                                 for r in g.values()]))
-                    out[f"own_assembly_library|{op}|{cset}|{kind}"] = spread(vals)
-                vals = []
+                o_vals, p_vals = [], []
                 for seed in SEEDS:
-                    g = groups.get((cset, kind, seed), {})
-                    cols = [j for j, s in enumerate(subs) if s in info and s != QUERY_RUN]
-                    if g and cols:
-                        vals.append(np.mean([per_contig_fraction(M, r, j)
-                                             for r in g.values() for j in cols]))
-                out[f"panel_mean|{op}|{cset}|{kind}"] = spread(vals)
+                    blocks = group_blocks(groups, (cset, kind, seed))
+                    if blocks is None:
+                        continue
+                    cols, starts, ids, widths = blocks
+                    F = contig_fractions(mats, op, cols, starts, widths)
+                    if own is not None:
+                        o_vals.append(float(F[own].mean()))
+                    if panel:
+                        p_vals.append(float(F[panel].mean()))
+                if own is not None:
+                    out[f"own_assembly_library|{op}|{cset}|{kind}"] = spread(o_vals)
+                out[f"panel_mean|{op}|{cset}|{kind}"] = spread(p_vals)
     return out
 
 
