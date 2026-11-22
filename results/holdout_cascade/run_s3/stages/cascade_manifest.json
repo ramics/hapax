@@ -1,0 +1,59 @@
+{
+  "script": "experiments/subtract_known.py",
+  "git_sha": "5134e4297494c9d9b71d316e10380969fbaf95c0",
+  "parameters": {
+    "seed": 3,
+    "pairs": 200000,
+    "block": 1500000,
+    "r1": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/reads/SRR23421544.fastq.gz",
+    "r2": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/reads/SRR23421544.fastq.gz",
+    "trim_r2": 0,
+    "k2_dbs": [
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_viral_20210517.d",
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_standard08.d",
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_pluspf08.d"
+    ],
+    "classify_bin": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/k2pkg/root/share/kraken2-2.17.2/libexec/classify",
+    "silva": [
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/SSURef_NR99_1381.fasta.gz",
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/LSURef_NR99_1381.fasta.gz"
+    ],
+    "selfasm": [
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_rrna.fa",
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_identified_norrna.fa"
+    ],
+    "observe": [
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_unidentified.fa"
+    ],
+    "dmnd": [
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/viral_holdout.dmnd",
+      "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/sprot.dmnd"
+    ],
+    "diamond_bin": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/bin/diamond",
+    "threads": 4,
+    "k2_confidence": [
+      "0.0",
+      "0.05",
+      "0.1",
+      "0.2"
+    ],
+    "k2_memory_map": false,
+    "k2_operating_confidence": 0.1,
+    "diamond_sensitivity": "--sensitive",
+    "diamond_bitscore": 50.0,
+    "entropy_min": 0.5,
+    "homopolymer_max": 25,
+    "min_mlen": 40,
+    "work": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade_work",
+    "out": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade",
+    "keep_known": 20000,
+    "rows_out": true
+  },
+  "wall_seconds": 355.8551733179993,
+  "peak_rss_bytes": 2698936320,
+  "python": "3.13.18",
+  "mappy": "2.31",
+  "diamond": "diamond version 2.1.9",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39",
+  "cpu_count": 4
+}

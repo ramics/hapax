@@ -1,0 +1,29 @@
+{
+ "seed": 1,
+ "script_sha256": "d8d43dbde84f5148da9acf88c2f1041a1dbd86b2ad62d21f2824e559bf213a61",
+ "git_sha": "cb5b0ae-dirty",
+ "contigs": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_identified_norrna.fa",
+ "min_contig": 300,
+ "candidate": "SRR23421544_NODE_18516_length_3990_cov_28.0000_megahit_k141_13361",
+ "leak_prefix": null,
+ "dmnd": [
+  "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/viral_holdout.dmnd",
+  "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/sprot.dmnd"
+ ],
+ "aa_floors": [
+  0,
+  50,
+  100,
+  150,
+  200,
+  300,
+  400
+ ],
+ "significance_evalue": 1e-05,
+ "contigs_scored": 22110,
+ "shuffle_failures": 0,
+ "reused_hits": true,
+ "seconds": 8.0,
+ "reading": "with an empty shuffled null on this library the field cannot be cleared here, only shown not to be chance; the floor sweep is against the real distribution, and the floors are swept, not chosen",
+ "note_on_the_withdrawn_kill": "the Berlin kill this script was written to test was WITHDRAWN: that null returned unshuffled input on dead-end walks, so every significant hit in it was real material compared against itself. This arm imports the fixed walk from holdout_run.py - 0 failures, 0 returned unchanged, 0 significant hits on 22,110 shuffled contigs. Second occurrence of that bug in this repo in two days; the shared module is experiments/shuffle_control.py."
+}
