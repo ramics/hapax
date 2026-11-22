@@ -2,8 +2,8 @@
   "tool": "hapax run",
   "spec": "SPEC.md 8.1",
   "script": "hapax.py",
-  "script_sha256": "4e52eeda07642921f91c0aac4af461ed9920bef53b2a998c7ebca45e396467db",
-  "git_sha": "6c1fc3735ed1860f4adc5d8e5e36b68d339849d4",
+  "script_sha256": "950f3c05f696a6dc37fe17604d78c81fde456f61e00cccb29027e5922e06b318",
+  "git_sha": "674c62a08fc3023ea208fa976141d388628f372f",
   "tree_dirty": true,
   "seed": 3,
   "inputs": {
@@ -21,6 +21,7 @@
     "seed": 3,
     "out": "results/holdout_cascade/run_s3",
     "pairs": 200000,
+    "block": 1000000,
     "report_pairs": 2000,
     "linkage_pairs": 20000,
     "census_queries": 3000,
@@ -37,6 +38,7 @@
     "unidentified_contigs": [
       "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_unidentified.fa"
     ],
+    "identified_contigs": null,
     "k2_dbs": [
       "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_viral_20210517.d",
       "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_standard08.d",
@@ -68,7 +70,7 @@
       "stage": "cascade",
       "status": "ok",
       "script": "subtract_known.py",
-      "seconds": 356.2,
+      "seconds": 332.2,
       "argv": [
         "--seed",
         "3",
@@ -87,6 +89,8 @@
         "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade_work",
         "--out",
         "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade",
+        "--block",
+        "1000000",
         "--k2-dbs",
         "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_viral_20210517.d",
         "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_standard08.d",
@@ -109,23 +113,23 @@
         "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_unidentified.fa"
       ],
       "provenance": {
-        "git_sha": "5134e4297494c9d9b71d316e10380969fbaf95c0",
+        "git_sha": "674c62a08fc3023ea208fa976141d388628f372f-dirty",
         "script_sha256": "absent from this stage's own manifest"
       },
       "outputs": {
         "tiers.json": {
-          "bytes": 9694,
-          "sha256_16": "43233ac72a368199",
+          "bytes": 13619,
+          "sha256_16": "ec0a07953055ee99",
           "from": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade/subtract_s3.json"
         },
         "stages/cascade_manifest.json": {
-          "bytes": 2681,
-          "sha256_16": "022b179d246344d3",
+          "bytes": 2687,
+          "sha256_16": "5cdffe6164fab67e",
           "from": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade/manifest_s3.json"
         },
         "stages/cascade_rows.jsonl": {
-          "bytes": 22345159,
-          "sha256_16": "570ebb8e4f7a0bb6",
+          "bytes": 22114191,
+          "sha256_16": "497c60b47a01cf35",
           "from": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade/residue_rows_s3.jsonl"
         }
       },
@@ -153,7 +157,7 @@
       "stage": "reads",
       "status": "ok",
       "script": "residue_report.py",
-      "seconds": 1598.5,
+      "seconds": 1568.9,
       "argv": [
         "--seed",
         "3",
@@ -183,19 +187,19 @@
         "--single-end"
       ],
       "provenance": {
-        "git_sha": "6c1fc3735ed1860f4adc5d8e5e36b68d339849d4",
-        "tree_dirty": false,
+        "git_sha": "674c62a08fc3023ea208fa976141d388628f372f-dirty",
+        "tree_dirty": true,
         "script_sha256": "11b925110f3324ce"
       },
       "outputs": {
         "reads.jsonl": {
-          "bytes": 5427274,
-          "sha256_16": "2293d8efea73adf4",
+          "bytes": 5443235,
+          "sha256_16": "9bd3c46f6bc97697",
           "from": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/reads/rows_s3.jsonl"
         },
         "fields.json": {
-          "bytes": 4681,
-          "sha256_16": "db4a85b8279b86c6",
+          "bytes": 4673,
+          "sha256_16": "2034c856775a2845",
           "from": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/reads/calibration_s3.json"
         }
       },
@@ -230,10 +234,9 @@
         "known": 2000
       },
       "counts": {
-        "recurs_and_unplaceable": 752,
-        "undetermined": 1183,
-        "distant_relative": 63,
-        "placed": 2
+        "undetermined": 1212,
+        "distant_relative": 69,
+        "recurs_and_unplaceable": 719
       },
       "separating_layers": [
         "recurs_and_unplaceable",
@@ -245,15 +248,21 @@
     {
       "stage": "strains",
       "status": "ok",
-      "subjects": 65,
+      "subjects": 69,
       "subjects_with_3_or_more_reads": 0
+    },
+    {
+      "stage": "divergent",
+      "status": "skipped",
+      "reason": "not selected with --stages"
     }
   ],
   "complete": false,
   "incomplete_because": [
     "linkage skipped: not selected with --stages",
     "census skipped: not selected with --stages",
-    "calibration skipped: not selected with --stages"
+    "calibration skipped: not selected with --stages",
+    "divergent skipped: not selected with --stages"
   ],
   "field_calibration": {
     "gc": {
@@ -278,7 +287,7 @@
     "no pile without its interval",
     "no score without the calibration run behind it"
   ],
-  "wall_seconds": 2038.7,
+  "wall_seconds": 1979.1,
   "python": "3.13.18",
   "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39",
   "cpu_count": 4

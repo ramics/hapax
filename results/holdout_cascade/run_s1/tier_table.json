@@ -68,7 +68,7 @@
       "marginal_removed": 0.00161,
       "cumulative_removed": 0.00161,
       "residue": 0.99839,
-      "wall_seconds": 21.809991079999236,
+      "wall_seconds": 23.354661887000475,
       "tier_alone_removed_interval": {
         "point": 0.00161,
         "lo": 0.001444,
@@ -132,7 +132,7 @@
       "marginal_removed": 0.093645,
       "cumulative_removed": 0.095255,
       "residue": 0.904745,
-      "wall_seconds": 30.739431531000264,
+      "wall_seconds": 31.83841364700129,
       "tier_alone_removed_interval": {
         "point": 0.095195,
         "lo": 0.093917,
@@ -196,7 +196,7 @@
       "marginal_removed": 0.016085,
       "cumulative_removed": 0.11134,
       "residue": 0.88866,
-      "wall_seconds": 9.950236198001221,
+      "wall_seconds": 12.144690719997016,
       "tier_alone_removed_interval": {
         "point": 0.01618,
         "lo": 0.015636,
@@ -258,7 +258,7 @@
       "marginal_removed": 0.13134,
       "cumulative_removed": 0.24268,
       "residue": 0.75732,
-      "wall_seconds": 43.22052588000042,
+      "wall_seconds": 37.20727355599956,
       "tier_alone_removed_interval": {
         "point": 0.16031,
         "lo": 0.158709,
@@ -320,7 +320,7 @@
       "marginal_removed": 0.00016,
       "cumulative_removed": 0.24284,
       "residue": 0.75716,
-      "wall_seconds": 25.179116176001116,
+      "wall_seconds": 18.93790594999882,
       "tier_alone_removed_interval": {
         "point": 0.14878,
         "lo": 0.147227,
@@ -382,7 +382,7 @@
       "marginal_removed": 0.11896,
       "cumulative_removed": 0.3618,
       "residue": 0.6382,
-      "wall_seconds": 3.7756241109991606,
+      "wall_seconds": 3.9707114760003606,
       "tier_alone_removed_interval": {
         "point": 0.20906,
         "lo": 0.207283,
@@ -446,7 +446,7 @@
       "marginal_removed": 0.260735,
       "cumulative_removed": 0.622535,
       "residue": 0.37746500000000005,
-      "wall_seconds": 6.423590743000204,
+      "wall_seconds": 7.5547824450004555,
       "tier_alone_removed_interval": {
         "point": 0.41854,
         "lo": 0.41638,
@@ -510,7 +510,7 @@
       "marginal_removed": 0.007685,
       "cumulative_removed": 0.63022,
       "residue": 0.36978,
-      "wall_seconds": 247.3804539090006,
+      "wall_seconds": 196.35039106099975,
       "tier_alone_removed_interval": {
         "point": 0.007685,
         "lo": 0.007312,
@@ -574,7 +574,7 @@
       "marginal_removed": 0.03913,
       "cumulative_removed": 0.66935,
       "residue": 0.33065,
-      "wall_seconds": 277.47732347300007,
+      "wall_seconds": 219.16696931299884,
       "tier_alone_removed_interval": {
         "point": 0.04336,
         "lo": 0.042476,
@@ -633,5 +633,5 @@
   ],
   "interval_method": "wilson_95_on_this_run's_counts; a multi-seed run reports across-seed spread instead",
   "source": "tiers.json",
-  "source_sha256_16": "7bcd17bce3e9a739"
+  "source_sha256_16": "c49e1ab5cb99c1ef"
 }

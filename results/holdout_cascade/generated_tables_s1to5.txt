@@ -1,0 +1,348 @@
+==============================================================================
+1. THE CASCADE, FIVE SEEDS (each 200,000 reads; one read pool, so the spread
+   below is subsampling noise and nothing else)
+==============================================================================
+tier                                           alone    marginal    cumulative
+artefact                                  0.01-0.16%  0.01-0.16%    0.01-0.16%
+rrna                                      9.34-11.53% 9.33-11.53%   9.35-11.54%
+k2_viral_20210517.d                       1.55-1.62%  1.54-1.61%  10.94-13.08%
+k2_standard08.d                           15.80-16.39%12.77-13.13%  24.02-25.86%
+k2_pluspf08.d                             14.64-15.20%  0.01-0.02%  24.03-25.86%
+selfasm_contigs_renamed_rrna              20.91-22.64%11.69-12.08%  36.12-37.56%
+selfasm_contigs_renamed_identified_norrna 41.03-41.85%25.42-26.07%  62.02-62.98%
+prot_viral_holdout                        0.76-0.78%  0.76-0.78%  62.79-63.73%
+prot_sprot                                4.27-4.36%  3.84-3.93%  66.72-67.57%
+
+  identified (tier 1)               66.72-67.57%
+  residue                           32.43-33.28%
+  tier 2 (assembled, unidentified)  14.32-14.68%
+  tier 3 (unplaced by anything)     18.11-18.65%
+
+  stages, per seed:
+    seed 1: complete=False  cascade=ok contigs=ok reads=ok linkage=skipped census=skipped calibration=skipped intervals=ok layers=ok strains=ok divergent=skipped
+    seed 2: complete=False  cascade=ok contigs=ok reads=ok linkage=skipped census=skipped calibration=skipped intervals=ok layers=ok strains=ok divergent=skipped
+    seed 3: complete=False  cascade=ok contigs=ok reads=ok linkage=skipped census=skipped calibration=skipped intervals=ok layers=ok strains=ok divergent=skipped
+    seed 4: complete=False  cascade=ok contigs=ok reads=ok linkage=skipped census=skipped calibration=skipped intervals=ok layers=ok strains=ok divergent=skipped
+    seed 5: complete=False  cascade=ok contigs=ok reads=ok linkage=skipped census=skipped calibration=skipped intervals=ok layers=ok strains=ok divergent=skipped
+
+==============================================================================
+2. THE ASSEMBLY SPLIT (whole library, one assembly, deterministic)
+==============================================================================
+  contigs 35,328  bases 22,037,613
+  identified 63.11% of contigs, 70.32% of bases
+  operating point: {"kraken2_confidence": 0.1, "diamond_bitscore": 50.0, "kraken2_db": "k2_viral_20210517.d", "protein_dbs": ["viral_holdout", "sprot"]}
+  identified by protein only: 62.46%; by nucleotide only: 0.01%
+  Kraken2 confidence sweep (fraction of contigs identified):
+    0.00: 1.15%
+    0.05: 0.26%
+    0.10: 0.22%
+    0.20: 0.19%
+  protein bitscore sweep:
+    viral_holdout: 30=44.68%  40=25.46%  50=20.94%  60=17.79%  80=12.86%  100=9.49%
+    sprot: 30=73.73%  40=63.06%  50=58.80%  60=55.10%  80=48.04%  100=41.91%
+
+==============================================================================
+3. THE TWO ARMS, CONTIG BY CONTIG
+==============================================================================
+
+--- candidate (withheld, deposited after the cutoff): 1 contigs ---
+  SRR23421544_NODE_18516_length_3990_cov_28.0000
+    3990 nt, 100.00% of the contig attributed, tier = identified
+    rank by length: 131 of 35328
+    holdout_nt     69.718% over 2873 (union cov 0.7103) E=0 bits=1141 -> NC_074562.1
+    holdout_prot   66.5% over 620 (union cov 0.4624) E=5.44e-282 bits=812 -> YP_010771404.1
+    full_nt        69.718% over 2873 (union cov 0.7103) E=0 bits=1141 -> NC_074562.1
+    full_prot      66.5% over 620 (union cov 0.4624) E=5.57e-282 bits=812 -> YP_010771404.1
+    sprot_undated  36.6% over 456 (union cov 0.3383) E=1.07e-68 bits=246 -> sp|P09675|RDRP_BPSP
+
+--- leak (already in the reference): 34 contigs ---
+  SRR23421544_NODE_4102_length_6383_cov_1188.0000
+    6383 nt, 100.00% of the contig attributed, tier = identified
+    rank by length: 30 of 35328
+    holdout_nt     99.905% over 6349 (union cov 0.9947) E=0 bits=11423 -> NC_028478.1
+    holdout_prot   99.8% over 1615 (union cov 0.759) E=0 bits=3196 -> YP_009182168.1
+    full_nt        99.905% over 6349 (union cov 0.9947) E=0 bits=11423 -> NC_028478.1
+    full_prot      99.8% over 1615 (union cov 0.759) E=0 bits=3196 -> YP_009182168.1
+    sprot_undated  99.8% over 1615 (union cov 0.759) E=0 bits=3196 -> sp|A0A0S2T050|RDRP_TBRFV
+  SRR23421544_NODE_13058_length_2721_cov_33.0000
+    2721 nt, 94.16% of the contig attributed, tier = identified
+    rank by length: 406 of 35328
+    holdout_nt     98.309% over 2721 (union cov 1.0) E=0 bits=4700 -> NC_003630.1
+    holdout_prot   99.4% over 906 (union cov 0.9989) E=0 bits=1744 -> NP_619740.1
+    full_nt        98.309% over 2721 (union cov 1.0) E=0 bits=4700 -> NC_003630.1
+    full_prot      99.4% over 906 (union cov 0.9989) E=0 bits=1744 -> NP_619740.1
+    sprot_undated  99.4% over 906 (union cov 0.9989) E=0 bits=1744 -> sp|P89657|RDRP_PMMVJ
+  SRR23421544_NODE_33243_length_2363_cov_32.7475
+    2363 nt, 91.92% of the contig attributed, tier = identified
+    rank by length: 562 of 35328
+    holdout_nt     98.688% over 2363 (union cov 1.0) E=0 bits=4122 -> NC_003630.1
+    holdout_prot   99.4% over 318 (union cov 0.4037) E=5.6e-216 bits=655 -> NP_619740.1
+    full_nt        98.688% over 2363 (union cov 1.0) E=0 bits=4122 -> NC_003630.1
+    full_prot      99.4% over 318 (union cov 0.4037) E=5.73e-216 bits=655 -> NP_619740.1
+    sprot_undated  100.0% over 318 (union cov 0.4037) E=4.22e-218 bits=661 -> sp|P89657|RDRP_PMMVJ
+  SRR23421544_NODE_18593_length_2345_cov_12.0000
+    2345 nt, 100.00% of the contig attributed, tier = identified
+    rank by length: 574 of 35328
+    holdout_nt     98.209% over 2345 (union cov 1.0) E=0 bits=4040 -> NC_002692.1
+    holdout_prot   99.7% over 781 (union cov 0.9991) E=0 bits=1519 -> NP_078447.1
+    full_nt        98.209% over 2345 (union cov 1.0) E=0 bits=4040 -> NC_002692.1
+    full_prot      99.7% over 781 (union cov 0.9991) E=0 bits=1519 -> NP_078447.1
+    sprot_undated  99.7% over 781 (union cov 0.9991) E=0 bits=1519 -> sp|P03587|RDRP_TOML
+  SRR23421544_NODE_28679_length_1781_cov_8.0000
+    1781 nt, 100.00% of the contig attributed, tier = identified
+    rank by length: 1118 of 35328
+    holdout_nt     98.43% over 1783 (union cov 1.0) E=0 bits=3069 -> NC_001556.1
+    holdout_prot   95.6% over 593 (union cov 0.9989) E=0 bits=1105 -> NP_062913.2
+    full_nt        98.43% over 1783 (union cov 1.0) E=0 bits=3069 -> NC_001556.1
+    full_prot      95.6% over 593 (union cov 0.9989) E=0 bits=1105 -> NP_062913.2
+    sprot_undated  95.6% over 593 (union cov 0.9989) E=0 bits=1105 -> sp|P18339|RDRP_TMGMV
+  SRR23421544_NODE_10510_length_1437_cov_24.0000
+    1437 nt, 100.00% of the contig attributed, tier = identified
+    rank by length: 1835 of 35328
+    holdout_nt     99.582% over 1437 (union cov 1.0) E=0 bits=2565 -> NC_002692.1
+    holdout_prot   100.0% over 316 (union cov 0.6597) E=7.89e-222 bits=658 -> NP_078446.1
+    full_nt        99.582% over 1437 (union cov 1.0) E=0 bits=2565 -> NC_002692.1
+    full_prot      100.0% over 316 (union cov 0.6597) E=8.08e-222 bits=658 -> NP_078446.1
+    sprot_undated  100.0% over 316 (union cov 0.6597) E=9.66e-222 bits=658 -> sp|Q9Q1T8|RDRP_TOMK1
+
+==============================================================================
+4. WHERE THE REMOVED PILE'S IDENTITIES SIT - the control that decides whether
+   a distance readout on tier 1 would have surfaced this
+==============================================================================
+
+--- holdout_nt ---
+  identified: 22,260 background contigs, 2,063 with a significant hit (9.3%)
+    median identity 75.6%  range 63.1-100.0
+         60-70% :    452  (21.91% of significant)
+         70-80% :    895  (43.38% of significant)
+         80-90% :    550  (26.66% of significant)
+         90-95% :    109  (5.28% of significant)
+         95-99% :     41  (1.99% of significant)
+        99-100% :     16  (0.78% of significant)
+  assembled_unidentifiable: 13,033 background contigs, 171 with a significant hit (1.3%)
+    median identity 83.0%  range 67.9-100.0
+         60-70% :      6  (3.51% of significant)
+         70-80% :     59  (34.50% of significant)
+         80-90% :     80  (46.78% of significant)
+         90-95% :     19  (11.11% of significant)
+         95-99% :      5  (2.92% of significant)
+        99-100% :      2  (1.17% of significant)
+    CANDIDATE sits at 69.7% (60-70% band): 422 of 2,063 identified background contigs (20.46%) are at or below it
+    CANDIDATE bitscore 1141 against the tier threshold of 50: 99.83% of identified background contigs score at or below it, so raising the threshold to spare it would also spare that share
+
+--- holdout_prot ---
+  identified: 22,260 background contigs, 7,601 with a significant hit (34.1%)
+    median identity 40.0%  range 20.2-100.0
+          0-50% :  5,766  (75.86% of significant)
+         50-60% :  1,015  (13.35% of significant)
+         60-70% :    443  (5.83% of significant)
+         70-80% :    169  (2.22% of significant)
+         80-90% :     82  (1.08% of significant)
+         90-95% :     48  (0.63% of significant)
+         95-99% :     53  (0.70% of significant)
+        99-100% :     25  (0.33% of significant)
+  assembled_unidentifiable: 13,033 background contigs, 98 with a significant hit (0.8%)
+    median identity 36.9%  range 24.1-78.3
+          0-50% :     86  (87.76% of significant)
+         50-60% :      8  (8.16% of significant)
+         60-70% :      3  (3.06% of significant)
+         70-80% :      1  (1.02% of significant)
+    CANDIDATE sits at 66.5% (60-70% band): 7,104 of 7,601 identified background contigs (93.46%) are at or below it
+    CANDIDATE bitscore 812 against the tier threshold of 50: 99.82% of identified background contigs score at or below it, so raising the threshold to spare it would also spare that share
+
+--- full_nt ---
+  identified: 22,260 background contigs, 2,100 with a significant hit (9.4%)
+    median identity 75.5%  range 63.1-100.0
+         60-70% :    462  (22.00% of significant)
+         70-80% :    921  (43.86% of significant)
+         80-90% :    552  (26.29% of significant)
+         90-95% :    107  (5.10% of significant)
+         95-99% :     42  (2.00% of significant)
+        99-100% :     16  (0.76% of significant)
+  assembled_unidentifiable: 13,033 background contigs, 173 with a significant hit (1.3%)
+    median identity 83.1%  range 67.9-100.0
+         60-70% :      6  (3.47% of significant)
+         70-80% :     59  (34.10% of significant)
+         80-90% :     80  (46.24% of significant)
+         90-95% :     20  (11.56% of significant)
+         95-99% :      5  (2.89% of significant)
+        99-100% :      3  (1.73% of significant)
+    CANDIDATE sits at 69.7% (60-70% band): 431 of 2,100 identified background contigs (20.52%) are at or below it
+    CANDIDATE bitscore 1141 against the tier threshold of 50: 99.83% of identified background contigs score at or below it, so raising the threshold to spare it would also spare that share
+
+--- full_prot ---
+  identified: 22,260 background contigs, 7,681 with a significant hit (34.5%)
+    median identity 40.0%  range 20.2-100.0
+          0-50% :  5,801  (75.52% of significant)
+         50-60% :  1,032  (13.44% of significant)
+         60-70% :    463  (6.03% of significant)
+         70-80% :    176  (2.29% of significant)
+         80-90% :     82  (1.07% of significant)
+         90-95% :     48  (0.62% of significant)
+         95-99% :     53  (0.69% of significant)
+        99-100% :     26  (0.34% of significant)
+  assembled_unidentifiable: 13,033 background contigs, 107 with a significant hit (0.8%)
+    median identity 36.9%  range 24.1-97.7
+          0-50% :     94  (87.85% of significant)
+         50-60% :      8  (7.48% of significant)
+         60-70% :      3  (2.80% of significant)
+         70-80% :      1  (0.93% of significant)
+         95-99% :      1  (0.93% of significant)
+    CANDIDATE sits at 66.5% (60-70% band): 7,170 of 7,681 identified background contigs (93.35%) are at or below it
+    CANDIDATE bitscore 812 against the tier threshold of 50: 99.82% of identified background contigs score at or below it, so raising the threshold to spare it would also spare that share
+
+--- sprot_undated ---
+  identified: 22,260 background contigs, 20,763 with a significant hit (93.3%)
+    median identity 56.5%  range 20.7-100.0
+          0-50% :  7,992  (38.49% of significant)
+         50-60% :  3,540  (17.05% of significant)
+         60-70% :  2,956  (14.24% of significant)
+         70-80% :  2,298  (11.07% of significant)
+         80-90% :  1,899  (9.15% of significant)
+         90-95% :  1,017  (4.90% of significant)
+         95-99% :    830  (4.00% of significant)
+        99-100% :    231  (1.11% of significant)
+  assembled_unidentifiable: 13,033 background contigs, 339 with a significant hit (2.6%)
+    median identity 35.9%  range 21.0-100.0
+          0-50% :    298  (87.91% of significant)
+         50-60% :     25  (7.37% of significant)
+         60-70% :     10  (2.95% of significant)
+         70-80% :      3  (0.88% of significant)
+         80-90% :      1  (0.29% of significant)
+        99-100% :      2  (0.59% of significant)
+    CANDIDATE sits at 36.6% (0-50% band): 2,863 of 20,763 identified background contigs (13.79%) are at or below it
+    CANDIDATE bitscore 246 against the tier threshold of 50: 79.97% of identified background contigs score at or below it, so raising the threshold to spare it would also spare that share
+
+==============================================================================
+4b. COVERAGE x IDENTITY JOINTLY, over the pile the cascade removed, and the
+    SAME cell counts for the leak arm. Identity alone is uninterpretable, so
+    the question is whether adding the axis that has calibration behind it
+    isolates the candidate. The leak arm is the direction check: it is known
+    material from this same library and must land top-right.
+==============================================================================
+
+  --- holdout_prot, arm=background, tier=identified: n=7,601 ---
+  cov \ id           0-50    50-60    60-70    70-80    80-90   90-100
+  0.70-1.01      3,530      653      280      102       49       87
+  0.50-0.70      1,096      172       62       25       17       19
+  0.25-0.50        891      152       69       30       12       18
+  0.00-0.25        249       38       32       12        4        2
+    CANDIDATE: identity 66.5%, union coverage 0.4624 -> cell cov 0.25-0.50 x id 60-70, which holds 69 contigs (0.91% of this pile)
+      peer:   4156 nt  68.0%  cov 0.458  bits 881
+      peer:   2432 nt  67.1%  cov 0.401  bits 434
+      peer:   1733 nt  64.8%  cov 0.485  bits 374
+      peer:   2040 nt  62.0%  cov 0.421  bits 356
+
+  --- holdout_prot, arm=leak: n=34 ---
+  cov \ id           0-50    50-60    60-70    70-80    80-90   90-100
+  0.70-1.01          0        0        0        0        1       29
+  0.50-0.70          0        0        0        0        0        3
+  0.25-0.50          0        0        0        0        0        1
+  0.00-0.25          0        0        0        0        0        0
+
+  --- holdout_nt, arm=background, tier=identified: n=2,063 ---
+  cov \ id           0-50    50-60    60-70    70-80    80-90   90-100
+  0.70-1.01          0        0      137      141       77       85
+  0.50-0.70          0        0       78       96        7        3
+  0.25-0.50          0        0      157      275       46        8
+  0.00-0.25          0        0       80      383      420       70
+    CANDIDATE: identity 69.7%, union coverage 0.7103 -> cell cov 0.70-1.01 x id 60-70, which holds 137 contigs (6.64% of this pile)
+      peer:   8190 nt  69.6%  cov 0.937  bits 2181
+      peer:   2005 nt  67.5%  cov 0.807  bits 471
+      peer:   2132 nt  66.6%  cov 0.738  bits 441
+      peer:   1122 nt  69.6%  cov 0.942  bits 435
+
+  --- holdout_nt, arm=leak: n=34 ---
+  cov \ id           0-50    50-60    60-70    70-80    80-90   90-100
+  0.70-1.01          0        0        0        0        2       32
+  0.50-0.70          0        0        0        0        0        0
+  0.25-0.50          0        0        0        0        0        0
+  0.00-0.25          0        0        0        0        0        0
+
+==============================================================================
+4c. THE COVERAGE GAP: how much more of a contig is explained by known
+    proteins TOGETHER than by the single best-covering one. The one field in
+    this experiment whose direction is pinned on known material from the same
+    water, so it is printed with that arm beside it and with a length-matched
+    comparison, because the gap can only open on a contig with several genes.
+==============================================================================
+
+  --- holdout_prot ---
+  CANDIDATE 3990 nt: per-subject 0.4624, any-subject 0.8286, GAP +36.6 points over 5 significant subjects
+  length-matched identified background (2793-5187 nt), n=193: median 0.1, mean 4.5, max 54.2
+    candidate percentile: 95.85%
+    gap > 10 points: 28 (14.51%)
+    gap > 20 points: 16 (8.29%)
+    gap > 30 points: 10 (5.18%)
+  LEAK ARM, known material from this library, n=34: median 0.0, mean 0.0, max 0.0
+  confound check, gap by number of significant subjects:
+      1 subjects: n= 1,437  median   0.0  mean   0.0
+      2 subjects: n=   697  median   0.0  mean   1.7
+      3 subjects: n=   567  median   0.0  mean   1.5
+      4 subjects: n=   501  median   0.0  mean   1.8
+      5 subjects: n= 4,399  median   0.0  mean   1.9
+
+  --- holdout_nt ---
+  CANDIDATE 3990 nt: per-subject 0.7103, any-subject 0.7103, GAP +0.0 points over 5 significant subjects
+  length-matched identified background (2793-5187 nt), n=94: median 0.0, mean 0.8, max 15.0
+    candidate percentile: 64.89%
+    gap > 10 points: 2 (2.13%)
+    gap > 20 points: 0 (0.00%)
+    gap > 30 points: 0 (0.00%)
+  LEAK ARM, known material from this library, n=34: median 0.0, mean 0.0, max 0.3
+  confound check, gap by number of significant subjects:
+      1 subjects: n=   917  median   0.0  mean   0.0
+      2 subjects: n=   317  median   0.0  mean   1.4
+      3 subjects: n=   149  median   0.0  mean   2.2
+      4 subjects: n=   110  median   0.0  mean   2.9
+      5 subjects: n=   570  median   0.2  mean   2.2
+
+==============================================================================
+5. WHAT THE PIPELINE ACTUALLY REPORTED - the `strains` and `layers` output
+   a reader would have in front of them, with the withheld genome removed
+   in tier 1 and therefore absent from both by construction
+==============================================================================
+
+  seed 1: 71 subjects over 1949 searched residue reads
+    residue reads per subject: max 1, subjects with >=2 0, with >=3 0
+    median aligned 42 aa, identity 37.0-100.0%
+    the withheld genome's own subject present: NO
+    layers[residue] of 2000: distant_relative=68  placed=3  recurs_and_unplaceable=822  undetermined=1107
+    layers[known] of 2000: artefact_shaped=6  distant_relative=583  placed=280  recurs_and_unplaceable=939  undetermined=192
+
+  seed 2: 54 subjects over 1945 searched residue reads
+    residue reads per subject: max 1, subjects with >=2 0, with >=3 0
+    median aligned 46 aa, identity 37.5-94.7%
+    the withheld genome's own subject present: NO
+    layers[residue] of 2000: distant_relative=53  placed=1  recurs_and_unplaceable=716  undetermined=1230
+    layers[known] of 2000: distant_relative=569  placed=277  recurs_and_unplaceable=861  undetermined=293
+
+  seed 3: 69 subjects over 1938 searched residue reads
+    residue reads per subject: max 1, subjects with >=2 0, with >=3 0
+    median aligned 46 aa, identity 35.4-87.0%
+    the withheld genome's own subject present: NO
+    layers[residue] of 2000: distant_relative=69  recurs_and_unplaceable=719  undetermined=1212
+    layers[known] of 2000: distant_relative=552  placed=313  recurs_and_unplaceable=886  undetermined=249
+
+  seed 4: 65 subjects over 1942 searched residue reads
+    residue reads per subject: max 1, subjects with >=2 0, with >=3 0
+    median aligned 41 aa, identity 36.4-100.0%
+    the withheld genome's own subject present: NO
+    layers[residue] of 2000: distant_relative=63  placed=2  recurs_and_unplaceable=752  undetermined=1183
+    layers[known] of 2000: artefact_shaped=1  distant_relative=552  placed=273  recurs_and_unplaceable=891  undetermined=283
+
+  seed 5: 63 subjects over 1942 searched residue reads
+    residue reads per subject: max 2, subjects with >=2 1, with >=3 0
+    median aligned 43 aa, identity 42.0-100.0%
+    the withheld genome's own subject present: NO
+    layers[residue] of 2000: distant_relative=61  placed=3  recurs_and_unplaceable=732  undetermined=1204
+    layers[known] of 2000: distant_relative=542  placed=259  recurs_and_unplaceable=924  undetermined=275
+
+==============================================================================
+6. DRIFT CONTROL: held-out index against today's, same pass
+==============================================================================
+  every distance is measured against the date-held-out index and today's index in the same pass. The reference can only have grown, so a distance against today's is a floor
+  [candidate] 3990 nt: holdout_nt=69.718%/cov 0.7103  holdout_prot=66.5%/cov 0.4624  full_nt=69.718%/cov 0.7103  full_prot=66.5%/cov 0.4624  sprot_undated=36.6%/cov 0.3383
+  [leak] 1150 nt: holdout_nt=99.044%/cov 1.0  holdout_prot=96.5%/cov 0.6678  full_nt=99.044%/cov 1.0  full_prot=96.5%/cov 0.6678  sprot_undated=92.5%/cov 0.6678
+  [leak] 329 nt: holdout_nt=95.719%/cov 0.997  holdout_prot=98.2%/cov 0.9939  full_nt=95.719%/cov 0.997  full_prot=98.2%/cov 0.9939  sprot_undated=94.5%/cov 0.9939
+  [leak] 578 nt: holdout_nt=97.578%/cov 1.0  holdout_prot=100.0%/cov 0.9965  full_nt=97.578%/cov 1.0  full_prot=100.0%/cov 0.9965  sprot_undated=100.0%/cov 0.9965

@@ -30,8 +30,17 @@ only 11.6% of spike reads hit at all, and background outranked spike at every th
 The subtrahend is therefore defined by **identification**, not by assembly — otherwise tier 2
 is swallowed whole by tier 1.
 
-The output is a **breakdown plus a cost-versus-completeness curve**. It is not a discovery
-claim. The residue is the honest remainder, not a finding.
+**A second rule sits beside it, and it is the newer one: subtracting a read is not the same as
+dismissing the sequence it came from.** The three tiers describe what is *removed from the
+read residue*. They do not describe where novel material can be, and a contig removed in tier
+1 at real distance is still reportable material — §5. Measured: the withheld genome of
+`results/holdout_cascade/` was correctly removed as identified and should still have reached
+a reader. **So every removal carries the distance and coverage that justified it, and the
+boolean alone is a defect.**
+
+The output is a **breakdown plus a cost-versus-completeness curve**, together with the
+distance continuum of §5. It is not a discovery claim. The residue is the honest remainder,
+not a finding.
 
 ### 1.1 Why the target is a measurement and not a call
 
@@ -108,6 +117,15 @@ Imo's, and each is a reported field rather than a threshold:
 **(i) Divergence of anything that is not a close homolog.** Closest relative is reported as a
 continuous number — bitscore, percent identity, alignment length — never thresholded into a
 call.
+
+**This is a requirement on the output, not on the computation, and that distinction is where
+it was being failed.** The cascade already computed every one of those numbers for every
+contig it removed and kept only a yes/no, so a contig removed at 66.5% and one removed at
+99.9% were indistinguishable downstream. `classify_contigs.py` therefore writes the removal
+evidence per contig — subject, identity, alignment length, E-value, bitscore and union
+coverage on the query — and the tier remains exactly as wide as it was. **Nothing about what
+is subtracted changes; what changes is that the subtraction is no longer silent about how far
+away the thing it removed was.** The continuum it feeds is §5.
 
 **(ii) Reads where part aligns well and the rest does not.** This was written as the sharpest
 open question in the design, on the grounds that for the residue it is the *normal case* — a
@@ -200,6 +218,15 @@ Contig-level identification reverses the read-level picture, and the tool needs 
 for that reason: **protein-only identifies 26.30% of contigs, nucleotide-only 5.73%** — at
 read length the nucleotide index does the work, at contig length the protein index does, by a
 factor of 4.6. Overall 34.78% of contigs and 49.13% of bases identified.
+
+**Tier 2 is never subtracted, and the output says so rather than relying on the reader
+knowing the rule.** `tiers.json` records this set with `"subtracted": false` and the tier
+table carries the note in prose, because both piles are "the sample's own contigs" and only
+one of them is a subtrahend. The scale of what that protects is large: subtracted, the
+unidentified set would remove a further **21.06–21.41%** of a library (five seeds,
+`results/holdout_cascade/`). **And protecting it is not sufficient** — the line between tier 1
+and tier 2 is drawn by whether an index recognises the contig, so the recognisable-but-distant
+lands in tier 1 and is removed. That is what §5 exists for.
 
 **Tier 2 is real but thin, and the tool reports it that way.** 46,157 contigs cannot be
 identified at all (14.3 Mb, median 254 nt, median coverage 1.12×). Only 3.87% — about **1,784
@@ -342,10 +369,61 @@ single long polyprotein ORF, which is favourable to a translated search.
 
 ---
 
-## 5. For known material: new strains of existing viruses
+## 5. For identified material: one distance continuum, not a strain question
 
-Where a read or contig *is* identified, the tool reports the strain question rather than
-stopping at the taxon. Measured constraints on what that can deliver:
+**Imo's call, 2026-11-22, and it supersedes the earlier framing of this section:** *"those
+identified genomes belong in bucket 1. The line between 'new strain of old thing' and 'new
+thing' doesn't exist in evolution."* So there is no strain product and no novelty product.
+There is **one continuum over everything that got a significant hit, ranked by distance with
+coverage beside it**, and the tier a contig ended up in is a column on that table rather than
+a different table.
+
+**The measurement that forces it** (`results/holdout_cascade/`, PR #31). A genome withheld
+from every index, in a library carrying it, assembles into one contig covering 96% of itself
+and is removed in tier 1 at **66.5% protein identity over 620 aa, E = 5.4e-282, bitscore 812
+against this tier's threshold of 50**. The already-referenced comparator from the same water
+reads **99.905%**. Two sequences thirty identity points apart receive the same single word,
+`identified`, and 66.5% is further than most within-species diversity — further than HIV
+quasispecies within one host. The distance that justified the removal is computed and then
+discarded. **That discard is the defect, not the removal.**
+
+**So tier 1 emits a distance, not a boolean.** Per removed contig, into the output:
+
+| field | why it is there |
+|---|---|
+| best subject, percent identity, alignment length, E-value, bitscore | an identity without its E-value is unreadable, and identity is quantised at short alignment lengths |
+| per-subject union coverage on the query | identity alone flatters towards *familiar*, by +17.2 points below 50% coverage; coverage is the control that removes most of it |
+| per-gene identity with the role, and the spread across genes | whole-contig identity is **not a property of the contig**: median spread between genes is 17.4 points on Berlin and **24.3 points** on the holdout, and the single figure is whichever gene won on bitscore |
+| which tier removed it and at which operating point | the same contig moves tier when a threshold moves, so the tier is meaningless without it |
+| mapped depth, breadth and evenness | assembler coverage headers understate mapped depth ~4×, and a length claim without a chimaera number is not a claim |
+
+**Rank by the conserved gene — the polymerase — with the per-gene spread shown.** Ranking on
+whole-contig identity ranks on which gene happened to win.
+
+**What must never appear on this table, and the reason is the project's founding rule.**
+Ordering by distance from a database is ordering by **database proximity**, so the table is a
+measurement and never a verdict: no novelty score, no threshold that says *novel*, no flag.
+Measured on the holdout: ordering the removed pile by identity puts the withheld genome at the
+**93.46th percentile** with 7,104 contigs ahead of it, so identity ordering is not merely
+uncalibrated, it is **actively wrong**. Adding coverage gives a cell of **70 contigs, 0.92% of
+the removed pile**, with **zero** of the 34 known contigs from the same water anywhere in it.
+That is the defensible output: **a shortlist with a count on it.** The withheld genome is not
+the top row of its own cell and the tool does not pretend otherwise.
+
+**Every row ships with its control arm, drawn and scored by the same code in the same pass** —
+known material from the same library — and with the index the distance was measured against,
+because a narrow index makes every distance an **upper bound**. Against core_nt, 319 GB, about
+a sixth of a divergent panel collapses to strain level while the rest holds, so the shortlist
+shrinks by roughly a sixth rather than dissolving.
+
+**Band labels are readings, not calls.** *Reference or near-reference* ≥97%, *divergent strain
+of the named taxon* ≥90%, *same genus or thereabouts* ≥70%, *family-level or looser — the
+subject is a nearest neighbour, not an identification* ≥40%, and below that *below any band a
+name survives*. They are printed as prose beside the number they came from, never substituted
+for it.
+
+**The near end of the continuum keeps its measured constraints**, which is all the old strain
+section ever contained:
 
 - Below about **3.8% divergence every assembler fuses lineages at any depth**; MEGAHIT
   separates from roughly 5% up (PR #12, 2,205 assemblies, 21 pairs, 5 seeds, 0 false mosaics
@@ -357,8 +435,35 @@ stopping at the taxon. Measured constraints on what that can deliver:
 - Pair scores cannot separate two hosts' swarms — two HBV hosts share 709 exact 150-mers.
   Only population structure can.
 
-So strain calls ship with the divergence at which they were made, and below ~4% the tool
-reports a fused lineage as fused rather than as a strain.
+So a reading at the near end ships with the divergence at which it was made, and below ~4%
+the tool reports a fused lineage as fused.
+
+**And the far end is where this stops being a strain question at all.** Six contigs on the
+Berlin panel are finished or near-finished genomes, 1.8–3.9 kb at 171–467× mapped depth with
+even coverage end to end, at family-level distance from anything published. On the continuum
+those sit beside the withheld genome, which is the point: **one axis, and the interesting
+material is at one end of it, not in a separate bucket.**
+
+### 5.1 The four residues, and which of them this table covers
+
+Imo's enumeration of where novel material can be, 2026-11-22:
+
+1. **Distant-relative contigs** — identified, at real distance. **This section's table**, and
+   the largest and best-characterised of the four.
+2. **Single reads with strong hits** — rare. Nucleotide beats protein at read level at every
+   distance, because 145 nt is only ~48 residues, so the protein tier's contig-level advantage
+   must not be carried down here (`results/holdout_run/`).
+3. **Unidentified contigs — explicitly NOT a subtrahend.** Tier 2, §3. The output records
+   `"subtracted": false` against this set rather than relying on the reader knowing the rule;
+   subtracted it would remove a further 21.1–21.4% of a library.
+4. **Single reads without strong hits** — the dark matter, at median depth 1. §4. No per-read
+   verdict is defensible here and *cannot discriminate here* is a legitimate row.
+
+**Bucket 3 being protected is not sufficient, and bucket 1 is why.** The line between 1 and 3
+is drawn by whether an index recognises the contig, so the recognisable-but-distant lands in
+1 and gets subtracted. The standing rule *the subtrahend is identification, not assembly*
+protects what nothing can recognise; it does not protect what is recognised from a long way
+away. That is the gap this section closes.
 
 ---
 
@@ -494,8 +599,15 @@ hapax run SAMPLE.R1.fq.gz SAMPLE.R2.fq.gz --seed N --out RUNDIR
 ```
 
 `RUNDIR` holds the manifest, the tier table, the per-read rows as JSONL, the per-contig
-rows, the calibration block and the assembly version. Everything downstream — including the
+rows, **`removal_evidence.tsv` — one row per route per removed contig, carrying the identity,
+alignment length, E-value, bitscore and query coverage that justified the removal (§2.1(i),
+§5)** — the calibration block and the assembly version. Everything downstream — including the
 web interface — reads those committed files and nothing else.
+
+`removal_evidence.tsv` is emitted in input order with no score and no ranking on it, and
+`route` is a column because a protein row carries an identity and a coverage, a Kraken2 row a
+taxid and a confidence, and a ribosomal row matching bases: three kinds of number that must
+not be pooled.
 
 **Implemented in [`hapax.py`](hapax.py)**, deliberately as an orchestrator: every number in
 the run directory comes from the `experiments/` script that already measures it, with that
@@ -506,7 +618,11 @@ the declared blind spots travelling with the run. Stages: `cascade`, `contigs`, 
 `linkage`, `census`, `calibration`, `intervals`, `layers`, `strains`. A stage whose
 reference data is absent writes `status: "skipped"` with the reason and the run is marked
 incomplete; it never falls back to a cheaper index and reports the number as if it were the
-real one.
+real one. `divergent` is the stage that reads §5's continuum over the removed pile, and
+`--block` is not optional in practice: it is the stride each seed skips into the FASTQ and it
+is a property of the library, so a run on a library smaller than the default's 1.5 M pairs per
+seed silently loses its later seeds unless it is set. The driver refuses to start when the
+arithmetic does not fit the library's counted reads.
 
 ### 8.2 Visual results reuse the existing generator
 
