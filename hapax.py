@@ -159,6 +159,19 @@ class Run:
         against three indexes and then run without them - and, where the script records
         what it opened, in that record.
         """
+        # A script's built-in default for a sample-specific input is one particular
+        # sample's file (Berlin's assembly, Berlin's CRISPR arrays, Berlin's trim). On a
+        # machine where that file exists the stage runs happily against the wrong sample
+        # and nothing in the output says so, which is worse than a missing file. So hapax
+        # must pass every such flag itself; one absent from the argv is a refusal.
+        without = set(getattr(self.args, "report_without", []) or [])
+        defaulted = [flag for flag, field in SAMPLE_SPECIFIC.get(script, [])
+                     if flag not in argv and not (field and field in without)]
+        if defaulted:
+            return self.record(name, "failed", script=script,
+                               reason=f"{defaulted} not passed, so {script} would use its "
+                                      f"built-in default, which is one specific sample's "
+                                      f"file or setting rather than this run's")
         dropped = [str(p) for p in (requested or []) if str(p) not in argv]
         if dropped:
             return self.record(name, "failed", script=script,
@@ -272,6 +285,12 @@ class Run:
         or 3.5% of this library depending only on confidence.
         """
         a = self.args
+        if a.contigs is None:
+            return self.record("cascade", "failed",
+                               reason="--contigs not given. It has no default because any "
+                                      "default is one sample's own assembly; give this "
+                                      "sample's identified contigs, or `--contigs` with "
+                                      "no paths to run the cascade without them")
         need = [a.r1, a.r2, *a.k2_dbs, *a.silva, *a.dmnd, *(a.contigs or [])]
         gone = self.missing("cascade", need)
         if gone:
@@ -299,8 +318,9 @@ class Run:
             argv += ["--diamond-bin", str(a.diamond_bin)]
         if a.k2_no_memory_map:
             argv += ["--no-k2-memory-map"]
-        if a.contigs:
-            argv += ["--selfasm", *[str(c) for c in a.contigs]]
+        # Always passed, even empty: an absent --selfasm makes subtract_known.py fall back
+        # to Berlin's assembly.
+        argv += ["--selfasm", *[str(c) for c in a.contigs]]
         if a.unidentified_contigs:
             argv += ["--observe", *[str(c) for c in a.unidentified_contigs]]
         return self.call("cascade", "subtract_known.py", argv,
@@ -332,7 +352,26 @@ class Run:
         # The subtracted pile is the known-positive control for every field, so it is
         # always passed, and its absence fails the stage rather than silently leaving the
         # report with no control.
-        argv += ["--subtracted-reads", str(sub)]
+        argv += ["--subtracted-reads", str(sub), "--trim-r2", str(a.trim_r2)]
+        # The references that belong to ONE sample. Each is this run's or the field is
+        # left out by name; the script's own defaults are Berlin's files.
+        without = set(a.report_without or [])
+        for field, flag, value, what in (
+                ("chimaera", "--chimaera-ref", a.assembly,
+                 "--assembly (this sample's own full assembly)"),
+                ("cross_sample", "--cross-sample-ref", a.cross_sample_ref,
+                 "--cross-sample-ref (assemblies of other samples from the same works)"),
+                ("crispr", "--spacers", a.spacers,
+                 "--spacers (CRISPR spacers from this sample's assemblies)")):
+            if field in without:
+                continue
+            if value is None:
+                return self.record("reads", "failed",
+                                   reason=f"the {field} field needs {what}, which has no "
+                                          f"default because any default is another "
+                                          f"sample's file; give it, or pass "
+                                          f"--report-without {field}")
+            argv += [flag, str(value)]
         # The protein indexes were NOT passed through before, so the report fell back to
         # its own defaults. Where those are absent every `closest_*` field is missing, and
         # the `strains` stage - which reads exactly those fields - writes an empty file
@@ -351,7 +390,10 @@ class Run:
                          {"reads.jsonl": out / f"rows_s{a.seed}.jsonl",
                           "fields.json": out / f"calibration_s{a.seed}.json"},
                          out / f"manifest_s{a.seed}.json",
-                         requested=list(a.dmnd))
+                         requested=list(a.dmnd) + [
+                             v for f, v in (("chimaera", a.assembly),
+                                            ("cross_sample", a.cross_sample_ref))
+                             if v is not None and f not in (a.report_without or [])])
 
     #: Why these two stages refuse on a single-end library rather than running: both are
     #: mate-linkage instruments whose ground truth is "these two sequences came from one
@@ -406,6 +448,17 @@ class Run:
         a = self.args
         if a.single_end:
             return self.record("census", "skipped", reason=self.SINGLE_END_SKIP)
+        # All three label classes are this sample's own contigs. The script's defaults
+        # are Berlin's, so on any other library every neighbour would have been labelled
+        # against the wrong assembly.
+        absent = [f for f, v in (("--rrna-contigs", a.rrna_contigs),
+                                 ("--identified-contigs", a.identified_contigs),
+                                 ("--unidentified-contigs", a.unidentified_contigs))
+                  if not v]
+        if absent:
+            return self.record("census", "failed",
+                               reason=f"the census labels neighbours against this "
+                                      f"sample's own contigs and needs {absent}")
         res = self.work / "cascade_work" / f"residue_s{a.seed}.fa"
         binary = ROOT / "experiments/kmer_coverage/target/release/census"
         gone = self.missing("census", [binary, res, a.r1, a.r2])
@@ -417,10 +470,11 @@ class Run:
                 "--r1", str(a.r1), "--r2", str(a.r2), "--trim-r2", str(a.trim_r2),
                 "--threads", str(a.threads),
                 "--work", str(self.work / "census_work"), "--out", str(out)]
-        if a.unidentified_contigs:
-            # The census labels a neighbour against the contigs that assembled without
-            # being identified, so it takes the first of these sets only.
-            argv += ["--unidentified-contigs", str(a.unidentified_contigs[0])]
+        # The census labels a neighbour against the contigs that assembled without being
+        # identified, so it takes the first of these sets only.
+        argv += ["--unidentified-contigs", str(a.unidentified_contigs[0]),
+                 "--rrna-contigs", str(a.rrna_contigs),
+                 "--identified-contigs", str(a.identified_contigs)]
         return self.call("census", "linkage_census.py", argv,
                          {"census.json": out / f"linkage_census_s{a.seed}.json"},
                          out / f"linkage_census_s{a.seed}.json")
@@ -438,17 +492,50 @@ class Run:
                                reason="--calibrate not given. The run's divergence ladder "
                                       "is therefore absent rather than assumed, and no "
                                       "sensitivity-at-divergence figure may be read off it")
-        gone = self.missing("calibration", [a.r1, a.r2, a.spike_genome])
+        # The ladder's tier 1 has to be THIS run's tier 1: the same Kraken2 databases and
+        # protein indexes as the cascade, and this sample's own contigs. None of them was
+        # passed before, so the ladder measured Berlin's subtrahend for any library. The
+        # spike genome is sample-specific too: it is a clean holdout only if it is absent
+        # from this sample's assembly.
+        absent = [f for f, v in (("--spike-genome", a.spike_genome),
+                                 ("--contigs", a.contigs),
+                                 ("--unidentified-contigs", a.unidentified_contigs),
+                                 ("--cross-sample-ref", a.cross_sample_ref)) if not v]
+        if absent:
+            return self.record("calibration", "failed",
+                               reason=f"the ladder needs this sample's {absent}")
+        silva = self.work / "cascade_work" / "silva.fa"
+        gone = self.missing("calibration", [a.r1, a.r2, a.spike_genome, silva, *a.contigs])
         if gone:
             return self.record("calibration", "failed", reason=f"absent inputs: {gone}")
+        # The ladder takes one identified-contig file and the cascade subtracts several,
+        # so the cascade's set is concatenated: the ladder's tier 1 is then the cascade's.
+        ident = self.work / "calibration_identified.fa"
+        if not self.preflighting:
+            with open(ident, "w") as h:
+                for c in a.contigs:
+                    h.write(Path(c).read_text())
         out = self.work / "calibration"
         argv = ["--seed", str(a.seed), "--out", str(out),
                 "--genome", str(a.spike_genome),
                 "--r1", str(a.r1), "--r2", str(a.r2), "--threads", str(a.threads),
+                "--trim-r2", str(a.trim_r2),
+                "--silva", str(silva),
+                "--identified", str(ident),
+                "--unidentified", str(a.unidentified_contigs[0]),
+                "--cross-sample-ref", str(a.cross_sample_ref),
+                "--k2-dbs", *[str(d) for d in a.k2_dbs],
+                "--dmnd", *[str(d) for d in a.dmnd],
                 "--work", str(self.work / "calibration_work")]
+        if a.classify_bin:
+            argv += ["--classify-bin", str(a.classify_bin)]
+        if a.diamond_bin:
+            argv += ["--diamond-bin", str(a.diamond_bin)]
         return self.call("calibration", "spike_holdout.py", argv,
-                         {"calibration_ladder.json": out / f"spike_s{a.seed}.json"},
-                         out / f"spike_s{a.seed}.json")
+                         {"calibration_ladder.json": out / f"spike_s{a.seed}.json",
+                          "stages/calibration_manifest.json":
+                              out / f"manifest_s{a.seed}.json"},
+                         out / f"manifest_s{a.seed}.json")
 
     # -- assembled-but-unidentifiable ----------------------------------------
     def contigs(self) -> dict:
@@ -796,6 +883,14 @@ class Run:
             iv["lo_block_corrected"] = max(0.0, iv["point"] - half)
             iv["hi_block_corrected"] = min(1.0, iv["point"] + half)
         breakdown["design_effect"] = DESIGN_EFFECT
+        # Advisory, not fatal: the factor is the only estimate there is, and it is a
+        # property of flow-cell layout rather than of the classifier. But on any library
+        # other than the one it was measured on it is BORROWED, and the file says so.
+        breakdown["design_effect_borrowed"] = "SRR23973193" not in str(self.args.r1)
+        if breakdown["design_effect_borrowed"]:
+            breakdown["design_effect_note"] = (
+                "measured on SRR23973193 and applied here unmeasured; the block-corrected "
+                "intervals are an estimate borrowed from another library")
         out = {"pairs": n, "operating_point": op, "breakdown": breakdown, "curve": rows,
                "interval_method": "wilson_95_on_this_run's_counts; a multi-seed run "
                                   "reports across-seed spread instead",
@@ -1139,6 +1234,27 @@ LAYER_FIELDS = {
 
 #: Stages that run an experiment script, and so are preflighted by calling it.
 SCRIPT_STAGES = ["cascade", "reads", "linkage", "census", "calibration", "divergent"]
+#: Flags whose script default is one specific sample's file or setting, which hapax must
+#: therefore always pass. The second element names the per-read field that may be left out
+#: with --report-without instead.
+SAMPLE_SPECIFIC = {
+    "subtract_known.py": [("--r1", None), ("--r2", None), ("--trim-r2", None),
+                          ("--selfasm", None)],
+    "residue_report.py": [("--library-r1", "abundance"), ("--library-r2", "abundance"),
+                          ("--trim-r2", None), ("--chimaera-ref", "chimaera"),
+                          ("--cross-sample-ref", "cross_sample"), ("--spacers", "crispr")],
+    "linkage_census.py": [("--r1", None), ("--r2", None), ("--trim-r2", None),
+                          ("--rrna-contigs", None), ("--identified-contigs", None),
+                          ("--unidentified-contigs", None)],
+    "spike_holdout.py": [("--r1", None), ("--r2", None), ("--trim-r2", None),
+                         ("--genome", None), ("--identified", None),
+                         ("--unidentified", None), ("--cross-sample-ref", None),
+                         ("--silva", None)],
+    "mate_friends.py": [("--r1", None), ("--r2", None), ("--trim-r2", None)],
+    "divergent_known.py": [("--r1", None), ("--r2", None), ("--trim-r2", None),
+                           ("--contigs", None)],
+}
+
 #: Scripts that implement --preflight: they check their own required inputs and tools.
 PREFLIGHT_SCRIPTS = {"subtract_known.py", "residue_report.py", "linkage_census.py",
                      "spike_holdout.py"}
@@ -1172,7 +1288,11 @@ def main() -> int:
                    help="pairs per pile through the linkage census. Both piles "
                         "always run: the control is what makes the residue "
                         "number readable")
-    r.add_argument("--trim-r2", type=int, default=14)
+    r.add_argument("--trim-r2", type=int, required=True,
+                   help="non-template bases to cut from the start of mate 2. REQUIRED: it "
+                        "is a property of the library kit (14 on SRR23973193, 0 on most "
+                        "others), and the old default of 14 silently cut 14 real bases off "
+                        "every other library's mate 2")
     r.add_argument("--single-end", action="store_true",
                    help="the library has no second mate, so r2 is r1 again and --trim-r2 "
                         "must be 0. Every cascade tier is a min, max or union over the "
@@ -1190,10 +1310,11 @@ def main() -> int:
                         "Identical calls and confidences; wall time and peak RSS only, "
                         "so those two fields are comparable only across runs that agreed "
                         "on this")
-    r.add_argument("--contigs", type=Path, nargs="+",
-                   default=[ROOT / "data/geo/sample_contigs_rrna.fa",
-                            ROOT / "data/geo/sample_contigs_identified_norrna.fa"],
-                   help="the sample's own IDENTIFIED contigs, the most efficient "
+    r.add_argument("--contigs", type=Path, nargs="*", default=None,
+                   help="REQUIRED for the cascade, no default: the default was Berlin's "
+                        "assembly, which would have been subtracted from any library. "
+                        "Pass it with no paths to run without. "
+                        "The sample's own IDENTIFIED contigs, the most efficient "
                         "subtrahend this project has measured by orders of magnitude - "
                         "1.4 MB of its own ribosomal contigs beats all 272 MB of SILVA. "
                         "It must be the identified ones only: the subtrahend is "
@@ -1212,6 +1333,17 @@ def main() -> int:
                         "reference that identified it, which the cascade computes and "
                         "then discards. A ribosomal match says what the sequence is and "
                         "not whose, so that pile is a different question")
+    r.add_argument("--rrna-contigs", type=Path, default=None,
+                   help="this sample's own ribosomal contigs; the census's rRNA class")
+    r.add_argument("--assembly", type=Path, default=None,
+                   help="this sample's own full assembly: the per-read chimaera test's "
+                        "reference. No default: the old one was Berlin's assembly, which "
+                        "on any other library is the wrong sample")
+    r.add_argument("--cross-sample-ref", type=Path, default=None,
+                   help="assemblies of OTHER samples from the same works, for cross-sample "
+                        "recurrence (per-read report) and the ladder")
+    r.add_argument("--spacers", type=Path, default=None,
+                   help="CRISPR spacers extracted from this sample's assemblies")
     r.add_argument("--k2-dbs", type=Path, nargs="+",
                    default=[ROOT / "data/k2_viral", ROOT / "data/k2_standard08",
                             ROOT / "data/k2_pluspf08", ROOT / "data/k2_pluspf16"])
@@ -1219,8 +1351,10 @@ def main() -> int:
                    default=[ROOT / "data/silva/SSU.fa.gz", ROOT / "data/silva/LSU.fa.gz"])
     r.add_argument("--dmnd", type=Path, nargs="*",
                    default=[ROOT / "data/prot/viral.dmnd", ROOT / "data/prot/sprot.dmnd"])
-    r.add_argument("--spike-genome", type=Path, default=ROOT / "data/spike/holdout.fa",
-                   help="genomes for the divergence ladder. Only a genome ABSENT from "
+    r.add_argument("--spike-genome", type=Path, default=None,
+                   help="REQUIRED with --calibrate, no default: it was chosen as absent "
+                        "from Berlin's assembly, which says nothing about another sample's. "
+                        "Genomes for the divergence ladder. Only a genome ABSENT from "
                         "this sample's own assembly is a clean holdout - a resident one "
                         "is removed by the sample's own contigs at every rung and reads "
                         "as the tool working when it is the sample working "

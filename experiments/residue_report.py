@@ -581,6 +581,11 @@ def main() -> None:
                          "measured abundance is relative to this many pairs, so the unit "
                          "is recurrence within a sample of the library, not a genome "
                          "coverage depth")
+    ap.add_argument("--trim-r2", type=int, default=14,
+                    help="mate-2 bases trimmed when reading the library for the abundance "
+                         "sketch. Was hardcoded to 14, which is SRR23973193's kit; the "
+                         "default keeps committed runs reproducible and hapax always "
+                         "passes the run's own value")
     ap.add_argument("--abundance-bits", type=int, default=28)
     ap.add_argument("--cross-sample-ref", type=Path,
                     default=ROOT / "data/geo/all_contigs_1kb.fa",
@@ -688,11 +693,11 @@ def main() -> None:
         t0 = time.perf_counter()
         sk = LibraryAbundance(bits=args.abundance_bits)
         for _nm, a, b, _q1, _q2 in _rp(args.library_r1, args.library_r2,
-                                       args.library_pairs, 14, 0):
+                                       args.library_pairs, args.trim_r2, 0):
             sk.add_seq(a)
             if b and not args.single_end:
-                # NOT just `if b`: the read_pairs call above is hardcoded to trim 14, so
-                # on a single-end library passed as both mates b is a non-empty SUFFIX of
+                # NOT just `if b`: the read_pairs call above trims --trim-r2, so on a
+                # single-end library passed as both mates b can be a non-empty SUFFIX of
                 # a and every 31-mer from position 14 on would be counted twice.
                 sk.add_seq(b)
         for name, (s1, s2) in pairs.items():
@@ -889,6 +894,9 @@ def main() -> None:
                 known_rows[name]["chimaera"] = chimaera_evidence(idx, a, b)
             k = [known_rows[name]["chimaera"] for name in known]
             chim_fp = sum(1 for x in k if x["split_disagree"]) / len(k)
+        consulted.searched("chimaera", args.chimaera_ref, queries=len(pairs),
+                           hits=sum(1 for nm in pairs
+                                    if rows[nm]["chimaera"].get("split_disagree")))
 
     # ---- field calibration: residue against shuffled null and against subtracted reads
     calib = {

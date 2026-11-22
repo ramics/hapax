@@ -144,6 +144,9 @@ def main() -> None:
     ap.add_argument("--real-rate", type=float, default=1e-6,
                     help="the abundance the headline is about; sets how many spike pairs "
                          "go into the abundance sketch")
+    ap.add_argument("--trim-r2", type=int, default=14,
+                    help="mate-2 bases trimmed when reading the real library. Was hardcoded "
+                         "to 14 (SRR23973193's kit); hapax passes the run's own value")
     ap.add_argument("--r1", type=Path, default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
     ap.add_argument("--r2", type=Path, default=ROOT / "data/berlin/SRR23973193_2.fastq.gz")
     ap.add_argument("--silva", type=Path, default=ROOT / "data/silva/silva_dna.fa")
@@ -180,8 +183,12 @@ def main() -> None:
     pf.file(args.r1, "--r1")
     pf.file(args.r2, "--r2")
     if not args.abundance_only:
-        pf.file(args.silva, "--silva")
-        pf.file(args.identified, "--identified")
+        if not args.preflight:
+            # Under hapax these two are written by earlier steps (the cascade's converted
+            # SILVA, the cascade's contigs concatenated), so a preflight run before them
+            # cannot check them; hapax checks them itself when the stage starts.
+            pf.file(args.silva, "--silva")
+            pf.file(args.identified, "--identified")
         pf.file(args.unidentified, "--unidentified")
         pf.file(args.cross_sample_ref, "--cross-sample-ref")
         for db in args.k2_dbs:
@@ -216,7 +223,7 @@ def main() -> None:
 
     # ---- background reads, for the distributions every spike score is read against
     bg = ([] if args.abundance_only else
-          list(read_pairs(args.r1, args.r2, args.background_pairs, 14,
+          list(read_pairs(args.r1, args.r2, args.background_pairs, args.trim_r2,
                           (args.seed - 1) * 1_500_000)))
 
     # ---- indexes, built once
@@ -343,11 +350,11 @@ def main() -> None:
     # field interpretable, which is why all three are measured rather than the first.
     spike_in_library = max(int(round(args.real_rate * args.library_pairs)), 1)
     sk = LibraryAbundance(bits=28)
-    for _nm, a, b, _q1, _q2 in read_pairs(args.r1, args.r2, args.library_pairs, 14, 0):
+    for _nm, a, b, _q1, _q2 in read_pairs(args.r1, args.r2, args.library_pairs, args.trim_r2, 0):
         sk.add_seq(a)
         sk.add_seq(b)
     bg_counts = []
-    for _nm, a, b, _q1, _q2 in read_pairs(args.r1, args.r2, 2000, 14, 0):
+    for _nm, a, b, _q1, _q2 in read_pairs(args.r1, args.r2, 2000, args.trim_r2, 0):
         cs = sorted(sk.counts(a))
         if cs:
             bg_counts.append(cs[len(cs) // 2])

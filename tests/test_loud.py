@@ -210,8 +210,8 @@ def _run(tmp_path, **kw) -> hapax.Run:
 def test_stage_fails_when_a_requested_index_is_not_in_its_argv(tmp_path):
     run = _run(tmp_path)
     idx = tmp_path / "k2_viral"
-    e = run.call("cascade", "subtract_known.py", ["--seed", "1"], {}, None,
-                 requested=[idx])
+    argv = ["--seed", "1", "--r1", "a", "--r2", "b", "--trim-r2", "0", "--selfasm"]
+    e = run.call("cascade", "subtract_known.py", argv, {}, None, requested=[idx])
     assert e["status"] == "failed" and str(idx) in e["reason"]
 
 
@@ -298,9 +298,53 @@ def test_finish_counts_known_rows_by_field_not_by_substring(tmp_path):
 def test_hapax_refuses_to_start_on_a_missing_input(tmp_path):
     p = subprocess.run([PY, str(ROOT / "hapax.py"), "run", str(tmp_path / "no_1.fq.gz"),
                         str(tmp_path / "no_2.fq.gz"), "--seed", "1",
-                        "--out", str(tmp_path / "run"), "--stages", "linkage"],
+                        "--out", str(tmp_path / "run"), "--stages", "linkage",
+                        "--trim-r2", "0"],
                        capture_output=True, text=True)
     assert p.returncode == 2, p.stderr
     m = json.loads((tmp_path / "run" / "manifest.json").read_text())
     assert m["status"] == "refused to start" and m["problems"]
     assert not (tmp_path / "run" / "stages" / "linkage.log").exists()
+
+
+# ------------------------------------------------------------- sample-specific defaults
+
+def _hapax(tmp_path, kit, *extra):
+    return subprocess.run(
+        [PY, str(ROOT / "hapax.py"), "run", str(kit.r1), str(kit.r2), "--seed", "1",
+         "--out", str(tmp_path / "run"), "--trim-r2", "0", "--pairs", "50",
+         "--k2-dbs", str(kit.k2), "--silva", str(kit.silva), "--dmnd", str(kit.dmnd),
+         "--classify-bin", str(kit.classify), "--diamond-bin", str(kit.diamond), *extra],
+        capture_output=True, text=True)
+
+
+def test_cascade_refuses_without_this_samples_contigs(tmp_path, kit):
+    kit.dmnd.write_bytes(b"x")
+    p = _hapax(tmp_path, kit, "--stages", "cascade")
+    assert p.returncode == 2 and "--contigs not given" in p.stderr
+
+
+def test_report_refuses_another_samples_assembly_by_default(tmp_path, kit):
+    """The chimaera test used to map against Berlin's assembly for any library."""
+    kit.dmnd.write_bytes(b"x")
+    p = _hapax(tmp_path, kit, "--contigs", str(kit.asm), "--stages", "cascade", "reads",
+               "--report-without", "rfam", "pfam", "crispr", "cross_sample")
+    assert p.returncode == 2 and "--assembly" in p.stderr
+
+
+def test_census_refuses_without_this_samples_label_contigs(tmp_path, kit):
+    kit.dmnd.write_bytes(b"x")
+    p = _hapax(tmp_path, kit, "--contigs", str(kit.asm), "--stages", "cascade", "census")
+    assert p.returncode == 2 and "--rrna-contigs" in p.stderr
+
+
+def test_call_refuses_a_stage_missing_a_sample_specific_flag(tmp_path):
+    run = _run(tmp_path, report_without=[])
+    e = run.call("census", "linkage_census.py", ["--r1", "x", "--r2", "y"], {}, None)
+    assert e["status"] == "failed" and "--trim-r2" in e["reason"]
+
+
+def test_trim_is_required(tmp_path):
+    p = subprocess.run([PY, str(ROOT / "hapax.py"), "run", "a", "b", "--seed", "1",
+                        "--out", str(tmp_path / "r")], capture_output=True, text=True)
+    assert p.returncode == 2 and "--trim-r2" in p.stderr
