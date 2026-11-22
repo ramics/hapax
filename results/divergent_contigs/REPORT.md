@@ -126,6 +126,47 @@ pelovivens*, 121 aa on *Dugnivirus solivicinum*. Position and length fit the lys
 which is small, overlapping and poorly conserved in this family, but nothing here
 establishes that. They are the clearest candidates for a structural prediction.
 
+## 7. A 319 GB nucleotide index collapses a sixth of the divergent panel
+
+Every identity in sections 1 to 6 is against `viral.dmnd` plus `sprot.dmnd`, a few hundred
+megabytes. The objection that answers is that the distance is a property of the index. So
+the same 284 contigs, both arms, went to NCBI core_nt (319 GB, db version 2026-10-22) on
+one EC2 instance: `blastn -task dc-megablast`, 8 threads, 4,427 s, $0.42 of instance time.
+Harvest in [`core_nt_s1.json`](core_nt_s1.json), summarised by
+`experiments/bigindex_harvest.py` from the committed row file.
+
+A hit counts at E < 1e-5, and identity is read beside the fraction of the contig the
+alignment covers, never alone.
+
+| | near-reference arm | divergent arm |
+|---|---|---|
+| contigs queried | 135 | 149 |
+| significant hit | **135** | 147 |
+| no significant hit | 0 | 2 |
+| median identity | 97.55% | **81.56%** |
+| median alignment | 1,332 nt, 98.8% of contig | 846 nt, 82.8% of contig |
+| **≥90% over ≥half the contig** | **131 (97.0%)** | **25 (16.8%)** |
+| **<80% identity, or under half covered** | **0** | **83 (55.7%)** |
+
+The near-reference arm is the calibration, and it passes: core_nt returns all 135 at a
+median 97.55% across 98.8% of the contig, and the four that miss the strain cut miss it
+narrowly (85.3% and 83.1% identity, 89.6% twice). Nothing about the search moved.
+
+On the divergent arm the big index does real work and does not finish the job. Twenty-five
+contigs, a sixth of the panel, collapse to strain-level identifications: their protein
+distance was an artefact of a narrow protein index. Eighty-three stay distant on at least
+one axis, 32 of them on both, and the floor is 65.0% nucleotide identity. The two axes
+separate cases a single number merges: 49 contigs have their alignment confined to under
+half their length, and 5 of those sit above 90% identity inside it — a conserved fragment
+in an otherwise unmatched contig, which is the shape a recombinant or a multi-segment
+assembly makes, not an identification. The worst of them covers 2.2% of the contig at
+93.5% over 77 nt.
+
+So the published numbers in this report are upper bounds on distance, as section 6's
+blind spot said, and the measured size of that bound is now one in six at nucleotide
+level. `blastx` against nr is running on the same instance and will put the same bound on
+the protein numbers, which are the ones section 6's ordering rests on.
+
 ## Blind spots
 
 - An ORF with no subject and no domain is unexplained, not non-coding. Past roughly 20-30%
@@ -137,11 +178,19 @@ establishes that. They are the clearest candidates for a structural prediction.
 - The control arm shares the assembler and the library with the test arm but not its
   divergence, so it cannot control for what the assembler does to divergent sequence
   specifically.
-- Every name here came from RefSeq viral proteins plus Swiss-Prot, which are narrow. A
-  contig at 35% to the closest RefSeq viral protein may sit far closer to something in nr
-  or core_nt. `experiments/divergent_contig_queries.py` builds the query sets for that
-  pass; until it has run, every identity on this page is an upper bound on distance from
-  what is known.
+- Every name in sections 1 to 6 came from RefSeq viral proteins plus Swiss-Prot, which are
+  narrow, so every identity there is an upper bound on distance from what is known.
+  Section 7 measures that bound against core_nt and finds it is one contig in six at
+  nucleotide level; the matching protein pass against nr is not in yet, so the gene-level
+  ordering in section 6 still carries the unmeasured version of this caveat.
+- Section 7 ran `blastn -task dc-megablast`, which is more sensitive than megablast and
+  less sensitive than the `blastn` task. The direction is fixed: a more sensitive search
+  can only collapse more of the divergent arm, never less, so 16.8% is a floor on how much
+  of the panel a full-size nucleotide index explains, not an estimate of it. The
+  near-reference arm shows the task is not what is limiting there, since it recovers all
+  135 contigs, but a near-reference arm cannot show that for divergent sequence.
+- Section 7 keeps one best alignment per contig, so a contig whose segments match
+  different subjects reads as the single best of them.
 
 ## Single seed
 

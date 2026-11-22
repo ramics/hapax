@@ -1,0 +1,163 @@
+{
+ "seed": 1,
+ "rows_file": "results/divergent_contigs/core_nt_block_001.jsonl",
+ "significant_evalue": 1e-05,
+ "search": {
+  "label": "fast_block_001_c000",
+  "program": "blastn",
+  "db": "/opt/hapax/db/core_nt",
+  "db_version": "2026-10-22-01-05-01",
+  "queries": 284,
+  "threads": 8,
+  "blastn_task": "dc-megablast",
+  "seconds": 4426.52712329,
+  "exit_code": 0
+ },
+ "search_command": [
+  "/opt/hapax/blast/bin/blastn",
+  "-task",
+  "dc-megablast",
+  "-db",
+  "/opt/hapax/db/core_nt",
+  "-query",
+  "/opt/hapax/queries/chunks/block_001_c000.fa",
+  "-out",
+  "/opt/hapax/out/hits_fast_block_001_c000.tsv",
+  "-num_threads",
+  "8",
+  "-max_target_seqs",
+  "5",
+  "-evalue",
+  "10",
+  "-outfmt",
+  "6 qseqid sseqid pident length qlen evalue bitscore"
+ ],
+ "arms": {
+  "control": {
+   "contigs_queried": 135,
+   "with_any_alignment": 135,
+   "significant": 135,
+   "no_significant_hit": 0,
+   "identity_pct": {
+    "n": 135,
+    "min": 83.051,
+    "p25": 95.105,
+    "median": 97.55,
+    "p75": 99.28,
+    "max": 100.0
+   },
+   "alignment_fraction_of_contig": {
+    "n": 135,
+    "min": 0.645,
+    "p25": 0.977,
+    "median": 0.988,
+    "p75": 0.996,
+    "max": 1.001
+   },
+   "alignment_length_nt": {
+    "n": 135,
+    "min": 454.0,
+    "p25": 730.0,
+    "median": 1332.0,
+    "p75": 2458.0,
+    "max": 8922.0
+   },
+   "collapsed_to_identification": {
+    "n": 131,
+    "share_of_arm": 0.9704,
+    "definition": ">= 90.0% identity over >= 50% of the contig"
+   },
+   "still_distant": {
+    "n": 0,
+    "share_of_arm": 0.0,
+    "definition": "< 80.0% identity, or covered over < 50% of the contig"
+   }
+  },
+  "divergent": {
+   "contigs_queried": 149,
+   "with_any_alignment": 149,
+   "significant": 147,
+   "no_significant_hit": 2,
+   "identity_pct": {
+    "n": 147,
+    "min": 65.043,
+    "p25": 73.883,
+    "median": 81.56,
+    "p75": 88.71,
+    "max": 100.0
+   },
+   "alignment_fraction_of_contig": {
+    "n": 147,
+    "min": 0.022,
+    "p25": 0.405,
+    "median": 0.828,
+    "p75": 0.978,
+    "max": 1.007
+   },
+   "alignment_length_nt": {
+    "n": 147,
+    "min": 55.0,
+    "p25": 504.0,
+    "median": 846.0,
+    "p75": 1662.0,
+    "max": 9104.0
+   },
+   "collapsed_to_identification": {
+    "n": 25,
+    "share_of_arm": 0.1678,
+    "definition": ">= 90.0% identity over >= 50% of the contig"
+   },
+   "still_distant": {
+    "n": 83,
+    "share_of_arm": 0.557,
+    "definition": "< 80.0% identity, or covered over < 50% of the contig"
+   }
+  }
+ },
+ "all": {
+  "contigs_queried": 284,
+  "with_any_alignment": 284,
+  "significant": 282,
+  "no_significant_hit": 2,
+  "identity_pct": {
+   "n": 282,
+   "min": 65.043,
+   "p25": 81.171,
+   "median": 92.52,
+   "p75": 97.643,
+   "max": 100.0
+  },
+  "alignment_fraction_of_contig": {
+   "n": 282,
+   "min": 0.022,
+   "p25": 0.759,
+   "median": 0.977,
+   "p75": 0.992,
+   "max": 1.007
+  },
+  "alignment_length_nt": {
+   "n": 282,
+   "min": 55.0,
+   "p25": 593.0,
+   "median": 983.0,
+   "p75": 2072.0,
+   "max": 9104.0
+  },
+  "collapsed_to_identification": {
+   "n": 156,
+   "share_of_arm": 0.5493,
+   "definition": ">= 90.0% identity over >= 50% of the contig"
+  },
+  "still_distant": {
+   "n": 83,
+   "share_of_arm": 0.2923,
+   "definition": "< 80.0% identity, or covered over < 50% of the contig"
+  }
+ },
+ "git_sha": "9c9ba31980529c2d198fbb7a023274d3995824c6-dirty",
+ "tree_dirty": true,
+ "script_sha256": "c4d7b5ce76b7db6f15571af61421d0ab347c24cb520739f06625d0c28be79ee5",
+ "timings_seconds": {
+  "total": 0.011
+ }
+}
