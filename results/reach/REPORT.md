@@ -1,5 +1,10 @@
 # How far each method reaches, and what the shortcut costs
 
+The committed files here are the generated table, its JSON, the structure arm's manifest and
+the 27,439 PDB identifiers it searched. The structure arm's 244,886 rows are 81 MB and live
+at `s3://amazebio-corpora-897641797669/corpora/results/hapax-bigindex/results/reach/structure-491abe8/`;
+the eight paid arms' rows are under that prefix beside their instance id.
+
 `experiments/reach_queries.py` builds the panel, `experiments/reach_arms.py` runs the eight
 arms that need an instance, `experiments/reach_structure.py` runs the structure arm in the
 container, and `experiments/report_reach.py` generates [`TABLES.md`](TABLES.md) from both
@@ -87,9 +92,19 @@ relative for every query on the panel**. The per-contig table is [`TABLES.md`](T
 
 **So the binding constraint is the significance statistics, not the seeding.** That was the
 expectation this arm was built to test cheaply, and it is confirmed: removing the heuristic
-entirely moves nothing. The exhaustive arm cost 902 s against DIAMOND's 93 s for all three
+entirely moves nothing. The exhaustive arm cost 905 s against DIAMOND's 93 s for all three
 modes and BLASTP's 53 s — affordable at this panel's size, and it buys nothing on this
 material.
+
+**One row of §8 is not a zero, and it is worth naming rather than rounding away.** The
+holdout's best arm is `tblastn` against RefSeq viral *genomes* at 66.9% against the
+baseline's 66.5% — a gain of 0.4 points on one contig out of sixteen. It is not a
+counterexample to the claim above, because that arm is not one of the four: it searches
+translated nucleotide genomes rather than the shared protein database, so it is a different
+universe and the comparison is not controlled. It is reported because the only contig where
+*anything* moved is the one whose true distance nobody chose, which is at least consistent
+with the subject set mattering more than the instrument — and 0.4 points is far too small to
+carry that reading on its own.
 
 ### What the exhaustive arm does produce, and why it is not reach
 
@@ -320,10 +335,18 @@ which came from a guess. No TM-score or LDDT is reportable from this arm at all:
 superposition scores needing C-alpha on both sides, and a ProstT5 query has no coordinates —
 foldseek says so itself. Folding the 54 real ORFs with ESMFold is about $4 on a GPU instance
 and buys those two numbers. Making the comparison genuinely controlled is the expensive one:
-it needs the *subject* side encoded, and the RefSeq viral half alone is **175,064,339
-residues**, which at this arm's own measured **66.3 residues/s on 8 vCPU** is thirty days of
-CPU. That is a GPU job whose rate we have not measured, so it is named as the next step and
-not costed to a figure this report would have to stand behind.
+it needs the *subject* side encoded, and the manifest prices that from this arm's own
+throughput rather than from an estimate — **49.6 residues/s on 4 vCPU** against the RefSeq
+viral half's **175,064,339 residues**, which is **40.8 days of CPU**. Both halves are in
+`structure_manifest.json` so the division can be redone. That is a GPU job, and its rate
+there is something this project has not measured, so it is named as the next step rather than
+costed to a figure this report would have to stand behind.
+
+**This arm reproduced exactly.** Run a second time from clean, at a different script hash,
+it returned all 244,886 alignments identical as a set — the same 178,660 subject chains from
+the same 27,439 entries, the same ORF hashes, every row the same. Only the order rows are
+emitted in differs, which is thread scheduling. That is a stronger claim than almost anything
+else in this repo can make, and it is free to make here because the arm costs nothing to run.
 
 ## The one null leak, and what it was
 
@@ -340,8 +363,8 @@ by summing seven of them.
 
 A full-sequence E-value answers *does this query have a relative*; a table of alignments
 needs the value that answers *is this alignment real*, which is the domain's own. Flooring
-on that removes the leak and costs the real piles nothing — 6 of 107 hmmsearch rows and 2.7%
-of jackhmmer's go, every query on every real pile keeps its hit, and the null is 0 of 80 at
+on that removes the leak and costs the real piles nothing — 6 of 107 hmmsearch rows and
+2.5% of jackhmmer's go ([`TABLES.md`](TABLES.md) §4b counts it per arm), every query on every real pile keeps its hit, and the null is 0 of 80 at
 every seed for every arm. **So this is a repeat artefact named, not a sensitivity traded**,
 and it is the same aggregate-against-per-unit shape as the three failures of 2026-11-20.
 

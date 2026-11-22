@@ -1,0 +1,53 @@
+{
+ "seed": 1,
+ "git_sha": "501ea23",
+ "script_sha256": "10fd26041d8181e85bcda848bcc3dff5e8b7e35058c0b040b2e56ea15c004278",
+ "orfs_sha256": "b432f5e14c976a213cba5cfc7b817522f1906ce34fdc176af57009506b20c42a",
+ "orf_stats": {
+  "orfs": 202,
+  "by_pile": {
+   "real": 54,
+   "shuffled": 148
+  },
+  "residues": 33037
+ },
+ "foldseek_version": "941cd33ff0771cd2e3f144e3293e22a2b87e9fda",
+ "mode": "exhaustive-search",
+ "threads": 4,
+ "target": {
+  "taxid": "10239",
+  "api": "https://search.rcsb.org/rcsbsearch/v2/query",
+  "reported_total": 27439,
+  "unique_entries": 27439,
+  "fetched_utc": "2026-11-22T21:38:28Z"
+ },
+ "structures": {
+  "wanted": 27439,
+  "present": 27439,
+  "missing": 0,
+  "missing_examples": [],
+  "seconds": 11.2
+ },
+ "subject_db": {
+  "chains": 178660,
+  "seconds": 490.1
+ },
+ "query_db": {
+  "seconds": 665.5
+ },
+ "encoding_price": {
+  "query_residues": 33037,
+  "seconds": 665.5,
+  "threads": 4,
+  "residues_per_second": 49.6,
+  "refseq_viral_residues": 175064339,
+  "subject_side_days": 40.8
+ },
+ "rows": 244886,
+ "evalue_searched": 10.0,
+ "tmscore_available": false,
+ "tmscore_reason": "ProstT5 writes 3Di from sequence, so the query database has no C-alpha; TM-score and LDDT need coordinates on both sides",
+ "host": "vm",
+ "cpu_count": 4,
+ "seconds": 1307.8
+}

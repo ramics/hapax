@@ -201,7 +201,8 @@ def load(run_dir: Path, extra_dirs: list[Path] | None = None
                 threads=m.get("threads"), host=m.get("host"),
                 script_sha256=m.get("script_sha256"), git_sha=m.get("git_sha"),
                 subject_chains=(m.get("subject_db") or {}).get("chains"),
-                target=m.get("target"), orfs_sha256=m.get("orfs_sha256"))
+                target=m.get("target"), orfs_sha256=m.get("orfs_sha256"),
+                encoding_price=m.get("encoding_price"))
     orfs = {r["orf"]: r for r in json.loads((run_dir / "orfs.json").read_text())} \
         if (run_dir / "orfs.json").exists() else {}
     stage = json.loads((run_dir / "stage_manifest.json").read_text()) \
@@ -536,6 +537,23 @@ def main(argv: list[str] | None = None) -> int:
         lines.append(f"| {ARM_LABEL.get(arm, arm)} | {fmt(row['seconds'], '.0f')} | "
                      f"{row['rows']} | {fmt(row['seconds_per_orf'], '.2f')} |")
     out["cost"] = cost_rows
+    # WHAT THE INTERESTING VERSION OF THE STRUCTURE ARM WOULD COST, from this arm's own
+    # throughput rather than from an estimate. The arm as run encodes 202 query ORFs; the
+    # version that would be a controlled comparison against the sequence arms encodes the
+    # SUBJECT side instead, and that is the same model over four orders of magnitude more
+    # residues. Printed here with both halves so the division can be redone.
+    price = (timings.get("foldseek_pdbvirus") or {}).get("encoding_price")
+    if price:
+        lines.append(
+            f"\nThe structure arm's own ProstT5 throughput is "
+            f"**{fmt(price.get('residues_per_second'), '.1f')} residues/s on "
+            f"{price.get('threads')} vCPU** ({price.get('query_residues'):,} query residues "
+            f"in {fmt(price.get('seconds'), '.0f')} s). Encoding the *subject* side instead "
+            f"- which is the only version of this arm that would be a controlled comparison "
+            f"against the sequence arms - is {price.get('refseq_viral_residues'):,} residues "
+            f"for the RefSeq viral half alone, or **"
+            f"{fmt(price.get('subject_side_days'), '.1f')} days of CPU**. That is a GPU job, "
+            f"and its rate there is unmeasured here.\n")
     failed = {a: t for a, t in timings.items() if t.get("ok") is False}
     if failed:
         lines.append("\nArms that did not run, and why:\n")
@@ -581,6 +599,41 @@ def main(argv: list[str] | None = None) -> int:
             best_hit_in_swissprot=len(folded),
             best_hit_in_refseq_viral=len(best_by_orf) - len(folded),
             swissprot_examples=sorted({r["subject"] for r in folded})[:8])
+
+    # §4b what the domain E-value floor costs the real piles.
+    #
+    # This is the fix for this panel's only null leak, and a fix that removes a leak by
+    # removing sensitivity is a trade rather than a fix. So the cost is counted: rows that
+    # clear the full-sequence floor and fail the domain floor, per profile arm. It is
+    # generated because it drifted once already - the prose carried a figure from a run
+    # whose jackhmmer rows were not the shipped ones, and jackhmmer's iterative profile
+    # building is not bit-identical between runs.
+    prof_rows = [r for r in rows if r["arm"] in ("hmmsearch_ga", "hmmsearch_open",
+                                                 "jackhmmer", "hhsearch")]
+    if prof_rows:
+        lines.append("\n## 4b. What the domain E-value floor costs\n")
+        lines.append(
+            "The null leak was a tandem repeat clearing the **full-sequence** E-value by "
+            "summing seven domains that were each worthless. Flooring on the domain value "
+            "too removes it; this is what that costs the real piles, counted as rows which "
+            "clear the full-sequence floor and fail the domain floor.\n")
+        lines.append("| arm | rows significant on full-sequence E | removed by the domain "
+                     "floor | % |")
+        lines.append("|---|---|---|---|")
+        floor_rows = []
+        for arm in ("hmmsearch_ga", "hmmsearch_open", "jackhmmer", "hhsearch"):
+            pool = [r for r in prof_rows if r["arm"] == arm
+                    and r.get("evalue") is not None and r["evalue"] <= EVALUE_FLOOR]
+            if not pool:
+                continue
+            lost = [r for r in pool
+                    if (r.get("domain_evalue") or r["evalue"]) > EVALUE_FLOOR]
+            pct = 100.0 * len(lost) / len(pool)
+            floor_rows.append(dict(arm=arm, full_sequence_significant=len(pool),
+                                   removed=len(lost), percent=round(pct, 1)))
+            lines.append(f"| {ARM_LABEL.get(arm, arm)} | {len(pool)} | {len(lost)} | "
+                         f"{pct:.1f} |")
+        out["domain_floor_cost"] = floor_rows
 
     # §5c the structure arm counted per GENE, not per contig.
     #
