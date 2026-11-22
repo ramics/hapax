@@ -647,9 +647,17 @@ def arm_codon(bins: dict, dbs: dict, out: Path, threads: int) -> list[dict]:
     tsv = out / "tblastn.tsv"
     fields = ("qseqid", "sseqid", "pident", "length", "qlen", "slen", "qstart", "qend",
               "sstart", "send", "evalue", "bitscore", "qcovhsp", "qseq", "sseq", "sframe")
-    sh([bins["tblastn"], "-query", out / "orfs.faa", "-db", dbs["viral_nt"],
-        "-out", tsv, "-outfmt", "6 " + " ".join(fields), "-num_threads", threads,
-        "-max_target_seqs", 50, "-evalue", 10, "-db_gencode", SUBJECT_GENETIC_CODE])
+    # Skipped when the table is already there. Two reasons, and the second is the one that
+    # matters: a re-run of the analysis after a fix does not have to pay for the search
+    # again, and the codon walk - which is the part of this file most able to be silently
+    # wrong by one - becomes testable from a hand-written table with a known answer.
+    # `tests/test_reach_codon.py` is that test.
+    if not tsv.exists():
+        sh([bins["tblastn"], "-query", out / "orfs.faa", "-db", dbs["viral_nt"],
+            "-out", tsv, "-outfmt", "6 " + " ".join(fields), "-num_threads", threads,
+            "-max_target_seqs", 50, "-evalue", 10, "-db_gencode", SUBJECT_GENETIC_CODE])
+    else:
+        print(f"  reusing {tsv.name}: {sum(1 for _ in open(tsv))} alignments", flush=True)
 
     #: Nei-Gojobori needs the number of synonymous and non-synonymous sites per codon, which
     #: depends only on the codon and the table. Built from the table rather than tabulated by
