@@ -272,7 +272,7 @@ SPECTRUM_MIN_COVERAGE = 0.5
 SPECTRUM_MIN_ALN_AA = 100
 
 
-def spectrum() -> dict | None:
+def spectrum(inputs: dict) -> dict | None:
     """The distance spectrum: one continuous axis, no bucket boundary anywhere on it.
 
     WHY A SPECTRUM AND NOT TIERS. Identity against a reference orders contigs by database
@@ -299,12 +299,16 @@ def spectrum() -> dict | None:
     own units, and the slot for a true displacement arrow waits on the protein pass against
     nr, which is the same instrument at a larger size.
     """
-    dk = load(ROOT / "results/divergent_known/divergent_known_s1.json")
-    if dk is None:
+    # Every file this panel reads is one the page descriptor declared, by path, for THIS
+    # sample. It used to read three repo-root result files whatever run directory it was
+    # given, so the holdout page drew the Berlin contigs as its own spectrum and nothing
+    # on the page said so.
+    if inputs["spectrum"] is None:
         return None
+    dk = load(inputs["spectrum"])
     big = {}
-    cn = ROOT / "results/divergent_contigs/core_nt_block_001.jsonl"
-    if cn.exists():
+    cn = inputs["spectrum_big_index"]
+    if cn is not None:
         for line in cn.read_text().splitlines():
             if not line.strip():
                 continue
@@ -358,12 +362,22 @@ def spectrum() -> dict | None:
     # and withheld from every index, so its real divergence is a measured 30.28% at
     # nucleotide level rather than an inference, and it belongs on the plot labelled as
     # such. Its three genes also show the gene spread doing its job: 24.3 points.
-    hv = load(ROOT / "results/conserved_positions/conserved_positions_s1.json") or {}
+    hv = load(inputs["spectrum_reference_point"]) if inputs["spectrum_reference_point"] \
+        else {}
+    truth = None
+    if inputs["spectrum_reference_point"] is not None:
+        # The true distance is read from the file that fixed it, not typed here.
+        truth = (load(inputs["spectrum_reference_truth"]) or {}).get("truth") or {}
+        if truth.get("nucleotide_divergence_percent") is None:
+            raise SystemExit(f"{inputs['spectrum_reference_truth']} has no "
+                             f"truth.nucleotide_divergence_percent; the reference point "
+                             f"on the spectrum cannot be drawn without its true distance")
     hold = None
     for row in hv.get("per_contig_roles") or []:
         if row.get("arm") == "extra_candidate_withheld":
             hold = {"by_role": row["by_role"], "spread": row["spread_points"],
-                    "true_nucleotide_divergence_percent": 30.28,
+                    "true_nucleotide_divergence_percent":
+                        truth["nucleotide_divergence_percent"],
                     "note": ("a genome withheld from every index; its position here is a "
                              "measurement of this axis, not an estimate of the genome")}
     ex = dk.get("external_positive_control") or {}
@@ -397,8 +411,145 @@ def spectrum() -> dict | None:
     }
 
 
+#: Every file outside the run directory that a panel may read, and what it is. A page
+#: descriptor must state each one, either as a path or as `{"not_run": reason}`: a key it
+#: leaves out is a refusal, because "nobody said" and "it does not apply" must not render
+#: the same. Nothing here is ever found by globbing - in particular a sample cannot acquire
+#: a ground truth (`truth_gene_map`) because a file with the right name happens to exist.
+PAGE_INPUTS = {
+    "spectrum": "experiments/divergent_known.py output: the contigs the distance "
+                "spectrum draws",
+    "spectrum_big_index": "core_nt block marking what the larger index did to those "
+                          "contigs",
+    "spectrum_reference_point": "experiments/conserved_positions.py output holding the "
+                                "withheld genome's per-gene identities",
+    "spectrum_reference_truth": "a gene map whose truth block fixes that genome's real "
+                                "distance",
+    "truth_gene_map": "this library's own ground truth, from "
+                      "experiments/holdout_gene_map.py",
+}
+
+#: The six fixed rows of a Methods entry, in order. Two spellings of the last two are in
+#: use and both are accepted; anything else is a refusal.
+METHOD_ROWS = [("Input",), ("Procedure",), ("Threshold",), ("Denominator",),
+               ("Control", "Control arm"), ("Bias", "Bias direction")]
+METHODS_FILE = ROOT / "results/web/methods.json"
+NOT_MEASURED = "Not measured on this library."
+
+
+def load_page(path: Path, rundir: Path | None) -> dict:
+    """Read and check a page descriptor: the only per-sample input the generator takes.
+
+    WHY A FILE AND NOT FLAGS. Two pages built from one generator with different flags are
+    two generators: whatever the holdout page needed was a flag Berlin did not pass, and
+    whatever Berlin said was typed into the renderer and printed on the holdout page too.
+    So everything a page says about its sample that is not in the run directory - its
+    title, the sentence that says what the water is, and every file outside the run it
+    reads - lives in one committed file per sample, and every sample goes through the same
+    command with it. A future sample needs a descriptor and nothing else.
+    """
+    d = json.loads(path.read_text())
+    problems = []
+    for k in ("title", "sample", "rundir", "inputs"):
+        if k not in d:
+            problems.append(f"missing key {k!r}")
+    smp = d.get("sample") or {}
+    for k in ("accession", "lede"):
+        if not smp.get(k):
+            problems.append(f"missing sample.{k}")
+    inputs = d.get("inputs") or {}
+    for k in sorted(set(PAGE_INPUTS) - set(inputs)):
+        problems.append(f"inputs.{k} is not declared: give a path or "
+                        f'{{"not_run": "why"}} ({PAGE_INPUTS[k]})')
+    for k in sorted(set(inputs) - set(PAGE_INPUTS)):
+        problems.append(f"inputs.{k} is not an input any panel reads")
+    resolved = {}
+    for k, v in inputs.items():
+        if k not in PAGE_INPUTS:
+            continue
+        if not isinstance(v, dict) or (("path" in v) == ("not_run" in v)):
+            problems.append(f"inputs.{k} must be exactly one of path or not_run")
+            continue
+        if "path" in v:
+            f = ROOT / v["path"]
+            if not f.exists():
+                # Declared but absent is not "not run": somebody said it exists.
+                problems.append(f"inputs.{k}: {v['path']} does not exist")
+            resolved[k] = f
+        else:
+            resolved[k] = None
+    if resolved.get("spectrum") is None and any(
+            resolved.get(k) for k in ("spectrum_big_index", "spectrum_reference_point")):
+        problems.append("spectrum inputs are declared without the spectrum itself")
+    if bool(resolved.get("spectrum_reference_point")) != bool(
+            resolved.get("spectrum_reference_truth")):
+        problems.append("spectrum_reference_point and spectrum_reference_truth come "
+                        "together: a point drawn without its true distance is a guess")
+    run = rundir if rundir is not None else ROOT / d.get("rundir", "")
+    if not (run / "manifest.json").exists():
+        problems.append(f"{run}/manifest.json is absent; this is not a hapax run "
+                        f"directory (pass --rundir if the run lives elsewhere)")
+    else:
+        # The descriptor and the run must be the same sample. Without this a descriptor
+        # could dress any run directory in another library's words.
+        inp = (json.loads((run / "manifest.json").read_text()).get("inputs") or {})
+        if smp.get("accession") and smp["accession"] not in str(inp.get("r1", "")):
+            problems.append(f"sample.accession {smp['accession']} is not in the run's "
+                            f"own input path {inp.get('r1')!r}")
+    if problems:
+        raise SystemExit(f"{path}: the page descriptor is refused:\n  - " +
+                         "\n  - ".join(problems))
+    d["_inputs"] = resolved
+    d["_rundir"] = run
+    return d
+
+
+def resolve_methods(accession: str) -> list[dict]:
+    """The Methods entries as this sample's page prints them.
+
+    Every page carries every entry, in one order, so a citation number means the same
+    thing on every page. What differs is which rows are filled. A row that states a
+    procedure or a threshold holds for every run and is written once. A row that states a
+    number measured on one library is stored under that library's accession and printed
+    only on that library's page; on any other page the row reads "Not measured on this
+    library." That is the fix for the holdout page printing "SRR23973193, Berlin
+    influent" as its own input row.
+
+    An entry `about` one fixed sample (the withheld-genome fixture) is a claim about that
+    sample wherever it is printed, so it must name the sample in its own Input row and can
+    then never be read as a statement about the page it sits on.
+    """
+    doc = json.loads(METHODS_FILE.read_text())
+    out, seen = [], set()
+    for e in doc["entries"]:
+        if e["id"] in seen:
+            raise SystemExit(f"{METHODS_FILE}: entry {e['id']!r} appears twice")
+        seen.add(e["id"])
+        rows = e["rows"]
+        labels = [r[0] for r in rows]
+        if len(rows) != len(METHOD_ROWS) or any(
+                lab not in ok for lab, ok in zip(labels, METHOD_ROWS)):
+            raise SystemExit(f"{METHODS_FILE}: entry {e['id']!r} rows are {labels}; a "
+                             f"Methods entry has exactly the six fixed rows in order")
+        meas = (e.get("measured") or {}).get(accession) or {}
+        if e["about"] != "tool":
+            if e["about"] not in (rows[0][1] or ""):
+                raise SystemExit(f"{METHODS_FILE}: entry {e['id']!r} is about "
+                                 f"{e['about']} but its Input row does not say so")
+            filled = rows
+        else:
+            for lab in meas:
+                if lab not in labels:
+                    raise SystemExit(f"{METHODS_FILE}: {e['id']!r} measured row {lab!r} "
+                                     f"for {accession} is not one of its rows")
+            filled = [[lab, meas.get(lab, txt if txt is not None else NOT_MEASURED)]
+                      for lab, txt in rows]
+        out.append({"id": e["id"], "t": e["title"], "rows": filled})
+    return out
+
+
 def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int,
-           gene_map: Path | None = None) -> dict:
+           page: dict) -> dict:
     rng = random.Random(seed)
     manifest = load(rundir / "manifest.json")
     if manifest is None:
@@ -442,17 +593,22 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int,
                  "field_calibration", "known_positive_rows", "known_positive_note",
                  "interface_rules", "stages")},
         "parameters": manifest.get("parameters", {}),
-        "spectrum": spectrum(),
+        "spectrum": spectrum(page["_inputs"]),
         # The page's biology, as data. Every plain-English claim it makes about what
         # a gene does or what an organism is comes from here, so the renderer has no
         # vocabulary of its own and a wrong word is wrong in one place.
         "vocabulary": load(ROOT / "experiments/virus_vocabulary.json"),
         "architecture": _one(rundir, "architecture_s*.json"),
-        # Only the holdout library has one, and it is passed explicitly
-        # rather than guessed from the run directory: a page that invented
-        # a ground truth for a sample that has none would be the worst
-        # failure this tool could have.
-        "holdout_gene_map": load(gene_map) if gene_map else None,
+        # Only a sample whose descriptor names one by path has a ground truth. It is
+        # never guessed from the run directory: a page that invented a ground truth for
+        # a sample that has none would be the worst failure this tool could have.
+        "holdout_gene_map": (load(page["_inputs"]["truth_gene_map"])
+                             if page["_inputs"]["truth_gene_map"] else None),
+        "page": {"title": page["title"], "sample": page["sample"],
+                 "inputs": {k: ({"path": str(v.relative_to(ROOT))} if v is not None else
+                                {"not_run": page["inputs"][k]["not_run"]})
+                            for k, v in page["_inputs"].items()}},
+        "methods": resolve_methods(page["sample"]["accession"]),
         "tier_table": load(rundir / "tier_table.json"),
         "layers": load(rundir / "layers.json"),
         "fields": load(rundir / "fields.json"),
@@ -493,7 +649,8 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int,
                            for r in table],
                   "n_drawn": len(table), "n_total": len(res), "sample_seed": seed},
         "built": {"script": "experiments/make_web.py", **provenance(__file__),
-                  "rundir": str(rundir)},
+                  "rundir": (str(rundir.resolve().relative_to(ROOT))
+                             if rundir.resolve().is_relative_to(ROOT) else str(rundir))},
     }
 
 
@@ -928,286 +1085,11 @@ function geneMap(nt, orfs, rightLabel) {
    the two are joined by a link rather than by the reader remembering. Each entry
    carries the six things that make a figure readable here: its input, the procedure,
    the threshold, the denominator, the control arm, and the direction of the bias that
-   the control does not remove. An entry with no control arm says so in that row.
-   The numbering is positional, so an entry cannot be cited by a number that moved. */
-const METHODS = [
-  {id: 'library', t: 'Library and read handling', rows: [
-    ['Input', 'SRR23973193, Berlin influent, total RNA, 8,731,224 read pairs.'],
-    ['Procedure', 'Mate 2 carries about 14 nt of non-template 5-prime sequence; 16 nt ' +
-      'are trimmed, leaving mates of 107 and 93 nt. Every percentage on this page is ' +
-      'of read pairs.'],
-    ['Threshold', 'None.'],
-    ['Denominator', 'Read pairs in the analysed block.'],
-    ['Control', 'Per-base error rate 0.00068, measured on self-overlapping pairs, so ' +
-      'quality-derived error rates run 2.6x conservative.'],
-    ['Bias', 'One plant, one date. In this plant the ribosomal fraction moves from ' +
-      '38.0% to 67.1% and the identifiable fraction from 22.7% to 40.7% over eight ' +
-      'months. Every fraction here is specific to this run.'],
-  ]},
-  {id: 'watchlist', t: 'Watchlist screen', rows: [
-    ['Input', '44 taxa, each with a recorded reason for inclusion.'],
-    ['Procedure', 'Kraken2 against PlusPF-08. A pair counts for a taxon when it is ' +
-      'assigned to that taxon or below it.'],
-    ['Threshold', 'Confidence 0.1 for the ranking; 0.2 for the per-row chip. ' +
-      'Threshold dominates database size by an order of magnitude: one database ' +
-      'removes 42.8%, 21.7% or 3.5% of this library on its setting alone.'],
-    ['Denominator', 'All read pairs.'],
-    ['Control', 'The same panel over composition-matched shuffled reads, counted on ' +
-      'the panel at both settings.'],
-    ['Bias', 'Misassignment to a close relative inflates a detection and is ' +
-      'uncontrolled. Non-detections carry rule-of-three upper bounds at this depth, ' +
-      'which are statements about sequencing depth and not about the catchment.'],
-  ]},
-  {id: 'composition', t: 'Library composition', rows: [
-    ['Input', 'All read pairs.'],
-    ['Procedure', 'Kraken2 PlusPF-08, assignments rolled up to superkingdom. The ' +
-      'second ring renormalises over the named fraction.'],
-    ['Threshold', 'Confidence selectable on the panel; the named fraction spans the ' +
-      'range quoted in the caveat.'],
-    ['Denominator', 'First ring all pairs, second ring the named pairs.'],
-    ['Control', 'None applicable: the figure is one classifier output.'],
-    ['Bias', 'RNA abundance, not cell counts: one bacterium with a thousand ribosomes ' +
-      'contributes a thousand times its cell count. The unnamed share is this index ' +
-      'reach at this setting; other tiers recognise most of it.'],
-  ]},
-  {id: 'cascade', t: 'Cascade removal', rows: [
-    ['Input', 'The read pairs. Each subtraction index runs independently over all of ' +
-      'them, so per-tier removal is order-free.'],
-    ['Procedure', 'Union across tiers. The ribosomal tier precedes the protein tiers, ' +
-      'because against a protein index ribosomal reads stop looking novel first. ' +
-      'Marginal removal is the increment a tier adds to the union.'],
-    ['Threshold', 'Kraken2 confidence as above; DIAMOND bitscore 50 for the protein ' +
-      'tier, swept across 30 to 100 in the output file.'],
-    ['Denominator', 'Read pairs.'],
-    ['Control', 'Shuffled reads, which score zero at every tier.'],
-    ['Bias', 'A tier can match sequence that nothing names, so identifiable exceeds ' +
-      'named: 77.10% identifiable against 7.49% nameable. Five seeds are contiguous ' +
-      'blocks of one flow cell with overdispersion about 1.5x, so the reported spread ' +
-      'is observed and is not an estimate of dispersion.'],
-  ]},
-  {id: 'contigid', t: 'Contig identification and divergence', rows: [
-    ['Input', 'Contigs assembled from this library.'],
-    ['Procedure', 'DIAMOND blastx against RefSeq viral proteins and Swiss-Prot. Every ' +
-      'identity is reported with its aligned length and the fraction of the subject ' +
-      'covered.'],
-    ['Threshold', 'E below 1e-5 and at least 60 aa aligned. Identity is quantised at ' +
-      'shorter alignment lengths and is not plotted there.'],
-    ['Denominator', 'Contigs with a significant hit.'],
-    ['Control', 'A dinucleotide-preserving shuffle of the same contigs through the ' +
-      'same search. 89.5% of real contigs carry a significant alignment and 0 of ' +
-      '11,361 shuffles do; the whole shuffled library yields one 47 aa alignment at ' +
-      'E=8.4e-4, which clears neither floor. Existence of the alignment is therefore ' +
-      'the calibrated quantity, and no field conditional on a hit has a null to be ' +
-      'compared against. This control asks whether a hit is real. It does not ask ' +
-      'whether identity measures the distance between a real contig and its real ' +
-      'relative, which the holdout answers: a genome 30.28% diverged was reported at ' +
-      '66.5% protein identity over 620 aa against a referenced comparator in the same ' +
-      'library at 99.9%, ordered correctly by 30 points.'],
-    ['Bias', 'Both reference sets are narrow, so each identity is an upper bound on ' +
-      'identity and each divergence a lower bound on divergence. That bound is ' +
-      'measured at nucleotide level against NCBI core_nt, 319 GB: of 149 divergent ' +
-      'contigs, 25 collapse to 90% identity or above over at least half their length ' +
-      'and 83 stay under 80% identity or under half covered, while all 135 ' +
-      'near-reference controls return at a median 97.55% over 98.8% of their length. ' +
-      'The protein equivalent against nr has not landed.'],
-  ]},
-  {id: 'genespread', t: 'Per-gene identity and ranking', rows: [
-    ['Input', 'ORFs called by Prodigal in metagenome mode, minimum 50 aa.'],
-    ['Procedure', 'DIAMOND blastp per ORF, with the gene role read from the subject ' +
-      'title. Rows rank on the polymerase where one is called; the panel states when ' +
-      'a row ranks on the whole contig instead.'],
-    ['Threshold', 'E below 1e-5, at least 60 aa.'],
-    ['Denominator', 'For the spread, contigs with two or more scorable genes.'],
-    ['Control', 'Contigs matching their reference at 95% or above, same procedure. ' +
-      'Their genes agree to a median 2.35 points where the divergent arm disagrees by ' +
-      '17.4. Over the whole identified pile, 600 divergent against 302 near-reference ' +
-      'contigs, the same comparison reads 12.8 against 2.45. Which gene carries the ' +
-      'distance is read paired, role against role on contigs carrying both as separate ' +
-      'ORFs: the maturation protein sits below the polymerase on 122 of 131 such ' +
-      'contigs, a median 6.9 points, and below the capsid on 28 of 31. The ' +
-      'near-reference arm is a coin toss there, which is what makes the divergent arm ' +
-      'readable.'],
-    ['Bias', 'The arms are not matched as drawn: divergent contigs carry a median of 3 ' +
-      'scorable genes over 3,820 nt against 1 over 552 nt, and more genes give a ' +
-      'spread more room, which biases the gap upward. At equal gene counts the gap ' +
-      'holds: 5.6 against 1.3 points at two genes, 16.9 against 2.65 at three. One ' +
-      'identity per contig is whichever gene won on bitscore, usually the more ' +
-      'conserved gene. Protein identity also understates nucleotide divergence, since ' +
-      'synonymous changes are invisible to it. Two confounds on the role ordering were ' +
-      'measured and neither explains it: distinct reference proteins matched per ORF ' +
-      'are 0.604 for the polymerase against 0.598 for the maturation protein, and ' +
-      'inside matched alignment-length bands the gap is 7 to 8 points. The capsid is ' +
-      'not placed in the ordering, because half its alignments run under 150 aa where ' +
-      'identity is quantised. Two roles called on one ORF are one number compared with ' +
-      'itself and are excluded.'],
-  ]},
-  {id: 'depth', t: 'Mapped depth and evenness', rows: [
-    ['Input', 'Every read pair in the library, mate 2 trimmed as above.'],
-    ['Procedure', 'Reads mapped back onto the contigs with minimap2. Depth is the ' +
-      'mean over contig positions; evenness is the fraction of positions within 2x ' +
-      'of the median.'],
-    ['Threshold', 'Primary alignments only.'],
-    ['Denominator', 'Contig positions.'],
-    ['Control', 'The assembler coverage header on the same contigs, which understates ' +
-      'mapped depth about fourfold on this set.'],
-    ['Bias', 'A region shared with another molecule collects that molecule reads, ' +
-      'which raises depth without raising evidence. Evenness is the field that ' +
-      'exposes it.'],
-  ]},
-  {id: 'chimaera', t: 'Chimaera check', rows: [
-    ['Input', 'The same contigs and the same per-gene hits.'],
-    ['Procedure', 'Genes on one contig are tested for whether they point at the same ' +
-      'subject organism.'],
-    ['Threshold', 'As the gene level above.'],
-    ['Denominator', 'Contigs with two or more scorable genes.'],
-    ['Control', 'The near-reference arm. The flag fires on 46.31% of divergent ' +
-      'contigs and 39.26% of controls.'],
-    ['Bias', 'The flag tracks how the assembler joins genes, so it carries almost no ' +
-      'information about divergence and nothing is dropped on it. Split-mapping, the ' +
-      'read-level version, has a 26% false-positive rate on known background.'],
-  ]},
-  {id: 'residue', t: 'Residue census and recurrence', rows: [
-    ['Input', 'Read pairs surviving every subtraction tier.'],
-    ['Procedure', 'Artefact signatures, mapped depth, and occupancy across the other ' +
-      'dates from the same plant.'],
-    ['Threshold', 'Significance as above. Occupancy is counted over 41 dates, which ' +
-      'are 85 distinct waters across 215 runs.'],
-    ['Denominator', 'Residue pairs seen once, against identified pairs at the same ' +
-      'depth.'],
-    ['Control', 'Identified reads at matched depth: 21.5% of residue reads appear on ' +
-      'none of the other dates against 0.9%, a factor of 24. Artefact signatures ' +
-      'together account for under 1% of the pile.'],
-    ['Bias', 'A query drawn from the library being searched is abundant there by ' +
-      'construction, which made 54% of background reads look like they were growing ' +
-      'against 6% under the swap control, so queries come from outside the library ' +
-      'searched. The median depth of this pile is 1, which is the floor of what any ' +
-      'read-level field can read.'],
-  ]},
-  {id: 'spectrum', t: 'The distance spectrum', rows: [
-    ['Input', 'Every identified contig of at least 300 nt that is short enough for ' +
-      'per-ORF scoring, from the divergent stage, both arms.'],
-    ['Procedure', 'ORFs called by Prodigal in metagenome mode, DIAMOND blastx and blastp ' +
-      'against RefSeq viral proteins and Swiss-Prot, roles read from Pfam at gathering ' +
-      'cutoffs. Position on the axis is the identity of the polymerase where one is ' +
-      'called and the whole-contig hit otherwise, stated per row. The bar is the range ' +
-      'across that contig own scorable genes. Colour is the fraction of the scored gene ' +
-      'the alignment spans. Height is median mapped depth from minimap2.'],
-    ['Threshold', 'E below 1e-5 and at least 60 aa aligned for a hit to exist. A contig ' +
-      'is drawn at an identity only if at least 50% of the scored gene is aligned over ' +
-      'at least 100 aa; the rest go to a lane off the axis.'],
-    ['Denominator', 'Contigs with a significant protein hit and a scorable gene. The ' +
-      'panel prints that count against the whole searched pile.'],
-    ['Control', 'Two, drawn by the same code. The near-reference arm, contigs matching ' +
-      'their reference at 95% or above, lands at the right-hand end by construction and ' +
-      'is what makes the left-hand end readable. And a dinucleotide-preserving shuffle ' +
-      'of the same contigs, which produces 0 significant alignments from 11,361, so the ' +
-      'existence of every point on this axis is calibrated even though no identity on ' +
-      'it is.'],
-    ['Bias', 'Identity against a reference orders contigs by database proximity, so no ' +
-      'threshold is drawn on the axis and the three-bucket overlay is off by default. ' +
-      'Both reference sets are narrow, so each position is an upper bound on identity; ' +
-      'against core_nt, 319 GB, 25 of 149 divergent contigs collapsed to a strain-level ' +
-      'identification and 83 stayed distant, which is the measured size of that bound at ' +
-      'nucleotide level. The ring recording that is a label, not a move along this axis, ' +
-      'because comparing a nucleotide identity with a protein one compares two ' +
-      'instruments. Identity also flatters towards familiar as coverage falls, by +17.2 ' +
-      'points below half coverage against +7.1 above 90%, which is why coverage is on ' +
-      'the colour ramp rather than in a column.'],
-  ]},
-  {id: 'concern', t: 'What the named leftovers point at', rows: [
-    ['Input', 'Every unplaced mate in the library, 2,744,042 of them, and the named ' +
-      'relative each one points at where it has a significant one. 214,502 reads over ' +
-      '41,829 distinct records.'],
-    ['Procedure', 'DIAMOND --sensitive against RefSeq viral proteins plus Swiss-Prot, ' +
-      'then the matched record is placed in a host group by an auditable keyword table ' +
-      'rather than a classifier, so a reader can disagree with one line. Two separate ' +
-      'axes are kept: what the record IS, and what it INFECTS. A cellular record is ' +
-      'not given a host, because it is the organism.'],
-    ['Threshold', 'E < 1e-5. Host confidence ramps with identity from 40% to 90% and ' +
-      'with aligned length from 20 to 60 aa, so a distant or short match is damped ' +
-      'towards unknown rather than counted at face value.'],
-    ['Denominator', 'Reads, not records: a share of records is a share of the ' +
-      'database. Both are shown on hover.'],
-    ['Control arm', 'The same search over 400,000 reads the cascade had already named, ' +
-      'and a dinucleotide-shuffled null that returns no significant hit at all.'],
-    ['Bias direction', 'Towards the well-sequenced. A group is large here when its ' +
-      'members are in the reference sets, not when it is abundant in the water, and ' +
-      'phage records dominate both. The 22.7% whose host could not be placed is counted ' +
-      'as unknown and never as safe. Nothing in this is a measure of harm.']]},
-  {id: 'crossplant', t: 'Recurrence across plants', rows: [
-    ['Input', '512 panel libraries from 32 wastewater plants on three continents, ' +
-      'against reads held out of the library searched.'],
-    ['Procedure', 'K-mer witnessing of each query read against the union of the panel, ' +
-      'paired within plant so that plants are compared with themselves.'],
-    ['Threshold', 'Exact 31-mer witness; depth of the query read recorded beside it, ' +
-      'because depth decides the outcome far more than the pile a read came from.'],
-    ['Denominator', 'Read pairs of the held-out library.'],
-    ['Control arm', 'Identified reads at matched depth, and a swap control against ' +
-      'reads from the library itself, which grow 54% by construction.'],
-    ['Bias direction', 'Blind to anything present once rather than to anything novel: ' +
-      'at depth 1 residue survives 79.0% and identified reads 70.5%, a gap of 8.5 ' +
-      'points. Contigs have not been put through it.']]},
-  {id: 'holdout', t: 'The withheld genome', rows: [
-    ['Input', 'SRR23421544, a wastewater library whose depositors later assembled and ' +
-      'deposited 25 genomes from that same water. One of them, OQ722337.1, was ' +
-      'deposited 2023-07-31, after the 2022-05-10 date every index in this run was ' +
-      'rolled back to, so no index here could contain it.'],
-    ['Procedure', 'The cascade was run blind over the library. The contig carrying the ' +
-      'withheld genome was then located by mapping, its genes called with the same ' +
-      'caller and minimum length as the gene-level stage, and its identities read from ' +
-      'that stage rather than recomputed.'],
-    ['Threshold', 'The cascade\u2019s own: Kraken2 at confidence 0.1 and a DIAMOND ' +
-      'bitscore of 50. The contig scores 812 against that 50.'],
-    ['Denominator', 'The deposited genome, 4,147 nt, for recovery; the run\u2019s ' +
-      'unidentified pile, 13,033 contigs, for whether it survived.'],
-    ['Control arm', 'A second contig from the same library carrying a genome that was ' +
-      'already published, which reads 99.9% and is removed by the same rule. Two ' +
-      'subjects thirty identity points apart get one word.'],
-    ['Bias direction', 'Towards finding the holdout easier than a real unknown would ' +
-      'be. Its nearest relative exists and is recognisable from a long way off; a ' +
-      'virus with no relative at all would reach tier 2 instead, which this fixture ' +
-      'cannot test. Rolling the reference back a further 4.5 years moved nothing, so ' +
-      'nothing leaked.']]},
-  {id: 'vocab', t: 'The words, and where they come from', rows: [
-    ['Input', 'experiments/virus_vocabulary.json, committed. One entry per gene role ' +
-      'and one per architecture, each with the plain words it licenses and the basis ' +
-      'for them.'],
-    ['Procedure', 'experiments/architecture_call.py applies the vocabulary\u2019s rule ' +
-      'to the scored contigs and writes the call with the evidence that fired. This ' +
-      'page assembles sentences from those fields and has no vocabulary of its own.'],
-    ['Threshold', 'one gene carrying a named Pfam family or a named subject-title ' +
-      'substring. The evidence is recorded per contig, so a reader can see how thin a ' +
-      'call is.'],
-    ['Denominator', 'every scored contig. A contig with no matching evidence is ' +
-      'recorded as not called, with the reason, and never as "not a phage".'],
-    ['Control arm', 'none, and there cannot be one: this is not a measurement. The ' +
-      'words are hand-written background knowledge. Committing them is what makes them ' +
-      'reviewable and correctable in one place rather than invisible inside a figure.'],
-    ['Bias direction', 'towards the one architecture the vocabulary knows. It can ' +
-      'recognise that architecture or decline; it cannot distinguish between ' +
-      'architectures, and a subject title saying "ssRNA phage" is a claim made by ' +
-      'whoever deposited the record.']]},
-  {id: 'nulls', t: 'Shuffled nulls', rows: [
-    ['Input', 'The same reads or contigs, shuffled with composition preserved.'],
-    ['Procedure', 'The identical search at the identical threshold, in the same pass ' +
-      'as the test it calibrates. The shuffle is the Altschul and Erikson Eulerian ' +
-      'walk, preserving length and dinucleotide composition exactly, from one shared ' +
-      'module that raises on failure. A shuffle that cannot be computed is reported, ' +
-      'never replaced by its input: an earlier version returned the input on a ' +
-      'dead-ended walk for 324 of 11,361 contigs, and those 324 supplied every hit ' +
-      'the null appeared to produce.'],
-    ['Threshold', 'As the test.'],
-    ['Denominator', 'As the test. A null of zero is reported as a census over the ' +
-      'number shuffled, because an empty table and a search that never ran look the ' +
-      'same.'],
-    ['Control', 'This row is the control.'],
-    ['Bias', 'A null states what a field reads on meaningless input. It does not ' +
-      'state what a field reads on real input for the wrong reason, which only a ' +
-      'positive control can remove. Where none exists the direction of the bias is ' +
-      'given alone. Operating point decides a null: the weak-hit band reads 92.3% on ' +
-      'shuffled reads with no E-value floor and 0.00% with one.'],
-  ]},
-];
+   the control does not remove. The entries are data, from results/web/methods.json,
+   resolved for this page's sample by make_web.py: a row measured on another library
+   reads "Not measured on this library" here rather than borrowing that library's number.
+   The numbering is positional and the same on every page. */
+const METHODS = D.methods || [];
 const MIDX = {};
 METHODS.forEach((m, i) => { MIDX[m.id] = i + 1; });
 const cite = id => '<a class="cite" href="#m-' + id + '" title="' +
@@ -1346,7 +1228,7 @@ function interval(iv) {
   // Name the sample, not the tool. Whoever opens this is looking at one water on one
   // day, and the accession is the only thing that lets them find it again or compare it
   // with another; "run viewer" told them which program wrote the page.
-  const acc = ((inp.r1 || '').match(/([A-Z]{3}\d{6,})/) || [])[1];
+  const acc = ((inp.r1 || '').match(/([A-Z]{3}\\d{6,})/) || [])[1];
   h.append(el('h1', null, acc ? esc(acc) + ', untreated wastewater'
                               : 'Hapax run viewer'));
   h.append(el('p', 'lede',
@@ -1473,7 +1355,7 @@ function interval(iv) {
     'Inputs, thresholds and outputs of this run.');
   const b = (t && t.breakdown) || {};
   const lede = el('p', 'lede',
-    'Sewage from one treatment plant in Berlin, sequenced as RNA. The cascade removes ' +
+    esc(((D.page || {}).sample || {}).lede || '') + ' The cascade removes ' +
     'identifiable sequence and the remainder is characterised. The reported quantity ' +
     'is distance to the nearest known relative, with the confidence in that ' +
     'distance.' + cite('cascade'));
@@ -2684,7 +2566,9 @@ function interval(iv) {
     'sits from the closest protein two reference sets hold. Far on the left, near on the ' +
     'right, and no boundary anywhere between them. ' + cite('spectrum'));
   if (!S || !S.on_axis || !S.on_axis.length) {
-    p.append(el('div', 'absent', 'no divergent-stage result in this build'));
+    const why = (((D.page || {}).inputs || {}).spectrum || {}).not_run;
+    p.append(el('div', 'absent', 'not run: ' + (why || 'no divergent-stage result in ' +
+      'this build')));
     app.append(p); return;
   }
   const RAMP = ['var(--cv1)', 'var(--cv2)', 'var(--cv3)', 'var(--cv4)', 'var(--cv5)'];
@@ -2832,7 +2716,8 @@ function interval(iv) {
         s += '<circle cx="' + x(hv.by_role[k]) + '" cy="' + yy + '" r="4.5" ' +
           'fill="var(--panel)" stroke="var(--warn)" stroke-width="2"><title>' +
           'the withheld genome, ' + esc(k) + ' at ' + num(hv.by_role[k], 1) +
-          '% - true divergence 30.28% at nucleotide level</title></circle>';
+          '% - true divergence ' + num(hv.true_nucleotide_divergence_percent, 2) +
+          '% at nucleotide level</title></circle>';
       });
       s += '<text x="' + (x(lo) - 10) + '" y="' + (yy + 4) +
         '" text-anchor="end" class="ax">the one genome whose true distance is known, ' +
@@ -3025,6 +2910,14 @@ function interval(iv) {
   d.append(el('summary', null, 'every stage, with the code that produced it'));
   d.append(el('pre', 'mono note scroll', esc(JSON.stringify(r.stages || [], null, 1))));
   p.append(d);
+  // What this page read from outside the run directory, as its descriptor declared it.
+  // A "not run" here is the reason a panel says so, stated once where it can be checked.
+  const pin = (D.page || {}).inputs || {};
+  const d3 = el('details');
+  d3.append(el('summary', null, 'files outside the run directory, as this page declares them'));
+  d3.append(el('pre', 'mono note scroll', esc(Object.keys(pin).map(k =>
+    k + ': ' + (pin[k].path || 'not run - ' + pin[k].not_run)).join('\\n'))));
+  p.append(d3);
   app.append(p);
 })();
 
@@ -4048,9 +3941,70 @@ function interval(iv) {
 """
 
 
+#: Run in headless Chromium against the page this build is about to write. The bundle is
+#: per-sample, so which panels render, and which citations they print, is only known once
+#: the page runs - a static check over the source can say every cite() names an entry, and
+#: cannot say a panel threw and silently took every later panel with it, which is how the
+#: holdout page once rendered four panels out of twenty.
+RENDER_CHECK = r"""
+const {chromium} = require('playwright');
+(async () => {
+  const b = await chromium.launch();
+  const p = await b.newPage();
+  const errors = [];
+  p.on('pageerror', e => errors.push(String(e)));
+  await p.goto('file://' + process.argv[2]);
+  await p.waitForTimeout(500);
+  const r = await p.evaluate(() => {
+    const app = document.getElementById('app');
+    const h = n => ((n.querySelector('h2') || {}).textContent || '');
+    const top = [...app.children].filter(n => n.tagName === 'SECTION').map(h)
+      .filter(t => t !== 'Detail');
+    const detail = [...document.querySelectorAll('.ditem > summary b')].map(x => x.textContent);
+    const cited = [...new Set([...document.querySelectorAll('a.cite')]
+      .map(a => a.getAttribute('href').slice(3)))];
+    const dangling = cited.filter(id => !document.getElementById('m-' + id));
+    return {top, detail, cited, dangling};
+  });
+  console.log(JSON.stringify({errors, ...r}));
+  await b.close();
+})().catch(e => { console.log(JSON.stringify({fatal: String(e)})); });
+"""
+
+
+def render_check(page_path: Path) -> dict | None:
+    """Run the written page; None where no browser is available, and the build says so."""
+    tmp = page_path.parent / ".render_check.js"
+    try:
+        tmp.write_text(RENDER_CHECK)
+        r = subprocess.run(["node", str(tmp), str(page_path.resolve())],
+                           capture_output=True, text=True, timeout=120)
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return None
+    finally:
+        tmp.unlink(missing_ok=True)
+    try:
+        out = json.loads(r.stdout.strip().splitlines()[-1])
+    except (IndexError, json.JSONDecodeError):
+        return None
+    if "fatal" in out:
+        if "Cannot find module" in out["fatal"]:
+            return None
+        raise SystemExit(f"the render check could not run the page: {out['fatal']}")
+    return out
+
+
 def main() -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("rundir", type=Path)
+    ap = argparse.ArgumentParser(
+        description="Build the run viewer for one sample from its page descriptor. Every "
+                    "sample goes through this same command; what differs is the "
+                    "descriptor, never a flag.")
+    ap.add_argument("page", type=Path,
+                    help="a page descriptor, results/web/pages/<sample>.json")
+    ap.add_argument("--rundir", type=Path, default=None,
+                    help="where the run directory is, if not at the descriptor's rundir "
+                         "(a location, not a choice of content: the run must be the "
+                         "descriptor's sample)")
     ap.add_argument("--out", type=Path, default=None,
                     help="the HTML file to write; default <rundir>/web/index.html")
     ap.add_argument("--scatter-per-pile", type=int, default=2500,
@@ -4059,28 +4013,25 @@ def main() -> None:
                          "does not say it is one reads as the whole pile")
     ap.add_argument("--table-rows", type=int, default=3000)
     ap.add_argument("--seed", type=int, default=1, help="draws those samples")
-    ap.add_argument("--title", default="Hapax run viewer",
-                    help="the page title, which also names the published artifact")
-    ap.add_argument("--gene-map", type=Path, default=None,
-                    help="a holdout gene map from experiments/holdout_gene_map.py. "
-                         "Only the holdout library has a known answer, so this is "
-                         "never inferred from the run directory")
     args = ap.parse_args()
 
     t0 = time.perf_counter()
-    b = bundle(args.rundir, args.scatter_per_pile, args.table_rows, args.seed,
-               args.gene_map)
-    out = args.out or (args.rundir / "web" / "index.html")
+    page_desc = load_page(args.page, args.rundir)
+    rundir = page_desc["_rundir"]
+    b = bundle(rundir, args.scatter_per_pile, args.table_rows, args.seed, page_desc)
+    b["built"]["page_descriptor"] = str(args.page)
+    out = args.out or (rundir / "web" / "index.html")
     out.parent.mkdir(parents=True, exist_ok=True)
     payload = json.dumps(b, separators=(",", ":"))
     if "</script" in payload:
         raise SystemExit("the bundle contains a closing script tag and would break the "
                          "page; a value in the run directory needs escaping")
     # A citation that points at no method entry is worse than no citation: it reads as
-    # a reference and goes nowhere. The ids are both in the page source, so the check is
-    # static and runs on every build rather than on whoever happens to click one.
+    # a reference and goes nowhere. Two checks, because the entries are now data. This
+    # one is static: every cite() in the source names an entry in the methods file. The
+    # render check below is the one that knows which citations this sample's page prints.
     cited = set(re.findall(r"cite\('([a-z_]+)'\)", PAGE))
-    defined = set(re.findall(r"\{id: '([a-z_]+)', t:", PAGE))
+    defined = {m["id"] for m in b["methods"]}
     missing = sorted(cited - defined)
     if missing:
         raise SystemExit(f"citations with no method entry: {', '.join(missing)}")
@@ -4089,7 +4040,7 @@ def main() -> None:
     # Two run directories make two pages, and an artifact gallery lists both by their
     # <title>. One title for both is two rows nobody can tell apart.
     page = PAGE.replace("<title>Hapax run viewer</title>",
-                        f"<title>{args.title}</title>")
+                        f"<title>{page_desc['title']}</title>")
     page = page.replace("__BUNDLE__", payload)
     # A page whose script does not parse renders as a blank panel-less document and says
     # nothing about why, which is exactly how one stray apostrophe cost a build here. Node
@@ -4110,12 +4061,34 @@ def main() -> None:
         tmp.unlink(missing_ok=True)
     out.write_text(page)
     size = out.stat().st_size
-    print(f"{out}  {size / 1e6:.2f} MB  {checked}  "
+
+    rc = render_check(out)
+    if rc is None:
+        rendered = "render not checked: node or playwright is not available"
+    else:
+        bad = []
+        if rc["errors"]:
+            bad.append("the page threw while rendering, so every panel after the throw "
+                       "is missing: " + "; ".join(rc["errors"]))
+        if rc["dangling"]:
+            bad.append("rendered citations with no Methods entry on this page: " +
+                       ", ".join(rc["dangling"]))
+        if bad:
+            out.unlink()
+            raise SystemExit("render check failed, page not written:\n  - " +
+                             "\n  - ".join(bad))
+        rendered = (f"render check passed: {len(rc['top'])} summary panels, "
+                    f"{len(rc['detail'])} in detail, {len(rc['cited'])} methods cited")
+    print(f"{out}  {size / 1e6:.2f} MB  {checked}; {rendered}  "
           f"residue rows {b['table']['n_total']}, drawn {b['table']['n_drawn']}; "
           f"scatter {b['scatter'].get('residue', {}).get('n_drawn', 0)}+"
           f"{b['scatter'].get('known', {}).get('n_drawn', 0)}; "
-          f"{len(cited)} of {len(defined)} methods cited"
+          f"{len(cited)} of {len(defined)} methods citable"
           + (f", never cited: {', '.join(unused)}" if unused else ""))
+    if rc is not None:
+        print("summary: " + " | ".join(rc["top"]))
+        print("not run: " + (", ".join(k for k, v in page_desc["_inputs"].items()
+                                       if v is None) or "nothing"))
     if size > 16_000_000:
         raise SystemExit(f"{size} bytes is over the 16 MB page limit; lower "
                          f"--scatter-per-pile or --table-rows")
