@@ -725,17 +725,15 @@ const METHODS = [
       'shorter alignment lengths and is not plotted there.'],
     ['Denominator', 'Contigs with a significant hit.'],
     ['Control', 'A dinucleotide-preserving shuffle of the same contigs through the ' +
-      'same search. Whether a significant alignment exists separates the piles: 89.5% ' +
-      'of real contigs against 2.7% of shuffles, a factor of 33. Conditional on a hit ' +
-      'existing, nothing about the alignment separates them: the shuffled median ' +
-      'identity is 43.5% against the real 45.1%, and only 12.0% of real hits clear the ' +
-      'shuffled p90 where 10% do so by construction. The one field carrying anything ' +
-      'is the fraction of the contig the alignment covers, at 26.3%. This control ' +
-      'asks whether a hit is real. It does not ask whether identity measures the ' +
-      'distance between a real contig and its real relative, which the holdout ' +
-      'answers: a genome 30.28% diverged was reported at 66.5% protein identity over ' +
-      '620 aa against a referenced comparator in the same library at 99.9%, ordered ' +
-      'correctly by 30 points.'],
+      'same search. 89.5% of real contigs carry a significant alignment and 0 of ' +
+      '11,361 shuffles do; the whole shuffled library yields one 47 aa alignment at ' +
+      'E=8.4e-4, which clears neither floor. Existence of the alignment is therefore ' +
+      'the calibrated quantity, and no field conditional on a hit has a null to be ' +
+      'compared against. This control asks whether a hit is real. It does not ask ' +
+      'whether identity measures the distance between a real contig and its real ' +
+      'relative, which the holdout answers: a genome 30.28% diverged was reported at ' +
+      '66.5% protein identity over 620 aa against a referenced comparator in the same ' +
+      'library at 99.9%, ordered correctly by 30 points.'],
     ['Bias', 'Both reference sets are narrow, so each identity is an upper bound on ' +
       'identity and each divergence a lower bound on divergence.'],
   ]},
@@ -803,9 +801,16 @@ const METHODS = [
   {id: 'nulls', t: 'Shuffled nulls', rows: [
     ['Input', 'The same reads or contigs, shuffled with composition preserved.'],
     ['Procedure', 'The identical search at the identical threshold, in the same pass ' +
-      'as the test it calibrates.'],
+      'as the test it calibrates. The shuffle is the Altschul and Erikson Eulerian ' +
+      'walk, preserving length and dinucleotide composition exactly, from one shared ' +
+      'module that raises on failure. A shuffle that cannot be computed is reported, ' +
+      'never replaced by its input: an earlier version returned the input on a ' +
+      'dead-ended walk for 324 of 11,361 contigs, and those 324 supplied every hit ' +
+      'the null appeared to produce.'],
     ['Threshold', 'As the test.'],
-    ['Denominator', 'As the test.'],
+    ['Denominator', 'As the test. A null of zero is reported as a census over the ' +
+      'number shuffled, because an empty table and a search that never ran look the ' +
+      'same.'],
     ['Control', 'This row is the control.'],
     ['Bias', 'A null states what a field reads on meaningless input. It does not ' +
       'state what a field reads on real input for the wrong reason, which only a ' +

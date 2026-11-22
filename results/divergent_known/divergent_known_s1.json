@@ -111,77 +111,77 @@
    {
     "from_percent": 25,
     "to_percent": 30,
-    "contigs": 23
+    "contigs": 0
    },
    {
     "from_percent": 30,
     "to_percent": 35,
-    "contigs": 36
+    "contigs": 0
    },
    {
     "from_percent": 35,
     "to_percent": 40,
-    "contigs": 47
+    "contigs": 0
    },
    {
     "from_percent": 40,
     "to_percent": 45,
-    "contigs": 61
+    "contigs": 0
    },
    {
     "from_percent": 45,
     "to_percent": 50,
-    "contigs": 43
+    "contigs": 0
    },
    {
     "from_percent": 50,
     "to_percent": 55,
-    "contigs": 36
+    "contigs": 0
    },
    {
     "from_percent": 55,
     "to_percent": 60,
-    "contigs": 17
+    "contigs": 0
    },
    {
     "from_percent": 60,
     "to_percent": 65,
-    "contigs": 9
+    "contigs": 0
    },
    {
     "from_percent": 65,
     "to_percent": 70,
-    "contigs": 10
+    "contigs": 0
    },
    {
     "from_percent": 70,
     "to_percent": 75,
-    "contigs": 4
+    "contigs": 0
    },
    {
     "from_percent": 75,
     "to_percent": 80,
-    "contigs": 3
+    "contigs": 0
    },
    {
     "from_percent": 80,
     "to_percent": 85,
-    "contigs": 6
+    "contigs": 0
    },
    {
     "from_percent": 85,
     "to_percent": 90,
-    "contigs": 2
+    "contigs": 0
    },
    {
     "from_percent": 90,
     "to_percent": 95,
-    "contigs": 4
+    "contigs": 0
    },
    {
     "from_percent": 95,
     "to_percent": 100,
-    "contigs": 3
+    "contigs": 0
    },
    {
     "from_percent": 100,
@@ -189,9 +189,9 @@
     "contigs": 0
    }
   ],
-  "null_reading": "304 of 11361 shuffled contigs clear the same significance bar, against 10172 real",
+  "null_reading": "0 of 11361 shuffled contigs clear the same significance bar, against 10172 real",
   "median_real": 45.1,
-  "median_null": 43.5
+  "median_null": null
  },
  "joint_cells": {
   "readout": "contigs per cell of contig coverage against identity. A cell with a count is the reportable object here; ordering rows inside a cell by identity would order them by database proximity",
@@ -206,28 +206,28 @@
       "identity_to": 50,
       "contigs": 152,
       "percent_of_pile": 1.49,
-      "shuffled_null": 17
+      "shuffled_null": 0
      },
      {
       "identity_from": 50,
       "identity_to": 60,
       "contigs": 30,
       "percent_of_pile": 0.29,
-      "shuffled_null": 3
+      "shuffled_null": 0
      },
      {
       "identity_from": 60,
       "identity_to": 70,
       "contigs": 11,
       "percent_of_pile": 0.11,
-      "shuffled_null": 2
+      "shuffled_null": 0
      },
      {
       "identity_from": 70,
       "identity_to": 80,
       "contigs": 8,
       "percent_of_pile": 0.08,
-      "shuffled_null": 2
+      "shuffled_null": 0
      },
      {
       "identity_from": 80,
@@ -254,42 +254,42 @@
       "identity_to": 50,
       "contigs": 1168,
       "percent_of_pile": 11.48,
-      "shuffled_null": 96
+      "shuffled_null": 0
      },
      {
       "identity_from": 50,
       "identity_to": 60,
       "contigs": 293,
       "percent_of_pile": 2.88,
-      "shuffled_null": 20
+      "shuffled_null": 0
      },
      {
       "identity_from": 60,
       "identity_to": 70,
       "contigs": 121,
       "percent_of_pile": 1.19,
-      "shuffled_null": 7
+      "shuffled_null": 0
      },
      {
       "identity_from": 70,
       "identity_to": 80,
       "contigs": 52,
       "percent_of_pile": 0.51,
-      "shuffled_null": 2
+      "shuffled_null": 0
      },
      {
       "identity_from": 80,
       "identity_to": 90,
       "contigs": 33,
       "percent_of_pile": 0.32,
-      "shuffled_null": 2
+      "shuffled_null": 0
      },
      {
       "identity_from": 90,
       "identity_to": 100.1,
       "contigs": 52,
       "percent_of_pile": 0.51,
-      "shuffled_null": 3
+      "shuffled_null": 0
      }
     ]
    },
@@ -302,42 +302,42 @@
       "identity_to": 50,
       "contigs": 1301,
       "percent_of_pile": 12.79,
-      "shuffled_null": 50
+      "shuffled_null": 0
      },
      {
       "identity_from": 50,
       "identity_to": 60,
       "contigs": 302,
       "percent_of_pile": 2.97,
-      "shuffled_null": 10
+      "shuffled_null": 0
      },
      {
       "identity_from": 60,
       "identity_to": 70,
       "contigs": 139,
       "percent_of_pile": 1.37,
-      "shuffled_null": 5
+      "shuffled_null": 0
      },
      {
       "identity_from": 70,
       "identity_to": 80,
       "contigs": 57,
       "percent_of_pile": 0.56,
-      "shuffled_null": 1
+      "shuffled_null": 0
      },
      {
       "identity_from": 80,
       "identity_to": 90,
       "contigs": 32,
       "percent_of_pile": 0.31,
-      "shuffled_null": 4
+      "shuffled_null": 0
      },
      {
       "identity_from": 90,
       "identity_to": 100.1,
       "contigs": 68,
       "percent_of_pile": 0.67,
-      "shuffled_null": 2
+      "shuffled_null": 0
      }
     ]
    },
@@ -350,42 +350,42 @@
       "identity_to": 50,
       "contigs": 3835,
       "percent_of_pile": 37.7,
-      "shuffled_null": 47
+      "shuffled_null": 0
      },
      {
       "identity_from": 50,
       "identity_to": 60,
       "contigs": 1230,
       "percent_of_pile": 12.09,
-      "shuffled_null": 20
+      "shuffled_null": 0
      },
      {
       "identity_from": 60,
       "identity_to": 70,
       "contigs": 593,
       "percent_of_pile": 5.83,
-      "shuffled_null": 5
+      "shuffled_null": 0
      },
      {
       "identity_from": 70,
       "identity_to": 80,
       "contigs": 232,
       "percent_of_pile": 2.28,
-      "shuffled_null": 2
+      "shuffled_null": 0
      },
      {
       "identity_from": 80,
       "identity_to": 90,
       "contigs": 149,
       "percent_of_pile": 1.46,
-      "shuffled_null": 2
+      "shuffled_null": 0
      },
      {
       "identity_from": 90,
       "identity_to": 100.1,
       "contigs": 312,
       "percent_of_pile": 3.07,
-      "shuffled_null": 2
+      "shuffled_null": 0
      }
     ]
    }
@@ -410,23 +410,7 @@
     "6": 0.51
    }
   },
-  "shuffled_null": {
-   "contigs": 304,
-   "median_gap_points": 1.43,
-   "p90_gap_points": 35.92,
-   "p99_gap_points": 49.55,
-   "max_gap_points": 51.91,
-   "share_above_10_points": 0.3553,
-   "share_above_30_points": 0.1447,
-   "median_by_significant_subject_count": {
-    "1": 0.0,
-    "2": 0.0,
-    "3": 0.0,
-    "4": 0.0,
-    "5": 0.0,
-    "6": 1.7
-   }
-  },
+  "shuffled_null": {},
   "holdout_reference_point": "the withheld genome reads +36.6 points on the holdout library, the 95.85th percentile of its length-matched background, where 34 contigs from already-referenced genomes read a maximum of 0.0"
  },
  "gene_count_matched_spread": {
@@ -461,10 +445,10 @@
    "contigs_searched": 11361,
    "real_with_a_significant_hit": 10172,
    "real_percent": 89.53,
-   "shuffled_with_a_significant_hit": 304,
-   "shuffled_percent": 2.68,
-   "ratio": 33.4,
-   "reading": "89.53% of real contigs against 2.68% of shuffles. The existence of the alignment is the calibrated quantity"
+   "shuffled_with_a_significant_hit": 0,
+   "shuffled_percent": 0.0,
+   "ratio": null,
+   "reading": "89.53% of real contigs against 0.0% of shuffles. The existence of the alignment is the calibrated quantity"
   },
   "conditional_on_a_hit": {
    "readout": "share of real hits above the shuffled null's p90, per field. A null p90 puts 10% above it by construction, so 10% is the no-information level and the whole table has to be read against that number",
@@ -477,13 +461,8 @@
       "p90": 69.6,
       "n": 10172
      },
-     "shuffled_null": {
-      "p10": 30.9,
-      "median": 43.5,
-      "p90": 65.9,
-      "n": 304
-     },
-     "percent_of_real_above_null_p90": 12.35
+     "shuffled_null": {},
+     "percent_of_real_above_null_p90": null
     },
     "aln_aa": {
      "real": {
@@ -492,13 +471,8 @@
       "p90": 420,
       "n": 10172
      },
-     "shuffled_null": {
-      "p10": 86,
-      "median": 200,
-      "p90": 493,
-      "n": 304
-     },
-     "percent_of_real_above_null_p90": 7.16
+     "shuffled_null": {},
+     "percent_of_real_above_null_p90": null
     },
     "subject_coverage": {
      "real": {
@@ -507,13 +481,8 @@
       "p90": 0.905,
       "n": 10172
      },
-     "shuffled_null": {
-      "p10": 0.163,
-      "median": 0.433,
-      "p90": 0.959,
-      "n": 304
-     },
-     "percent_of_real_above_null_p90": 7.48
+     "shuffled_null": {},
+     "percent_of_real_above_null_p90": null
     },
     "contig_coverage": {
      "real": {
@@ -522,13 +491,8 @@
       "p90": 0.987,
       "n": 10172
      },
-     "shuffled_null": {
-      "p10": 0.279,
-      "median": 0.498,
-      "p90": 0.945,
-      "n": 304
-     },
-     "percent_of_real_above_null_p90": 26.44
+     "shuffled_null": {},
+     "percent_of_real_above_null_p90": null
     },
     "bitscore": {
      "real": {
@@ -537,17 +501,10 @@
       "p90": 342.0,
       "n": 10172
      },
-     "shuffled_null": {
-      "p10": 68.9,
-      "median": 148.0,
-      "p90": 391.0,
-      "n": 304
-     },
-     "percent_of_real_above_null_p90": 7.63
+     "shuffled_null": {},
+     "percent_of_real_above_null_p90": null
     }
-   },
-   "strongest_field": "contig_coverage",
-   "reading": "cannot discriminate here. The strongest field is contig_coverage at 26.44% against a no-information level of 10%, and identity itself reads 12.35%. Once a shuffle clears the significance bar its alignment looks like a real one on every field measured, so no property of a hit may be used to argue that the hit is real"
+   }
   },
   "at_a_stricter_operating_point": {
    "readout": "the same two piles under coverage and length floors. This is the only lever that moves the null, and it costs real hits, so the trade is reported rather than chosen here",
@@ -556,25 +513,25 @@
      "subject_coverage_at_least": 0.5,
      "aln_aa_at_least": 100,
      "real": 2990,
-     "shuffled_null": 124,
+     "shuffled_null": 0,
      "real_percent_of_searched": 26.32,
-     "shuffled_percent_of_searched": 1.09
+     "shuffled_percent_of_searched": 0.0
     },
     {
      "subject_coverage_at_least": 0.8,
      "aln_aa_at_least": 150,
      "real": 1127,
-     "shuffled_null": 56,
+     "shuffled_null": 0,
      "real_percent_of_searched": 9.92,
-     "shuffled_percent_of_searched": 0.49
+     "shuffled_percent_of_searched": 0.0
     },
     {
      "subject_coverage_at_least": 0.9,
      "aln_aa_at_least": 200,
      "real": 733,
-     "shuffled_null": 26,
+     "shuffled_null": 0,
      "real_percent_of_searched": 6.45,
-     "shuffled_percent_of_searched": 0.23
+     "shuffled_percent_of_searched": 0.0
     }
    ]
   }
@@ -45172,16 +45129,16 @@
  ],
  "seed": 1,
  "timings_seconds": {
-  "blastx_viral": 103.1,
-  "blastx_null_viral": 92.5,
-  "blastx_sprot": 103.7,
-  "blastx_null_sprot": 109.9,
-  "blastp_viral": 82.7,
-  "blastp_sprot": 86.1,
-  "pfam": 108.8,
-  "total": 921.5
+  "blastx_viral": 107.6,
+  "blastx_null_viral": 88.7,
+  "blastx_sprot": 108.1,
+  "blastx_null_sprot": 101.6,
+  "blastp_viral": 79.4,
+  "blastp_sprot": 93.1,
+  "pfam": 108.4,
+  "total": 892.4
  },
- "git_sha": "9b051990c036251e7d20bf3992740da2113f9512-dirty",
- "tree_dirty": true,
- "script_sha256": "acc9a0ecc1f233d2"
+ "git_sha": "14e33410f0198b78ca6986c11739cefa0717244f",
+ "tree_dirty": false,
+ "script_sha256": "b4c42cb7b61e0dc3"
 }

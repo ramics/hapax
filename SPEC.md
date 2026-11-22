@@ -398,10 +398,13 @@ Three constraints on reading those distances, each measured:
   disagree by a median of 12.8 points on divergent material against 2.45 on near-reference
   material, and the gap survives matching on gene count. Rank on the conserved gene and ship
   the spread.
-- **Identity alone does not say a hit is real.** Against a dinucleotide-preserving shuffle of
-  the same contigs, existence of a significant alignment separates at 89.53% against 2.68%,
-  while the identity of a hit that exists does not separate at all. Every distance ships with
-  its aligned length and coverage.
+- **Existence of the alignment is the calibrated quantity; identity is not calibrated
+  against noise at all.** Against a dinucleotide-preserving shuffle of the same contigs,
+  89.53% of real contigs carry a significant alignment and **0 of 11,361 shuffles do**, so
+  at this operating point there is no shuffled hit to compare an identity against. Every
+  distance therefore ships with its aligned length and coverage, which are what make a weak
+  identity readable, and no field conditional on a hit may be described as calibrated until
+  a control that produces hits exists.
 - **Per-read identity leans towards familiarity**, by +17.2 points below 50% query coverage
   and +7.1 above 90%, vanishing at zero distance. Read-level distances are upper bounds on
   identity.

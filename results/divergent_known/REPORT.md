@@ -39,18 +39,34 @@ the normal and correct reading of such a contig. The finding is that one bit can
 the difference between that case and a 99.9% match, and that the pipeline currently makes
 no record of which it was.
 
-## 2. The null: existence separates, nothing about the hit does
+## 2. The null: existence separates, and nothing conditional on a hit can be tested
 
 Each contig was dinucleotide-shuffled, preserving length and dinucleotide composition, and
-put through the identical search in the same pass.
+put through the identical search in the same pass. The shuffle is
+`experiments/shuffle_control.py`, imported.
 
-- **Existence**: 89.53% of real contigs carry a significant alignment, against 2.68% of
-  shuffles. A factor of 33.
-- **Conditional on a hit existing, nothing separates them.** Median identity 45.1% real
-  against 43.5% shuffled. Scored as the share of real hits above the shuffled p90, where a
-  p90 puts 10% above it by construction: identity 12.35%, alignment length 7.16%, subject
-  coverage 7.48%, bitscore 7.63%. The one field carrying anything is the fraction of the
-  contig the alignment covers, 26.44%, with real median 0.815 against shuffled 0.498.
+**Of 11,361 shuffled contigs, 0 carry a significant alignment.** 89.53% of the real
+contigs do. The whole shuffled library produces one alignment of any kind, 47 aa at
+E=8.45e-4, which clears neither the E-value nor the length floor.
+
+An earlier version of this section reported 2.68% for the null and a 33-fold ratio. That
+number was an artefact: the shuffle it used returned its input unchanged when its walk
+dead-ended, which happened for 324 contigs, and all 304 "shuffled" hits came from those
+324. The correction is recorded in `CLAUDE.md` and in the commit that replaced the shuffle.
+
+Two consequences:
+
+- **Existence of a significant alignment is the calibrated readout, and the separation is
+  total at this operating point.** E < 1e-5 over at least 60 aa against RefSeq viral
+  proteins plus Swiss-Prot admits nothing from composition-matched noise. There is no
+  ratio to quote, because the denominator is zero.
+- **Every field conditional on a hit now has no null at all.** Identity, alignment length,
+  subject coverage, bitscore and contig coverage were previously compared against a
+  shuffled distribution; that distribution was real sequence. With a correct shuffle the
+  comparison cannot be made, because the control pile is empty. Those fields are neither
+  calibrated nor killed here. The real distributions are reported for what they are:
+  identity p10 32.0, median 45.1, p90 69.6; aligned length 88 / 143 / 420 aa; contig
+  coverage 0.407 / 0.815 / 0.987; subject coverage 0.151 / 0.342 / 0.905.
 
 **Scope.** This calibrates whether a hit is real. It says nothing about whether identity
 measures the distance between a real contig and its real relative. The holdout answers that
@@ -61,23 +77,25 @@ significant alignment's identity does not tell you the query is real, and on sho
 alignments it is quantised and optimistic, so it ships with its coverage and its aligned
 length every time.
 
-Coverage and length floors are the only lever that moves the null, and they cost real hits:
+Coverage and length floors used to be reported here as the lever that moves the null. With
+the null at zero they move only the real pile, and that is a cost curve rather than a
+calibration:
 
-| floor | real | shuffled |
+| floor | real contigs | shuffled |
 |---|---|---|
-| none | 89.53% | 2.68% |
-| subject coverage 0.5, 100 aa | 26.53% | 1.14% |
-| subject coverage 0.8, 150 aa | 9.96% | 0.49% |
-| subject coverage 0.9, 200 aa | 6.47% | 0.23% |
+| none | 89.53% | 0.00% |
+| subject coverage 0.5, 100 aa | 26.32% | 0.00% |
+| subject coverage 0.8, 150 aa | 9.92% | 0.00% |
+| subject coverage 0.9, 200 aa | 6.45% | 0.00% |
 
-2.68% is high for a null. The untested candidate is low-complexity sequence, which a
-dinucleotide shuffle preserves and which aligns to anything; the control is the aligner's
-own compositional masking, not run here. Until that is measured, 2.68% is an upper bound on
-chance and 33 a lower bound on the ratio.
+A null of zero over 11,361 shuffles bounds the chance rate at roughly 1 in 11,000 at best;
+it is not evidence that the rate is zero. The untested candidate remains low-complexity
+sequence, which a dinucleotide shuffle preserves and which aligns to anything, and the
+control for it is the aligner's own compositional masking, not run here.
 
 ## 3. One identity per contig is whichever gene won on bitscore
 
-Over 600 divergent and 301 near-reference contigs, median per-contig spread between a
+Over 600 divergent and 302 near-reference contigs, median per-contig spread between a
 contig's own genes:
 
 - divergent arm **12.8 points**, near-reference arm **2.45 points**.
@@ -115,7 +133,7 @@ novelty.
 of what the protein tier removed, over alignments of at least 30 aa, with the shorter ones
 counted separately because identity is quantised there.
 
-## 4b. The coverage gap, and why it fails
+## 4b. The coverage gap: the kill is withdrawn, and the background rate is the number
 
 The holdout thread proposed a field and asked for the null it lacked. Two coverages of the
 same contig from the same significant HSPs: **per-subject** is the union against whichever
@@ -125,29 +143,34 @@ holdout library the withheld genome reads +36.6 points, the 95.85th percentile o
 length-matched identified contigs whose gap is median 0.1, and 34 contigs from
 already-referenced genomes read median, mean and maximum 0.0.
 
-Through the shuffle on this library the field does not survive, and the null is the higher
-of the two:
+This section previously killed the field on a shuffled null that read worse than the real
+pile. That null was not shuffled; with the shuffle corrected it contains no hits at all, so
+**there is no shuffled gap distribution and the kill is withdrawn.** The field is untested
+against noise, not cleared by it.
 
-| | real, 10,172 contigs | shuffled, 304 contigs |
-|---|---|---|
-| median gap | 0.38 points | 1.43 points |
-| p90 | 21.5 | 35.9 |
-| p99 | 46.2 | 49.6 |
-| above 10 points | 14.51% | 35.53% |
-| above 30 points | 5.81% | 14.47% |
+What the run does give is the field's rate on real identified background, which is the
+comparison that matters for a flag meant to fire on a residue:
 
-A shuffled contig that clears the significance bar is **more than twice as likely** as a
-real one to show a gap above 30 points. Several weak HSPs land on unrelated records in
-different places, no single one covers much, and the gap follows. The holdout thread's
-gene-count control reproduces here and does not catch it: median gap 0.0 in every
-subject-count bin up to five, on both arms.
+| gap over 10,172 identified contigs | |
+|---|---|
+| median | 0.38 points |
+| p90 | 21.5 |
+| p99 | 46.2 |
+| above 10 points | 14.51% |
+| above 30 points | 5.81% |
 
-What survives is one direction of it. A gap near zero means one subject explains the contig,
-which is why 34 referenced contigs reading a maximum of 0.0 is a real statement. A large gap
-is necessary for multi-gene architecture and not sufficient for it. The version worth testing
-next, not run here, is the gap conditioned on every contributing HSP exceeding a length
-floor, since the shuffled gaps are built from short scattered alignments and the holdout
-candidate's two from 620 aa and 493 aa.
+So 30 points is the 94.2nd percentile of already-identified contigs and the holdout's +36.6
+sits between that and the 99th. A threshold there fires on a few hundred identified contigs
+per library. That is consistent with the holdout thread's own length-matched percentile and
+is the operating point the field has to be read at, rather than against the 0.0 that
+referenced genomes read.
+
+One direction of the field is solid without any null. A gap near zero means one subject
+explains the contig, which is why 34 referenced contigs reading a maximum of 0.0 is a real
+statement. A large gap is necessary for multi-gene architecture and not sufficient for it.
+The version worth testing next is the gap conditioned on every contributing HSP exceeding a
+length floor; the holdout candidate's two come from 620 aa and 493 aa, and a shuffled null
+cannot reach those lengths at all.
 
 ## 5. The band is a continuum, and it is not short
 
@@ -174,7 +197,10 @@ union of HSPs over the contig.
 So the distance record is a measurement to report, not a filter to act on. The cascade
 deletes 6,781 contigs whose nearest viral protein relative is under 60% identical, and
 nothing in protein identity against a narrow index shortens that list. Whether a broader
-index shortens it is what the running nr and core_nt pass decides.
+index shortens it is now partly measured: against core_nt, 16.8% of the divergent contig
+panel collapses to a strain-level identification and 55.7% stays distant
+(`results/divergent_contigs/REPORT.md` §7). The protein equivalent against nr is still
+running.
 
 ## 6. Blind spots
 
@@ -194,6 +220,7 @@ index shortens it is what the running nr and core_nt pass decides.
 
 ## Cost
 
-911 s wall on 4 cores: 221 s of DIAMOND blastx on the real contigs, 213 s on the null, 162 s
-of blastp, 108 s of Pfam, the rest mapping 17.5 M mates. The null doubles the search cost and
-is the reason the result above can be stated at all.
+892 s wall on 4 cores: DIAMOND blastx on the real contigs and on the null, blastp at gene
+level, Pfam, and mapping 17.5 M mates. The null roughly doubles the search cost. It bought
+one number here - zero - and it cost a day, because the first version of it was wrong in a
+way that read as a passed control.
