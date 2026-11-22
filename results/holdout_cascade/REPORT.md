@@ -143,8 +143,8 @@ contig against identity, printed by `report_holdout_cascade.py` section 4b:
 | 0.00-0.25 | 229 | 37 | 27 | 9 | 4 | 2 |
 
 The candidate's protein hit covers **0.4624** of the contig at 66.5%, so it lands in the
-`coverage 0.25-0.50, identity 60-70%` cell: **70 contigs, 0.92% of the removed pile.** At
-nucleotide level it is coverage 0.7180 at 69.7%, a cell holding **139 contigs, 6.74%**. Either
+`coverage 0.25-0.50, identity 60-70%` cell: **69 contigs, 0.91% of the removed pile.** At
+nucleotide level it is coverage 0.7103 at 69.7%, a cell holding **137 contigs, 6.64%**. Either
 way this is a shortlist a person can read in an afternoon, not a lottery.
 
 **And the direction is fixed on known material from the same library.** This is what the leak
@@ -186,7 +186,7 @@ the removed pile under the first and the 50.18th under the second.
 | | gap, percentage points |
 |---|---|
 | the withheld genome, 3,990 nt | **+36.6** |
-| 193 identified background contigs of 2,793-5,187 nt | median 0.1, mean 4.4, max 54.2 |
+| 193 identified background contigs of 2,793-5,187 nt | median 0.1, mean 4.5, max 54.2 |
 | **the leak arm: 34 contigs of already-referenced genomes, same library** | **median 0.0, mean 0.0, max 0.0** |
 
 Not one known contig in this water has any gap at all, and the candidate is at the **95.85th
@@ -399,7 +399,7 @@ contigs - and it is the ground-truth confirmation reported further down.
 **The consequence for this report is that I now have less external support, not more.** The
 coverage axis was the one recommendation here with a second instrument behind it, and that
 instrument has withdrawn its reading. Coverage is still what the ground truth in this
-experiment points at - it is what turns a 93.46th-percentile identity into a 0.92% cell - but
+experiment points at - it is what turns a 93.46th-percentile identity into a 0.91% cell - but
 that is now **one measurement on one library with one positive**, not two converging ones.
 Stated plainly because the earlier version of this section claimed the convergence.
 
@@ -418,7 +418,7 @@ contig from the same water enters**.
 the top of the report, and the measurement says what the box could honestly be: not a verdict,
 and not the top row. Within its own cell the candidate ranks fourth on bitscore at nucleotide
 level and second at protein, so a box that fires on the top row would have missed it. What is
-defensible is the **cell**, not the ranking inside it: a section that says *70 contigs were
+defensible is the **cell**, not the ranking inside it: a section that says *69 contigs were
 removed at family-level distance over a quarter to a half of their length, and no
 already-known contig in this library looks like that*. The red box, honestly built, is a
 shortlist with a count on it.

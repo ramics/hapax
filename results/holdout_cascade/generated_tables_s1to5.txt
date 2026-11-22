@@ -49,9 +49,9 @@ prot_sprot                                4.27-4.36%  3.84-3.93%  66.72-67.57%
   SRR23421544_NODE_18516_length_3990_cov_28.0000
     3990 nt, 100.00% of the contig attributed, tier = identified
     rank by length: 131 of 35328
-    holdout_nt     69.718% over 2873 (union cov 0.718) E=0 bits=1141 -> NC_074562.1
+    holdout_nt     69.718% over 2873 (union cov 0.7103) E=0 bits=1141 -> NC_074562.1
     holdout_prot   66.5% over 620 (union cov 0.4624) E=5.44e-282 bits=812 -> YP_010771404.1
-    full_nt        69.718% over 2873 (union cov 0.718) E=0 bits=1141 -> NC_074562.1
+    full_nt        69.718% over 2873 (union cov 0.7103) E=0 bits=1141 -> NC_074562.1
     full_prot      66.5% over 620 (union cov 0.4624) E=5.57e-282 bits=812 -> YP_010771404.1
     sprot_undated  36.6% over 456 (union cov 0.3383) E=1.07e-68 bits=246 -> sp|P09675|RDRP_BPSP
 
@@ -223,11 +223,11 @@ prot_sprot                                4.27-4.36%  3.84-3.93%  66.72-67.57%
 
   --- holdout_prot, arm=background, tier=identified: n=7,601 ---
   cov \ id           0-50    50-60    60-70    70-80    80-90   90-100
-  0.70-1.01      3,571      656      282      102       49       87
-  0.50-0.70      1,095      173       64       26       17       19
-  0.25-0.50        871      149       70       32       12       18
-  0.00-0.25        229       37       27        9        4        2
-    CANDIDATE: identity 66.5%, union coverage 0.4624 -> cell cov 0.25-0.50 x id 60-70, which holds 70 contigs (0.92% of this pile)
+  0.70-1.01      3,530      653      280      102       49       87
+  0.50-0.70      1,096      172       62       25       17       19
+  0.25-0.50        891      152       69       30       12       18
+  0.00-0.25        249       38       32       12        4        2
+    CANDIDATE: identity 66.5%, union coverage 0.4624 -> cell cov 0.25-0.50 x id 60-70, which holds 69 contigs (0.91% of this pile)
       peer:   4156 nt  68.0%  cov 0.458  bits 881
       peer:   2432 nt  67.1%  cov 0.401  bits 434
       peer:   1733 nt  64.8%  cov 0.485  bits 374
@@ -242,11 +242,11 @@ prot_sprot                                4.27-4.36%  3.84-3.93%  66.72-67.57%
 
   --- holdout_nt, arm=background, tier=identified: n=2,063 ---
   cov \ id           0-50    50-60    60-70    70-80    80-90   90-100
-  0.70-1.01          0        0      139      144       77       85
-  0.50-0.70          0        0       86      105       10        3
-  0.25-0.50          0        0      155      295       61       10
-  0.00-0.25          0        0       72      351      402       68
-    CANDIDATE: identity 69.7%, union coverage 0.7180 -> cell cov 0.70-1.01 x id 60-70, which holds 139 contigs (6.74% of this pile)
+  0.70-1.01          0        0      137      141       77       85
+  0.50-0.70          0        0       78       96        7        3
+  0.25-0.50          0        0      157      275       46        8
+  0.00-0.25          0        0       80      383      420       70
+    CANDIDATE: identity 69.7%, union coverage 0.7103 -> cell cov 0.70-1.01 x id 60-70, which holds 137 contigs (6.64% of this pile)
       peer:   8190 nt  69.6%  cov 0.937  bits 2181
       peer:   2005 nt  67.5%  cov 0.807  bits 471
       peer:   2132 nt  66.6%  cov 0.738  bits 441
@@ -269,33 +269,33 @@ prot_sprot                                4.27-4.36%  3.84-3.93%  66.72-67.57%
 
   --- holdout_prot ---
   CANDIDATE 3990 nt: per-subject 0.4624, any-subject 0.8286, GAP +36.6 points over 5 significant subjects
-  length-matched identified background (2793-5187 nt), n=193: median 0.1, mean 4.4, max 54.2
+  length-matched identified background (2793-5187 nt), n=193: median 0.1, mean 4.5, max 54.2
     candidate percentile: 95.85%
     gap > 10 points: 28 (14.51%)
     gap > 20 points: 16 (8.29%)
     gap > 30 points: 10 (5.18%)
   LEAK ARM, known material from this library, n=34: median 0.0, mean 0.0, max 0.0
   confound check, gap by number of significant subjects:
-      1 subjects: n= 1,437  median   0.0  mean  -1.4
-      2 subjects: n=   697  median   0.0  mean   0.7
-      3 subjects: n=   567  median   0.0  mean   0.8
-      4 subjects: n=   501  median   0.0  mean   1.4
+      1 subjects: n= 1,437  median   0.0  mean   0.0
+      2 subjects: n=   697  median   0.0  mean   1.7
+      3 subjects: n=   567  median   0.0  mean   1.5
+      4 subjects: n=   501  median   0.0  mean   1.8
       5 subjects: n= 4,399  median   0.0  mean   1.9
 
   --- holdout_nt ---
-  CANDIDATE 3990 nt: per-subject 0.7180, any-subject 0.7103, GAP +-0.8 points over 5 significant subjects
-  length-matched identified background (2793-5187 nt), n=94: median 0.0, mean 0.1, max 15.0
-    candidate percentile: 22.34%
+  CANDIDATE 3990 nt: per-subject 0.7103, any-subject 0.7103, GAP +0.0 points over 5 significant subjects
+  length-matched identified background (2793-5187 nt), n=94: median 0.0, mean 0.8, max 15.0
+    candidate percentile: 64.89%
     gap > 10 points: 2 (2.13%)
     gap > 20 points: 0 (0.00%)
     gap > 30 points: 0 (0.00%)
   LEAK ARM, known material from this library, n=34: median 0.0, mean 0.0, max 0.3
   confound check, gap by number of significant subjects:
-      1 subjects: n=   917  median   0.0  mean  -1.6
-      2 subjects: n=   317  median   0.0  mean  -0.0
-      3 subjects: n=   149  median   0.0  mean   0.5
-      4 subjects: n=   110  median   0.0  mean   0.9
-      5 subjects: n=   570  median   0.0  mean   1.2
+      1 subjects: n=   917  median   0.0  mean   0.0
+      2 subjects: n=   317  median   0.0  mean   1.4
+      3 subjects: n=   149  median   0.0  mean   2.2
+      4 subjects: n=   110  median   0.0  mean   2.9
+      5 subjects: n=   570  median   0.2  mean   2.2
 
 ==============================================================================
 5. WHAT THE PIPELINE ACTUALLY REPORTED - the `strains` and `layers` output
@@ -342,7 +342,7 @@ prot_sprot                                4.27-4.36%  3.84-3.93%  66.72-67.57%
 6. DRIFT CONTROL: held-out index against today's, same pass
 ==============================================================================
   every distance is measured against the date-held-out index and today's index in the same pass. The reference can only have grown, so a distance against today's is a floor
-  [candidate] 3990 nt: holdout_nt=69.718%/cov 0.718  holdout_prot=66.5%/cov 0.4624  full_nt=69.718%/cov 0.718  full_prot=66.5%/cov 0.4624  sprot_undated=36.6%/cov 0.3383
+  [candidate] 3990 nt: holdout_nt=69.718%/cov 0.7103  holdout_prot=66.5%/cov 0.4624  full_nt=69.718%/cov 0.7103  full_prot=66.5%/cov 0.4624  sprot_undated=36.6%/cov 0.3383
   [leak] 1150 nt: holdout_nt=99.044%/cov 1.0  holdout_prot=96.5%/cov 0.6678  full_nt=99.044%/cov 1.0  full_prot=96.5%/cov 0.6678  sprot_undated=92.5%/cov 0.6678
   [leak] 329 nt: holdout_nt=95.719%/cov 0.997  holdout_prot=98.2%/cov 0.9939  full_nt=95.719%/cov 0.997  full_prot=98.2%/cov 0.9939  sprot_undated=94.5%/cov 0.9939
   [leak] 578 nt: holdout_nt=97.578%/cov 1.0  holdout_prot=100.0%/cov 0.9965  full_nt=97.578%/cov 1.0  full_prot=100.0%/cov 0.9965  sprot_undated=100.0%/cov 0.9965
