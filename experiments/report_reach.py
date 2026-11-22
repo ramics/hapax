@@ -56,7 +56,8 @@ SHARED_DB = "swissprot+viral"
 #: that decides how a reader sees it, so a table never asks anyone to know that `afdb` means
 #: Swiss-Prot folded - which is the fact that makes the structure arm a controlled
 #: comparison rather than a different search against different subjects.
-DB_LABEL = {"afdb": "AlphaFold/Swiss-Prot (Swiss-Prot, folded)", "pdb": "the PDB"}
+DB_LABEL = {"afdb": "AlphaFold/Swiss-Prot (Swiss-Prot, folded)", "pdb": "the PDB",
+            "pdbvirus": "every solved virus structure in the PDB"}
 
 #: Which arm is the baseline to beat. DIAMOND's most sensitive mode, because the question is
 #: what the production search can reach when it is allowed to be slow, not what it reaches
@@ -65,7 +66,7 @@ BASELINE_ARMS = ("diamond_ultra_sensitive", "diamond_very_sensitive", "diamond_s
 
 ARM_ORDER = ("diamond_sensitive", "diamond_very_sensitive", "diamond_ultra_sensitive",
              "blastp", "sw_exhaustive", "hmmsearch_ga", "hmmsearch_open", "jackhmmer",
-             "hhsearch", "foldseek_afdb", "foldseek_pdb", "codon")
+             "hhsearch", "foldseek_afdb", "foldseek_pdb", "foldseek_pdbvirus", "codon")
 
 ARM_LABEL = {
     "diamond_sensitive": "DIAMOND --sensitive",
@@ -79,6 +80,7 @@ ARM_LABEL = {
     "hhsearch": "HHsearch, profile vs Pfam profiles",
     "foldseek_afdb": "Foldseek vs AlphaFold/Swiss-Prot",
     "foldseek_pdb": "Foldseek vs PDB",
+    "foldseek_pdbvirus": "Foldseek vs solved virus structures",
     "codon": "tblastn vs RefSeq viral genomes",
 }
 
@@ -163,17 +165,43 @@ def ev(value) -> str:
     return "0" if value == 0 else f"{value:.1e}"
 
 
-def load(run_dir: Path) -> tuple[list[dict], dict, dict, dict]:
+def load(run_dir: Path, extra_dirs: list[Path] | None = None
+         ) -> tuple[list[dict], dict, dict, dict]:
+    """Rows, timings, ORFs and the staging manifest for one table.
+
+    WHY THERE IS MORE THAN ONE SOURCE DIRECTORY. The eight paid arms need subject sets that
+    only fit on an instance and come back from its results prefix. The structure arm needs
+    about 6 GB of coordinates and a 2.3 GB model, which fits in the container, so it runs
+    there for nothing and writes its own directory with its own manifest. Merging them is
+    the honest shape: two hosts, two script hashes, one panel, and `§0` prints both so no
+    reader has to assume one provenance covers everything.
+
+    An extra directory must agree with the run on the GENES. `orfs.json` is read from the
+    run directory only, and `reach_structure.py` records the sha256 of the `orfs.faa` it
+    called so the agreement is checkable rather than assumed.
+    """
     rows: list[dict] = []
-    for path in sorted(run_dir.glob("rows_*.jsonl")):
-        with open(path) as handle:
-            for line in handle:
-                if line.strip():
-                    rows.append(json.loads(line))
     timings = {}
-    for path in sorted(run_dir.glob("timing_*.json")):
-        t = json.loads(path.read_text())
-        timings[t["arm"]] = t
+    for source in [run_dir] + list(extra_dirs or []):
+        for path in sorted(source.glob("rows_*.jsonl")):
+            with open(path) as handle:
+                for line in handle:
+                    if line.strip():
+                        rows.append(json.loads(line))
+        for path in sorted(source.glob("timing_*.json")):
+            t = json.loads(path.read_text())
+            timings[t["arm"]] = t
+        # `reach_structure.py` writes one manifest rather than a timing file per arm,
+        # because it is one arm. Translating it here keeps the cost table's shape.
+        manifest = source / "structure_manifest.json"
+        if manifest.exists():
+            m = json.loads(manifest.read_text())
+            timings["foldseek_pdbvirus"] = dict(
+                arm="foldseek_pdbvirus", seconds=m.get("seconds"), ok=True,
+                threads=m.get("threads"), host=m.get("host"),
+                script_sha256=m.get("script_sha256"), git_sha=m.get("git_sha"),
+                subject_chains=(m.get("subject_db") or {}).get("chains"),
+                target=m.get("target"), orfs_sha256=m.get("orfs_sha256"))
     orfs = {r["orf"]: r for r in json.loads((run_dir / "orfs.json").read_text())} \
         if (run_dir / "orfs.json").exists() else {}
     stage = json.loads((run_dir / "stage_manifest.json").read_text()) \
@@ -189,10 +217,15 @@ def main(argv: list[str] | None = None) -> int:
                     help="the instance's output, as downloaded from its results prefix")
     ap.add_argument("--panel", type=Path, required=True, help="panel.json from the run")
     ap.add_argument("--out", type=Path, default=ROOT / "results/reach")
+    ap.add_argument("--extra-dir", type=Path, action="append", default=[],
+                    help="another directory of rows for this same panel, such as "
+                         "reach_structure.py's in-container output. Repeatable. Its "
+                         "provenance is printed beside the run's rather than folded into "
+                         "it, because it is a different host and a different script.")
     args = ap.parse_args(argv)
     args.out.mkdir(parents=True, exist_ok=True)
 
-    rows, timings, orfs, stage = load(args.run_dir)
+    rows, timings, orfs, stage = load(args.run_dir, args.extra_dir)
     panel = json.loads(args.panel.read_text())
     arm_of_query = {r["qid"]: r["arm"] for r in panel["rows"]}
     taxon_of_query = {r["qid"]: r["taxon"] for r in panel["rows"]}
@@ -255,6 +288,35 @@ def main(argv: list[str] | None = None) -> int:
                  f"load-bearing: without it a tandem repeat in one Swiss-Prot protein puts "
                  f"a shuffled ORF above significance, which is this panel's only null "
                  f"leak.\n")
+    # PROVENANCE IS PRINTED PER SOURCE, not once for the table. The paid arms and the
+    # structure arm ran on different hosts under different scripts, and a single line would
+    # make the reader assume one hash covers all of it - which is the exact failure the
+    # `script_sha256` convention exists to prevent.
+    if args.extra_dir:
+        run_orfs = args.run_dir / "orfs.faa"
+        orfs_sha = (hashlib.sha256(run_orfs.read_bytes()).hexdigest()
+                    if run_orfs.exists() else None)
+        prov = [f"- `{args.run_dir.name}`: commit `{stage.get('commit', 'unknown')}`, "
+                f"{len([a for a in arms_present if a != 'foldseek_pdbvirus'])} arms on "
+                f"{stage.get('instance_type', 'an instance')}"]
+        for extra in args.extra_dir:
+            m_path = extra / "structure_manifest.json"
+            if not m_path.exists():
+                prov.append(f"- `{extra.name}`: rows merged, no manifest found")
+                continue
+            m = json.loads(m_path.read_text())
+            same = ("the same `orfs.faa`" if m.get("orfs_sha256") == orfs_sha
+                    else "**a different `orfs.faa` from the run's**")
+            prov.append(
+                f"- `{extra.name}`: git `{m.get('git_sha')}`, script sha256 "
+                f"`{(m.get('script_sha256') or '')[:12]}`, {m.get('foldseek_version','')[:12]}, "
+                f"{(m.get('subject_db') or {}).get('chains')} subject chains from "
+                f"{(m.get('target') or {}).get('unique_entries')} PDB entries queried "
+                f"{(m.get('target') or {}).get('fetched_utc', 'unknown')}, on {same}")
+        lines.append("This table is merged from more than one source, so each one's "
+                     "provenance is given separately:\n")
+        lines += prov
+        lines.append("")
 
     # §1 reach per pile per arm
     lines.append("\n## 1. How far each method reaches, by pile\n")
