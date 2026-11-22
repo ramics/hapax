@@ -52,6 +52,7 @@ import argparse
 import collections
 import hashlib
 import json
+import os
 import random
 import statistics
 import subprocess
@@ -399,9 +400,14 @@ def main() -> None:
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args()
 
-    for p in (a.contigs, a.dmnd, a.pfam):
-        if not p.exists():
-            raise SystemExit(f"missing input: {p}")
+    # --dmnd-sprot was missing from this check and then skipped with `continue` wherever
+    # it was absent, so a run without it reported Swiss-Prot-free distances under the
+    # same name. Every index named is required.
+    for p in (a.contigs, a.dmnd, a.dmnd_sprot, a.pfam, a.r1, a.r2):
+        if not p.exists() or (p.is_file() and p.stat().st_size == 0):
+            raise SystemExit(f"missing or empty input: {p}")
+    if not os.access(a.diamond_bin, os.X_OK):
+        raise SystemExit(f"--diamond-bin {a.diamond_bin} is not executable")
     a.work.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
     rng = random.Random(a.seed)
@@ -425,8 +431,6 @@ def main() -> None:
     hsps, qlen = {}, {}
     nullhits, nhsps, nqlen = {}, {}, {}
     for label, db in (("viral", a.dmnd), ("sprot", a.dmnd_sprot)):
-        if not db.exists():
-            continue
         r = diamond_blastx(fa, db, a.work / f"whole_{label}.tsv", a.diamond_bin,
                            a.threads, a.diamond_mode)
         secs[f"blastx_{label}"] = r["seconds"]
@@ -475,8 +479,6 @@ def main() -> None:
     print(f"{len(orfs)} ORFs on {len(gl)} contigs", file=sys.stderr)
     orfhits = {}
     for label, db in (("viral", a.dmnd), ("sprot", a.dmnd_sprot)):
-        if not db.exists():
-            continue
         r = diamond_blastp(orfs, db, a.work, a.diamond_bin, a.threads,
                            a.diamond_mode, f"gl_{label}")
         secs[f"blastp_{label}"] = r["seconds"]

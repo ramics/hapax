@@ -176,3 +176,19 @@ DNA libraries have an RNA library of the same date and collection window. The DN
 | profile index | Pfam-A.hmm, EBI `Pfam/current_release` | 2026-11-21 | 53,275 models, HMMER3/f, model dates to June 2026; `Pfam.version` is absent from that directory so the release number is not recorded and the file itself is the provenance |
 | translated-search index | RefSeq `viral.1.protein.faa.gz` + UniProt Swiss-Prot `uniprot_sprot.fasta.gz` | 2026-11-21 | the same pair the mate-width thread used, re-fetched into a fresh container |
 | Berlin wastewater reads | SRR23973193 (PRJNA948850) via ENA fastq | 2026-11-21 | re-fetched; byte sizes match the figures recorded above (404,863,127 and 419,810,100), so it is the same file as the earlier threads used |
+
+## Holdout run (experiments/holdout_run.py)
+
+Fetched 2026-11-21 into the gitignored container scratchpad, from ENA. These three runs are
+one study's wastewater RNA libraries across three collection dates; the candidate genome
+`OQ722337.1` was deposited 2023-07-31 from the 2022-05-10 library, which is what makes the
+date holdout a genuine blind.
+
+| Purpose | Accession | Downloaded | Notes |
+|---|---|---|---|
+| candidate's containing library | SRR23421544 | 2026-11-21 | collection 2022-05-10, treated wastewater, Russia; `TRANSCRIPTOMIC/RNA-Seq/cDNA`; 4,290,429 reads / 347 MB gz. **Single-end in practice** despite `library_layout=PAIRED`: no `/2` records present. Carries `OQ722337.1` at 32,575 reads / 452.4x and `OQ722330.1` (the `leak` arm) at 1,776 reads |
+| sibling library, later date | SRR23421543 | 2026-11-21 | 10,578,319 reads / 575 MB gz; carries the candidate at 71,360 reads / 866.3x - the deeper of the three, used for the recurrence control in `results/holdout_candidates/depth.tsv` |
+| sibling library, earlier date | SRR23421542 | 2026-11-21 | 6,469,570 reads / 221 MB gz; candidate at 13,518 reads / 229.8x |
+| nucleotide reference | RefSeq viral genomic release (`viral.*.genomic.gbff.gz`) | 2026-11-21 | 19,650 records. Taken as the **release file rather than the API**: an `efetch` paging of the equivalent protein set is ~100 minutes against 6 seconds here |
+| protein reference | RefSeq viral protein release (`viral.protein.faa`) | 2026-11-21 | 722,827 proteins, 229 MB. The whole release, not a taxon-scoped subset - scoping it by hand-written order taxids previously produced "no protein relative at all" for four candidates, which was an artefact of a database that did not contain their class |
+| date key | each RefSeq record's original GenBank accession, parsed from its COMMENT provenance line | 2026-11-21 | 19,622 of 19,650 resolved (99.9%). `createdate` is NOT the deposit date: 3,926 records carry a 2023 `createdate` while wrapping decades-older sequence |

@@ -15,9 +15,20 @@ experiment saying what it measured, what it killed, and where its report is.
 ## Running it
 
 ```
-python3 hapax.py run SAMPLE_1.fastq.gz SAMPLE_2.fastq.gz --seed 1 --out RUNDIR
+python3 hapax.py run SAMPLE_1.fastq.gz SAMPLE_2.fastq.gz --seed 1 --out RUNDIR \
+    --trim-r2 14 \
+    --contigs IDENTIFIED_RRNA.fa IDENTIFIED_OTHER.fa --unidentified-contigs UNIDENTIFIED.fa \
+    --identified-contigs IDENTIFIED_OTHER.fa --rrna-contigs IDENTIFIED_RRNA.fa \
+    --assembly ASSEMBLY.fa --cross-sample-ref OTHER_SAMPLES.fa --spacers SPACERS.fa
 python3 experiments/make_web.py RUNDIR          # writes RUNDIR/web/index.html
 ```
+
+Everything that belongs to one sample - its trim, its own contigs, its assembly - has to
+be given: there are no defaults for those, because a default is some other sample's file
+and the run would use it without complaint. A per-read field whose reference you do not
+have is left out by name (`--report-without cross_sample crispr ...`) and recorded as not
+searched. The run checks every input, index and tool before it starts and refuses, exit
+status 2, if anything is missing.
 
 `hapax.py` is an orchestrator: every number in `RUNDIR` comes from the `experiments/`
 script that already measures it, with that script's own seed and manifest. The web view is

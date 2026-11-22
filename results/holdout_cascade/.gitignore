@@ -1,0 +1,19 @@
+# WHAT IS NOT KEPT HERE, AND WHY, SO THE ABSENCE IS NOT MISTAKEN FOR AN OVERSIGHT.
+#
+# `stages/cascade_rows.jsonl` is subtract_known.py's per-read row dump, 22 MB per seed. It
+# is an intermediate on the way to tiers.json, keyed by the stage manifest's content hash,
+# and the same class of file as `results/*/work/` which this repo already ignores. The
+# removal percentages every claim rests on are in tiers.json and tier_table.json, which
+# are kept for every seed.
+run_s*/stages/cascade_rows.jsonl
+
+# The per-read report's own row dumps, 12 MB per seed. Kept for SEED 1 ONLY (negated
+# below), because the per-read half is not where this experiment's question lives - the
+# withheld genome reaches a reader as a contig, and tier 3 here is read-level background -
+# but one seed's rows should be inspectable rather than merely described.
+run_s*/contigs.jsonl
+run_s*/reads.jsonl
+run_s*/layers.jsonl
+!run_s1/contigs.jsonl
+!run_s1/reads.jsonl
+!run_s1/layers.jsonl

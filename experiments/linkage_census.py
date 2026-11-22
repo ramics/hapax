@@ -55,6 +55,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from subtract_known import _mm_index, map_filter, provenance
+from loud import Preflight
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -115,9 +116,14 @@ def census(binary: Path, r1: Path, r2: Path, trim: int, queries: list, work: Pat
     rows = work / f"census_rows_{tag}.tsv"
     err = work / f"census_{tag}.err"
     with open(rows, "w") as out, open(err, "w") as e:
-        subprocess.run([str(binary), str(r1), str(r2), str(trim), str(q),
-                        str(min_shared), str(max_witnesses), str(seed)],
-                       stdout=out, stderr=e, check=True)
+        proc = subprocess.run([str(binary), str(r1), str(r2), str(trim), str(q),
+                               str(min_shared), str(max_witnesses), str(seed)],
+                              stdout=out, stderr=e)
+    if proc.returncode != 0:
+        # The census writes its stderr to a file, so without this the log says only that
+        # it failed.
+        raise SystemExit(f"census {tag} exited {proc.returncode}:\n"
+                         + "\n".join(err.read_text().splitlines()[-20:]))
     print(f"[{tag}] {err.read_text().strip().splitlines()[-1]}", flush=True)
     return rows
 
@@ -244,8 +250,11 @@ def main() -> None:
     ap.add_argument("--min-mlen", type=int, default=40,
                     help="the cascade's operating point, so a neighbour labelled none is "
                          "unidentified at the same threshold the residue was defined by")
-    ap.add_argument("--silva", type=Path, nargs="*",
-                    default=[ROOT / "data/silva/SSU.fa.gz", ROOT / "data/silva/LSU.fa.gz"])
+    # Accepted so old command lines still parse, and refused if given: nothing in this
+    # script reads SILVA. It used to default to the SILVA paths, which put an index in
+    # every manifest's parameters that the census never consulted.
+    ap.add_argument("--silva", type=Path, nargs="*", default=[],
+                    help="not read by this script; giving it is an error")
     ap.add_argument("--identified-contigs", type=Path,
                     default=ROOT / "data/geo/sample_contigs_identified.fa")
     ap.add_argument("--unidentified-contigs", type=Path,
@@ -254,17 +263,37 @@ def main() -> None:
                     default=ROOT / "data/geo/sample_contigs_rrna.fa",
                     help="the sample's own ribosomal contigs: 1.4 MB of them removes more "
                          "of this library than all 272 MB of SILVA, so they are the rRNA "
-                         "reference and SILVA is the fallback")
+                         "reference. There is no fallback: absent means refuse")
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--work", type=Path, default=Path("/tmp/claude-0/wk/census"))
     ap.add_argument("--out", type=Path, default=ROOT / "results/linkage_census")
+    ap.add_argument("--preflight", action="store_true",
+                    help="check every input and tool, then exit: 0 if the run could "
+                         "start, 2 if not")
     args = ap.parse_args()
+
+    # A class with no reference used to print a WARNING and carry on, so every neighbour
+    # of that class was labelled `none` - unidentified - which inflates exactly the
+    # "neighbourhood as unknown as the read" number this census exists to measure.
+    pf = Preflight("linkage_census.py")
+    pf.exe(args.binary, "--binary (cargo build --release --bin census)")
+    pf.file(args.r1, "--r1")
+    pf.file(args.r2, "--r2")
+    pf.file(args.rrna_contigs, "--rrna-contigs (class rrna)")
+    pf.file(args.identified_contigs, "--identified-contigs (class identified_contig)")
+    pf.file(args.unidentified_contigs, "--unidentified-contigs (class unidentified_contig)")
+    pf.require(not args.silva, f"--silva {args.silva} given, but this script never reads "
+                               f"SILVA; the rRNA class is labelled from --rrna-contigs")
+    if not args.preflight:
+        for tag in ("residue", "subtracted"):
+            pf.file(args.cascade_work / f"{tag}_s{args.seed}.fa",
+                    f"cascade work ({tag} pile)")
+    pf.module("mappy", "labelling")
+    pf.done(args.preflight)
 
     t0 = time.perf_counter()
     args.work.mkdir(parents=True, exist_ok=True)
     args.out.mkdir(parents=True, exist_ok=True)
-    if not args.binary.exists():
-        raise SystemExit(f"{args.binary} is not built: cargo build --release --bin census")
 
     piles = {}
     for tag, fa in (("residue", args.cascade_work / f"residue_s{args.seed}.fa"),
@@ -276,20 +305,15 @@ def main() -> None:
         print(f"{tag}: {len(piles[tag])} query pairs from {fa.name}", flush=True)
 
     refs: dict[str, object] = {}
-    rrna_fa = args.rrna_contigs if args.rrna_contigs.exists() else None
-    if rrna_fa:
-        refs["rrna"] = _mm_index(rrna_fa, args.work / "rrna.mmi", args.threads)
-    if args.identified_contigs.exists():
-        refs["identified_contig"] = _mm_index(args.identified_contigs,
-                                              args.work / "identified.mmi", args.threads)
-    if args.unidentified_contigs.exists():
-        refs["unidentified_contig"] = _mm_index(args.unidentified_contigs,
-                                                args.work / "unidentified.mmi",
-                                                args.threads)
+    refs["rrna"] = _mm_index(args.rrna_contigs, args.work / "rrna.mmi", args.threads)
+    refs["identified_contig"] = _mm_index(args.identified_contigs,
+                                          args.work / "identified.mmi", args.threads)
+    refs["unidentified_contig"] = _mm_index(args.unidentified_contigs,
+                                            args.work / "unidentified.mmi", args.threads)
     missing = [c for c in CLASSES[:-1] if c not in refs]
     if missing:
-        print(f"WARNING: no reference for {missing}; those classes cannot be assigned and "
-              f"their neighbours will fall into none", flush=True)
+        raise SystemExit(f"no reference for classes {missing}: their neighbours would all "
+                         f"be labelled none")
 
     rng = random.Random(args.seed)
     result = {}

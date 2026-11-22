@@ -53,7 +53,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from berlin_io import read_pairs, revcomp
 from subtract_known import (_mm_index, artefact_fields, dir_bytes, git_sha, kraken2,
-                            map_filter, shannon_entropy, spread)
+                            map_filter, provenance, shannon_entropy, spread)
+from loud import Preflight, require_output, run_tool
 from residue_report import (LibraryAbundance, dinucleotide_bias, folding, frame_evidence,
                             repetitiveness, _sample_of)
 
@@ -143,6 +144,9 @@ def main() -> None:
     ap.add_argument("--real-rate", type=float, default=1e-6,
                     help="the abundance the headline is about; sets how many spike pairs "
                          "go into the abundance sketch")
+    ap.add_argument("--trim-r2", type=int, default=14,
+                    help="mate-2 bases trimmed when reading the real library. Was hardcoded "
+                         "to 14 (SRR23973193's kit); hapax passes the run's own value")
     ap.add_argument("--r1", type=Path, default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
     ap.add_argument("--r2", type=Path, default=ROOT / "data/berlin/SRR23973193_2.fastq.gz")
     ap.add_argument("--silva", type=Path, default=ROOT / "data/silva/silva_dna.fa")
@@ -165,7 +169,37 @@ def main() -> None:
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--work", type=Path, default=Path("/tmp/claude-0/wk/spike"))
     ap.add_argument("--out", type=Path, default=ROOT / "results/spike_holdout")
+    ap.add_argument("--preflight", action="store_true",
+                    help="check every input, index and tool, then exit: 0 if the run "
+                         "could start, 2 if not")
     args = ap.parse_args()
+
+    # The ladder is the run's only positive control, so an index that silently drops out
+    # of it makes the spike survive tier 1 more often and reads as lower sensitivity of
+    # the TOOL. Every index it was asked for has to be there.
+    pf = Preflight("spike_holdout.py")
+    for g in args.genome:
+        pf.file(g, "--genome")
+    pf.file(args.r1, "--r1")
+    pf.file(args.r2, "--r2")
+    if not args.abundance_only:
+        if not args.preflight:
+            # Under hapax these two are written by earlier steps (the cascade's converted
+            # SILVA, the cascade's contigs concatenated), so a preflight run before them
+            # cannot check them; hapax checks them itself when the stage starts.
+            pf.file(args.silva, "--silva")
+            pf.file(args.identified, "--identified")
+        pf.file(args.unidentified, "--unidentified")
+        pf.file(args.cross_sample_ref, "--cross-sample-ref")
+        for db in args.k2_dbs:
+            pf.kraken2_db(db)
+        if args.k2_dbs:
+            pf.exe(args.classify_bin, "--classify-bin")
+        for db in args.dmnd:
+            pf.file(db, "--dmnd")
+        if args.dmnd:
+            pf.exe(args.diamond_bin, "--diamond-bin")
+    pf.done(args.preflight)
 
     args.work.mkdir(parents=True, exist_ok=True)
     args.out.mkdir(parents=True, exist_ok=True)
@@ -189,21 +223,20 @@ def main() -> None:
 
     # ---- background reads, for the distributions every spike score is read against
     bg = ([] if args.abundance_only else
-          list(read_pairs(args.r1, args.r2, args.background_pairs, 14,
+          list(read_pairs(args.r1, args.r2, args.background_pairs, args.trim_r2,
                           (args.seed - 1) * 1_500_000)))
 
     # ---- indexes, built once
     idx = {}
     if args.abundance_only:
         idx = {}
-    elif args.silva.exists():
+    else:
         idx["rrna"] = _mm_index(args.silva, args.work / "silva.mmi", args.threads)
     if not args.abundance_only:
         for tag, ref in (("selfasm_identified", args.identified),
                          ("selfasm_unidentified", args.unidentified),
                          ("cross_sample", args.cross_sample_ref)):
-            if ref.exists():
-                idx[tag] = _mm_index(ref, args.work / f"{ref.stem}.mmi", args.threads)
+            idx[tag] = _mm_index(ref, args.work / f"{ref.stem}.mmi", args.threads)
 
     rungs: list[dict] = []
     if not args.abundance_only:
@@ -234,24 +267,27 @@ def main() -> None:
                     sq = a if i == 1 else b
                     h.write(f"@{nm}\n{sq}\n+\n{'I' * len(sq)}\n")
         for db in args.k2_dbs:
-            if (db / "hash.k2d").exists():
-                calls, _w, _r = kraken2(db, fq1, fq2, args.classify_bin, args.threads,
-                                        args.work / "k2.out", args.k2_confidence)
-                hit[db.name] = {k for k, tx in calls.items() if tx != 0}
+            calls, _w, _r = kraken2(db, fq1, fq2, args.classify_bin, args.threads,
+                                    args.work / "k2.out", args.k2_confidence)
+            if len(calls) != len(all_pairs):
+                raise SystemExit(f"Kraken2 {db.name} returned {len(calls)} calls for "
+                                 f"{len(all_pairs)} pairs")
+            hit[db.name] = {k for k, tx in calls.items() if tx != 0}
         fa = args.work / "spike.fa"
         with open(fa, "w") as h:
             for nm, a, b in all_pairs:
                 h.write(f">{nm}/1\n{a}\n>{nm}/2\n{b}\n")
         prot_best: dict[str, dict[str, tuple[float, float]]] = {}
         for db in args.dmnd:
-            if not db.exists():
-                continue
             tsv = args.work / f"{db.stem}.tsv"
-            subprocess.run([str(args.diamond_bin), "blastx", "--db", str(db),
-                            "--query", str(fa), "--out", str(tsv), "--threads",
-                            str(args.threads), "--outfmt", "6", "qseqid", "sseqid",
-                            "pident", "bitscore", "--max-target-seqs", "1",
-                            "--evalue", "10", "--sensitive", "--quiet"], check=True)
+            tsv.unlink(missing_ok=True)
+            run_tool([str(args.diamond_bin), "blastx", "--db", str(db),
+                      "--query", str(fa), "--out", str(tsv), "--threads",
+                      str(args.threads), "--outfmt", "6", "qseqid", "sseqid",
+                      "pident", "bitscore", "--max-target-seqs", "1",
+                      "--evalue", "10", "--sensitive", "--quiet"],
+                     f"DIAMOND blastx against {db.name}")
+            require_output(tsv, f"DIAMOND {db.name}", allow_empty=True)
             best: dict[str, tuple[float, float]] = {}
             with open(tsv) as h:
                 for line in h:
@@ -314,11 +350,11 @@ def main() -> None:
     # field interpretable, which is why all three are measured rather than the first.
     spike_in_library = max(int(round(args.real_rate * args.library_pairs)), 1)
     sk = LibraryAbundance(bits=28)
-    for _nm, a, b, _q1, _q2 in read_pairs(args.r1, args.r2, args.library_pairs, 14, 0):
+    for _nm, a, b, _q1, _q2 in read_pairs(args.r1, args.r2, args.library_pairs, args.trim_r2, 0):
         sk.add_seq(a)
         sk.add_seq(b)
     bg_counts = []
-    for _nm, a, b, _q1, _q2 in read_pairs(args.r1, args.r2, 2000, 14, 0):
+    for _nm, a, b, _q1, _q2 in read_pairs(args.r1, args.r2, 2000, args.trim_r2, 0):
         cs = sorted(sk.counts(a))
         if cs:
             bg_counts.append(cs[len(cs) // 2])
@@ -371,7 +407,10 @@ def main() -> None:
     (args.out / f"spike_s{args.seed}.json").write_text(json.dumps(out, indent=2))
     (args.out / f"manifest_s{args.seed}.json").write_text(json.dumps({
         "script": "experiments/spike_holdout.py",
-        "git_sha": git_sha(),
+        **provenance(__file__),
+        # Every index in `parameters` was required to exist before the run started, so
+        # this list is what tier 1 actually consisted of, not what was asked for.
+        "tier1_indexes_consulted": sorted(hit) if not args.abundance_only else [],
         "parameters": {k: (str(v) if isinstance(v, Path) else
                            [str(x) for x in v] if isinstance(v, list) else v)
                        for k, v in vars(args).items()},

@@ -1981,7 +1981,11 @@ function interval(iv) {
     body.append(tr);
   });
   tb.append(body); sc.append(tb); p.append(sc);
-  if (F.chimaera_split_rate != null) {
+  // A string here is the per-read report saying the test did not run; it used to be 0.0,
+  // which this sentence rendered as "fires on 0%".
+  if (typeof F.chimaera_split_rate === 'string') {
+    p.append(el('p', 'note', 'Chimaera test ' + esc(F.chimaera_split_rate) + '.'));
+  } else if (F.chimaera_split_rate != null) {
     p.append(el('p', 'note', 'Chimaera fires on ' + pct(F.chimaera_split_rate) +
       ' of residue reads and ' + pct(F.chimaera_split_rate_on_subtracted_reads) +
       ' of reads already identified, which is the test\\'s own false-positive rate. ' +
