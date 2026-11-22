@@ -583,6 +583,26 @@ def main() -> None:
                                 for k in sorted(set(picked.values()))},
             "orfs_real": len(orfs), "orfs_shuffled": len(sorfs),
             "orfs_scored_real": len(real_rows), "orfs_scored_shuffled": len(shuf_rows),
+            # TWO STEPS, TWO CENSUSES. Scoring an ORF needs a significant BLAST
+            # alignment; a Pfam call does not, and Pfam runs on every ORF in both arms.
+            # So the domain call has a null even when the alignment has none, and it is
+            # the only calibrated quantity left in this part of the experiment once the
+            # shuffled arm produces no alignments. Reported as a count over the number
+            # called, because "no significant hits" and "the search never ran" look the
+            # same in an empty table.
+            "domain_census": {
+                "readout": ("ORFs carrying at least one Pfam domain at the curators' "
+                            "gathering cutoffs, over all ORFs called, which does not "
+                            "require a BLAST alignment"),
+                "real": {"orfs_called": len(orfs),
+                         "with_a_domain": sum(1 for o in orfs
+                                              if results["real"][2].get(o["orf"])),
+                         },
+                "shuffled": {"orfs_called": len(sorfs),
+                             "with_a_domain": sum(1 for o in sorfs
+                                                  if results["shuffled"][2].get(o["orf"])),
+                             },
+            },
         },
         "inside_against_outside": {k: arm_rollup(v) for k, v in sorted(by_arm.items())},
         "by_domain_role": {k: by_role(v) for k, v in sorted(by_arm.items())},
