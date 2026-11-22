@@ -1,0 +1,36 @@
+{
+ "script": "experiments/path_settings_absorption.py",
+ "git_sha": "8775f40",
+ "script_sha256": "9f8ca28aa645ac2edf777caaaf8c6786fa54c3f7fa4a02e782d70f81c0b4ca5f",
+ "python": "3.13.18",
+ "argv": [
+  "--seed",
+  "1",
+  "--baseline-unidentified",
+  "/home/user/stage/wk/asm_baseline/contigs_renamed_unidentified.fa",
+  "--arms",
+  "baseline=/home/user/stage/wk/asm_baseline/contigs_renamed_identified.fa",
+  "baseline_repeat=/home/user/stage/wk/asm_baseline_repeat/contigs_renamed_identified.fa",
+  "lax_bubble=/home/user/stage/wk/asm_lax_bubble/contigs_renamed_identified.fa",
+  "strict_bubble=/home/user/stage/wk/asm_strict_bubble/contigs_renamed_identified.fa",
+  "no_bubble=/home/user/stage/wk/asm_no_bubble/contigs_renamed_identified.fa",
+  "--minimap2",
+  "/home/user/stage/bin/minimap2",
+  "--threads",
+  "2",
+  "--out",
+  "results/path_settings"
+ ],
+ "seconds": 3.16337129600106,
+ "minimap2": "2.28-r1209",
+ "parameters": {
+  "seed": "1",
+  "baseline_unidentified": "/home/user/stage/wk/asm_baseline/contigs_renamed_unidentified.fa",
+  "arms": "['baseline=/home/user/stage/wk/asm_baseline/contigs_renamed_identified.fa', 'baseline_repeat=/home/user/stage/wk/asm_baseline_repeat/contigs_renamed_identified.fa', 'lax_bubble=/home/user/stage/wk/asm_lax_bubble/contigs_renamed_identified.fa', 'strict_bubble=/home/user/stage/wk/asm_strict_bubble/contigs_renamed_identified.fa', 'no_bubble=/home/user/stage/wk/asm_no_bubble/contigs_renamed_identified.fa']",
+  "minimap2": "/home/user/stage/bin/minimap2",
+  "min_identity": "0.99",
+  "min_aln": "200",
+  "threads": "2",
+  "out": "results/path_settings"
+ }
+}

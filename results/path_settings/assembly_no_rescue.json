@@ -1,0 +1,21 @@
+{
+ "arm": "no_rescue",
+ "flags": [
+  "--min-contig-len",
+  "200",
+  "--no-mercy",
+  "--no-local"
+ ],
+ "direction": "remove both low-coverage rescue mechanisms. The least-path-rescue end",
+ "threads": 4,
+ "seconds": 231.43926217900025,
+ "peak_rss_bytes": 0,
+ "contigs": 23684,
+ "bases": 14132183,
+ "n50": 614,
+ "max": 14854,
+ "ge500": 9549,
+ "ge1000": 2363,
+ "ge3000": 189,
+ "contigs_fa": "/home/user/stage/wk/asm_no_rescue/final.contigs.fa"
+}

@@ -1,0 +1,21 @@
+{
+ "arm": "prune_hard",
+ "flags": [
+  "--min-contig-len",
+  "200",
+  "--prune-level",
+  "3"
+ ],
+ "direction": "prune harder. Expect a larger residue and little change deep down",
+ "threads": 4,
+ "seconds": 647.2296761830003,
+ "peak_rss_bytes": 0,
+ "contigs": 26975,
+ "bases": 18283273,
+ "n50": 737,
+ "max": 20695,
+ "ge500": 13312,
+ "ge1000": 3772,
+ "ge3000": 298,
+ "contigs_fa": "/home/user/stage/wk/asm_prune_hard/final.contigs.fa"
+}

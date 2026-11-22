@@ -1,0 +1,21 @@
+{
+ "arm": "lax_bubble",
+ "flags": [
+  "--min-contig-len",
+  "200",
+  "--merge-level",
+  "20,0.90"
+ ],
+ "direction": "merge bubbles down to 90% similarity. THE ABSORPTION ARM: expect longer contigs, more mosaics, and a residue that shrinks wrongly",
+ "threads": 4,
+ "seconds": 723.6421475370003,
+ "peak_rss_bytes": 0,
+ "contigs": 35204,
+ "bases": 22012860,
+ "n50": 651,
+ "max": 20695,
+ "ge500": 15086,
+ "ge1000": 3954,
+ "ge3000": 332,
+ "contigs_fa": "/home/user/stage/wk/asm_lax_bubble/final.contigs.fa"
+}

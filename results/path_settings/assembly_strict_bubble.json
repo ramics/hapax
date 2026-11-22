@@ -1,0 +1,21 @@
+{
+ "arm": "strict_bubble",
+ "flags": [
+  "--min-contig-len",
+  "200",
+  "--merge-level",
+  "20,0.98"
+ ],
+ "direction": "merge only near-identical bubbles. Expect more, shorter contigs and less lineage fusion; breadth may fall",
+ "threads": 4,
+ "seconds": 702.090505614,
+ "peak_rss_bytes": 0,
+ "contigs": 35567,
+ "bases": 21954518,
+ "n50": 639,
+ "max": 20695,
+ "ge500": 15056,
+ "ge1000": 3892,
+ "ge3000": 296,
+ "contigs_fa": "/home/user/stage/wk/asm_strict_bubble/final.contigs.fa"
+}

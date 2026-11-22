@@ -1,0 +1,21 @@
+{
+ "arm": "meta_sensitive",
+ "flags": [
+  "--min-contig-len",
+  "200",
+  "--presets",
+  "meta-sensitive"
+ ],
+ "direction": "the preset the residue assembly used, never compared to the default until now. NOT a path arm: it also sets --min-count 1, a lever this project already measured as dead, so it is reported separately and no path conclusion rests on it",
+ "threads": 4,
+ "seconds": 2207.4164350580004,
+ "peak_rss_bytes": 0,
+ "contigs": 53906,
+ "bases": 29809319,
+ "n50": 547,
+ "max": 15436,
+ "ge500": 18918,
+ "ge1000": 4095,
+ "ge3000": 304,
+ "contigs_fa": "/home/user/stage/wk/asm_meta_sensitive/final.contigs.fa"
+}

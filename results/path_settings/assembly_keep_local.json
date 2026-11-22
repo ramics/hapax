@@ -1,0 +1,23 @@
+{
+ "arm": "keep_local",
+ "flags": [
+  "--min-contig-len",
+  "200",
+  "--low-local-ratio",
+  "0.05",
+  "--disconnect-ratio",
+  "0.02"
+ ],
+ "direction": "keep low-coverage local branches that the defaults remove",
+ "threads": 4,
+ "seconds": 711.4001310599997,
+ "peak_rss_bytes": 0,
+ "contigs": 36345,
+ "bases": 22209442,
+ "n50": 634,
+ "max": 21798,
+ "ge500": 15483,
+ "ge1000": 3878,
+ "ge3000": 259,
+ "contigs_fa": "/home/user/stage/wk/asm_keep_local/final.contigs.fa"
+}

@@ -1,0 +1,32 @@
+{
+  "script": "experiments/classify_contigs.py",
+  "git_sha": "8775f40d552564dac6a1ef3c23963f9932fa8986",
+  "parameters": {
+    "seed": 1,
+    "contigs": "/home/user/stage/wk/asm_baseline/contigs_renamed.fa",
+    "k2_db": "/home/user/stage/db/k2_viral_20210517.d",
+    "classify_bin": "/home/user/stage/k2pkg/root/share/kraken2-2.17.2/libexec/classify",
+    "dmnd": [
+      "/home/user/stage/prot/holdout_prot.dmnd",
+      "/home/user/stage/prot/sprot.dmnd"
+    ],
+    "diamond_bin": "/home/user/stage/bin/diamond",
+    "k2_confidence": [
+      "0.0",
+      "0.05",
+      "0.1",
+      "0.2"
+    ],
+    "operating_confidence": 0.1,
+    "operating_bitscore": 50.0,
+    "silva_mmi": "/home/user/stage/wk/silva.mmi",
+    "rrna_min_mlen": 100,
+    "min_len": 200,
+    "threads": 4,
+    "work": "/home/user/stage/wk/contigs_baseline",
+    "out": "/home/user/stage/wk/idout_baseline"
+  },
+  "wall_seconds": 260.4410519180001,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}
