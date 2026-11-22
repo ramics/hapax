@@ -120,6 +120,19 @@ def main(argv: list[str] | None = None) -> int:
                          "dead-man timer, so an underestimated rate costs a short table "
                          "rather than a dead run")
     ap.add_argument("--depth", type=int, default=2_000_000)
+    ap.add_argument("--query-libs-per-plant", type=int, default=3,
+                    help="how many libraries of each plant supply query reads, taken at a "
+                         "stride over that plant's dates. Every library is still a subject; "
+                         "sampling the query axis is what keeps the k-mer table under the "
+                         "cache cliff the scan falls off above ~200,000 queries. 0 means "
+                         "every library, which is the 776,826-query set that took 40x the "
+                         "time for 3.9x the queries")
+    ap.add_argument("--berlin-queries", type=int, default=50_000,
+                    help="target size of the Berlin query set, split equally between its "
+                         "(pile, depth bin, seed) groups. 0 keeps all ~193,000")
+    ap.add_argument("--query-ceiling", type=int, default=250_000,
+                    help="the instance refuses to scan a query file larger than this, "
+                         "because above the cliff no timer we would pay for finishes")
     ap.add_argument("--threads", type=int, default=8)
     ap.add_argument("--shards", type=int, default=1,
                     help="how many subjects to process at once. The scan is one "
@@ -182,6 +195,8 @@ def main(argv: list[str] | None = None) -> int:
         QUERY_RUN=args.query_run, SUBJECT_COUNT=args.subjects,
         BUDGET_HOURS=args.budget_hours, DEPTH=args.depth, THREADS=args.threads,
         SHARDS=args.shards,
+        QUERY_LIBS_PER_PLANT=args.query_libs_per_plant,
+        BERLIN_QUERIES=args.berlin_queries, QUERY_CEILING=args.query_ceiling,
         # fasterq-dump is the only threaded step, so the threads are divided between the
         # shards rather than each shard asking for all of them. The reference project lost a
         # fourteen-hour ceiling to eight workers each asking for three threads on eight

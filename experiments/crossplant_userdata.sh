@@ -142,28 +142,68 @@ ls /opt/hapax/out/sample/sample_*.json | wc -l > /opt/hapax/out/subjects_sampled
 [ "$(cat /opt/hapax/out/subjects_sampled.txt)" -gt 0 ] || die "no subject was sampled"
 
 # ---------------------------------------------------------------- one query file
-# Berlin piles truncated to the same 90 nt per mate as every library query; shorter pairs
-# are dropped and counted.
+# The scan's cost is not linear in the query count: it falls off a cache cliff once the
+# k-mer table stops fitting. 201,526 queries scanned a 2M-pair library in 15-44 s; 776,826
+# queries, the same libraries, took 1,400-1,800 s - 40x the time for 3.9x the queries, on
+# the same subject. Both measured. So the query set is capped twice over: queries come from
+# a stride of libraries per plant rather than every library, and the Berlin piles are cut to
+# an equal share per (pile, depth bin, seed) group, taken in file order, which is already a
+# random draw. Every library is still a subject; only the query axis is sampled.
 "$PYBIN" - <<'PY' || die "the query file could not be built"
-import glob, json
+import csv, glob, json, os
 L = 90
-kept = dropped = 0
+TARGET_BERLIN = @@BERLIN_QUERIES@@
+PER_PLANT = @@QUERY_LIBS_PER_PLANT@@
+
+# A fixed stride over each plant's dates, so every plant supplies queries and the sources
+# are spread in time: drift is the biggest caveat on any cross-plant number.
+sampled = {os.path.basename(q)[len("queries_"):-len(".tsv")]
+           for q in glob.glob("/opt/hapax/out/sample/queries_*.tsv")}
+by_plant = {}
+for r in csv.DictReader(open("/opt/hapax/panel.tsv"), delimiter="\t"):
+    if r["run"] in sampled:
+        by_plant.setdefault((r["project"], r["plant"]), []).append(r)
+picked = []
+for k in sorted(by_plant):
+    rows = sorted(by_plant[k], key=lambda r: (r["date"], r["run"]))
+    n = min(PER_PLANT, len(rows)) if PER_PLANT else len(rows)
+    picked += [rows[round(i * (len(rows) - 1) / (n - 1))] if n > 1 else rows[0]
+               for i in range(n)]
+picked = sorted({r["run"] for r in picked})
+
+groups = {}
+short = 0
+for line in open("/opt/hapax/berlin_queries.tsv"):
+    f = line.rstrip("\n").split("\t")
+    if len(f[1]) < L or len(f[2]) < L:
+        short += 1
+        continue
+    g = f[0].split("|")
+    groups.setdefault((g[0], g[1], g[-1]), []).append(f)
+per = max(1, TARGET_BERLIN // max(1, len(groups))) if TARGET_BERLIN else None
+kept = cut = 0
 with open("/opt/hapax/queries.tsv", "w") as out:
-    for line in open("/opt/hapax/berlin_queries.tsv"):
-        f = line.rstrip("\n").split("\t")
-        if len(f[1]) < L or len(f[2]) < L:
-            dropped += 1
-            continue
-        out.write(f"berlin|{f[0]}\t{f[1][:L]}\t{f[2][:L]}\n")
-        kept += 1
-    libs = 0
-    for p in sorted(glob.glob("/opt/hapax/out/sample/queries_*.tsv")):
-        out.write(open(p).read())
-        libs += 1
-json.dump({"berlin_kept": kept, "berlin_dropped_short": dropped, "libraries": libs},
+    for g in sorted(groups):
+        rows = groups[g][:per] if per else groups[g]
+        cut += len(groups[g]) - len(rows)
+        for f in rows:
+            out.write(f"berlin|{f[0]}\t{f[1][:L]}\t{f[2][:L]}\n")
+            kept += 1
+    for acc in picked:
+        out.write(open(f"/opt/hapax/out/sample/queries_{acc}.tsv").read())
+json.dump({"berlin_kept": kept, "berlin_dropped_short": short,
+           "berlin_dropped_subsample": cut, "berlin_groups": len(groups),
+           "berlin_per_group": per, "query_libraries": len(picked),
+           "query_plants": len(by_plant), "libraries_per_plant": PER_PLANT},
           open("/opt/hapax/out/query_build.json", "w"))
+open("/opt/hapax/out/query_libraries.txt", "w").write("\n".join(picked) + "\n")
 PY
-wc -l < /opt/hapax/queries.tsv
+cp /opt/hapax/out/query_build.json /opt/hapax/query_build.json
+QN="$(wc -l < /opt/hapax/queries.tsv)"
+echo "query rows: $QN"
+# Above the measured cliff the pass cannot finish inside any timer we would pay for, so this
+# is a refusal rather than a slow run.
+[ "$QN" -le @@QUERY_CEILING@@ ] || die "the query file has $QN rows, over the @@QUERY_CEILING@@ the scan stays under its cache cliff for"
 
 # ---------------------------------------------------------------- phase 2: scan, in shards
 ls /opt/hapax/out/sample/sample_*.json | sed 's#.*/sample_##; s#\.json##' > /opt/hapax/sampled.txt
