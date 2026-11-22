@@ -104,11 +104,11 @@ DEFAULT_VOLUME_THROUGHPUT = 250
 DEFAULT_VOLUME_IOPS = 3000
 
 #: Minutes. The only bound on the bill that does not depend on anything in the run working,
-#: including this launcher staying alive. Five hours: staging is projected at about ninety
-#: minutes once AlphaFold/Swiss-Prot is built here rather than downloaded prebuilt (28.6 GB
-#: from EBI, then `foldseek createdb` over about 542,000 structures), and the arms at two, so
-#: this is still comfortably over and inside the pre-approved ceiling.
-DEFAULT_HARD_STOP_MINUTES = 300
+#: including this launcher staying alive. Three hours: measured staging is twelve minutes and
+#: the eight arms took 3,858 s wall clock on run 5, so this is better than double. It was
+#: five hours while the structure databases were staged here; that arm now runs in the
+#: container, and a timer kept wide for work that has moved is just a wider bill.
+DEFAULT_HARD_STOP_MINUTES = 180
 HEARTBEAT_SECONDS = 300
 
 ON_DEMAND_USD_PER_HOUR = {"c6i.xlarge": 0.17, "c6i.2xlarge": 0.34, "m6i.xlarge": 0.19,

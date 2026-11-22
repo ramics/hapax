@@ -120,26 +120,13 @@ for prog in hmmsearch jackhmmer hmmpress; do
 done
 /opt/hapax/bin/hmmsearch -h >/dev/null || die "hmmsearch will not run"
 
-# Foldseek: graded. A pinned release tag that has moved is a plausible failure and the
-# structure arms are the exploratory ones, so a failure here drops two arms rather than the
-# run. `latest` is tried second: a floating version is worse provenance than a pinned one,
-# and it is recorded which was used.
-SKIP_STRUCTURE=0
-FOLDSEEK_SOURCE="pinned @@FOLDSEEK_VERSION@@"
-if ! curl -fsSL --retry 3 -o foldseek.tar.gz \
-    "https://github.com/steineggerlab/foldseek/releases/download/@@FOLDSEEK_VERSION@@/foldseek-linux-avx2.tar.gz"; then
-  FOLDSEEK_SOURCE="latest (the pinned tag did not resolve)"
-  curl -fsSL --retry 3 -o foldseek.tar.gz \
-    "https://github.com/steineggerlab/foldseek/releases/latest/download/foldseek-linux-avx2.tar.gz" \
-    || { SKIP_STRUCTURE=1; FOLDSEEK_SOURCE="none: no foldseek binary downloaded"; }
-fi
-if [ "$SKIP_STRUCTURE" = 0 ]; then
-  tar xzf foldseek.tar.gz
-  cp foldseek/bin/foldseek /opt/hapax/bin/foldseek || SKIP_STRUCTURE=1
-  /opt/hapax/bin/foldseek version || SKIP_STRUCTURE=1
-fi
-echo "=== foldseek: $FOLDSEEK_SOURCE, skip_structure=$SKIP_STRUCTURE ===" \
-  | tee /opt/hapax/log-foldseek.txt
+# NO FOLDSEEK BINARY IS STAGED. The structure arm moved to the container (see the note
+# further down where its databases used to be built), so downloading it here would be an
+# unused dependency whose failure could still drop a run. `FOLDSEEK_SOURCE` is kept in the
+# manifest, reading `not staged`, rather than removed: a field that disappears looks like a
+# field nobody recorded.
+FOLDSEEK_SOURCE="not staged: the structure arm runs in-container"
+echo "=== foldseek: $FOLDSEEK_SOURCE ===" | tee /opt/hapax/log-foldseek.txt
 
 # ---------------------------------------------------------------- code and panel
 aws s3 cp "$S3/code/@@CODE_KEY@@" code.tar.gz --region "$REGION" \
@@ -274,72 +261,32 @@ if [ "$VIRAL_NT" -gt 0 ] && /opt/hapax/bin/makeblastdb -in /opt/hapax/db/viral_n
   ARMS="$ARMS codon"
 fi
 
-# The structure arms. AlphaFold/Swiss-Prot is the target that makes arm 4 comparable to arms
-# 1-2: it is the same subjects, folded.
+# THE STRUCTURE ARM DOES NOT RUN HERE ANY MORE, and that is a deliberate move rather than a
+# step skipped. It is now `experiments/reach_structure.py`, which runs in the container for
+# nothing against every solved virus structure in the PDB. Three things pushed it off the
+# instance, in increasing order of importance.
 #
-# WHERE THE ProstT5 WEIGHTS COME FROM. `--prostt5-model` takes a DIRECTORY and foldseek
-# looks inside it for a weights file by name. Release 10-941cd33 looks for
-# `prostt5-f16.gguf`, which is exactly what this account's S3 holds, so the file is staged
-# under its own name and nothing is renamed. Four runs were spent on the previous pin, which
-# looked for other names and segfaulted on this file; `experiments/ec2_reach.py` carries
-# that story at the version constant.
+# One: `foldseek databases` exits 0 on a failed download. Its downloads come from a single
+# Cloudflare worker, that worker answered HTTP 429 with a 17-byte body from three networks
+# across several hours on 2026-11-22, and foldseek untarred the error body, printed
+# `gzip: stdin: not in gzip format`, moved nothing, and exited 0. Two runs added structure
+# arms on that exit code and then failed on `Input .../afdb_sprot does not exist`.
 #
-# `foldseek databases` IS NEVER TRUSTED FOR WHETHER IT WORKED, for either the weights or
-# the subjects. Its downloads come from one Cloudflare worker, that worker answered HTTP 429
-# with a 17-byte body on 2026-11-22 from three networks, and foldseek untarred the error
-# body, printed `gzip: stdin: not in gzip format`, moved nothing, and exited 0. Run 5 added
-# both structure arms on that exit code and then spent 500 s per arm failing on `Input
-# .../afdb_sprot does not exist` - a whole arm reported absent for a reason that was not the
-# real one. So every structure database here is decided by `fs_db_ok` on the files, and the
-# weights by `-s`, after the download claims to have worked.
-fs_db_ok() {   # $1 = database base path, $2 = the fewest subjects that can be right
-  [ -s "$1.dbtype" ] && [ -s "$1.index" ] && [ -s "${1}_ss.dbtype" ] \
-    && [ "$(wc -l < "$1.index")" -ge "$2" ]
-}
-if [ "$SKIP_STRUCTURE" = 0 ]; then
-  mkdir -p /opt/hapax/db/prostt5
-  aws s3 cp "s3://@@BUCKET@@/@@PROSTT5_KEY@@" /opt/hapax/db/prostt5/prostt5-f16.gguf \
-      --region "$REGION" || true
-  if [ -s /opt/hapax/db/prostt5/prostt5-f16.gguf ]; then
-    # AlphaFold/Swiss-Prot IS BUILT HERE FROM EBI, not downloaded prebuilt, because EBI
-    # serves the structures themselves and the worker does not serve anything. This is the
-    # target that makes the arm a controlled comparison - Swiss-Prot folded is arms 1-2's
-    # subjects in another alphabet - so it is worth 28.6 GB and a `createdb` rather than
-    # being dropped with the worker. `createdb` over the real coordinates gives subjects
-    # with `_ca`; the ProstT5 query side has none, which is why no TM-score is reportable.
-    mkdir -p /opt/hapax/db/afdb_struct /opt/hapax/db/fs_afdb_sprot
-    if curl -fsSL --retry 3 -o /opt/hapax/db/afdb_sprot.tar \
-        "https://ftp.ebi.ac.uk/pub/databases/alphafold/latest/swissprot_pdb_v6.tar"; then
-      tar xf /opt/hapax/db/afdb_sprot.tar -C /opt/hapax/db/afdb_struct || true
-      rm -f /opt/hapax/db/afdb_sprot.tar
-      /opt/hapax/bin/foldseek createdb /opt/hapax/db/afdb_struct \
-          /opt/hapax/db/fs_afdb_sprot/afdb_sprot --threads "$THREADS" \
-          > /opt/hapax/log-fs-afdb.txt 2>&1 || true
-      # 100,000 is a floor, not an expectation: Swiss-Prot folded is about 542,000 entries,
-      # and anything an order of magnitude under that is a truncated extraction, which would
-      # read in the table as structure finding fewer relatives rather than as a short index.
-      if fs_db_ok /opt/hapax/db/fs_afdb_sprot/afdb_sprot 100000; then
-        ARMS="$ARMS foldseek_afdb"
-      fi
-      wc -l /opt/hapax/db/fs_afdb_sprot/afdb_sprot.index >> /opt/hapax/log-fs-afdb.txt 2>&1
-      rm -rf /opt/hapax/db/afdb_struct
-    fi
-    # PDB is the uncontrolled universe and is graded: it is where a remote structural
-    # relative of a phage coat protein would actually sit, but it is not the comparison the
-    # brief turns on. It stays on the worker because no single bulk file serves it, so if
-    # the worker is still rate-limited this arm is absent WITH ITS REASON rather than
-    # present and empty.
-    if /opt/hapax/bin/foldseek databases PDB /opt/hapax/db/fs_pdb/pdb \
-        /opt/hapax/db/fstmp_pdb --threads "$THREADS" > /opt/hapax/log-fs-pdb.txt 2>&1 \
-        && fs_db_ok /opt/hapax/db/fs_pdb/pdb 10000; then
-      ARMS="$ARMS foldseek_pdb"
-    else
-      echo "=== foldseek PDB database unavailable; the arm is absent, not empty. \
-foldseek's own output follows ===" | tee -a /opt/hapax/log-arms.txt
-      tail -20 /opt/hapax/log-fs-pdb.txt | tee -a /opt/hapax/log-arms.txt || true
-    fi
-  fi
-fi
+# Two: the only bulk-servable alternative, EBI's 28.6 GB `swissprot_pdb_v6.tar`, came down
+# at 6.7 MB/s and then stopped advancing entirely at 33 GB of a 200 GB disk - no error, no
+# socket timeout on the curl - and took a whole run's dead-man timer with it.
+#
+# Three, and this is the one that matters: AlphaFold/Swiss-Prot was chosen because it is
+# Swiss-Prot folded, which would have made the arm these same subjects in another alphabet.
+# But the shared database here is Swiss-Prot PLUS the RefSeq viral proteins, and
+# `report_reach.py` §5b counts 47 of the 51 ORFs finding their nearest relative in the
+# RefSeq viral half, which is folded nowhere. So that target could not have answered the
+# question it was chosen for, and paying to stage it again would buy a weak null.
+#
+# The ProstT5 weights are therefore not staged here either. Nothing in this script needs
+# them, and `reach_structure.py` pulls them from the same S3 key into the container.
+echo "=== structure arm runs in-container via experiments/reach_structure.py, not here \
+===" | tee -a /opt/hapax/log-arms.txt
 
 du -sh /opt/hapax/db > /opt/hapax/log-db.txt
 df -h / >> /opt/hapax/log-db.txt
