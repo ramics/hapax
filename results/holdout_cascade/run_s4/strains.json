@@ -1,0 +1,985 @@
+{
+  "significance_evalue": 1e-05,
+  "subjects": [
+    {
+      "subject": "sp|Q9ZCF6|NUOG_RICPR",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 36.4,
+      "identity_range": [
+        36.4,
+        36.4
+      ],
+      "median_aligned_aa": 44,
+      "median_evalue": 4.43e-06,
+      "worst_evalue": 4.43e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q8Y0J4|FABH_RALN1",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 37.8,
+      "identity_range": [
+        37.8,
+        37.8
+      ],
+      "median_aligned_aa": 45,
+      "median_evalue": 3.54e-07,
+      "worst_evalue": 3.54e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|P42898|MTHR_HUMAN",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 40.0,
+      "identity_range": [
+        40.0,
+        40.0
+      ],
+      "median_aligned_aa": 50,
+      "median_evalue": 3.23e-06,
+      "worst_evalue": 3.23e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|B1HUI4|AROE_LYSSC",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 40.0,
+      "identity_range": [
+        40.0,
+        40.0
+      ],
+      "median_aligned_aa": 50,
+      "median_evalue": 1.21e-06,
+      "worst_evalue": 1.21e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|O31775|YMDB_BACSU",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 40.8,
+      "identity_range": [
+        40.8,
+        40.8
+      ],
+      "median_aligned_aa": 49,
+      "median_evalue": 9.06e-07,
+      "worst_evalue": 9.06e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q08871|DESD_SYNY3",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 42.0,
+      "identity_range": [
+        42.0,
+        42.0
+      ],
+      "median_aligned_aa": 50,
+      "median_evalue": 6.28e-06,
+      "worst_evalue": 6.28e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|A4VPN8|TRUB_STUS1",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 43.8,
+      "identity_range": [
+        43.8,
+        43.8
+      ],
+      "median_aligned_aa": 48,
+      "median_evalue": 8.18e-06,
+      "worst_evalue": 8.18e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|P67702|HIGA_ECOL6",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 43.8,
+      "identity_range": [
+        43.8,
+        43.8
+      ],
+      "median_aligned_aa": 48,
+      "median_evalue": 3.27e-08,
+      "worst_evalue": 3.27e-08,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q55081|PHR_SYNY3",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 44.7,
+      "identity_range": [
+        44.7,
+        44.7
+      ],
+      "median_aligned_aa": 47,
+      "median_evalue": 6.7e-07,
+      "worst_evalue": 6.7e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "YP_010770737.1",
+      "index": "viral_holdout",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 44.7,
+      "identity_range": [
+        44.7,
+        44.7
+      ],
+      "median_aligned_aa": 47,
+      "median_evalue": 4.46e-08,
+      "worst_evalue": 4.46e-08,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q9I5N9|HXCR_PSEAE",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 44.9,
+      "identity_range": [
+        44.9,
+        44.9
+      ],
+      "median_aligned_aa": 49,
+      "median_evalue": 9.17e-07,
+      "worst_evalue": 9.17e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q56227|NQO12_THET8",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 44.9,
+      "identity_range": [
+        44.9,
+        44.9
+      ],
+      "median_aligned_aa": 49,
+      "median_evalue": 4.42e-06,
+      "worst_evalue": 4.42e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|P39853|CAPD_STAAU",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 45.2,
+      "identity_range": [
+        45.2,
+        45.2
+      ],
+      "median_aligned_aa": 42,
+      "median_evalue": 6.05e-06,
+      "worst_evalue": 6.05e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q74E25|SYY_GEOSL",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 45.8,
+      "identity_range": [
+        45.8,
+        45.8
+      ],
+      "median_aligned_aa": 59,
+      "median_evalue": 4.4e-06,
+      "worst_evalue": 4.4e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q72JK8|APAUH_THET2",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 46.0,
+      "identity_range": [
+        46.0,
+        46.0
+      ],
+      "median_aligned_aa": 50,
+      "median_evalue": 4.98e-07,
+      "worst_evalue": 4.98e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q9PKF5|FABH_CHLMU",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 46.3,
+      "identity_range": [
+        46.3,
+        46.3
+      ],
+      "median_aligned_aa": 41,
+      "median_evalue": 2.59e-07,
+      "worst_evalue": 2.59e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "YP_009361585.1",
+      "index": "viral_holdout",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 46.5,
+      "identity_range": [
+        46.5,
+        46.5
+      ],
+      "median_aligned_aa": 43,
+      "median_evalue": 1.38e-07,
+      "worst_evalue": 1.38e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|C0HMM1|PCAL_RHOJR",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 46.7,
+      "identity_range": [
+        46.7,
+        46.7
+      ],
+      "median_aligned_aa": 45,
+      "median_evalue": 2.35e-06,
+      "worst_evalue": 2.35e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|P55561|Y4MB_SINFN",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 46.8,
+      "identity_range": [
+        46.8,
+        46.8
+      ],
+      "median_aligned_aa": 47,
+      "median_evalue": 2.99e-06,
+      "worst_evalue": 2.99e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "YP_009551671.1",
+      "index": "viral_holdout",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 46.8,
+      "identity_range": [
+        46.8,
+        46.8
+      ],
+      "median_aligned_aa": 47,
+      "median_evalue": 7.77e-08,
+      "worst_evalue": 7.77e-08,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "YP_010770211.1",
+      "index": "viral_holdout",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 47.2,
+      "identity_range": [
+        47.2,
+        47.2
+      ],
+      "median_aligned_aa": 36,
+      "median_evalue": 1.14e-07,
+      "worst_evalue": 1.14e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q9XDH6|DPO3A_PSEFL",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 47.4,
+      "identity_range": [
+        47.4,
+        47.4
+      ],
+      "median_aligned_aa": 38,
+      "median_evalue": 4.41e-06,
+      "worst_evalue": 4.41e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|A0M6G5|ATPD_CHRFK",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 47.9,
+      "identity_range": [
+        47.9,
+        47.9
+      ],
+      "median_aligned_aa": 48,
+      "median_evalue": 2.24e-07,
+      "worst_evalue": 2.24e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|P94605|GYRA_CLOAB",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 48.8,
+      "identity_range": [
+        48.8,
+        48.8
+      ],
+      "median_aligned_aa": 43,
+      "median_evalue": 7.04e-07,
+      "worst_evalue": 7.04e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "YP_010769782.1",
+      "index": "viral_holdout",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 48.9,
+      "identity_range": [
+        48.9,
+        48.9
+      ],
+      "median_aligned_aa": 47,
+      "median_evalue": 2.19e-06,
+      "worst_evalue": 2.19e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q88D09|MCPQ_PSEPK",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 49.0,
+      "identity_range": [
+        49.0,
+        49.0
+      ],
+      "median_aligned_aa": 49,
+      "median_evalue": 7.02e-07,
+      "worst_evalue": 7.02e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|O86365|Y584_MYCTU",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 50.0,
+      "identity_range": [
+        50.0,
+        50.0
+      ],
+      "median_aligned_aa": 44,
+      "median_evalue": 6.07e-06,
+      "worst_evalue": 6.07e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q474E1|SYV_CUPPJ",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 51.0,
+      "identity_range": [
+        51.0,
+        51.0
+      ],
+      "median_aligned_aa": 49,
+      "median_evalue": 1.73e-06,
+      "worst_evalue": 1.73e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "YP_009337040.1",
+      "index": "viral_holdout",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 51.1,
+      "identity_range": [
+        51.1,
+        51.1
+      ],
+      "median_aligned_aa": 47,
+      "median_evalue": 3.07e-07,
+      "worst_evalue": 3.07e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|P23883|PUUC_ECOLI",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 1,
+      "median_identity_percent": 51.2,
+      "identity_range": [
+        51.2,
+        51.2
+      ],
+      "median_aligned_aa": 41,
+      "median_evalue": 2.35e-06,
+      "worst_evalue": 2.35e-06,
+      "reading": "present and partly identified: the already-subtracted pile points at this subject too"
+    },
+    {
+      "subject": "sp|P87048|RPN1_SCHPO",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 51.4,
+      "identity_range": [
+        51.4,
+        51.4
+      ],
+      "median_aligned_aa": 35,
+      "median_evalue": 3.39e-06,
+      "worst_evalue": 3.39e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|P29136|MEP1_SOYBN",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 51.4,
+      "identity_range": [
+        51.4,
+        51.4
+      ],
+      "median_aligned_aa": 35,
+      "median_evalue": 8.18e-06,
+      "worst_evalue": 8.18e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|P44466|DACA_HAEIN",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 52.1,
+      "identity_range": [
+        52.1,
+        52.1
+      ],
+      "median_aligned_aa": 48,
+      "median_evalue": 4.88e-07,
+      "worst_evalue": 4.88e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "YP_010839761.1",
+      "index": "viral_holdout",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 52.2,
+      "identity_range": [
+        52.2,
+        52.2
+      ],
+      "median_aligned_aa": 46,
+      "median_evalue": 2.23e-07,
+      "worst_evalue": 2.23e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q2NKU6|DPY30_BOVIN",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 52.5,
+      "identity_range": [
+        52.5,
+        52.5
+      ],
+      "median_aligned_aa": 40,
+      "median_evalue": 1.8e-07,
+      "worst_evalue": 1.8e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|O33948|CATA1_ACILW",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 52.5,
+      "identity_range": [
+        52.5,
+        52.5
+      ],
+      "median_aligned_aa": 40,
+      "median_evalue": 9.05e-07,
+      "worst_evalue": 9.05e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|P43957|NQRC_HAEIN",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 52.5,
+      "identity_range": [
+        52.5,
+        52.5
+      ],
+      "median_aligned_aa": 40,
+      "median_evalue": 8.2e-08,
+      "worst_evalue": 8.2e-08,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|O05519|YDIF_BACSU",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 52.6,
+      "identity_range": [
+        52.6,
+        52.6
+      ],
+      "median_aligned_aa": 38,
+      "median_evalue": 3.23e-06,
+      "worst_evalue": 3.23e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|P50428|ARSA_MOUSE",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 53.2,
+      "identity_range": [
+        53.2,
+        53.2
+      ],
+      "median_aligned_aa": 47,
+      "median_evalue": 1.91e-07,
+      "worst_evalue": 1.91e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q54QA6|TRM11_DICDI",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 53.5,
+      "identity_range": [
+        53.5,
+        53.5
+      ],
+      "median_aligned_aa": 43,
+      "median_evalue": 9.18e-07,
+      "worst_evalue": 9.18e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|A0R2D3|RSEA_MYCS2",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 53.7,
+      "identity_range": [
+        53.7,
+        53.7
+      ],
+      "median_aligned_aa": 41,
+      "median_evalue": 1.86e-06,
+      "worst_evalue": 1.86e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q1RIM1|TOP1_RICBR",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 54.5,
+      "identity_range": [
+        54.5,
+        54.5
+      ],
+      "median_aligned_aa": 44,
+      "median_evalue": 5.47e-08,
+      "worst_evalue": 5.47e-08,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "YP_010770264.1",
+      "index": "viral_holdout",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 55.3,
+      "identity_range": [
+        55.3,
+        55.3
+      ],
+      "median_aligned_aa": 38,
+      "median_evalue": 1.07e-06,
+      "worst_evalue": 1.07e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q9AGY6|HDDC_ANETH",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 55.3,
+      "identity_range": [
+        55.3,
+        55.3
+      ],
+      "median_aligned_aa": 38,
+      "median_evalue": 4.51e-08,
+      "worst_evalue": 4.51e-08,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q1D346|NRDR_MYXXD",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 55.6,
+      "identity_range": [
+        55.6,
+        55.6
+      ],
+      "median_aligned_aa": 36,
+      "median_evalue": 1.01e-06,
+      "worst_evalue": 1.01e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q82XC7|NTPPA_NITEU",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 56.1,
+      "identity_range": [
+        56.1,
+        56.1
+      ],
+      "median_aligned_aa": 41,
+      "median_evalue": 5.13e-06,
+      "worst_evalue": 5.13e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q80XL6|ACD11_MOUSE",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 56.7,
+      "identity_range": [
+        56.7,
+        56.7
+      ],
+      "median_aligned_aa": 30,
+      "median_evalue": 5.13e-06,
+      "worst_evalue": 5.13e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "YP_010769674.1",
+      "index": "viral_holdout",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 58.3,
+      "identity_range": [
+        58.3,
+        58.3
+      ],
+      "median_aligned_aa": 36,
+      "median_evalue": 1.03e-06,
+      "worst_evalue": 1.03e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "YP_009329977.1",
+      "index": "viral_holdout",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 59.4,
+      "identity_range": [
+        59.4,
+        59.4
+      ],
+      "median_aligned_aa": 32,
+      "median_evalue": 7.53e-07,
+      "worst_evalue": 7.53e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q8K9V4|SODM_BUCAP",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 60.0,
+      "identity_range": [
+        60.0,
+        60.0
+      ],
+      "median_aligned_aa": 35,
+      "median_evalue": 6.16e-08,
+      "worst_evalue": 6.16e-08,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|A6L4M1|ATPL_PHOV8",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 61.1,
+      "identity_range": [
+        61.1,
+        61.1
+      ],
+      "median_aligned_aa": 36,
+      "median_evalue": 1.87e-07,
+      "worst_evalue": 1.87e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q52923|EXOD_RHIME",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 61.1,
+      "identity_range": [
+        61.1,
+        61.1
+      ],
+      "median_aligned_aa": 36,
+      "median_evalue": 1.54e-07,
+      "worst_evalue": 1.54e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|P56909|NUOE1_RHIME",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 61.9,
+      "identity_range": [
+        61.9,
+        61.9
+      ],
+      "median_aligned_aa": 42,
+      "median_evalue": 1.66e-06,
+      "worst_evalue": 1.66e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "YP_009593334.1",
+      "index": "viral_holdout",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 66.7,
+      "identity_range": [
+        66.7,
+        66.7
+      ],
+      "median_aligned_aa": 27,
+      "median_evalue": 2.49e-06,
+      "worst_evalue": 2.49e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q8P9V9|BCP_XANCP",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 68.0,
+      "identity_range": [
+        68.0,
+        68.0
+      ],
+      "median_aligned_aa": 25,
+      "median_evalue": 3.35e-08,
+      "worst_evalue": 3.35e-08,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q8XDQ5|GDX_ECO57",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 68.6,
+      "identity_range": [
+        68.6,
+        68.6
+      ],
+      "median_aligned_aa": 35,
+      "median_evalue": 2.54e-08,
+      "worst_evalue": 2.54e-08,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q9HVW0|KDSD_PSEAE",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 68.6,
+      "identity_range": [
+        68.6,
+        68.6
+      ],
+      "median_aligned_aa": 35,
+      "median_evalue": 4.13e-08,
+      "worst_evalue": 4.13e-08,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|P30336|CADA_ALKPO",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 68.8,
+      "identity_range": [
+        68.8,
+        68.8
+      ],
+      "median_aligned_aa": 32,
+      "median_evalue": 1.07e-06,
+      "worst_evalue": 1.07e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|P0ABE0|BCCP_ECO57",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 70.0,
+      "identity_range": [
+        70.0,
+        70.0
+      ],
+      "median_aligned_aa": 30,
+      "median_evalue": 1.81e-06,
+      "worst_evalue": 1.81e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|P30012|NADC_SALTY",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 71.4,
+      "identity_range": [
+        71.4,
+        71.4
+      ],
+      "median_aligned_aa": 35,
+      "median_evalue": 7.61e-08,
+      "worst_evalue": 7.61e-08,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q54BT3|ABCB2_DICDI",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 72.7,
+      "identity_range": [
+        72.7,
+        72.7
+      ],
+      "median_aligned_aa": 33,
+      "median_evalue": 1.3e-07,
+      "worst_evalue": 1.3e-07,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|B3PGZ3|AROE_CELJU",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 73.1,
+      "identity_range": [
+        73.1,
+        73.1
+      ],
+      "median_aligned_aa": 26,
+      "median_evalue": 1.21e-06,
+      "worst_evalue": 1.21e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|A0M5T1|SYL_CHRFK",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 76.9,
+      "identity_range": [
+        76.9,
+        76.9
+      ],
+      "median_aligned_aa": 26,
+      "median_evalue": 4.64e-06,
+      "worst_evalue": 4.64e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q88MH6|UPPS_PSEPK",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 91.7,
+      "identity_range": [
+        91.7,
+        91.7
+      ],
+      "median_aligned_aa": 24,
+      "median_evalue": 7.58e-08,
+      "worst_evalue": 7.58e-08,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    },
+    {
+      "subject": "sp|Q31IS8|ERPA_HYDCU",
+      "index": "sprot",
+      "residue_reads": 1,
+      "known_reads": 0,
+      "median_identity_percent": 100.0,
+      "identity_range": [
+        100.0,
+        100.0
+      ],
+      "median_aligned_aa": 16,
+      "median_evalue": 6.37e-06,
+      "worst_evalue": 6.37e-06,
+      "reading": "only the residue points here, which is a relative in the database and not an identification"
+    }
+  ],
+  "subjects_total": 65,
+  "known_pile_searched_reads": 1942,
+  "unit": "one row per subject, not per read",
+  "not_a_score": "subjects are not ordered by novelty. Identity is a distance from a database and score ordering tracks database proximity, so the ordering here is by how many residue reads point at the subject",
+  "caveat": "a 107 nt query against a large index finds about 40 bases at about 88% by chance and the chance band reads identically on residue and identified reads, so every row carries its worst E-value as well as its median"
+}

@@ -1,0 +1,33 @@
+{
+  "script": "experiments/crossplant_report.py",
+  "git_sha": "06322c22f85bec9e2e8e02b379bc7f473873b169",
+  "tree_dirty": false,
+  "script_sha256": "3dcee6de3e4e0f04",
+  "parameters": {
+    "run_dir": "/tmp/claude-0/-home-user/f61a138b-a2e5-555e-86c0-1f6228da8cbf/scratchpad/run_reads",
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "ks": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64,
+      128,
+      256,
+      512
+    ],
+    "background_min": 0.1,
+    "top": 500
+  },
+  "subjects": 531,
+  "queries": 145040,
+  "seconds": 316.1
+}

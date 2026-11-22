@@ -2,8 +2,8 @@
   "tool": "hapax run",
   "spec": "SPEC.md 8.1",
   "script": "hapax.py",
-  "script_sha256": "4e52eeda07642921f91c0aac4af461ed9920bef53b2a998c7ebca45e396467db",
-  "git_sha": "65520e83e9aa02b28a682a4fc897cf7da117f414",
+  "script_sha256": "950f3c05f696a6dc37fe17604d78c81fde456f61e00cccb29027e5922e06b318",
+  "git_sha": "453ebcbdc772d5094ed05dc58849c81c61975048",
   "tree_dirty": true,
   "seed": 1,
   "inputs": {
@@ -21,6 +21,7 @@
     "seed": 1,
     "out": "results/holdout_cascade/run_s1",
     "pairs": 200000,
+    "block": 1000000,
     "report_pairs": 2000,
     "linkage_pairs": 20000,
     "census_queries": 3000,
@@ -37,6 +38,7 @@
     "unidentified_contigs": [
       "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_unidentified.fa"
     ],
+    "identified_contigs": null,
     "k2_dbs": [
       "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_viral_20210517.d",
       "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_standard08.d",
@@ -68,7 +70,7 @@
       "stage": "cascade",
       "status": "ok",
       "script": "subtract_known.py",
-      "seconds": 697.0,
+      "seconds": 626.6,
       "argv": [
         "--seed",
         "1",
@@ -87,6 +89,8 @@
         "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade_work",
         "--out",
         "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade",
+        "--block",
+        "1000000",
         "--k2-dbs",
         "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_viral_20210517.d",
         "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_standard08.d",
@@ -109,18 +113,18 @@
         "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_unidentified.fa"
       ],
       "provenance": {
-        "git_sha": "65520e83e9aa02b28a682a4fc897cf7da117f414-dirty",
+        "git_sha": "453ebcbdc772d5094ed05dc58849c81c61975048-dirty",
         "script_sha256": "absent from this stage's own manifest"
       },
       "outputs": {
         "tiers.json": {
-          "bytes": 9730,
-          "sha256_16": "7bcd17bce3e9a739",
+          "bytes": 13655,
+          "sha256_16": "c49e1ab5cb99c1ef",
           "from": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade/subtract_s1.json"
         },
         "stages/cascade_manifest.json": {
           "bytes": 2687,
-          "sha256_16": "ef734748fb478f73",
+          "sha256_16": "c27843242446837d",
           "from": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade/manifest_s1.json"
         },
         "stages/cascade_rows.jsonl": {
@@ -153,7 +157,7 @@
       "stage": "reads",
       "status": "ok",
       "script": "residue_report.py",
-      "seconds": 1648.1,
+      "seconds": 1812.2,
       "argv": [
         "--seed",
         "1",
@@ -183,7 +187,7 @@
         "--single-end"
       ],
       "provenance": {
-        "git_sha": "65520e83e9aa02b28a682a4fc897cf7da117f414-dirty",
+        "git_sha": "453ebcbdc772d5094ed05dc58849c81c61975048-dirty",
         "tree_dirty": true,
         "script_sha256": "11b925110f3324ce"
       },
@@ -195,7 +199,7 @@
         },
         "fields.json": {
           "bytes": 4668,
-          "sha256_16": "afb35f2ee90dd21d",
+          "sha256_16": "09126d34fdfea649",
           "from": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/reads/calibration_s1.json"
         }
       },
@@ -247,13 +251,19 @@
       "status": "ok",
       "subjects": 71,
       "subjects_with_3_or_more_reads": 0
+    },
+    {
+      "stage": "divergent",
+      "status": "skipped",
+      "reason": "not selected with --stages"
     }
   ],
   "complete": false,
   "incomplete_because": [
     "linkage skipped: not selected with --stages",
     "census skipped: not selected with --stages",
-    "calibration skipped: not selected with --stages"
+    "calibration skipped: not selected with --stages",
+    "divergent skipped: not selected with --stages"
   ],
   "field_calibration": {
     "gc": {
@@ -278,7 +288,7 @@
     "no pile without its interval",
     "no score without the calibration run behind it"
   ],
-  "wall_seconds": 2425.8,
+  "wall_seconds": 2519.9,
   "python": "3.13.18",
   "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39",
   "cpu_count": 4
