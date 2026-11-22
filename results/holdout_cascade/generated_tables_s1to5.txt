@@ -3,23 +3,27 @@
    below is subsampling noise and nothing else)
 ==============================================================================
 tier                                           alone    marginal    cumulative
-artefact                                  0.16-0.16%  0.16-0.16%    0.16-0.16%
-rrna                                      9.52-9.52%  9.36-9.36%    9.53-9.53%
-k2_viral_20210517.d                       1.62-1.62%  1.61-1.61%  11.13-11.13%
-k2_standard08.d                           16.03-16.03%13.13-13.13%  24.27-24.27%
-k2_pluspf08.d                             14.88-14.88%  0.02-0.02%  24.28-24.28%
-selfasm_contigs_renamed_rrna              20.91-20.91%11.90-11.90%  36.18-36.18%
-selfasm_contigs_renamed_identified_norrna 41.85-41.85%26.07-26.07%  62.25-62.25%
-prot_viral_holdout                        0.77-0.77%  0.77-0.77%  63.02-63.02%
-prot_sprot                                4.34-4.34%  3.91-3.91%  66.94-66.94%
+artefact                                  0.01-0.16%  0.01-0.16%    0.01-0.16%
+rrna                                      9.34-11.53% 9.33-11.53%   9.35-11.54%
+k2_viral_20210517.d                       1.55-1.62%  1.54-1.61%  10.94-13.08%
+k2_standard08.d                           15.80-16.39%12.77-13.13%  24.02-25.86%
+k2_pluspf08.d                             14.64-15.20%  0.01-0.02%  24.03-25.86%
+selfasm_contigs_renamed_rrna              20.91-22.64%11.69-12.08%  36.12-37.56%
+selfasm_contigs_renamed_identified_norrna 41.03-41.85%25.42-26.07%  62.02-62.98%
+prot_viral_holdout                        0.76-0.78%  0.76-0.78%  62.79-63.73%
+prot_sprot                                4.27-4.36%  3.84-3.93%  66.72-67.57%
 
-  identified (tier 1)               66.94-66.94%
-  residue                           33.06-33.06%
-  tier 2 (assembled, unidentified)  14.68-14.68%
-  tier 3 (unplaced by anything)     18.39-18.39%
+  identified (tier 1)               66.72-67.57%
+  residue                           32.43-33.28%
+  tier 2 (assembled, unidentified)  14.32-14.68%
+  tier 3 (unplaced by anything)     18.11-18.65%
 
   stages, per seed:
     seed 1: complete=False  cascade=ok contigs=ok reads=ok linkage=skipped census=skipped calibration=skipped intervals=ok layers=ok strains=ok divergent=skipped
+    seed 2: complete=False  cascade=ok contigs=ok reads=ok linkage=skipped census=skipped calibration=skipped intervals=ok layers=ok strains=ok divergent=skipped
+    seed 3: complete=False  cascade=ok contigs=ok reads=ok linkage=skipped census=skipped calibration=skipped intervals=ok layers=ok strains=ok divergent=skipped
+    seed 4: complete=False  cascade=ok contigs=ok reads=ok linkage=skipped census=skipped calibration=skipped intervals=ok layers=ok strains=ok divergent=skipped
+    seed 5: complete=False  cascade=ok contigs=ok reads=ok linkage=skipped census=skipped calibration=skipped intervals=ok layers=ok strains=ok divergent=skipped
 
 ==============================================================================
 2. THE ASSEMBLY SPLIT (whole library, one assembly, deterministic)
@@ -305,6 +309,34 @@ prot_sprot                                4.34-4.34%  3.91-3.91%  66.94-66.94%
     the withheld genome's own subject present: NO
     layers[residue] of 2000: distant_relative=68  placed=3  recurs_and_unplaceable=822  undetermined=1107
     layers[known] of 2000: artefact_shaped=6  distant_relative=583  placed=280  recurs_and_unplaceable=939  undetermined=192
+
+  seed 2: 54 subjects over 1945 searched residue reads
+    residue reads per subject: max 1, subjects with >=2 0, with >=3 0
+    median aligned 46 aa, identity 37.5-94.7%
+    the withheld genome's own subject present: NO
+    layers[residue] of 2000: distant_relative=53  placed=1  recurs_and_unplaceable=716  undetermined=1230
+    layers[known] of 2000: distant_relative=569  placed=277  recurs_and_unplaceable=861  undetermined=293
+
+  seed 3: 69 subjects over 1938 searched residue reads
+    residue reads per subject: max 1, subjects with >=2 0, with >=3 0
+    median aligned 46 aa, identity 35.4-87.0%
+    the withheld genome's own subject present: NO
+    layers[residue] of 2000: distant_relative=69  recurs_and_unplaceable=719  undetermined=1212
+    layers[known] of 2000: distant_relative=552  placed=313  recurs_and_unplaceable=886  undetermined=249
+
+  seed 4: 65 subjects over 1942 searched residue reads
+    residue reads per subject: max 1, subjects with >=2 0, with >=3 0
+    median aligned 41 aa, identity 36.4-100.0%
+    the withheld genome's own subject present: NO
+    layers[residue] of 2000: distant_relative=63  placed=2  recurs_and_unplaceable=752  undetermined=1183
+    layers[known] of 2000: artefact_shaped=1  distant_relative=552  placed=273  recurs_and_unplaceable=891  undetermined=283
+
+  seed 5: 63 subjects over 1942 searched residue reads
+    residue reads per subject: max 2, subjects with >=2 1, with >=3 0
+    median aligned 43 aa, identity 42.0-100.0%
+    the withheld genome's own subject present: NO
+    layers[residue] of 2000: distant_relative=61  placed=3  recurs_and_unplaceable=732  undetermined=1204
+    layers[known] of 2000: distant_relative=542  placed=259  recurs_and_unplaceable=924  undetermined=275
 
 ==============================================================================
 6. DRIFT CONTROL: held-out index against today's, same pass

@@ -1,10 +1,10 @@
 {
   "script": "experiments/subtract_known.py",
-  "git_sha": "65520e83e9aa02b28a682a4fc897cf7da117f414-dirty",
+  "git_sha": "453ebcbdc772d5094ed05dc58849c81c61975048-dirty",
   "parameters": {
     "seed": 2,
     "pairs": 200000,
-    "block": 1500000,
+    "block": 1000000,
     "r1": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/reads/SRR23421544.fastq.gz",
     "r2": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/reads/SRR23421544.fastq.gz",
     "trim_r2": 0,
@@ -49,8 +49,8 @@
     "keep_known": 20000,
     "rows_out": true
   },
-  "wall_seconds": 510.2335633499997,
-  "peak_rss_bytes": 2697601024,
+  "wall_seconds": 333.5773869709992,
+  "peak_rss_bytes": 2705973248,
   "python": "3.13.18",
   "mappy": "2.31",
   "diamond": "diamond version 2.1.9",

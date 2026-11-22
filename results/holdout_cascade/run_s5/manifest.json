@@ -2,8 +2,8 @@
   "tool": "hapax run",
   "spec": "SPEC.md 8.1",
   "script": "hapax.py",
-  "script_sha256": "4e52eeda07642921f91c0aac4af461ed9920bef53b2a998c7ebca45e396467db",
-  "git_sha": "0d6d617ac1ad2650b481665a5f2063a66b27a3a1",
+  "script_sha256": "950f3c05f696a6dc37fe17604d78c81fde456f61e00cccb29027e5922e06b318",
+  "git_sha": "674c62a08fc3023ea208fa976141d388628f372f",
   "tree_dirty": true,
   "seed": 5,
   "inputs": {
@@ -21,6 +21,7 @@
     "seed": 5,
     "out": "results/holdout_cascade/run_s5",
     "pairs": 200000,
+    "block": 1000000,
     "report_pairs": 2000,
     "linkage_pairs": 20000,
     "census_queries": 3000,
@@ -37,6 +38,7 @@
     "unidentified_contigs": [
       "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_unidentified.fa"
     ],
+    "identified_contigs": null,
     "k2_dbs": [
       "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_viral_20210517.d",
       "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_standard08.d",
@@ -66,9 +68,9 @@
   "stages": [
     {
       "stage": "cascade",
-      "status": "failed",
+      "status": "ok",
       "script": "subtract_known.py",
-      "seconds": 11.4,
+      "seconds": 358.9,
       "argv": [
         "--seed",
         "5",
@@ -87,6 +89,8 @@
         "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade_work",
         "--out",
         "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade",
+        "--block",
+        "1000000",
         "--k2-dbs",
         "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_viral_20210517.d",
         "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_standard08.d",
@@ -108,13 +112,28 @@
         "--observe",
         "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_unidentified.fa"
       ],
-      "log": "stages/cascade.log",
-      "reason": "exit 1",
-      "tail": [
-        "$ /usr/local/bin/python3 -I /home/user/hapax/experiments/subtract_known.py --seed 5 --pairs 200000 --r1 /tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/reads/SRR23421544.fastq.gz --r2 /tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/reads/SRR23421544.fastq.gz --trim-r2 0 --threads 4 --rows-out --work /tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade_work --out /tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade --k2-dbs /tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_viral_20210517.d /tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_standard08.d /tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/k2_pluspf08.d --silva /tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/SSURef_NR99_1381.fasta.gz /tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/db/LSURef_NR99_1381.fasta.gz --dmnd /tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/viral_holdout.dmnd /tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/sprot.dmnd --classify-bin /tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/k2pkg/root/share/kraken2-2.17.2/libexec/classify --diamond-bin /tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/bin/diamond --no-k2-memory-map --selfasm /tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_rrna.fa /tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_identified_norrna.fa --observe /tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_unidentified.fa",
-        "",
-        "no pairs read"
-      ]
+      "provenance": {
+        "git_sha": "674c62a08fc3023ea208fa976141d388628f372f-dirty",
+        "script_sha256": "absent from this stage's own manifest"
+      },
+      "outputs": {
+        "tiers.json": {
+          "bytes": 13663,
+          "sha256_16": "06cb9b86bb1fb4ff",
+          "from": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade/subtract_s5.json"
+        },
+        "stages/cascade_manifest.json": {
+          "bytes": 2687,
+          "sha256_16": "a60ae614b1badfd8",
+          "from": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade/manifest_s5.json"
+        },
+        "stages/cascade_rows.jsonl": {
+          "bytes": 22474929,
+          "sha256_16": "9588aa85d996e8a6",
+          "from": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade/residue_rows_s5.jsonl"
+        }
+      },
+      "log": "stages/cascade.log"
     },
     {
       "stage": "contigs",
@@ -136,8 +155,55 @@
     },
     {
       "stage": "reads",
-      "status": "skipped",
-      "reason": "the cascade's residue is the input and ['/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade_work/residue_s5.fa'] is absent; run the cascade stage first"
+      "status": "ok",
+      "script": "residue_report.py",
+      "seconds": 1600.3,
+      "argv": [
+        "--seed",
+        "5",
+        "--residue",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade_work/residue_s5.fa",
+        "--reads",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade_work/residue_s5.fa",
+        "--max-pairs",
+        "2000",
+        "--threads",
+        "4",
+        "--library-r1",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/reads/SRR23421544.fastq.gz",
+        "--library-r2",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/reads/SRR23421544.fastq.gz",
+        "--work",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/reads_work",
+        "--out",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/reads",
+        "--subtracted-reads",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade_work/subtracted_s5.fa",
+        "--dmnd",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/viral_holdout.dmnd",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/sprot.dmnd",
+        "--diamond-bin",
+        "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/bin/diamond",
+        "--single-end"
+      ],
+      "provenance": {
+        "git_sha": "674c62a08fc3023ea208fa976141d388628f372f-dirty",
+        "tree_dirty": true,
+        "script_sha256": "11b925110f3324ce"
+      },
+      "outputs": {
+        "reads.jsonl": {
+          "bytes": 5446014,
+          "sha256_16": "0d122892db9625ca",
+          "from": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/reads/rows_s5.jsonl"
+        },
+        "fields.json": {
+          "bytes": 4676,
+          "sha256_16": "847170abbd332284",
+          "from": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/reads/calibration_s5.json"
+        }
+      },
+      "log": "stages/reads.log"
     },
     {
       "stage": "linkage",
@@ -156,34 +222,63 @@
     },
     {
       "stage": "intervals",
-      "status": "skipped",
-      "reason": "tiers.json is absent"
+      "status": "ok",
+      "rows": 9,
+      "operating_point_complete": true
     },
     {
       "stage": "layers",
-      "status": "skipped",
-      "reason": "reads.jsonl is absent"
+      "status": "ok",
+      "totals": {
+        "residue": 2000,
+        "known": 2000
+      },
+      "counts": {
+        "undetermined": 1204,
+        "recurs_and_unplaceable": 732,
+        "distant_relative": 61,
+        "placed": 3
+      },
+      "separating_layers": [
+        "recurs_and_unplaceable",
+        "distant_relative",
+        "placed",
+        "undetermined"
+      ]
     },
     {
       "stage": "strains",
+      "status": "ok",
+      "subjects": 63,
+      "subjects_with_3_or_more_reads": 0
+    },
+    {
+      "stage": "divergent",
       "status": "skipped",
-      "reason": "reads.jsonl is absent"
+      "reason": "not selected with --stages"
     }
   ],
   "complete": false,
   "incomplete_because": [
-    "cascade failed",
-    "reads skipped: the cascade's residue is the input and ['/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/hapax_shared/cascade_work/residue_s5.fa'] is absent; run the cascade stage first",
     "linkage skipped: not selected with --stages",
     "census skipped: not selected with --stages",
     "calibration skipped: not selected with --stages",
-    "intervals skipped: tiers.json is absent",
-    "layers skipped: reads.jsonl is absent",
-    "strains skipped: reads.jsonl is absent"
+    "divergent skipped: not selected with --stages"
   ],
-  "field_calibration": "fields.json absent in this run",
-  "known_positive_rows": 0,
-  "known_positive_note": "no subtracted reads in this run, so every field's known-positive comparison is not measured",
+  "field_calibration": {
+    "gc": {
+      "state": "cannot discriminate here: the null is the field itself",
+      "note": "null identical to the measurement by construction: the shuffle preserves this field, so it has no null here and cannot discriminate"
+    },
+    "entropy3": "calibrated",
+    "longest_orf_aa": "calibrated",
+    "frame_identifiable_frac": "calibrated",
+    "kmer16_duplicate_frac": "calibrated",
+    "closest_viral_holdout": "cannot discriminate here: no null in this run",
+    "closest_sprot": "cannot discriminate here: no null in this run"
+  },
+  "known_positive_rows": 2000,
+  "known_positive_note": "subtracted reads travel in reads.jsonl as the known-positive comparison; a field that reads the same on both carries no information about the residue",
   "blind_spots": {
     "file": "blind_spots.json",
     "sha256_16": "0f6d0da62f26d3ee"
@@ -193,7 +288,7 @@
     "no pile without its interval",
     "no score without the calibration run behind it"
   ],
-  "wall_seconds": 94.4,
+  "wall_seconds": 2039.4,
   "python": "3.13.18",
   "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39",
   "cpu_count": 4

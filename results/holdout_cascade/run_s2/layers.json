@@ -9,17 +9,16 @@
   ],
   "counts": {
     "residue": {
-      "recurs_and_unplaceable": 699,
-      "undetermined": 1231,
-      "distant_relative": 69,
+      "recurs_and_unplaceable": 716,
+      "undetermined": 1230,
+      "distant_relative": 53,
       "placed": 1
     },
     "known": {
-      "recurs_and_unplaceable": 833,
-      "distant_relative": 578,
-      "undetermined": 292,
-      "placed": 294,
-      "artefact_shaped": 3
+      "distant_relative": 569,
+      "undetermined": 293,
+      "recurs_and_unplaceable": 861,
+      "placed": 277
     }
   },
   "totals": {
@@ -29,18 +28,18 @@
   "against_known_positive": {
     "recurs_and_unplaceable": {
       "residue": {
-        "point": 0.3495,
-        "lo": 0.328909,
-        "hi": 0.370668,
-        "k": 699,
+        "point": 0.358,
+        "lo": 0.337279,
+        "hi": 0.379265,
+        "k": 716,
         "n": 2000,
         "method": "wilson_95"
       },
       "known_positive": {
-        "point": 0.4165,
-        "lo": 0.395074,
-        "hi": 0.438246,
-        "k": 833,
+        "point": 0.4305,
+        "lo": 0.408953,
+        "hi": 0.452314,
+        "k": 861,
         "n": 2000,
         "method": "wilson_95"
       },
@@ -50,11 +49,11 @@
       ],
       "field_coverage": {
         "residue": {
-          "closest_*": 1927,
+          "closest_*": 1904,
           "library_abundance": 2000
         },
         "known": {
-          "closest_*": 1946,
+          "closest_*": 1945,
           "library_abundance": 2000
         }
       },
@@ -63,18 +62,18 @@
     },
     "distant_relative": {
       "residue": {
-        "point": 0.0345,
-        "lo": 0.027352,
-        "hi": 0.043433,
-        "k": 69,
+        "point": 0.0265,
+        "lo": 0.020317,
+        "hi": 0.034499,
+        "k": 53,
         "n": 2000,
         "method": "wilson_95"
       },
       "known_positive": {
-        "point": 0.289,
-        "lo": 0.269553,
-        "hi": 0.309256,
-        "k": 578,
+        "point": 0.2845,
+        "lo": 0.265154,
+        "hi": 0.304672,
+        "k": 569,
         "n": 2000,
         "method": "wilson_95"
       },
@@ -83,10 +82,10 @@
       ],
       "field_coverage": {
         "residue": {
-          "closest_*": 1927
+          "closest_*": 1904
         },
         "known": {
-          "closest_*": 1946
+          "closest_*": 1945
         }
       },
       "separates": true,
@@ -115,11 +114,11 @@
       ],
       "field_coverage": {
         "residue": {
-          "closest_*": 1927,
+          "closest_*": 1904,
           "motif": 0
         },
         "known": {
-          "closest_*": 1946,
+          "closest_*": 1945,
           "motif": 0
         }
       },
@@ -136,10 +135,10 @@
         "method": "wilson_95"
       },
       "known_positive": {
-        "point": 0.147,
-        "lo": 0.132157,
-        "hi": 0.163196,
-        "k": 294,
+        "point": 0.1385,
+        "lo": 0.124053,
+        "hi": 0.154333,
+        "k": 277,
         "n": 2000,
         "method": "wilson_95"
       },
@@ -148,10 +147,10 @@
       ],
       "field_coverage": {
         "residue": {
-          "closest_*": 1927
+          "closest_*": 1904
         },
         "known": {
-          "closest_*": 1946
+          "closest_*": 1945
         }
       },
       "separates": true,
@@ -167,10 +166,10 @@
         "method": "wilson_95"
       },
       "known_positive": {
-        "point": 0.0015,
-        "lo": 0.00051,
-        "hi": 0.004401,
-        "k": 3,
+        "point": 0.0,
+        "lo": 0.0,
+        "hi": 0.001917,
+        "k": 0,
         "n": 2000,
         "method": "wilson_95"
       },
@@ -188,7 +187,7 @@
         "known": {
           "entropy3": 2000,
           "homopolymer": 2000,
-          "adapter": 3
+          "adapter": 0
         }
       },
       "separates": false,
@@ -196,18 +195,18 @@
     },
     "undetermined": {
       "residue": {
-        "point": 0.6155,
-        "lo": 0.593977,
-        "hi": 0.63658,
-        "k": 1231,
+        "point": 0.615,
+        "lo": 0.593473,
+        "hi": 0.636086,
+        "k": 1230,
         "n": 2000,
         "method": "wilson_95"
       },
       "known_positive": {
-        "point": 0.146,
-        "lo": 0.131203,
-        "hi": 0.162154,
-        "k": 292,
+        "point": 0.1465,
+        "lo": 0.13168,
+        "hi": 0.162675,
+        "k": 293,
         "n": 2000,
         "method": "wilson_95"
       },
@@ -217,11 +216,11 @@
       ],
       "field_coverage": {
         "residue": {
-          "closest_*": 1927,
+          "closest_*": 1904,
           "library_abundance": 2000
         },
         "known": {
-          "closest_*": 1946,
+          "closest_*": 1945,
           "library_abundance": 2000
         }
       },

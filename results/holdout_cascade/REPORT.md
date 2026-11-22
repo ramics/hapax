@@ -31,20 +31,22 @@ residue reads by how interesting they are. Both ran and both are intact. Neither
 virus, and what they do contain is worth stating because it is the chance band and nothing
 else.
 
-`strains` names **71 subjects** over 1,949 searched residue reads. **Every one of them is
-supported by exactly one read** - no subject reaches two, let alone three - at a median
-alignment of **42 aa** and identities from 37% to 100%. Those are the numbers a 145 nt read
+`strains` names **54-71 subjects** across the five seeds, over ~1,940 searched residue reads
+each. **Across all five seeds exactly one subject anywhere reaches two reads** - every other
+one of the 322 is supported by a single read, and none reaches three - at a median alignment
+of **41-46 aa** and identities from 35.4% to 100%. Those are the numbers a 145 nt read
 produces against a protein index when it is matching by chance, and the field this project has
 already retracted a claim in. The subject the withheld genome's own contig matched,
-`YP_010771404.1`, is **absent**; it is searched for by name in the generator rather than
-assumed missing, because "we did not see it" and "we did not look" is precisely the bug this
-experiment found three of.
+`YP_010771404.1`, is **absent from all five**; it is searched for by name in the generator
+rather than assumed missing, because "we did not see it" and "we did not look" is precisely
+the bug this experiment found three of.
 
-`layers` sorts 2,000 residue reads into `placed` 3, `distant_relative` 68,
-`recurs_and_unplaceable` 822, `undetermined` 1,107. Its known-positive arm, the same 2,000
-fields computed on already-identified reads, reads `placed` 280 and `distant_relative` 583 - so
-the layer assignment is working and pointing the right way. It is simply looking in a pile the
-virus was removed from two stages earlier.
+`layers` sorts 2,000 residue reads into `placed` **1-3**, `distant_relative` **53-69**,
+`recurs_and_unplaceable` **716-822**, `undetermined` **1,107-1,230**. Its known-positive arm,
+the same 2,000 fields computed on already-identified reads, reads `placed` **259-313** and
+`distant_relative` **542-583** - so the layer assignment is working and pointing the right way,
+by two orders of magnitude on `placed`. It is simply looking in a pile the virus was removed
+from two stages earlier.
 
 So the failure is not that the signal was too weak to see. **The pipeline reported a clean,
 well-calibrated, correct answer about a pile that no longer contained the thing it was asked
@@ -455,12 +457,32 @@ which is precisely why a near-reference arm cannot test the asymmetry and this h
 standing rule, is therefore the one recommendation in this report that ground truth supports
 rather than undermines.
 
-## The cascade: three seeds on the first pass, and why that is a defect not a result
+## The cascade: five seeds, and the three-seed first pass that was a defect not a result
 
-See `report_holdout_cascade.py` section 1 for the generated table. The seeds are disjoint
-200,000-read blocks of **one read pool**, so the spread between them is subsampling noise:
-not library variation, not biological variation, and narrower than either by an unknown
-factor.
+`generated_tables_s1to5.txt` holds the generated table; the seeds are disjoint 200,000-read
+blocks of **one read pool**, so the spread between them is subsampling noise: not library
+variation, not biological variation, and narrower than either by an unknown factor.
+
+| | five seeds, min-max |
+|---|---|
+| identified (tier 1) | **66.72-67.57%** |
+| residue | 32.43-33.28% |
+| tier 2, assembled but unidentifiable | 14.32-14.68% |
+| tier 3, unplaced by anything | 18.11-18.65% |
+
+**Where the removal comes from is the familiar shape and is the context for the finding
+above.** The sample's own identified contigs are again the largest single subtrahend at a
+**25.42-26.07% marginal** contribution, with ribosomal sequence at 9.33-11.53%, the three
+Kraken2 databases at 1.54-1.61%, 12.77-13.13% and 0.01-0.02%, and the two protein indexes at
+0.76-0.78% and 3.84-3.93%. Each figure is that tier's marginal contribution in the order the
+cascade consults them, so they are not interchangeable with the alone-column. **The withheld
+genome was removed by that first term** - this library's own assembly, consulted against the
+rolled-back indexes - which is why the efficiency finding and this experiment's finding are
+the same fact seen twice: an index built from the sample explains the sample, including the
+parts of it nobody has named.
+
+The eight-month drift caveat applies with its usual force, and more so here: this is a
+different plant on a different continent, so **read every percentage as "on SRR23421544"**.
 
 **The first pass produced three seeds, not five, and the cause is a fifth defect.**
 `subtract_known.py`'s `--block` stride - how far seed N skips into the FASTQ - defaults to
@@ -481,7 +503,7 @@ default. Both are fixed: `hapax run --block` now exists, and
 the last ending at 4,200,000 of 4,290,429) and **refuses to start** if the arithmetic does not
 fit the library's actual read count, which it now counts rather than assumes.
 
-All five seeds are being re-run under the corrected stride. **The three-seed numbers are not
+All five seeds have been re-run under the corrected stride. **The three-seed numbers are not
 carried forward**, because changing the stride moves every seed's block, and the convention
 does not let one directory hold results from two parameterisations.
 
@@ -545,20 +567,25 @@ below, because it is what produced three seeds out of five.
    stage does not supply it. Same shape as bug 1: a function that exists, is documented as
    load-bearing, and is not wired up.
 
-   **It bit exactly the case its own docstring predicts, in this run.** Because I committed
-   between seeds, the five seeds record **three different git SHAs** - `65520e8-dirty`,
-   `5134e42`, `6c1fc37` - and for the `cascade` stage the one field that could show the code
-   was unchanged is absent. The `reads` stage does propagate a hash and it is identical across
-   seeds (`11b925110f3324ce`), which is what that field is for.
+   **It bit exactly the case its own docstring predicts, and the final run shows both halves
+   of why the hash exists.** Because report and data files were committed while the seeds ran,
+   the five run-level manifests record **two different git SHAs** - `453ebcb` for seed 1 and
+   `674c62a` for seeds 2-5 - which under a SHA-only convention is indistinguishable from a
+   code fix landing mid-run, the exact case the convention forbids reporting as a five-seed
+   result. **The run-level `script_sha256` settles it: all five read
+   `950f3c05f696a6dc…`, byte-identical.** The two commits touched `results/` and nothing
+   executable, which is confirmable rather than asserted: `hapax.py`,
+   `subtract_known.py` and `residue_report.py` hash the same at `453ebcb`, at `674c62a` and in
+   the working tree. **So the hash does its job and the SHA does not** - this directory is one
+   code version on five disjoint blocks, and the field that proves it is the content hash.
 
-   The seeds *are* one code version, but it has to be shown from outside the manifests:
-   `git diff 5134e42 HEAD` and `git diff HEAD` are both empty for `hapax.py`,
-   `subtract_known.py` and `residue_report.py`, so those three files have been byte-identical
-   since before seed 2 and the working tree matches HEAD. Seed 1 ran the same bytes
-   uncommitted. **That is a reconstruction, not provenance**, and it is only available because
-   the whole run happened inside one session. Not fixed here, because seeds were in flight and
-   editing a script mid-run is the one thing the conventions forbid outright; handed to the
-   `Make hapax fail loudly` thread with the rest.
+   The `cascade` stage's own manifest is the half that still fails: it carries
+   `git_sha` and no hash, so at stage level the question cannot be answered from the file at
+   all, and `hapax.py` records `"script_sha256": "absent from this stage's own manifest"`
+   rather than inventing one. The `reads` stage does propagate a hash and it is identical
+   across all five seeds (`11b925110f3324ce`). Not fixed here, because seeds were in flight
+   and editing a script mid-run is the one thing the conventions forbid outright; handed to the
+   `Make hapax fail loudly` thread, which has it in PR #30.
 
 **Audit, bugs 1-3: nothing committed is affected.** No directory under `results/` contains a
 manifest from `hapax.py` or a `hapax run` directory, and there is no committed `strains.json`,

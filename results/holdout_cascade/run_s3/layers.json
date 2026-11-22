@@ -9,16 +9,15 @@
   ],
   "counts": {
     "residue": {
-      "recurs_and_unplaceable": 752,
-      "undetermined": 1183,
-      "distant_relative": 63,
-      "placed": 2
+      "undetermined": 1212,
+      "distant_relative": 69,
+      "recurs_and_unplaceable": 719
     },
     "known": {
-      "distant_relative": 533,
-      "recurs_and_unplaceable": 891,
-      "undetermined": 274,
-      "placed": 302
+      "distant_relative": 552,
+      "recurs_and_unplaceable": 886,
+      "placed": 313,
+      "undetermined": 249
     }
   },
   "totals": {
@@ -28,18 +27,18 @@
   "against_known_positive": {
     "recurs_and_unplaceable": {
       "residue": {
-        "point": 0.376,
-        "lo": 0.355028,
-        "hi": 0.397448,
-        "k": 752,
+        "point": 0.3595,
+        "lo": 0.338757,
+        "hi": 0.380781,
+        "k": 719,
         "n": 2000,
         "method": "wilson_95"
       },
       "known_positive": {
-        "point": 0.4455,
-        "lo": 0.423842,
-        "hi": 0.467367,
-        "k": 891,
+        "point": 0.443,
+        "lo": 0.421359,
+        "hi": 0.464859,
+        "k": 886,
         "n": 2000,
         "method": "wilson_95"
       },
@@ -49,11 +48,11 @@
       ],
       "field_coverage": {
         "residue": {
-          "closest_*": 1869,
+          "closest_*": 1913,
           "library_abundance": 2000
         },
         "known": {
-          "closest_*": 1959,
+          "closest_*": 1938,
           "library_abundance": 2000
         }
       },
@@ -62,18 +61,18 @@
     },
     "distant_relative": {
       "residue": {
-        "point": 0.0315,
-        "lo": 0.024698,
-        "hi": 0.040098,
-        "k": 63,
+        "point": 0.0345,
+        "lo": 0.027352,
+        "hi": 0.043433,
+        "k": 69,
         "n": 2000,
         "method": "wilson_95"
       },
       "known_positive": {
-        "point": 0.2665,
-        "lo": 0.247584,
-        "hi": 0.286311,
-        "k": 533,
+        "point": 0.276,
+        "lo": 0.256852,
+        "hi": 0.296007,
+        "k": 552,
         "n": 2000,
         "method": "wilson_95"
       },
@@ -82,10 +81,10 @@
       ],
       "field_coverage": {
         "residue": {
-          "closest_*": 1869
+          "closest_*": 1913
         },
         "known": {
-          "closest_*": 1959
+          "closest_*": 1938
         }
       },
       "separates": true,
@@ -114,11 +113,11 @@
       ],
       "field_coverage": {
         "residue": {
-          "closest_*": 1869,
+          "closest_*": 1913,
           "motif": 0
         },
         "known": {
-          "closest_*": 1959,
+          "closest_*": 1938,
           "motif": 0
         }
       },
@@ -127,18 +126,18 @@
     },
     "placed": {
       "residue": {
-        "point": 0.001,
-        "lo": 0.000274,
-        "hi": 0.003639,
-        "k": 2,
+        "point": 0.0,
+        "lo": 0.0,
+        "hi": 0.001917,
+        "k": 0,
         "n": 2000,
         "method": "wilson_95"
       },
       "known_positive": {
-        "point": 0.151,
-        "lo": 0.135978,
-        "hi": 0.16736,
-        "k": 302,
+        "point": 0.1565,
+        "lo": 0.141237,
+        "hi": 0.17308,
+        "k": 313,
         "n": 2000,
         "method": "wilson_95"
       },
@@ -147,10 +146,10 @@
       ],
       "field_coverage": {
         "residue": {
-          "closest_*": 1869
+          "closest_*": 1913
         },
         "known": {
-          "closest_*": 1959
+          "closest_*": 1938
         }
       },
       "separates": true,
@@ -195,18 +194,18 @@
     },
     "undetermined": {
       "residue": {
-        "point": 0.5915,
-        "lo": 0.569801,
-        "hi": 0.612848,
-        "k": 1183,
+        "point": 0.606,
+        "lo": 0.584401,
+        "hi": 0.627193,
+        "k": 1212,
         "n": 2000,
         "method": "wilson_95"
       },
       "known_positive": {
-        "point": 0.137,
-        "lo": 0.122625,
-        "hi": 0.152767,
-        "k": 274,
+        "point": 0.1245,
+        "lo": 0.110746,
+        "hi": 0.139693,
+        "k": 249,
         "n": 2000,
         "method": "wilson_95"
       },
@@ -216,11 +215,11 @@
       ],
       "field_coverage": {
         "residue": {
-          "closest_*": 1869,
+          "closest_*": 1913,
           "library_abundance": 2000
         },
         "known": {
-          "closest_*": 1959,
+          "closest_*": 1938,
           "library_abundance": 2000
         }
       },
