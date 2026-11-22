@@ -1,0 +1,57 @@
+{
+ "script": "holdout_cascade.py",
+ "script_sha256": "03444eb63c2b31009918739b2b8c1892865c25771dfe24cc07a5f64422fcc28f",
+ "git_sha": "453ebcbdc772d5094ed05dc58849c81c61975048",
+ "tree_dirty": true,
+ "seed": 1,
+ "seed_note": "deterministic given the assembly: the attribution and both searches have no randomness, so five seeds here would be five identical files and none is run",
+ "parameters": {
+  "seed": "1",
+  "contigs": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed.fa",
+  "refs": "/home/user/hapax/results/holdout_candidates/candidates.fa",
+  "candidate": "OQ722337.1",
+  "leak": "OQ722330.1",
+  "holdout_nt_db": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/holdout/db_holdout_nt",
+  "holdout_prot_db": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/viral_holdout.dmnd",
+  "full_nt_db": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/full/db_full_nt",
+  "full_prot_db": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/viral_full.dmnd",
+  "blastbin": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/bin",
+  "diamond_bin": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/bin/diamond",
+  "sprot_db": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/sprot.dmnd",
+  "classify": "results/holdout_cascade/contig_identification.json",
+  "identified_fa": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_identified.fa",
+  "unidentifiable_fa": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_unidentified.fa",
+  "run_dir": "results/holdout_cascade/run_s1",
+  "threads": "4",
+  "work": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/score",
+  "out": "results/holdout_cascade"
+ },
+ "inputs": {
+  "contigs_renamed.fa": {
+   "bytes": 24354401,
+   "sha256_16": "ddaa167a674c9f17"
+  },
+  "candidates.fa": {
+   "bytes": 342643,
+   "sha256_16": "5e700bf57a1a9695"
+  }
+ },
+ "contigs": 35328,
+ "arm_sizes": {
+  "candidate": 1,
+  "leak": 34,
+  "background": 35293
+ },
+ "timings_s": {
+  "attribute": 2.5,
+  "search_holdout_nt": 1351.7,
+  "search_holdout_prot": 175.1,
+  "search_full_nt": 1463.5,
+  "search_full_prot": 175.6,
+  "search_sprot_undated": 239.4,
+  "total": 3411.8
+ },
+ "run_utc": "2026-11-22T12:32:29Z",
+ "python": "3.13.18",
+ "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
+}

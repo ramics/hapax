@@ -90,7 +90,7 @@ below 812, so a bar high enough to save this genome would stop the tier working 
 ### The control says this is real
 
 The comparator genome from the same library - the one whose nearest relative was already in
-the reference and long predates the cutoff - reads **99.9% identity over 6,349 nt at 99.5%
+the reference and long predates the cutoff - reads **99.905% identity over 6,349 nt at 99.47%
 coverage**. So the holdout is not over-removing, the leak arm behaves, and nothing leaked.
 
 Two genomes 30 identity points apart, and the cascade records the same single word for both:
@@ -184,7 +184,7 @@ the removed pile under the first and the 50.18th under the second.
 | | gap, percentage points |
 |---|---|
 | the withheld genome, 3,990 nt | **+36.6** |
-| 193 identified background contigs of 2,793-5,187 nt | median 0.1, mean 4.5, max 54.2 |
+| 193 identified background contigs of 2,793-5,187 nt | median 0.1, mean 4.4, max 54.2 |
 | **the leak arm: 34 contigs of already-referenced genomes, same library** | **median 0.0, mean 0.0, max 0.0** |
 
 Not one known contig in this water has any gap at all, and the candidate is at the **95.85th
@@ -194,6 +194,16 @@ how a field gets flattered. **It is not a gene-count artefact**: binned by numbe
 significant subjects, the median gap is 0.0 in every bin, including the 5-subject bin that
 holds 4,399 of the 7,601 contigs and has a mean of 1.9 - and the candidate has 5 subjects.
 A gap requires several genes but several genes do not produce a gap.
+
+**The field exists at protein level only, and that is a constraint on it rather than a
+caveat.** On the same contig against the nucleotide index the gap is **-0.8 points, the
+22.34nd percentile** of its length band, where only 2 of 94 length-matched contigs exceed 10
+points at all. The mechanism says why: at nucleotide level the candidate has one best genome
+and its HSPs all land on that genome, so there is nothing for other subjects to add. The gap
+measures *genes drifting onto different protein records*, which is a protein-space phenomenon
+by construction. **So it is not a second axis on top of coverage - it is the protein tier's
+coverage read twice**, and a pipeline carrying it must compute it where the divergence is
+scored and not where the reads are.
 
 **Where it gets suspicious, and the limit is mine not the field's.** Four cuts - gap > 30
 points, identity 50-70%, any-subject coverage >= 0.70, length >= 1500 nt - select **7
