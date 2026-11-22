@@ -146,33 +146,57 @@ every control, every saturation figure is identical. The timings are the part th
 reproduce — jackhmmer ran 1,008 s and then 1,150 s on the same input — which is the ordinary
 reason this repo's convention says a benchmark number needs its instance type and its day.
 
-## Profiles reach everything the sequence arms reach, and nothing further
+## Profiles: the literature's claim reproduces, but only profile against profile
 
-hmmsearch against Pfam-A places a domain on every contig in every pile, at the curated
-gathering cutoffs and at E ≤ 10 alike, and the null stays empty at both. So the profile
-library agrees with the sequence arms about which of these contigs are recognisable, which
-is worth having as a cross-check and is not reach: there is no contig that profiles find and
-sequence search misses.
+Two profile arms, and they disagree in a way that matters.
 
-The literature on this family — Callanan 2020, Rūmnieks 2026 — reports that several profiles
-per protein are needed to recover its divergent members, and this panel reads the opposite
-way round:
+**hmmsearch**, a curated profile against our sequence, places a domain on every contig in
+every pile, at the gathering cutoffs and at E ≤ 10 alike, and puts nothing on the null. It
+agrees with the sequence arms about which contigs are recognisable, which is a cross-check
+worth having and is not reach: there is no contig profiles find and sequence search misses.
 
-| pile | ORFs with a domain | distinct Pfam models | ORFs carrying 2+ models | most on one ORF |
-|---|---|---|---|---|
-| divergent | 17 | 3 | **0** | 1 |
-| near_reference | 17 | 4 | 1 | 2 |
-| the withheld genome | 3 | 3 | 0 | 1 |
-| its already-referenced companion | 4 | **7** | 1 | **4** |
+**HHsearch**, our profile against Pfam's profiles, places about three times as many models —
+and that is where the family literature's claim shows up:
 
-**Profile multiplicity tracks how well represented a sequence already is, not how divergent
-it is.** The one contig in the panel whose relatives are fully in the databases carries
-seven models and reaches four on a single ORF; the divergent pile carries three models in
-total and never more than one per ORF. Read as an instrument this is the familiarity
-polarity `cov_step_conservation/` found in the coverage-shape family, one level up: a count
-of matched profiles says *already described*. It does not contradict the literature's claim,
-which is about what a curated family needs in order to be *built*; it does mean the count
-cannot be used the other way, as evidence that a contig is divergent.
+| arm | pile | ORFs with a model | ORFs carrying 2+ models | most on one ORF | distinct models |
+|---|---|---|---|---|---|
+| hmmsearch at GA | divergent | 17 | **0** | 1 | 3 |
+| hmmsearch at GA | near_reference | 17 | 1 | 2 | 4 |
+| hmmsearch at GA | its companion | 4 | 1 | 4 | 7 |
+| HHsearch | divergent | 19 | **12** | 6 | 9 |
+| HHsearch | near_reference | 20 | 13 | 6 | 9 |
+| HHsearch | the withheld genome | 3 | 2 | 6 | 9 |
+| HHsearch | its companion | 4 | 3 | **10** | 22 |
+
+Callanan 2020 and Rūmnieks 2026 report that several profiles per protein are needed to
+recover this family's divergent members. **Profile against sequence does not reproduce that
+at all** — not one divergent ORF carries two models. **Profile against profile does**: the
+median divergent ORF carries two and the maximum is six, and the models it adds are the
+other viral polymerase families, PF00680, PF00978, PF00998, PF02123 and PF05919. So the
+claim is about the comparison being profile-to-profile, not about profiles in general, and
+reading it off hmmsearch would have produced a flat contradiction of the literature.
+
+**It is still not reach, and the control is again what says so.** HHsearch is very nearly a
+superset of hmmsearch — zero hmmsearch-only contig-model pairs on three of the four piles,
+one on the fourth — and the pairs it adds number **34 on the divergent pile and 34 on the
+95–99% control.** Identical. A contig matching its reference at 96% picks up exactly as many
+extra models as one at 45%, so the multiplicity is a property of Pfam's overlapping RdRp
+models rather than evidence about the query. And HHsearch's best hit on the withheld genome
+is PF00978 at E = 3.9e-06, against hmmsearch's PF03863 at E = 1e-25: on the one query whose
+distance is known, the more sensitive instrument returns the *weaker* statistic.
+
+The one row that does stand apart is the already-referenced companion, at a median of eight
+models per ORF and a maximum of ten against everything else's two and six. That is the
+familiarity polarity `cov_step_conservation/` found in the coverage-shape family, one level
+up: **a count of matched profiles says "already described".** It cannot be used the other
+way round.
+
+**The null here is zero for a reason that is not a clean null.** HHsearch reads 0 of 80
+shuffled records, but no shuffled record could have scored: the query profile is built from
+jackhmmer's alignment, every one of the 148 shuffled ORFs yields an alignment of depth 1,
+and `hhmake` refuses a profile built from one sequence. The arm's null is empty by
+construction, not by calibration, so its only working control is the near-reference pile.
+That limitation belongs to any profile-based novelty claim, not just to this panel.
 
 ## Codon space: the saturation claim, measured on both bands
 
@@ -233,11 +257,13 @@ are the marginal tail, like the exhaustive arm's. Five iterations of profile bui
 quadruple the hit list, find no nearer relative for any of the sixteen contigs, and are the
 only arm on the panel that puts anything above significance on a shuffle.
 
-## What the two shakedown runs bought, which was five bugs
+## What the shakedown runs bought, which was seven faults
 
 They are reported because it is where most of this experiment's correctness came from, and
-because four of the five were in readouts rather than in tools. A tool that fails exits
-non-zero; a readout that fails returns a number.
+because the split between the two kinds matters. **A tool that fails exits non-zero; a
+readout that fails returns a number.** Three of the seven were in tools or in external
+services and announced themselves. Four were in readouts, and every one of those produced a
+plausible table.
 
 ### The one that mattered: a control had replaced the test, and the run looked clean
 
@@ -266,7 +292,7 @@ Described in full above. The fix is one line — take each ORF's best-scoring al
 than every alignment — and it moves the divergent pile's saturation from "indistinguishable
 from the 95–99% control" to "half its genes, against none of the control's".
 
-### Three in the tools
+### Three in the tools and the services behind them
 
 **RefSeq names its genomic release files differently from its protein files** —
 `viral.N.1.genomic.fna.gz` against `viral.N.protein.faa.gz`. Eight 404s dropped the codon arm
@@ -284,13 +310,34 @@ side the ORF is on, and `tests/test_reach_domtbl.py` holds that run's own output
 fixture — including a 1,132 residue ORF against a 173-position profile, where every quantity
 differs so a swap cannot pass by coincidence.
 
-**Foldseek's `--prostt5-model` wants the directory that its own `databases ProstT5` writes,
-and that directory is more than the weights file.** Run 1 passed the `.gguf` that was
-already in this account's S3; run 2 passed a directory holding only that `.gguf`. Both
-exited 1, and because the arm used `check=True` without capturing output, foldseek's own
-complaint was discarded both times — two runs spent on an exit code that carries nothing.
-Staging now has foldseek build the directory itself, the S3 copy is a fallback the arm also
-tries, and every attempt's stderr is kept.
+**hhmake does not read Stockholm, and said so as "alignment too shallow".** It reads A3M,
+A2M and aligned FASTA; handed jackhmmer's output it exits non-zero, and the arm's one
+`except` branch labelled every failure a shallow alignment — which is the correct label for
+a depth-1 null and the wrong one for 51 real alignments at a median depth of 951. The
+zero-profiles guard added after the collision is what caught it, by failing the arm instead
+of reporting an empty table. The blocks are now converted here, concatenating each
+sequence's wrapped rows rather than taking its first occurrence, and a refusal of an
+alignment with two or more sequences raises with hhmake's own words.
+
+**Foldseek's segfault, which four runs read as an exit 1.** `--prostt5-model` takes a
+directory and foldseek looks inside it for a weights file *by name*, and the accepted names
+changed between releases. Pinned release 9-427df8a accepts `model.safetensors` or
+`model.gguf`, and the only gguf its own downloader ships is a q4_0 quantisation; handed the
+f16 gguf this account holds — the right model, the right format, 2.4 GB, in the directory it
+was pointed at — it crashes inside the model load. Release 10-941cd33 looks for
+`prostt5-f16.gguf`, which is exactly what that file is, and reads it.
+
+Three things made this expensive and all three are worth keeping in mind. The arm used
+`check=True` without capturing output, so foldseek's own message was discarded for three
+runs. `foldseek databases ProstT5` is not a usable fallback: its weights URL answers
+Cloudflare 1027, daily quota exhausted, from two separate networks, and foldseek untars the
+17-byte error body, fails, and **exits 0** — which is why run 3's staging reported success
+with no weights on disk. And the whole thing was diagnosable in the container for nothing:
+the binary is a 50 MB download and the weights come out of S3 in twenty seconds, so the
+segfault reproduced in two seconds locally once anyone tried. Running the arm's full command
+sequence locally then caught a further fault before it cost anything — `convertalis` cannot
+report `alntmscore` or `lddt` from a ProstT5 database, because both need C-alpha coordinates
+and a predicted 3Di string has none.
 
 The codon walk was tested before it ever ran, in `tests/test_reach_codon.py`, for the same
 reason: it reconstructs a codon alignment from a gapped protein alignment, a CDS in
