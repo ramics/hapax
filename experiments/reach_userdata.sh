@@ -284,23 +284,59 @@ fi
 # looked for other names and segfaulted on this file; `experiments/ec2_reach.py` carries
 # that story at the version constant.
 #
-# `foldseek databases ProstT5` is not used and is not a fallback. Its download answered
-# Cloudflare 1027 on 2026-11-22, and foldseek untarred the 17-byte error body, failed, and
-# exited 0 anyway - so its exit status says nothing about whether weights exist, and only
-# the file test below decides.
+# `foldseek databases` IS NEVER TRUSTED FOR WHETHER IT WORKED, for either the weights or
+# the subjects. Its downloads come from one Cloudflare worker, that worker answered HTTP 429
+# with a 17-byte body on 2026-11-22 from three networks, and foldseek untarred the error
+# body, printed `gzip: stdin: not in gzip format`, moved nothing, and exited 0. Run 5 added
+# both structure arms on that exit code and then spent 500 s per arm failing on `Input
+# .../afdb_sprot does not exist` - a whole arm reported absent for a reason that was not the
+# real one. So every structure database here is decided by `fs_db_ok` on the files, and the
+# weights by `-s`, after the download claims to have worked.
+fs_db_ok() {   # $1 = database base path, $2 = the fewest subjects that can be right
+  [ -s "$1.dbtype" ] && [ -s "$1.index" ] && [ -s "${1}_ss.dbtype" ] \
+    && [ "$(wc -l < "$1.index")" -ge "$2" ]
+}
 if [ "$SKIP_STRUCTURE" = 0 ]; then
   mkdir -p /opt/hapax/db/prostt5
   aws s3 cp "s3://@@BUCKET@@/@@PROSTT5_KEY@@" /opt/hapax/db/prostt5/prostt5-f16.gguf \
       --region "$REGION" || true
   if [ -s /opt/hapax/db/prostt5/prostt5-f16.gguf ]; then
-    if /opt/hapax/bin/foldseek databases Alphafold/Swiss-Prot \
-        /opt/hapax/db/fs_afdb_sprot/afdb_sprot /opt/hapax/db/fstmp_afdb \
-        --threads "$THREADS"; then
-      ARMS="$ARMS foldseek_afdb"
+    # AlphaFold/Swiss-Prot IS BUILT HERE FROM EBI, not downloaded prebuilt, because EBI
+    # serves the structures themselves and the worker does not serve anything. This is the
+    # target that makes the arm a controlled comparison - Swiss-Prot folded is arms 1-2's
+    # subjects in another alphabet - so it is worth 28.6 GB and a `createdb` rather than
+    # being dropped with the worker. `createdb` over the real coordinates gives subjects
+    # with `_ca`; the ProstT5 query side has none, which is why no TM-score is reportable.
+    mkdir -p /opt/hapax/db/afdb_struct /opt/hapax/db/fs_afdb_sprot
+    if curl -fsSL --retry 3 -o /opt/hapax/db/afdb_sprot.tar \
+        "https://ftp.ebi.ac.uk/pub/databases/alphafold/latest/swissprot_pdb_v6.tar"; then
+      tar xf /opt/hapax/db/afdb_sprot.tar -C /opt/hapax/db/afdb_struct || true
+      rm -f /opt/hapax/db/afdb_sprot.tar
+      /opt/hapax/bin/foldseek createdb /opt/hapax/db/afdb_struct \
+          /opt/hapax/db/fs_afdb_sprot/afdb_sprot --threads "$THREADS" \
+          > /opt/hapax/log-fs-afdb.txt 2>&1 || true
+      # 100,000 is a floor, not an expectation: Swiss-Prot folded is about 542,000 entries,
+      # and anything an order of magnitude under that is a truncated extraction, which would
+      # read in the table as structure finding fewer relatives rather than as a short index.
+      if fs_db_ok /opt/hapax/db/fs_afdb_sprot/afdb_sprot 100000; then
+        ARMS="$ARMS foldseek_afdb"
+      fi
+      wc -l /opt/hapax/db/fs_afdb_sprot/afdb_sprot.index >> /opt/hapax/log-fs-afdb.txt 2>&1
+      rm -rf /opt/hapax/db/afdb_struct
     fi
+    # PDB is the uncontrolled universe and is graded: it is where a remote structural
+    # relative of a phage coat protein would actually sit, but it is not the comparison the
+    # brief turns on. It stays on the worker because no single bulk file serves it, so if
+    # the worker is still rate-limited this arm is absent WITH ITS REASON rather than
+    # present and empty.
     if /opt/hapax/bin/foldseek databases PDB /opt/hapax/db/fs_pdb/pdb \
-        /opt/hapax/db/fstmp_pdb --threads "$THREADS"; then
+        /opt/hapax/db/fstmp_pdb --threads "$THREADS" > /opt/hapax/log-fs-pdb.txt 2>&1 \
+        && fs_db_ok /opt/hapax/db/fs_pdb/pdb 10000; then
       ARMS="$ARMS foldseek_pdb"
+    else
+      echo "=== foldseek PDB database unavailable; the arm is absent, not empty. \
+foldseek's own output follows ===" | tee -a /opt/hapax/log-arms.txt
+      tail -20 /opt/hapax/log-fs-pdb.txt | tee -a /opt/hapax/log-arms.txt || true
     fi
   fi
 fi

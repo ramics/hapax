@@ -104,8 +104,10 @@ DEFAULT_VOLUME_THROUGHPUT = 250
 DEFAULT_VOLUME_IOPS = 3000
 
 #: Minutes. The only bound on the bill that does not depend on anything in the run working,
-#: including this launcher staying alive. Five hours: staging is projected at under an hour
-#: and the arms at two, so this is roughly double and still inside the pre-approved ceiling.
+#: including this launcher staying alive. Five hours: staging is projected at about ninety
+#: minutes once AlphaFold/Swiss-Prot is built here rather than downloaded prebuilt (28.6 GB
+#: from EBI, then `foldseek createdb` over about 542,000 structures), and the arms at two, so
+#: this is still comfortably over and inside the pre-approved ceiling.
 DEFAULT_HARD_STOP_MINUTES = 300
 HEARTBEAT_SECONDS = 300
 

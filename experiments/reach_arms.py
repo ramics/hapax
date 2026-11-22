@@ -748,6 +748,19 @@ def arm_foldseek(bins: dict, dbs: dict, out: Path, threads: int, target: str) ->
                 "Its own output, which the exit code does not carry:\n"
                 + ((exc.stderr or "") + (exc.stdout or ""))[-2500:]) from exc
         print((done.stdout or "")[-400:], flush=True)
+    # THE SUBJECTS ARE CHECKED BEFORE THEY ARE SEARCHED. Staging decides which arms run and
+    # `foldseek databases` exits 0 on a failed download, so run 5 reached here with no
+    # subject database at all, ran both searches, and failed twice over 500 s on `Input
+    # .../afdb_sprot does not exist`. That is the staging fault's shape - a default where a
+    # refusal belongs - and this check makes the arm say so in one line instead of
+    # presenting a download failure as a search that found nothing.
+    subjects = Path(dbs[f"fs_{target}"])
+    if not subjects.with_suffix(".dbtype").exists():
+        raise FileNotFoundError(
+            f"the foldseek subject database {subjects} was not staged, so this arm has "
+            f"nothing to search. Its directory holds "
+            f"{sorted(q.name for q in subjects.parent.glob('*'))[:6]}. An empty table here "
+            f"would read as structure finding no relative, which is a different claim.")
     # `--exhaustive-search` skips the prefilter, which is the whole point of the arm: a
     # structural relative this far out is exactly what a k-mer prefilter would drop. It is
     # affordable only because the query set is 35 ORFs. If this build of foldseek will not
@@ -756,9 +769,15 @@ def arm_foldseek(bins: dict, dbs: dict, out: Path, threads: int, target: str) ->
     try:
         sh([bins["foldseek"], "search", qdb, dbs[f"fs_{target}"], resdb,
             out / f"fstmp_{target}", "-a", "--threads", threads, "-e", 10,
-            "--max-seqs", 1000, "--exhaustive-search", 1])
+            "--max-seqs", 1000, "--exhaustive-search", 1], capture_output=True, text=True)
         mode = "exhaustive-search"
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as exc:
+        # The fallback prints what it is falling back FROM. Silently dropping to the
+        # prefilter would change what the arm measures - the prefilter is the thing a
+        # distant structural relative gets dropped by - and leave no record of the swap.
+        print("  foldseek --exhaustive-search refused; falling back to the most sensitive "
+              "prefilter. Its own output:\n"
+              + ((exc.stderr or "") + (exc.stdout or ""))[-1200:], flush=True)
         shutil.rmtree(out / f"fstmp_{target}", ignore_errors=True)
         sh([bins["foldseek"], "search", qdb, dbs[f"fs_{target}"], resdb,
             out / f"fstmp_{target}", "-a", "--threads", threads, "-e", 10,
