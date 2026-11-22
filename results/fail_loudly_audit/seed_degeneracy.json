@@ -1,0 +1,49 @@
+{
+  "script": "experiments/seed_degeneracy_audit.py",
+  "seed": 1,
+  "groups_checked": 150,
+  "flagged": [
+    {
+      "dir": "results/block_position_bias",
+      "files": "block_fractions.npz",
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "sizes": {
+        "3": 3248,
+        "4": 3248,
+        "5": 3248,
+        "1": 3248,
+        "2": 3248
+      },
+      "flags": [
+        "byte-identical: [[1, 2, 3, 4, 5]]"
+      ]
+    },
+    {
+      "dir": "results/holdout_cascade",
+      "files": "run_s*/blind_spots.json",
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "sizes": {
+        "4": 6079,
+        "1": 6079,
+        "5": 6079,
+        "3": 6079,
+        "2": 6079
+      },
+      "flags": [
+        "byte-identical: [[1, 2, 3, 4, 5]]"
+      ]
+    }
+  ]
+}
