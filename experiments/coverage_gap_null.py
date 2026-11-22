@@ -136,9 +136,41 @@ def gaps(tsv: Path, aa_floor: int) -> dict[str, dict]:
     return out
 
 
+def census(tsv: Path) -> dict:
+    """How many contigs the arm returned ANY hit for, and how many a SIGNIFICANT one.
+
+    Separated from the gap statistics because an arm with no significant hits and an arm
+    that was never searched both produce an empty distribution, and this repo has now
+    found three bugs in one day whose whole content was that confusion. The numbers below
+    are what distinguish "the null is clean" from "the null did not run": the shuffled arm
+    here returns 9,608 HSPs over 5,335 contigs and none of them significant, which is a
+    measurement. An arm reporting 0 and 0 is a plumbing failure.
+    """
+    q_any: set[str] = set()
+    q_sig: set[str] = set()
+    best = None
+    n = 0
+    for line in open(tsv):
+        f = line.rstrip("\n").split("\t")
+        if len(f) < 10:
+            continue
+        n += 1
+        q_any.add(f[0])
+        e = float(f[6])
+        if e < SIGNIFICANCE_EVALUE:
+            q_sig.add(f[0])
+        if best is None or e < best:
+            best = e
+    return {"hsps": n, "contigs_with_any_hit": len(q_any),
+            "contigs_with_significant_hit": len(q_sig),
+            "best_evalue": best}
+
+
 def describe(vals: list[float]) -> dict:
     if not vals:
-        return {"n": 0}
+        return {"n": 0, "state": "no contig in this arm has a significant hit, so the "
+                                 "arm has no gap distribution - this is a reading, not a "
+                                 "missing measurement; see the census block"}
     v = sorted(vals)
     def q(p: float) -> float:
         return round(v[min(len(v) - 1, int(p * len(v)))], 2)
@@ -161,6 +193,11 @@ def main() -> int:
     ap.add_argument("--diamond-bin", type=Path, required=True)
     ap.add_argument("--min-contig", type=int, default=300)
     ap.add_argument("--threads", type=int, default=2)
+    ap.add_argument("--reuse-hits", action="store_true",
+                    help="use the hit tables already in --work instead of "
+                         "searching again. The searches are deterministic given "
+                         "the same query file, index and seed, so this is a cache "
+                         "and not a shortcut; the manifest records that it was used")
     ap.add_argument("--work", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args()
@@ -190,12 +227,25 @@ def main() -> int:
 
     hits = {}
     for arm, fa in (("real", real_fa), ("shuffled", shuf_fa)):
+        out = a.work / f"hits_{arm}.tsv"
+        if a.reuse_hits and out.exists() and out.stat().st_size > 0:
+            log(f"  {arm}: reusing {out}")
+            hits[arm] = out
+            continue
         t = time.time()
-        hits[arm] = diamond(a.diamond_bin, fa, a.dmnd,
-                            a.work / f"hits_{arm}.tsv", a.threads)
+        hits[arm] = diamond(a.diamond_bin, fa, a.dmnd, out, a.threads)
         log(f"  {arm}: {time.time() - t:.0f}s")
 
-    result = {"arms": {}, "candidate": {}, "leak": {}}
+    # Read the census BEFORE the gaps, because it is what says whether an empty gap
+    # distribution is a clean null or a search that never happened.
+    cen = {arm: census(hits[arm]) for arm in hits}
+    for arm, c in cen.items():
+        log(f"  census {arm}: {c['hsps']:,} HSPs over "
+            f"{c['contigs_with_any_hit']:,} contigs, "
+            f"{c['contigs_with_significant_hit']:,} significant, "
+            f"best E={c['best_evalue']:.3g}")
+
+    result = {"census": cen, "arms": {}}
     for floor in AA_FLOORS:
         g = {arm: gaps(hits[arm], floor) for arm in hits}
         row = {}
@@ -206,6 +256,12 @@ def main() -> int:
             sh = sorted(v["gap_points"] for v in g["shuffled"].values())
             above = sum(1 for x in sh if x >= c["gap_points"])
             row["candidate"] = dict(c)
+            rl = [v["gap_points"] for v in g["real"].values()]
+            at_or_above = sum(1 for x in rl if x >= c["gap_points"])
+            row["candidate"]["real_at_or_above_candidate"] = at_or_above
+            row["candidate"]["real_percentile"] = (
+                round(100 * sum(1 for x in rl if x <= c["gap_points"]) / len(rl), 2)
+                if rl else None)
             # The only honest reading of one positive against a null: where in the null
             # it sits. A candidate at the null's p90 is not a detection.
             row["candidate"]["shuffled_at_or_above_candidate"] = above

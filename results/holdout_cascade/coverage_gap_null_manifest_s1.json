@@ -1,0 +1,27 @@
+{
+ "seed": 1,
+ "script_sha256": "34b414b5736c8d23f53c9feccce6e65316fc7cd8d11bd5f2fd78a386c4c3defa",
+ "git_sha": "7195e2f-dirty",
+ "contigs": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_identified_norrna.fa",
+ "min_contig": 300,
+ "candidate": "SRR23421544_NODE_18516_length_3990_cov_28.0000_megahit_k141_13361",
+ "leak_prefix": null,
+ "dmnd": [
+  "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/viral_holdout.dmnd",
+  "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/prot/sprot.dmnd"
+ ],
+ "aa_floors": [
+  0,
+  50,
+  100,
+  150,
+  200,
+  300,
+  400
+ ],
+ "significance_evalue": 1e-05,
+ "contigs_scored": 22110,
+ "shuffle_failures": 0,
+ "seconds": 8.2,
+ "reading": "the field survives only if a floor exists at which the candidate leaves the shuffled distribution; swept, not chosen"
+}

@@ -243,7 +243,42 @@ below is measuring rather than assuming away.
 `experiments/coverage_gap_null.py` tests this on *this* library, where the positive is a
 real genome at a known distance rather than a population statistic, sweeping the length floor
 rather than choosing one - because a floor picked after seeing where a single candidate sits
-is the same mistake this field already made once. Its result is below.
+is the same mistake this field already made once.
+
+**It does not rescue the field, and the reason is worth more than the attempt.** On this
+library the shuffled arm has **no significant hits at all**: 22,110 identified non-ribosomal
+contigs, dinucleotide-shuffled with 0 walk failures, returned 9,608 HSPs over 5,335 contigs
+and **0 of them below E < 1e-5**, best E-value 5.5e-4, against 22,084 of 22,107 significant
+on the real arm. That is recorded as a census beside the distribution rather than as an empty
+distribution, because an arm with no significant hits and an arm that was never searched
+produce the same empty table, and that confusion is the entire content of three bugs found
+today.
+
+So **the mechanism that kills the field on Berlin cannot operate here**, which means this
+library cannot test it. And the floor sweep shows why the refinement is not the answer anyway:
+
+| HSP floor | real contigs still scorable | real p90 gap | candidate | its percentile | real contigs at or above it |
+|---|---|---|---|---|---|
+| 0 aa | 22,084 | 1.65 | 36.62 | 98.68 | 292 |
+| 100 aa | 18,243 | 0.91 | 36.62 | 99.16 | 155 |
+| 200 aa | 5,397 | 0.88 | 36.62 | 99.15 | 47 |
+| 400 aa | 953 | 0.68 | 36.62 | 99.27 | 8 |
+
+Raising the floor barely moves the candidate - 98.68th to 99.27th percentile - while
+**discarding 96% of the real pile**. It is not sharpening a contrast; it is shrinking the
+thing being measured. And at any floor above 150 aa the candidate's own coat gene, 135 aa,
+is excluded, so the gap would then be computed from a subset of its real genes. **The field
+stays killed.**
+
+**One open discrepancy, which is theirs and mine jointly and should not be papered over.**
+Their shuffled arm has 2.68% of contigs clearing significance and produces large gaps; mine
+has **0.00%**. Same nominal procedure, opposite verdicts, and this repo's rule is never to
+compare two instruments - so the difference is a thing to resolve rather than a result either
+of us can lean on. Candidate causes, unresolved: a different E-value floor, a much larger
+protein index behind their arm, a different contig length distribution, or a shuffle applied
+to ORFs rather than to the nucleotide contig. Until that is settled, **the Berlin kill is the
+one that governs**, because a field is dead as soon as any competent null kills it, and a
+clean null elsewhere does not revive it.
 
 **And the leak arm's three zeroes rest on 34 contigs from a handful of
 single-ORF-dominated tobamoviruses**, so "known material has no gap" may be partly a
