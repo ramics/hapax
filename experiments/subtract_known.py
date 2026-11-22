@@ -568,6 +568,7 @@ def main() -> None:
                                    for b in (30, 40, 50, 60, 80, 100)},
                 "bitscore_sweep_of_library": {str(b): sum(1 for v in best.values() if v[0] >= b) / n
                                               for b in (30, 40, 50, 60, 80, 100)},
+                "removed_at_what_distance": _removal_distance(best, args.diamond_bitscore),
             }
             tsv.unlink(missing_ok=True)
 
@@ -748,6 +749,57 @@ def _mm_index(fa: Path, mmi: Path, threads: int):
         raise SystemExit(f"could not index {fa}")
     mark_cache(mmi, [fa])
     return a
+
+
+def _removal_distance(best: dict, bitscore: float) -> dict:
+    """The distance at which the protein tier removed each read, not just that it did.
+
+    The tier's output is one bit per read, and the holdout thread showed what that costs:
+    a contig 30.3% divergent from its withheld reference is removed at bitscore 840
+    against a threshold of 50, so the removal is not marginal and no threshold recovers
+    it. The identity was computed and thrown away. Keeping its distribution is free -
+    `best` already carries pident, alignment length and E-value per read.
+
+    Bias, stated rather than corrected: per-read identity leans towards "familiar". On
+    the holdout's known distance, 145 nt reads report about 83% where the genome-level
+    truth is 69.72%, up to 96.9% on the shortest alignments, and the error falls from
+    +17.2 points below 50% coverage to +7.1 above 90% and is zero at zero distance. So
+    every number here is an UPPER bound on identity and a lower bound on divergence, and
+    the direction never reverses. Identity is also quantised at short alignment lengths,
+    so the histogram runs only over alignments of at least 30 aa and the shorter ones are
+    counted separately rather than binned.
+    """
+    kept = [v for v in best.values() if v[0] >= bitscore]
+    scorable = [v for v in kept if v[3] >= 30]
+    edges = [0, 30, 40, 50, 60, 70, 80, 90, 95, 100]
+    hist = []
+    for lo, hi in zip(edges, edges[1:]):
+        hist.append({"from_percent": lo, "to_percent": hi,
+                     "reads": sum(1 for v in scorable if lo <= v[2] < hi)})
+    hist.append({"from_percent": 100, "to_percent": 100.1,
+                 "reads": sum(1 for v in scorable if v[2] >= 100)})
+    ids = sorted(v[2] for v in scorable)
+    aln = sorted(v[3] for v in scorable)
+    med = lambda z: z[len(z) // 2] if z else None
+    return {
+        "unit": "read pairs removed by this tier at the cascade's bitscore",
+        "bitscore_threshold": bitscore,
+        "removed": len(kept),
+        "alignment_at_least_30_aa": len(scorable),
+        "alignment_under_30_aa_unscorable": len(kept) - len(scorable),
+        "identity_histogram": hist,
+        "median_identity_percent": med(ids),
+        "median_alignment_aa": med(aln),
+        "barely_recognisable_share": (
+            round(sum(1 for v in scorable if v[2] < 70) / len(scorable), 4)
+            if scorable else None),
+        "barely_recognisable_means": ("under 70% identity over at least 30 aa: removed as "
+                                      "known, but at a distance where the subject lends "
+                                      "its name rather than establishing an identity"),
+        "bias": ("per-read identity reads high towards familiar, by +17.2 points below "
+                 "50% alignment coverage and +7.1 above 90% on the holdout's known "
+                 "distance, so these are upper bounds on identity"),
+    }
 
 
 def _mlen_sweep(hits: dict, n: int) -> dict:

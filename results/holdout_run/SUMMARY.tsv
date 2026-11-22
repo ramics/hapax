@@ -1,0 +1,17 @@
+arm	index	seeds	reads_per_seed	identified_pct_min	identified_pct_max	median_identity_min	median_identity_max	median_aln_len	truth_identity
+background	full_nt	5	2000	10.85	14.1	80.0	81.379	115	
+background	full_prot	5	2000	5.05	5.35	55.814	58.696	47	
+background	holdout_nt	5	2000	10.7	14.05	80.0	81.379	117	
+background	holdout_prot	5	2000	4.9	5.3	55.814	58.333	47	
+candidate	full_nt	5	2000	5.25	7.0	82.558	83.333	90	69.72
+candidate	full_prot	5	2000	2.45	2.8	67.347	73.913	44	66.45
+candidate	holdout_nt	5	2000	5.25	7.0	82.558	83.333	90	69.72
+candidate	holdout_prot	5	2000	2.4	2.75	67.347	73.913	45	66.45
+leak	full_nt	5	2000	56.65	59.3	100.0	100.0	150	99.92
+leak	full_prot	5	2000	48.0	51.1	100.0	100.0	49	99.81
+leak	holdout_nt	5	2000	56.65	59.3	100.0	100.0	150	99.92
+leak	holdout_prot	5	2000	48.05	51.1	100.0	100.0	49	99.81
+shuffled	full_nt	5	2000	0.0	0.0				
+shuffled	full_prot	5	2000	0.0	0.0				
+shuffled	holdout_nt	5	2000	0.0	0.0				
+shuffled	holdout_prot	5	2000	0.0	0.0				

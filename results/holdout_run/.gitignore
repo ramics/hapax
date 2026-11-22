@@ -1,0 +1,10 @@
+# Rebuildable inputs, not results: 1.2 GB of index and read files that the script
+# regenerates from the RefSeq release and the staged library in minutes.
+# The holdout's manifest and its dropped-accession list ARE committed, because
+# they are the provenance of which entries were withheld and cannot be recovered
+# from the indexes once they are deleted.
+holdout_nt.fa
+holdout_prot.fa
+db_holdout_*
+reads_*.fa
+*.done

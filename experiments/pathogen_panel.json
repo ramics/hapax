@@ -1,0 +1,274 @@
+{
+ "what_this_is": "a committed watchlist of taxa a public-health reader would want asked about in a wastewater library. It is a SCREENING PANEL, not a ranking: every entry is reported whether or not it was seen, because a taxon looked for and not found is a result and an empty row is not.",
+ "how_a_row_is_counted": "pairs under the whole clade of the taxid, not the exact taxid. A read Kraken2 places at `Enterovirus C` and one it places at a serotype beneath it are the same answer to a reader, and requiring an exact match would report absence for a taxon the classifier placed one rank up.",
+ "what_a_detection_is_not": "a species call from a 107 nt read against a k-mer index is a claim about shared k-mers with a reference. It is not a diagnosis, not a viable organism, and not a case. Every row is reported at three confidence thresholds because the classified fraction moves by an order of magnitude across them.",
+ "what_an_absence_is_not": "evidence that the organism is not in the catchment. This is an untargeted shotgun library, which the literature reports as insensitive for human pathogens at wastewater concentrations; the bound each absent row carries is a bound on what this sequencing could have seen.",
+ "selection": "chosen for what a public-health reader asks of sewage: the enteric viruses wastewater surveillance was built on, the respiratory and vaccine-preventable viruses it was extended to, the notifiable bacterial enteric pathogens, the ESKAPE organisms that carry antimicrobial resistance, and the waterborne parasites. Not chosen by looking at this sample, which would make every row a foregone conclusion.",
+ "taxonomy": "taxids are the scientific names in data/k2_pluspf08/names.dmp, resolved against that file",
+ "entries": [
+  {
+   "taxid": 142786,
+   "name": "Norovirus",
+   "group": "enteric virus",
+   "why": "the commonest cause of epidemic gastroenteritis and the most-watched target in wastewater"
+  },
+  {
+   "taxid": 28875,
+   "name": "Rotavirus A",
+   "group": "enteric virus",
+   "why": "the leading cause of severe childhood diarrhoea and a vaccine-programme indicator"
+  },
+  {
+   "taxid": 12092,
+   "name": "Hepatovirus A",
+   "group": "enteric virus",
+   "why": "hepatitis A, faecal-oral, outbreak-prone in low-vaccination groups"
+  },
+  {
+   "taxid": 291484,
+   "name": "Hepatitis E virus",
+   "group": "enteric virus",
+   "why": "waterborne hepatitis, zoonotic in Europe via pigs"
+  },
+  {
+   "taxid": 12059,
+   "name": "Enterovirus",
+   "group": "enteric virus",
+   "why": "includes poliovirus, EV-D68 and EV-A71; the genus polio surveillance watches"
+  },
+  {
+   "taxid": 138950,
+   "name": "Enterovirus C",
+   "group": "enteric virus",
+   "why": "the species containing the polioviruses, reported separately from the genus"
+  },
+  {
+   "taxid": 95341,
+   "name": "Sapovirus",
+   "group": "enteric virus",
+   "why": "gastroenteritis, under-ascertained clinically and visible in sewage"
+  },
+  {
+   "taxid": 249588,
+   "name": "Mamastrovirus",
+   "group": "enteric virus",
+   "why": "human astroviruses, paediatric gastroenteritis"
+  },
+  {
+   "taxid": 10509,
+   "name": "Mastadenovirus",
+   "group": "enteric virus",
+   "why": "enteric adenovirus types 40/41, and a classic faecal indicator"
+  },
+  {
+   "taxid": 194960,
+   "name": "Kobuvirus",
+   "group": "enteric virus",
+   "why": "Aichivirus A, gastroenteritis, routinely abundant in sewage"
+  },
+  {
+   "taxid": 138954,
+   "name": "Parechovirus",
+   "group": "enteric virus",
+   "why": "neonatal sepsis and meningitis; shed in faeces"
+  },
+  {
+   "taxid": 2697049,
+   "name": "Severe acute respiratory syndrome coronavirus 2",
+   "group": "respiratory virus",
+   "why": "the virus that made wastewater surveillance routine"
+  },
+  {
+   "taxid": 11320,
+   "name": "Influenza A virus",
+   "group": "respiratory virus",
+   "why": "seasonal and pandemic influenza, including avian spillover"
+  },
+  {
+   "taxid": 11520,
+   "name": "Influenza B virus",
+   "group": "respiratory virus",
+   "why": "seasonal influenza"
+  },
+  {
+   "taxid": 1868215,
+   "name": "Orthopneumovirus",
+   "group": "respiratory virus",
+   "why": "respiratory syncytial virus, a major infant hospitalisation cause"
+  },
+  {
+   "taxid": 11234,
+   "name": "Measles morbillivirus",
+   "group": "vaccine-preventable",
+   "why": "outbreaks follow vaccination gaps and wastewater detection precedes case reports"
+  },
+  {
+   "taxid": 2560602,
+   "name": "Mumps orthorubulavirus",
+   "group": "vaccine-preventable",
+   "why": "vaccine-preventable, shed in urine and saliva"
+  },
+  {
+   "taxid": 11041,
+   "name": "Rubella virus",
+   "group": "vaccine-preventable",
+   "why": "congenital rubella is the reason elimination is tracked"
+  },
+  {
+   "taxid": 10242,
+   "name": "Orthopoxvirus",
+   "group": "emerging",
+   "why": "the genus containing mpox and smallpox"
+  },
+  {
+   "taxid": 11676,
+   "name": "Human immunodeficiency virus 1",
+   "group": "bloodborne",
+   "why": "bloodborne; a detection in sewage would be unexpected and worth explaining"
+  },
+  {
+   "taxid": 10407,
+   "name": "Hepatitis B virus",
+   "group": "bloodborne",
+   "why": "bloodborne hepatitis"
+  },
+  {
+   "taxid": 12637,
+   "name": "Dengue virus",
+   "group": "arbovirus",
+   "why": "arboviral, imported-case indicator"
+  },
+  {
+   "taxid": 11082,
+   "name": "West Nile virus",
+   "group": "arbovirus",
+   "why": "arboviral, bird reservoir, local transmission in Europe"
+  },
+  {
+   "taxid": 28901,
+   "name": "Salmonella enterica",
+   "group": "enteric bacterium",
+   "why": "salmonellosis, notifiable in most countries"
+  },
+  {
+   "taxid": 620,
+   "name": "Shigella",
+   "group": "enteric bacterium",
+   "why": "shigellosis, low infectious dose, faecal-oral"
+  },
+  {
+   "taxid": 666,
+   "name": "Vibrio cholerae",
+   "group": "enteric bacterium",
+   "why": "cholera; the organism wastewater surveillance was invented for"
+  },
+  {
+   "taxid": 197,
+   "name": "Campylobacter jejuni",
+   "group": "enteric bacterium",
+   "why": "the commonest bacterial gastroenteritis in Europe"
+  },
+  {
+   "taxid": 630,
+   "name": "Yersinia enterocolitica",
+   "group": "enteric bacterium",
+   "why": "foodborne gastroenteritis"
+  },
+  {
+   "taxid": 1639,
+   "name": "Listeria monocytogenes",
+   "group": "enteric bacterium",
+   "why": "foodborne, high case fatality in pregnancy and the elderly"
+  },
+  {
+   "taxid": 1496,
+   "name": "Clostridioides difficile",
+   "group": "healthcare-associated",
+   "why": "healthcare-associated diarrhoea, spore-forming, survives treatment"
+  },
+  {
+   "taxid": 1773,
+   "name": "Mycobacterium tuberculosis",
+   "group": "notifiable",
+   "why": "tuberculosis; wastewater detection is an active research question"
+  },
+  {
+   "taxid": 446,
+   "name": "Legionella pneumophila",
+   "group": "environmental",
+   "why": "legionellosis; an environmental organism with a water route"
+  },
+  {
+   "taxid": 171,
+   "name": "Leptospira",
+   "group": "environmental",
+   "why": "leptospirosis, rodent urine, flood-associated"
+  },
+  {
+   "taxid": 210,
+   "name": "Helicobacter pylori",
+   "group": "chronic",
+   "why": "gastric cancer risk; a possible waterborne route"
+  },
+  {
+   "taxid": 562,
+   "name": "Escherichia coli",
+   "group": "indicator",
+   "why": "mostly commensal here: it is the faecal indicator organism, not by itself a pathogen signal"
+  },
+  {
+   "taxid": 573,
+   "name": "Klebsiella pneumoniae",
+   "group": "antimicrobial resistance",
+   "why": "ESKAPE; carbapenem resistance spreads through sewage"
+  },
+  {
+   "taxid": 287,
+   "name": "Pseudomonas aeruginosa",
+   "group": "antimicrobial resistance",
+   "why": "ESKAPE; environmental reservoir and hospital pathogen"
+  },
+  {
+   "taxid": 1280,
+   "name": "Staphylococcus aureus",
+   "group": "antimicrobial resistance",
+   "why": "ESKAPE; MRSA community carriage"
+  },
+  {
+   "taxid": 1352,
+   "name": "Enterococcus faecium",
+   "group": "antimicrobial resistance",
+   "why": "ESKAPE; vancomycin resistance, and a faecal indicator"
+  },
+  {
+   "taxid": 470,
+   "name": "Acinetobacter baumannii",
+   "group": "antimicrobial resistance",
+   "why": "ESKAPE; highly drug-resistant hospital pathogen"
+  },
+  {
+   "taxid": 5806,
+   "name": "Cryptosporidium",
+   "group": "parasite",
+   "why": "chlorine-tolerant, drinking-water outbreaks"
+  },
+  {
+   "taxid": 5740,
+   "name": "Giardia",
+   "group": "parasite",
+   "why": "giardiasis, cyst-forming, waterborne"
+  },
+  {
+   "taxid": 5759,
+   "name": "Entamoeba histolytica",
+   "group": "parasite",
+   "why": "amoebic dysentery, faecal-oral"
+  },
+  {
+   "taxid": 5811,
+   "name": "Toxoplasma gondii",
+   "group": "parasite",
+   "why": "oocysts shed by cats reach water"
+  }
+ ]
+}
