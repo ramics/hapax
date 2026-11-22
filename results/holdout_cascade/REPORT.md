@@ -481,6 +481,21 @@ rolled-back indexes - which is why the efficiency finding and this experiment's 
 the same fact seen twice: an index built from the sample explains the sample, including the
 parts of it nobody has named.
 
+**The sample's own UNIDENTIFIED contigs are not part of that, and the output says so rather
+than relying on the reader knowing the rule.** `tiers.json` records the unidentified observe
+set with `"subtracted": false`, and the tier table carries the note *"tier 2 is observed and
+never subtracted"*; the 66.72-67.57% union excludes it. Worth stating because the distinction
+is easy to lose when both piles are "the sample's own contigs", and because the scale of what
+it protects is large: **subtracted, that set would remove a further 21.06-21.41% of the
+library on its own** across the five seeds, which is where tier 2's 14.32-14.68% comes from
+once tier 1 has run first.
+
+**And that is exactly why protecting it is not sufficient.** The line between the two piles is
+drawn by whether a database recognises the contig, so the withheld genome - recognisable at
+66.5%, novel by 30 points - lands on the *identified* side and is removed. The material this
+experiment lost was never in the protected pile. **Nothing in the design protects the
+recognisable-but-distant**, which is the whole finding above, restated from the other end.
+
 The eight-month drift caveat applies with its usual force, and more so here: this is a
 different plant on a different continent, so **read every percentage as "on SRR23421544"**.
 
