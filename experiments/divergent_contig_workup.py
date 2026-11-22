@@ -279,6 +279,30 @@ def map_back(contig_fa: Path, r1: Path, r2: Path, trim_r2: int, work: Path,
     return {"per_contig": out, "mates_streamed": seen}
 
 
+# Gene names as they appear in RefSeq viral and Swiss-Prot titles, mapped to the four
+# roles an ssRNA phage genome has. The table is here rather than inferred, so a reader can
+# disagree with one line; `other` is a real bucket and not a dustbin, and every row prints
+# the title the rule fired on.
+GENE_WORDS = [
+    ("rna-directed rna pol", "polymerase"),
+    ("rna-dependent rna pol", "polymerase"),
+    ("replicase", "polymerase"),
+    ("rna polymerase", "polymerase"),
+    ("maturation", "maturation"),
+    ("coat protein", "coat"),
+    ("capsid", "coat"),
+    ("lysis", "lysis"),
+]
+
+
+def gene_role(title: str) -> str:
+    t = (title or "").lower()
+    for word, role in GENE_WORDS:
+        if word in t:
+            return role
+    return "other"
+
+
 def workup(contigs: dict, seqs: dict, orfs: list, hits: dict, pfam: dict,
            depth: dict) -> list:
     """One row per contig, with the per-ORF evidence that produced it."""
@@ -306,6 +330,7 @@ def workup(contigs: dict, seqs: dict, orfs: list, hits: dict, pfam: dict,
                 "significant": bool(h and h["evalue"] < SIGNIFICANT_EVALUE
                                     and h["aln_aa"] >= MIN_ALN_AA),
                 "divergence_class": band(h["pident"]) if h else None,
+                "gene_role": gene_role((h or {}).get("title")) if h else None,
                 "pfam": [{"id": d["pfam"], "description": d["description"]}
                          for d in dom],
             })
@@ -314,6 +339,14 @@ def workup(contigs: dict, seqs: dict, orfs: list, hits: dict, pfam: dict,
         # which at this distance is ordinary. So it is a flag with its direction stated,
         # read beside coverage evenness, and never a verdict on its own.
         distinct = len({s for s in subjects})
+        sig = [r for r in orf_rows if r["significant"]]
+        ids = [r["pident"] for r in sig]
+        # THE NUMBER TO RANK BY. A whole-contig best hit reports whichever gene won on
+        # bitscore, and on this material that is as often the fastest-evolving gene as the
+        # slowest. The polymerase is what places a virus in a family, so its identity is
+        # carried separately, and the spread between a contig's own genes is reported so a
+        # single figure can never stand in for the contig again.
+        pol = [r["pident"] for r in sig if r["gene_role"] == "polymerase"]
         rows.append({
             **meta,
             "contig": name,
@@ -321,13 +354,26 @@ def workup(contigs: dict, seqs: dict, orfs: list, hits: dict, pfam: dict,
             "orfs_with_a_subject": named,
             "orfs_with_a_pfam_domain": sum(1 for r in orf_rows if r["pfam"]),
             "distinct_subjects_across_orfs": distinct,
+            "polymerase_pident": max(pol) if pol else None,
+            "polymerase_divergence_class": band(max(pol)) if pol else None,
+            "orf_identity_spread_points": (round(max(ids) - min(ids), 1)
+                                           if len(ids) >= 2 else None),
+            "orf_identity_min": round(min(ids), 1) if ids else None,
+            "orf_identity_max": round(max(ids), 1) if ids else None,
             "coding_density": round(
                 sum(abs(o["end"] - o["start"]) for o in mine) / max(1, len(seqs[name])), 3),
             "read_support": depth.get(name, {}),
             "subject_disagreement_flag": distinct > 1 and len(mine) > 1,
             "orf_rows": orf_rows,
         })
-    rows.sort(key=lambda r: (r["whole_contig_pident"], -r["contig_nt"]))
+    # Ranked by the polymerase where there is one, falling back to the whole-contig hit,
+    # and the row says which of the two it was ranked on.
+    for r in rows:
+        r["ranked_on"] = ("polymerase" if r["polymerase_pident"] is not None
+                          else "whole-contig best hit")
+        r["rank_pident"] = (r["polymerase_pident"] if r["polymerase_pident"] is not None
+                            else r["whole_contig_pident"])
+    rows.sort(key=lambda r: (r["rank_pident"], -r["contig_nt"]))
     return rows
 
 
@@ -423,7 +469,25 @@ def main() -> None:
                 [r["read_support"].get("mapped_median_depth", 0) for r in rs]),
             "median_breadth_covered": round(statistics.median(
                 [r["read_support"].get("breadth_covered", 0) for r in rs]), 4),
+            "contigs_with_two_or_more_scorable_genes":
+                sum(1 for r in rs if r["orf_identity_spread_points"] is not None),
+            "median_orf_identity_spread_points": statistics.median(
+                [r["orf_identity_spread_points"] for r in rs
+                 if r["orf_identity_spread_points"] is not None] or [0]),
+            "by_gene_role": gene_rollup(rs),
         }
+
+    def gene_rollup(rs):
+        """Identity by what the gene is, which is the comparison the ranking needs."""
+        acc = collections.defaultdict(list)
+        for r in rs:
+            for o in r["orf_rows"]:
+                if o["significant"]:
+                    acc[o["gene_role"]].append(o["pident"])
+        return {k: {"orfs": len(v),
+                    "median_pident": round(statistics.median(v), 1),
+                    "min_pident": round(min(v), 1), "max_pident": round(max(v), 1)}
+                for k, v in sorted(acc.items(), key=lambda kv: -len(kv[1]))}
 
     out = {
         "unit": "one row per contig; orf_rows is one row per predicted protein",
@@ -443,8 +507,13 @@ def main() -> None:
             "control_arm_is_at_or_above_percent": a.control_above,
             "mate_2_trimmed_nt": a.trim_r2,
             "mates_streamed_per_file": a.map_limit or "whole library",
+            "mates_actually_streamed": depth["mates_streamed"],
         },
         "summary": {"divergent": summarise(div), "control_near_reference": summarise(con)},
+        "the_number_to_rank_by": (
+            "polymerase_pident where the contig has one, because a whole-contig best hit "
+            "reports whichever gene won on bitscore. orf_identity_spread_points is how "
+            "far that choice could have moved the row."),
         "how_to_read": (
             "Compare the two arms column by column. A field that reads the same on both "
             "is describing assembly, not divergence. subject_disagreement_flag fires on "
