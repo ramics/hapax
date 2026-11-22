@@ -247,6 +247,41 @@ recording that neither failure was visible to any tell this project relies on: *
 moving with the test* and *an explicit census* both work by reading a distribution, and
 nothing was plotting this column. **An impossible sign needs an invariant, not a reader.**
 
+**The scoring script now reads its search output through `experiments/search_hits.py`, and
+the switch found two more impossible values in this same committed table.** The two unions,
+the best hit and the gap are built from one read of one row set, under one `passes_floor`,
+and `coverage_gap` raises before any fraction is formed, so the filter cannot be written
+twice again. What the shared parser's units then exposed:
+
+- **Nucleotide best-HSP query coverage was above 1.0** - 1.0009, 1.0011, 1.0013, 1.0021,
+  1.0026 and 1.0046 on six leak contigs - because `length` counts gaps while `qlen` does
+  not. A fraction of a contig cannot exceed the contig. Taken from the alignment's own
+  `qstart`/`qend` it cannot.
+- **The protein version of the same field was residues over nucleotides**, so it capped at
+  exactly 1/3 and read 0.4662 where the coordinate span is 0.4624. That was already known
+  and fixed here; the nucleotide side was not, and it is the same bug with the opposite
+  sign.
+
+Neither field is quoted anywhere in this report, which is exactly why they survived: the
+numbers it quotes are the union coverages, which were always built from query coordinates.
+**Three impossible values in one table, all in columns no figure used.**
+
+**A third thing was arbitrary rather than wrong.** `attributed_to` names whichever reference
+covers most of a contig, and **38 of 35,328 contigs are covered equally by both**, so the
+label was whichever the search listed first. Changing to the shared union relabelled 12 of
+them. All 38 sit far below the 0.50 attribution threshold - **0 ties above it** - so no arm
+changes and nothing in this report moves, but a label decided by file order is the
+array-order bias this repo has withdrawn a result over, so the row now carries
+`attributed_tie` and the manifest carries the count.
+
+**The re-run the hash change forced reproduced the published table exactly.** Every figure
+in `generated_tables_s1to5.txt` is byte-identical after a fresh 40-minute run of all five
+searches: the cell of 69 contigs (0.91%), the +36.6 points at the 95.85th percentile, the
+nucleotide 0.7103 on both sides, every `gap > 10/20/30` count. The only differences in
+`contig_rows_s1.tsv` are the 12 tie labels and 2,072 gap cells moving by 1 in the fourth
+decimal, because the gap is now rounded once instead of being the difference of two rounded
+numbers.
+
 **Where it gets suspicious, and the limit is mine not the field's.** Four cuts - gap > 30
 points, identity 50-70%, any-subject coverage >= 0.70, length >= 1500 nt - select **7
 background contigs, 0.092% of the removed pile, 0 of 34 leak contigs**, and the candidate

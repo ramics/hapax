@@ -1,14 +1,14 @@
 {
  "script": "holdout_cascade.py",
- "script_sha256": "d800af2c29a0839246ce07fcf63f76c947438a71f9c2a9263bdffc81ab3a6370",
- "git_sha": "14730c2b441cac90493c5c9a36a6998724dbb3be",
+ "script_sha256": "727447ecfebc8bc6c5eadab37bc78d66b46b1f7e9b78f08dc66c8c239e7807b2",
+ "git_sha": "1049b122b966c3f500c53644cc80a1e7792368a4",
  "tree_dirty": true,
  "seed": 1,
  "seed_note": "deterministic given the assembly: the attribution and both searches have no randomness, so five seeds here would be five identical files and none is run",
  "parameters": {
   "seed": "1",
   "contigs": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed.fa",
-  "refs": "/home/user/hapax/results/holdout_candidates/candidates.fa",
+  "refs": "results/holdout_candidates/candidates.fa",
   "candidate": "OQ722337.1",
   "leak": "OQ722330.1",
   "holdout_nt_db": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/holdout/db_holdout_nt",
@@ -23,7 +23,7 @@
   "unidentifiable_fa": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_unidentified.fa",
   "run_dir": "results/holdout_cascade/run_s1",
   "threads": "4",
-  "work": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/score3",
+  "work": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/score4",
   "out": "results/holdout_cascade"
  },
  "inputs": {
@@ -42,16 +42,18 @@
   "leak": 34,
   "background": 35293
  },
+ "attribution_ties": 38,
+ "attribution_ties_above_threshold": 0,
  "timings_s": {
-  "attribute": 2.6,
-  "search_holdout_nt": 1085.6,
-  "search_holdout_prot": 108.1,
-  "search_full_nt": 985.9,
-  "search_full_prot": 99.0,
-  "search_sprot_undated": 136.5,
-  "total": 2420.7
+  "attribute": 2.2,
+  "search_holdout_nt": 1015.6,
+  "search_holdout_prot": 105.2,
+  "search_full_nt": 1014.4,
+  "search_full_prot": 106.4,
+  "search_sprot_undated": 152.4,
+  "total": 2400.2
  },
- "run_utc": "2026-11-22T17:01:52Z",
+ "run_utc": "2026-11-22T22:39:49Z",
  "python": "3.13.18",
  "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
 }
