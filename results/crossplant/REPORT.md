@@ -246,6 +246,15 @@ It was built before the real data landed and it caught two bugs in this report: 
 compared as a string that is an integer in memory, which silently found zero plants for the
 paired comparison, and the own-library ceiling quoting only its minimum.
 
+**This report carries a reproduction.** The first run of it wrote a manifest with a
+`-dirty` SHA, which this repo treats as unresolved provenance rather than provenance. The
+script was committed and the report re-run from the clean tree: the manifest now reads
+`06322c22f85bec9e2e8e02b379bc7f473873b169` with `tree_dirty: false`, and all six output
+files — `plant_matrix.tsv`, `plant_summary.tsv`, `saturation.tsv`, `growth_top.tsv`,
+`composition_5p.tsv` and `controls.json` — are byte-identical between the two independent
+runs. That is the cheap version of reproduction the conventions describe, and it fell out of
+fixing the provenance rather than being scheduled.
+
 **Caveats.** Every number is at `most` or `any` on exact 31-mers: this instrument sees
 identity, not homology, so a divergent relative of a panel sequence counts as absent.
 Percentages are of query reads, not of a library. The five seeds resample the query draw, so

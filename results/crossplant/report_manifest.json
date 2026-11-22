@@ -1,7 +1,7 @@
 {
   "script": "experiments/crossplant_report.py",
-  "git_sha": "302ac927af40e0e079b523a60d96d4e2f04ddb5d-dirty",
-  "tree_dirty": true,
+  "git_sha": "06322c22f85bec9e2e8e02b379bc7f473873b169",
+  "tree_dirty": false,
   "script_sha256": "3dcee6de3e4e0f04",
   "parameters": {
     "run_dir": "/tmp/claude-0/-home-user/f61a138b-a2e5-555e-86c0-1f6228da8cbf/scratchpad/run_reads",
@@ -29,5 +29,5 @@
   },
   "subjects": 531,
   "queries": 145040,
-  "seconds": 306.5
+  "seconds": 316.1
 }
