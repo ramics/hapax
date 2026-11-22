@@ -1,0 +1,241 @@
+{
+  "layer_order_most_to_least_interesting": [
+    "recurs_and_unplaceable",
+    "distant_relative",
+    "profile_only",
+    "placed",
+    "artefact_shaped",
+    "undetermined"
+  ],
+  "counts": {
+    "residue": {
+      "recurs_and_unplaceable": 752,
+      "undetermined": 1183,
+      "distant_relative": 63,
+      "placed": 2
+    },
+    "known": {
+      "distant_relative": 533,
+      "recurs_and_unplaceable": 891,
+      "undetermined": 274,
+      "placed": 302
+    }
+  },
+  "totals": {
+    "residue": 2000,
+    "known": 2000
+  },
+  "against_known_positive": {
+    "recurs_and_unplaceable": {
+      "residue": {
+        "point": 0.376,
+        "lo": 0.355028,
+        "hi": 0.397448,
+        "k": 752,
+        "n": 2000,
+        "method": "wilson_95"
+      },
+      "known_positive": {
+        "point": 0.4455,
+        "lo": 0.423842,
+        "hi": 0.467367,
+        "k": 891,
+        "n": 2000,
+        "method": "wilson_95"
+      },
+      "depends_on_fields": [
+        "closest_*",
+        "library_abundance"
+      ],
+      "field_coverage": {
+        "residue": {
+          "closest_*": 1869,
+          "library_abundance": 2000
+        },
+        "known": {
+          "closest_*": 1959,
+          "library_abundance": 2000
+        }
+      },
+      "separates": true,
+      "reading": "separates at 95%, fires MORE on already-identified reads, which is a sign flip: whatever it reads, it is not interest"
+    },
+    "distant_relative": {
+      "residue": {
+        "point": 0.0315,
+        "lo": 0.024698,
+        "hi": 0.040098,
+        "k": 63,
+        "n": 2000,
+        "method": "wilson_95"
+      },
+      "known_positive": {
+        "point": 0.2665,
+        "lo": 0.247584,
+        "hi": 0.286311,
+        "k": 533,
+        "n": 2000,
+        "method": "wilson_95"
+      },
+      "depends_on_fields": [
+        "closest_*"
+      ],
+      "field_coverage": {
+        "residue": {
+          "closest_*": 1869
+        },
+        "known": {
+          "closest_*": 1959
+        }
+      },
+      "separates": true,
+      "reading": "separates at 95%, fires MORE on already-identified reads, which is a sign flip: whatever it reads, it is not interest"
+    },
+    "profile_only": {
+      "residue": {
+        "point": 0.0,
+        "lo": 0.0,
+        "hi": 0.001917,
+        "k": 0,
+        "n": 2000,
+        "method": "wilson_95"
+      },
+      "known_positive": {
+        "point": 0.0,
+        "lo": 0.0,
+        "hi": 0.001917,
+        "k": 0,
+        "n": 2000,
+        "method": "wilson_95"
+      },
+      "depends_on_fields": [
+        "closest_*",
+        "motif"
+      ],
+      "field_coverage": {
+        "residue": {
+          "closest_*": 1869,
+          "motif": 0
+        },
+        "known": {
+          "closest_*": 1959,
+          "motif": 0
+        }
+      },
+      "separates": null,
+      "reading": "not comparable in this run: motif was not computed on the known pile, so its zero is absence rather than a measurement"
+    },
+    "placed": {
+      "residue": {
+        "point": 0.001,
+        "lo": 0.000274,
+        "hi": 0.003639,
+        "k": 2,
+        "n": 2000,
+        "method": "wilson_95"
+      },
+      "known_positive": {
+        "point": 0.151,
+        "lo": 0.135978,
+        "hi": 0.16736,
+        "k": 302,
+        "n": 2000,
+        "method": "wilson_95"
+      },
+      "depends_on_fields": [
+        "closest_*"
+      ],
+      "field_coverage": {
+        "residue": {
+          "closest_*": 1869
+        },
+        "known": {
+          "closest_*": 1959
+        }
+      },
+      "separates": true,
+      "reading": "separates at 95%, fires MORE on already-identified reads, which is a sign flip: whatever it reads, it is not interest"
+    },
+    "artefact_shaped": {
+      "residue": {
+        "point": 0.0,
+        "lo": 0.0,
+        "hi": 0.001917,
+        "k": 0,
+        "n": 2000,
+        "method": "wilson_95"
+      },
+      "known_positive": {
+        "point": 0.0,
+        "lo": 0.0,
+        "hi": 0.001917,
+        "k": 0,
+        "n": 2000,
+        "method": "wilson_95"
+      },
+      "depends_on_fields": [
+        "entropy3",
+        "homopolymer",
+        "adapter"
+      ],
+      "field_coverage": {
+        "residue": {
+          "entropy3": 2000,
+          "homopolymer": 2000,
+          "adapter": 0
+        },
+        "known": {
+          "entropy3": 2000,
+          "homopolymer": 2000,
+          "adapter": 0
+        }
+      },
+      "separates": false,
+      "reading": "cannot discriminate here: the intervals overlap"
+    },
+    "undetermined": {
+      "residue": {
+        "point": 0.5915,
+        "lo": 0.569801,
+        "hi": 0.612848,
+        "k": 1183,
+        "n": 2000,
+        "method": "wilson_95"
+      },
+      "known_positive": {
+        "point": 0.137,
+        "lo": 0.122625,
+        "hi": 0.152767,
+        "k": 274,
+        "n": 2000,
+        "method": "wilson_95"
+      },
+      "depends_on_fields": [
+        "closest_*",
+        "library_abundance"
+      ],
+      "field_coverage": {
+        "residue": {
+          "closest_*": 1869,
+          "library_abundance": 2000
+        },
+        "known": {
+          "closest_*": 1959,
+          "library_abundance": 2000
+        }
+      },
+      "separates": true,
+      "reading": "separates at 95%, enriched in the residue"
+    }
+  },
+  "rule": {
+    "significance_evalue": 1e-05,
+    "significance_note": "1e-5, because the chance band reads identically on residue and already-identified reads: at E<1e-5 14.6% of residue reads have a relative covering ~96% of the read at 90.1% identity, and a weaker hit describes the database rather than the read (results/partial_match_subjects/)",
+    "close_identity_percent": 90.0,
+    "recurrence_min_occurrences": 2,
+    "recurrence_note": "a 1-in-a-million virus is a singleton against ~68 occurrences for background, so recurrence is weak evidence per read and is used only to separate 'rare and unsequenced' from 'could be artefact'",
+    "artefact_entropy3_below": 0.5,
+    "artefact_homopolymer_above": 25
+  },
+  "not_a_score": "layers are a sort order with evidence attached. Searching only ever removes background; it never scores novelty, because score ordering tracks database proximity"
+}

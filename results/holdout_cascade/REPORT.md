@@ -412,10 +412,12 @@ disjoint 200,000-read blocks of **one read pool**, so the spread between them is
 noise: it is not library variation, not biological variation, and narrower than either by an
 unknown factor.
 
-## Three bugs found on the way, which matter beyond this experiment
+## Four defects found on the way, which matter beyond this experiment
 
-All three are one failure mode: **an optional input is absent and the code either dies at the
-end or returns a number that reads as a measurement.**
+The first three are one failure mode: **an optional input is absent and the code either dies
+at the end or returns a number that reads as a measurement.** The fourth is its sibling and
+the one with the longest reach: **a provenance field the conventions require is computed and
+then not written**, so the run cannot say what code produced it.
 
 1. **`hapax.py` validated `--k2-dbs`, `--silva` and `--dmnd` and then never passed them.** The
    cascade fell back to `subtract_known.py`'s own default paths whatever the run was given. On
@@ -437,11 +439,52 @@ end or returns a number that reads as a measurement.**
    already uses an `x = None` guard. `motif_rate` also returned `0.0` when nothing had been
    searched; both now say `not measured`.
 
-**Audit of what this could have affected: nothing committed.** No directory under `results/`
-contains a manifest from `hapax.py` or a `hapax run` directory, and there is no committed
-`strains.json`, `layers.json` or `reads.jsonl` anywhere. Every committed cascade number comes
-from `subtract_known.py` invoked directly, whose manifests name the indexes it genuinely used.
+4. **`subtract_known.py` defines the content hash the conventions require and never calls
+   it.** `provenance()` returns `git_sha`, `tree_dirty` and `script_sha256` and carries a
+   docstring explaining that the hash is the only one of the three that pins the code when
+   the tree is dirty - citing a real incident where a fix landed between two seeds of one
+   multi-seed run. **It is never called.** The manifest instead records `"script":
+   "experiments/subtract_known.py"`, which is a path, and a bare `git_sha`. `hapax.py` reads
+   the stage's manifest for the hash, does not find one, and honestly records `"script_sha256":
+   "absent from this stage's own manifest"` - so the orchestrator obeys the convention and the
+   stage does not supply it. Same shape as bug 1: a function that exists, is documented as
+   load-bearing, and is not wired up.
+
+   **It bit exactly the case its own docstring predicts, in this run.** Because I committed
+   between seeds, the five seeds record **three different git SHAs** - `65520e8-dirty`,
+   `5134e42`, `6c1fc37` - and for the `cascade` stage the one field that could show the code
+   was unchanged is absent. The `reads` stage does propagate a hash and it is identical across
+   seeds (`11b925110f3324ce`), which is what that field is for.
+
+   The seeds *are* one code version, but it has to be shown from outside the manifests:
+   `git diff 5134e42 HEAD` and `git diff HEAD` are both empty for `hapax.py`,
+   `subtract_known.py` and `residue_report.py`, so those three files have been byte-identical
+   since before seed 2 and the working tree matches HEAD. Seed 1 ran the same bytes
+   uncommitted. **That is a reconstruction, not provenance**, and it is only available because
+   the whole run happened inside one session. Not fixed here, because seeds were in flight and
+   editing a script mid-run is the one thing the conventions forbid outright; handed to the
+   `Make hapax fail loudly` thread with the rest.
+
+**Audit, bugs 1-3: nothing committed is affected.** No directory under `results/` contains a
+manifest from `hapax.py` or a `hapax run` directory, and there is no committed `strains.json`,
+`layers.json` or `reads.jsonl` anywhere. Every committed cascade number comes from
+`subtract_known.py` invoked directly, whose manifests name the indexes it genuinely used.
 `results/holdout_cascade/` is the first committed `hapax run`, and it carries the fixes.
+
+**Audit, bug 4: it reaches most of the archive.** Of **125 committed manifests** under
+`results/`, **29 carry a `script_sha256` and 96 do not**. 36 record a `-dirty` git SHA, and
+**20 are both dirty and hashless, which means their provenance cannot be recovered from the
+file at all** - the SHA names a working tree that was not the code, and nothing else pins it.
+Those 20 are in `nucleotide_ladder/` (5 seeds), `spike_abundance/` (4 of 5),
+`partial_alignment/`, `partial_alignment_contigs/`, `peptide_absence_noise/` and a handful
+more. The largest hashless groups are `novelty_blocks/` (20), `mate_rho/` (11),
+`insert_profile/` (7) and `peptide_absence/` (7).
+
+This is a **list, not a re-run**, and it is not a claim that any of those numbers are wrong -
+only that the convention's own test cannot be applied to them. It is also not caused by
+`subtract_known.py` alone; the field is simply absent from most writers, so **the convention
+is honoured by 29 of 125 manifests**. Worth knowing before the next multi-seed campaign,
+because the convention exists for precisely the situation this run hit by accident.
 
 ## What this run could not measure
 
