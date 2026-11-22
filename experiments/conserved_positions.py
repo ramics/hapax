@@ -49,6 +49,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "experiments"))
 
+from shuffle_control import dinuc_shuffle  # noqa: E402
 from divergent_contig_workup import (  # noqa: E402
     MIN_ALN_AA, SIGNIFICANT_EVALUE, call_orfs, read_fasta, sha256_of,
 )
@@ -81,35 +82,6 @@ def role_of(name: str, desc: str) -> str:
         if word in hay:
             return role
     return "other"
-
-
-def dinuc_shuffle(seq: str, rng: random.Random) -> str:
-    """Eulerian-walk shuffle preserving length and dinucleotide composition.
-
-    Dinucleotides rather than single bases because single-base shuffling destroys local
-    composition and makes the null easier than the real thing for reasons that have
-    nothing to do with homology.
-    """
-    s = seq.upper()
-    if len(s) < 4:
-        return s
-    for _ in range(20):
-        nxt = collections.defaultdict(list)
-        for a, b in zip(s, s[1:]):
-            nxt[a].append(b)
-        for v in nxt.values():
-            rng.shuffle(v)
-        out, cur = [s[0]], s[0]
-        ok = True
-        for _ in range(len(s) - 1):
-            if not nxt[cur]:
-                ok = False
-                break
-            cur = nxt[cur].pop()
-            out.append(cur)
-        if ok:
-            return "".join(out)
-    return s
 
 
 def pfam_envelopes(orfs: list, hmm: Path, threads: int) -> dict:
@@ -306,6 +278,95 @@ def by_role(rows: list) -> dict:
     return out
 
 
+def paired_roles(per_contig: list) -> dict:
+    """Role against role, on contigs that carry BOTH. The unpaired comparison misleads.
+
+    Our role counts are lopsided - most divergent contigs here carry a polymerase and far
+    fewer carry a scorable capsid - so a median taken per role compares different sets of
+    contigs. That is how a ranking by median can disagree with a ranking by within-contig
+    position, which is exactly the disagreement the literature forced us to look at.
+
+    Friedman et al. 2009 rank the capsid most conserved in all four Leviviridae
+    genogroups, measuring amino acid distance WITHIN a genogroup of close relatives. The
+    same paper's nucleotide similarity plot across genogroups reads the replicase most
+    similar at 50-60% and the maturation protein most dissimilar below 10%, which is our
+    ordering. The two are different quantities: variability among known close strains
+    against distance from a contig to the nearest reference the database holds. This
+    function reports ours in the form that can be compared, which is pairwise and paired.
+    """
+    g = collections.defaultdict(lambda: [0, 0, []])
+    for r in per_contig:
+        roles = r["by_role"]
+        for a in roles:
+            for b in roles:
+                if a >= b:
+                    continue
+                k = f"{a} vs {b}"
+                g[k][0] += 1
+                g[k][1] += 1 if roles[a] > roles[b] else 0
+                g[k][2].append(round(roles[a] - roles[b], 2))
+    out = {}
+    for k, (n, higher, diffs) in sorted(g.items()):
+        if n < 5:
+            continue
+        out[k] = {"contigs_with_both": n,
+                  "share_first_higher": round(higher / n, 3),
+                  "median_difference_points": round(statistics.median(diffs), 2)}
+    return {"readout": ("role against role on contigs carrying both, so the comparison "
+                        "is paired. A share near 0.5 means the two roles are "
+                        "indistinguishable on this material"),
+            "pairs": out}
+
+
+def role_ordering_controls(rows: list) -> dict:
+    """Two controls on the claim that roles diverge in a fixed order.
+
+    The ordering - polymerase closest to what is published, maturation furthest - is
+    partly precedented: Friedman et al. 2009 (J. Virol. 83(21)) report the greatest
+    genetic distance in the maturation protein of Leviviridae against much lower
+    replicase distances. Their conservation ranking is not ours, though, so two
+    explanations that have nothing to do with selection have to be measured rather than
+    argued about.
+
+    (1) DATABASE COMPOSITION. Detection models for this family were built around the
+    conserved replicase, so a role with more reference proteins has more chances of a
+    close one. Counted here as distinct subject accessions per role and per ORF.
+
+    (2) ALIGNMENT LENGTH. A divergent maturation protein may align only over its most
+    conserved stretch, or not at all. The first biases its identity UP and the second
+    removes it from the table; the direction of the pair is not obvious, so identity is
+    reported per role inside alignment-length bands, where the comparison is like for
+    like.
+    """
+    bands = [(60, 150), (150, 300), (300, 600), (600, 10 ** 6)]
+    out = {"readout": ("per role: how many distinct reference proteins it matched, and "
+                       "its identity inside alignment-length bands so the roles are "
+                       "compared at like alignment length"),
+           "roles": {}}
+    g = collections.defaultdict(list)
+    for r in rows:
+        for role in {d["role"] for d in r["domains"]}:
+            g[role].append(r)
+    for role, rs in sorted(g.items()):
+        if len(rs) < 5:
+            continue
+        subs = {r["subject"] for r in rs}
+        byband = {}
+        for lo, hi in bands:
+            inb = [r["pident"] for r in rs if lo <= r["aln_aa"] < hi]
+            byband[f"{lo}-{hi if hi < 10 ** 6 else 'up'}"] = {
+                "orfs": len(inb),
+                "median_identity_percent": (round(statistics.median(inb), 2)
+                                            if len(inb) >= 5 else None)}
+        out["roles"][role] = {
+            "orfs": len(rs),
+            "distinct_subjects": len(subs),
+            "distinct_subjects_per_orf": round(len(subs) / len(rs), 3),
+            "median_identity_by_alignment_length": byband,
+        }
+    return out
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--seed", type=int, default=1)
@@ -492,6 +553,10 @@ def main() -> None:
         },
         "inside_against_outside": {k: arm_rollup(v) for k, v in sorted(by_arm.items())},
         "by_domain_role": {k: by_role(v) for k, v in sorted(by_arm.items())},
+        "paired_roles": {arm: paired_roles([r for r in per_contig if r["arm"] == arm])
+                        for arm in sorted({r["arm"] for r in per_contig})},
+        "role_ordering_controls": {k: role_ordering_controls(v)
+                                  for k, v in sorted(by_arm.items())},
         "which_function_is_diverging": {
             "readout": ("contigs carrying two or more domain roles, by which role is the "
                         "most diverged. A count, never an ordering of contigs"),

@@ -37,6 +37,20 @@ sequence carrying no information; a known-positive comparison against subtracted
 whether it carries anything about the residue. A field that reads the same on both is
 reported with that fact, not hidden.
 
+**A shuffled null comes from `experiments/shuffle_control.py`, imported, never
+reimplemented, and it raises rather than falling back.** Two scripts each carried their own
+naive dinucleotide shuffle, and both handled a dead-ended walk by retrying and then
+returning the input unchanged. That fired for 324 of 11,361 contigs, 2.85%, and all 304
+"shuffled" contigs that produced a significant protein hit were among them: zero genuinely
+shuffled contigs produced one. The bad null published an existence ratio, a claim that
+identity cannot separate real sequence from noise, and two kills of other people's fields,
+all withdrawn. It was the same bug twice in two days, already fixed once in PR #29, and the
+only arm that was right imported its shuffle instead of writing one. Two consequences
+beyond the module: **when two instruments disagree about a CONTROL, chase that before any
+result** - 0.00% against 2.68% on the same nominal null is what exposed this - and **record
+"no significant hits" as an explicit census**, because an empty table and a search that
+never ran look identical.
+
 **A null is not a bias statement, and a number needs both.** A null says what a field reads
 on meaningless input. A bias statement says what it reads on *real* input for the wrong
 reason — and only the second can be removed by a control. So every number ships with the

@@ -61,6 +61,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from shuffle_control import dinuc_shuffle  # noqa: E402
 from divergent_contig_workup import (BANDS, MIN_ALN_AA, SIGNIFICANT_EVALUE, band,
                                      call_orfs, diamond_blastp, gene_role, map_back,
                                      pfam_scan, read_fasta, sha256_of)
@@ -115,36 +116,6 @@ def diamond_blastx(fa: Path, db: Path, out: Path, binpath: Path, threads: int,
                 best[f[0]] = row
     return {"best": best, "hsps": hsps, "qlen": qlen,
             "seconds": round(time.time() - t0, 1)}
-
-
-def dinuc_shuffle(seq: str, rng: random.Random) -> str:
-    """Preserve dinucleotide composition, which a mononucleotide shuffle does not.
-
-    Stop-codon density is a dinucleotide property, so a naive shuffle inflates ORF length
-    and the control stops being one. Implemented as an Eulerian walk over the dinucleotide
-    graph, restarted on a dead end rather than repaired, which is unbiased enough for a
-    null and keeps the code readable.
-    """
-    s = seq.upper()
-    if len(s) < 4:
-        return s
-    for _ in range(20):
-        nxt = collections.defaultdict(list)
-        for a, b in zip(s, s[1:]):
-            nxt[a].append(b)
-        for v in nxt.values():
-            rng.shuffle(v)
-        out, cur = [s[0]], s[0]
-        ok = True
-        for _ in range(len(s) - 1):
-            if not nxt[cur]:
-                ok = False
-                break
-            cur = nxt[cur].pop()
-            out.append(cur)
-        if ok:
-            return "".join(out)
-    return s
 
 
 def histogram(values: list) -> list:
