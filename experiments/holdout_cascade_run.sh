@@ -36,9 +36,40 @@ SEEDS="${SEEDS:-1 2 3 4 5}"
 # not where this experiment's question lives: the withheld genome reaches a reader as a
 # contig, and tier 3 here is read-level background. Recorded rather than silently lowered.
 REPORT_PAIRS="${REPORT_PAIRS:-2000}"
+# BLOCK IS A PROPERTY OF THE LIBRARY AND MUST BE SET PER LIBRARY. subtract_known.py
+# defaults to 1,500,000, which is the stride for Berlin's 8,731,224 pairs. This library has
+# 4,290,429 reads, so at that stride seeds 4 and 5 skip to 4.5 M and 6.0 M, read nothing,
+# and the cascade exits with "no pairs read". That is exactly what happened on the first
+# pass here: seeds 1-3 ran and 4-5 failed, which is a THREE-seed result wearing a five-seed
+# directory, and the convention forbids a mixture. 1,000,000 puts the five disjoint blocks
+# at 0, 1 M, 2 M, 3 M and 4 M, the last ending at 4,200,000 of 4,290,429.
+BLOCK="${BLOCK:-1000000}"
 K2BIN="$S/k2pkg/root/share/kraken2-2.17.2/libexec/classify"
 
 mkdir -p "$OUT" "$S/wk"
+
+# ---- 0. the blocks must fit the library, checked before anything runs ------------------
+# The failure above was silent in the only way that matters: each seed failed loudly on its
+# own and the DIRECTORY still looked like a five-seed run. So the arithmetic is asserted
+# here rather than trusted, against the read count rather than against a remembered one.
+LAST_SEED=$(for s in $SEEDS; do echo "$s"; done | sort -n | tail -1)
+READS=$(python3 -I - "$S/reads/SRR23421544.fastq.gz" <<'PY'
+import gzip, sys
+n = 0
+with gzip.open(sys.argv[1], "rt") as fh:
+    for n, _ in enumerate(fh, 1):
+        pass
+print(n // 4)
+PY
+)
+NEED=$(( (LAST_SEED - 1) * BLOCK + PAIRS ))
+echo "library $READS reads; $LAST_SEED seeds x $PAIRS pairs at stride $BLOCK needs $NEED"
+if [ "$NEED" -gt "$READS" ]; then
+  echo "REFUSING: seed $LAST_SEED would start at $(( (LAST_SEED - 1) * BLOCK )) in a" \
+       "library of $READS reads. Lower BLOCK to at most" \
+       "$(( (READS - PAIRS) / (LAST_SEED - 1) )) or lower PAIRS." >&2
+  exit 2
+fi
 
 # ---- 0a. MEGAHIT header -> the SPAdes-like form the committed scripts parse ------------
 # classify_contigs.py and residue_report.py read length and coverage out of the contig
@@ -100,7 +131,7 @@ for sd in $SEEDS; do
   if [ -s "$OUT/run_s$sd/manifest.json" ]; then echo "seed $sd already done"; continue; fi
   python3 hapax.py run "$S/reads/SRR23421544.fastq.gz" "$S/reads/SRR23421544.fastq.gz" \
     --seed "$sd" --out "$OUT/run_s$sd" --work "$S/wk/hapax_shared" \
-    --single-end --trim-r2 0 --pairs "$PAIRS" --threads "$THREADS" \
+    --single-end --trim-r2 0 --pairs "$PAIRS" --block "$BLOCK" --threads "$THREADS" \
     --report-pairs "$REPORT_PAIRS" \
     --report-without cross_sample rfam crispr pfam chimaera \
     --k2-no-memory-map \

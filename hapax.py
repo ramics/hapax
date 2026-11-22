@@ -300,6 +300,16 @@ class Run:
                 "--r1", str(a.r1), "--r2", str(a.r2), "--trim-r2", str(a.trim_r2),
                 "--threads", str(a.threads), "--rows-out",
                 "--work", str(self.work / "cascade_work"), "--out", str(out)]
+        # The block stride WAS NOT EXPOSED HERE AT ALL, so `hapax run` could only ever use
+        # subtract_known.py's default of 1,500,000 - the stride for SRR23973193's 8,731,224
+        # pairs. On a smaller library the later seeds skip past the end of the FASTQ and the
+        # cascade exits with "no pairs read". Measured: on SRR23421544's 4,290,429 reads,
+        # seeds 4 and 5 start at 4.5 M and 6.0 M and read nothing, so a five-seed run
+        # produced three seeds and two failures while the run directory still looked like
+        # five. A parameter that decides WHICH READS ARE MEASURED does not belong behind a
+        # default tuned to one library.
+        if a.block:
+            argv += ["--block", str(a.block)]
         # These three were VALIDATED above and then never passed, so the cascade silently
         # fell back to subtract_known.py's own default paths whatever the run was given.
         # On a machine where the defaults are absent the stage dies; on one where they
@@ -1274,6 +1284,13 @@ def main() -> int:
     r.add_argument("--pairs", type=int, default=200_000,
                    help="pairs through the cascade. The block is seed-determined, so five "
                         "seeds are five disjoint blocks of the same library")
+    r.add_argument("--block", type=int, default=None,
+                   help="pairs skipped per seed, so seed N reads the block starting at "
+                        "(N-1)*block. MUST BE SET FOR A LIBRARY SMALLER THAN BERLIN: the "
+                        "stage default of 1,500,000 sends seed 4 past the end of a 4.3 M "
+                        "read library, which fails the seed loudly and leaves the run "
+                        "directory looking complete. Left unset, the stage's default is "
+                        "used and recorded in its manifest")
     r.add_argument("--report-pairs", type=int, default=20_000,
                    help="residue pairs through the per-read report, whose per-read fields "
                         "are far costlier than the cascade's")
