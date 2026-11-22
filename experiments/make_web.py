@@ -730,7 +730,12 @@ const METHODS = [
       'existing, nothing about the alignment separates them: the shuffled median ' +
       'identity is 43.5% against the real 45.1%, and only 12.0% of real hits clear the ' +
       'shuffled p90 where 10% do so by construction. The one field carrying anything ' +
-      'is the fraction of the contig the alignment covers, at 26.3%.'],
+      'is the fraction of the contig the alignment covers, at 26.3%. This control ' +
+      'asks whether a hit is real. It does not ask whether identity measures the ' +
+      'distance between a real contig and its real relative, which the holdout ' +
+      'answers: a genome 30.28% diverged was reported at 66.5% protein identity over ' +
+      '620 aa against a referenced comparator in the same library at 99.9%, ordered ' +
+      'correctly by 30 points.'],
     ['Bias', 'Both reference sets are narrow, so each identity is an upper bound on ' +
       'identity and each divergence a lower bound on divergence.'],
   ]},
@@ -951,10 +956,9 @@ function interval(iv) {
   h.append(el('h1', null, acc ? esc(acc) + ', untreated wastewater'
                               : 'Hapax run viewer'));
   h.append(el('p', 'lede',
-    'Untargeted RNA sequencing of untreated wastewater. Screening results, ' +
-    'composition, divergence of assembled viruses from their references, and the ' +
-    'unnamed remainder. Every figure carries its operating point and control. No ' +
-    'figure on this page scores novelty.'));
+    'Untargeted RNA sequencing of untreated wastewater. Screening, composition, ' +
+    'divergence of assembled viruses, and the unnamed remainder. Every figure carries ' +
+    'its operating point and control. No figure scores novelty.'));
   // Two scopes on one page, said once at the top. The classified profile and the
   // residue search read every pair; the cascade reads a block, because it cannot be run
   // over the library in this container. A reader who assumes one scope for all of it
@@ -1058,10 +1062,9 @@ function interval(iv) {
   }
   p.append(g);
   p.append(el('p', 'note',
-    'The dark squares are the subject of this page. They are not a discovery: ' +
-    'unnameable sequence is the normal state of a wastewater metagenome, and the ' +
-    'measurements below are an attempt to say what is actually in that pile, how far ' +
-    'from anything known it sits, and where the instrument stops being able to tell.'));
+    'The dark squares are the subject of this page. Unnameable sequence is the normal ' +
+    'state of a wastewater metagenome. What follows measures its composition, its ' +
+    'distance from anything known, and where the instrument stops reading.'));
   p.append(opChips((t || {}).operating_point || {}));
   app.append(p);
 })();
@@ -1077,9 +1080,9 @@ function interval(iv) {
   const b = (t && t.breakdown) || {};
   const lede = el('p', 'lede',
     'Sewage from one treatment plant in Berlin, sequenced as RNA. The cascade removes ' +
-    'identifiable sequence; the remainder is characterised, not scored. Reported ' +
-    'quantity is distance to the nearest known relative and the confidence in that ' +
-    'distance.');
+    'identifiable sequence and the remainder is characterised. The reported quantity ' +
+    'is distance to the nearest known relative, with the confidence in that ' +
+    'distance.' + cite('cascade'));
   p.append(lede);
   const g = el('div', 'big');
   function big(v, lab) { const d = el('div');
@@ -1244,12 +1247,11 @@ function interval(iv) {
     });
   });
   p.append(el('p', 'note',
-    '<b>The second join changes the unit and the sample, and that is marked on it.</b> ' +
-    'The first two panels are read PAIRS over the whole block this run read. The third ' +
-    'and fourth are MATES, and only the ' + K.searched.toLocaleString() + ' of them the ' +
-    'per-read report searched, so the wedge between them is a re-basing and not a ' +
-    'subdivision. Reading a percentage straight across the whole figure would be wrong, ' +
-    'which is why none is drawn that way.'));
+    '<b>The second join changes unit and sample.</b> Panels one and two are read ' +
+    'PAIRS over the whole block. Panels three and four are MATES, and only the ' +
+    K.searched.toLocaleString() + ' the per-read report searched, so the wedge between ' +
+    'them is a re-basing. No percentage runs straight across this figure.' +
+    cite('library')));
   app.append(p);
 })();
 
@@ -1290,8 +1292,7 @@ function interval(iv) {
   p.append(rows);
   const last = curve[curve.length - 1];
   p.append(el('p', 'note',
-    'Two things this shape says that the numbers alone do not. <b>The sample\\'s own ' +
-    'assembly is the biggest single bite in the cascade</b> at ' +
+    '<b>The sample own assembly is the biggest single bite in the cascade</b>, at ' +
     num(100 * (curve.filter(c => /selfasm_sample_contigs_identified/.test(c.tier))[0]
       || {marginal_removed: 0}).marginal_removed, 1) +
     ' points from ' + gb((curve.filter(c => /selfasm_sample_contigs_identified/
@@ -1425,16 +1426,14 @@ function interval(iv) {
   // will read the host colours as claims about the sample.
   const hc = R.host_confidence_summary || {};
   const warn = el('div', 'callout');
-  warn.innerHTML = '<b>Read this before the colours below.</b> Nothing in this residue is ' +
-    'close enough to a known organism for that organism\\'s host to transfer. The best ' +
-    'match of all ' + hc.subjects + ' is ' + num(hc.best_identity_percent, 1) +
-    '% identity over ' + hc.best_aligned_aa + ' amino acids, <b>' + hc['at_or_above_0.5'] +
-    ' of ' + hc.subjects + '</b> clear even half confidence, and the median is ' +
-    num(hc.median, 2) + '. So the host groups here are labels on the matched database ' +
-    'record, not claims about what is in the water, and the ranking below is really ' +
-    'distance and quantity wearing a colour. <b>That is the finding, not a caveat:</b> ' +
-    'this is what it looks like when a surveillance question runs past the edge of what ' +
-    'the references can answer.';
+  warn.innerHTML = '<b>Read this before the colours below.</b> No residue subject is ' +
+    'close enough for its host to transfer. The best of all ' + hc.subjects + ' is ' +
+    num(hc.best_identity_percent, 1) + '% identity over ' + hc.best_aligned_aa +
+    ' amino acids, <b>' + hc['at_or_above_0.5'] + ' of ' + hc.subjects +
+    '</b> clear half confidence, and the median is ' + num(hc.median, 2) +
+    '. The host groups below label a database record. The surveillance question has ' +
+    'run past the edge of what the references answer, which is itself the ' +
+    'finding.' + cite('residue');
   p.append(warn);
 
   const GCOL = {bacteriophage: 'var(--g-phage)', plant: 'var(--g-plant)',
