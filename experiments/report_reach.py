@@ -79,6 +79,27 @@ ARM_LABEL = {
 NO_IDENTITY = {"hmmsearch_ga", "hmmsearch_open", "jackhmmer", "hhsearch"}
 
 
+def failure_reason(traceback: str) -> str:
+    """The one line from a failed arm's traceback that says what went wrong.
+
+    The last line is the usual choice and it is the wrong one here, because the arms capture
+    their tools' output and re-raise it: the last line of foldseek's stdout is
+    "Time for processing: 0h 0m 0s 5ms", which went into this table as a reason for three
+    runs' worth of structure failures. So a line that names the problem is preferred over a
+    line that merely came last.
+    """
+    rows = [l.strip() for l in traceback.strip().splitlines() if l.strip()]
+    if not rows:
+        return "no traceback recorded"
+    wanted = ("could not", "cannot", "refused", "not find", "no such", "error:",
+              "failed", "permission", "missing")
+    named = [l for l in rows
+             if any(w in l.lower() for w in wanted) and not l.startswith("File \"")]
+    # The exception's own final line still wins when it says something, so prefer the last
+    # matching line over the first: tracebacks nest, and the outermost message is ours.
+    return (named[-1] if named else rows[-1])[:400]
+
+
 def significant(row: dict) -> bool:
     """One floor for every arm, so the arms can be compared at all.
 
@@ -440,8 +461,7 @@ def main(argv: list[str] | None = None) -> int:
     if failed:
         lines.append("\nArms that did not run, and why:\n")
         for arm, t in sorted(failed.items()):
-            first = (t.get("traceback", "").strip().splitlines() or ["no traceback"])[-1]
-            lines.append(f"- `{arm}`: {first}")
+            lines.append(f"- `{arm}`: {failure_reason(t.get('traceback', ''))}")
         out["failed_arms"] = {a: t.get("traceback") for a, t in failed.items()}
 
     # §6 profiles: does a second profile in the same clan reach further

@@ -36,9 +36,9 @@
   "note": "a dinucleotide shuffle preserves stop-codon density, so the null yields few and short ORFs. It calibrates existence of an alignment, not any field conditional on one"
  },
  "stage": {
-  "instance_id": "i-0499bf15b019eba9f",
+  "instance_id": "i-0bf3677bc8ad09bb4",
   "instance_type": "c6i.2xlarge",
-  "commit": "15faed25a8d020978dbc6c7b0ed23d9c05a780e3",
+  "commit": "fb628c4a07cce80bcb06af61ba57a88602dfca9d",
   "seed": 1,
   "threads": 8,
   "arms_staged": "diamond blastp exhaustive hmmsearch jackhmmer hhsearch codon foldseek_afdb foldseek_pdb",
@@ -909,31 +909,31 @@
   {
    "arm": "diamond_sensitive",
    "timing_key": "diamond",
-   "seconds": 95.05,
+   "seconds": 93.26,
    "rows": 15279,
-   "seconds_per_orf": 0.47,
+   "seconds_per_orf": 0.46,
    "ok": true
   },
   {
    "arm": "diamond_very_sensitive",
    "timing_key": "diamond",
-   "seconds": 95.05,
+   "seconds": 93.26,
    "rows": 16257,
-   "seconds_per_orf": 0.47,
+   "seconds_per_orf": 0.46,
    "ok": true
   },
   {
    "arm": "diamond_ultra_sensitive",
    "timing_key": "diamond",
-   "seconds": 95.05,
+   "seconds": 93.26,
    "rows": 16531,
-   "seconds_per_orf": 0.47,
+   "seconds_per_orf": 0.46,
    "ok": true
   },
   {
    "arm": "blastp",
    "timing_key": "blastp",
-   "seconds": 52.81,
+   "seconds": 53.42,
    "rows": 17005,
    "seconds_per_orf": 0.26,
    "ok": true
@@ -941,47 +941,48 @@
   {
    "arm": "sw_exhaustive",
    "timing_key": "exhaustive",
-   "seconds": 899.81,
+   "seconds": 901.9,
    "rows": 101000,
-   "seconds_per_orf": 4.45,
+   "seconds_per_orf": 4.46,
    "ok": true
   },
   {
    "arm": "hmmsearch_ga",
    "timing_key": "hmmsearch",
-   "seconds": 94.43,
+   "seconds": 98.06,
    "rows": 48,
-   "seconds_per_orf": 0.47,
+   "seconds_per_orf": 0.49,
    "ok": true
   },
   {
    "arm": "hmmsearch_open",
    "timing_key": "hmmsearch",
-   "seconds": 94.43,
+   "seconds": 98.06,
    "rows": 160,
-   "seconds_per_orf": 0.47,
+   "seconds_per_orf": 0.49,
    "ok": true
   },
   {
    "arm": "jackhmmer",
    "timing_key": "jackhmmer",
-   "seconds": 1008.31,
+   "seconds": 1150.36,
    "rows": 58932,
-   "seconds_per_orf": 4.99,
+   "seconds_per_orf": 5.69,
    "ok": true
   },
   {
    "arm": "codon",
    "timing_key": "codon",
-   "seconds": 45.39,
+   "seconds": 45.56,
    "rows": 3192,
-   "seconds_per_orf": 0.22,
+   "seconds_per_orf": 0.23,
    "ok": true
   }
  ],
  "failed_arms": {
-  "foldseek_afdb": "Traceback (most recent call last):\n  File \"/opt/hapax/experiments/reach_arms.py\", line 621, in arm_foldseek\n    sh([bins[\"foldseek\"], \"createdb\", out / \"orfs.faa\", qdb,\n  File \"/opt/hapax/experiments/reach_arms.py\", line 88, in sh\n    return subprocess.run([str(c) for c in cmd], check=True, **kw)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib64/python3.12/subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['/opt/hapax/bin/foldseek', 'createdb', '/opt/hapax/out/orfs.faa', '/opt/hapax/out/fsq_afdb', '--prostt5-model', '/opt/hapax/db/prostt5', '--threads', '8']' returned non-zero exit status 1.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/opt/hapax/experiments/reach_arms.py\", line 936, in main\n    rows = plan[arm]()\n           ^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 923, in <lambda>\n    \"foldseek_afdb\": lambda: arm_foldseek(bins, dbs, args.out, args.threads, \"afdb\"),\n                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 627, in arm_foldseek\n    sh([bins[\"foldseek\"], \"createdb\", out / \"orfs.faa\", qdb,\n  File \"/opt/hapax/experiments/reach_arms.py\", line 88, in sh\n    return subprocess.run([str(c) for c in cmd], check=True, **kw)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib64/python3.12/subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['/opt/hapax/bin/foldseek', 'createdb', '/opt/hapax/out/orfs.faa', '/opt/hapax/out/fsq_afdb', '--prostt5-model', '/opt/hapax/db/prostt5/prostt5-f16.gguf', '--threads', '8']' returned non-zero exit status 1.\n",
-  "foldseek_pdb": "Traceback (most recent call last):\n  File \"/opt/hapax/experiments/reach_arms.py\", line 621, in arm_foldseek\n    sh([bins[\"foldseek\"], \"createdb\", out / \"orfs.faa\", qdb,\n  File \"/opt/hapax/experiments/reach_arms.py\", line 88, in sh\n    return subprocess.run([str(c) for c in cmd], check=True, **kw)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib64/python3.12/subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['/opt/hapax/bin/foldseek', 'createdb', '/opt/hapax/out/orfs.faa', '/opt/hapax/out/fsq_pdb', '--prostt5-model', '/opt/hapax/db/prostt5', '--threads', '8']' returned non-zero exit status 1.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/opt/hapax/experiments/reach_arms.py\", line 936, in main\n    rows = plan[arm]()\n           ^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 924, in <lambda>\n    \"foldseek_pdb\": lambda: arm_foldseek(bins, dbs, args.out, args.threads, \"pdb\"),\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 627, in arm_foldseek\n    sh([bins[\"foldseek\"], \"createdb\", out / \"orfs.faa\", qdb,\n  File \"/opt/hapax/experiments/reach_arms.py\", line 88, in sh\n    return subprocess.run([str(c) for c in cmd], check=True, **kw)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib64/python3.12/subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['/opt/hapax/bin/foldseek', 'createdb', '/opt/hapax/out/orfs.faa', '/opt/hapax/out/fsq_pdb', '--prostt5-model', '/opt/hapax/db/prostt5/prostt5-f16.gguf', '--threads', '8']' returned non-zero exit status 1.\n"
+  "foldseek_afdb": "Traceback (most recent call last):\n  File \"/opt/hapax/experiments/reach_arms.py\", line 1002, in main\n    rows = plan[arm]()\n           ^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 989, in <lambda>\n    \"foldseek_afdb\": lambda: arm_foldseek(bins, dbs, args.out, args.threads, \"afdb\"),\n                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 687, in arm_foldseek\n    raise RuntimeError(\nRuntimeError: foldseek createdb refused every ProstT5 model layout offered. Its own output for each, which is the part the exit code does not carry:\n--- foldseek's own download (/opt/hapax/db/prostt5_own):\nCould not find ProstT5 model weights. Download with `foldseek databases ProstT5 prostt5_out tmp`\ncreatedb /opt/hapax/out/orfs.faa /opt/hapax/out/fsq_afdb --prostt5-model /opt/hapax/db/prostt5_own --threads 8 \n\nMMseqs Version:        \t427df8a6b5d0ef78bee0f98cd3e6faaca18f172d\nPath to ProstT5        \t/opt/hapax/db/prostt5_own\nChain name mode        \t0\nWrite mapping file     \t0\nMask b-factor threshold\t0\nCoord store mode       \t2\nWrite lookup file      \t1\nInput format           \t0\nFile Inclusion Regex   \t.*\nFile Exclusion Regex   \t^$\nThreads                \t8\nVerbosity              \t3\n\nConverting sequences\n[\nTime for merging to fsq_afdb_h: 0h 0m 0s 1ms\nTime for merging to fsq_afdb: 0h 0m 0s 0ms\nDatabase type: Aminoacid\nTime for processing: 0h 0m 0s 12ms\n\n--- staged directory (/opt/hapax/db/prostt5):\nCould not find ProstT5 model weights. Download with `foldseek databases ProstT5 prostt5_out tmp`\n/opt/hapax/out/fsq_afdb exists and will be overwritten\n/opt/hapax/out/fsq_afdb exists and will be overwritten\ncreatedb /opt/hapax/out/orfs.faa /opt/hapax/out/fsq_afdb --prostt5-model /opt/hapax/db/prostt5 --threads 8 \n\nMMseqs Version:        \t427df8a6b5d0ef78bee0f98cd3e6faaca18f172d\nPath to ProstT5        \t/opt/hapax/db/prostt5\nChain name mode        \t0\nWrite mapping file     \t0\nMask b-factor threshold\t0\nCoord store mode       \t2\nWrite lookup file      \t1\nInput format           \t0\nFile Inclusion Regex   \t.*\nFile Exclusion Regex   \t^$\nThreads                \t8\nVerbosity              \t3\n\nConverting sequences\n[\nTime for merging to fsq_afdb_h: 0h 0m 0s 0ms\nTime for merging to fsq_afdb: 0h 0m 0s 0ms\nDatabase type: Aminoacid\nTime for processing: 0h 0m 0s 5ms\n\n--- weights file (/opt/hapax/db/prostt5/prostt5-f16.gguf):\nCould not find ProstT5 model weights. Download with `foldseek databases ProstT5 prostt5_out tmp`\n/opt/hapax/out/fsq_afdb exists and will be overwritten\n/opt/hapax/out/fsq_afdb exists and will be overwritten\ncreatedb /opt/hapax/out/orfs.faa /opt/hapax/out/fsq_afdb --prostt5-model /opt/hapax/db/prostt5/prostt5-f16.gguf --threads 8 \n\nMMseqs Version:        \t427df8a6b5d0ef78bee0f98cd3e6faaca18f172d\nPath to ProstT5        \t/opt/hapax/db/prostt5/prostt5-f16.gguf\nChain name mode        \t0\nWrite mapping file     \t0\nMask b-factor threshold\t0\nCoord store mode       \t2\nWrite lookup file      \t1\nInput format           \t0\nFile Inclusion Regex   \t.*\nFile Exclusion Regex   \t^$\nThreads                \t8\nVerbosity              \t3\n\nConverting sequences\n[\nTime for merging to fsq_afdb_h: 0h 0m 0s 1ms\nTime for merging to fsq_afdb: 0h 0m 0s 0ms\nDatabase type: Aminoacid\nTime for processing: 0h 0m 0s 5ms\n\n",
+  "foldseek_pdb": "Traceback (most recent call last):\n  File \"/opt/hapax/experiments/reach_arms.py\", line 1002, in main\n    rows = plan[arm]()\n           ^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 990, in <lambda>\n    \"foldseek_pdb\": lambda: arm_foldseek(bins, dbs, args.out, args.threads, \"pdb\"),\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 687, in arm_foldseek\n    raise RuntimeError(\nRuntimeError: foldseek createdb refused every ProstT5 model layout offered. Its own output for each, which is the part the exit code does not carry:\n--- foldseek's own download (/opt/hapax/db/prostt5_own):\nCould not find ProstT5 model weights. Download with `foldseek databases ProstT5 prostt5_out tmp`\ncreatedb /opt/hapax/out/orfs.faa /opt/hapax/out/fsq_pdb --prostt5-model /opt/hapax/db/prostt5_own --threads 8 \n\nMMseqs Version:        \t427df8a6b5d0ef78bee0f98cd3e6faaca18f172d\nPath to ProstT5        \t/opt/hapax/db/prostt5_own\nChain name mode        \t0\nWrite mapping file     \t0\nMask b-factor threshold\t0\nCoord store mode       \t2\nWrite lookup file      \t1\nInput format           \t0\nFile Inclusion Regex   \t.*\nFile Exclusion Regex   \t^$\nThreads                \t8\nVerbosity              \t3\n\nConverting sequences\n[\nTime for merging to fsq_pdb_h: 0h 0m 0s 1ms\nTime for merging to fsq_pdb: 0h 0m 0s 0ms\nDatabase type: Aminoacid\nTime for processing: 0h 0m 0s 5ms\n\n--- staged directory (/opt/hapax/db/prostt5):\nCould not find ProstT5 model weights. Download with `foldseek databases ProstT5 prostt5_out tmp`\n/opt/hapax/out/fsq_pdb exists and will be overwritten\n/opt/hapax/out/fsq_pdb exists and will be overwritten\ncreatedb /opt/hapax/out/orfs.faa /opt/hapax/out/fsq_pdb --prostt5-model /opt/hapax/db/prostt5 --threads 8 \n\nMMseqs Version:        \t427df8a6b5d0ef78bee0f98cd3e6faaca18f172d\nPath to ProstT5        \t/opt/hapax/db/prostt5\nChain name mode        \t0\nWrite mapping file     \t0\nMask b-factor threshold\t0\nCoord store mode       \t2\nWrite lookup file      \t1\nInput format           \t0\nFile Inclusion Regex   \t.*\nFile Exclusion Regex   \t^$\nThreads                \t8\nVerbosity              \t3\n\nConverting sequences\n[\nTime for merging to fsq_pdb_h: 0h 0m 0s 1ms\nTime for merging to fsq_pdb: 0h 0m 0s 0ms\nDatabase type: Aminoacid\nTime for processing: 0h 0m 0s 5ms\n\n--- weights file (/opt/hapax/db/prostt5/prostt5-f16.gguf):\nCould not find ProstT5 model weights. Download with `foldseek databases ProstT5 prostt5_out tmp`\n/opt/hapax/out/fsq_pdb exists and will be overwritten\n/opt/hapax/out/fsq_pdb exists and will be overwritten\ncreatedb /opt/hapax/out/orfs.faa /opt/hapax/out/fsq_pdb --prostt5-model /opt/hapax/db/prostt5/prostt5-f16.gguf --threads 8 \n\nMMseqs Version:        \t427df8a6b5d0ef78bee0f98cd3e6faaca18f172d\nPath to ProstT5        \t/opt/hapax/db/prostt5/prostt5-f16.gguf\nChain name mode        \t0\nWrite mapping file     \t0\nMask b-factor threshold\t0\nCoord store mode       \t2\nWrite lookup file      \t1\nInput format           \t0\nFile Inclusion Regex   \t.*\nFile Exclusion Regex   \t^$\nThreads                \t8\nVerbosity              \t3\n\nConverting sequences\n[\nTime for merging to fsq_pdb_h: 0h 0m 0s 0ms\nTime for merging to fsq_pdb: 0h 0m 0s 0ms\nDatabase type: Aminoacid\nTime for processing: 0h 0m 0s 5ms\n\n",
+  "hhsearch": "Traceback (most recent call last):\n  File \"/opt/hapax/experiments/reach_arms.py\", line 1002, in main\n    rows = plan[arm]()\n           ^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 988, in <lambda>\n    \"hhsearch\": lambda: arm_hhsearch(bins, dbs, args.out, args.threads),\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 584, in arm_hhsearch\n    raise RuntimeError(\nRuntimeError: hhmake refused all 202 alignments, so no query profile was built and this arm measured nothing. An empty table here would read as 'profile search found no relative', which is a different claim.\n"
  },
  "profiles": [
   {
@@ -1361,6 +1362,6 @@
    "best_arm_query_coverage": 1.0
   }
  ],
- "script_sha256": "2dd71534635e2354ad62b088e433f7f9633c04c0d2899483d7a2b8a166915027",
- "git_sha": "15faed25a8d020978dbc6c7b0ed23d9c05a780e3"
+ "script_sha256": "6a109b12cfa0f65e22dfbe5563b502be09c0d8875320df1cc1d57c9c16a80cec",
+ "git_sha": "fb628c4a07cce80bcb06af61ba57a88602dfca9d"
 }

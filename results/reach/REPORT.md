@@ -61,6 +61,9 @@ on one. That is the same wall `results/divergent_known/` §2 reached from the ot
 
 ## The answer to the first two arms: nothing beats the production search
 
+The baseline is DIAMOND `--ultra-sensitive`, the most sensitive setting the production search
+offers; every other arm is scored against it.
+
 | arm | contigs where it found a nearer relative than the baseline |
 |---|---|
 | DIAMOND `--sensitive` | 0 of 16 |
@@ -74,8 +77,9 @@ relative for every query on the panel**. The per-contig table is [`TABLES.md`](T
 
 **So the binding constraint is the significance statistics, not the seeding.** That was the
 expectation this arm was built to test cheaply, and it is confirmed: removing the heuristic
-entirely moves nothing. The exhaustive arm cost 550 s against DIAMOND's 94 s for three modes
-and BLASTP's 40 s — affordable, and it buys nothing on this material.
+entirely moves nothing. The exhaustive arm cost 902 s against DIAMOND's 93 s for all three
+modes and BLASTP's 53 s — affordable at this panel's size, and it buys nothing on this
+material.
 
 ### What the exhaustive arm does produce, and why it is not reach
 
@@ -83,7 +87,10 @@ It reports 595 query-subject pairs the baseline did not, which looks like reach 
 control is read: **273 of them are on the divergent contigs and 260 on the near-reference
 contigs.** BLASTP's 283 extras split 124 to 128 the same way. A contig that already matches
 its reference at 96% picks up just as many, so these are the tail of marginal alignments
-rather than a longer reach, and none of them is the nearest relative for its contig.
+rather than a longer reach, and none of them is the nearest relative for its contig. The
+furthest of the 595 is 19.3% identity over 450 residues — on the floor described in the next
+section, which is where a database of this size puts its last significant alignment
+regardless of the query.
 
 ## The statistic in the brief does not work, and the control is how we know
 
@@ -130,6 +137,14 @@ from EBI:
 
 Seven polymerase identities from `results/divergent_contigs/` and the holdout's protein
 identity from `results/holdout_cascade/`, to the decimal place.
+
+**And the table reproduces itself.** Runs 2 and 3 were separate instances, separate
+containers and separately staged databases, a little under an hour apart. Regenerating
+[`TABLES.md`](TABLES.md) from each gives files that differ in exactly two places: the
+provenance line naming the run, and the wall-clock column. Every identity, every count,
+every control, every saturation figure is identical. The timings are the part that does not
+reproduce — jackhmmer ran 1,008 s and then 1,150 s on the same input — which is the ordinary
+reason this repo's convention says a benchmark number needs its instance type and its day.
 
 ## Profiles reach everything the sequence arms reach, and nothing further
 
@@ -210,12 +225,13 @@ of jackhmmer's go, every query on every real pile keeps its hit, and the null is
 every seed for every arm. **So this is a repeat artefact named, not a sensitivity traded**,
 and it is the same aggregate-against-per-unit shape as the three failures of 2026-11-20.
 
-It also puts a number on what iterative profile search actually bought. jackhmmer reports
-35,704 query-subject pairs the baseline never returned, which is a sixtyfold expansion —
-and they split 13,096 to 13,585 between the divergent contigs and the 95–99% control.
-Equal, so they are the marginal tail, like the exhaustive arm's. Five iterations of profile
-building expand the hit list enormously, find no nearer relative for any of the sixteen
-contigs, and are the only arm on the panel to put anything above significance on a shuffle.
+It also puts a number on what iterative profile search actually bought. jackhmmer returns
+45,860 significant query-subject pairs against the baseline's 11,611 — **3.9 times as many,
+and a strict superset: it misses none of the baseline's.** Of the 34,595 pairs it adds,
+12,804 are on the divergent contigs and 13,350 on the 95–99% control. Equal again, so they
+are the marginal tail, like the exhaustive arm's. Five iterations of profile building
+quadruple the hit list, find no nearer relative for any of the sixteen contigs, and are the
+only arm on the panel that puts anything above significance on a shuffle.
 
 ## What the two shakedown runs bought, which was five bugs
 
