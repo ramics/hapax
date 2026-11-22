@@ -3672,8 +3672,10 @@ function interval(iv) {
   const P = D.profile, curve = (D.tier_table || {}).curve || [];
   const brk = (D.tier_table || {}).breakdown;
   if (!P || !curve.length || !brk) return;
-  const p = panel('Named against recognised: cascade reconciliation',
-    'Reconciling 7% named against 77% identifiable.');
+  // The subtitle quotes the two figures this panel reconciles, so they are computed
+  // before it is written rather than typed into it. They were "7%" and "77%", which is
+  // Berlin's answer printed on whatever library the page was built from.
+  let named = 0, unnamed = 0; const unnamedRows = [];
   // Which tiers can name is a property of the tier, declared here where it can be read.
   // A Kraken2 or DIAMOND hit carries a taxon or an accession; an artefact filter, a
   // SILVA match and a match to a contig from this very sample tell you the sequence has
@@ -3684,7 +3686,6 @@ function interval(iv) {
                rrna: 'ribosomal RNA',
                selfasm_sample_contigs_rrna: 'own-sample ribosomal contigs',
                selfasm_sample_contigs_identified_norrna: 'own-sample unnamed contigs'};
-  let named = 0, unnamed = 0; const unnamedRows = [];
   curve.forEach(c => {
     const m = c.marginal_removed || 0;
     if (CAN_NAME[c.tier]) { named += m; }
@@ -3692,6 +3693,9 @@ function interval(iv) {
   });
   const k2here = 1 - (((P.at_confidence['0.1'] || {}).by_superkingdom || [])
     .filter(g => g.group === 'unclassified')[0] || {}).fraction;
+  const p = panel('Named against recognised: cascade reconciliation',
+    'Reconciling ' + pct(named) + ' named against ' + pct(brk.identified.point) +
+    ' identifiable.');
   const box = el('div', 'cmp');
   const rowbar = (lab, v, col, sub) => {
     const r = el('div', 'crow');
@@ -3810,15 +3814,24 @@ function interval(iv) {
   if (w && ids.length) {
     const lo = Math.min.apply(null, ids), hi = Math.max.apply(null, ids);
     const note = el('div', 'callout');
+    // Every figure in this sentence is read from the gene map. The two it used to
+    // carry - "thirty identity points apart" and an "about 66%" fallback for a genome
+    // with no polymerase called - were typed, and the second would have printed a
+    // Berlin-shaped number on a contig it had never measured.
+    const cv = ctl ? ctl.orfs.filter(o => o.pident != null).map(o => o.pident) : [];
+    const span = v => num(Math.min.apply(null, v), 1) + ' to ' +
+      num(Math.max.apply(null, v), 1) + '%';
     note.innerHTML = '<b>This is the measurement that matters most on the page, and it ' +
-      'is a failure.</b> Two contigs from one library, ' +
-      (ctl ? 'thirty identity points apart, ' : '') + 'get the same single word: ' +
-      '<i>identified</i>, and both are subtracted as known background. A whole-contig ' +
-      'identity of ' + (pol ? num(pol.pident, 1) + '%' : 'about 66%') + ' is also not a ' +
-      'property of the contig: this genome spans ' + num(hi - lo, 1) + ' points between ' +
-      'its own genes, so that figure is whichever gene won on bitscore. Ranking by ' +
-      'identity does not rescue it either, because it sits high in the removed pile ' +
-      'rather than low' + cite('nulls') + '.';
+      'is a failure.</b> Two contigs from one library get the same single word: ' +
+      '<i>identified</i>, and both are subtracted as known background' +
+      (cv.length ? ', though this one&rsquo;s genes read ' + span(ids) +
+        ' and the published one&rsquo;s read ' + span(cv) : '') + '. ' +
+      (pol ? 'A whole-contig identity of ' + num(pol.pident, 1) + '% is also not a ' +
+        'property of the contig: ' : 'A single whole-contig identity is not a property ' +
+        'of the contig either: ') + 'this genome spans ' + num(hi - lo, 1) +
+      ' points between its own genes, so that figure is whichever gene won on bitscore. ' +
+      'Ranking by identity does not rescue it either, because it sits high in the ' +
+      'removed pile rather than low' + cite('nulls') + '.';
     p.append(note);
   }
 
