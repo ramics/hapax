@@ -367,7 +367,8 @@ def main(argv: list[str] | None = None) -> int:
     out["controls"] = control_rows
     lines.append(f"\nThe null is {panel['shuffle']['implementation']}, fallback per seed "
                  f"{panel['shuffle']['fallback_records']} out of "
-                 f"{panel['shuffle'].get('records_shuffled_per_seed')} records each. "
+                 f"{panel['shuffle'].get('records_shuffled_per_seed', 'all')} records "
+                 f"each. "
                  f"{panel['shuffle']['note']}.\n")
 
     # §5 cost
@@ -475,36 +476,52 @@ def main(argv: list[str] | None = None) -> int:
         out["codon"] = codon_rows
 
     # §8 one row per contig, so a reader can see which gene carried the number
-    lines.append("\n## 8. Per contig, under the baseline and under the arm that reached "
-                 "furthest\n")
-    lines.append("| contig | pile | nearest named relative | baseline most distant %id | "
-                 "best arm | its most distant %id | gene |")
-    lines.append("|---|---|---|---|---|---|---|")
+    lines.append("\n## 8. Per contig: did any arm find a nearer relative than the "
+                 "baseline\n")
+    lines.append("Ranked on the NEAREST relative, not the most distant one, for the reason "
+                 "in section 1: the most-distant column is set by the floor. A contig whose "
+                 "best arm is the baseline is a contig where nothing in this comparison "
+                 "beat the production search. The gene column says which ORF carried the "
+                 "number, because a complete genome's genes sit at different distances - "
+                 "`results/divergent_contigs/` measured a 17.4-point median spread between "
+                 "them - so a per-contig identity with no gene beside it is the error that "
+                 "report named.\n")
+    lines.append("| contig | pile | nearest named relative | baseline nearest %id | "
+                 "best arm | its nearest %id | gain | gene |")
+    lines.append("|---|---|---|---|---|---|---|---|")
     contig_rows = []
     for row in panel["rows"]:
         if row["arm"] == "shuffled":
             continue
         qid = row["qid"]
-        base = most_distant(baseline, qid) if baseline else None
-        cands = [(a, most_distant(a, qid)) for a in arms_present if a not in NO_IDENTITY]
+        base = best(baseline, qid) if baseline else None
+        base_id = base.get("pident") if base else None
+        cands = [(a, best(a, qid)) for a in arms_present if a not in NO_IDENTITY]
         cands = [(a, h) for a, h in cands if h and h.get("pident") is not None]
-        winner = min(cands, key=lambda t: t[1]["pident"]) if cands else None
+        # Highest identity wins, with the baseline preferred on a tie: the question is
+        # whether anything beat the production search, so a tie is "nothing did".
+        winner = max(cands, key=lambda t: (t[1]["pident"], t[0] == baseline)) \
+            if cands else None
+        gain = (round(winner[1]["pident"] - base_id, 1)
+                if winner and base_id is not None else None)
         entry = dict(
             qid=qid, pile=row["arm"], taxon=taxon_of_query.get(qid), nt=row["nt"],
             mapped_depth=row.get("mapped_depth"),
             polymerase_pident=row.get("polymerase_pident"),
-            baseline_most_distant=(round(base["pident"], 1)
-                                   if base and base.get("pident") is not None else None),
+            baseline_nearest=(round(base_id, 1) if base_id is not None else None),
             best_arm=winner[0] if winner else None,
-            best_arm_most_distant=(round(winner[1]["pident"], 1) if winner else None),
+            best_arm_nearest=(round(winner[1]["pident"], 1) if winner else None),
+            gain_over_baseline_points=gain,
             best_arm_gene=winner[1]["orf"] if winner else None,
-            best_arm_subject=winner[1]["subject"] if winner else None)
+            best_arm_subject=winner[1]["subject"] if winner else None,
+            best_arm_query_coverage=(round(winner[1]["qcov"], 3) if winner else None))
         contig_rows.append(entry)
         lines.append(
             f"| {qid} | {row['arm']} | {taxon_of_query.get(qid, '-')[:34]} | "
-            f"{fmt(entry['baseline_most_distant'])} | "
+            f"{fmt(entry['baseline_nearest'])} | "
             f"{ARM_LABEL.get(entry['best_arm'], '-')} | "
-            f"{fmt(entry['best_arm_most_distant'])} | "
+            f"{fmt(entry['best_arm_nearest'])} | "
+            f"{'none' if gain in (0.0, None) else format(gain, '+.1f')} | "
             f"{(entry['best_arm_gene'] or '-').split('__')[-1]} |")
     out["per_contig"] = contig_rows
 
