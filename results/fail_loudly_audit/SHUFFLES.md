@@ -16,6 +16,19 @@ move one way — towards the test — so the direction of the error is fixed and
 Read the second kind first. There are three, and all three were already withdrawn before
 this audit, by the threads that own them.
 
+**Correction, after this file was first committed: the bug is still live on `main`.**
+`experiments/divergent_known.py` defines its own naive walk with `return s` after 20 retries,
+and that is the copy `main` runs; `experiments/shuffle_control.py`, the corrected module, is
+on a branch and not on `main`. So a fourth claim belongs in the table below: running `main`'s
+`divergent` stage over the holdout library's identified pile reported 175 shuffles of 22,110,
+0.79%, carrying a significant hit. Withdrawn, same shape as the 324-of-11,361 case, and the
+file records no count of how often the fallback fired, so the share of those 175 that were
+never shuffled is unrecoverable from the output. Being fixed in PR #33, which imports the
+canonical module rather than writing a fourth copy of it and adds the `null_census` that three
+broken copies would have had to show. **The lesson this file now carries about itself**: an
+audit that reads committed *results* does not see a live defect in committed *code*, and this
+one did not.
+
 ## 1. Measured, not read off the code
 
 `experiments/shuffle_fallback_audit.py --seed 1..5 --fasta <resasm contigs>`: every
@@ -78,10 +91,17 @@ than controlled.
 
 ## 3. Priority order, nothing re-run
 
-1. **Nothing is outstanding.** Every claim this bug touched sits in `divergent_known/` and
-   `holdout_cascade/`, and both were re-run and corrected by the threads that own them before
-   this audit reached them. The correction is on a branch, not on `main`.
-2. **`divergent_known.py` is edited by the fail-loudly pass**, and the owning thread has
+1. **One thing is outstanding and it is code, not a number**: `main`'s own
+   `divergent_known.py` still carries the naive walk, so any run of the `divergent` stage from
+   `main` produces a contaminated null today. PR #33 replaces it with the canonical
+   `shuffle_control` module. Until that lands, treat any null from that stage as withdrawn on
+   sight.
+2. **No committed claim is outstanding.** Every claim this bug touched sits in
+   `divergent_known/` and `holdout_cascade/`, and both were re-run and corrected by the
+   threads that own them. `divergent_known/`'s re-run reproduced every number to the digit
+   from a materially different code state (§5b there), which is the stronger reproduction
+   claim this repo rarely gets to make.
+3. **`divergent_known.py` is edited by the fail-loudly pass**, and the owning thread has
    agreed the order: this branch merges first, that thread takes these hunks rather than
    re-deriving them, and the single re-run happens afterwards. Its side is small and does not
    conflict semantically — the local `dinuc_shuffle` deleted for an import of
@@ -91,10 +111,10 @@ than controlled.
    provenance rule that forces a re-run of its committed result, and the owning thread's
    `experiments/shuffle_control.py` replaces the shuffle in the same file, so the re-run
    should happen **once, after both land**, not twice.
-3. **`residue_structure/`'s null arm** is a ≤0.10% contamination pointing the conservative
+4. **`residue_structure/`'s null arm** is a ≤0.10% contamination pointing the conservative
    way inside a field already reported as non-discriminating. Re-running it changes a number
    nobody quotes. Worth doing when that experiment is next touched, not on its own.
-4. **The one measurement nobody has made**: whether the dead-end rate is higher on the
+5. **The one measurement nobody has made**: whether the dead-end rate is higher on the
    sequence classes this project cares about most — low-complexity and repetitive residue
    contigs are exactly where a walk dead-ends, and that is also where a chance alignment comes
    from. The 304-of-304 concentration above establishes that the two coincide on one pile; what
