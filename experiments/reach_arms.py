@@ -113,7 +113,7 @@ def write_fasta(path: Path, records: list[tuple[str, str]]) -> None:
 
 
 # ------------------------------------------------------------------ ORFs
-def call_orfs(panel: Path, null: Path, out: Path) -> dict:
+def call_orfs(panel: Path, nulls: list[Path], out: Path) -> dict:
     """Prodigal in metagenome mode over every pile, via pyrodigal.
 
     pyrodigal rather than the Prodigal binary: it is the same algorithm and the same
@@ -132,7 +132,7 @@ def call_orfs(panel: Path, null: Path, out: Path) -> dict:
     finder = pyrodigal.GeneFinder(meta=True)
     proteins: list[tuple[str, str]] = []
     rows: list[dict] = []
-    for source, pile in ((panel, "real"), (null, "shuffled")):
+    for source, pile in [(panel, "real")] + [(n, "shuffled") for n in nulls]:
         for name, desc, seq in read_fasta(source):
             arm = desc.split()[0] if desc else pile
             genes = finder.find_genes(seq.encode())
@@ -398,8 +398,13 @@ def arm_jackhmmer(bins: dict, dbs: dict, out: Path, threads: int) -> list[dict]:
     the per-iteration counts are kept so the curve is visible rather than a single endpoint.
     """
     tbl = out / "jackhmmer.tbl"
+    # `-A` keeps the final iteration's alignment per query. That file is this run's only
+    # source of a query profile built from real homologues, and the profile-to-profile arm
+    # is built on it rather than on an hhblits pass against UniRef30 - which would be a 50
+    # GB download and, more to the point, a different subject universe from the one every
+    # other arm here searches.
     sh([bins["jackhmmer"], "-N", 5, "--cpu", threads, "--noali",
-        "--domtblout", tbl, "-E", 10, "--incE", 1e-3,
+        "--domtblout", tbl, "-A", out / "jackhmmer.sto", "-E", 10, "--incE", 1e-3,
         out / "orfs.faa", dbs["prot_fasta"]], stdout=subprocess.DEVNULL)
     rows = []
     with open(tbl) as handle:
@@ -419,6 +424,129 @@ def arm_jackhmmer(bins: dict, dbs: dict, out: Path, threads: int) -> list[dict]:
                 qcov=(int(f[18]) - int(f[17]) + 1) / max(qlen, 1),
                 qstart=int(f[17]), qend=int(f[18]), sstart=int(f[15]), send=int(f[16])))
     return rows
+
+
+def arm_hhsearch(bins: dict, dbs: dict, out: Path, threads: int) -> list[dict]:
+    """Profile against profile: the query's own HMM searched against Pfam's.
+
+    WHY THIS IS A SEPARATE ARM FROM hmmsearch. hmmsearch compares a curated profile to the
+    query's single sequence, so one side of the comparison carries no information about the
+    query's family. HHsearch compares two profiles, which is the more sensitive instrument
+    on paper and the one the literature on this family leans on. If profiles help here at
+    all, this is where the help should be largest - and if it is not larger than hmmsearch,
+    that is the measurement.
+
+    WHERE THE QUERY PROFILE COMES FROM, AND WHY NOT hhblits. The standard recipe builds the
+    query profile by iterating against UniRef30, a 50 GB download. That would also change
+    the subject universe behind the query side, which is the one thing this comparison holds
+    fixed: every other arm here derives whatever it knows about the query from Swiss-Prot
+    plus RefSeq viral. So the profile is built from jackhmmer's own final alignment against
+    exactly that set. The cost is a shallower profile than hhblits would give, which makes
+    this arm's reach a lower bound rather than the method's ceiling, and that is said in the
+    report rather than left for a reader to notice.
+
+    The target side is Pfam's HHM database, so this arm's subjects are Pfam and no
+    difference against the sequence baseline is computed for it.
+    """
+    sto = out / "jackhmmer.sto"
+    if not sto.exists():
+        raise FileNotFoundError(
+            f"{sto} is missing: the profile arm needs jackhmmer's alignment, so the "
+            f"jackhmmer arm has to run before it. Pass both, in that order.")
+
+    # jackhmmer writes one Stockholm block per query, concatenated. Split on the terminator
+    # rather than parsing: each block names its own query in the `#=GS` lines and hhmake
+    # reads Stockholm directly, so nothing needs reformatting.
+    blocks, current = [], []
+    for line in sto.read_text().splitlines(keepends=True):
+        current.append(line)
+        if line.strip() == "//":
+            blocks.append("".join(current))
+            current = []
+    print(f"  {len(blocks)} query alignments from jackhmmer", flush=True)
+
+    hhm_dir = out / "hhm"
+    hhm_dir.mkdir(exist_ok=True)
+    queries = [name for name, _, _ in read_fasta(out / "orfs.faa")]
+    pairs: list[tuple[str, Path]] = []
+    for i, block in enumerate(blocks):
+        # The query an alignment belongs to is the sequence jackhmmer searched with, which
+        # appears in the block's `#=GS` or `#=GF` metadata depending on the version. Falling
+        # back to file order is safe because jackhmmer emits one block per query in query
+        # order, and the assertion below catches it if that ever stops being true.
+        named = [q for q in queries if q in block]
+        qname = named[0] if named else (queries[i] if i < len(queries) else f"block{i}")
+        path = hhm_dir / f"{qname}.sto"
+        path.write_text(block)
+        pairs.append((qname, path))
+
+    rows = []
+    for qname, path in pairs:
+        hhm = path.with_suffix(".hhm")
+        try:
+            sh([bins["hhmake"], "-i", path, "-o", hhm, "-M", "first", "-v", 0])
+        except subprocess.CalledProcessError:
+            # An alignment of one sequence is a profile with no information; hhmake refuses
+            # it. That is a real outcome for an ORF jackhmmer found nothing for, and it is
+            # recorded by the ORF's absence from these rows rather than by a crash.
+            print(f"    {qname}: no profile (alignment too shallow)", flush=True)
+            continue
+        hhr = path.with_suffix(".hhr")
+        sh([bins["hhsearch"], "-i", hhm, "-d", dbs["hh_pfam"], "-o", hhr,
+            "-cpu", threads, "-e", 10, "-v", 0])
+        for hit in _parse_hhr(hhr):
+            rows.append(dict(
+                arm="hhsearch", program="hhsearch, query HMM from jackhmmer", db="Pfam-A",
+                orf=qname, subject=hit["subject"], pident=None, aln=hit["cols"],
+                qlen=hit["qlen"], slen=hit["slen"], evalue=hit["evalue"],
+                bitscore=hit["score"], probability=hit["prob"],
+                qcov=hit["cols"] / max(hit["qlen"], 1),
+                qstart=hit["qstart"], qend=hit["qend"],
+                sstart=hit["sstart"], send=hit["send"]))
+    return rows
+
+
+def _parse_hhr(path: Path) -> list[dict]:
+    """The hit table of one `.hhr`, which is fixed-width and not tabular.
+
+    Parsed from the summary block rather than the alignments, and by the column positions
+    hhsearch documents rather than by splitting on whitespace: a long Pfam description
+    contains spaces and would shift every field after it.
+    """
+    text = path.read_text().splitlines()
+    qlen = 0
+    for line in text:
+        if line.startswith("Match_columns"):
+            qlen = int(line.split()[-1])
+            break
+    out, started = [], False
+    for line in text:
+        if line.startswith(" No Hit"):
+            started = True
+            continue
+        if started:
+            if not line.strip():
+                break
+            # ` No Hit  Prob E-value P-value  Score  SS Cols Query HMM Template HMM`
+            tail = line[34:].split()
+            if len(tail) < 7:
+                continue
+            subject = line[4:34].split()[0]
+            try:
+                prob, evalue, _pvalue, score = (float(tail[0]), float(tail[1]),
+                                                float(tail[2]), float(tail[3]))
+                cols = int(tail[5])
+                qrange = tail[6].split("-")
+                srange = tail[7].split("-") if len(tail) > 7 else ["0", "0"]
+                slen_field = tail[8] if len(tail) > 8 else "(0)"
+            except (ValueError, IndexError):
+                continue
+            out.append(dict(
+                subject=subject, prob=prob, evalue=evalue, score=score, cols=cols,
+                qlen=qlen, qstart=int(qrange[0]), qend=int(qrange[-1]),
+                sstart=int(srange[0]), send=int(srange[-1]),
+                slen=int(slen_field.strip("()") or 0)))
+    return out
 
 
 def arm_foldseek(bins: dict, dbs: dict, out: Path, threads: int, target: str) -> list[dict]:
@@ -661,8 +789,10 @@ def arm_codon(bins: dict, dbs: dict, out: Path, threads: int) -> list[dict]:
 
 
 # ------------------------------------------------------------------ driver
-ARMS = ("diamond", "blastp", "exhaustive", "hmmsearch", "jackhmmer", "foldseek_afdb",
-        "foldseek_pdb", "codon")
+#: Order matters in one place only: `hhsearch` builds its query profile from the alignment
+#: `jackhmmer` writes, so it has to come after it. The driver runs them in the order given.
+ARMS = ("diamond", "blastp", "exhaustive", "hmmsearch", "jackhmmer", "hhsearch",
+        "foldseek_afdb", "foldseek_pdb", "codon")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -670,7 +800,10 @@ def main(argv: list[str] | None = None) -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--panel", type=Path, required=True)
-    ap.add_argument("--null", type=Path, required=True)
+    ap.add_argument("--null", type=Path, nargs="+", required=True,
+                    help="one or more shuffled piles, one per null seed. Five is the "
+                         "convention: the real arms are fixed sequence, so the shuffle is "
+                         "the only place a seed means anything here")
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--threads", type=int, default=8)
     ap.add_argument("--arms", nargs="+", default=list(ARMS), choices=ARMS)
@@ -680,7 +813,8 @@ def main(argv: list[str] | None = None) -> int:
     args.out.mkdir(parents=True, exist_ok=True)
 
     bins = {name: (args.bin_dir / name) for name in
-            ("diamond", "blastp", "tblastn", "hmmsearch", "jackhmmer", "foldseek")}
+            ("diamond", "blastp", "tblastn", "hmmsearch", "jackhmmer", "foldseek",
+             "hhsearch", "hhmake")}
     for name, path in bins.items():
         if not path.exists():
             found = shutil.which(name)
@@ -695,9 +829,10 @@ def main(argv: list[str] | None = None) -> int:
         fs_afdb=args.db_dir / "fs_afdb_sprot" / "afdb_sprot",
         fs_pdb=args.db_dir / "fs_pdb" / "pdb",
         viral_nt=args.db_dir / "viral_nt",
+        hh_pfam=args.db_dir / "hh_pfam" / "pfam",
     )
 
-    orf_stats = call_orfs(args.panel, args.null, args.out)
+    orf_stats = call_orfs(args.panel, list(args.null), args.out)
     print(f"=== ORFs: {json.dumps(orf_stats)} ===", flush=True)
 
     # Loaded once and shared: arm 5 walks subject coordinates into genome sequence, and
@@ -716,6 +851,7 @@ def main(argv: list[str] | None = None) -> int:
         "exhaustive": lambda: arm_exhaustive(dbs, args.out, args.threads),
         "hmmsearch": lambda: arm_hmmsearch(bins, dbs, args.out, args.threads),
         "jackhmmer": lambda: arm_jackhmmer(bins, dbs, args.out, args.threads),
+        "hhsearch": lambda: arm_hhsearch(bins, dbs, args.out, args.threads),
         "foldseek_afdb": lambda: arm_foldseek(bins, dbs, args.out, args.threads, "afdb"),
         "foldseek_pdb": lambda: arm_foldseek(bins, dbs, args.out, args.threads, "pdb"),
         "codon": lambda: arm_codon(bins, dbs, args.out, args.threads),

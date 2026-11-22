@@ -67,6 +67,12 @@ BLAST_VERSION = "2.17.0"
 #: arm of this run is the production search, so it has to be the production binary.
 DIAMOND_VERSION = "2.1.10"
 HMMER_VERSION = "3.4"
+HHSUITE_VERSION = "3.3.0"
+#: The Steinegger lab's mirror of Pfam as HHM profiles. Pinned to a release rather than a
+#: `current` path: the profile-to-profile arm's reach depends on which Pfam it searched, and
+#: a floating URL would make that number uncitable.
+HH_PFAM_URL = ("https://wwwuser.gwdg.de/~compbiol/data/hhsuite/databases/hhsuite_dbs/"
+               "pfamA_35.0.tar.gz")
 FOLDSEEK_VERSION = "9-427df8a"
 
 #: Eight vCPU is the account ceiling - every `4xlarge` and larger came back
@@ -79,7 +85,7 @@ DEFAULT_INSTANCE_TYPE = "c6i.2xlarge"
 #: Swiss-Prot and the viral sets about 5. 150 leaves room for a Foldseek database that has
 #: grown since this was measured, and at $0.08/GB-month the headroom costs under a cent an
 #: hour.
-DEFAULT_VOLUME_GB = 150
+DEFAULT_VOLUME_GB = 200
 DEFAULT_VOLUME_THROUGHPUT = 250
 DEFAULT_VOLUME_IOPS = 3000
 
@@ -272,6 +278,7 @@ def main(argv: list[str] | None = None) -> int:
         CODE_KEY=Path(code_key).name, INSTANCE_TYPE=args.instance_type,
         BLAST_VERSION=BLAST_VERSION, DIAMOND_VERSION=DIAMOND_VERSION,
         HMMER_VERSION=HMMER_VERSION, FOLDSEEK_VERSION=FOLDSEEK_VERSION,
+        HHSUITE_VERSION=HHSUITE_VERSION, HH_PFAM_URL=HH_PFAM_URL,
         NCBI_BUCKET=NCBI_BUCKET, NCBI_PREFIX=NCBI_PREFIX, PROSTT5_KEY=PROSTT5_KEY,
     )
     # The run script is content-addressed by the commit AND by a hash of its own rendered
@@ -366,6 +373,7 @@ def main(argv: list[str] | None = None) -> int:
         "projected_worst_case_usd": round(cost, 2),
         "ncbi_prefix": NCBI_PREFIX, "blast": BLAST_VERSION, "diamond": DIAMOND_VERSION,
         "hmmer": HMMER_VERSION, "foldseek": FOLDSEEK_VERSION, "prostt5_key": PROSTT5_KEY,
+        "hhsuite": HHSUITE_VERSION, "hh_pfam": HH_PFAM_URL,
         "launched": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "results_prefix": f"s3://{bucket}/{prefix}/results/reach/{iid}/",
         "logs_prefix": f"s3://{bucket}/{prefix}/logs/reach-{iid}/",

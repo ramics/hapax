@@ -35,7 +35,11 @@ WHAT GOES IN, AND WHY EACH PILE IS NEEDED.
    make the control unreadable, so the plant-virus controls in the same length band are
    deliberately not used.
 
-4. **The shuffled null**: every record above, dinucleotide-shuffled. The implementation is
+4. **The shuffled null**: every record above, dinucleotide-shuffled, at five seeds. The
+   convention here is five seeds on any headline number, and this panel is the one place it
+   bites: the real contigs are fixed sequence with nothing to re-draw, so the only
+   stochastic element in the whole comparison is the shuffle. Five of them is what turns
+   "the null read zero" from one draw into a range. The implementation is
    imported from `experiments/holdout_run.py` — the fixed Altschul-Erikson walk that
    `results/fail_loudly_audit/` measures at a 0.00% return-the-input rate — and NOT
    reimplemented. Two hand-rolled walks in this repo answered a dead end with `return seq`,
@@ -169,7 +173,12 @@ def pick_controls(workup: dict, lengths: list[int], want: int) -> list[dict]:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--seed", type=int, default=1)
+    ap.add_argument("--seed", type=int, default=1,
+                    help="the panel's own seed, recorded in the manifest. The real arms "
+                         "are fixed sequence, so this seeds the shuffles and nothing else")
+    ap.add_argument("--null-seeds", type=int, nargs="+", default=[1, 2, 3, 4, 5],
+                    help="one null pile per seed. Five, because a null that reads zero "
+                         "once is a draw and a null that reads zero five times is a range")
     ap.add_argument("--identified", type=Path, default=ROOT / "data/reach/identified.fa",
                     help="the assembly's identified contigs; the test and control arms are "
                          "both drawn from it. Staged from "
@@ -219,26 +228,35 @@ def main(argv: list[str] | None = None) -> int:
                             mapped_depth=None, polymerase_pident=None,
                             seq=holdout[match[0]]))
 
-    # The null, and the two numbers that say whether it is one. `fallback` counts records
-    # the walk could not shuffle; anything above zero means real sequence would be entering
-    # the control pile, and this refuses rather than writing it.
-    shuffled, fallback = [], []
-    for rec in records:
-        seq = dinuc_shuffle(rec["seq"].upper(), rng)
-        if seq is None:
-            fallback.append(rec["qid"])
-            continue
-        shuffled.append(dict(qid=f"sh_{rec['qid']}", arm="shuffled", contig=rec["contig"],
-                             taxon=f"dinucleotide shuffle of {rec['qid']}",
+    # The null, and the number that says whether it is one. `fallback` counts records the
+    # walk could not shuffle; anything above zero means real sequence would be entering the
+    # control pile, and this refuses rather than writing it. Measured per seed, because the
+    # walk's dead end depends on the draw as well as on the sequence.
+    shuffled: dict[int, list[dict]] = {}
+    fallback: dict[int, list[str]] = {}
+    for null_seed in args.null_seeds:
+        seed_rng = random.Random((args.seed, null_seed).__hash__())
+        pile, missed = [], []
+        for rec in records:
+            seq = dinuc_shuffle(rec["seq"].upper(), seed_rng)
+            if seq is None:
+                missed.append(rec["qid"])
+                continue
+            pile.append(dict(qid=f"sh{null_seed}_{rec['qid']}", arm="shuffled",
+                             null_seed=null_seed, contig=rec["contig"],
+                             taxon=f"dinucleotide shuffle of {rec['qid']}, seed {null_seed}",
                              mapped_depth=None, polymerase_pident=None, seq=seq))
-    if fallback:
+        shuffled[null_seed], fallback[null_seed] = pile, missed
+    if any(fallback.values()):
         raise SystemExit(
-            f"the dinucleotide walk returned nothing for {fallback}: those records would be "
-            f"absent from the null rather than shuffled into it. Raise `tries` or exclude "
-            f"them explicitly - do not let the null be quietly smaller than the test")
+            f"the dinucleotide walk returned nothing for {dict(fallback)}: those records "
+            f"would be absent from the null rather than shuffled into it. Raise `tries` or "
+            f"exclude them explicitly - do not let the null be quietly smaller than the "
+            f"test, which is how two kills were manufactured in two days")
 
     args.out.mkdir(parents=True, exist_ok=True)
-    for stem, pile in (("panel", records), ("null", shuffled)):
+    piles = [("panel", records)] + [(f"null_s{s}", shuffled[s]) for s in args.null_seeds]
+    for stem, pile in piles:
         text = "".join(
             f">{r['qid']} {r['arm']} {r['contig']} | {r['taxon']}\n"
             + "\n".join(r["seq"][i:i + 70] for i in range(0, len(r["seq"]), 70)) + "\n"
@@ -258,22 +276,24 @@ def main(argv: list[str] | None = None) -> int:
         unit="one contig",
         question="which search method recovers the most distant real relative, at what cost",
         seed=args.seed,
-        arms={arm: sum(1 for r in records + shuffled if r["arm"] == arm)
-              for arm in ("divergent", "near_reference", "holdout", "holdout_reference",
-                          "shuffled")},
+        null_seeds=args.null_seeds,
+        arms={arm: sum(1 for r in records if r["arm"] == arm)
+              for arm in ("divergent", "near_reference", "holdout", "holdout_reference")}
+        | {"shuffled": sum(len(p) for p in shuffled.values())},
         shuffle=dict(
             implementation="holdout_run.dinuc_shuffle (fixed Altschul-Erikson walk)",
             measured_at="results/fail_loudly_audit/ reports 0.00% fallback on read windows "
                         "and whole contigs; the rate is a property of the input, so it is "
                         "measured again here",
-            fallback_records=len(fallback),
+            fallback_records={s: len(v) for s, v in fallback.items()},
             fallback_rate=0.0,
+            records_shuffled_per_seed=len(records),
             note="a dinucleotide shuffle preserves stop-codon density, so the null yields "
                  "few and short ORFs. It calibrates existence of an alignment, not any "
                  "field conditional on one",
         ),
         rows=[{k: v for k, v in r.items() if k != "seq"} | {"nt": len(r["seq"])}
-              for r in records + shuffled],
+              for r in records + [x for s in args.null_seeds for x in shuffled[s]]],
         git_sha=sha,
         tree_dirty=dirty,
         script_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
@@ -282,7 +302,8 @@ def main(argv: list[str] | None = None) -> int:
 
     for arm, n in manifest["arms"].items():
         print(f"  {arm:20s} {n}")
-    print(f"shuffle fallback: {len(fallback)} of {len(records)} records")
+    print(f"shuffle fallback per seed, out of {len(records)} records: "
+          f"{ {s: len(v) for s, v in fallback.items()} }")
     print(f"written to {args.out}")
     return 0
 

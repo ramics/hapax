@@ -151,8 +151,12 @@ mkdir -p /opt/hapax/queries
 aws s3 cp "$S3/scratch/reach-panel-@@PANEL_SET@@/" /opt/hapax/queries/ \
   --recursive --region "$REGION" || die "the panel did not copy"
 test -f /opt/hapax/queries/panel.fa || die "no panel.fa; the arms would start on nothing"
-test -f /opt/hapax/queries/null.fa || die "no null.fa; there would be no shuffled control"
-grep -c '^>' /opt/hapax/queries/panel.fa /opt/hapax/queries/null.fa
+# One null pile per seed. Five, because the real arms are fixed sequence and the shuffle is
+# the only place a seed means anything in this comparison - so a null that reads zero reads
+# zero five times or it is one draw.
+NULLS=$(ls /opt/hapax/queries/null_s*.fa 2>/dev/null | tr '\n' ' ')
+[ -n "$NULLS" ] || die "no null_s*.fa; there would be no shuffled control"
+grep -c '^>' /opt/hapax/queries/panel.fa $NULLS
 
 # Imports before the long read. On the instance a short payload costs hours and a launch;
 # locally it costs a second, and this is the check that catches the module that was added to
@@ -214,6 +218,34 @@ fi
 # jackhmmer needs only the shared set, which is fatal above, so it is always in.
 ARMS="$ARMS jackhmmer"
 
+# hh-suite, for the profile-to-profile arm. Graded, and ordered after jackhmmer because the
+# query profile is built from the alignment jackhmmer writes - deliberately, rather than by
+# an hhblits pass against UniRef30, which would be a 50 GB download AND a different subject
+# universe behind the query side from the one every other arm here searches.
+if curl -fsSL --retry 3 -o hhsuite.tar.gz \
+    "https://github.com/soedinglab/hh-suite/releases/download/v@@HHSUITE_VERSION@@/hhsuite-@@HHSUITE_VERSION@@-AVX2-Linux.tar.gz"; then
+  mkdir -p /opt/hapax/hhsuite && tar xzf hhsuite.tar.gz -C /opt/hapax/hhsuite
+  for prog in hhsearch hhmake; do
+    find /opt/hapax/hhsuite -name "$prog" -type f -perm -u+x -exec cp {} /opt/hapax/bin/ \; || true
+  done
+  mkdir -p /opt/hapax/db/hh_pfam
+  if [ -x /opt/hapax/bin/hhsearch ] && [ -x /opt/hapax/bin/hhmake ] \
+      && curl -fsSL --retry 3 -o pfam_hh.tar.gz "@@HH_PFAM_URL@@"; then
+    tar xzf pfam_hh.tar.gz -C /opt/hapax/db/hh_pfam --strip-components=0
+    # The archive's internal prefix is not fixed between releases, so the database name is
+    # discovered from what landed rather than assumed. An assumed name is a wasted launch.
+    HHBASE=$(find /opt/hapax/db/hh_pfam -name "*_hhm.ffindex" | head -1 | sed 's/_hhm.ffindex//')
+    if [ -n "$HHBASE" ]; then
+      ln -sf "$HHBASE"_hhm.ffindex /opt/hapax/db/hh_pfam/pfam_hhm.ffindex || true
+      for suffix in hhm.ffdata hhm.ffindex a3m.ffdata a3m.ffindex cs219.ffdata cs219.ffindex; do
+        [ -e "${HHBASE}_${suffix}" ] && ln -sf "${HHBASE}_${suffix}" \
+          "/opt/hapax/db/hh_pfam/pfam_${suffix}" || true
+      done
+      ARMS="$ARMS hhsearch"
+    fi
+  fi
+fi
+
 # RefSeq viral genomes, for the codon arm: tblastn against these gives the subject's
 # nucleotide coordinates, which is what makes a codon alignment reconstructable without a
 # network round trip per subject.
@@ -259,7 +291,7 @@ echo "=== arms that will run: $ARMS ===" | tee /opt/hapax/log-arms.txt
 # arm failed, which means the setup is wrong rather than one tool.
 # shellcheck disable=SC2086
 "$PYBIN" experiments/reach_arms.py --seed @@SEED@@ \
-  --panel /opt/hapax/queries/panel.fa --null /opt/hapax/queries/null.fa \
+  --panel /opt/hapax/queries/panel.fa --null $NULLS \
   --out /opt/hapax/out --threads "$THREADS" \
   --bin-dir /opt/hapax/bin --db-dir /opt/hapax/db \
   --arms $ARMS > /opt/hapax/log-arms-run.txt 2>&1 \
@@ -278,6 +310,8 @@ cat > /opt/hapax/out/stage_manifest.json <<MANIFEST
  "blast_version": "@@BLAST_VERSION@@",
  "diamond_version": "@@DIAMOND_VERSION@@",
  "hmmer_version": "@@HMMER_VERSION@@",
+ "hhsuite_version": "@@HHSUITE_VERSION@@",
+ "null_piles": "$NULLS",
  "foldseek": "$FOLDSEEK_SOURCE",
  "ncbi_blast_snapshot": "@@NCBI_PREFIX@@",
  "refseq_viral_protein_files": $VIRAL_PROT,
