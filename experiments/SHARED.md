@@ -27,6 +27,7 @@ hash. New code imports; a tripwire test fails on a new copy.
 |---|---|---|
 | `shuffle_control.py` | `dinuc_shuffle` (Altschul-Erikson walk with the tree condition, raises), `mono_shuffle`, `check_shuffle`, `shuffle_arm` (validates every output, returns a census) | `tests/test_shuffle_control.py` |
 | `search_hits.py` | `read_hits` (named columns, raises on a missing file or a wrong field count), `best_per_query` (strict `>` on bitscore, as every copy does), `pair_key`, `query_coverage` and `subject_coverage` from coordinates in the query's own units, `union_query_coverage` with one E-value floor for both modes, `outfmt_args` so the command and the parser share a column list | `tests/test_search_hits.py` |
+| `provenance.py` | `provenance(script)`: the same `git_sha`, `tree_dirty` and `script_sha256` as `subtract_known.provenance`, plus `modules_sha256` (every repo module loaded) and `code_sha256` over all of them. It raises rather than writing "unknown" | `tests/test_provenance.py` |
 | `loud.py` | refuse-to-start preflight, consulted-index record, `run_tool` | `tests/test_loud.py` (on main) |
 | `subtract_known.py` (de facto) | `provenance`, `kraken2`, `map_filter`, `_mm_index`, `dir_bytes`, imported by 47 scripts | none of its own; see rank 3 |
 
@@ -108,9 +109,10 @@ hit wins a tie. They differ in four ways that each move a number:
 - **`subtract_known.provenance` hashes only the calling script.** 47 scripts import
   their mapping, Kraken2 and filtering code from `subtract_known.py`. When that shared code
   changes, their `script_sha256` does not. The git SHA is the only record, and a `-dirty`
-  SHA is no record. Consolidating more code makes this hole bigger, so the provenance
-  module that fixes it (hashing every local module actually imported) comes with the
-  consolidation, not after it.
+  SHA is no record. Consolidating more code makes this hole bigger, so `provenance.py`
+  comes with the consolidation, not after it. New scripts use it. Existing ones keep
+  `subtract_known.provenance` until they are touched, because the output keys are a
+  superset of the old ones.
 - About 33 scripts call `git rev-parse` themselves. There are 14 private
   `_git_sha`, `_provenance` and `manifest` helpers. All of them flag a dirty tree, but
   only some hash the script.
