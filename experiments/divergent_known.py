@@ -60,6 +60,9 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from shuffle_control import shuffle_all  # noqa: E402  the one copy of the null's shuffle
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from divergent_contig_workup import (BANDS, MIN_ALN_AA, SIGNIFICANT_EVALUE, band,
                                      call_orfs, diamond_blastp, gene_role, map_back,
@@ -106,36 +109,15 @@ def diamond_blastx(fa: Path, db: Path, out: Path, binpath: Path, threads: int,
     return {"best": best, "seconds": round(time.time() - t0, 1)}
 
 
-def dinuc_shuffle(seq: str, rng: random.Random) -> str:
-    """Preserve dinucleotide composition, which a mononucleotide shuffle does not.
-
-    Stop-codon density is a dinucleotide property, so a naive shuffle inflates ORF length
-    and the control stops being one. Implemented as an Eulerian walk over the dinucleotide
-    graph, restarted on a dead end rather than repaired, which is unbiased enough for a
-    null and keeps the code readable.
-    """
-    s = seq.upper()
-    if len(s) < 4:
-        return s
-    for _ in range(20):
-        nxt = collections.defaultdict(list)
-        for a, b in zip(s, s[1:]):
-            nxt[a].append(b)
-        for v in nxt.values():
-            rng.shuffle(v)
-        out, cur = [s[0]], s[0]
-        ok = True
-        for _ in range(len(s) - 1):
-            if not nxt[cur]:
-                ok = False
-                break
-            cur = nxt[cur].pop()
-            out.append(cur)
-        if ok:
-            return "".join(out)
-    return s
-
-
+# The shuffle used to live here, reimplemented, and it was WRONG in the one way that
+# manufactures results: the naive Eulerian walk dead-ends on most real sequence, and the
+# fallback was `return s` - the input, unchanged, presented as a null. That has now fired
+# three times in this repo on three separate copies (results/holdout_run/ discarded 80 jobs
+# over it; results/divergent_known/ withdrew four published-looking numbers; and this copy
+# produced the 0.79% null in the first holdout_cascade divergent run, which is withdrawn).
+# So it is imported from ONE module and never written again: the second writer cannot know
+# which non-obvious condition the first was fixing. shuffle_control raises rather than
+# returning anything, and reports sequences it could not shuffle by name.
 def histogram(values: list) -> list:
     out = []
     for lo, hi in zip(EDGES, EDGES[1:]):
@@ -161,7 +143,8 @@ def quantiles(vals: list) -> dict:
             "p90": round(at(0.90), 3), "n": len(v)}
 
 
-def discrimination(sig: dict, nullsig: dict, n_contigs: int) -> dict:
+def discrimination(sig: dict, nullsig: dict, n_contigs: int,
+                   n_null: int | None = None) -> dict:
     """What separates a real identified contig from a dinucleotide shuffle of itself,
     searched the same way, and what does not.
 
@@ -183,14 +166,21 @@ def discrimination(sig: dict, nullsig: dict, n_contigs: int) -> dict:
     base = {"readout": ("existence of a significant alignment, then every property of "
                         "that alignment, real against a dinucleotide-preserving shuffle "
                         "of the same contigs through the same search")}
+    # The two arms can have different denominators, because a sequence invariant under a
+    # dinucleotide shuffle is dropped from the null rather than passed through as itself.
+    # Dividing both by the real arm's count would understate the null's rate.
+    n_null = n_contigs if n_null is None else n_null
     rr = round(100.0 * len(sig) / max(1, n_contigs), 2)
-    nr = round(100.0 * len(nullsig) / max(1, n_contigs), 2)
+    nr = round(100.0 * len(nullsig) / max(1, n_null), 2)
     base["existence"] = {
         "contigs_searched": n_contigs,
+        "shuffles_searched": n_null,
         "real_with_a_significant_hit": len(sig),
         "real_percent": rr,
         "shuffled_with_a_significant_hit": len(nullsig),
         "shuffled_percent": nr,
+        "bound_on_chance": (f"0 of {n_null} bounds chance at roughly 1 in {n_null}; it "
+                            f"does not establish zero" if not nullsig else None),
         "ratio": round(rr / nr, 1) if nr else None,
         "reading": (f"{rr}% of real contigs against {nr}% of shuffles. The existence of "
                     f"the alignment is the calibrated quantity"),
@@ -291,7 +281,23 @@ def main() -> None:
     # The null goes through the identical search, so the two cannot differ by anything but
     # the sequence. Same names with a suffix, so a row can be traced back to its original.
     shuf = a.work / "identified_shuffled.fa"
-    shuf.write_text("".join(f">{n}\n{dinuc_shuffle(s, rng)}\n" for n, s in seqs.items()))
+    sh = shuffle_all(seqs, rng)
+    shuffled = sh["shuffled"]
+    # Counted into the output, not into a comment. An arm that silently lost members and an
+    # arm that silently copied the test produce the same plausible-looking distribution, so
+    # the denominator the null's percentage is computed against has to be visible.
+    null_census = {"sequences_offered": len(seqs),
+                   "sequences_shuffled": len(shuffled),
+                   "unchanged_and_dropped": len(sh["unchanged_and_dropped"]),
+                   "unchanged_names": sh["unchanged_and_dropped"][:20],
+                   "returned_input": 0,
+                   "note": ("shuffle_control raises rather than falling back, so "
+                            "returned_input is 0 by construction and is reported anyway "
+                            "because it is the field three broken copies of this null "
+                            "would have had to show")}
+    print(f"null: {len(shuffled)} of {len(seqs)} shuffled, "
+          f"{len(sh['unchanged_and_dropped'])} invariant and dropped", file=sys.stderr)
+    shuf.write_text("".join(f">{n}\n{s}\n" for n, s in shuffled.items()))
 
     hits, secs = {}, {}
     for label, db in (("viral", a.dmnd), ("sprot", a.dmnd_sprot)):
@@ -444,7 +450,8 @@ def main() -> None:
             "median_real": round(statistics.median(ids), 1) if ids else None,
             "median_null": round(statistics.median(nullids), 1) if nullids else None,
         },
-        "discrimination": discrimination(sig, nullsig, len(seqs)),
+        "discrimination": discrimination(sig, nullsig, len(seqs), len(shuffled)),
+        "null_census": null_census,
         "operating_point": {
             "min_alignment_aa": MIN_ALN_AA,
             "significant_evalue": SIGNIFICANT_EVALUE,

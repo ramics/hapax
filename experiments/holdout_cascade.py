@@ -169,12 +169,24 @@ def blast(binary: Path, task: str, query: Path, db: str, out: Path, threads: int
     return out
 
 
-def parse_best(tsv: Path) -> dict[str, dict]:
+def parse_best(tsv: Path, aa: bool = False) -> dict[str, dict]:
     """Best HSP per query by bitscore, with coverage of the QUERY attached.
 
     Best-by-bitscore rather than best-by-identity: identity on a short alignment is
     quantised and rises as the alignment shortens, so ordering by it systematically
     prefers the least informative hit. This repo has the retraction to prove it.
+
+    `aa` SAYS WHETHER THE ALIGNMENT LENGTH IS IN AMINO ACIDS, AND IT IS NOT OPTIONAL
+    BOOKKEEPING. For DIAMOND blastx the query is nucleotide and the alignment length is
+    residues, so `aln_len / qlen` is a ratio of two different units and caps at exactly
+    1/3: every protein coverage this function produced read at most 0.3333, which looks
+    like a plausible low coverage rather than like a bug. The three-fold conversion is
+    applied here, in one place, because `divergent_known.py` computes the same quantity as
+    `3 * aln_aa / contig_nt` and two copies differing by 3x is how a number becomes
+    unreadable. `subject_coverage` needs no conversion either way, since protein alignment
+    length and protein subject length are both residues. The union coverages are also
+    unaffected, because qstart/qend are query NUCLEOTIDE coordinates even under blastx -
+    which is why they, and not this field, are what the report quotes.
     """
     best: dict[str, dict] = {}
     if not tsv.exists():
@@ -188,7 +200,9 @@ def parse_best(tsv: Path) -> dict[str, dict]:
                "evalue": float(f[10]), "bitscore": float(f[11]),
                "qlen": int(f[12]), "slen": int(f[13]),
                "qstart": int(f[6]), "qend": int(f[7])}
-        row["query_coverage"] = round(row["aln_len"] / row["qlen"], 4) if row["qlen"] else None
+        q_nt = row["aln_len"] * 3 if aa else row["aln_len"]
+        row["aligned_query_nt"] = q_nt
+        row["query_coverage"] = round(q_nt / row["qlen"], 4) if row["qlen"] else None
         row["subject_coverage"] = round(row["aln_len"] / row["slen"], 4) if row["slen"] else None
         cur = best.get(q)
         if cur is None or row["bitscore"] > cur["bitscore"]:
@@ -420,7 +434,7 @@ def main() -> int:
         else:
             tsv = blast(a.blastbin / task, task, a.contigs, db,
                         a.work / f"hits_{label}.tsv", a.threads)
-        hits[label] = parse_best(tsv)
+        hits[label] = parse_best(tsv, aa=(task == "diamond"))
         hits[label + "__union"] = union_coverage(tsv)
         hits[label + "__anyunion"] = union_coverage_any(tsv)
         timings[f"search_{label}"] = round(time.perf_counter() - t, 1)
