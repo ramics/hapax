@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import platform
 import random
 import subprocess
@@ -3150,6 +3151,16 @@ def main() -> None:
     if "</script" in payload:
         raise SystemExit("the bundle contains a closing script tag and would break the "
                          "page; a value in the run directory needs escaping")
+    # A citation that points at no method entry is worse than no citation: it reads as
+    # a reference and goes nowhere. The ids are both in the page source, so the check is
+    # static and runs on every build rather than on whoever happens to click one.
+    cited = set(re.findall(r"cite\('([a-z_]+)'\)", PAGE))
+    defined = set(re.findall(r"\{id: '([a-z_]+)', t:", PAGE))
+    missing = sorted(cited - defined)
+    if missing:
+        raise SystemExit(f"citations with no method entry: {', '.join(missing)}")
+    unused = sorted(defined - cited)
+
     page = PAGE.replace("__BUNDLE__", payload)
     # A page whose script does not parse renders as a blank panel-less document and says
     # nothing about why, which is exactly how one stray apostrophe cost a build here. Node
@@ -3173,7 +3184,9 @@ def main() -> None:
     print(f"{out}  {size / 1e6:.2f} MB  {checked}  "
           f"residue rows {b['table']['n_total']}, drawn {b['table']['n_drawn']}; "
           f"scatter {b['scatter'].get('residue', {}).get('n_drawn', 0)}+"
-          f"{b['scatter'].get('known', {}).get('n_drawn', 0)}")
+          f"{b['scatter'].get('known', {}).get('n_drawn', 0)}; "
+          f"{len(cited)} of {len(defined)} methods cited"
+          + (f", never cited: {', '.join(unused)}" if unused else ""))
     if size > 16_000_000:
         raise SystemExit(f"{size} bytes is over the 16 MB page limit; lower "
                          f"--scatter-per-pile or --table-rows")
