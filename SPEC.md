@@ -360,6 +360,52 @@ stopping at the taxon. Measured constraints on what that can deliver:
 So strain calls ship with the divergence at which they were made, and below ~4% the tool
 reports a fused lineage as fused rather than as a strain.
 
+### 5.1 The subtrahend keeps the distance it removed at
+
+Tier 1 removes what can be identified. Its output is one bit per contig and per read, and
+that bit is the tool's largest single information loss. Measured:
+
+- Over 10,170 identified contigs with a significant protein hit, **4.3% sit at 90% identity
+  or above and 90.2% sit below 70%** (`results/divergent_known/`). The same word subtracts
+  both ends of an eighty-point range.
+- The holdout shows what that costs when it matters. A genome withheld from every index,
+  30.28% diverged, assembles into one contig covering 96% of it and scores **66.5% protein
+  identity over 620 aa, bitscore 840 against the tier threshold of 50**. It is marked
+  identified, subtracted into tier 1, and never reaches the residue that `strains` reports
+  on. The removal is not marginal, so **no threshold change recovers it.**
+
+The tool therefore records, for every subtraction, the distance at which the subtraction
+happened: identity, aligned length, the fraction of the subject covered, the fraction of the
+query covered, and mapped depth where there is a contig. That is a distance with a coverage,
+not a novelty score: it states how far the removed thing was from the thing that removed it
+and says nothing about whether anything else is closer. Ranking subjects by it would rank
+them by database proximity, which §1.1 forbids, so the stage reports a distribution and
+per-row distances and draws no ranking.
+
+**This record is a measurement, not a filter.** Identity against coverage over one library
+is a continuum with no gap, and the holdout genome sits inside the mass: its own cell,
+coverage at or above 0.70 and identity 60 to 70%, holds 304 contigs, 4.02% of the pile, and
+two of its neighbours there are longer and better covered than it is. A threshold drawn at
+the holdout's own position fires about 300 times per library and does not put the holdout at
+the top. The holdout is also at the **93rd percentile of identity** among identified contigs,
+so no low-identity rule reaches it. The tool therefore reports the distribution and the
+per-row distances and leaves the cut to the operator, with the count it would produce stated
+beside it.
+
+Three constraints on reading those distances, each measured:
+
+- **The identity is a property of the best gene, not of the contig.** A contig's own genes
+  disagree by a median of 12.8 points on divergent material against 2.45 on near-reference
+  material, and the gap survives matching on gene count. Rank on the conserved gene and ship
+  the spread.
+- **Identity alone does not say a hit is real.** Against a dinucleotide-preserving shuffle of
+  the same contigs, existence of a significant alignment separates at 89.52% against 2.68%,
+  while the identity of a hit that exists does not separate at all. Every distance ships with
+  its aligned length and coverage.
+- **Per-read identity leans towards familiarity**, by +17.2 points below 50% query coverage
+  and +7.1 above 90%, vanishing at zero distance. Read-level distances are upper bounds on
+  identity.
+
 ---
 
 ## 6. Calibration and versioning — the two run-time requirements

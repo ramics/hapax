@@ -168,10 +168,19 @@ def discrimination(sig: dict, nullsig: dict, n_contigs: int) -> dict:
     This block exists because the smoke run killed the obvious reading. Over 2,855
     identified contigs the shuffled null's median whole-contig protein identity was
     HIGHER than the real one, 42.6% against 41.3%, and its p10, p90, alignment length,
-    subject coverage and bitscore all sat inside the real spread. So a low identity is
-    not evidence of distance from the database: a chance alignment to a narrow protein
-    index lands in the same band as real distant homology, and nothing about the
-    alignment, once it exists, says which it is.
+    subject coverage and bitscore all sat inside the real spread. A chance alignment to a
+    narrow protein index lands in the same band as real distant homology, so nothing about
+    the alignment, once it exists, says which of the two it is.
+
+    Scope, because the obvious over-reading of that is wrong. This calibrates whether a
+    hit is REAL. It says nothing about whether identity measures the distance between a
+    real contig and its real relative, which is the quantity this stage reports and which
+    the holdout answers directly: a genome 30.28% diverged read 66.5% protein identity
+    over 620 aa where a referenced comparator from the same library read 99.9%, ordered
+    correctly and 30 points apart. The usable statement is the narrow one. A significant
+    alignment's identity does not tell you the query is real, and on short alignments it
+    is quantised and optimistic, so it ships with its coverage and its aligned length
+    every time.
 
     What does separate is whether a significant alignment exists at all, which the null
     almost never produces. The direction of that bias matters: the null is a filter, not
