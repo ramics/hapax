@@ -16,6 +16,19 @@ move one way — towards the test — so the direction of the error is fixed and
 Read the second kind first. There are three, and all three were already withdrawn before
 this audit, by the threads that own them.
 
+**Correction, after this file was first committed: the bug is still live on `main`.**
+`experiments/divergent_known.py` defines its own naive walk with `return s` after 20 retries,
+and that is the copy `main` runs; `experiments/shuffle_control.py`, the corrected module, is
+on a branch and not on `main`. So a fourth claim belongs in the table below: running `main`'s
+`divergent` stage over the holdout library's identified pile reported 175 shuffles of 22,110,
+0.79%, carrying a significant hit. Withdrawn, same shape as the 324-of-11,361 case, and the
+file records no count of how often the fallback fired, so the share of those 175 that were
+never shuffled is unrecoverable from the output. Being fixed in PR #33, which imports the
+canonical module rather than writing a fourth copy of it and adds the `null_census` that three
+broken copies would have had to show. **The lesson this file now carries about itself**: an
+audit that reads committed *results* does not see a live defect in committed *code*, and this
+one did not.
+
 ## 1. Measured, not read off the code
 
 `experiments/shuffle_fallback_audit.py --seed 1..5 --fasta <resasm contigs>`: every
@@ -48,6 +61,53 @@ Re-run with the fixed walk, from the thread that owns that result: **0 of 11,361
 Berlin contigs produce a significant protein alignment and **0 of 932** shuffled ORFs do, the
 whole library yielding one 47 aa alignment at E=8.45e-4, which clears neither floor.
 
+### A census, not a tell
+
+CLAUDE.md's heuristic for a bad control is **the control moving with the test**, and it caught
+the broken shuffle twice. It cannot catch this one. A 0.027% contamination moves a null by
+nothing visible, so the tell stays silent while the defect is real; what caught it was
+**counting** — sequences offered, sequences shuffled, sequences handed back unchanged. The
+generalisation is worth more than the shuffle: **a tell is a reading of the output and a census
+is a property of the run.** A rate small enough to be invisible in the first is plain in the
+second, and the two broken copies cost a night precisely because neither counted. So every null
+ships its own census beside it rather than relying on a reader to notice its control twitch.
+PR #33's `null_census` is that, for the one that caused this.
+
+### The defect is the missing tree condition, not the bare `return s`
+
+A grep for the fallback across `experiments/` finds five local copies, and **two of them are
+false positives for a reader greping on that string**. `residue_structure.py` and
+`residue_contig_annotation.py` both end with a silent `return s` after their retry loop, and
+both carry the Altschul–Erikson connectivity condition — each vertex's chosen *last* edge has
+to keep a path to the sequence's final base — which is what makes the walk succeed. The two
+broken copies lacked that condition. **The fallback made the failure silent; it did not cause
+it.** So the thing to grep for is a walk with no last-edge or tree condition, and the thing to
+check afterwards is the measured rate.
+
+Measured over 7,390 read-length windows of real sequence (one RNG seed per call, the way each
+script calls it):
+
+| implementation | has the tree condition | returned input |
+|---|---|---|
+| `residue_contig_annotation` | yes | **0 of 7,390** |
+| `residue_structure` | yes | **2 of 7,390, 0.027%** |
+
+`residue_structure` is **not** zero, and the two failures are ordinary-looking 93 and 107 nt
+reads rather than degenerate sequence. Its 50 retries cannot fix a structural failure, so for
+those sequences the fallback fires on every retry. The gene-level thread measured 0 of 5,000
+for the same function; both readings are consistent with a rate near 0.03%, which neither
+sample size pins. **No committed number from either script moves at this magnitude**, and the
+direction is the conservative one, but the file should not record it as zero, so it does not.
+
+**The hygiene fix is a decision about re-runs, not a free tidy-up.** Making either script raise
+instead of falling back, and report its own fallback count, changes its `script_sha256`, which
+under this repo's provenance rule forces re-running `results/residue_structure/` and
+`results/residue_contig_annotation/`. Folding `holdout_run.py`'s own correct copy into the
+shared module forces `results/holdout_run/` too, 92 minutes. **Recommendation, recorded rather
+than acted on: do not re-run for this.** The measured rates say nothing published moves, so the
+fix should ride along the next time each of those scripts is touched for a reason of its own,
+and the rates above are what makes that deferral readable instead of a shrug.
+
 **A mononucleotide shuffle (`rng.shuffle` of a list of bases) has no walk and no dead end, so
 it cannot hit this bug.** Neither can a permutation of labels, partners, columns or rows. Most
 of this repo's nulls are one of those, which is why the blast radius is small.
@@ -78,10 +138,17 @@ than controlled.
 
 ## 3. Priority order, nothing re-run
 
-1. **Nothing is outstanding.** Every claim this bug touched sits in `divergent_known/` and
-   `holdout_cascade/`, and both were re-run and corrected by the threads that own them before
-   this audit reached them. The correction is on a branch, not on `main`.
-2. **`divergent_known.py` is edited by the fail-loudly pass**, and the owning thread has
+1. **One thing is outstanding and it is code, not a number**: `main`'s own
+   `divergent_known.py` still carries the naive walk, so any run of the `divergent` stage from
+   `main` produces a contaminated null today. PR #33 replaces it with the canonical
+   `shuffle_control` module. Until that lands, treat any null from that stage as withdrawn on
+   sight.
+2. **No committed claim is outstanding.** Every claim this bug touched sits in
+   `divergent_known/` and `holdout_cascade/`, and both were re-run and corrected by the
+   threads that own them. `divergent_known/`'s re-run reproduced every number to the digit
+   from a materially different code state (§5b there), which is the stronger reproduction
+   claim this repo rarely gets to make.
+3. **`divergent_known.py` is edited by the fail-loudly pass**, and the owning thread has
    agreed the order: this branch merges first, that thread takes these hunks rather than
    re-deriving them, and the single re-run happens afterwards. Its side is small and does not
    conflict semantically — the local `dinuc_shuffle` deleted for an import of
@@ -91,10 +158,10 @@ than controlled.
    provenance rule that forces a re-run of its committed result, and the owning thread's
    `experiments/shuffle_control.py` replaces the shuffle in the same file, so the re-run
    should happen **once, after both land**, not twice.
-3. **`residue_structure/`'s null arm** is a ≤0.10% contamination pointing the conservative
+4. **`residue_structure/`'s null arm** is a ≤0.10% contamination pointing the conservative
    way inside a field already reported as non-discriminating. Re-running it changes a number
    nobody quotes. Worth doing when that experiment is next touched, not on its own.
-4. **The one measurement nobody has made**: whether the dead-end rate is higher on the
+5. **The one measurement nobody has made**: whether the dead-end rate is higher on the
    sequence classes this project cares about most — low-complexity and repetitive residue
    contigs are exactly where a walk dead-ends, and that is also where a chance alignment comes
    from. The 304-of-304 concentration above establishes that the two coincide on one pile; what
