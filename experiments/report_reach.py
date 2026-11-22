@@ -200,10 +200,21 @@ def main(argv: list[str] | None = None) -> int:
     lines.append("\n## 1. How far each method reaches, by pile\n")
     lines.append("`queries with a hit` is out of the pile's size. `most distant` is the "
                  "median over that pile of each contig's lowest-identity significant "
-                 "alignment; `furthest single` is the lowest of them.\n")
-    lines.append("| arm | pile | queries with a hit | most distant (median %id) | "
-                 "furthest single | median aligned aa | median query coverage |")
-    lines.append("|---|---|---|---|---|---|---|")
+                 "alignment; `furthest single` is the lowest of them. `nearest` is the "
+                 "median of each contig's *best* significant alignment.\n")
+    lines.append("**Read the two identity columns against each other and against the "
+                 "near-reference row.** The most-distant column is bounded below by the "
+                 "floor rather than by the query: at a fixed E-value the lowest-identity "
+                 "alignment a large database returns is set by the database's size and the "
+                 "query's length, so a near-reference contig and a divergent one come back "
+                 "at nearly the same number. That is the control moving with the test, and "
+                 "it means the most-distant statistic is a property of the operating point "
+                 "and not of the method. The nearest column is the one that separates "
+                 "piles, and `queries with a hit` is the one that separates arms.\n")
+    lines.append("| arm | pile | queries with a hit | nearest (median %id) | "
+                 "most distant (median %id) | furthest single | median aligned aa | "
+                 "median query coverage |")
+    lines.append("|---|---|---|---|---|---|---|---|")
     per_arm_pile: dict[tuple[str, str], dict] = {}
     for arm in arms_present:
         for pile in ("divergent", "near_reference", "holdout", "holdout_reference",
@@ -214,8 +225,13 @@ def main(argv: list[str] | None = None) -> int:
             hits = [most_distant(arm, q) for q in qs]
             hits = [h for h in hits if h]
             idents = [h["pident"] for h in hits if h.get("pident") is not None]
+            tops = [best(arm, q) for q in qs]
+            top_idents = [t["pident"] for t in tops
+                          if t and t.get("pident") is not None]
             cell = dict(
                 arm=arm, pile=pile, queries=len(qs), with_a_hit=len(hits),
+                median_nearest_pident=(round(statistics.median(top_idents), 1)
+                                       if top_idents else None),
                 median_most_distant_pident=(round(statistics.median(idents), 1)
                                             if idents else None),
                 furthest_single_pident=(round(min(idents), 1) if idents else None),
@@ -226,6 +242,7 @@ def main(argv: list[str] | None = None) -> int:
             per_arm_pile[(arm, pile)] = cell
             lines.append(
                 f"| {ARM_LABEL.get(arm, arm)} | {pile} | {len(hits)}/{len(qs)} | "
+                f"{fmt(cell['median_nearest_pident'])} | "
                 f"{fmt(cell['median_most_distant_pident'])} | "
                 f"{fmt(cell['furthest_single_pident'])} | "
                 f"{fmt(cell['median_aligned_aa'], '.0f')} | "
