@@ -249,14 +249,26 @@ fi
 # RefSeq viral genomes, for the codon arm: tblastn against these gives the subject's
 # nucleotide coordinates, which is what makes a codon alignment reconstructable without a
 # network round trip per subject.
+# TWO NAMING PATTERNS, AND THE FIRST RUN FOUND OUT WHY. RefSeq's viral release names its
+# protein files `viral.N.protein.faa.gz` but its genomic files `viral.N.1.genomic.fna.gz` -
+# the extra index is part of the genomic name and not of the protein one. Assuming the
+# protein pattern held gave eight 404s on run i-0672a2ca4a782aa21 and dropped the codon arm
+# from that run's table. Both patterns are tried here rather than the corrected one alone,
+# because a release that renames again should degrade to the other spelling rather than to
+# a silent zero.
 VIRAL_NT=0
 for n in 1 2 3 4 5 6 7 8; do
-  if curl -fsSL --retry 3 -o "/opt/hapax/db/viral.$n.genomic.fna.gz" \
-      "https://ftp.ncbi.nlm.nih.gov/refseq/release/viral/viral.$n.genomic.fna.gz"; then
-    gzip -dc "/opt/hapax/db/viral.$n.genomic.fna.gz" >> /opt/hapax/db/viral_nt.fna
-    VIRAL_NT=$((VIRAL_NT + 1))
-  fi
+  for name in "viral.$n.1.genomic.fna.gz" "viral.$n.genomic.fna.gz"; do
+    if curl -fsSL --retry 3 -o "/opt/hapax/db/$name" \
+        "https://ftp.ncbi.nlm.nih.gov/refseq/release/viral/$name"; then
+      gzip -dc "/opt/hapax/db/$name" >> /opt/hapax/db/viral_nt.fna
+      VIRAL_NT=$((VIRAL_NT + 1))
+      break
+    fi
+  done
 done
+[ "$VIRAL_NT" -gt 0 ] || echo "=== no viral genomic release files; the codon arm will be \
+absent from this table rather than wrong ===" | tee -a /opt/hapax/log-arms.txt
 if [ "$VIRAL_NT" -gt 0 ] && /opt/hapax/bin/makeblastdb -in /opt/hapax/db/viral_nt.fna \
     -dbtype nucl -out /opt/hapax/db/viral_nt -title "refseq_viral_genomic"; then
   ARMS="$ARMS codon"
