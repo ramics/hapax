@@ -100,9 +100,17 @@ hit wins a tie. They differ in four ways that each move a number:
   every protein label's best-HSP coverage capped at exactly 0.3333 in PR #33's
   `holdout_cascade_s1.json`. `divergent_known` computes the same quantity as
   `3 * aln_aa / contig_nt`. The holdout thread has fixed `parse_best` in PR #33. The field
-  was never quoted. Coverage now feeds SPEC's removal-evidence table, so this is the next
-  module (`search_hits.py`, a separate PR): named columns, explicit units, and the E-value
-  always carried.
+  was never quoted. `search_hits.query_coverage` takes coverage from query coordinates,
+  in the query's own units.
+- **Two definitions of the coverage gap, and one of them went negative.** Before PR #33's
+  fix, `holdout_cascade` subtracted a per-subject union over *all* HSPs from an
+  any-subject union over HSPs with E < 1e-5. `coverage_gap_null` floored both. Under one
+  floor the gap cannot be negative, but it was negative on 394 of 7,734 protein rows and
+  508 of 2,269 nucleotide rows. The candidate's +36.6 was the same under both definitions.
+  The -0.8 nucleotide figure was an artefact. Once the floors were matched, a `>` against
+  `>=` difference still left one negative row in 41,271. So `search_hits` has a single
+  comparison (`passes_floor`) and `coverage_gap`, which forms both unions from the same
+  rows and raises on a negative gap before anything is written.
 
 ### 3. Manifest and provenance
 
