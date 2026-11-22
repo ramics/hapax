@@ -26,6 +26,7 @@ hash. New code imports; a tripwire test fails on a new copy.
 | module | what | invariant test |
 |---|---|---|
 | `shuffle_control.py` | `dinuc_shuffle` (Altschul-Erikson walk with the tree condition, raises), `mono_shuffle`, `check_shuffle`, `shuffle_arm` (validates every output, returns a census) | `tests/test_shuffle_control.py` |
+| `search_hits.py` | `read_hits` (named columns, raises on a missing file or a wrong field count), `best_per_query` (strict `>` on bitscore, as every copy does), `pair_key`, `query_coverage` and `subject_coverage` from coordinates in the query's own units, `union_query_coverage` with one E-value floor for both modes, `outfmt_args` so the command and the parser share a column list | `tests/test_search_hits.py` |
 | `loud.py` | refuse-to-start preflight, consulted-index record, `run_tool` | `tests/test_loud.py` (on main) |
 | `subtract_known.py` (de facto) | `provenance`, `kraken2`, `map_filter`, `_mm_index`, `dir_bytes`, imported by 47 scripts | none of its own; see rank 3 |
 
