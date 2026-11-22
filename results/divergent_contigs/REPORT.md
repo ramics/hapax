@@ -91,6 +91,41 @@ single-stranded RNA bacteriophage. These infect bacteria. That is consistent wit
 standing negative that nothing in this sample is human-associated, and it means the
 public-health reading of this panel is indirect.
 
+## 6. The gene that picks the host is the one furthest from the database
+
+Every one of the seven deep genomes carries the complete *Fiersviridae* gene set, and the
+domains confirm it rather than inferring it: `RNA_replicase_B`, `Levi_coat`, `Phage_mat-A`.
+The alignments run the full length of each ORF (polymerase 460-785 aa, coat 130-160 aa,
+maturation protein 290-515 aa), which is what distinguishes a complete genome from a
+fragment that happens to be long.
+
+In this class the maturation protein is the receptor-binding protein: it attaches to the
+host pilus and it is what decides which bacterium the phage can infect. It is also the
+most divergent gene on these contigs.
+
+| | divergent arm | near-reference control |
+|---|---|---|
+| contigs with both a polymerase and a maturation protein | 50 | 19 |
+| maturation protein below the polymerase | **86%** | 63% |
+| median polymerase minus maturation protein | **7.7 points** | 0.4 points |
+
+The control is what makes this readable: on contigs that match their reference the two
+genes agree to within half a point, so the 7.7-point lean on the divergent arm is not a
+property of the two proteins' general evolutionary rates as this instrument sees them. Six
+of the seven deep genomes follow it; *Chimpavirus luticola* is the exception.
+
+**The direction of the bias is stated and not controlled**: the maturation protein is the
+longest and the fastest-evolving gene in this family regardless of host, so a lean of this
+sign is expected even with no host difference at all. What the control establishes is that
+the lean is specific to the divergent arm. Whether these phages infect different bacteria
+cannot be answered from sequence identity, and the route that could answer it is
+co-occurrence with bacterial abundance across the plant's 115 other libraries.
+
+Two contigs carry a short ORF with no subject and no domain at all - 74 aa on *Rodtovirus
+pelovivens*, 121 aa on *Dugnivirus solivicinum*. Position and length fit the lysis gene,
+which is small, overlapping and poorly conserved in this family, but nothing here
+establishes that. They are the clearest candidates for a structural prediction.
+
 ## Blind spots
 
 - An ORF with no subject and no domain is unexplained, not non-coding. Past roughly 20-30%
