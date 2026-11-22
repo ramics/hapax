@@ -443,6 +443,11 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int,
                  "interface_rules", "stages")},
         "parameters": manifest.get("parameters", {}),
         "spectrum": spectrum(),
+        # The page's biology, as data. Every plain-English claim it makes about what
+        # a gene does or what an organism is comes from here, so the renderer has no
+        # vocabulary of its own and a wrong word is wrong in one place.
+        "vocabulary": load(ROOT / "experiments/virus_vocabulary.json"),
+        "architecture": _one(rundir, "architecture_s*.json"),
         # Only the holdout library has one, and it is passed explicitly
         # rather than guessed from the run directory: a page that invented
         # a ground truth for a sample that has none would be the worst
@@ -843,12 +848,26 @@ function panel(title, sub) { const p = el('section', 'panel');
    colour of a polymerase cannot mean one thing in the summary and another in the
    holdout panel. Roles carry a plain-English gloss because a reader who does not
    know what a maturation protein is cannot read a legend that only names it. */
-const GENE_ROLE = {polymerase: ['var(--v1)', 'copies the genome'],
-                   coat: ['var(--v3)', 'builds the shell'],
-                   capsid: ['var(--v3)', 'builds the shell'],
-                   maturation: ['var(--v2)', 'attaches to the host cell'],
-                   other: ['var(--null)', 'another gene, role not called']};
+/* Built from D.vocabulary, never written here. A gloss the renderer invents is a
+   biological claim with no provenance sitting beside numbers that have one. */
+const VOC = D.vocabulary || {roles: {}, architectures: {}};
+const GENE_ROLE = {};
+Object.keys(VOC.roles || {}).forEach(k => {
+  GENE_ROLE[k] = ['var(' + VOC.roles[k].colour_token + ')', VOC.roles[k].plain];
+});
+if (!GENE_ROLE.other) GENE_ROLE.other = ['var(--null)', 'role not called'];
 const geneRoleOf = o => (o && GENE_ROLE[o.role] ? o.role : 'other');
+
+/* The architecture call for a contig, from the file experiments/architecture_call.py
+   wrote. Returns null where the rule declined, which is a census entry and not a verdict
+   of "not a phage". */
+const ARCH = {};
+((D.architecture || {}).rows || []).forEach(r => { ARCH[r.contig] = r; });
+const archOf = c => ARCH[c] || null;
+function archWords(a) {
+  if (!a || !a.architecture) return null;
+  return (VOC.architectures || {})[a.architecture] || null;
+}
 
 function geneLegend(keys) {
   const lg = el('div', 'maplegend');
@@ -1149,6 +1168,25 @@ const METHODS = [
       'virus with no relative at all would reach tier 2 instead, which this fixture ' +
       'cannot test. Rolling the reference back a further 4.5 years moved nothing, so ' +
       'nothing leaked.']]},
+  {id: 'vocab', t: 'The words, and where they come from', rows: [
+    ['Input', 'experiments/virus_vocabulary.json, committed. One entry per gene role ' +
+      'and one per architecture, each with the plain words it licenses and the basis ' +
+      'for them.'],
+    ['Procedure', 'experiments/architecture_call.py applies the vocabulary\u2019s rule ' +
+      'to the scored contigs and writes the call with the evidence that fired. This ' +
+      'page assembles sentences from those fields and has no vocabulary of its own.'],
+    ['Threshold', 'one gene carrying a named Pfam family or a named subject-title ' +
+      'substring. The evidence is recorded per contig, so a reader can see how thin a ' +
+      'call is.'],
+    ['Denominator', 'every scored contig. A contig with no matching evidence is ' +
+      'recorded as not called, with the reason, and never as "not a phage".'],
+    ['Control arm', 'none, and there cannot be one: this is not a measurement. The ' +
+      'words are hand-written background knowledge. Committing them is what makes them ' +
+      'reviewable and correctable in one place rather than invisible inside a figure.'],
+    ['Bias direction', 'towards the one architecture the vocabulary knows. It can ' +
+      'recognise that architecture or decline; it cannot distinguish between ' +
+      'architectures, and a subject title saying "ssRNA phage" is a claim made by ' +
+      'whoever deposited the record.']]},
   {id: 'nulls', t: 'Shuffled nulls', rows: [
     ['Input', 'The same reads or contigs, shuffled with composition preserved.'],
     ['Procedure', 'The identical search at the identical threshold, in the same pass ' +
@@ -3435,16 +3473,22 @@ function interval(iv) {
   if (deep.length) {
     const d = el('div', 'bites');
     d.append(el('div', 'pghead', 'the finished genomes, drawn to scale'));
-    const allPhage = deep.every(r => (r.orfs_drawn || []).some(o =>
-      /ssRNA phage|Levi_coat|Phage_mat-A|RNA_replicase_B/i
-        .test((o.title || '') + ' ' + o.pfam.join(' '))));
-    if (allPhage) {
+    // What these are is read from the architecture file, which applied the committed
+    // vocabulary's rule and recorded the evidence. The renderer counts rows.
+    const calls = deep.map(r => archOf(r.contig)).filter(Boolean);
+    const oneArch = calls.length === deep.length && calls.length > 0 &&
+      calls.every(c => c.architecture && c.architecture === calls[0].architecture);
+    const AW = oneArch ? archWords(calls[0]) : null;
+    if (AW) {
+      const full = calls.filter(c => c.has_every_expected_role).length;
       const intro = el('p', 'gintro');
-      intro.innerHTML = 'All ' + deep.length + ' are <b>single-stranded RNA ' +
-        'bacteriophages</b>: viruses that infect bacteria, not people. Each is a strand ' +
-        'of RNA a few kilobases long carrying the three genes such a phage needs, drawn ' +
-        'below at their real positions. The arrow is the direction the gene is read and ' +
-        'the number on it is identity to the closest published protein.';
+      intro.innerHTML = 'All ' + deep.length + ' are called <b>' +
+        esc(deep.length === 1 ? AW.label : (AW.label_plural || AW.label)) +
+        '</b>: ' + esc(AW.plain) + ', and ' + esc(AW.does_not) + '. ' +
+        (full ? full + ' of them carry ' + esc(AW.expected_roles_plain) + '. ' : '') +
+        'Each is drawn below at its real gene positions; the arrow is the direction the ' +
+        'gene is read and the number on it is identity to the closest published ' +
+        'protein.' + cite('vocab');
       d.append(intro);
     }
     d.append(geneLegend());
@@ -3463,31 +3507,34 @@ function interval(iv) {
       card.append(geneMap(r.contig_nt, os.map(o => Object.assign({}, o,
         {pident: o.sig ? o.pident : null})), kb + ' kb'));
 
-      // what it is, in words a reader can check against the picture above
-      const roles = os.filter(o => o.sig).map(roleOf);
-      const phage = os.some(o => /ssRNA phage|Levi_coat|Phage_mat-A|RNA_replicase_B/i
-        .test((o.title || '') + ' ' + o.pfam.join(' ')));
-      const envOnly = os.filter(o => o.sig).length &&
-        os.filter(o => o.sig).every(o => /ssRNA phage SRR|MAG:/.test(o.title || ''));
-      const far = os.filter(o => o.sig).sort((a, b) => a.pident - b.pident)[0];
+      // what it is, in words a reader can check against the picture above. Every
+      // claim here is a field of the architecture row or the vocabulary it applied.
+      const A = archOf(r.contig), AX = archWords(A);
       const say = el('div', 'gsay');
       say.innerHTML =
-        (allPhage ? '' : (phage ? '<b>A single-stranded RNA bacteriophage.</b> ' :
-          '<b>A virus</b>, architecture not called from its genes. ')) +
+        (AX && !AW ? '<b>' + esc(AX.label) + '.</b> ' : '') +
+        (A && !A.architecture
+          ? '<span class="dim">No architecture called: ' + esc(A.not_called_because) +
+            '</span> ' : '') +
         '<b>' + kb + ' kb</b> at <b>' + Math.round(rs.mapped_mean_depth) +
         'x</b>, covered ' + (rs.breadth_covered > 0.98 ? 'end to end'
           : pct(rs.breadth_covered) + ' of its length') +
         (rs.evenness_within_2x_of_median < 0.6
           ? ' but unevenly, so part of it may be a different molecule' : '') + '. ' +
-        (far ? 'Furthest from anything published: the <b>' +
-          esc(far.role || 'unnamed gene') + '</b> at ' + num(far.pident, 1) + '%. ' : '') +
-        (roles.length < os.length
-          ? (os.length - roles.length === 1
-             ? 'One of its ' + os.length + ' genes has no significant match at all. '
-             : (os.length - roles.length) + ' of its ' + os.length + ' genes have no ' +
-               'significant match at all. ') : '') +
-        (envOnly ? '<span class="dim">Its nearest published relative is itself an ' +
-          'unnamed sequence from another wastewater sample.</span>' : '');
+        (A && A.most_diverged_role && A.identity_spread_points != null
+          ? 'Its <b>' + esc(A.most_diverged_role) + '</b> is the gene furthest from ' +
+            'anything published and its <b>' + esc(A.least_diverged_role) +
+            '</b> the closest, ' + num(A.identity_spread_points, 1) + ' points apart.'
+          : (far ? 'Furthest from anything published: the <b>' +
+             esc(far.role || 'unnamed gene') + '</b> at ' + num(far.pident, 1) + '%.'
+             : '')) + ' ' +
+        (A && A.genes_called > A.genes_with_a_role
+          ? (A.genes_called - A.genes_with_a_role) + ' of its ' + A.genes_called +
+            ' genes carry no role. ' : '') +
+        (A && A.nearest_subject_provenance === 'environmental_record'
+          ? '<span class="dim">Its nearest published relative is ' +
+            esc(((VOC.subject_provenance || {}).environmental_record || {}).plain ||
+                'an environmental record') + '.</span>' : '');
       card.append(say);
       d.append(card);
     });
@@ -3854,13 +3901,16 @@ function interval(iv) {
     if (!v.length) return;
     const lo = Math.min.apply(null, v), hi = Math.max.apply(null, v);
     const s = el('div', 'gsay');
-    s.innerHTML = 'Its genes read <b>' + v.slice().sort((a, b) => b - a)
+    const A = archOf(c.contig), AX = archWords(A);
+    s.innerHTML = (AX ? '<b>' + esc(AX.label) + '.</b> ' : (A ?
+      '<span class="dim">No architecture called from its genes.</span> ' : '')) +
+      'Its genes read <b>' + v.slice().sort((a, b) => b - a)
       .map(x => num(x, 1) + '%').join('</b>, <b>') + '</b> against the closest protein ' +
       'the rolled-back indexes hold, a spread of <b>' + num(hi - lo, 1) + ' points ' +
-      'inside one genome</b>.' + (c.arm === 'withheld'
-        ? ' The gene that attaches to the host is the furthest out and the one that ' +
-          'copies the genome is the closest in, which is the ordering the Berlin ' +
-          'contigs show' + cite('genespread') + '.' : '');
+      'inside one genome</b>.' +
+      (A && A.most_diverged_role ? ' Furthest out is its <b>' +
+        esc(A.most_diverged_role) + '</b> and closest in its <b>' +
+        esc(A.least_diverged_role) + '</b>' + cite('genespread') + '.' : '');
     card.append(s);
   }
 

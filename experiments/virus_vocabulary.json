@@ -1,0 +1,86 @@
+{
+  "what_this_is": "Every plain-English claim the web view makes about biology, as data rather than as prose inside the renderer. The numbers on that page are generated from result files; the words were not, and the words carry claims. This file is where they are reviewable, correctable and attributable. Nothing here is measured: it is background knowledge, written by hand, and the renderer may assemble sentences from it but may not add to it.",
+  "how_to_correct_it": "Edit an entry. The renderer reads this file and has no vocabulary of its own, so a wrong gloss is wrong in exactly one place. An entry whose basis cannot be stated should be deleted rather than softened.",
+  "roles": {
+    "polymerase": {
+      "plain": "copies the genome",
+      "colour_token": "--v1",
+      "basis": "the gene_role the committed Pfam scan assigned, from the family name RNA_replicase_B. In a positive-sense RNA virus the replicase is the enzyme that copies the genome.",
+      "pfam_names": [
+        "RNA_replicase_B"
+      ]
+    },
+    "coat": {
+      "plain": "builds the shell",
+      "colour_token": "--v3",
+      "basis": "Pfam family Levi_coat. The coat protein is the structural subunit the particle is built from.",
+      "pfam_names": [
+        "Levi_coat"
+      ]
+    },
+    "capsid": {
+      "plain": "builds the shell",
+      "colour_token": "--v3",
+      "basis": "the same structural role under the name the scoring stage used for it.",
+      "pfam_names": [
+        "Levi_coat"
+      ]
+    },
+    "maturation": {
+      "plain": "attaches to the host cell",
+      "colour_token": "--v2",
+      "basis": "Pfam family Phage_mat-A. In Leviviricetes the maturation protein is the single copy incorporated into the particle that binds the host pilus and carries the genome in; it is the gene in contact with the host, which is why its divergence is reported separately.",
+      "pfam_names": [
+        "Phage_mat-A"
+      ]
+    },
+    "other": {
+      "plain": "another gene, role not called",
+      "colour_token": "--null",
+      "basis": "no role assigned. Either no Pfam domain was found or the domain carries no role in this table. It is not a claim that the gene has no function."
+    }
+  },
+  "architectures": {
+    "ssrna_phage": {
+      "label": "single-stranded RNA bacteriophage",
+      "infects": "bacteria",
+      "plain": "a virus that infects bacteria",
+      "does_not": "it does not infect people",
+      "expected_roles": [
+        "maturation",
+        "coat",
+        "polymerase"
+      ],
+      "expected_roles_plain": "the three genes such a phage needs: one to attach to a bacterium, one to build the shell it travels in, and one to copy its genome",
+      "typical_length_nt": [
+        3000,
+        4500
+      ],
+      "rule": {
+        "any_pfam_name": [
+          "RNA_replicase_B",
+          "Levi_coat",
+          "Phage_mat-A"
+        ],
+        "any_subject_title_substring": [
+          "ssRNA phage"
+        ],
+        "minimum_genes_firing": 1
+      },
+      "basis": "ICTV class Leviviricetes: positive-sense single-stranded RNA bacteriophages of 3 to 4.5 kb carrying a maturation protein, a coat protein and a replicase. The three Pfam families above are that class's own families, so a contig carrying them is an RNA phage by the same evidence that named its genes.",
+      "what_this_call_is_not": "it is a call about the nearest reference material, not an isolation. Nothing here has been grown, and a sequence that carries a phage's genes in a phage's arrangement is read as a phage because that is what the evidence supports, not because the organism was observed.",
+      "label_plural": "single-stranded RNA bacteriophages"
+    }
+  },
+  "subject_provenance": {
+    "environmental_record": {
+      "title_substrings": [
+        "ssRNA phage SRR",
+        "MAG:"
+      ],
+      "plain": "an unnamed sequence from another environmental sample",
+      "basis": "a RefSeq title of the form 'ssRNA phage SRRxxxxxxx_n' or one marked MAG names a record assembled from a metagenome and given a placeholder name, not a characterised isolate. The substring is the whole test, so a record named some other way will not be recognised and is reported as unknown rather than as characterised."
+    }
+  },
+  "status": "hand-written background knowledge. It is not a result, carries no seed and no run, and is listed in the web view's Methods as what it is."
+}
