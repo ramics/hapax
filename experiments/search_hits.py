@@ -30,6 +30,13 @@ from pathlib import Path
 from typing import Callable, Iterable
 
 
+# The project's significance floor for "a relative exists", in one place. It is not a
+# default anywhere in this module: every function that filters takes `evalue_below`
+# explicitly, so the operating point is visible at the call and lands in the manifest.
+# Import this constant, never retype 1e-5.
+SIGNIFICANCE_EVALUE = 1e-5
+
+
 class SearchOutputError(RuntimeError):
     """Raised instead of returning something that reads as a search result."""
 
