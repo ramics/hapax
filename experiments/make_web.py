@@ -1292,7 +1292,8 @@ function interval(iv) {
   p.append(rows);
   const last = curve[curve.length - 1];
   p.append(el('p', 'note',
-    '<b>The sample own assembly is the biggest single bite in the cascade</b>, at ' +
+    '<b>The assembly of this sample is the biggest single bite in the cascade</b>, ' +
+    'at ' +
     num(100 * (curve.filter(c => /selfasm_sample_contigs_identified/.test(c.tier))[0]
       || {marginal_removed: 0}).marginal_removed, 1) +
     ' points from ' + gb((curve.filter(c => /selfasm_sample_contigs_identified/
@@ -1742,8 +1743,8 @@ function interval(iv) {
 (function () {
   const t = D.tier_table;
   const p = panel('Tier removal and threshold sweep',
-    'Per index: removal alone, marginal removal, and residue. The slider is the tier ' +
-    'own threshold sweep, which moves a tier further than database size does.');
+    'Per index: removal alone, marginal removal, and residue. The slider sweeps the ' +
+    'threshold of that tier, which moves a tier further than database size does.');
   if (!t) { p.append(el('div', 'absent', 'tier_table.json absent')); app.append(p); return; }
   const swept = (t.curve || []).filter(c => c.threshold_sweep);
   const ctl = el('div', 'controls');
@@ -2695,13 +2696,13 @@ function interval(iv) {
   note.innerHTML = '<b>Caveats.</b>' + cite('composition') +
     ' This is RNA abundance rather than cell counts: one ' +
     'bacterium with a thousand ribosomes contributes a thousand times its cell count. ' +
-    'The named fraction ranges from ' +
+    'The named fraction runs from ' +
     pct(1 - (((P.at_confidence['0.0'] || {}).by_superkingdom || [])
-      .filter(g => g.group === 'unclassified')[0] || {}).fraction) + ' and ' +
+      .filter(g => g.group === 'unclassified')[0] || {}).fraction) +
+    ' at the loosest setting to ' +
     pct(1 - (((P.at_confidence['0.2'] || {}).by_superkingdom || [])
       .filter(g => g.group === 'unclassified')[0] || {}).fraction) +
-    ' across the confidence settings above. Unnamed sequence is not evidence of ' +
-    'novelty; see below.';
+    ' at the strictest. Unnamed sequence is not evidence of novelty; see below.';
   p.append(note);
   app.append(p);
 })();
