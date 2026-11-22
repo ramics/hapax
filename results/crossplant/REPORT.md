@@ -317,5 +317,134 @@ the min-max is an honest range over that draw and not a dispersion estimate. Dri
 here as everywhere: the panel spans 2020 to 2025 and SRR23973193 is one morning in Berlin.
 
 **The tier 2 contig arm runs over this same panel at the same fixed depth** and is reported
-in §8 when it lands; contigs are the stronger probe, because a contig offers many independent
-windows of one molecule where a 90 nt read offers close to a coin flip.
+in §8; contigs are the stronger probe, because a contig offers many independent windows of
+one molecule where a 90 nt read offers close to a coin flip.
+
+## 8. The contig arm: Imo's second eligible pile
+
+Tier 2 is the material that assembled but could not be identified, and it is eligible for
+background subtraction on exactly the same argument as the unplaced reads. It was cut into
+non-overlapping 90 nt windows — the same width as the read queries, so the instrument is
+unchanged — paired consecutively, and searched against the same 530 libraries at the same
+fixed 2,000,000-pair depth. 6,000 tier 2 contigs per seed, with 3,000 identified contigs per
+seed as the comparator and mononucleotide shuffles of both as the floor. 80,824 query rows,
+29 s per subject library.
+
+### Controls, read first
+
+| | own assembly library | panel mean | shuffled |
+|---|---|---|---|
+| tier 2 contigs, `most` | 0.3774 | 0.0044 | 0.0000 |
+| tier 2 contigs, `any` | 0.5393 | 0.0158 | 0.0000 |
+| identified contigs, `most` | 0.4613 | 0.0418 | 0.0000 |
+| identified contigs, `any` | 0.6360 | 0.0880 | 0.0000 |
+
+**The own-library column is not a reachability ceiling, and reading it as one would halve
+every number below.** Each subject library is cut to exactly 2,000,000 pairs, which for
+SRR23973193 is 22.9% of its 8,731,224; a contig assembled at median depth 6 therefore has
+most of its support outside the subject file it is searched against. The union of 530
+libraries witnesses 72.1% of tier 2 windows at `any`, well above the own library's 53.9%, so
+the windows are reachable and the single-library figure is a subsample limit. Shuffled
+contigs read 0.0000 against all 530 libraries at both operating points.
+
+### The residue is local — the clearest separation this instrument has produced
+
+Witnessed windows by subject plant, at `any`:
+
+| subject plant | tier 2 contigs | identified contigs | ratio |
+|---|---|---|---|
+| Berlin, other dates (own plant) | **0.1816** | **0.3060** | 1.7x |
+| best foreign plant (PRJNA924011:H) | 0.0705 | 0.1367 | 1.9x |
+| median of the 31 foreign plants | **0.0135** | **0.0862** | **6.4x** |
+| lowest foreign plant | 0.0038 | 0.0645 | 17x |
+| shuffled | 0.0000 | 0.0000 | — |
+
+Read down the tier 2 column: **its own plant's other dates witness it 13.4x more than the
+median foreign plant does** (0.1816 against 0.0135), where identified contigs gain only 3.5x
+from being at home. The read arm's equivalent own-plant advantage was 1.12x. So the
+unidentifiable contigs are far more plant-specific than identified material is — they recur
+where they came from and very nearly vanish elsewhere.
+
+**Bias statement.** The foreign-plant comparison between the two sets is confounded by
+length: 58% of tier 2 contigs fall in the shortest band against 37% of identified ones, and
+witnessing rises with length throughout. The within-set Berlin-versus-foreign ratio is free
+of it, since it is the same contigs either way, and that is where the 13.4x lives. For the
+between-set comparison read the length-stratified endpoint below instead of this table.
+
+### What the whole panel leaves behind
+
+Leftover windows and untouched contigs against the full 530-library union, by length band,
+at `any` (`contig_saturation.tsv` carries both points and the full k ladder):
+
+| length | tier 2 left | identified left | gap |
+|---|---|---|---|
+| 180-270 nt (n=3,503 / 1,111) | 0.3031 | 0.2168 | 8.6 pts, 1.40x |
+| 270-450 nt (n=1,860 / 936) | 0.2588 | 0.1892 | 7.0 pts, 1.37x |
+| 450-900 nt (n=548 / 519) | 0.1701 | 0.1300 | 4.0 pts, 1.31x |
+| 900+ nt (n=87 / 432) | 0.1658 | 0.1008 | 6.5 pts, 1.64x |
+| all | 0.2789 | 0.1759 | 10.3 pts, 1.59x |
+
+**The gap survives length stratification in every band**, which is what the read arm could
+not show at matched depth without the two operating points disagreeing fourfold. Here the
+two points agree on the direction and nearly on the size: at `most` the all-contig pair is
+0.5977 against 0.4448, 1.34x.
+
+The per-contig version is the one to quote at Imo: against all 530 libraries, **17.6% of
+tier 2 contigs have not one exact 31-mer anywhere in four continents of wastewater**, against
+9.0% of identified contigs — a 2.0x separation, with every shuffled contig untouched
+(1.0000) as the floor. 81.4% of tier 2 contigs are removed at the half-the-windows mark
+against 89.2% of identified ones.
+
+**The mid-curve is not readable.** At k=64 the two sets cross over (tier 2 0.5945 against
+identified 0.6114), but the seed spread there is 0.5340-0.7565 against 0.4424-0.6261 — the
+crossover sits inside it. The five seeds resample both the contig draw and the shuffled
+library order, and the read arm measured own-plant libraries as worth 2.6x more each, so
+whether a Berlin library lands early dominates the middle of the curve. Read the endpoint and
+k=1, not the shape between them.
+
+### Growth at contig level: the pooled number is an artefact, the restricted one survives
+
+Imo's third question was whether something that stops being a background should be reported
+rather than subtracted. At contig level the pooled answer is wrong for a reason the read arm
+did not have: **93.2% of tier 2 contigs have zero panel depth under them, and there
+`(own+1)/(p99+1)` is own depth wearing a ratio's clothes.** Of the 224 tier 2 contigs in the
+top 500 by growth, 189 sit below 1% panel occupancy with a panel p99 of 0.0. So the
+distribution is reported split, with the swap control split the same way:
+
+| tier 2 contigs | n | >=2x | >=10x | >=100x | p99 |
+|---|---|---|---|---|---|
+| pooled (**do not quote**) | 30,000 | 29.62% | 0.45% | 0.053% | 5.0 |
+| panel carries the contig | 2,033 | **4.92%** | 0.64% | 0.148% | 7.7 |
+| ...its swap control | 2,033 | **0.00%** | 0.00% | 0.00% | 0.9 |
+| panel carries nothing there | 27,967 | 31.41% | 0.43% | 0.047% | 5.0 |
+| shuffled | 3,667 | 0.00% | 0.00% | 0.00% | 1.0 |
+
+**Growth is real where it is a ratio, and an order of magnitude rarer than the pooled number
+says.** 4.92% of the tier 2 contigs the panel actually carries exceed twice its p99, against
+a swap control that returns exactly 0.00% at every threshold and a p99 below 1 — so the
+separation from "another library drawn from the same panel" is complete. Identified contigs
+in the same stratum read 4.78% with a swap control of 0.65%, so the tier 2 signal is the
+cleaner of the two. But it applies to 6.8% of tier 2, because growth needs a background to
+grow out of, and most of this pile does not have one. The other 93.2% is an absence result
+and belongs with the occupancy numbers above, not among the blooms.
+
+Growth is also reported per mate, because a pooled pair-symmetric field averages two leans:
+mate 2 reads higher throughout (0.357 against 0.319 at >=2x for tier 2), the direction its
+shorter length predicts.
+
+### What this changes
+
+The read arm's verdict was that a cross-plant union removes abundance rather than identity.
+**At contig level it removes identity too, and the separation is clean enough to act on:**
+the two piles differ by 1.3-1.6x in every length band, the residue is 13.4x more
+plant-specific than it is anywhere else, and 17.6% of it has no exact 31-mer anywhere in the
+panel. Length and depth are why — a contig offers tens of independent windows where a 90 nt
+read offers close to a coin flip. This supports the agreed order in SPEC: subtract across
+plants, assemble what survives, then point the expensive instruments at the contig residual.
+
+It also sharpens the translated-alignment question. Exact 31-mers go blind above ~15%
+divergence, and 17.6% of tier 2 contigs read absent against the whole panel. Those are the
+contigs where a protein-level search against the panel could still find kin, and they are now
+a named, counted list rather than a hypothesis — but the panel would have to be assembled and
+its ORFs called first, which is the expensive half. The decision belongs with the residual
+assembly arm, not here.
