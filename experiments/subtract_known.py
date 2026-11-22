@@ -163,7 +163,8 @@ def artefact_flag(f: dict, entropy_min: float, homopolymer_max: int) -> bool:
 # ------------------------------------------------------------------------------ kraken2
 
 def kraken2(db: Path, fq1: Path, fq2: Path, classify_bin: Path, threads: int,
-            out: Path, confidence: float = 0.0) -> tuple[dict[str, int], float, int]:
+            out: Path, confidence: float = 0.0,
+            memory_map: bool = True) -> tuple[dict[str, int], float, int]:
     """Classify a pair file at one confidence threshold; return {read name: taxid}.
 
     The threshold is passed to Kraken2 rather than reconstructed afterwards. Kraken2's
@@ -177,8 +178,16 @@ def kraken2(db: Path, fq1: Path, fq2: Path, classify_bin: Path, threads: int,
     intersect tiers read by read.
     """
     t0 = time.perf_counter()
+    # -M memory-maps the hash instead of loading it. It was hardcoded, and on an 8 GB
+    # database that turns every minimizer lookup into a random disk read: this project
+    # measured 100k pairs unfinished in 9 minutes mapped against 27 seconds loaded. The
+    # flag changes wall time and peak RSS only - the calls and confidences are identical
+    # either way - so it is a parameter rather than a constant, and `timings` and
+    # `peak_rss_mb` in the output are only comparable between runs that chose the same
+    # value. Default stays -M so previously committed runs reproduce unchanged.
     cmd = [str(classify_bin), "-H", str(db / "hash.k2d"), "-t", str(db / "taxo.k2d"),
-           "-o", str(db / "opts.k2d"), "-M", "-p", str(threads), "-P",
+           "-o", str(db / "opts.k2d"), *(["-M"] if memory_map else []),
+           "-p", str(threads), "-P",
            "-T", str(confidence), "-O", str(out), str(fq1), str(fq2)]
     subprocess.run(cmd, check=True, capture_output=True)
     wall = time.perf_counter() - t0
@@ -319,6 +328,15 @@ def main() -> None:
     ap.add_argument("--k2-confidence", type=float, nargs="+",
                     default=[0.0, 0.05, 0.1, 0.2],
                     help="Kraken2 confidence thresholds to sweep; each is a separate run")
+    ap.add_argument("--no-k2-memory-map", dest="k2_memory_map", action="store_false",
+                    help="load each Kraken2 hash into RAM instead of memory-mapping it. "
+                         "The calls and confidences are identical; only wall time and "
+                         "peak RSS change, so `timings` and `peak_rss_mb` are comparable "
+                         "only across runs that made the same choice. On an 8 GB database "
+                         "memory-mapping makes every lookup a random disk read - measured "
+                         "here at 100k pairs unfinished in 9 minutes mapped against 27 "
+                         "seconds loaded - so this is the setting to use when the machine "
+                         "has the memory and the database is large")
     ap.add_argument("--k2-operating-confidence", type=float, default=0.1,
                     help="the threshold whose removals enter the cascade. 0.0 accepts a "
                          "single matching minimizer, which on a wastewater library is "
@@ -412,7 +430,8 @@ def main() -> None:
         sweep, taxa, wall_total = {}, None, 0.0
         for conf in args.k2_confidence:
             calls, wall, rss = kraken2(db, fq1, fq2, args.classify_bin, args.threads,
-                                       out, conf)
+                                       out, conf,
+                                       memory_map=args.k2_memory_map)
             hit = {k for k, tx in calls.items() if tx != 0}
             sweep[f"{conf:.2f}"] = len(hit) / n
             wall_total += wall

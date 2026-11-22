@@ -284,7 +284,7 @@ class SpacerIndex:
         return len(self.map) * kmers / (4 ** self.k)
 
     def match(self, s1: str, s2: str):
-        for s in (s1, s2):
+        for s in mates(s1, s2):
             for i in range(len(s) - self.k + 1):
                 hit = self.map.get(s[i:i + self.k])
                 if hit:
@@ -331,6 +331,27 @@ def rfam_scan(seqs: dict[str, str], cm: Path, cmscan: Path, threads: int, work: 
     return best
 
 
+def mates(s1: str, s2: str):
+    """The mates of a pair that actually carry sequence.
+
+    WHY THIS IS NOT JUST `(s1, s2)`. A single-end library has no mate 2, and this script's
+    per-read fields are written as loops over both mates. The two wrong ways to run such a
+    library are (a) to pass the same FASTQ twice, which makes mate 2 a copy of mate 1 and
+    turns `kmer16_duplicate_frac` into a constant 1.0, doubles `halves_placed` onto a 0-4
+    scale, and - worst - doubles every 31-mer occurrence count in the library abundance
+    sketch, promoting true singletons to depth 2 across the board; and (b) to divide those
+    counts by two afterwards, which is a correction applied to a number that was never
+    measured. Both produce fields that read as results.
+
+    So mate 2 is absent rather than duplicated, and every loop over a pair goes through
+    here. An absent mate contributes nothing to a field instead of contributing itself
+    twice, which is the only version of these fields that means the same thing on a
+    single-end library as on a paired one. On a paired library this returns both mates and
+    nothing changes.
+    """
+    return [m for m in (s1, s2) if m]
+
+
 def repetitiveness(s1: str, s2: str, k: int = 16) -> dict:
     """Does the pair carry information, or the same few bases many times over?
 
@@ -339,14 +360,14 @@ def repetitiveness(s1: str, s2: str, k: int = 16) -> dict:
     k-mers are all distinct at k=16.
     """
     kms = Counter()
-    for s in (s1, s2):
+    for s in mates(s1, s2):
         for i in range(len(s) - k + 1):
             kms[s[i:i + k]] += 1
     tot = sum(kms.values())
     dup = sum(c for c in kms.values() if c > 1)
     best_period, best_score = 0, 0.0
     for p in range(1, 13):
-        for s in (s1, s2):
+        for s in mates(s1, s2):
             if len(s) <= p:
                 continue
             match = sum(1 for a, b in zip(s, s[p:]) if a == b)
@@ -382,7 +403,7 @@ def chimaera_evidence(idx, s1: str, s2: str, half_min: int = 30) -> dict:
     beside it.
     """
     out = {"halves_placed": 0, "split_disagree": False, "refs": []}
-    for s in (s1, s2):
+    for s in mates(s1, s2):
         h = len(s) // 2
         hits = []
         for part in (s[:h], s[h:]):
@@ -538,6 +559,18 @@ def main() -> None:
                     help="only the DIAMOND index-size sweep: skip motifs, chimaera and "
                          "the per-read fields, which do not depend on the protein index")
     ap.add_argument("--max-pairs", type=int, default=20_000)
+    ap.add_argument("--single-end", action="store_true",
+                    help="the library has no second mate. The cascade upstream is run "
+                         "with the same FASTQ as both mates, which is exact for every "
+                         "tier there because each one is a min, max or union over the "
+                         "two; it is NOT exact here, where a duplicated mate 2 would "
+                         "double every 31-mer occurrence count in the abundance sketch "
+                         "and promote true singletons to depth 2. With this flag mate 2 "
+                         "is dropped at load, so it is absent rather than duplicated and "
+                         "every field means on this library what it means on a paired "
+                         "one. See mates(). The fields that need two real mates - mate "
+                         "disagreement, mate linkage, the merge of SPEC 4.3 - are not "
+                         "recoverable and are reported as not measured, not worked around")
     ap.add_argument("--library-r1", type=Path,
                     default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
     ap.add_argument("--library-r2", type=Path,
@@ -570,8 +603,9 @@ def main() -> None:
     rng = random.Random(args.seed)
     t_start = time.perf_counter()
 
-    pairs = _load_fasta_pairs(args.reads, args.max_pairs)
-    known = _load_fasta_pairs(args.subtracted_reads, args.max_pairs) if args.subtracted_reads else {}
+    pairs = _load_fasta_pairs(args.reads, args.max_pairs, args.single_end)
+    known = _load_fasta_pairs(args.subtracted_reads, args.max_pairs,
+                              args.single_end) if args.subtracted_reads else {}
     if not pairs:
         raise SystemExit("no residue pairs")
 
@@ -610,9 +644,13 @@ def main() -> None:
         for _nm, a, b, _q1, _q2 in _rp(args.library_r1, args.library_r2,
                                        args.library_pairs, 14, 0):
             sk.add_seq(a)
-            sk.add_seq(b)
+            if b and not args.single_end:
+                # NOT just `if b`: the read_pairs call above is hardcoded to trim 14, so
+                # on a single-end library passed as both mates b is a non-empty SUFFIX of
+                # a and every 31-mer from position 14 on would be counted twice.
+                sk.add_seq(b)
         for name, (s1, s2) in pairs.items():
-            cs = sk.counts(s1) + sk.counts(s2)
+            cs = sk.counts(s1) + (sk.counts(s2) if s2 else [])
             cs.sort()
             rows[name]["library_abundance"] = {
                 "median_31mer_count": cs[len(cs) // 2] if cs else None,
@@ -622,7 +660,7 @@ def main() -> None:
         if known:
             kn = []
             for kname, (s1, s2) in known.items():
-                cs = sk.counts(s1) + sk.counts(s2)
+                cs = sk.counts(s1) + (sk.counts(s2) if s2 else [])
                 cs.sort()
                 if cs:
                     kn.append(cs[len(cs) // 2])
@@ -668,7 +706,7 @@ def main() -> None:
         counts = []
         for name, (s1, s2) in pairs.items():
             samples = set()
-            for s in (s1, s2):
+            for s in mates(s1, s2):
                 for a in idx.map(s):
                     if a.mlen >= args.cross_min_mlen:
                         samples.add(_sample_of(a.ctg))
@@ -679,7 +717,7 @@ def main() -> None:
         if known:
             for s1, s2 in known.values():
                 samples = set()
-                for s in (s1, s2):
+                for s in mates(s1, s2):
                     for a in idx.map(s):
                         if a.mlen >= args.cross_min_mlen:
                             samples.add(_sample_of(a.ctg))
@@ -704,7 +742,8 @@ def main() -> None:
         q = {}
         for name, (s1, s2) in pairs.items():
             q[f"{name}/1"] = s1
-            q[f"{name}/2"] = s2
+            if s2:
+                q[f"{name}/2"] = s2
         hits = rfam_scan(q, args.rfam, args.cmscan_bin, args.threads, args.work,
                          args.rfam_evalue)
         per_pair = {}
@@ -755,10 +794,18 @@ def main() -> None:
 
     # ---- motifs
     pf = {}
+    # Bound BEFORE the block that may not run. Every other optional field in this function
+    # already follows this pattern (`crispr`, `cross`, `rfam`, `abund`, `chim_fp` are all
+    # set to None first); this one was not, so with no Pfam database on disk the whole
+    # per-read pass completed and then died on the summary - 26 minutes of work thrown away
+    # at the last line, with nothing written. An absent optional index must degrade to
+    # "not measured", which is this script's own stated contract.
+    pf_known_rate = None
+    pfam_searched = False
     if args.pfam.exists() and not args.skip_fields:
         prot = {}
         for name, (s1, s2) in pairs.items():
-            for i, (strand, off, s) in enumerate(six_frames(s1 + "NN" + s2)):
+            for i, (strand, off, s) in enumerate(six_frames(s1 + "NN" + s2 if s2 else s1)):
                 prot[f"{name}|{strand}{off}"] = translate(s).replace("*", "X")
         raw = pfam_hits(prot, args.pfam, args.pfam_evalue, args.threads)
         for key, hits in raw.items():
@@ -774,7 +821,7 @@ def main() -> None:
         if known and args.known_motifs:
             kprot = {}
             for name, (s1, s2) in known.items():
-                for strand, off, s in six_frames(s1 + "NN" + s2):
+                for strand, off, s in six_frames(s1 + "NN" + s2 if s2 else s1):
                     kprot[f"{name}|{strand}{off}"] = translate(s).replace("*", "X")
             kraw = pfam_hits(kprot, args.pfam, args.pfam_evalue, args.threads)
             kpf: dict[str, list] = {}
@@ -787,6 +834,7 @@ def main() -> None:
             pf_known_rate = len(kpf) / len(known)
         else:
             pf_known_rate = None
+        pfam_searched = True
 
     # ---- chimaera evidence, and its own false-positive rate on subtracted reads
     chim_fp = None
@@ -830,8 +878,14 @@ def main() -> None:
             "primer_dimer": sum(1 for r in rows.values() if r["primer_dimer"]) / len(rows),
             "low_entropy_0.5": sum(1 for r in rows.values() if r["entropy3"] < 0.5) / len(rows),
         },
-        "motif_rate": len(pf) / len(rows) if pf else 0.0,
-        "motif_rate_on_subtracted_reads": pf_known_rate,
+        # A zero here would read as "no read carries a motif". When no profile database
+        # was on disk, nothing was searched, and those are different facts - the project
+        # has already shipped a table where an unsearched control read as a separation.
+        "motif_rate": (len(pf) / len(rows) if pfam_searched else
+                       "not measured: no profile database in this run"),
+        "motif_rate_on_subtracted_reads": (
+            pf_known_rate if pfam_searched else
+            "not measured: no profile database in this run"),
         "library_abundance": abund,
         "crispr": crispr,
         "rfam": rfam,
@@ -935,7 +989,8 @@ def _sample_of(ctg: str) -> str:
     return ctg.split("_NODE_")[0]
 
 
-def _load_fasta_pairs(path: Path | None, limit: int) -> dict[str, tuple[str, str]]:
+def _load_fasta_pairs(path: Path | None, limit: int,
+                      single_end: bool = False) -> dict[str, tuple[str, str]]:
     if path is None or not path.exists():
         return {}
     out: dict[str, list] = {}
@@ -949,13 +1004,20 @@ def _load_fasta_pairs(path: Path | None, limit: int) -> dict[str, tuple[str, str
                 out.setdefault(base, ["", ""])[0 if mate == "1" else 1] = line.strip()
             if len(out) > limit:
                 break
+    if single_end:
+        # Mate 2 is dropped rather than kept as a duplicate of mate 1; see mates() for
+        # which fields that protects. A pair is admitted on mate 1 alone, because on a
+        # single-end library "both mates present" would admit nothing.
+        return {k: (v[0], "") for k, v in list(out.items())[:limit] if v[0]}
     return {k: (v[0], v[1]) for k, v in list(out.items())[:limit] if v[0] and v[1]}
 
 
 def _diamond_best(dbin: Path, db: Path, pairs: dict, fa: Path, threads: int, mode: str):
     with open(fa, "w") as h:
         for name, (s1, s2) in pairs.items():
-            h.write(f">{name}/1\n{s1}\n>{name}/2\n{s2}\n")
+            h.write(f">{name}/1\n{s1}\n")
+            if s2:
+                h.write(f">{name}/2\n{s2}\n")
     tsv = fa.with_suffix(".tsv")
     subprocess.run([str(dbin), "blastx", "--db", str(db), "--query", str(fa),
                     "--out", str(tsv), "--threads", str(threads), "--outfmt", "6",

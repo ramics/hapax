@@ -1,0 +1,131 @@
+{
+  "contigs_file": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed.fa",
+  "contigs": 35328,
+  "bases": 22037613,
+  "operating_point": {
+    "kraken2_confidence": 0.1,
+    "diamond_bitscore": 50.0,
+    "kraken2_db": "k2_viral_20210517.d",
+    "protein_dbs": [
+      "viral_holdout",
+      "sprot"
+    ]
+  },
+  "kraken2_confidence_sweep": {
+    "0.00": 0.011463994565217392,
+    "0.05": 0.002575860507246377,
+    "0.10": 0.0022078804347826085,
+    "0.20": 0.0018965126811594203
+  },
+  "protein_bitscore_sweep": {
+    "viral_holdout": {
+      "30": 0.44675611413043476,
+      "40": 0.25461390398550726,
+      "50": 0.20940896739130435,
+      "60": 0.17793251811594202,
+      "80": 0.1285665760869565,
+      "100": 0.09493885869565218
+    },
+    "sprot": {
+      "30": 0.7372905344202898,
+      "40": 0.6306329257246377,
+      "50": 0.5880038496376812,
+      "60": 0.5510360054347826,
+      "80": 0.48038383152173914,
+      "100": 0.4190726902173913
+    }
+  },
+  "identified_frac": 0.6310858242753623,
+  "identified_bases_frac": 0.7031763830320462,
+  "route_nucleotide_only": 0.00014153079710144928,
+  "route_protein_only": 0.6245754076086957,
+  "all": {
+    "contigs": 35328,
+    "bases": 22037613,
+    "len_median": 458.0,
+    "len_p90": 1059,
+    "len_max": 20695,
+    "cov_median": 3.0,
+    "frac_over_500nt": 0.4279891304347826,
+    "frac_over_2x": 0.9680706521739131,
+    "frac_over_500nt_and_2x": 0.424903759057971
+  },
+  "identified": {
+    "contigs": 22295,
+    "bases": 15496329,
+    "len_median": 498,
+    "len_p90": 1230,
+    "len_max": 14940,
+    "cov_median": 3.0,
+    "frac_over_500nt": 0.4971518277640727,
+    "frac_over_2x": 0.9721910742318906,
+    "frac_over_500nt_and_2x": 0.49401211033864095
+  },
+  "rrna_contigs": {
+    "contigs": 184,
+    "bases": 135789,
+    "len_median": 537.0,
+    "len_p90": 1353,
+    "len_max": 5589,
+    "cov_median": 37.0,
+    "frac_over_500nt": 0.5597826086956522,
+    "frac_over_2x": 0.9891304347826086,
+    "frac_over_500nt_and_2x": 0.5597826086956522
+  },
+  "rrna_contig_frac": 0.005208333333333333,
+  "rrna_bases_frac": 0.006161692738682724,
+  "identified_excluding_rrna": {
+    "contigs": 22111,
+    "bases": 15360540,
+    "len_median": 497,
+    "len_p90": 1230,
+    "len_max": 14940,
+    "cov_median": 3.0,
+    "frac_over_500nt": 0.49663063633485593,
+    "frac_over_2x": 0.9720501108045769,
+    "frac_over_500nt_and_2x": 0.4934647912803582
+  },
+  "unidentified": {
+    "contigs": 13033,
+    "bases": 6541284,
+    "len_median": 411,
+    "len_p90": 776,
+    "len_max": 20695,
+    "cov_median": 3.0,
+    "frac_over_500nt": 0.30967543926954655,
+    "frac_over_2x": 0.9610220210235556,
+    "frac_over_500nt_and_2x": 0.3066830353717486
+  },
+  "tier2_population": {
+    "contigs": 13033,
+    "bases": 6541284,
+    "len_median": 411,
+    "len_p90": 776,
+    "len_max": 20695,
+    "cov_median": 3.0,
+    "frac_over_500nt": 0.30967543926954655,
+    "frac_over_2x": 0.9610220210235556,
+    "frac_over_500nt_and_2x": 0.3066830353717486
+  },
+  "tier2_min_len": 200,
+  "files": {
+    "identified": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_identified.fa",
+    "identified_excluding_rrna": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_identified_norrna.fa",
+    "rrna_contigs": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_rrna.fa",
+    "unidentified_tier2": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_unidentified.fa"
+  },
+  "index_bytes": {
+    "kraken2": 490063024,
+    "viral_holdout": 233114131,
+    "sprot": 294430316
+  },
+  "timings_seconds": {
+    "silva_contigs": 3.6113586000001305,
+    "kraken2_conf0.0": 5.053466485999934,
+    "kraken2_conf0.05": 0.49694247699994776,
+    "kraken2_conf0.1": 0.477664243999925,
+    "kraken2_conf0.2": 0.416925332999881,
+    "diamond_viral_holdout": 108.53004313800011,
+    "diamond_sprot": 156.3366509120001
+  }
+}

@@ -170,6 +170,24 @@ class Run:
                 "--r1", str(a.r1), "--r2", str(a.r2), "--trim-r2", str(a.trim_r2),
                 "--threads", str(a.threads), "--rows-out",
                 "--work", str(self.work / "cascade_work"), "--out", str(out)]
+        # These three were VALIDATED above and then never passed, so the cascade silently
+        # fell back to subtract_known.py's own default paths whatever the run was given.
+        # On a machine where the defaults are absent the stage dies; on one where they
+        # exist it would quietly measure against the wrong indexes and report the run's
+        # arguments in the manifest - the index named in the provenance not being the one
+        # consulted, which is the failure this repo already had to withdraw a figure for.
+        if a.k2_dbs:
+            argv += ["--k2-dbs", *[str(d) for d in a.k2_dbs]]
+        if a.silva:
+            argv += ["--silva", *[str(d) for d in a.silva]]
+        if a.dmnd:
+            argv += ["--dmnd", *[str(d) for d in a.dmnd]]
+        if a.classify_bin:
+            argv += ["--classify-bin", str(a.classify_bin)]
+        if a.diamond_bin:
+            argv += ["--diamond-bin", str(a.diamond_bin)]
+        if a.k2_no_memory_map:
+            argv += ["--no-k2-memory-map"]
         if a.contigs:
             argv += ["--selfasm", *[str(c) for c in a.contigs]]
         if a.unidentified_contigs:
@@ -198,10 +216,34 @@ class Run:
                 "--work", str(self.work / "reads_work"), "--out", str(out)]
         if sub.exists():
             argv += ["--subtracted-reads", str(sub)]
+        # The protein indexes were NOT passed through before, so the report fell back to
+        # its own defaults. Where those are absent every `closest_*` field is missing, and
+        # the `strains` stage - which reads exactly those fields - writes an empty file
+        # that looks like "no divergent relatives" rather than "nothing was searched".
+        if a.dmnd:
+            argv += ["--dmnd", *[str(d) for d in a.dmnd]]
+        if a.diamond_bin:
+            argv += ["--diamond-bin", str(a.diamond_bin)]
+        if a.single_end:
+            argv += ["--single-end"]
         return self.call("reads", "residue_report.py", argv,
                          {"reads.jsonl": out / f"rows_s{a.seed}.jsonl",
                           "fields.json": out / f"calibration_s{a.seed}.json"},
                          out / f"manifest_s{a.seed}.json")
+
+    #: Why these two stages refuse on a single-end library rather than running: both are
+    #: mate-linkage instruments whose ground truth is "these two sequences came from one
+    #: insert". With no second mate the only way to run them is to make mate 2 a copy of
+    #: mate 1, and then `linkage` reports near-perfect friendship and `census` labels every
+    #: residue read's neighbourhood with its own copy. Those are FABRICATED positives, not
+    #: degraded measurements, and a degraded measurement is the only kind this tool is
+    #: allowed to report. So they are skipped with the reason in the manifest, and the
+    #: merge, mate disagreement and mate linkage of SPEC 4.3 are absent from the run.
+    SINGLE_END_SKIP = ("the library has no second mate. This is a mate-linkage instrument, "
+                       "and duplicating mate 1 would report a fabricated positive rather "
+                       "than a degraded measurement, so it is not run. SPEC 4.3's merge, "
+                       "mate disagreement and mate linkage are therefore not measured in "
+                       "this run")
 
     def linkage(self) -> dict:
         """The grouping calibration: can a read find a read it is genuinely related to?
@@ -213,6 +255,8 @@ class Run:
         or the grouping in the web view has no operating point.
         """
         a = self.args
+        if a.single_end:
+            return self.record("linkage", "skipped", reason=self.SINGLE_END_SKIP)
         tool = ROOT / "experiments/kmer_coverage/target/release/kmer_coverage"
         gone = self.missing("linkage", [tool, a.r1, a.r2])
         if gone:
@@ -238,6 +282,8 @@ class Run:
         no witnesses is reported apart rather than folded into the unknown.
         """
         a = self.args
+        if a.single_end:
+            return self.record("census", "skipped", reason=self.SINGLE_END_SKIP)
         res = self.work / "cascade_work" / f"residue_s{a.seed}.fa"
         binary = ROOT / "experiments/kmer_coverage/target/release/census"
         gone = self.missing("census", [binary, res, a.r1, a.r2])
@@ -891,7 +937,23 @@ def main() -> int:
                         "always run: the control is what makes the residue "
                         "number readable")
     r.add_argument("--trim-r2", type=int, default=14)
+    r.add_argument("--single-end", action="store_true",
+                   help="the library has no second mate, so r2 is r1 again and --trim-r2 "
+                        "must be 0. Every cascade tier is a min, max or union over the "
+                        "two mates, so a duplicated mate gives exactly the read-level "
+                        "answer there; the per-read report is told separately to drop "
+                        "mate 2 rather than duplicate it, and the two mate-linkage stages "
+                        "refuse. Costs twice the search time for the same answer, which "
+                        "is cheaper than a second code path through the cascade")
+    r.add_argument("--diamond-bin", type=Path, default=None)
+    r.add_argument("--classify-bin", type=Path, default=None,
+                   help="Kraken2's raw `classify` binary, not the kraken2 wrapper")
     r.add_argument("--threads", type=int, default=4)
+    r.add_argument("--k2-no-memory-map", action="store_true",
+                   help="load each Kraken2 hash into RAM rather than memory-mapping it. "
+                        "Identical calls and confidences; wall time and peak RSS only, "
+                        "so those two fields are comparable only across runs that agreed "
+                        "on this")
     r.add_argument("--contigs", type=Path, nargs="+",
                    default=[ROOT / "data/geo/sample_contigs_rrna.fa",
                             ROOT / "data/geo/sample_contigs_identified_norrna.fa"],
