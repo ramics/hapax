@@ -608,6 +608,29 @@ details > summary { cursor: pointer; font-size: 13px; color: var(--dim); }
   .donutlg { max-width: none; }
 }
 a { color: var(--identified); }
+/* ---- citations ------------------------------------------------------------
+   Every headline figure carries a link to the entry that states how it was
+   computed. The link is an anchor and the highlight is :target, so a citation
+   works with scripting disabled and cannot drift from its target. */
+.cite { font-family: var(--mono); font-size: 0.68em; vertical-align: super;
+  text-decoration: none; color: var(--v1); padding: 0 0.08em; }
+.cite:hover { text-decoration: underline; }
+.meth { border-top: 1px solid var(--edge); padding: 0.7rem 0;
+  display: grid; grid-template-columns: 1.7rem minmax(0, 1fr); gap: 0 0.4rem;
+  scroll-margin-top: 1rem; }
+.meth .mno { font-family: var(--mono); font-size: 12px; color: var(--dim); }
+.meth h3 { font-size: 13.5px; font-weight: 600; margin: 0 0 0.35rem; }
+.mgrid { display: grid; grid-template-columns: 6.6rem minmax(0, 1fr);
+  gap: 0.2rem 0.7rem; margin: 0; font-size: 12.5px; }
+.mgrid dt { color: var(--dim); }
+.mgrid dd { margin: 0; }
+.meth:target { background: var(--v2-soft); border-radius: 6px;
+  box-shadow: 0 0 0 0.5rem var(--v2-soft); }
+@media (max-width: 680px) {
+  .meth { grid-template-columns: 1.3rem minmax(0, 1fr); }
+  .mgrid { grid-template-columns: minmax(0, 1fr); gap: 0 0; }
+  .mgrid dt { margin-top: 0.3rem; }
+}
 :focus-visible { outline: 2px solid var(--identified); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
@@ -628,6 +651,167 @@ function panel(title, sub) { const p = el('section', 'panel');
   p.append(el('h2', null, esc(title)));
   if (sub) p.append(el('p', 'note', sub));
   return p; }
+
+
+/* ---- METHODS: ONE ENTRY PER HEADLINE FIGURE -------------------------------
+   The page states numbers at the top and how they were obtained at the bottom, and
+   the two are joined by a link rather than by the reader remembering. Each entry
+   carries the six things that make a figure readable here: its input, the procedure,
+   the threshold, the denominator, the control arm, and the direction of the bias that
+   the control does not remove. An entry with no control arm says so in that row.
+   The numbering is positional, so an entry cannot be cited by a number that moved. */
+const METHODS = [
+  {id: 'library', t: 'Library and read handling', rows: [
+    ['Input', 'SRR23973193, Berlin influent, total RNA, 8,731,224 read pairs.'],
+    ['Procedure', 'Mate 2 carries about 14 nt of non-template 5-prime sequence; 16 nt ' +
+      'are trimmed, leaving mates of 107 and 93 nt. Every percentage on this page is ' +
+      'of read pairs.'],
+    ['Threshold', 'None.'],
+    ['Denominator', 'Read pairs in the analysed block.'],
+    ['Control', 'Per-base error rate 0.00068, measured on self-overlapping pairs, so ' +
+      'quality-derived error rates run 2.6x conservative.'],
+    ['Bias', 'One plant, one date. In this plant the ribosomal fraction moves from ' +
+      '38.0% to 67.1% and the identifiable fraction from 22.7% to 40.7% over eight ' +
+      'months. Every fraction here is specific to this run.'],
+  ]},
+  {id: 'watchlist', t: 'Watchlist screen', rows: [
+    ['Input', '44 taxa, each with a recorded reason for inclusion.'],
+    ['Procedure', 'Kraken2 against PlusPF-08. A pair counts for a taxon when it is ' +
+      'assigned to that taxon or below it.'],
+    ['Threshold', 'Confidence 0.1 for the ranking; 0.2 for the per-row chip. ' +
+      'Threshold dominates database size by an order of magnitude: one database ' +
+      'removes 42.8%, 21.7% or 3.5% of this library on its setting alone.'],
+    ['Denominator', 'All read pairs.'],
+    ['Control', 'The same panel over composition-matched shuffled reads, counted on ' +
+      'the panel at both settings.'],
+    ['Bias', 'Misassignment to a close relative inflates a detection and is ' +
+      'uncontrolled. Non-detections carry rule-of-three upper bounds at this depth, ' +
+      'which are statements about sequencing depth and not about the catchment.'],
+  ]},
+  {id: 'composition', t: 'Library composition', rows: [
+    ['Input', 'All read pairs.'],
+    ['Procedure', 'Kraken2 PlusPF-08, assignments rolled up to superkingdom. The ' +
+      'second ring renormalises over the named fraction.'],
+    ['Threshold', 'Confidence selectable on the panel; the named fraction spans the ' +
+      'range quoted in the caveat.'],
+    ['Denominator', 'First ring all pairs, second ring the named pairs.'],
+    ['Control', 'None applicable: the figure is one classifier output.'],
+    ['Bias', 'RNA abundance, not cell counts: one bacterium with a thousand ribosomes ' +
+      'contributes a thousand times its cell count. The unnamed share is this index ' +
+      'reach at this setting; other tiers recognise most of it.'],
+  ]},
+  {id: 'cascade', t: 'Cascade removal', rows: [
+    ['Input', 'The read pairs. Each subtraction index runs independently over all of ' +
+      'them, so per-tier removal is order-free.'],
+    ['Procedure', 'Union across tiers. The ribosomal tier precedes the protein tiers, ' +
+      'because against a protein index ribosomal reads stop looking novel first. ' +
+      'Marginal removal is the increment a tier adds to the union.'],
+    ['Threshold', 'Kraken2 confidence as above; DIAMOND bitscore 50 for the protein ' +
+      'tier, swept across 30 to 100 in the output file.'],
+    ['Denominator', 'Read pairs.'],
+    ['Control', 'Shuffled reads, which score zero at every tier.'],
+    ['Bias', 'A tier can match sequence that nothing names, so identifiable exceeds ' +
+      'named: 77.10% identifiable against 7.49% nameable. Five seeds are contiguous ' +
+      'blocks of one flow cell with overdispersion about 1.5x, so the reported spread ' +
+      'is observed and is not an estimate of dispersion.'],
+  ]},
+  {id: 'contigid', t: 'Contig identification and divergence', rows: [
+    ['Input', 'Contigs assembled from this library.'],
+    ['Procedure', 'DIAMOND blastx against RefSeq viral proteins and Swiss-Prot. Every ' +
+      'identity is reported with its aligned length and the fraction of the subject ' +
+      'covered.'],
+    ['Threshold', 'E below 1e-5 and at least 60 aa aligned. Identity is quantised at ' +
+      'shorter alignment lengths and is not plotted there.'],
+    ['Denominator', 'Contigs with a significant hit.'],
+    ['Control', 'A dinucleotide-preserving shuffle of the same contigs through the ' +
+      'same search. Whether a significant alignment exists separates the piles: 89.5% ' +
+      'of real contigs against 2.7% of shuffles, a factor of 33. Conditional on a hit ' +
+      'existing, nothing about the alignment separates them: the shuffled median ' +
+      'identity is 43.5% against the real 45.1%, and only 12.0% of real hits clear the ' +
+      'shuffled p90 where 10% do so by construction. The one field carrying anything ' +
+      'is the fraction of the contig the alignment covers, at 26.3%.'],
+    ['Bias', 'Both reference sets are narrow, so each identity is an upper bound on ' +
+      'identity and each divergence a lower bound on divergence.'],
+  ]},
+  {id: 'genespread', t: 'Per-gene identity and ranking', rows: [
+    ['Input', 'ORFs called by Prodigal in metagenome mode, minimum 50 aa.'],
+    ['Procedure', 'DIAMOND blastp per ORF, with the gene role read from the subject ' +
+      'title. Rows rank on the polymerase where one is called; the panel states when ' +
+      'a row ranks on the whole contig instead.'],
+    ['Threshold', 'E below 1e-5, at least 60 aa.'],
+    ['Denominator', 'For the spread, contigs with two or more scorable genes.'],
+    ['Control', 'Contigs matching their reference at 95% or above, same procedure. ' +
+      'Their genes agree to a median 2.35 points where the divergent arm disagrees by ' +
+      '17.4. Over the whole identified pile, 600 divergent against 301 near-reference ' +
+      'contigs, the same comparison reads 12.8 against 2.45.'],
+    ['Bias', 'The arms are not matched as drawn: divergent contigs carry a median of 3 ' +
+      'scorable genes over 3,820 nt against 1 over 552 nt, and more genes give a ' +
+      'spread more room, which biases the gap upward. At equal gene counts the gap ' +
+      'holds: 5.6 against 1.3 points at two genes, 16.9 against 2.65 at three. One ' +
+      'identity per contig is whichever gene won on bitscore, usually the more ' +
+      'conserved gene. Protein identity also understates nucleotide divergence, since ' +
+      'synonymous changes are invisible to it.'],
+  ]},
+  {id: 'depth', t: 'Mapped depth and evenness', rows: [
+    ['Input', 'Every read pair in the library, mate 2 trimmed as above.'],
+    ['Procedure', 'Reads mapped back onto the contigs with minimap2. Depth is the ' +
+      'mean over contig positions; evenness is the fraction of positions within 2x ' +
+      'of the median.'],
+    ['Threshold', 'Primary alignments only.'],
+    ['Denominator', 'Contig positions.'],
+    ['Control', 'The assembler coverage header on the same contigs, which understates ' +
+      'mapped depth about fourfold on this set.'],
+    ['Bias', 'A region shared with another molecule collects that molecule reads, ' +
+      'which raises depth without raising evidence. Evenness is the field that ' +
+      'exposes it.'],
+  ]},
+  {id: 'chimaera', t: 'Chimaera check', rows: [
+    ['Input', 'The same contigs and the same per-gene hits.'],
+    ['Procedure', 'Genes on one contig are tested for whether they point at the same ' +
+      'subject organism.'],
+    ['Threshold', 'As the gene level above.'],
+    ['Denominator', 'Contigs with two or more scorable genes.'],
+    ['Control', 'The near-reference arm. The flag fires on 46.31% of divergent ' +
+      'contigs and 39.26% of controls.'],
+    ['Bias', 'The flag tracks how the assembler joins genes, so it carries almost no ' +
+      'information about divergence and nothing is dropped on it. Split-mapping, the ' +
+      'read-level version, has a 26% false-positive rate on known background.'],
+  ]},
+  {id: 'residue', t: 'Residue census and recurrence', rows: [
+    ['Input', 'Read pairs surviving every subtraction tier.'],
+    ['Procedure', 'Artefact signatures, mapped depth, and occupancy across the other ' +
+      'dates from the same plant.'],
+    ['Threshold', 'Significance as above. Occupancy is counted over 41 dates, which ' +
+      'are 85 distinct waters across 215 runs.'],
+    ['Denominator', 'Residue pairs seen once, against identified pairs at the same ' +
+      'depth.'],
+    ['Control', 'Identified reads at matched depth: 21.5% of residue reads appear on ' +
+      'none of the other dates against 0.9%, a factor of 24. Artefact signatures ' +
+      'together account for under 1% of the pile.'],
+    ['Bias', 'A query drawn from the library being searched is abundant there by ' +
+      'construction, which made 54% of background reads look like they were growing ' +
+      'against 6% under the swap control, so queries come from outside the library ' +
+      'searched. The median depth of this pile is 1, which is the floor of what any ' +
+      'read-level field can read.'],
+  ]},
+  {id: 'nulls', t: 'Shuffled nulls', rows: [
+    ['Input', 'The same reads or contigs, shuffled with composition preserved.'],
+    ['Procedure', 'The identical search at the identical threshold, in the same pass ' +
+      'as the test it calibrates.'],
+    ['Threshold', 'As the test.'],
+    ['Denominator', 'As the test.'],
+    ['Control', 'This row is the control.'],
+    ['Bias', 'A null states what a field reads on meaningless input. It does not ' +
+      'state what a field reads on real input for the wrong reason, which only a ' +
+      'positive control can remove. Where none exists the direction of the bias is ' +
+      'given alone. Operating point decides a null: the weak-hit band reads 92.3% on ' +
+      'shuffled reads with no E-value floor and 0.00% with one.'],
+  ]},
+];
+const MIDX = {};
+METHODS.forEach((m, i) => { MIDX[m.id] = i + 1; });
+const cite = id => '<a class="cite" href="#m-' + id + '" title="' +
+  (MIDX[id] ? 'method ' + MIDX[id] : 'method') + '">[' + (MIDX[id] || '?') + ']</a>';
 
 
 /* A PILE FANNING INTO ITS PARTS, WITH ITS CONTROL DRAWN THE SAME WAY UNDERNEATH.
@@ -801,8 +985,8 @@ function interval(iv) {
   const t = D.tier_table, b = (t && t.breakdown) || {};
   if (!b.identified || !b.residual) return;
   const p = panel('Library partition, one square per percent',
-    'Each square is one percent of the read pairs in this run. Pale squares were named ' +
-    'by searching; the dark ones are what no search could name.');
+    'One square is one percent of this run read pairs. Pale squares were named by ' +
+    'searching; dark squares were not.');
   const frac = {identified: b.identified.point,
     assembled_unidentified: (b.assembled_unidentified || {}).point || 0,
     residual: b.residual.point};
@@ -888,7 +1072,7 @@ function interval(iv) {
 (function () {
   const t = D.tier_table, S = D.strains, L = D.linkage, C = D.census;
   const p = panel('Run summary',
-    'What this run did, and what came out of it.');
+    'Inputs, thresholds and outputs of this run.');
   const b = (t && t.breakdown) || {};
   const lede = el('p', 'lede',
     'Sewage from one treatment plant in Berlin, sequenced as RNA. The cascade removes ' +
@@ -955,8 +1139,8 @@ function interval(iv) {
   const R = D.ranking, K = R && R.kind_summary;
   if (!b.identified || !K) return;
   const p = panel('Cascade partition, nested',
-    'Every read pair in this run, taken apart in three steps. Each panel is the ' +
-    'highlighted slice of the one before it, blown up to full height.');
+    'Every read pair in three steps. Each panel is the highlighted slice of the one ' +
+    'before it, at full height.');
 
   const COL = {identified: 'var(--identified)', assembled_unidentified: 'var(--tier2)',
     residual: 'var(--residue)', named: 'var(--identified)', none: 'var(--null)',
@@ -1078,8 +1262,8 @@ function interval(iv) {
   const t = D.tier_table, curve = (t && t.curve) || [];
   if (!curve.length) return;
   const p = panel('Marginal removal per index',
-    'The cascade, one row per index, in the order they ran. The dark slice is what that ' +
-    'index removed that nothing before it had already taken.');
+    'One row per index, in run order. The dark slice is what that index removed and ' +
+    'nothing before it had.');
   const rows = el('div', 'bites');
   curve.forEach((c, i) => {
     const before = c.cumulative_removed - c.marginal_removed;
@@ -1128,8 +1312,7 @@ function interval(iv) {
 (function () {
   const R = D.ranking, K = R && R.kind_summary;
   const p = panel('Kind assignment of matched subjects',
-    'Of the leftover reads, the few that have a named relative at all, and what kind of ' +
-    'thing that relative is.');
+    'Leftover reads with a named relative, by what kind of thing that relative is.');
   if (!K) { p.append(el('div', 'absent', 'no kind summary in ranking.json'));
     app.append(p); return; }
   const KCOL = {putative_phage: 'var(--g-phage)',
@@ -1229,9 +1412,8 @@ function interval(iv) {
 (function () {
   const R = D.ranking;
   const p = panel('Subject ranking, four axes',
-    'The named relatives the leftover reads point at, ordered by how much of a person\\'s ' +
-    'attention each one deserves. Four measured things go in and all four are shown on ' +
-    'every row, so the order can be argued with one row at a time.');
+    'Named relatives of the leftover reads, ordered on four measured axes. All four ' +
+    'are shown on every row.');
   if (!R) { p.append(el('div', 'absent',
     'ranking.json absent: run experiments/concern_ranking.py over this directory'));
     app.append(p); return; }
@@ -1409,9 +1591,7 @@ function interval(iv) {
   if (!R || !(R.subjects || []).length) return;
   const pn = R.points_note;
   const p = panel('Identity against read support, per subject',
-    'The named relatives at once: how far the reads are from each one, against how many ' +
-    'reads point at it. One picture of what the leftovers are related to, and how ' +
-    'distantly.' + (pn ? ' Drawn from a seeded sample of ' + pn.drawn.toLocaleString() +
+    'Distance from each named relative against the number of reads pointing at it.' + (pn ? ' Drawn from a seeded sample of ' + pn.drawn.toLocaleString() +
     ' of the ' + pn.of.toLocaleString() + ' subjects, because a cut by rank would empty ' +
     'the lower left corner and that is where most of the residue is.' : ''));
   const GCOL = {bacteriophage: 'var(--g-phage)', plant: 'var(--g-plant)',
@@ -1506,9 +1686,8 @@ function interval(iv) {
 (function () {
   const t = D.tier_table;
   const p = panel('Class fractions with intervals',
-    'One bar over the library: what was identified, what assembled without being ' +
-    'identified, and what is left. Each segment carries the interval from this run\\'s ' +
-    'own counts.');
+    'Identified, assembled without identification, and left over. Each segment ' +
+    'carries its interval.');
   if (!t) { p.append(el('div', 'absent', 'tier_table.json absent: the cascade did not run'));
     app.append(p); return; }
   const last = (t.curve || [])[(t.curve || []).length - 1];
@@ -1563,9 +1742,8 @@ function interval(iv) {
 (function () {
   const t = D.tier_table;
   const p = panel('Tier removal and threshold sweep',
-    'Each index in turn: what it removes alone, what it adds, and what is left. The ' +
-    'slider is the tier\\'s own threshold sweep, because the threshold moves a tier by ' +
-    'more than a database\\'s size does.');
+    'Per index: removal alone, marginal removal, and residue. The slider is the tier ' +
+    'own threshold sweep, which moves a tier further than database size does.');
   if (!t) { p.append(el('div', 'absent', 'tier_table.json absent')); app.append(p); return; }
   const swept = (t.curve || []).filter(c => c.threshold_sweep);
   const ctl = el('div', 'controls');
@@ -1719,9 +1897,9 @@ function interval(iv) {
 (function () {
   const L = D.layers;
   const p = panel('Residue layers, ordered, with controls',
-    'A layer is a sort order with its evidence attached, not a score. Each is laid ' +
-    'beside the same rule applied to reads the cascade did identify, and where that ' +
-    'control was never computed the page says so instead of showing a separation.');
+    'A layer is a sort order with its evidence attached. Each sits beside the same ' +
+    'rule applied to identified reads; where that control was never computed the page ' +
+    'says so.');
   if (!L) { p.append(el('div', 'absent', 'layers.json absent')); app.append(p); return; }
   const sc = el('div', 'scroll');
   const tb = el('table');
@@ -1832,9 +2010,9 @@ function interval(iv) {
 (function () {
   const S = D.strains;
   const p = panel('Candidate divergent strains, grouped by subject',
-    'Grouped by the relative the reads are nearest to, because a new strain is a subject ' +
-    'several residue reads point at from a distance, not a read with a low score. ' +
-    'Subjects are ordered by how many reads point at them and never by identity: ' +
+    'Grouped by nearest relative: a candidate strain is a subject several residue ' +
+    'reads point at from a distance. Subjects are ordered by read count and never by ' +
+    'identity: ' +
     'identity is a distance from a database, and ordering by it would order by database ' +
     'proximity.');
   if (!S) { p.append(el('div', 'absent',
@@ -2008,8 +2186,8 @@ function interval(iv) {
 (function () {
   const C = D.calibration_ladder;
   const p = panel('Holdout spike, divergence ladder',
-    'A holdout genome spiked at known divergence and pushed through the same cascade. It ' +
-    'is the only positive control the tool has, and the rungs are ordinal.');
+    'A holdout genome spiked at known divergence through the same cascade. The only ' +
+    'positive control here; the rungs are ordinal.');
   if (!C) {
     p.append(el('div', 'absent',
       'no calibration ladder in this run: it was not requested, so no ' +
@@ -2155,7 +2333,7 @@ function interval(iv) {
 (function () {
   const B = D.blind_spots;
   const p = panel('Blind spots',
-    'Each entry names the measurement that established it.');
+    'Each entry names the measurement that established it.' + cite('nulls'));
   if (!B) { p.append(el('div', 'absent', 'blind_spots.json absent from the run directory'));
     app.append(p); return; }
   const g = el('div', 'grid2');
@@ -2278,8 +2456,7 @@ function interval(iv) {
 (function () {
   const P = D.profile;
   const p = panel('Watchlist screen',
-    'Forty-four watchlist taxa screened against the whole library. Levels are read ' +
-    'pairs, not cases.');
+    '44 watchlist taxa against the whole library. Levels are read pairs, not cases.');
   if (!P) {
     p.append(el('div', 'absent', 'public_health_profile_s*.json absent: run ' +
       'experiments/public_health_profile.py over this library'));
@@ -2309,11 +2486,12 @@ function interval(iv) {
   hero.innerHTML =
     '<div class="vmain">' + (top
       ? 'Highest watchlist detection: <b>' + esc(top.name) + '</b>, at <b>' +
-        oneIn(top.fraction) + ' read pairs</b>.'
-      : 'No watchlist taxon detected.') + '</div>' +
+        oneIn(top.fraction) + ' read pairs</b>.' + cite('watchlist')
+      : 'No watchlist taxon detected.' + cite('watchlist')) + '</div>' +
     '<div class="vsub">' + hit.length + ' of ' + rows.length + ' detected at ' +
     'confidence ' + CONF + '. No row reaches 1 pair in 100,000. Untargeted RNA ' +
-    'sequencing has low sensitivity for human pathogens at these concentrations.</div>';
+    'sequencing has low sensitivity for human pathogens at these ' +
+    'concentrations.' + cite('library') + '</div>';
   p.append(hero);
 
   const rank = el('div', 'ranked');
@@ -2352,12 +2530,13 @@ function interval(iv) {
   });
   more.append(mgrid);
   more.append(el('p', 'note',
-    'Bounds are rule-of-three upper limits at this sequencing depth, not statements ' +
-    'about the catchment. Absence requires a targeted assay.'));
+    'Bounds are rule-of-three upper limits at this sequencing depth.' +
+    cite('watchlist') + ' Absence requires a targeted assay.'));
   p.append(more);
 
   const cal = el('div', 'callout');
-  cal.innerHTML = '<b>Shuffled control.</b> The same panel over composition-matched ' +
+  cal.innerHTML = '<b>Shuffled control.</b>' + cite('nulls') +
+    ' The same panel over composition-matched ' +
     'shuffled reads detects <b>' + ((nul['0.0'] || {}).panel_rows_detected) + ' of ' +
     rows.length + ' rows at confidence 0</b> and ' +
     ((nul[CONF] || {}).panel_rows_detected) + ' at confidence ' + CONF + '. ' +
@@ -2371,8 +2550,9 @@ function interval(iv) {
 (function () {
   const P = D.profile;
   const p = panel('What this water is',
-    'Kraken2 PlusPF-08 over all read pairs. First circle: the fraction carrying any ' +
-    'name. Second: the composition of that fraction.');
+    'Kraken2 PlusPF-08 over all read pairs.' + cite('composition') +
+    ' First circle: the fraction carrying any name. Second: the composition of that ' +
+    'fraction.');
   if (!P) { p.append(el('div', 'absent', 'public_health_profile_s*.json absent'));
     app.append(p); return; }
 
@@ -2512,7 +2692,8 @@ function interval(iv) {
   sel.onchange = draw; draw();
 
   const note = el('div', 'callout');
-  note.innerHTML = '<b>Caveats.</b> This is RNA abundance, not cell counts: one ' +
+  note.innerHTML = '<b>Caveats.</b>' + cite('composition') +
+    ' This is RNA abundance rather than cell counts: one ' +
     'bacterium with a thousand ribosomes contributes a thousand times its cell count. ' +
     'The named fraction ranges from ' +
     pct(1 - (((P.at_confidence['0.0'] || {}).by_superkingdom || [])
@@ -2534,8 +2715,8 @@ function interval(iv) {
 (function () {
   const S = D.strain_divergence, W = D.contig_workup;
   const p = panel('Assembled viruses and their divergence',
-    'Protein identity of each assembled virus to its closest published relative, ' +
-    'gene by gene, most divergent first.');
+    'Protein identity of each assembled virus to its closest published relative, gene ' +
+    'by gene, most divergent first.' + cite('contigid'));
   if (!S) {
     p.append(el('div', 'absent', 'known_strain_divergence_s*.json absent: run ' +
       'experiments/known_strain_divergence.py'));
@@ -2558,12 +2739,13 @@ function interval(iv) {
   const hero = el('div', 'verdict');
   hero.innerHTML = '<div class="vmain"><b>' + belowNinety.length + ' of ' + taxa.length +
     '</b> assembled viruses sit <b>below 90% identity</b> to their closest published ' +
-    'protein' + (deep.length ? ', and <b>' + deep.length + '</b> of those are complete ' +
-      'genomes at over 100x read depth' : '') + '.</div>' +
+    'protein' + cite('contigid') +
+    (deep.length ? ', and <b>' + deep.length + '</b> of those are complete ' +
+      'genomes at over 100x read depth' + cite('depth') : '') + '.</div>' +
     '<div class="vsub">DIAMOND blastx, alignments of at least 60 aa at E&lt;1e-5. ' +
-    'Below about 90% identity these are not strains of the taxon they are named after: ' +
-    'the subject is the nearest neighbour in a sparse database. Divergence is measured ' +
-    'against that database, not within the sample.</div>';
+    'Below about 90% identity the subject is a nearest neighbour in a sparse database, ' +
+    'and the name it lends does not establish the taxon. Divergence is measured ' +
+    'against the database, at this operating point.</div>';
   p.append(hero);
 
   if (deep.length) {
@@ -2588,9 +2770,9 @@ function interval(iv) {
     });
     p.append(d);
     p.append(el('p', 'note',
-      'Depth is every read in the library mapped back, not the assembler\\'s own ' +
-      'coverage header, which understates read support about fourfold on this set. ' +
-      'Breadth is above 99% on all of them, so these are genomes rather than fragments.'));
+      'Depth is every read in the library mapped back. The assembler coverage header ' +
+      'understates read support about fourfold on this set. Breadth is above 99% on ' +
+      'all of them.' + cite('depth')));
   }
 
   if (!rows.length) {
@@ -2616,8 +2798,9 @@ function interval(iv) {
     taxa.slice(0, 10).forEach(t => rank.append(draw(t)));
     p.append(rank);
     p.append(el('p', 'note',
-      'Ranked on one best hit per contig, which is whichever gene won on bitscore. Run ' +
-      'experiments/divergent_contig_workup.py for the gene-level ranking.'));
+      'Ranked on one best hit per contig, which is whichever gene won on bitscore.' +
+      cite('genespread') +
+      ' Run experiments/divergent_contig_workup.py for the gene-level ranking.'));
   } else {
     const rank = el('div', 'ranked');
     rank.append(el('div', 'pghead',
@@ -2678,15 +2861,18 @@ function interval(iv) {
       box.append(r);
     });
     p.append(box);
-    p.append(el('div', 'callout',
-      'A contig\\'s own genes disagree by a median of ' +
-      num(dsum.median_orf_identity_spread_points, 1) + ' points on the divergent arm ' +
-      'and ' + num(ctrl.median_orf_identity_spread_points, 2) + ' on the control. One ' +
-      'identity per contig therefore reports whichever gene won on bitscore. The ' +
-      'chimaera flag fires on ' + pct(dsum.fraction_flagged_subject_disagreement) +
+    const cal2 = el('div', 'callout');
+    cal2.innerHTML =
+      'The genes on one contig disagree by a median of <b>' +
+      num(dsum.median_orf_identity_spread_points, 1) + ' points</b> on the divergent ' +
+      'arm and <b>' + num(ctrl.median_orf_identity_spread_points, 2) +
+      '</b> on the control, so one identity per contig reports whichever gene won on ' +
+      'bitscore.' + cite('genespread') +
+      ' The chimaera flag fires on ' + pct(dsum.fraction_flagged_subject_disagreement) +
       ' of divergent contigs and ' + pct(ctrl.fraction_flagged_subject_disagreement) +
-      ' of controls, so it describes how the assembler joins genes rather than ' +
-      'divergence, and nothing is dropped on it.'));
+      ' of controls, so it describes how the assembler joins genes and nothing is ' +
+      'dropped on it.' + cite('chimaera');
+    p.append(cal2);
   }
 
   // The blind-spot list is five sentences from the result file. It stays complete and
@@ -2714,16 +2900,17 @@ function interval(iv) {
   const tier = k => (cur.filter(c => c.tier === k)[0] || {});
   if (!K || !b) return;
   const p = panel('The unnamed remainder',
-    'The fraction no reference names.');
+    'The fraction no reference names.' + cite('cascade'));
   const own = tier('selfasm_sample_contigs_identified_norrna').marginal_removed;
   const rr = tier('rrna').tier_alone_removed;
 
   const hero = el('div', 'verdict');
   hero.innerHTML = '<div class="vmain"><b>' +
     pct(1 - (K.named / (K.searched || 1))) + '</b> of residual reads have no ' +
-    'significant protein match in any index available here.</div>' +
-    '<div class="vsub">' + pct(own) + ' of the library matches contigs assembled from ' +
-    'this sample that carry no name; ' + pct(rr) + ' is ribosomal RNA.</div>';
+    'significant protein match in any index available here.' + cite('residue') +
+    '</div><div class="vsub">' + pct(own) + ' of the library matches contigs assembled ' +
+    'from this sample that carry no name; ' + pct(rr) + ' is ribosomal RNA.' +
+    cite('cascade') + '</div>';
   p.append(hero);
 
   // One picture of the whole library, split by WHAT WE CAN SAY about each part rather
@@ -2769,10 +2956,10 @@ function interval(iv) {
 
   const note = el('div', 'callout');
   note.innerHTML = '<b>Unnamed is not novel.</b> A search establishes that sequence ' +
-    'is already known; it cannot establish novelty, because any search-derived score ' +
-    'tracks distance to the database. Measured in the detail below: artefact ' +
-    'signatures account for under 1% of this pile, it contains no abundant unknown ' +
-    'genome, and its median depth is 1.';
+    'is already known. It cannot establish novelty, because any search-derived score ' +
+    'tracks distance to the database. Artefact signatures account for under 1% of this ' +
+    'pile, it contains no abundant unknown genome, and its median depth is 1.' +
+    cite('residue');
   p.append(note);
   app.append(p);
 })();
@@ -2832,6 +3019,27 @@ function interval(iv) {
     ((D.parameters || {}).pairs || 0).toLocaleString() + '-pair block.'));
   app.append(p);
 })();
+// ---------- methods
+// Built after every panel, so a citation can only point at an entry that exists. The
+// entries are static text: what varies between runs is in the result files and on the
+// panels above, and a method that changed with the run would not be a method.
+(function () {
+  const p = panel('Methods',
+    'One entry per headline figure, cited from it by number. Each states the input, ' +
+    'the procedure, the threshold, the denominator, the control arm and the direction ' +
+    'of the bias the control leaves behind.');
+  METHODS.forEach((m, i) => {
+    const d = el('div', 'meth');
+    d.id = 'm-' + m.id;
+    d.innerHTML = '<div class="mno">' + (i + 1) + '</div><div><h3>' + esc(m.t) +
+      '</h3><dl class="mgrid">' +
+      m.rows.map(r => '<dt>' + esc(r[0]) + '</dt><dd>' + r[1] + '</dd>').join('') +
+      '</dl></div>';
+    p.append(d);
+  });
+  app.append(p);
+})();
+
 // ---------- summary and detail
 // Runs last, after every panel has rendered. It reorganises rather than regenerates: the
 // detail panels keep the markup they were built with and are only moved inside a
@@ -2843,7 +3051,7 @@ function interval(iv) {
   // method report wearing a sample report's clothes.
   const SUMMARY = ['Watchlist screen', 'What this water is',
                    'Assembled viruses and their divergence',
-                   'The unnamed remainder'];
+                   'The unnamed remainder', 'Methods'];
   const panels = Array.prototype.filter.call(app.children,
     n => n.tagName === 'SECTION' && n.classList.contains('panel'));
   const detail = panels.filter(n => {
@@ -2861,9 +3069,8 @@ function interval(iv) {
   const wrap = el('section', 'panel');
   wrap.append(el('h2', null, 'Detail'));
   wrap.append(el('p', 'note',
-    'Every measurement the summary above is read from, one section each, closed by ' +
-    'default. Nothing here is a different number from the summary: the summary is ' +
-    'drawn from these same files.'));
+    'Every measurement the summary is read from, one section each, closed by default. ' +
+    'The summary is drawn from these same files.'));
   detail.forEach(n => {
     const d = el('details', 'ditem');
     const h = n.querySelector('h2');

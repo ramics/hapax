@@ -417,6 +417,39 @@ def main() -> None:
                 [r["read_support"].get("mapped_mean_depth", 0) for r in rs]),
         }
 
+    # The two gene-level arms are NOT comparable as drawn, and the confound runs one way.
+    # On the full pile the divergent arm's contigs have a median of 3 scorable genes over
+    # 3,820 nt where the control arm has 1 over 552 nt, because a contig matching its
+    # reference at 95% is usually a short fragment of a well-sampled organism. More genes
+    # and more length give a spread more room, so the raw comparison is biased TOWARDS
+    # the divergent arm. Matching on the number of scorable genes removes that, and the
+    # gap survives it, so the matched figure is the one to quote.
+    def matched_spread(rs_d, rs_c) -> dict:
+        def by_gene_count(rs):
+            out = collections.defaultdict(list)
+            for r in rs:
+                n = len([g for g in r.get("genes", []) if g.get("pident") is not None])
+                if r.get("orf_identity_spread_points") is not None:
+                    out[n].append(r["orf_identity_spread_points"])
+            return out
+        dd, cc = by_gene_count(rs_d), by_gene_count(rs_c)
+        bands = []
+        for n in sorted(set(dd) & set(cc)):
+            if n < 2 or len(dd[n]) < 5 or len(cc[n]) < 5:
+                continue
+            bands.append({
+                "scorable_genes": n,
+                "divergent_contigs": len(dd[n]),
+                "divergent_median_spread_points": round(statistics.median(dd[n]), 2),
+                "control_contigs": len(cc[n]),
+                "control_median_spread_points": round(statistics.median(cc[n]), 2),
+            })
+        return {"readout": ("median per-contig gene identity spread at equal numbers of "
+                            "scorable genes. The unmatched comparison is biased towards "
+                            "the divergent arm, whose contigs are longer and carry more "
+                            "genes"),
+                "bands": bands}
+
     out = {
         "unit": "one row per identified contig taken to the gene level",
         "question": ("how far was each identified contig from the reference that "
@@ -444,6 +477,9 @@ def main() -> None:
             "median_real": round(statistics.median(ids), 1) if ids else None,
             "median_null": round(statistics.median(nullids), 1) if nullids else None,
         },
+        "gene_count_matched_spread": matched_spread(
+            [r for r in rows if r["arm"] == "divergent"],
+            [r for r in rows if r["arm"] == "control_near_reference"]),
         "discrimination": discrimination(sig, nullsig, len(seqs)),
         "operating_point": {
             "min_alignment_aa": MIN_ALN_AA,
