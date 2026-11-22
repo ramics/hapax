@@ -100,6 +100,12 @@ def fmt(value, spec: str = ".1f") -> str:
         return "-"
     if isinstance(value, float) and (math.isnan(value) or math.isinf(value)):
         return "-"
+    # A dN of exactly zero divided by a positive dS gives -0.0, which formats as "-0.000"
+    # and, inside a range, as the unreadable "-0.00--0.00". The sign carries no information
+    # at zero, so it is dropped here rather than in the arithmetic, where the sign of a
+    # genuinely small negative number would matter.
+    if isinstance(value, float) and value == 0.0:
+        value = 0.0
     return format(value, spec)
 
 
@@ -440,17 +446,31 @@ def main(argv: list[str] | None = None) -> int:
     if codon:
         lines.append("\n## 7. Codon space: is the synonymous signal saturated where these "
                      "candidates sit\n")
-        lines.append("One row per pile, over significant tblastn alignments. `dS undefined` "
-                     "is the Jukes-Cantor correction's argument going non-positive, which "
-                     "is what saturation looks like when it is not clipped to a finite "
-                     "number.\n")
-        lines.append("| pile | alignments | median %id | dS undefined | median dS | "
+        lines.append(
+            "**Read the `nearest` block, not the `all` block.** `all` pools every "
+            "significant tblastn alignment a pile produced, and a pile's alignments are "
+            "dominated by its long tail of distant subjects rather than by its own nearest "
+            "relative - so `all` reads the same on the divergent pile and on the 95-99% "
+            "control, which is the subject set describing itself rather than the piles. "
+            "`nearest` takes the best-scoring alignment per ORF, which is the relative the "
+            "contig actually has. `dS undefined` is the Jukes-Cantor correction's argument "
+            "going non-positive, which is what saturation looks like when it is not clipped "
+            "to a finite number.\n")
+        lines.append("| set | pile | alignments | median %id | dS undefined | median dS | "
                      "median dN | median dN/dS | spread of dN/dS (p10-p90) |")
-        lines.append("|---|---|---|---|---|---|---|---|")
+        lines.append("|---|---|---|---|---|---|---|---|---|")
         codon_rows = []
-        for pile in ("divergent", "near_reference", "holdout", "holdout_reference",
-                     "shuffled"):
-            pool = [r for r in codon if r["pile"] == pile]
+        #: Best-scoring codon alignment per ORF, which is the per-ORF nearest relative.
+        nearest: dict[str, dict] = {}
+        for r in codon:
+            held = nearest.get(r["orf"])
+            if held is None or r["bitscore"] > held["bitscore"]:
+                nearest[r["orf"]] = r
+        pools = [("nearest", list(nearest.values())), ("all", codon)]
+        for label, source in pools:
+          for pile in ("divergent", "near_reference", "holdout", "holdout_reference",
+                       "shuffled"):
+            pool = [r for r in source if r["pile"] == pile]
             if not pool:
                 continue
             ds = [r["d_syn"] for r in pool if r.get("d_syn") is not None]
@@ -458,7 +478,7 @@ def main(argv: list[str] | None = None) -> int:
             ratios = sorted(r["dnds"] for r in pool if r.get("dnds") is not None)
             undefined = sum(1 for r in pool if r.get("synonymous_saturated"))
             row = dict(
-                pile=pile, alignments=len(pool),
+                set=label, pile=pile, alignments=len(pool),
                 median_pident=round(statistics.median([r["pident"] for r in pool]), 1),
                 ds_undefined=undefined,
                 ds_undefined_share=round(undefined / len(pool), 3),
@@ -469,7 +489,7 @@ def main(argv: list[str] | None = None) -> int:
                 dnds_p90=round(ratios[int(0.9 * (len(ratios) - 1))], 3) if ratios else None)
             codon_rows.append(row)
             lines.append(
-                f"| {pile} | {len(pool)} | {fmt(row['median_pident'])} | "
+                f"| {label} | {pile} | {len(pool)} | {fmt(row['median_pident'])} | "
                 f"{undefined}/{len(pool)} | {fmt(row['median_ds'], '.3f')} | "
                 f"{fmt(row['median_dn'], '.3f')} | {fmt(row['median_dnds'], '.3f')} | "
                 f"{fmt(row['dnds_p10'], '.2f')}-{fmt(row['dnds_p90'], '.2f')} |")

@@ -463,6 +463,67 @@ def arm_jackhmmer(bins: dict, dbs: dict, out: Path, threads: int) -> list[dict]:
                         db="swissprot+viral", orf_is_target=False)
 
 
+def split_jackhmmer_alignments(sto: Path, queries: set[str],
+                               hhm_dir: Path) -> list[tuple[str, Path]]:
+    """jackhmmer's concatenated Stockholm, split into one file per query it searched with.
+
+    WHICH QUERY A BLOCK BELONGS TO, AND THE BUG THIS REPLACES. The first version matched by
+    substring - the first ORF name that appeared anywhere in the block. Every shuffled ORF
+    is named `sh<seed>_<orf>`, so a real ORF's name is a substring of its own null's name,
+    and each null block was written to its real counterpart's filename and overwrote it.
+    202 ORFs produced 59 files, nearly all of them holding a shuffle; and because a
+    one-sequence alignment is a profile `hhmake` refuses, the arm then reported zero rows
+    and `ok: true` - a plumbing failure wearing the clothes of a measurement.
+
+    So the name is read from jackhmmer's own `#=GF ID <query>-i<iteration>` line, matched
+    exactly against the ORF set, and every surprise raises rather than falling back to
+    block order. This is split out of the arm so it can be tested without HHsuite present,
+    which is the only reason the regression test exists.
+    """
+    if not sto.exists():
+        raise FileNotFoundError(
+            f"{sto} is missing: the profile arm needs jackhmmer's alignment, so the "
+            f"jackhmmer arm has to run before it. Pass both, in that order.")
+
+    blocks, current = [], []
+    for line in sto.read_text().splitlines(keepends=True):
+        current.append(line)
+        if line.strip() == "//":
+            blocks.append("".join(current))
+            current = []
+    print(f"  {len(blocks)} query alignments from jackhmmer", flush=True)
+
+    hhm_dir.mkdir(parents=True, exist_ok=True)
+    pairs: list[tuple[str, Path]] = []
+    seen: dict[str, int] = {}
+    for i, block in enumerate(blocks):
+        name = None
+        for line in block.splitlines():
+            if line.startswith("#=GF ID"):
+                name = re.sub(r"-i\d+$", "", line.split(None, 2)[2].strip())
+                break
+        if name is None:
+            raise ValueError(
+                f"jackhmmer block {i} has no `#=GF ID` line, so the query it belongs to "
+                f"cannot be established. Falling back to block order is what produced the "
+                f"silent overwrite this check replaces.")
+        if name not in queries:
+            raise ValueError(
+                f"jackhmmer block {i} names query {name!r}, which is not one of the "
+                f"{len(queries)} ORFs in orfs.faa. The name is parsed, not guessed, so a "
+                f"mismatch means the format changed.")
+        if name in seen:
+            raise ValueError(
+                f"two jackhmmer blocks ({seen[name]} and {i}) both name query {name!r}. "
+                f"Writing both would silently keep only the second, which is exactly the "
+                f"failure this arm already had once.")
+        seen[name] = i
+        path = hhm_dir / f"{name}.sto"
+        path.write_text(block)
+        pairs.append((name, path))
+    return pairs
+
+
 def arm_hhsearch(bins: dict, dbs: dict, out: Path, threads: int) -> list[dict]:
     """Profile against profile: the query's own HMM searched against Pfam's.
 
@@ -485,43 +546,17 @@ def arm_hhsearch(bins: dict, dbs: dict, out: Path, threads: int) -> list[dict]:
     The target side is Pfam's HHM database, so this arm's subjects are Pfam and no
     difference against the sequence baseline is computed for it.
     """
-    sto = out / "jackhmmer.sto"
-    if not sto.exists():
-        raise FileNotFoundError(
-            f"{sto} is missing: the profile arm needs jackhmmer's alignment, so the "
-            f"jackhmmer arm has to run before it. Pass both, in that order.")
-
-    # jackhmmer writes one Stockholm block per query, concatenated. Split on the terminator
-    # rather than parsing: each block names its own query in the `#=GS` lines and hhmake
-    # reads Stockholm directly, so nothing needs reformatting.
-    blocks, current = [], []
-    for line in sto.read_text().splitlines(keepends=True):
-        current.append(line)
-        if line.strip() == "//":
-            blocks.append("".join(current))
-            current = []
-    print(f"  {len(blocks)} query alignments from jackhmmer", flush=True)
-
-    hhm_dir = out / "hhm"
-    hhm_dir.mkdir(exist_ok=True)
-    queries = [name for name, _, _ in read_fasta(out / "orfs.faa")]
-    pairs: list[tuple[str, Path]] = []
-    for i, block in enumerate(blocks):
-        # The query an alignment belongs to is the sequence jackhmmer searched with, which
-        # appears in the block's `#=GS` or `#=GF` metadata depending on the version. Falling
-        # back to file order is safe because jackhmmer emits one block per query in query
-        # order, and the assertion below catches it if that ever stops being true.
-        named = [q for q in queries if q in block]
-        qname = named[0] if named else (queries[i] if i < len(queries) else f"block{i}")
-        path = hhm_dir / f"{qname}.sto"
-        path.write_text(block)
-        pairs.append((qname, path))
+    pairs = split_jackhmmer_alignments(
+        out / "jackhmmer.sto", {name for name, _, _ in read_fasta(out / "orfs.faa")},
+        out / "hhm")
 
     rows = []
+    built = 0
     for qname, path in pairs:
         hhm = path.with_suffix(".hhm")
         try:
             sh([bins["hhmake"], "-i", path, "-o", hhm, "-M", "first", "-v", 0])
+            built += 1
         except subprocess.CalledProcessError:
             # An alignment of one sequence is a profile with no information; hhmake refuses
             # it. That is a real outcome for an ORF jackhmmer found nothing for, and it is
@@ -540,6 +575,16 @@ def arm_hhsearch(bins: dict, dbs: dict, out: Path, threads: int) -> list[dict]:
                 qcov=hit["cols"] / max(hit["qlen"], 1),
                 qstart=hit["qstart"], qend=hit["qend"],
                 sstart=hit["sstart"], send=hit["send"]))
+    # ZERO PROFILES IS A FAILURE, NOT A FINDING. "No profile could be built for any query"
+    # and "profiles were built and found nothing" are different outcomes that both come out
+    # as an empty table, and the first one has been wrong here once already. An arm whose
+    # every query was refused has measured nothing, so it says so instead of returning [].
+    print(f"  {built} of {len(pairs)} queries yielded a profile", flush=True)
+    if not built:
+        raise RuntimeError(
+            f"hhmake refused all {len(pairs)} alignments, so no query profile was built and "
+            f"this arm measured nothing. An empty table here would read as 'profile search "
+            f"found no relative', which is a different claim.")
     return rows
 
 
@@ -611,21 +656,38 @@ def arm_foldseek(bins: dict, dbs: dict, out: Path, threads: int, target: str) ->
     qdb, resdb = out / f"fsq_{target}", out / f"fsr_{target}"
     tsv = out / f"foldseek_{target}.tsv"
     if not qdb.with_suffix(".dbtype").exists():
-        # `--prostt5-model` wants the DIRECTORY foldseek's own `databases ProstT5` would
-        # have written, not the weights file inside it. Passing the file is what the first
-        # run did, and foldseek accepted the option, printed it back, and then exited 1 - so
-        # the file form is tried as a fallback rather than assumed wrong, and whichever
-        # worked goes in the row.
-        model = dbs["prostt5"]
-        try:
-            sh([bins["foldseek"], "createdb", out / "orfs.faa", qdb,
-                "--prostt5-model", model, "--threads", threads])
-        except subprocess.CalledProcessError:
-            inner = next(iter(sorted(Path(model).glob("*.gguf"))), None)
-            if inner is None:
-                raise
-            sh([bins["foldseek"], "createdb", out / "orfs.faa", qdb,
-                "--prostt5-model", inner, "--threads", threads])
+        # WHAT `--prostt5-model` ACTUALLY WANTS, after two runs spent on it. It takes the
+        # DIRECTORY that foldseek's own `databases ProstT5` writes - and that directory is
+        # more than the weights file. Run 1 passed the `.gguf` and run 2 passed a directory
+        # holding only that `.gguf`, copied from this account's S3; both exited 1. So the
+        # staging now has foldseek build the directory itself, and the S3 copy is only a
+        # fallback. Each attempt's stderr is kept, because foldseek's exit code says
+        # nothing and two runs were spent not knowing what it objected to.
+        attempts: list[tuple[str, Path]] = [("staged directory", Path(dbs["prostt5"]))]
+        inner = next(iter(sorted(Path(dbs["prostt5"]).glob("*.gguf"))), None)
+        if inner is not None:
+            attempts.append(("weights file", inner))
+        if dbs.get("prostt5_own"):
+            attempts.insert(0, ("foldseek's own download", Path(dbs["prostt5_own"])))
+        failures = []
+        for label, model in attempts:
+            try:
+                # Captured rather than streamed, because what is wanted is the tail of
+                # foldseek's own complaint on the failing path, and `check=True` discards it.
+                done = sh([bins["foldseek"], "createdb", out / "orfs.faa", qdb,
+                           "--prostt5-model", model, "--threads", threads],
+                          capture_output=True, text=True)
+                print(f"  3Di written from the {label}\n{(done.stdout or '')[-400:]}",
+                      flush=True)
+                break
+            except subprocess.CalledProcessError as exc:
+                detail = ((exc.stderr or "") + (exc.stdout or ""))[-2000:]
+                failures.append(f"--- {label} ({model}):\n{detail}")
+        else:
+            raise RuntimeError(
+                "foldseek createdb refused every ProstT5 model layout offered. Its own "
+                "output for each, which is the part the exit code does not carry:\n"
+                + "\n".join(failures))
     # `--exhaustive-search` skips the prefilter, which is the whole point of the arm: a
     # structural relative this far out is exactly what a k-mer prefilter would drop. It is
     # affordable only because the query set is 35 ORFs. If this build of foldseek will not
@@ -894,6 +956,10 @@ def main(argv: list[str] | None = None) -> int:
         prot_fasta=args.db_dir / "prot.faa",
         pfam=args.db_dir / "Pfam-A.hmm",
         prostt5=args.db_dir / "prostt5",
+        # Written by `foldseek databases ProstT5` during staging when the network allowed
+        # it, and absent otherwise; the arm tries it first and falls back to the S3 copy.
+        prostt5_own=((args.db_dir / "prostt5_own").exists()
+                     and args.db_dir / "prostt5_own") or None,
         fs_afdb=args.db_dir / "fs_afdb_sprot" / "afdb_sprot",
         fs_pdb=args.db_dir / "fs_pdb" / "pdb",
         viral_nt=args.db_dir / "viral_nt",

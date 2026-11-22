@@ -274,13 +274,27 @@ if [ "$VIRAL_NT" -gt 0 ] && /opt/hapax/bin/makeblastdb -in /opt/hapax/db/viral_n
   ARMS="$ARMS codon"
 fi
 
-# The structure arms. ProstT5 comes from this account's own S3, where it was already staged,
-# which is the only reason the structure axis is affordable at all here. AlphaFold/Swiss-Prot
-# is the target that makes arm 4 comparable to arms 1-2: it is the same subjects, folded.
+# The structure arms. AlphaFold/Swiss-Prot is the target that makes arm 4 comparable to arms
+# 1-2: it is the same subjects, folded.
+#
+# WHERE THE ProstT5 WEIGHTS COME FROM, AND WHY TWICE WAS NOT ENOUGH. This account's S3 holds
+# the 2.4 GB `prostt5-f16.gguf`, and for two runs that file was all that was staged - once
+# passed directly, once as the only file in a directory. `foldseek createdb` exited 1 both
+# times, because `--prostt5-model` wants the directory `foldseek databases ProstT5` writes
+# and that directory is more than the weights. So foldseek now builds it itself, over the
+# network, and the S3 copy stays only as a fallback the arm will also try. Both paths are
+# handed to the arm and it reports which one produced the 3Di.
 if [ "$SKIP_STRUCTURE" = 0 ]; then
   mkdir -p /opt/hapax/db/prostt5
-  if aws s3 cp "s3://@@BUCKET@@/@@PROSTT5_KEY@@" /opt/hapax/db/prostt5/prostt5-f16.gguf \
-      --region "$REGION"; then
+  aws s3 cp "s3://@@BUCKET@@/@@PROSTT5_KEY@@" /opt/hapax/db/prostt5/prostt5-f16.gguf \
+      --region "$REGION" || true
+  if /opt/hapax/bin/foldseek databases ProstT5 /opt/hapax/db/prostt5_own \
+      /opt/hapax/db/fstmp_ptt5 --threads "$THREADS"; then
+    PROSTT5_OWN=/opt/hapax/db/prostt5_own
+  else
+    PROSTT5_OWN=
+  fi
+  if [ -n "$PROSTT5_OWN" ] || [ -s /opt/hapax/db/prostt5/prostt5-f16.gguf ]; then
     if /opt/hapax/bin/foldseek databases Alphafold/Swiss-Prot \
         /opt/hapax/db/fs_afdb_sprot/afdb_sprot /opt/hapax/db/fstmp_afdb \
         --threads "$THREADS"; then

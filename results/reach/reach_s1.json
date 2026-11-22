@@ -1,0 +1,1367 @@
+{
+ "unit": "one contig",
+ "question": "which search method recovers the most distant real relative, at what cost",
+ "seed": 1,
+ "operating_point": {
+  "evalue_floor": 1e-05,
+  "min_alignment_aa": 60,
+  "shared_subject_set": "swissprot+viral",
+  "baseline": "diamond_ultra_sensitive",
+  "profile_arms_floored_on_evalue_only": [
+   "hhsearch",
+   "hmmsearch_ga",
+   "hmmsearch_open",
+   "jackhmmer"
+  ]
+ },
+ "panel": {
+  "divergent": 7,
+  "near_reference": 7,
+  "holdout": 1,
+  "holdout_reference": 1,
+  "shuffled": 80
+ },
+ "shuffle": {
+  "implementation": "holdout_run.dinuc_shuffle (fixed Altschul-Erikson walk)",
+  "measured_at": "results/fail_loudly_audit/ reports 0.00% fallback on read windows and whole contigs; the rate is a property of the input, so it is measured again here",
+  "fallback_records": {
+   "1": 0,
+   "2": 0,
+   "3": 0,
+   "4": 0,
+   "5": 0
+  },
+  "fallback_rate": 0.0,
+  "records_shuffled_per_seed": 16,
+  "note": "a dinucleotide shuffle preserves stop-codon density, so the null yields few and short ORFs. It calibrates existence of an alignment, not any field conditional on one"
+ },
+ "stage": {
+  "instance_id": "i-0499bf15b019eba9f",
+  "instance_type": "c6i.2xlarge",
+  "commit": "15faed25a8d020978dbc6c7b0ed23d9c05a780e3",
+  "seed": 1,
+  "threads": 8,
+  "arms_staged": "diamond blastp exhaustive hmmsearch jackhmmer hhsearch codon foldseek_afdb foldseek_pdb",
+  "blast_version": "2.17.0",
+  "diamond_version": "2.1.10",
+  "hmmer_version": "3.4",
+  "hhsuite_version": "3.3.0",
+  "null_piles": "/opt/hapax/queries/null_s1.fa /opt/hapax/queries/null_s2.fa /opt/hapax/queries/null_s3.fa /opt/hapax/queries/null_s4.fa /opt/hapax/queries/null_s5.fa ",
+  "foldseek": "pinned 9-427df8a",
+  "ncbi_blast_snapshot": "2026-10-22-01-05-01",
+  "refseq_viral_protein_files": 1,
+  "refseq_viral_genomic_files": 1,
+  "shared_subject_sequences": 1210551,
+  "pfam_version": "Pfam release       : 39.0 Pfam-A families    : 53275 Date               : 2026-09 "
+ },
+ "arms": [
+  "diamond_sensitive",
+  "diamond_very_sensitive",
+  "diamond_ultra_sensitive",
+  "blastp",
+  "sw_exhaustive",
+  "hmmsearch_ga",
+  "hmmsearch_open",
+  "jackhmmer",
+  "codon"
+ ],
+ "reach_by_pile": [
+  {
+   "arm": "diamond_sensitive",
+   "pile": "divergent",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": 47.8,
+   "median_most_distant_pident": 21.8,
+   "furthest_single_pident": 20.3,
+   "median_aligned_aa": 289,
+   "median_query_coverage": 0.654
+  },
+  {
+   "arm": "diamond_sensitive",
+   "pile": "near_reference",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": 96.2,
+   "median_most_distant_pident": 22.2,
+   "furthest_single_pident": 20.8,
+   "median_aligned_aa": 279,
+   "median_query_coverage": 0.704
+  },
+  {
+   "arm": "diamond_sensitive",
+   "pile": "holdout",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": 66.5,
+   "median_most_distant_pident": 21.1,
+   "furthest_single_pident": 21.1,
+   "median_aligned_aa": 232,
+   "median_query_coverage": 0.46
+  },
+  {
+   "arm": "diamond_sensitive",
+   "pile": "holdout_reference",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": 99.8,
+   "median_most_distant_pident": 20.4,
+   "furthest_single_pident": 20.4,
+   "median_aligned_aa": 534,
+   "median_query_coverage": 0.434
+  },
+  {
+   "arm": "diamond_sensitive",
+   "pile": "shuffled",
+   "queries": 80,
+   "with_a_hit": 0,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": null,
+   "median_query_coverage": null
+  },
+  {
+   "arm": "diamond_very_sensitive",
+   "pile": "divergent",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": 47.8,
+   "median_most_distant_pident": 21.8,
+   "furthest_single_pident": 20.3,
+   "median_aligned_aa": 289,
+   "median_query_coverage": 0.654
+  },
+  {
+   "arm": "diamond_very_sensitive",
+   "pile": "near_reference",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": 96.2,
+   "median_most_distant_pident": 22.2,
+   "furthest_single_pident": 20.8,
+   "median_aligned_aa": 279,
+   "median_query_coverage": 0.704
+  },
+  {
+   "arm": "diamond_very_sensitive",
+   "pile": "holdout",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": 66.5,
+   "median_most_distant_pident": 21.1,
+   "furthest_single_pident": 21.1,
+   "median_aligned_aa": 232,
+   "median_query_coverage": 0.46
+  },
+  {
+   "arm": "diamond_very_sensitive",
+   "pile": "holdout_reference",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": 99.8,
+   "median_most_distant_pident": 20.7,
+   "furthest_single_pident": 20.7,
+   "median_aligned_aa": 434,
+   "median_query_coverage": 0.858
+  },
+  {
+   "arm": "diamond_very_sensitive",
+   "pile": "shuffled",
+   "queries": 80,
+   "with_a_hit": 0,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": null,
+   "median_query_coverage": null
+  },
+  {
+   "arm": "diamond_ultra_sensitive",
+   "pile": "divergent",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": 47.8,
+   "median_most_distant_pident": 21.8,
+   "furthest_single_pident": 20.3,
+   "median_aligned_aa": 289,
+   "median_query_coverage": 0.654
+  },
+  {
+   "arm": "diamond_ultra_sensitive",
+   "pile": "near_reference",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": 96.2,
+   "median_most_distant_pident": 22.2,
+   "furthest_single_pident": 20.8,
+   "median_aligned_aa": 279,
+   "median_query_coverage": 0.704
+  },
+  {
+   "arm": "diamond_ultra_sensitive",
+   "pile": "holdout",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": 66.5,
+   "median_most_distant_pident": 21.1,
+   "furthest_single_pident": 21.1,
+   "median_aligned_aa": 232,
+   "median_query_coverage": 0.46
+  },
+  {
+   "arm": "diamond_ultra_sensitive",
+   "pile": "holdout_reference",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": 99.8,
+   "median_most_distant_pident": 20.7,
+   "furthest_single_pident": 20.7,
+   "median_aligned_aa": 434,
+   "median_query_coverage": 0.858
+  },
+  {
+   "arm": "diamond_ultra_sensitive",
+   "pile": "shuffled",
+   "queries": 80,
+   "with_a_hit": 0,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": null,
+   "median_query_coverage": null
+  },
+  {
+   "arm": "blastp",
+   "pile": "divergent",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": 47.8,
+   "median_most_distant_pident": 21.0,
+   "furthest_single_pident": 20.7,
+   "median_aligned_aa": 288,
+   "median_query_coverage": 0.77
+  },
+  {
+   "arm": "blastp",
+   "pile": "near_reference",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": 95.9,
+   "median_most_distant_pident": 21.3,
+   "furthest_single_pident": 19.6,
+   "median_aligned_aa": 305,
+   "median_query_coverage": 0.66
+  },
+  {
+   "arm": "blastp",
+   "pile": "holdout",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": 66.5,
+   "median_most_distant_pident": 21.4,
+   "furthest_single_pident": 21.4,
+   "median_aligned_aa": 304,
+   "median_query_coverage": 0.6
+  },
+  {
+   "arm": "blastp",
+   "pile": "holdout_reference",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": 99.6,
+   "median_most_distant_pident": 20.0,
+   "furthest_single_pident": 20.0,
+   "median_aligned_aa": 545,
+   "median_query_coverage": 0.45
+  },
+  {
+   "arm": "blastp",
+   "pile": "shuffled",
+   "queries": 80,
+   "with_a_hit": 0,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": null,
+   "median_query_coverage": null
+  },
+  {
+   "arm": "sw_exhaustive",
+   "pile": "divergent",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": 47.8,
+   "median_most_distant_pident": 21.1,
+   "furthest_single_pident": 19.8,
+   "median_aligned_aa": 335,
+   "median_query_coverage": 0.772
+  },
+  {
+   "arm": "sw_exhaustive",
+   "pile": "near_reference",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": 96.2,
+   "median_most_distant_pident": 21.1,
+   "furthest_single_pident": 19.3,
+   "median_aligned_aa": 356,
+   "median_query_coverage": 0.8
+  },
+  {
+   "arm": "sw_exhaustive",
+   "pile": "holdout",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": 66.5,
+   "median_most_distant_pident": 21.1,
+   "furthest_single_pident": 21.1,
+   "median_aligned_aa": 318,
+   "median_query_coverage": 0.598
+  },
+  {
+   "arm": "sw_exhaustive",
+   "pile": "holdout_reference",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": 99.7,
+   "median_most_distant_pident": 19.0,
+   "furthest_single_pident": 19.0,
+   "median_aligned_aa": 1109,
+   "median_query_coverage": 0.916
+  },
+  {
+   "arm": "sw_exhaustive",
+   "pile": "shuffled",
+   "queries": 80,
+   "with_a_hit": 0,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": null,
+   "median_query_coverage": null
+  },
+  {
+   "arm": "hmmsearch_ga",
+   "pile": "divergent",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": 127,
+   "median_query_coverage": 0.533
+  },
+  {
+   "arm": "hmmsearch_ga",
+   "pile": "near_reference",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": 145,
+   "median_query_coverage": 0.519
+  },
+  {
+   "arm": "hmmsearch_ga",
+   "pile": "holdout",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": 114,
+   "median_query_coverage": 0.234
+  },
+  {
+   "arm": "hmmsearch_ga",
+   "pile": "holdout_reference",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": 121,
+   "median_query_coverage": 0.107
+  },
+  {
+   "arm": "hmmsearch_ga",
+   "pile": "shuffled",
+   "queries": 80,
+   "with_a_hit": 0,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": null,
+   "median_query_coverage": null
+  },
+  {
+   "arm": "hmmsearch_open",
+   "pile": "divergent",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": 125,
+   "median_query_coverage": 0.34
+  },
+  {
+   "arm": "hmmsearch_open",
+   "pile": "near_reference",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": 115,
+   "median_query_coverage": 0.414
+  },
+  {
+   "arm": "hmmsearch_open",
+   "pile": "holdout",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": 114,
+   "median_query_coverage": 0.234
+  },
+  {
+   "arm": "hmmsearch_open",
+   "pile": "holdout_reference",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": 117,
+   "median_query_coverage": 0.103
+  },
+  {
+   "arm": "hmmsearch_open",
+   "pile": "shuffled",
+   "queries": 80,
+   "with_a_hit": 0,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": null,
+   "median_query_coverage": null
+  },
+  {
+   "arm": "jackhmmer",
+   "pile": "divergent",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": 101,
+   "median_query_coverage": 0.184
+  },
+  {
+   "arm": "jackhmmer",
+   "pile": "near_reference",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": 129,
+   "median_query_coverage": 0.238
+  },
+  {
+   "arm": "jackhmmer",
+   "pile": "holdout",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": 192,
+   "median_query_coverage": 0.312
+  },
+  {
+   "arm": "jackhmmer",
+   "pile": "holdout_reference",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": 108,
+   "median_query_coverage": 0.22
+  },
+  {
+   "arm": "jackhmmer",
+   "pile": "shuffled",
+   "queries": 80,
+   "with_a_hit": 1,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": 23,
+   "median_query_coverage": 0.277
+  },
+  {
+   "arm": "codon",
+   "pile": "divergent",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": 47.8,
+   "median_most_distant_pident": 24.3,
+   "furthest_single_pident": 21.9,
+   "median_aligned_aa": 334,
+   "median_query_coverage": 0.75
+  },
+  {
+   "arm": "codon",
+   "pile": "near_reference",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": 95.9,
+   "median_most_distant_pident": 24.9,
+   "furthest_single_pident": 21.5,
+   "median_aligned_aa": 297,
+   "median_query_coverage": 0.7
+  },
+  {
+   "arm": "codon",
+   "pile": "holdout",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": 66.9,
+   "median_most_distant_pident": 28.2,
+   "furthest_single_pident": 28.2,
+   "median_aligned_aa": 312,
+   "median_query_coverage": 0.62
+  },
+  {
+   "arm": "codon",
+   "pile": "holdout_reference",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": 99.8,
+   "median_most_distant_pident": 21.9,
+   "furthest_single_pident": 21.9,
+   "median_aligned_aa": 366,
+   "median_query_coverage": 0.3
+  },
+  {
+   "arm": "codon",
+   "pile": "shuffled",
+   "queries": 80,
+   "with_a_hit": 0,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": null,
+   "median_query_coverage": null
+  }
+ ],
+ "holdout": [
+  {
+   "arm": "diamond_sensitive",
+   "subject": "YP_010769845.1",
+   "pident": 21.1,
+   "aln": 232,
+   "qcov": 0.46,
+   "evalue": 5.1e-09,
+   "best_pident": 66.5,
+   "companion_best_pident": 99.8
+  },
+  {
+   "arm": "diamond_very_sensitive",
+   "subject": "YP_010769845.1",
+   "pident": 21.1,
+   "aln": 232,
+   "qcov": 0.46,
+   "evalue": 5.1e-09,
+   "best_pident": 66.5,
+   "companion_best_pident": 99.8
+  },
+  {
+   "arm": "diamond_ultra_sensitive",
+   "subject": "YP_010769845.1",
+   "pident": 21.1,
+   "aln": 232,
+   "qcov": 0.46,
+   "evalue": 5.1e-09,
+   "best_pident": 66.5,
+   "companion_best_pident": 99.8
+  },
+  {
+   "arm": "blastp",
+   "subject": "YP_010770120.1",
+   "pident": 21.382,
+   "aln": 304,
+   "qcov": 0.6,
+   "evalue": 1e-06,
+   "best_pident": 66.452,
+   "companion_best_pident": 99.624
+  },
+  {
+   "arm": "sw_exhaustive",
+   "subject": "YP_010768790.1",
+   "pident": 21.069182389937108,
+   "aln": 318,
+   "qcov": 0.598,
+   "evalue": 3.867428552655153e-06,
+   "best_pident": 66.45161290322581,
+   "companion_best_pident": 99.73118279569893
+  },
+  {
+   "arm": "hmmsearch_ga",
+   "subject": "PF03863.20",
+   "pident": null,
+   "aln": 114,
+   "qcov": 0.234,
+   "evalue": 1e-25,
+   "best_pident": null,
+   "companion_best_pident": null
+  },
+  {
+   "arm": "hmmsearch_open",
+   "subject": "PF03863.20",
+   "pident": null,
+   "aln": 114,
+   "qcov": 0.234,
+   "evalue": 1e-25,
+   "best_pident": null,
+   "companion_best_pident": null
+  },
+  {
+   "arm": "jackhmmer",
+   "subject": "YP_009256557.1",
+   "pident": null,
+   "aln": 192,
+   "qcov": 0.312,
+   "evalue": 6.7e-06,
+   "best_pident": null,
+   "companion_best_pident": null
+  },
+  {
+   "arm": "codon",
+   "subject": "NC_073984.1",
+   "pident": 28.205,
+   "aln": 312,
+   "qcov": 0.62,
+   "evalue": 1.31e-26,
+   "best_pident": 66.939,
+   "companion_best_pident": 99.797
+  }
+ ],
+ "against_baseline": [
+  {
+   "arm": "diamond_sensitive",
+   "comparable": true,
+   "extra_pairs": 3,
+   "by_pile": {
+    "near_reference": 3
+   },
+   "most_distant_extra": {
+    "query": "ctl1",
+    "subject": "YP_010770146.1",
+    "pident": 30.7,
+    "aln": 261,
+    "evalue": 1.25e-18
+   }
+  },
+  {
+   "arm": "diamond_very_sensitive",
+   "comparable": true,
+   "extra_pairs": 3,
+   "by_pile": {
+    "divergent": 1,
+    "holdout_reference": 2
+   },
+   "most_distant_extra": {
+    "query": "leak",
+    "subject": "YP_009553650.1",
+    "pident": 27.5,
+    "aln": 291,
+    "evalue": 5.04e-09
+   }
+  },
+  {
+   "arm": "blastp",
+   "comparable": true,
+   "extra_pairs": 283,
+   "by_pile": {
+    "divergent": 124,
+    "near_reference": 128,
+    "holdout": 15,
+    "holdout_reference": 16
+   },
+   "most_distant_extra": {
+    "query": "ctl1",
+    "subject": "YP_010769823.1",
+    "pident": 19.6,
+    "aln": 332,
+    "evalue": 2.05e-06
+   }
+  },
+  {
+   "arm": "sw_exhaustive",
+   "comparable": true,
+   "extra_pairs": 595,
+   "by_pile": {
+    "divergent": 273,
+    "near_reference": 260,
+    "holdout": 28,
+    "holdout_reference": 34
+   },
+   "most_distant_extra": {
+    "query": "ctl5",
+    "subject": "YP_010769328.1",
+    "pident": 19.3,
+    "aln": 450,
+    "evalue": 3.609050002448714e-06
+   }
+  },
+  {
+   "arm": "hmmsearch_ga",
+   "comparable": false,
+   "db": "Pfam-A"
+  },
+  {
+   "arm": "hmmsearch_open",
+   "comparable": false,
+   "db": "Pfam-A"
+  },
+  {
+   "arm": "jackhmmer",
+   "comparable": true,
+   "extra_pairs": 35704,
+   "by_pile": {
+    "divergent": 13096,
+    "near_reference": 13585,
+    "holdout": 1735,
+    "holdout_reference": 7281,
+    "shuffled": 7
+   },
+   "most_distant_extra": null
+  },
+  {
+   "arm": "codon",
+   "comparable": false,
+   "db": "refseq viral genomes"
+  }
+ ],
+ "controls": [
+  {
+   "arm": "diamond_sensitive",
+   "null_alignments": 0,
+   "null_alignments_per_seed": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+   },
+   "null_alignments_min": 0,
+   "null_alignments_max": 0,
+   "null_queries_with_one": 0,
+   "null_queries": 80,
+   "near_reference_with_one": 7,
+   "divergent_with_one": 7
+  },
+  {
+   "arm": "diamond_very_sensitive",
+   "null_alignments": 0,
+   "null_alignments_per_seed": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+   },
+   "null_alignments_min": 0,
+   "null_alignments_max": 0,
+   "null_queries_with_one": 0,
+   "null_queries": 80,
+   "near_reference_with_one": 7,
+   "divergent_with_one": 7
+  },
+  {
+   "arm": "diamond_ultra_sensitive",
+   "null_alignments": 0,
+   "null_alignments_per_seed": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+   },
+   "null_alignments_min": 0,
+   "null_alignments_max": 0,
+   "null_queries_with_one": 0,
+   "null_queries": 80,
+   "near_reference_with_one": 7,
+   "divergent_with_one": 7
+  },
+  {
+   "arm": "blastp",
+   "null_alignments": 0,
+   "null_alignments_per_seed": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+   },
+   "null_alignments_min": 0,
+   "null_alignments_max": 0,
+   "null_queries_with_one": 0,
+   "null_queries": 80,
+   "near_reference_with_one": 7,
+   "divergent_with_one": 7
+  },
+  {
+   "arm": "sw_exhaustive",
+   "null_alignments": 0,
+   "null_alignments_per_seed": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+   },
+   "null_alignments_min": 0,
+   "null_alignments_max": 0,
+   "null_queries_with_one": 0,
+   "null_queries": 80,
+   "near_reference_with_one": 7,
+   "divergent_with_one": 7
+  },
+  {
+   "arm": "hmmsearch_ga",
+   "null_alignments": 0,
+   "null_alignments_per_seed": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+   },
+   "null_alignments_min": 0,
+   "null_alignments_max": 0,
+   "null_queries_with_one": 0,
+   "null_queries": 80,
+   "near_reference_with_one": 7,
+   "divergent_with_one": 7
+  },
+  {
+   "arm": "hmmsearch_open",
+   "null_alignments": 0,
+   "null_alignments_per_seed": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+   },
+   "null_alignments_min": 0,
+   "null_alignments_max": 0,
+   "null_queries_with_one": 0,
+   "null_queries": 80,
+   "near_reference_with_one": 7,
+   "divergent_with_one": 7
+  },
+  {
+   "arm": "jackhmmer",
+   "null_alignments": 7,
+   "null_alignments_per_seed": {
+    "1": 0,
+    "2": 7,
+    "3": 0,
+    "4": 0,
+    "5": 0
+   },
+   "null_alignments_min": 0,
+   "null_alignments_max": 7,
+   "null_queries_with_one": 1,
+   "null_queries": 80,
+   "near_reference_with_one": 7,
+   "divergent_with_one": 7
+  },
+  {
+   "arm": "codon",
+   "null_alignments": 0,
+   "null_alignments_per_seed": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+   },
+   "null_alignments_min": 0,
+   "null_alignments_max": 0,
+   "null_queries_with_one": 0,
+   "null_queries": 80,
+   "near_reference_with_one": 7,
+   "divergent_with_one": 7
+  }
+ ],
+ "cost": [
+  {
+   "arm": "diamond_sensitive",
+   "timing_key": "diamond",
+   "seconds": 95.05,
+   "rows": 15279,
+   "seconds_per_orf": 0.47,
+   "ok": true
+  },
+  {
+   "arm": "diamond_very_sensitive",
+   "timing_key": "diamond",
+   "seconds": 95.05,
+   "rows": 16257,
+   "seconds_per_orf": 0.47,
+   "ok": true
+  },
+  {
+   "arm": "diamond_ultra_sensitive",
+   "timing_key": "diamond",
+   "seconds": 95.05,
+   "rows": 16531,
+   "seconds_per_orf": 0.47,
+   "ok": true
+  },
+  {
+   "arm": "blastp",
+   "timing_key": "blastp",
+   "seconds": 52.81,
+   "rows": 17005,
+   "seconds_per_orf": 0.26,
+   "ok": true
+  },
+  {
+   "arm": "sw_exhaustive",
+   "timing_key": "exhaustive",
+   "seconds": 899.81,
+   "rows": 101000,
+   "seconds_per_orf": 4.45,
+   "ok": true
+  },
+  {
+   "arm": "hmmsearch_ga",
+   "timing_key": "hmmsearch",
+   "seconds": 94.43,
+   "rows": 48,
+   "seconds_per_orf": 0.47,
+   "ok": true
+  },
+  {
+   "arm": "hmmsearch_open",
+   "timing_key": "hmmsearch",
+   "seconds": 94.43,
+   "rows": 160,
+   "seconds_per_orf": 0.47,
+   "ok": true
+  },
+  {
+   "arm": "jackhmmer",
+   "timing_key": "jackhmmer",
+   "seconds": 1008.31,
+   "rows": 58932,
+   "seconds_per_orf": 4.99,
+   "ok": true
+  },
+  {
+   "arm": "codon",
+   "timing_key": "codon",
+   "seconds": 45.39,
+   "rows": 3192,
+   "seconds_per_orf": 0.22,
+   "ok": true
+  }
+ ],
+ "failed_arms": {
+  "foldseek_afdb": "Traceback (most recent call last):\n  File \"/opt/hapax/experiments/reach_arms.py\", line 621, in arm_foldseek\n    sh([bins[\"foldseek\"], \"createdb\", out / \"orfs.faa\", qdb,\n  File \"/opt/hapax/experiments/reach_arms.py\", line 88, in sh\n    return subprocess.run([str(c) for c in cmd], check=True, **kw)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib64/python3.12/subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['/opt/hapax/bin/foldseek', 'createdb', '/opt/hapax/out/orfs.faa', '/opt/hapax/out/fsq_afdb', '--prostt5-model', '/opt/hapax/db/prostt5', '--threads', '8']' returned non-zero exit status 1.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/opt/hapax/experiments/reach_arms.py\", line 936, in main\n    rows = plan[arm]()\n           ^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 923, in <lambda>\n    \"foldseek_afdb\": lambda: arm_foldseek(bins, dbs, args.out, args.threads, \"afdb\"),\n                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 627, in arm_foldseek\n    sh([bins[\"foldseek\"], \"createdb\", out / \"orfs.faa\", qdb,\n  File \"/opt/hapax/experiments/reach_arms.py\", line 88, in sh\n    return subprocess.run([str(c) for c in cmd], check=True, **kw)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib64/python3.12/subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['/opt/hapax/bin/foldseek', 'createdb', '/opt/hapax/out/orfs.faa', '/opt/hapax/out/fsq_afdb', '--prostt5-model', '/opt/hapax/db/prostt5/prostt5-f16.gguf', '--threads', '8']' returned non-zero exit status 1.\n",
+  "foldseek_pdb": "Traceback (most recent call last):\n  File \"/opt/hapax/experiments/reach_arms.py\", line 621, in arm_foldseek\n    sh([bins[\"foldseek\"], \"createdb\", out / \"orfs.faa\", qdb,\n  File \"/opt/hapax/experiments/reach_arms.py\", line 88, in sh\n    return subprocess.run([str(c) for c in cmd], check=True, **kw)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib64/python3.12/subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['/opt/hapax/bin/foldseek', 'createdb', '/opt/hapax/out/orfs.faa', '/opt/hapax/out/fsq_pdb', '--prostt5-model', '/opt/hapax/db/prostt5', '--threads', '8']' returned non-zero exit status 1.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/opt/hapax/experiments/reach_arms.py\", line 936, in main\n    rows = plan[arm]()\n           ^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 924, in <lambda>\n    \"foldseek_pdb\": lambda: arm_foldseek(bins, dbs, args.out, args.threads, \"pdb\"),\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 627, in arm_foldseek\n    sh([bins[\"foldseek\"], \"createdb\", out / \"orfs.faa\", qdb,\n  File \"/opt/hapax/experiments/reach_arms.py\", line 88, in sh\n    return subprocess.run([str(c) for c in cmd], check=True, **kw)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib64/python3.12/subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['/opt/hapax/bin/foldseek', 'createdb', '/opt/hapax/out/orfs.faa', '/opt/hapax/out/fsq_pdb', '--prostt5-model', '/opt/hapax/db/prostt5/prostt5-f16.gguf', '--threads', '8']' returned non-zero exit status 1.\n"
+ },
+ "profiles": [
+  {
+   "pile": "divergent",
+   "orfs_with_a_domain": 17,
+   "distinct_models": 3,
+   "orfs_with_two_or_more": 0,
+   "max_models_on_one_orf": 1
+  },
+  {
+   "pile": "near_reference",
+   "orfs_with_a_domain": 17,
+   "distinct_models": 4,
+   "orfs_with_two_or_more": 1,
+   "max_models_on_one_orf": 2
+  },
+  {
+   "pile": "holdout",
+   "orfs_with_a_domain": 3,
+   "distinct_models": 3,
+   "orfs_with_two_or_more": 0,
+   "max_models_on_one_orf": 1
+  },
+  {
+   "pile": "holdout_reference",
+   "orfs_with_a_domain": 4,
+   "distinct_models": 7,
+   "orfs_with_two_or_more": 1,
+   "max_models_on_one_orf": 4
+  }
+ ],
+ "codon": [
+  {
+   "set": "nearest",
+   "pile": "divergent",
+   "alignments": 22,
+   "median_pident": 52.3,
+   "ds_undefined": 11,
+   "ds_undefined_share": 0.5,
+   "median_ds": 1.164,
+   "median_dn": 0.466,
+   "median_dnds": 0.109,
+   "dnds_p10": 0.06,
+   "dnds_p90": 0.198
+  },
+  {
+   "set": "nearest",
+   "pile": "near_reference",
+   "alignments": 22,
+   "median_pident": 96.1,
+   "ds_undefined": 0,
+   "ds_undefined_share": 0.0,
+   "median_ds": 0.189,
+   "median_dn": 0.019,
+   "median_dnds": 0.104,
+   "dnds_p10": 0.066,
+   "dnds_p90": 0.174
+  },
+  {
+   "set": "nearest",
+   "pile": "holdout",
+   "alignments": 3,
+   "median_pident": 66.9,
+   "ds_undefined": 0,
+   "ds_undefined_share": 0.0,
+   "median_ds": 1.333,
+   "median_dn": 0.271,
+   "median_dnds": 0.204,
+   "dnds_p10": 0.143,
+   "dnds_p90": 0.204
+  },
+  {
+   "set": "nearest",
+   "pile": "holdout_reference",
+   "alignments": 4,
+   "median_pident": 99.8,
+   "ds_undefined": 0,
+   "ds_undefined_share": 0.0,
+   "median_ds": 0.002,
+   "median_dn": 0.001,
+   "median_dnds": -0.0,
+   "dnds_p10": -0.0,
+   "dnds_p90": -0.0
+  },
+  {
+   "set": "all",
+   "pile": "divergent",
+   "alignments": 859,
+   "median_pident": 35.8,
+   "ds_undefined": 631,
+   "ds_undefined_share": 0.735,
+   "median_ds": 2.314,
+   "median_dn": 0.706,
+   "median_dnds": 0.272,
+   "dnds_p10": 0.131,
+   "dnds_p90": 0.488
+  },
+  {
+   "set": "all",
+   "pile": "near_reference",
+   "alignments": 865,
+   "median_pident": 36.9,
+   "ds_undefined": 615,
+   "ds_undefined_share": 0.711,
+   "median_ds": 2.211,
+   "median_dn": 0.692,
+   "median_dnds": 0.266,
+   "dnds_p10": 0.114,
+   "dnds_p90": 0.448
+  },
+  {
+   "set": "all",
+   "pile": "holdout",
+   "alignments": 150,
+   "median_pident": 35.1,
+   "ds_undefined": 111,
+   "ds_undefined_share": 0.74,
+   "median_ds": 2.556,
+   "median_dn": 0.731,
+   "median_dnds": 0.288,
+   "dnds_p10": 0.161,
+   "dnds_p90": 0.472
+  },
+  {
+   "set": "all",
+   "pile": "holdout_reference",
+   "alignments": 189,
+   "median_pident": 44.8,
+   "ds_undefined": 127,
+   "ds_undefined_share": 0.672,
+   "median_ds": 2.038,
+   "median_dn": 0.553,
+   "median_dnds": 0.172,
+   "dnds_p10": 0.028,
+   "dnds_p90": 0.429
+  }
+ ],
+ "per_contig": [
+  {
+   "qid": "div1",
+   "pile": "divergent",
+   "taxon": "Kahshuvirus borborenecus",
+   "nt": 3484,
+   "mapped_depth": 467.2,
+   "polymerase_pident": 44.9,
+   "baseline_nearest": 44.9,
+   "best_arm": "diamond_ultra_sensitive",
+   "best_arm_nearest": 44.9,
+   "gain_over_baseline_points": 0.0,
+   "best_arm_gene": "div1__orf1",
+   "best_arm_subject": "YP_010769695.1",
+   "best_arm_query_coverage": 0.98
+  },
+  {
+   "qid": "div2",
+   "pile": "divergent",
+   "taxon": "Fiersviridae",
+   "nt": 3452,
+   "mapped_depth": 402.4,
+   "polymerase_pident": 48.6,
+   "baseline_nearest": 48.6,
+   "best_arm": "codon",
+   "best_arm_nearest": 48.6,
+   "gain_over_baseline_points": 0.0,
+   "best_arm_gene": "div2__orf1",
+   "best_arm_subject": "NC_074049.1",
+   "best_arm_query_coverage": 0.97
+  },
+  {
+   "qid": "div3",
+   "pile": "divergent",
+   "taxon": "Koteshevirus lutadaptatum",
+   "nt": 3058,
+   "mapped_depth": 296.8,
+   "polymerase_pident": 46.6,
+   "baseline_nearest": 46.6,
+   "best_arm": "blastp",
+   "best_arm_nearest": 46.6,
+   "gain_over_baseline_points": 0.0,
+   "best_arm_gene": "div3__orf1",
+   "best_arm_subject": "YP_010769505.1",
+   "best_arm_query_coverage": 0.98
+  },
+  {
+   "qid": "div4",
+   "pile": "divergent",
+   "taxon": "Sholavirus sp. 'caenicola'",
+   "nt": 3725,
+   "mapped_depth": 281.7,
+   "polymerase_pident": 83.8,
+   "baseline_nearest": 83.8,
+   "best_arm": "blastp",
+   "best_arm_nearest": 83.8,
+   "gain_over_baseline_points": 0.0,
+   "best_arm_gene": "div4__orf1",
+   "best_arm_subject": "YP_010769867.1",
+   "best_arm_query_coverage": 1.0
+  },
+  {
+   "qid": "div5",
+   "pile": "divergent",
+   "taxon": "Rodtovirus pelovivens",
+   "nt": 3930,
+   "mapped_depth": 170.7,
+   "polymerase_pident": 45.6,
+   "baseline_nearest": 45.6,
+   "best_arm": "diamond_ultra_sensitive",
+   "best_arm_nearest": 45.6,
+   "gain_over_baseline_points": 0.0,
+   "best_arm_gene": "div5__orf4",
+   "best_arm_subject": "YP_010769278.1",
+   "best_arm_query_coverage": 0.989
+  },
+  {
+   "qid": "div6",
+   "pile": "divergent",
+   "taxon": "Dugnivirus solivicinum",
+   "nt": 3996,
+   "mapped_depth": 142.4,
+   "polymerase_pident": 47.8,
+   "baseline_nearest": 47.8,
+   "best_arm": "diamond_ultra_sensitive",
+   "best_arm_nearest": 47.8,
+   "gain_over_baseline_points": 0.0,
+   "best_arm_gene": "div6__orf4",
+   "best_arm_subject": "YP_010768837.1",
+   "best_arm_query_coverage": 0.991
+  },
+  {
+   "qid": "div7",
+   "pile": "divergent",
+   "taxon": "Chimpavirus luticola",
+   "nt": 4526,
+   "mapped_depth": 116.2,
+   "polymerase_pident": 84.8,
+   "baseline_nearest": 84.8,
+   "best_arm": "blastp",
+   "best_arm_nearest": 84.8,
+   "gain_over_baseline_points": 0.0,
+   "best_arm_gene": "div7__orf1",
+   "best_arm_subject": "YP_010771316.1",
+   "best_arm_query_coverage": 1.0
+  },
+  {
+   "qid": "ctl1",
+   "pile": "near_reference",
+   "taxon": "Pepevirus faecicola",
+   "nt": 3698,
+   "mapped_depth": 98.45,
+   "polymerase_pident": 96.1,
+   "baseline_nearest": 96.1,
+   "best_arm": "diamond_ultra_sensitive",
+   "best_arm_nearest": 96.1,
+   "gain_over_baseline_points": 0.0,
+   "best_arm_gene": "ctl1__orf3",
+   "best_arm_subject": "YP_013609461.1",
+   "best_arm_query_coverage": 1.0
+  },
+  {
+   "qid": "ctl2",
+   "pile": "near_reference",
+   "taxon": "Aldormivirus defluviicola",
+   "nt": 3708,
+   "mapped_depth": 72.92,
+   "polymerase_pident": 98.4,
+   "baseline_nearest": 98.4,
+   "best_arm": "diamond_ultra_sensitive",
+   "best_arm_nearest": 98.4,
+   "gain_over_baseline_points": 0.0,
+   "best_arm_gene": "ctl2__orf1",
+   "best_arm_subject": "YP_010768915.1",
+   "best_arm_query_coverage": 0.941
+  },
+  {
+   "qid": "ctl3",
+   "pile": "near_reference",
+   "taxon": "Yahnavirus asienecus",
+   "nt": 3118,
+   "mapped_depth": 26.92,
+   "polymerase_pident": 95.9,
+   "baseline_nearest": 95.9,
+   "best_arm": "sw_exhaustive",
+   "best_arm_nearest": 95.9,
+   "gain_over_baseline_points": 0.0,
+   "best_arm_gene": "ctl3__orf3",
+   "best_arm_subject": "YP_010769031.1",
+   "best_arm_query_coverage": 1.0
+  },
+  {
+   "qid": "ctl4",
+   "pile": "near_reference",
+   "taxon": "Sholavirus caenivivens",
+   "nt": 3734,
+   "mapped_depth": 56.42,
+   "polymerase_pident": 96.5,
+   "baseline_nearest": 96.5,
+   "best_arm": "sw_exhaustive",
+   "best_arm_nearest": 96.5,
+   "gain_over_baseline_points": 0.0,
+   "best_arm_gene": "ctl4__orf4",
+   "best_arm_subject": "YP_010769881.1",
+   "best_arm_query_coverage": 1.0
+  },
+  {
+   "qid": "ctl5",
+   "pile": "near_reference",
+   "taxon": "Piponevirus borborenecus",
+   "nt": 4032,
+   "mapped_depth": 82.53,
+   "polymerase_pident": 96.2,
+   "baseline_nearest": 96.2,
+   "best_arm": "sw_exhaustive",
+   "best_arm_nearest": 96.2,
+   "gain_over_baseline_points": 0.0,
+   "best_arm_gene": "ctl5__orf1",
+   "best_arm_subject": "YP_010769732.1",
+   "best_arm_query_coverage": 1.0
+  },
+  {
+   "qid": "ctl6",
+   "pile": "near_reference",
+   "taxon": "Trotivirus neoasiovicinum",
+   "nt": 4047,
+   "mapped_depth": 26.96,
+   "polymerase_pident": 99.2,
+   "baseline_nearest": 99.3,
+   "best_arm": "blastp",
+   "best_arm_nearest": 99.3,
+   "gain_over_baseline_points": 0.0,
+   "best_arm_gene": "ctl6__orf2",
+   "best_arm_subject": "YP_010769564.1",
+   "best_arm_query_coverage": 1.0
+  },
+  {
+   "qid": "ctl7",
+   "pile": "near_reference",
+   "taxon": "Gehnevirus pelenecus",
+   "nt": 3750,
+   "mapped_depth": 111.5,
+   "polymerase_pident": 95.2,
+   "baseline_nearest": 95.2,
+   "best_arm": "diamond_ultra_sensitive",
+   "best_arm_nearest": 95.2,
+   "gain_over_baseline_points": 0.0,
+   "best_arm_gene": "ctl7__orf1",
+   "best_arm_subject": "YP_010769353.1",
+   "best_arm_query_coverage": 1.0
+  },
+  {
+   "qid": "hold",
+   "pile": "holdout",
+   "taxon": "withheld genome, 30.28% diverged",
+   "nt": 3990,
+   "mapped_depth": null,
+   "polymerase_pident": null,
+   "baseline_nearest": 66.5,
+   "best_arm": "codon",
+   "best_arm_nearest": 66.9,
+   "gain_over_baseline_points": 0.4,
+   "best_arm_gene": "hold__orf1",
+   "best_arm_subject": "NC_074562.1",
+   "best_arm_query_coverage": 0.99
+  },
+  {
+   "qid": "leak",
+   "pile": "holdout_reference",
+   "taxon": "already-referenced companion from the same library",
+   "nt": 6383,
+   "mapped_depth": null,
+   "polymerase_pident": null,
+   "baseline_nearest": 99.8,
+   "best_arm": "diamond_ultra_sensitive",
+   "best_arm_nearest": 99.8,
+   "gain_over_baseline_points": 0.0,
+   "best_arm_gene": "leak__orf3",
+   "best_arm_subject": "A0A0S2T050.1",
+   "best_arm_query_coverage": 1.0
+  }
+ ],
+ "script_sha256": "f35d7c84f59c15ecf399e93756a72e82eff5720ea5730e29d83c19e3c33735ea",
+ "git_sha": "15faed25a8d020978dbc6c7b0ed23d9c05a780e3"
+}
