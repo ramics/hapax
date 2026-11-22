@@ -465,36 +465,83 @@ def main(argv: list[str] | None = None) -> int:
         out["failed_arms"] = {a: t.get("traceback") for a, t in failed.items()}
 
     # §6 profiles: does a second profile in the same clan reach further
-    pfam = [r for r in sig if r["arm"] == "hmmsearch_ga"]
+    #: Every arm whose subjects are Pfam models, because the "several profiles per role"
+    #: question is answered differently by profile-against-sequence and
+    #: profile-against-profile, and reading it off only the first contradicts the literature.
+    PROFILE_ARMS = ("hmmsearch_ga", "hmmsearch_open", "hhsearch")
+    pfam = [r for r in sig if r["arm"] in PROFILE_ARMS]
     if pfam:
         lines.append("\n## 6. More than one profile per role\n")
-        lines.append("The literature on this family reports that several profiles per "
-                     "protein are needed to find its divergent members. Counted here as "
-                     "distinct Pfam models placed on one ORF, which is the observable "
-                     "version of that claim.\n")
-        lines.append("| pile | ORFs with a domain | distinct models | "
-                     "ORFs with 2+ models | models per ORF (max) |")
-        lines.append("|---|---|---|---|---|")
+        lines.append(
+            "The literature on this family reports that several profiles per protein are "
+            "needed to find its divergent members. Counted here as distinct Pfam models "
+            "placed on one ORF, which is the observable version of that claim - and counted "
+            "per arm, because profile-against-sequence and profile-against-profile answer "
+            "it oppositely. Models are counted by ACCESSION with its version stripped, so "
+            "two arms citing different releases of one family are not counted as two "
+            "families.\n")
+        lines.append("| arm | pile | ORFs with a domain | distinct models | "
+                     "ORFs with 2+ models | models per ORF (median) | (max) |")
+        lines.append("|---|---|---|---|---|---|---|")
         prof_rows = []
-        for pile in ("divergent", "near_reference", "holdout", "holdout_reference",
-                     "shuffled"):
-            pool = [r for r in pfam if r["pile"] == pile]
+        for arm in PROFILE_ARMS:
+          arm_rows = [r for r in pfam if r["arm"] == arm]
+          if not arm_rows:
+              continue
+          for pile in ("divergent", "near_reference", "holdout", "holdout_reference",
+                       "shuffled"):
+            pool = [r for r in arm_rows if r["pile"] == pile]
             if not pool and pile not in ("divergent", "near_reference"):
                 continue
             by_orf: dict[str, set] = {}
             for r in pool:
-                by_orf.setdefault(r["orf"], set()).add(r.get("profile_name") or r["subject"])
-            multi = sum(1 for s in by_orf.values() if len(s) > 1)
-            row = dict(pile=pile, orfs_with_a_domain=len(by_orf),
+                # The accession without its version: hmmsearch reports PF01819.25 and
+                # HHsearch may report another release of the same family, and counting those
+                # as two models would manufacture exactly the multiplicity being measured.
+                acc = (r.get("subject") or "").split(".")[0] or r.get("profile_name")
+                by_orf.setdefault(r["orf"], set()).add(acc)
+            sizes = sorted(len(s) for s in by_orf.values())
+            multi = sum(1 for n in sizes if n > 1)
+            row = dict(arm=arm, pile=pile, orfs_with_a_domain=len(by_orf),
                        distinct_models=len({m for s in by_orf.values() for m in s}),
                        orfs_with_two_or_more=multi,
-                       max_models_on_one_orf=max((len(s) for s in by_orf.values()),
-                                                 default=0))
+                       median_models_on_one_orf=sizes[len(sizes) // 2] if sizes else 0,
+                       max_models_on_one_orf=sizes[-1] if sizes else 0)
             prof_rows.append(row)
-            lines.append(f"| {pile} | {row['orfs_with_a_domain']} | "
-                         f"{row['distinct_models']} | {multi} | "
+            lines.append(f"| {ARM_LABEL.get(arm, arm)} | {pile} | "
+                         f"{row['orfs_with_a_domain']} | {row['distinct_models']} | "
+                         f"{multi} | {row['median_models_on_one_orf']} | "
                          f"{row['max_models_on_one_orf']} |")
         out["profiles"] = prof_rows
+
+        # Which models one profile arm places that another does not, per pile. This is the
+        # column that decides whether the extra models are reach or tail: if an arm adds the
+        # same number on the divergent pile as on the 95-99% control, it is describing Pfam's
+        # own overlapping families rather than the query.
+        placed: dict[tuple[str, str], set] = {}
+        for r in pfam:
+            acc = (r.get("subject") or "").split(".")[0] or r.get("profile_name")
+            placed.setdefault((r["arm"], r["pile"]), set()).add((r["query"], acc))
+        if any(a == "hhsearch" for a, _ in placed):
+            lines.append("\n**Which models HHsearch adds, and on which pile.** A contig-model "
+                         "pair counted once per contig. `hmmsearch-only` is the check that "
+                         "the more sensitive arm has not simply traded one set for another.\n")
+            lines.append("| pile | hmmsearch pairs | HHsearch pairs | HHsearch-only | "
+                         "hmmsearch-only |")
+            lines.append("|---|---|---|---|---|")
+            add_rows = []
+            for pile in ("divergent", "near_reference", "holdout", "holdout_reference"):
+                hm = (placed.get(("hmmsearch_ga", pile), set())
+                      | placed.get(("hmmsearch_open", pile), set()))
+                hh = placed.get(("hhsearch", pile), set())
+                if not hm and not hh:
+                    continue
+                add_rows.append(dict(pile=pile, hmmsearch=len(hm), hhsearch=len(hh),
+                                     hhsearch_only=len(hh - hm),
+                                     hmmsearch_only=len(hm - hh)))
+                lines.append(f"| {pile} | {len(hm)} | {len(hh)} | {len(hh - hm)} | "
+                             f"{len(hm - hh)} |")
+            out["profile_overlap"] = add_rows
 
     # §7 codon space and the saturation question
     codon = [r for r in rows if r["arm"] == "codon" and significant(r)]
