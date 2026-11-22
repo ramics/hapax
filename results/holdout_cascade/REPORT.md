@@ -565,6 +565,21 @@ Those 20 are in `nucleotide_ladder/` (5 seeds), `spike_abundance/` (4 of 5),
 more. The largest hashless groups are `novelty_blocks/` (20), `mate_rho/` (11),
 `insert_profile/` (7) and `peptide_absence/` (7).
 
+**Audit, bug 5: no committed seed group elsewhere shows the same failure, and that was
+checked rather than assumed.** The `Make hapax fail loudly` thread ran
+`experiments/seed_degeneracy_audit.py` over all **150 multi-seed file groups** under
+`results/`, testing each for a zero-byte seed, a seed under half its group's median size, and
+byte-identical seeds. **Nothing committed is empty or short anywhere.** Two groups are
+byte-identical across all five seeds and both are correct by design and already stated in
+their own reports: `block_position_bias/block_fractions_s*.npz`, where the block statistics
+are exact over the whole library and the seed varies only the random-sample control in the
+per-seed JSON, and `holdout_cascade/run_s*/blind_spots.json`, a fixed panel `hapax` copies
+into every run directory. **What that check cannot see is a seed that read the right number
+of reads from the wrong region** - which is the failure here, since seeds 4 and 5 did not
+read a short block, they read none - and nothing closes that from committed output alone. The
+`--block` guard is what closes it going forward: it refuses to start unless the arithmetic
+fits the library's counted reads.
+
 This is a **list, not a re-run**, and it is not a claim that any of those numbers are wrong -
 only that the convention's own test cannot be applied to them. It is also not caused by
 `subtract_known.py` alone; the field is simply absent from most writers, so **the convention
