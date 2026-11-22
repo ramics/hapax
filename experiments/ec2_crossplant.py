@@ -120,6 +120,16 @@ def main(argv: list[str] | None = None) -> int:
                          "dead-man timer, so an underestimated rate costs a short table "
                          "rather than a dead run")
     ap.add_argument("--depth", type=int, default=2_000_000)
+    ap.add_argument("--query-mode", default="reads", choices=("reads", "contigs", "both"),
+                    help="which arm to scan. 'reads' is the Berlin piles plus per-library "
+                         "read queries; 'contigs' is the tier 2 contig windows plus their "
+                         "identified-contig control, which is a far stronger probe of "
+                         "whether a molecule is background elsewhere than one 90 nt read "
+                         "at depth one; 'both' puts them in one pass, which only fits "
+                         "under the query ceiling with a smaller read set")
+    ap.add_argument("--contig-queries", type=Path,
+                    default=ROOT / "results/crossplant/contig_queries.tsv",
+                    help="built by experiments/crossplant_contig_queries.py")
     ap.add_argument("--query-libs-per-plant", type=int, default=3,
                     help="how many libraries of each plant supply query reads, taken at a "
                          "stride over that plant's dates. Every library is still a subject; "
@@ -182,7 +192,10 @@ def main(argv: list[str] | None = None) -> int:
             "The instance has no checkout, so the commit is the only thing that makes its "
             "output traceable. Commit the launcher, the template and the payload first.")
 
-    for path in (args.panel,):
+    needed = [args.panel]
+    if args.query_mode in ("contigs", "both"):
+        needed.append(args.contig_queries)
+    for path in needed:
         if not path.exists():
             raise SystemExit(f"{path} is missing; the instance would start on nothing")
 
@@ -196,6 +209,7 @@ def main(argv: list[str] | None = None) -> int:
         BUDGET_HOURS=args.budget_hours, DEPTH=args.depth, THREADS=args.threads,
         SHARDS=args.shards,
         QUERY_LIBS_PER_PLANT=args.query_libs_per_plant,
+        QUERY_MODE=args.query_mode,
         BERLIN_QUERIES=args.berlin_queries, QUERY_CEILING=args.query_ceiling,
         # fasterq-dump is the only threaded step, so the threads are divided between the
         # shards rather than each shard asking for all of them. The reference project lost a
@@ -233,7 +247,10 @@ def main(argv: list[str] | None = None) -> int:
         print(f"payload at s3://{bucket}/{code_key}", flush=True)
         s3.put_object(Bucket=bucket, Key=run_key, Body=run_script.encode())
         print(f"run script at s3://{bucket}/{run_key}", flush=True)
-        for path, name in ((args.panel, "panel.tsv"),):
+        uploads = [(args.panel, "panel.tsv")]
+        if args.query_mode in ("contigs", "both"):
+            uploads.append((args.contig_queries, "contig_queries.tsv"))
+        for path, name in uploads:
             key = f"{prefix}/scratch/crossplant-{args.query_set}/{name}"
             s3.put_object(Bucket=bucket, Key=key, Body=path.read_bytes())
             print(f"  {key}  {path.stat().st_size / 1e6:.1f} MB", flush=True)

@@ -105,6 +105,13 @@ aws s3 cp "$S3/scratch/crossplant-@@QUERY_SET@@/panel.tsv" /opt/hapax/panel.tsv 
 test -s /opt/hapax/berlin_queries.tsv || die "the Berlin query set is empty"
 test -s /opt/hapax/panel.tsv || die "the panel is empty"
 
+if [ "@@QUERY_MODE@@" != "reads" ]; then
+  aws s3 cp "$S3/scratch/crossplant-@@QUERY_SET@@/contig_queries.tsv" \
+    /opt/hapax/contig_queries.tsv --region "$REGION" \
+    || die "the contig query set did not arrive"
+  test -s /opt/hapax/contig_queries.tsv || die "the contig query set is empty"
+fi
+
 # ---------------------------------------------------------------- subjects: ACC:TRIM_R2
 # Berlin's SMARTer Pico mate 2 keeps its 14-nt trim; every other kit gets none. Libraries
 # under the fixed depth are left out rather than scanned at a lower depth. A pilot takes an
@@ -152,8 +159,10 @@ ls /opt/hapax/out/sample/sample_*.json | wc -l > /opt/hapax/out/subjects_sampled
 "$PYBIN" - <<'PY' || die "the query file could not be built"
 import csv, glob, json, os
 L = 90
+MODE = "@@QUERY_MODE@@"
 TARGET_BERLIN = @@BERLIN_QUERIES@@
 PER_PLANT = @@QUERY_LIBS_PER_PLANT@@
+READS = MODE in ("reads", "both")
 
 # A fixed stride over each plant's dates, so every plant supplies queries and the sources
 # are spread in time: drift is the biggest caveat on any cross-plant number.
@@ -173,7 +182,7 @@ picked = sorted({r["run"] for r in picked})
 
 groups = {}
 short = 0
-for line in open("/opt/hapax/berlin_queries.tsv"):
+for line in (open("/opt/hapax/berlin_queries.tsv") if READS else []):
     f = line.rstrip("\n").split("\t")
     if len(f[1]) < L or len(f[2]) < L:
         short += 1
@@ -189,14 +198,21 @@ with open("/opt/hapax/queries.tsv", "w") as out:
         for f in rows:
             out.write(f"berlin|{f[0]}\t{f[1][:L]}\t{f[2][:L]}\n")
             kept += 1
-    for acc in picked:
-        out.write(open(f"/opt/hapax/out/sample/queries_{acc}.tsv").read())
-json.dump({"berlin_kept": kept, "berlin_dropped_short": short,
+    if READS:
+        for acc in picked:
+            out.write(open(f"/opt/hapax/out/sample/queries_{acc}.tsv").read())
+    contig_rows = 0
+    if MODE != "reads":
+        for line in open("/opt/hapax/contig_queries.tsv"):
+            out.write(line)
+            contig_rows += 1
+json.dump({"mode": MODE, "contig_rows": contig_rows, "berlin_kept": kept, "berlin_dropped_short": short,
            "berlin_dropped_subsample": cut, "berlin_groups": len(groups),
-           "berlin_per_group": per, "query_libraries": len(picked),
+           "berlin_per_group": per, "query_libraries": len(picked) if READS else 0,
            "query_plants": len(by_plant), "libraries_per_plant": PER_PLANT},
           open("/opt/hapax/out/query_build.json", "w"))
-open("/opt/hapax/out/query_libraries.txt", "w").write("\n".join(picked) + "\n")
+open("/opt/hapax/out/query_libraries.txt", "w").write(
+    "\n".join(picked if READS else []) + "\n")
 PY
 cp /opt/hapax/out/query_build.json /opt/hapax/query_build.json
 QN="$(wc -l < /opt/hapax/queries.tsv)"

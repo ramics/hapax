@@ -1,0 +1,83 @@
+{
+  "script": "experiments/crossplant_contig_queries.py",
+  "git_sha": "18f243817d6638ec0fba9879b2a444fba683b79c-dirty",
+  "tree_dirty": true,
+  "script_sha256": "b04e2190125e058e",
+  "parameters": {
+    "window": 90,
+    "max_pairs": 8,
+    "unident_per_seed": 6000,
+    "ident_per_seed": 3000,
+    "null_frac": 0.1,
+    "seeds": "1,2,3,4,5"
+  },
+  "source": "s3 shared/contig_sets/, the cascade's own contig sets",
+  "length_summary": {
+    "unident": {
+      "contigs": 46157,
+      "total_nt": 14293591,
+      "median_nt": 254
+    },
+    "ident": {
+      "contigs": 28846,
+      "total_nt": 14627276,
+      "median_nt": 271
+    }
+  },
+  "sets": {
+    "unident": {
+      "eligible": 46157,
+      "contigs_total": 46157,
+      "per_seed": {
+        "1": {
+          "contigs": 6000,
+          "pairs": 7858
+        },
+        "2": {
+          "contigs": 6000,
+          "pairs": 7920
+        },
+        "3": {
+          "contigs": 6000,
+          "pairs": 7806
+        },
+        "4": {
+          "contigs": 6000,
+          "pairs": 7736
+        },
+        "5": {
+          "contigs": 6000,
+          "pairs": 7785
+        }
+      }
+    },
+    "ident": {
+      "eligible": 23086,
+      "contigs_total": 28846,
+      "per_seed": {
+        "1": {
+          "contigs": 3000,
+          "pairs": 6881
+        },
+        "2": {
+          "contigs": 3000,
+          "pairs": 6957
+        },
+        "3": {
+          "contigs": 3000,
+          "pairs": 6848
+        },
+        "4": {
+          "contigs": 3000,
+          "pairs": 6805
+        },
+        "5": {
+          "contigs": 3000,
+          "pairs": 6991
+        }
+      }
+    }
+  },
+  "rows": 80824,
+  "seconds": 1.2
+}
