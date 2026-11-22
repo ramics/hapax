@@ -271,13 +271,17 @@ rather than asserted.
 **What it found.** Every real contig gets a significant structural alignment, and the
 assignments are correct biology arrived at independently:
 
-| pile | contigs placed | genes placed, of | genes structure placed that sequence did not | median 3Di identity of the best placement |
+[`TABLES.md`](TABLES.md) §5c counts it per gene, because §1 counts contigs and a contig
+counts as placed if any one of its genes is — which for this arm hides the whole shape of the
+result. Every structural placement is listed there with the entry it landed on.
+
+| pile | contigs placed (§1) | genes placed, of (§5c) | genes structure placed that sequence did not | median 3Di identity of the best placement |
 |---|---|---|---|---|
 | divergent | 7 of 7 | 8 of 24 | **0** | 32.6% |
 | near-reference | 7 of 7 | 8 of 23 | **0** | 31.2% |
 | holdout | 1 of 1 | 1 of 3 | **0** | 31.5% |
 | already-referenced companion | 1 of 1 | 4 of 4 | **0** | 47.1% |
-| shuffled, 5 seeds | 0 of 80 | 0 | 0 | — |
+| shuffled, 5 seeds | 0 of 80 | 0 of 148 | **0** | — |
 
 Seven of the eight divergent placements are the **polymerase on a Qβ replicase structure**
 (3MMP, 3AVX, 3AVT, 4R71 — the RNA-dependent RNA polymerase of the type species of this very

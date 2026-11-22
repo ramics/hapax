@@ -86,6 +86,13 @@ PAGE_ROWS = 10000
 #: eight is already about 13 entries a second, so the whole set is well under an hour.
 FETCH_PARALLEL = 8
 
+#: Residues in the RefSeq viral protein release that the paid arms' subject database is
+#: built from, counted with `grep`/`gzip` over `viral.1.protein.faa.gz` on 2026-11-22:
+#: 722,823 proteins. It is here so the manifest can price the only version of this arm that
+#: would be a controlled comparison - the one that encodes the SUBJECT side - from this
+#: arm's own measured throughput rather than from an estimate.
+REFSEQ_VIRAL_RESIDUES = 175_064_339
+
 #: The E-value floor every arm in this comparison reports against, from `report_reach.py`.
 #: Nothing here is thresholded on it - the rows are written un-thresholded and the readout
 #: applies it - but it is recorded so the manifest says what the run was aimed at.
@@ -238,6 +245,26 @@ def build_query_db(foldseek: Path, orfs: Path, qdb: Path, model: Path,
     return dict(seconds=round(time.time() - started, 1))
 
 
+def encoding_price(residues: int, seconds: float, threads: int) -> dict:
+    """What ProstT5 costs per residue, and therefore what a controlled arm would cost.
+
+    THIS IS WHY THE NUMBER IS GENERATED RATHER THAN TYPED. The interesting version of this
+    arm encodes the SUBJECT side - the same proteins the sequence arms search - so that
+    structure and sequence differ by instrument and not by database. The only honest way to
+    say whether that is affordable is this arm's own throughput times the subject side's own
+    size, and both halves then live in the manifest where a reader can divide them again.
+    `refseq_viral_residues` is counted from the same RefSeq viral protein release the paid
+    arms' subject database is built from.
+    """
+    rate = residues / seconds if seconds else None
+    subject_residues = REFSEQ_VIRAL_RESIDUES
+    return dict(query_residues=residues, seconds=seconds, threads=threads,
+                residues_per_second=(round(rate, 1) if rate else None),
+                refseq_viral_residues=subject_residues,
+                subject_side_days=(round(subject_residues / rate / 86400, 1)
+                                   if rate else None))
+
+
 def search(foldseek: Path, qdb: Path, sdb: Path, out: Path, threads: int) -> tuple[Path, str]:
     """Search with the prefilter off, which is the point of the arm.
 
@@ -353,6 +380,8 @@ def main(argv: list[str] | None = None) -> int:
         orfs_sha256=sha256(args.out / "orfs.faa"), orf_stats=orf_stats,
         foldseek_version=version, mode=mode, threads=args.threads,
         target=target, structures=fetched, subject_db=subjects, query_db=queries,
+        encoding_price=encoding_price(orf_stats["residues"], queries["seconds"],
+                                      args.threads),
         rows=len(rows), evalue_searched=EVALUE_REPORTED,
         tmscore_available=False,
         tmscore_reason="ProstT5 writes 3Di from sequence, so the query database has no "

@@ -582,6 +582,77 @@ def main(argv: list[str] | None = None) -> int:
             best_hit_in_refseq_viral=len(best_by_orf) - len(folded),
             swissprot_examples=sorted({r["subject"] for r in folded})[:8])
 
+    # §5c the structure arm counted per GENE, not per contig.
+    #
+    # WHY PER GENE. §1 counts contigs, and a contig counts as placed if any one of its genes
+    # is. For this arm that hides the result: it places one gene per contig where the
+    # sequence arms place nearly all of them, and the write-up's claim is about which genes
+    # and how many. Generated here so the prose quotes a table rather than a pass somebody
+    # ran once by hand.
+    #
+    # "Structure only" is the reach question asked the only way it can be asked across two
+    # subject universes: not which subjects were missed - they are not shared - but whether
+    # any GENE is placed by structure that sequence could not place at all.
+    SEQ_ARMS = ("diamond_sensitive", "diamond_very_sensitive", "diamond_ultra_sensitive",
+                "blastp", "sw_exhaustive")
+    if "foldseek_pdbvirus" in arms_present:
+        seq_placed = {r["orf"] for r in sig if r["arm"] in SEQ_ARMS}
+        str_best: dict[str, dict] = {}
+        for r in sig:
+            if r["arm"] != "foldseek_pdbvirus":
+                continue
+            if r["orf"] not in str_best or r["evalue"] < str_best[r["orf"]]["evalue"]:
+                str_best[r["orf"]] = r
+        pile_of_orf = {r["orf"]: r["pile"] for r in rows}
+        lines.append("\n## 5c. The structure arm per gene, and the one reach question it "
+                     "can answer\n")
+        lines.append(
+            "§1 counts contigs, and a contig counts as placed if any one of its genes is. "
+            "This counts genes. `structure only` is the reach question asked the only way "
+            "two different subject universes allow: not which subjects the other arms "
+            "missed, since none are shared, but whether any gene is placed by structure "
+            "that no sequence arm could place at all.\n")
+        lines.append("| pile | ORFs | placed by a sequence arm | placed by structure | "
+                     "**structure only** | sequence only | median 3Di identity of the "
+                     "best placement |")
+        lines.append("|---|---|---|---|---|---|---|")
+        gene_rows = []
+        for pile in ("divergent", "near_reference", "holdout", "holdout_reference",
+                     "shuffled"):
+            pool = [o for o, p in pile_of_orf.items() if p == pile]
+            if not pool:
+                continue
+            s = [o for o in pool if o in seq_placed]
+            t = [o for o in pool if o in str_best]
+            only_t = sorted(o for o in pool if o in str_best and o not in seq_placed)
+            only_s = [o for o in pool if o in seq_placed and o not in str_best]
+            ids = [str_best[o]["pident"] for o in t]
+            med = statistics.median(ids) if ids else None
+            gene_rows.append(dict(pile=pile, orfs=len(pool), sequence=len(s),
+                                  structure=len(t), structure_only=len(only_t),
+                                  structure_only_orfs=only_t, sequence_only=len(only_s),
+                                  median_best_pident=(round(med, 1) if med else None)))
+            lines.append(f"| {pile} | {len(pool)} | {len(s)} | {len(t)} | "
+                         f"**{len(only_t)}** | {len(only_s)} | {fmt(med, '.1f')} |")
+        lines.append("")
+        lines.append("Every structural placement, with the entry it landed on:\n")
+        lines.append("| ORF | pile | subject | E | 3Di identity | aligned aa | query cov |")
+        lines.append("|---|---|---|---|---|---|---|")
+        placements = []
+        for orf in sorted(str_best, key=lambda o: (pile_of_orf.get(o, ""), o)):
+            r = str_best[orf]
+            if pile_of_orf.get(orf) == "shuffled":
+                continue
+            placements.append(dict(orf=orf, pile=pile_of_orf.get(orf),
+                                   subject=r["subject"], evalue=r["evalue"],
+                                   pident=round(r["pident"], 1), aln=r["aln"],
+                                   qcov=r.get("qcov")))
+            lines.append(f"| `{orf}` | {pile_of_orf.get(orf)} | `{r['subject']}` | "
+                         f"{ev(r['evalue'])} | {r['pident']:.1f} | {r['aln']} | "
+                         f"{fmt(r.get('qcov'), '.2f')} |")
+        out["structure_per_gene"] = dict(piles=gene_rows, placements=placements,
+                                         sequence_arms_counted=list(SEQ_ARMS))
+
     # §6 profiles: does a second profile in the same clan reach further
     #: Every arm whose subjects are Pfam models, because the "several profiles per role"
     #: question is answered differently by profile-against-sequence and

@@ -36,18 +36,18 @@
   "note": "a dinucleotide shuffle preserves stop-codon density, so the null yields few and short ORFs. It calibrates existence of an alignment, not any field conditional on one"
  },
  "stage": {
-  "instance_id": "i-0bf3677bc8ad09bb4",
+  "instance_id": "i-055ea9ae3eaf1809c",
   "instance_type": "c6i.2xlarge",
-  "commit": "fb628c4a07cce80bcb06af61ba57a88602dfca9d",
+  "commit": "491abe8a4292a6aeecfcf928a8b8f70e6077f671",
   "seed": 1,
   "threads": 8,
-  "arms_staged": "diamond blastp exhaustive hmmsearch jackhmmer hhsearch codon foldseek_afdb foldseek_pdb",
+  "arms_staged": "diamond blastp exhaustive hmmsearch jackhmmer hhsearch codon",
   "blast_version": "2.17.0",
   "diamond_version": "2.1.10",
   "hmmer_version": "3.4",
   "hhsuite_version": "3.3.0",
   "null_piles": "/opt/hapax/queries/null_s1.fa /opt/hapax/queries/null_s2.fa /opt/hapax/queries/null_s3.fa /opt/hapax/queries/null_s4.fa /opt/hapax/queries/null_s5.fa ",
-  "foldseek": "pinned 9-427df8a",
+  "foldseek": "not staged: the structure arm runs in-container",
   "ncbi_blast_snapshot": "2026-10-22-01-05-01",
   "refseq_viral_protein_files": 1,
   "refseq_viral_genomic_files": 1,
@@ -63,6 +63,8 @@
   "hmmsearch_ga",
   "hmmsearch_open",
   "jackhmmer",
+  "hhsearch",
+  "foldseek_pdbvirus",
   "codon"
  ],
  "reach_by_pile": [
@@ -507,6 +509,116 @@
    "median_query_coverage": null
   },
   {
+   "arm": "hhsearch",
+   "pile": "divergent",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": 185,
+   "median_query_coverage": 0.333
+  },
+  {
+   "arm": "hhsearch",
+   "pile": "near_reference",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": 187,
+   "median_query_coverage": 0.319
+  },
+  {
+   "arm": "hhsearch",
+   "pile": "holdout",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": 183,
+   "median_query_coverage": 0.297
+  },
+  {
+   "arm": "hhsearch",
+   "pile": "holdout_reference",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": 110,
+   "median_query_coverage": 0.414
+  },
+  {
+   "arm": "hhsearch",
+   "pile": "shuffled",
+   "queries": 80,
+   "with_a_hit": 0,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": null,
+   "median_query_coverage": null
+  },
+  {
+   "arm": "foldseek_pdbvirus",
+   "pile": "divergent",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": 31.8,
+   "median_most_distant_pident": 8.2,
+   "furthest_single_pident": 7.8,
+   "median_aligned_aa": 542,
+   "median_query_coverage": 0.654
+  },
+  {
+   "arm": "foldseek_pdbvirus",
+   "pile": "near_reference",
+   "queries": 7,
+   "with_a_hit": 7,
+   "median_nearest_pident": 30.7,
+   "median_most_distant_pident": 8.4,
+   "furthest_single_pident": 7.9,
+   "median_aligned_aa": 530,
+   "median_query_coverage": 0.724
+  },
+  {
+   "arm": "foldseek_pdbvirus",
+   "pile": "holdout",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": 31.5,
+   "median_most_distant_pident": 8.1,
+   "furthest_single_pident": 8.1,
+   "median_aligned_aa": 781,
+   "median_query_coverage": 0.857
+  },
+  {
+   "arm": "foldseek_pdbvirus",
+   "pile": "holdout_reference",
+   "queries": 1,
+   "with_a_hit": 1,
+   "median_nearest_pident": 81.7,
+   "median_most_distant_pident": 8.0,
+   "furthest_single_pident": 8.0,
+   "median_aligned_aa": 485,
+   "median_query_coverage": 0.807
+  },
+  {
+   "arm": "foldseek_pdbvirus",
+   "pile": "shuffled",
+   "queries": 80,
+   "with_a_hit": 0,
+   "median_nearest_pident": null,
+   "median_most_distant_pident": null,
+   "furthest_single_pident": null,
+   "median_aligned_aa": null,
+   "median_query_coverage": null
+  },
+  {
    "arm": "codon",
    "pile": "divergent",
    "queries": 7,
@@ -644,6 +756,26 @@
    "companion_best_pident": null
   },
   {
+   "arm": "hhsearch",
+   "subject": "PF00978.24",
+   "pident": null,
+   "aln": 183,
+   "qcov": 0.297,
+   "evalue": 3.9e-06,
+   "best_pident": null,
+   "companion_best_pident": null
+  },
+  {
+   "arm": "foldseek_pdbvirus",
+   "subject": "7QTL_B",
+   "pident": 8.1,
+   "aln": 781,
+   "qcov": 0.857,
+   "evalue": 1.384e-07,
+   "best_pident": 31.5,
+   "companion_best_pident": 81.69999999999999
+  },
+  {
    "arm": "codon",
    "subject": "NC_073984.1",
    "pident": 28.205,
@@ -743,6 +875,16 @@
     "holdout_reference": 6765
    },
    "most_distant_extra": null
+  },
+  {
+   "arm": "hhsearch",
+   "comparable": false,
+   "db": "Pfam-A"
+  },
+  {
+   "arm": "foldseek_pdbvirus",
+   "comparable": false,
+   "db": "pdbvirus"
   },
   {
    "arm": "codon",
@@ -888,6 +1030,40 @@
    "divergent_with_one": 7
   },
   {
+   "arm": "hhsearch",
+   "null_alignments": 0,
+   "null_alignments_per_seed": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+   },
+   "null_alignments_min": 0,
+   "null_alignments_max": 0,
+   "null_queries_with_one": 0,
+   "null_queries": 80,
+   "near_reference_with_one": 7,
+   "divergent_with_one": 7
+  },
+  {
+   "arm": "foldseek_pdbvirus",
+   "null_alignments": 0,
+   "null_alignments_per_seed": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+   },
+   "null_alignments_min": 0,
+   "null_alignments_max": 0,
+   "null_queries_with_one": 0,
+   "null_queries": 80,
+   "near_reference_with_one": 7,
+   "divergent_with_one": 7
+  },
+  {
    "arm": "codon",
    "null_alignments": 0,
    "null_alignments_per_seed": {
@@ -909,7 +1085,7 @@
   {
    "arm": "diamond_sensitive",
    "timing_key": "diamond",
-   "seconds": 93.26,
+   "seconds": 93.49,
    "rows": 15279,
    "seconds_per_orf": 0.46,
    "ok": true
@@ -917,7 +1093,7 @@
   {
    "arm": "diamond_very_sensitive",
    "timing_key": "diamond",
-   "seconds": 93.26,
+   "seconds": 93.49,
    "rows": 16257,
    "seconds_per_orf": 0.46,
    "ok": true
@@ -925,7 +1101,7 @@
   {
    "arm": "diamond_ultra_sensitive",
    "timing_key": "diamond",
-   "seconds": 93.26,
+   "seconds": 93.49,
    "rows": 16531,
    "seconds_per_orf": 0.46,
    "ok": true
@@ -933,7 +1109,7 @@
   {
    "arm": "blastp",
    "timing_key": "blastp",
-   "seconds": 53.42,
+   "seconds": 53.2,
    "rows": 17005,
    "seconds_per_orf": 0.26,
    "ok": true
@@ -941,77 +1117,460 @@
   {
    "arm": "sw_exhaustive",
    "timing_key": "exhaustive",
-   "seconds": 901.9,
+   "seconds": 904.95,
    "rows": 101000,
-   "seconds_per_orf": 4.46,
+   "seconds_per_orf": 4.48,
    "ok": true
   },
   {
    "arm": "hmmsearch_ga",
    "timing_key": "hmmsearch",
-   "seconds": 98.06,
+   "seconds": 96.41,
    "rows": 48,
-   "seconds_per_orf": 0.49,
+   "seconds_per_orf": 0.48,
    "ok": true
   },
   {
    "arm": "hmmsearch_open",
    "timing_key": "hmmsearch",
-   "seconds": 98.06,
+   "seconds": 96.41,
    "rows": 160,
-   "seconds_per_orf": 0.49,
+   "seconds_per_orf": 0.48,
    "ok": true
   },
   {
    "arm": "jackhmmer",
    "timing_key": "jackhmmer",
-   "seconds": 1150.36,
+   "seconds": 1120.34,
    "rows": 58932,
-   "seconds_per_orf": 5.69,
+   "seconds_per_orf": 5.55,
+   "ok": true
+  },
+  {
+   "arm": "hhsearch",
+   "timing_key": "hhsearch",
+   "seconds": 534.38,
+   "rows": 2226,
+   "seconds_per_orf": 2.65,
+   "ok": true
+  },
+  {
+   "arm": "foldseek_pdbvirus",
+   "timing_key": "foldseek_pdbvirus",
+   "seconds": 1249.1,
+   "rows": 244886,
+   "seconds_per_orf": 6.18,
    "ok": true
   },
   {
    "arm": "codon",
    "timing_key": "codon",
-   "seconds": 45.56,
+   "seconds": 45.43,
    "rows": 3192,
-   "seconds_per_orf": 0.23,
+   "seconds_per_orf": 0.22,
    "ok": true
   }
  ],
- "failed_arms": {
-  "foldseek_afdb": "Traceback (most recent call last):\n  File \"/opt/hapax/experiments/reach_arms.py\", line 1002, in main\n    rows = plan[arm]()\n           ^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 989, in <lambda>\n    \"foldseek_afdb\": lambda: arm_foldseek(bins, dbs, args.out, args.threads, \"afdb\"),\n                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 687, in arm_foldseek\n    raise RuntimeError(\nRuntimeError: foldseek createdb refused every ProstT5 model layout offered. Its own output for each, which is the part the exit code does not carry:\n--- foldseek's own download (/opt/hapax/db/prostt5_own):\nCould not find ProstT5 model weights. Download with `foldseek databases ProstT5 prostt5_out tmp`\ncreatedb /opt/hapax/out/orfs.faa /opt/hapax/out/fsq_afdb --prostt5-model /opt/hapax/db/prostt5_own --threads 8 \n\nMMseqs Version:        \t427df8a6b5d0ef78bee0f98cd3e6faaca18f172d\nPath to ProstT5        \t/opt/hapax/db/prostt5_own\nChain name mode        \t0\nWrite mapping file     \t0\nMask b-factor threshold\t0\nCoord store mode       \t2\nWrite lookup file      \t1\nInput format           \t0\nFile Inclusion Regex   \t.*\nFile Exclusion Regex   \t^$\nThreads                \t8\nVerbosity              \t3\n\nConverting sequences\n[\nTime for merging to fsq_afdb_h: 0h 0m 0s 1ms\nTime for merging to fsq_afdb: 0h 0m 0s 0ms\nDatabase type: Aminoacid\nTime for processing: 0h 0m 0s 12ms\n\n--- staged directory (/opt/hapax/db/prostt5):\nCould not find ProstT5 model weights. Download with `foldseek databases ProstT5 prostt5_out tmp`\n/opt/hapax/out/fsq_afdb exists and will be overwritten\n/opt/hapax/out/fsq_afdb exists and will be overwritten\ncreatedb /opt/hapax/out/orfs.faa /opt/hapax/out/fsq_afdb --prostt5-model /opt/hapax/db/prostt5 --threads 8 \n\nMMseqs Version:        \t427df8a6b5d0ef78bee0f98cd3e6faaca18f172d\nPath to ProstT5        \t/opt/hapax/db/prostt5\nChain name mode        \t0\nWrite mapping file     \t0\nMask b-factor threshold\t0\nCoord store mode       \t2\nWrite lookup file      \t1\nInput format           \t0\nFile Inclusion Regex   \t.*\nFile Exclusion Regex   \t^$\nThreads                \t8\nVerbosity              \t3\n\nConverting sequences\n[\nTime for merging to fsq_afdb_h: 0h 0m 0s 0ms\nTime for merging to fsq_afdb: 0h 0m 0s 0ms\nDatabase type: Aminoacid\nTime for processing: 0h 0m 0s 5ms\n\n--- weights file (/opt/hapax/db/prostt5/prostt5-f16.gguf):\nCould not find ProstT5 model weights. Download with `foldseek databases ProstT5 prostt5_out tmp`\n/opt/hapax/out/fsq_afdb exists and will be overwritten\n/opt/hapax/out/fsq_afdb exists and will be overwritten\ncreatedb /opt/hapax/out/orfs.faa /opt/hapax/out/fsq_afdb --prostt5-model /opt/hapax/db/prostt5/prostt5-f16.gguf --threads 8 \n\nMMseqs Version:        \t427df8a6b5d0ef78bee0f98cd3e6faaca18f172d\nPath to ProstT5        \t/opt/hapax/db/prostt5/prostt5-f16.gguf\nChain name mode        \t0\nWrite mapping file     \t0\nMask b-factor threshold\t0\nCoord store mode       \t2\nWrite lookup file      \t1\nInput format           \t0\nFile Inclusion Regex   \t.*\nFile Exclusion Regex   \t^$\nThreads                \t8\nVerbosity              \t3\n\nConverting sequences\n[\nTime for merging to fsq_afdb_h: 0h 0m 0s 1ms\nTime for merging to fsq_afdb: 0h 0m 0s 0ms\nDatabase type: Aminoacid\nTime for processing: 0h 0m 0s 5ms\n\n",
-  "foldseek_pdb": "Traceback (most recent call last):\n  File \"/opt/hapax/experiments/reach_arms.py\", line 1002, in main\n    rows = plan[arm]()\n           ^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 990, in <lambda>\n    \"foldseek_pdb\": lambda: arm_foldseek(bins, dbs, args.out, args.threads, \"pdb\"),\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 687, in arm_foldseek\n    raise RuntimeError(\nRuntimeError: foldseek createdb refused every ProstT5 model layout offered. Its own output for each, which is the part the exit code does not carry:\n--- foldseek's own download (/opt/hapax/db/prostt5_own):\nCould not find ProstT5 model weights. Download with `foldseek databases ProstT5 prostt5_out tmp`\ncreatedb /opt/hapax/out/orfs.faa /opt/hapax/out/fsq_pdb --prostt5-model /opt/hapax/db/prostt5_own --threads 8 \n\nMMseqs Version:        \t427df8a6b5d0ef78bee0f98cd3e6faaca18f172d\nPath to ProstT5        \t/opt/hapax/db/prostt5_own\nChain name mode        \t0\nWrite mapping file     \t0\nMask b-factor threshold\t0\nCoord store mode       \t2\nWrite lookup file      \t1\nInput format           \t0\nFile Inclusion Regex   \t.*\nFile Exclusion Regex   \t^$\nThreads                \t8\nVerbosity              \t3\n\nConverting sequences\n[\nTime for merging to fsq_pdb_h: 0h 0m 0s 1ms\nTime for merging to fsq_pdb: 0h 0m 0s 0ms\nDatabase type: Aminoacid\nTime for processing: 0h 0m 0s 5ms\n\n--- staged directory (/opt/hapax/db/prostt5):\nCould not find ProstT5 model weights. Download with `foldseek databases ProstT5 prostt5_out tmp`\n/opt/hapax/out/fsq_pdb exists and will be overwritten\n/opt/hapax/out/fsq_pdb exists and will be overwritten\ncreatedb /opt/hapax/out/orfs.faa /opt/hapax/out/fsq_pdb --prostt5-model /opt/hapax/db/prostt5 --threads 8 \n\nMMseqs Version:        \t427df8a6b5d0ef78bee0f98cd3e6faaca18f172d\nPath to ProstT5        \t/opt/hapax/db/prostt5\nChain name mode        \t0\nWrite mapping file     \t0\nMask b-factor threshold\t0\nCoord store mode       \t2\nWrite lookup file      \t1\nInput format           \t0\nFile Inclusion Regex   \t.*\nFile Exclusion Regex   \t^$\nThreads                \t8\nVerbosity              \t3\n\nConverting sequences\n[\nTime for merging to fsq_pdb_h: 0h 0m 0s 1ms\nTime for merging to fsq_pdb: 0h 0m 0s 0ms\nDatabase type: Aminoacid\nTime for processing: 0h 0m 0s 5ms\n\n--- weights file (/opt/hapax/db/prostt5/prostt5-f16.gguf):\nCould not find ProstT5 model weights. Download with `foldseek databases ProstT5 prostt5_out tmp`\n/opt/hapax/out/fsq_pdb exists and will be overwritten\n/opt/hapax/out/fsq_pdb exists and will be overwritten\ncreatedb /opt/hapax/out/orfs.faa /opt/hapax/out/fsq_pdb --prostt5-model /opt/hapax/db/prostt5/prostt5-f16.gguf --threads 8 \n\nMMseqs Version:        \t427df8a6b5d0ef78bee0f98cd3e6faaca18f172d\nPath to ProstT5        \t/opt/hapax/db/prostt5/prostt5-f16.gguf\nChain name mode        \t0\nWrite mapping file     \t0\nMask b-factor threshold\t0\nCoord store mode       \t2\nWrite lookup file      \t1\nInput format           \t0\nFile Inclusion Regex   \t.*\nFile Exclusion Regex   \t^$\nThreads                \t8\nVerbosity              \t3\n\nConverting sequences\n[\nTime for merging to fsq_pdb_h: 0h 0m 0s 0ms\nTime for merging to fsq_pdb: 0h 0m 0s 0ms\nDatabase type: Aminoacid\nTime for processing: 0h 0m 0s 5ms\n\n",
-  "hhsearch": "Traceback (most recent call last):\n  File \"/opt/hapax/experiments/reach_arms.py\", line 1002, in main\n    rows = plan[arm]()\n           ^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 988, in <lambda>\n    \"hhsearch\": lambda: arm_hhsearch(bins, dbs, args.out, args.threads),\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hapax/experiments/reach_arms.py\", line 584, in arm_hhsearch\n    raise RuntimeError(\nRuntimeError: hhmake refused all 202 alignments, so no query profile was built and this arm measured nothing. An empty table here would read as 'profile search found no relative', which is a different claim.\n"
+ "structure_subject_universe": {
+  "orfs_with_baseline_hit": 51,
+  "best_hit_in_swissprot": 4,
+  "best_hit_in_refseq_viral": 47,
+  "swissprot_examples": [
+   "A0A0S2SZW1.1",
+   "A0A0S2SZX3.1",
+   "A0A0S2T050.1"
+  ]
+ },
+ "structure_per_gene": {
+  "piles": [
+   {
+    "pile": "divergent",
+    "orfs": 24,
+    "sequence": 22,
+    "structure": 8,
+    "structure_only": 0,
+    "structure_only_orfs": [],
+    "sequence_only": 14,
+    "median_best_pident": 32.6
+   },
+   {
+    "pile": "near_reference",
+    "orfs": 23,
+    "sequence": 22,
+    "structure": 8,
+    "structure_only": 0,
+    "structure_only_orfs": [],
+    "sequence_only": 14,
+    "median_best_pident": 31.2
+   },
+   {
+    "pile": "holdout",
+    "orfs": 3,
+    "sequence": 3,
+    "structure": 1,
+    "structure_only": 0,
+    "structure_only_orfs": [],
+    "sequence_only": 2,
+    "median_best_pident": 31.5
+   },
+   {
+    "pile": "holdout_reference",
+    "orfs": 4,
+    "sequence": 4,
+    "structure": 4,
+    "structure_only": 0,
+    "structure_only_orfs": [],
+    "sequence_only": 0,
+    "median_best_pident": 47.1
+   },
+   {
+    "pile": "shuffled",
+    "orfs": 148,
+    "sequence": 0,
+    "structure": 0,
+    "structure_only": 0,
+    "structure_only_orfs": [],
+    "sequence_only": 0,
+    "median_best_pident": null
+   }
+  ],
+  "placements": [
+   {
+    "orf": "div1__orf1",
+    "pile": "divergent",
+    "subject": "3MMP_F",
+    "evalue": 2.381e-16,
+    "pident": 28.7,
+    "aln": 456,
+    "qcov": 0.73
+   },
+   {
+    "orf": "div2__orf1",
+    "pile": "divergent",
+    "subject": "3AVX_A",
+    "evalue": 5.16e-15,
+    "pident": 33.7,
+    "aln": 388,
+    "qcov": 0.654
+   },
+   {
+    "orf": "div3__orf1",
+    "pile": "divergent",
+    "subject": "4R71_D",
+    "evalue": 3.103e-16,
+    "pident": 29.6,
+    "aln": 391,
+    "qcov": 0.818
+   },
+   {
+    "orf": "div4__orf1",
+    "pile": "divergent",
+    "subject": "3AVX_A",
+    "evalue": 9.484e-20,
+    "pident": 38.9,
+    "aln": 419,
+    "qcov": 0.704
+   },
+   {
+    "orf": "div5__orf3",
+    "pile": "divergent",
+    "subject": "6YFM_AA",
+    "evalue": 1.533e-10,
+    "pident": 53.3,
+    "aln": 150,
+    "qcov": 0.993
+   },
+   {
+    "orf": "div5__orf4",
+    "pile": "divergent",
+    "subject": "4R71_D",
+    "evalue": 1.563e-18,
+    "pident": 33.3,
+    "aln": 513,
+    "qcov": 0.845
+   },
+   {
+    "orf": "div6__orf4",
+    "pile": "divergent",
+    "subject": "3MMP_F",
+    "evalue": 2.288e-18,
+    "pident": 31.8,
+    "aln": 383,
+    "qcov": 0.667
+   },
+   {
+    "orf": "div7__orf1",
+    "pile": "divergent",
+    "subject": "3MMP_F",
+    "evalue": 5.347e-13,
+    "pident": 21.2,
+    "aln": 466,
+    "qcov": 0.568
+   },
+   {
+    "orf": "hold__orf1",
+    "pile": "holdout",
+    "subject": "3MMP_F",
+    "evalue": 1.106e-22,
+    "pident": 31.5,
+    "aln": 504,
+    "qcov": 0.782
+   },
+   {
+    "orf": "leak__orf1",
+    "pile": "holdout_reference",
+    "subject": "28YM_AD",
+    "evalue": 2.486e-13,
+    "pident": 90.1,
+    "aln": 153,
+    "qcov": 0.962
+   },
+   {
+    "orf": "leak__orf2",
+    "pile": "holdout_reference",
+    "subject": "7CZ6",
+    "evalue": 3.908e-07,
+    "pident": 9.3,
+    "aln": 160,
+    "qcov": 0.594
+   },
+   {
+    "orf": "leak__orf3",
+    "pile": "holdout_reference",
+    "subject": "3UQS_B",
+    "evalue": 7.437e-11,
+    "pident": 12.6,
+    "aln": 473,
+    "qcov": 0.815
+   },
+   {
+    "orf": "leak__orf4",
+    "pile": "holdout_reference",
+    "subject": "3VKW",
+    "evalue": 8.948e-45,
+    "pident": 81.7,
+    "aln": 455,
+    "qcov": 0.383
+   },
+   {
+    "orf": "ctl1__orf3",
+    "pile": "near_reference",
+    "subject": "3MMP_F",
+    "evalue": 2.539e-15,
+    "pident": 23.2,
+    "aln": 534,
+    "qcov": 0.808
+   },
+   {
+    "orf": "ctl2__orf1",
+    "pile": "near_reference",
+    "subject": "3AVX_A",
+    "evalue": 1.867e-17,
+    "pident": 22.2,
+    "aln": 602,
+    "qcov": 0.911
+   },
+   {
+    "orf": "ctl3__orf3",
+    "pile": "near_reference",
+    "subject": "4R71_D",
+    "evalue": 5.712e-17,
+    "pident": 30.7,
+    "aln": 508,
+    "qcov": 0.835
+   },
+   {
+    "orf": "ctl4__orf4",
+    "pile": "near_reference",
+    "subject": "4R71_D",
+    "evalue": 3.22e-20,
+    "pident": 35.3,
+    "aln": 492,
+    "qcov": 0.842
+   },
+   {
+    "orf": "ctl5__orf1",
+    "pile": "near_reference",
+    "subject": "3AVT_A",
+    "evalue": 1.026e-18,
+    "pident": 31.8,
+    "aln": 511,
+    "qcov": 0.727
+   },
+   {
+    "orf": "ctl6__orf3",
+    "pile": "near_reference",
+    "subject": "6YFM_AA",
+    "evalue": 3.444e-11,
+    "pident": 54.0,
+    "aln": 150,
+    "qcov": 0.993
+   },
+   {
+    "orf": "ctl6__orf4",
+    "pile": "near_reference",
+    "subject": "3AVX_A",
+    "evalue": 1.539e-20,
+    "pident": 33.4,
+    "aln": 482,
+    "qcov": 0.739
+   },
+   {
+    "orf": "ctl7__orf1",
+    "pile": "near_reference",
+    "subject": "3AVX_A",
+    "evalue": 5.249e-18,
+    "pident": 26.7,
+    "aln": 513,
+    "qcov": 0.85
+   }
+  ],
+  "sequence_arms_counted": [
+   "diamond_sensitive",
+   "diamond_very_sensitive",
+   "diamond_ultra_sensitive",
+   "blastp",
+   "sw_exhaustive"
+  ]
  },
  "profiles": [
   {
+   "arm": "hmmsearch_ga",
    "pile": "divergent",
    "orfs_with_a_domain": 17,
    "distinct_models": 3,
    "orfs_with_two_or_more": 0,
+   "median_models_on_one_orf": 1,
    "max_models_on_one_orf": 1
   },
   {
+   "arm": "hmmsearch_ga",
    "pile": "near_reference",
    "orfs_with_a_domain": 17,
    "distinct_models": 4,
    "orfs_with_two_or_more": 1,
+   "median_models_on_one_orf": 1,
    "max_models_on_one_orf": 2
   },
   {
+   "arm": "hmmsearch_ga",
    "pile": "holdout",
    "orfs_with_a_domain": 3,
    "distinct_models": 3,
    "orfs_with_two_or_more": 0,
+   "median_models_on_one_orf": 1,
    "max_models_on_one_orf": 1
   },
   {
+   "arm": "hmmsearch_ga",
    "pile": "holdout_reference",
    "orfs_with_a_domain": 4,
    "distinct_models": 7,
    "orfs_with_two_or_more": 1,
+   "median_models_on_one_orf": 1,
    "max_models_on_one_orf": 4
+  },
+  {
+   "arm": "hmmsearch_open",
+   "pile": "divergent",
+   "orfs_with_a_domain": 19,
+   "distinct_models": 3,
+   "orfs_with_two_or_more": 0,
+   "median_models_on_one_orf": 1,
+   "max_models_on_one_orf": 1
+  },
+  {
+   "arm": "hmmsearch_open",
+   "pile": "near_reference",
+   "orfs_with_a_domain": 18,
+   "distinct_models": 4,
+   "orfs_with_two_or_more": 1,
+   "median_models_on_one_orf": 1,
+   "max_models_on_one_orf": 2
+  },
+  {
+   "arm": "hmmsearch_open",
+   "pile": "holdout",
+   "orfs_with_a_domain": 3,
+   "distinct_models": 3,
+   "orfs_with_two_or_more": 0,
+   "median_models_on_one_orf": 1,
+   "max_models_on_one_orf": 1
+  },
+  {
+   "arm": "hmmsearch_open",
+   "pile": "holdout_reference",
+   "orfs_with_a_domain": 4,
+   "distinct_models": 8,
+   "orfs_with_two_or_more": 1,
+   "median_models_on_one_orf": 1,
+   "max_models_on_one_orf": 5
+  },
+  {
+   "arm": "hhsearch",
+   "pile": "divergent",
+   "orfs_with_a_domain": 19,
+   "distinct_models": 9,
+   "orfs_with_two_or_more": 12,
+   "median_models_on_one_orf": 2,
+   "max_models_on_one_orf": 6
+  },
+  {
+   "arm": "hhsearch",
+   "pile": "near_reference",
+   "orfs_with_a_domain": 20,
+   "distinct_models": 9,
+   "orfs_with_two_or_more": 13,
+   "median_models_on_one_orf": 2,
+   "max_models_on_one_orf": 6
+  },
+  {
+   "arm": "hhsearch",
+   "pile": "holdout",
+   "orfs_with_a_domain": 3,
+   "distinct_models": 9,
+   "orfs_with_two_or_more": 2,
+   "median_models_on_one_orf": 2,
+   "max_models_on_one_orf": 6
+  },
+  {
+   "arm": "hhsearch",
+   "pile": "holdout_reference",
+   "orfs_with_a_domain": 4,
+   "distinct_models": 22,
+   "orfs_with_two_or_more": 3,
+   "median_models_on_one_orf": 8,
+   "max_models_on_one_orf": 10
+  }
+ ],
+ "profile_overlap": [
+  {
+   "pile": "divergent",
+   "hmmsearch": 19,
+   "hhsearch": 53,
+   "hhsearch_only": 34,
+   "hmmsearch_only": 0
+  },
+  {
+   "pile": "near_reference",
+   "hmmsearch": 19,
+   "hhsearch": 53,
+   "hhsearch_only": 34,
+   "hmmsearch_only": 0
+  },
+  {
+   "pile": "holdout",
+   "hmmsearch": 3,
+   "hhsearch": 9,
+   "hhsearch_only": 6,
+   "hmmsearch_only": 0
+  },
+  {
+   "pile": "holdout_reference",
+   "hmmsearch": 8,
+   "hhsearch": 22,
+   "hhsearch_only": 15,
+   "hmmsearch_only": 1
   }
  ],
  "codon": [
@@ -1362,6 +1921,6 @@
    "best_arm_query_coverage": 1.0
   }
  ],
- "script_sha256": "6a109b12cfa0f65e22dfbe5563b502be09c0d8875320df1cc1d57c9c16a80cec",
- "git_sha": "fb628c4a07cce80bcb06af61ba57a88602dfca9d"
+ "script_sha256": "f1bbb73b5945d52f45f66c39bfe888783c3e93a9ee55ce0b8601c78040f37dbf",
+ "git_sha": "491abe8a4292a6aeecfcf928a8b8f70e6077f671"
 }
