@@ -205,6 +205,29 @@ def main() -> None:
                       f"| `{a}` | {st.mean(d_res):+.2f} | {min(d_res):+.2f} to "
                       f"{max(d_res):+.2f} | {st.mean(d_t2):+.2f} | - | {len(d_res)} |")
 
+    absf = d / "absorption_s1.json"
+    if absf.exists():
+        ab = json.loads(absf.read_text())
+        print("\n## 4c. Absorption at the contig level\n")
+        print("How much of the BASELINE's unidentifiable pile now sits inside a contig the "
+              "cascade calls identified, per arm. `baseline` is 0 by construction (the two "
+              "piles are disjoint) and `baseline_repeat` is the null: the same setting at a "
+              "different thread count, so it is what this reads when nothing changed.\n")
+        print("| arm | contigs >=90% inside an identified contig | of bases | "
+              "coverage-weighted | of which the single largest contig |")
+        print("|---|---|---|---|---|")
+        for a, r in ab.items():
+            t1 = r.get("top1_share_of_absorbed_mass")
+            print(f"| `{a}` | {r['contigs_ninety_covered']} of "
+                  f"{r['baseline_unidentified_contigs']:,} "
+                  f"| {r['bases_absorbed_frac'] * 100:.2f}% "
+                  f"| {r['coverage_weighted_mass_frac'] * 100:.2f}% "
+                  f"| {t1 * 100:.0f}% |" if t1 is not None else
+                  f"| `{a}` | {r['contigs_ninety_covered']} of "
+                  f"{r['baseline_unidentified_contigs']:,} "
+                  f"| {r['bases_absorbed_frac'] * 100:.2f}% "
+                  f"| {r['coverage_weighted_mass_frac'] * 100:.2f}% | - |")
+
     print("\n## 5. Provenance\n")
     print(f"- script `{man['script']}` at `{man['script_sha256'][:12]}`, git `{man['git_sha']}`")
     print(f"- {man.get('megahit_version', '?')}, minimap2 {man.get('minimap2_version', '?')}")

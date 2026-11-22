@@ -115,10 +115,51 @@ NOTE: these fractions are not comparable to the 77.10% of `results/subtract_know
 |---|---|---|---|---|---|---|
 | `baseline` | 64.58 | 35.42 | 34.89-35.83 | 15.38 | 20.04 | 5 |
 | `baseline_repeat` | 64.59 | 35.41 | 34.89-35.81 | 15.68 | 19.73 | 5 |
-| `lax_bubble` | 66.09 | 33.91 | 33.60-34.23 | 14.12 | 19.79 | 2 |
+| `keep_local` | 64.31 | 35.69 | 35.23-36.08 | 13.89 | 21.80 | 5 |
+| `keep_thin` | 65.27 | 34.73 | 34.21-35.14 | 13.11 | 21.62 | 5 |
+| `lax_bubble` | 65.91 | 34.09 | 33.60-34.49 | 14.14 | 19.95 | 5 |
+| `meta_sensitive` | 66.16 | 33.84 | 33.30-34.19 | 14.58 | 19.26 | 5 |
+| `no_bubble` | 62.97 | 37.03 | 36.47-37.42 | 16.06 | 20.97 | 5 |
+| `no_rescue` | 57.37 | 42.63 | 41.91-43.01 | 14.35 | 28.28 | 5 |
+| `prune_hard` | 63.80 | 36.20 | 35.68-36.59 | 13.59 | 22.61 | 5 |
+| `strict_bubble` | 64.13 | 35.87 | 35.34-36.25 | 15.41 | 20.46 | 5 |
+
+### 4b. Residue against baseline, PAIRED BY SEED
+
+Five seeds are five disjoint blocks of one read pool, so the same seed is the same reads and the paired difference is the comparison with the subsampling noise taken out. The `baseline_repeat` row is the null.
+
+| arm | residue change (pts, mean) | per-seed range | tier 2 change | tier 3 change | seeds paired |
+|---|---|---|---|---|---|
+| `baseline` | +0.00 | +0.00 to +0.00 | +0.00 | +0.00 | 5 |
+| `baseline_repeat` | -0.00 | -0.01 to +0.01 | +0.31 | -0.31 | 5 |
+| `keep_local` | +0.27 | +0.20 to +0.33 | -1.49 | +1.76 | 5 |
+| `keep_thin` | -0.69 | -0.71 to -0.66 | -2.26 | +1.58 | 5 |
+| `lax_bubble` | -1.33 | -1.36 to -1.30 | -1.24 | -0.09 | 5 |
+| `meta_sensitive` | -1.57 | -1.63 to -1.52 | -0.80 | -0.78 | 5 |
+| `no_bubble` | +1.61 | +1.58 to +1.66 | +0.68 | +0.93 | 5 |
+| `no_rescue` | +7.22 | +7.01 to +7.37 | -1.03 | +8.24 | 5 |
+| `prune_hard` | +0.78 | +0.76 to +0.80 | -1.79 | +2.57 | 5 |
+| `strict_bubble` | +0.45 | +0.42 to +0.47 | +0.03 | +0.42 | 5 |
+
+## 4c. Absorption at the contig level
+
+How much of the BASELINE's unidentifiable pile now sits inside a contig the cascade calls identified, per arm. `baseline` is 0 by construction (the two piles are disjoint) and `baseline_repeat` is the null: the same setting at a different thread count, so it is what this reads when nothing changed.
+
+| arm | contigs >=90% inside an identified contig | of bases | coverage-weighted | of which the single largest contig |
+|---|---|---|---|---|
+| `baseline` | 0 of 13,034 | 0.00% | 0.00% | - |
+| `baseline_repeat` | 13 of 13,034 | 0.12% | 0.18% | 54% |
+| `lax_bubble` | 38 of 13,034 | 0.40% | 0.26% | 29% |
+| `strict_bubble` | 44 of 13,034 | 0.35% | 0.25% | 10% |
+| `no_bubble` | 71 of 13,034 | 0.67% | 0.67% | 14% |
+| `keep_thin` | 24 of 13,034 | 0.26% | 7.61% | 95% |
+| `keep_local` | 76 of 13,034 | 0.69% | 8.25% | 79% |
+| `prune_hard` | 84 of 13,034 | 0.83% | 0.47% | 20% |
+| `no_rescue` | 28 of 13,034 | 0.40% | 0.31% | 22% |
+| `meta_sensitive` | 720 of 13,034 | 5.42% | 10.63% | 73% |
 
 ## 5. Provenance
 
-- script `experiments/path_settings.py` at `d4a01adccdea`, git `8775f40`
+- script `experiments/path_settings.py` at `d4a01adccdea`, git `6668bf4`
 - MEGAHIT v1.2.9, minimap2 2.28-r1209
 - reads sha256 `a199c914af6e`

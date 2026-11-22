@@ -107,6 +107,94 @@ a measurement of how much of this assembly exists only because of path rescue - 
 levers that would push further in that direction (`keep_thin`, `keep_local`) buy nothing:
 `keep_local` adds 1,017 contigs and 172 kb of sequence and **loses four genomes**.
 
+## The read-level readout, which is where Imo's objection lands
+
+Identification and the read-level cascade ran per arm, five seeds each, so residue size is an
+output of the setting. Paired by seed - five seeds are five disjoint blocks of one pool, so
+the same seed is the same reads - the baseline leaves **35.42%** of pairs as residue and its
+own repeat moves that by **-0.00 points (range -0.01 to +0.01)**. That null is what makes the
+rest readable.
+
+**The residue of this library spans 33.84% to 42.63% across the ladder: 8.79 points, from
+assembler flags alone.** In the same arms, recovery of 25 real genomes moves by at most one
+genome. So the residue fraction is substantially a property of how the assembler chooses
+paths, and only partly a property of the water.
+
+| arm | residue, paired change | where it comes from |
+|---|---|---|
+| `lax_bubble` (merge to 0.90) | **-1.33** | tier 2 -1.24 |
+| `baseline` (0.95) | 0 | - |
+| `strict_bubble` (0.98) | **+0.45** | tier 3 +0.42 |
+| `no_bubble` (off) | **+1.61** | tier 2 +0.68, tier 3 +0.93 |
+| `no_rescue` | **+7.22** | tier 3 **+8.24**, tier 2 -1.03 |
+| `prune_hard` | +0.78 | tier 3 +2.57, tier 2 -1.79 |
+| `keep_thin` | -0.69 | tier 2 -2.26, tier 3 +1.58 |
+| `keep_local` | +0.27 | tier 2 -1.49, tier 3 +1.76 |
+| `meta_sensitive` | -1.57 | tier 2 -0.80, tier 3 -0.78 |
+
+**The bubble axis is monotone and signed**: -1.33, 0, +0.45, +1.61 as merging goes from a
+0.90 similarity floor to off. So this is a response to that lever and not to any change in
+the contig set, which was the alternative worth ruling out.
+
+**`no_rescue` is the large effect and it moves a different pile.** Removing mercy k-mers and
+local assembly adds **7.22 points** of residue, of which **8.24 points arrive in tier 3** -
+reads that now match nothing at all - while tier 2 *falls* by 1.03. Those reads do not become
+unidentifiable; they lose their contig. That is the same 36% of assembled bases seen from the
+read side, and it is the clearest statement this experiment makes about what path selection
+is worth: it is worth about 7 points of this library's residue, and essentially all of it at
+the thin end.
+
+**Tier 2 and tier 3 trade against each other, and three arms move them in opposite
+directions.** `keep_thin` takes 2.26 points out of tier 2 and puts 1.58 into tier 3;
+`prune_hard` -1.79 and +2.57; `keep_local` -1.49 and +1.76. The arithmetic says where tier 2's
+reads went: in `keep_thin`, 1.58 of the 2.26 points fell through to tier 3 - they lost their
+contig rather than gaining a name - and the remaining 0.69 left the residue altogether, which
+is the slice the absorption test below accounts for. **Reporting tier 2 without tier 3 beside
+it would read all three of these arms as an improvement.**
+
+## Did anything get absorbed? Yes, and not by the lever that was supposed to do it
+
+`experiments/path_settings_absorption.py` aligns each arm's identified contigs against the
+*baseline's* unidentifiable pile and asks how much of that pile now sits inside something the
+cascade calls identified. The same-setting null is **0.12% of bases / 0.18% coverage-weighted**,
+which exists only because MEGAHIT's output shifts slightly with thread count.
+
+**By bases nothing much moves anywhere**: 0.26% to 0.83% across the whole path ladder, with
+the largest figure belonging to `prune_hard`. **`lax_bubble`, the arm built to cause
+absorption, reads 0.40% of bases and 0.26% coverage-weighted - 1.4x the null, and lower than
+`no_bubble`'s 0.67%, which is the opposite direction.** So lowering the bubble-merging floor
+does not swallow the unidentifiable pile, and its 1.33 points of residue are not explained
+this way.
+
+**Where absorption does appear, it is one contig.** `keep_thin` reads 7.61% coverage-weighted
+and `keep_local` 8.25%, against a 0.18% null - 42x and 46x. But **95% and 79% of that mass is
+a single contig**: a 940 nt contig at 6,972x and a 506 nt contig at 15,975x, each going from
+unidentifiable to inside an identified contig when low-depth branches are kept. By bases the
+same two arms read 0.26% and 0.69%. So the honest form is: keeping thin branches welds one or
+two very deep short fragments onto recognisable sequence, which is enough to reclassify a
+visible slice of tier-2 *reads* while moving almost no tier-2 *sequence*. That is exactly why
+tier 2 falls 2.26 points in `keep_thin` while its tier 3 rises 1.58.
+
+`meta_sensitive` is the arm where absorption is broad as well as deep: **720 of 13,034
+contigs, 5.42% of bases, 10.63% coverage-weighted**. It is also the arm with the smallest
+residue. It is not a path arm - the preset also sets `--min-count 1` - and this is the
+clearest reason not to read its residue as an improvement.
+
+**The mechanism for the bubble axis is therefore something else, and this instrument cannot
+pin it down.** The likeliest candidate is recruitment rather than absorption: a merged contig
+is a better magnet for a swarm than the variant-specific contigs it replaces, and the
+cascade's own-assembly tier subtracts a read on 40 matching bases. Under that reading the
+reads leaving the residue are variants of material the sample already holds - the residue
+still shrinks without anything new being found.
+
+**What this settles about the design.** Imo's objection stands: residue size moves by up to
+8.8 points on settings that do not improve recovery of a single real genome, so a
+residue-only arm would have reported those movements as progress, and a whole-library arm is
+the only one that can see it. What it adds is that the absorption is driven by the
+thin-branch levers rather than the bubble floor, that it is concentrated in one or two very
+deep fragments, and that the number to carry forward is the pair - **residue size and
+ground-truth recovery, from the same pass, never one alone.**
+
 ## What this cannot say
 
 - **One library, one sample.** SRR23421544 is a treated-wastewater RNA library; Berlin's
@@ -132,35 +220,3 @@ levers that would push further in that direction (`keep_thin`, `keep_local`) buy
   there: upstream RefSeq viral keeps dropping records, so the rebuild reads 19,202 kept
   nucleotide records against 19,211 recorded and was built with `--allow-mismatch`. Direction:
   fewer pre-cutoff relatives make a candidate look more novel, the dangerous way.
-
-## The read-level readout, which is where Imo's objection lands
-
-Identification and the read-level cascade were run per arm, so residue size is an output of
-each setting. Paired by seed - five seeds are five disjoint blocks of one pool, so the same
-seed is the same reads - the baseline's residue is 35.42% of pairs and its own repeat moves
-it by **-0.00 points (range -0.01 to +0.01)**. That is the instrument's noise floor, and it
-is tight enough to read small effects against.
-
-**`lax_bubble` takes 1.33 points of the library out of the residue** (range -1.30 to -1.36),
-and **1.24 of those points come out of tier 2** - reads that previously matched only contigs
-nothing could identify. Nothing in the ground-truth panel moves in that arm: no genome loses
-breadth, no genome loses purity, no contig spans two molecules. This is exactly the shape the
-objection predicted: on a residue-only design the setting would have looked like an
-improvement, and the panel would not have contradicted it.
-
-**But the contig-level test says the mechanism is not novel sequence being swallowed.**
-`experiments/path_settings_absorption.py` aligns each arm's identified contigs against the
-*baseline's* unidentifiable pile and asks how much of it now sits inside something the
-cascade calls identified. Coverage-weighted: null `baseline_repeat` **0.18%**, `lax_bubble`
-**0.26%**, `strict_bubble` **0.25%**, `no_bubble` **0.67%**. So the arm with the largest
-contig-level absorption is the one that keeps paths *apart*, and `lax_bubble`'s figure is
-1.4x a null that exists only because MEGAHIT's output shifts slightly with thread count.
-0.26% of that pile cannot account for 1.24 points of reads.
-
-The likelier mechanism, which this instrument cannot separate from absorption, is read
-recruitment: a merged contig is a better magnet for a swarm than the variant-specific contigs
-it replaces, and the cascade's own-assembly tier subtracts a read on 40 matching bases. Under
-that reading the reads leaving the residue are variants of material the sample already holds,
-and the residue shrinks without anything new being found. **Either way the number to report
-is the pair, not the residue alone**: 1.33 points left the residue and nothing in the truth
-panel improved.

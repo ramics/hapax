@@ -1,6 +1,6 @@
 {
  "script": "experiments/path_settings.py",
- "git_sha": "8775f40",
+ "git_sha": "6668bf4",
  "script_sha256": "d4a01adccdea13980e7e48b1d04a1e981957ca3d5dbc331f9b861778d2dcec59",
  "python": "3.13.18",
  "argv": [
@@ -17,7 +17,7 @@
   "--memory",
   "0.72",
   "--arms",
-  "baseline,baseline_repeat,lax_bubble,no_bubble,strict_bubble,keep_thin,keep_local,prune_hard,no_rescue,meta_sensitive",
+  "baseline,baseline_repeat,lax_bubble,no_rescue,prune_hard",
   "--work",
   "/home/user/stage/wk",
   "--out",
@@ -27,13 +27,8 @@
   "baseline",
   "baseline_repeat",
   "lax_bubble",
-  "no_bubble",
-  "strict_bubble",
-  "keep_thin",
-  "keep_local",
-  "prune_hard",
   "no_rescue",
-  "meta_sensitive"
+  "prune_hard"
  ],
  "ladder": {
   "baseline": {
@@ -108,7 +103,7 @@
  },
  "parameters": {
   "seed": "1",
-  "arms": "baseline,baseline_repeat,lax_bubble,no_bubble,strict_bubble,keep_thin,keep_local,prune_hard,no_rescue,meta_sensitive",
+  "arms": "baseline,baseline_repeat,lax_bubble,no_rescue,prune_hard",
   "stages": "['assemble', 'score']",
   "reads": "/home/user/stage/reads/SRR23421544.fastq.gz",
   "r2": "None",
@@ -128,8 +123,8 @@
   "out": "results/path_settings",
   "force": "False"
  },
- "seconds_total": 3.1044594770010008,
- "peak_rss_bytes": 108064768,
+ "seconds_total": 1.8503401749985642,
+ "peak_rss_bytes": 106995712,
  "megahit_version": "MEGAHIT v1.2.9",
  "minimap2_version": "2.28-r1209",
  "reads_sha256": "a199c914af6ef3e27a4601cd0fef8080691f7c68c71706d10afda7f2afcf61dc"

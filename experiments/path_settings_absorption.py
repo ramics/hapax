@@ -112,12 +112,24 @@ def main() -> None:
                 detail.append({"contig": n, "length": base_len[n], "cov": base_cov[n],
                                "covered_frac": frac})
         detail.sort(key=lambda r: -r["length"] * r["cov"])
+        # detail holds only contigs at >=0.5 covered; top1 share is computed over it, so
+        # it is an upper bound on how concentrated the mass is, not an estimate.
         rows[name] = {
             "baseline_unidentified_contigs": len(base),
             "baseline_unidentified_bases": total_bases,
             "contigs_touched": len(spans),
             "contigs_half_covered": n_half, "contigs_ninety_covered": n_ninety,
             "bases_absorbed": covered_bases,
+            "absorbed_coverage_mass": covered_mass,
+            "baseline_unidentified_coverage_mass": total_mass,
+            # How much of the absorbed coverage-weighted mass is ONE contig. Measured
+            # because it turned out to be nearly all of it in three arms - a 940 nt contig
+            # at 6,972x and a 506 nt one at 15,975x - so the weighted percentage without
+            # this column reads as a broad effect when it is one deep fragment.
+            "top1_share_of_absorbed_mass": (
+                max((r["length"] * r["covered_frac"] * r["cov"] for r in detail), default=0)
+                / covered_mass
+                if covered_mass else None),
             "bases_absorbed_frac": covered_bases / total_bases if total_bases else None,
             "coverage_weighted_mass_frac": covered_mass / total_mass if total_mass else None,
             "top_absorbed": detail[:25],
