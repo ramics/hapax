@@ -735,7 +735,12 @@ const METHODS = [
       '66.5% protein identity over 620 aa against a referenced comparator in the same ' +
       'library at 99.9%, ordered correctly by 30 points.'],
     ['Bias', 'Both reference sets are narrow, so each identity is an upper bound on ' +
-      'identity and each divergence a lower bound on divergence.'],
+      'identity and each divergence a lower bound on divergence. That bound is ' +
+      'measured at nucleotide level against NCBI core_nt, 319 GB: of 149 divergent ' +
+      'contigs, 25 collapse to 90% identity or above over at least half their length ' +
+      'and 83 stay under 80% identity or under half covered, while all 135 ' +
+      'near-reference controls return at a median 97.55% over 98.8% of their length. ' +
+      'The protein equivalent against nr has not landed.'],
   ]},
   {id: 'genespread', t: 'Per-gene identity and ranking', rows: [
     ['Input', 'ORFs called by Prodigal in metagenome mode, minimum 50 aa.'],
@@ -746,15 +751,26 @@ const METHODS = [
     ['Denominator', 'For the spread, contigs with two or more scorable genes.'],
     ['Control', 'Contigs matching their reference at 95% or above, same procedure. ' +
       'Their genes agree to a median 2.35 points where the divergent arm disagrees by ' +
-      '17.4. Over the whole identified pile, 600 divergent against 301 near-reference ' +
-      'contigs, the same comparison reads 12.8 against 2.45.'],
+      '17.4. Over the whole identified pile, 600 divergent against 302 near-reference ' +
+      'contigs, the same comparison reads 12.8 against 2.45. Which gene carries the ' +
+      'distance is read paired, role against role on contigs carrying both as separate ' +
+      'ORFs: the maturation protein sits below the polymerase on 122 of 131 such ' +
+      'contigs, a median 6.9 points, and below the capsid on 28 of 31. The ' +
+      'near-reference arm is a coin toss there, which is what makes the divergent arm ' +
+      'readable.'],
     ['Bias', 'The arms are not matched as drawn: divergent contigs carry a median of 3 ' +
       'scorable genes over 3,820 nt against 1 over 552 nt, and more genes give a ' +
       'spread more room, which biases the gap upward. At equal gene counts the gap ' +
       'holds: 5.6 against 1.3 points at two genes, 16.9 against 2.65 at three. One ' +
       'identity per contig is whichever gene won on bitscore, usually the more ' +
       'conserved gene. Protein identity also understates nucleotide divergence, since ' +
-      'synonymous changes are invisible to it.'],
+      'synonymous changes are invisible to it. Two confounds on the role ordering were ' +
+      'measured and neither explains it: distinct reference proteins matched per ORF ' +
+      'are 0.604 for the polymerase against 0.598 for the maturation protein, and ' +
+      'inside matched alignment-length bands the gap is 7 to 8 points. The capsid is ' +
+      'not placed in the ordering, because half its alignments run under 150 aa where ' +
+      'identity is quantised. Two roles called on one ORF are one number compared with ' +
+      'itself and are excluded.'],
   ]},
   {id: 'depth', t: 'Mapped depth and evenness', rows: [
     ['Input', 'Every read pair in the library, mate 2 trimmed as above.'],
