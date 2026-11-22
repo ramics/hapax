@@ -35,6 +35,7 @@ import argparse
 import hashlib
 import json
 import math
+import re
 import statistics
 from pathlib import Path
 
@@ -49,6 +50,13 @@ MIN_ALN_AA = 60
 #: The subject universe every sequence arm shares. A difference against the baseline is
 #: computed here and nowhere else.
 SHARED_DB = "swissprot+viral"
+
+#: How a subject set is named in the tables. The arms write a short key on each row
+#: (`afdb`, `pdb`) because that is what names their database files; this is the only place
+#: that decides how a reader sees it, so a table never asks anyone to know that `afdb` means
+#: Swiss-Prot folded - which is the fact that makes the structure arm a controlled
+#: comparison rather than a different search against different subjects.
+DB_LABEL = {"afdb": "AlphaFold/Swiss-Prot (Swiss-Prot, folded)", "pdb": "the PDB"}
 
 #: Which arm is the baseline to beat. DIAMOND's most sensitive mode, because the question is
 #: what the production search can reach when it is allowed to be slow, not what it reaches
@@ -350,12 +358,21 @@ def main(argv: list[str] | None = None) -> int:
             if arm == baseline:
                 continue
             arm_rows = [r for r in sig if r["arm"] == arm]
-            if not arm_rows or arm_rows[0].get("db") != SHARED_DB:
-                novel_rows.append(dict(arm=arm, comparable=False,
-                                       db=(arm_rows[0].get("db") if arm_rows else None)))
+            # THE SUBJECT SET IS READ OFF EVERY ROW, not only the significant ones. An arm
+            # that ran against Pfam or a structure database and cleared the floor nowhere
+            # has no significant row to carry its `db`, and this table used to print that as
+            # `searches nothing` - which reads as the arm having no subjects rather than no
+            # hits, and those are opposite findings. The two cases are now distinguished:
+            # an arm with no rows at all did not run.
+            arm_db = next((r.get("db") for r in rows if r["arm"] == arm and r.get("db")), None)
+            if arm_db != SHARED_DB:
+                novel_rows.append(dict(arm=arm, comparable=False, db=arm_db))
+                searched = (f"{DB_LABEL.get(arm_db, f'`{arm_db}`')}, which the baseline "
+                            f"never saw" if arm_db
+                            else "no subject set is recorded on its rows, so this arm "
+                                 "produced none")
                 lines.append(f"| {ARM_LABEL.get(arm, arm)} | not comparable: searches "
-                             f"`{arm_rows[0].get('db') if arm_rows else 'nothing'}` | - | "
-                             f"- | - | - |")
+                             f"{searched} | - | - | - | - |")
                 continue
             extra = [r for r in arm_rows if (r["query"], r["subject"]) not in base_pairs]
             by_pile: dict[str, int] = {}
@@ -463,6 +480,45 @@ def main(argv: list[str] | None = None) -> int:
         for arm, t in sorted(failed.items()):
             lines.append(f"- `{arm}`: {failure_reason(t.get('traceback', ''))}")
         out["failed_arms"] = {a: t.get("traceback") for a, t in failed.items()}
+
+    # §5b the structure arm's subject universe, which is the thing that decides how a null
+    # result from it may be read.
+    #
+    # WHY THIS SECTION EXISTS. AlphaFold/Swiss-Prot was chosen as the structure target
+    # because it is Swiss-Prot folded, which makes it the baseline's subjects in another
+    # alphabet - that was the design, and it is half true. The shared sequence database is
+    # Swiss-Prot PLUS the RefSeq viral proteins, and only the Swiss-Prot half is folded
+    # anywhere. So this counts where the sequence arms' nearest relatives actually come
+    # from. If they come from the RefSeq viral half, the structure arm is searching a
+    # universe that excludes them, and "structure found nothing further" is then a statement
+    # about Swiss-Prot's coverage of this family rather than about structure.
+    REFSEQ_PREFIX = re.compile(r"^(?:YP|NP|AP|XP|WP)_")
+    if baseline is not None:
+        best_by_orf: dict[str, dict] = {}
+        for r in sig:
+            if r["arm"] != baseline:
+                continue
+            k = r["orf"]
+            if k not in best_by_orf or r["bitscore"] > best_by_orf[k]["bitscore"]:
+                best_by_orf[k] = r
+        folded = [r for r in best_by_orf.values() if not REFSEQ_PREFIX.match(r["subject"])]
+        lines.append("\n## 5b. Whether the structure target holds these proteins at all\n")
+        lines.append(
+            "The shared sequence database is Swiss-Prot plus the RefSeq viral proteins, and "
+            "AlphaFold/Swiss-Prot folds only the Swiss-Prot half. So the structure arm is "
+            "the baseline's subjects in another alphabet only to the extent that the "
+            "baseline's hits are Swiss-Prot hits. Counted on each ORF's best significant "
+            "alignment under the baseline:\n")
+        lines.append("| ORFs with a significant baseline hit | best hit in Swiss-Prot "
+                     "(foldable) | best hit in RefSeq viral (folded nowhere) |")
+        lines.append("|---|---|---|")
+        lines.append(f"| {len(best_by_orf)} | {len(folded)} | "
+                     f"{len(best_by_orf) - len(folded)} |")
+        out["structure_subject_universe"] = dict(
+            orfs_with_baseline_hit=len(best_by_orf),
+            best_hit_in_swissprot=len(folded),
+            best_hit_in_refseq_viral=len(best_by_orf) - len(folded),
+            swissprot_examples=sorted({r["subject"] for r in folded})[:8])
 
     # §6 profiles: does a second profile in the same clan reach further
     #: Every arm whose subjects are Pfam models, because the "several profiles per role"
