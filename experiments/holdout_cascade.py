@@ -210,13 +210,23 @@ def parse_best(tsv: Path, aa: bool = False) -> dict[str, dict]:
     return best
 
 
-def union_coverage(tsv: Path) -> dict[str, dict]:
-    """Per query-subject pair, the union of HSP intervals on the query.
+def union_coverage(tsv: Path, evalue: float = SIGNIFICANCE_EVALUE) -> dict[str, dict]:
+    """Per query-subject pair, the union of SIGNIFICANT HSP intervals on the query.
 
     A single HSP cannot cover a multi-gene genome - this project already demoted exactly
     the right candidates with a coverage flag defined on one HSP, because a levivirus's
     best blastx HSP covers about 45% of it. Attribution therefore uses the union of
     intervals, so a contig re-derived in several pieces counts as covered.
+
+    THE E-VALUE FLOOR IS NOT OPTIONAL AND ITS ABSENCE HERE PRODUCED AN IMPOSSIBLE NUMBER.
+    This function had no floor while `union_coverage_any` had one, so the two sides of the
+    "coverage gap" saw different HSPs and their difference was not a difference of
+    definitions but of filters. Any-subject coverage CONTAINS per-subject coverage under
+    matched filters, so the gap cannot be negative - and it was negative on 394 of 7,734
+    protein rows and 508 of 2,269 nucleotide rows, to -0.50. The floor is now a parameter
+    with the same default as the other function's, so a mismatch has to be written
+    deliberately rather than inherited. Attribution is unaffected either way: that pass is
+    run at `evalue="1e-10"`, so every HSP it sees already clears this floor.
     """
     iv: dict[tuple[str, str], list] = {}
     qlen: dict[str, int] = {}
@@ -225,6 +235,14 @@ def union_coverage(tsv: Path) -> dict[str, dict]:
     for line in open(tsv):
         f = line.rstrip("\n").split("\t")
         if len(f) < 14:
+            continue
+        # `>= evalue`, matching union_coverage_any EXACTLY. This was `> evalue` for one
+        # commit, and the single-row difference it made is the whole lesson: an HSP at
+        # E == 1e-5 was then kept by one side of the subtraction and dropped by the other,
+        # and the gap came out at -0.0453 on exactly one contig of 41,271 cells. A filter
+        # written twice will differ on the boundary even when both authors mean the same
+        # thing, which is why the floor belongs in one shared function.
+        if float(f[10]) >= evalue:
             continue
         q, s = f[0], f[1]
         a, b = sorted((int(f[6]), int(f[7])))
@@ -518,8 +536,25 @@ def main() -> int:
                 row[f"{label}_coverage_any"] = ca
                 # The gap, stored rather than left to be derived, so that a reader of the
                 # TSV cannot accidentally compare the two definitions the wrong way round.
-                row[f"{label}_coverage_gap"] = (
-                    round(ca - cu, 4) if (ca is not None and cu is not None) else None)
+                gap = round(ca - cu, 4) if (ca is not None and cu is not None) else None
+                # AN INVARIANT, ASSERTED WHERE IT IS COMPUTED, BECAUSE THIS ONE SHIPPED
+                # BROKEN TWICE. The any-subject union CONTAINS the per-subject union, so
+                # the gap cannot be negative. Both failures were filter mismatches between
+                # the two functions - first a missing E-value floor on one side (394 of
+                # 7,734 protein rows and 508 of 2,269 nucleotide rows negative, to -0.50),
+                # then `>` against `>=` on the boundary (one row of 41,271, at -0.0453).
+                # Neither was visible to any tell this project uses, because the tells read
+                # distributions and nothing was plotting this column. An impossible sign is
+                # the cheapest check there is, so it raises rather than being counted: a
+                # violation here means the two unions disagree about which HSPs exist, and
+                # every number derived from either is then unreadable.
+                if gap is not None and gap < 0:
+                    raise SystemExit(
+                        f"coverage gap {gap} is negative for {nm} on {label}: "
+                        f"per-subject {cu}, any-subject {ca}. The any-subject union "
+                        f"contains the per-subject union, so the two are not applying the "
+                        f"same HSP filter. Fix the filter, do not relax this check.")
+                row[f"{label}_coverage_gap"] = gap
                 row[f"{label}_significant_subjects"] = (
                     ua or {}).get("significant_subjects")
                 row[f"{label}_evalue"] = b["evalue"]

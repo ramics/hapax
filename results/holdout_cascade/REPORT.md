@@ -143,8 +143,8 @@ contig against identity, printed by `report_holdout_cascade.py` section 4b:
 | 0.00-0.25 | 229 | 37 | 27 | 9 | 4 | 2 |
 
 The candidate's protein hit covers **0.4624** of the contig at 66.5%, so it lands in the
-`coverage 0.25-0.50, identity 60-70%` cell: **70 contigs, 0.92% of the removed pile.** At
-nucleotide level it is coverage 0.7180 at 69.7%, a cell holding **139 contigs, 6.74%**. Either
+`coverage 0.25-0.50, identity 60-70%` cell: **69 contigs, 0.91% of the removed pile.** At
+nucleotide level it is coverage 0.7103 at 69.7%, a cell holding **137 contigs, 6.64%**. Either
 way this is a shortlist a person can read in an afternoon, not a lottery.
 
 **And the direction is fixed on known material from the same library.** This is what the leak
@@ -186,7 +186,7 @@ the removed pile under the first and the 50.18th under the second.
 | | gap, percentage points |
 |---|---|
 | the withheld genome, 3,990 nt | **+36.6** |
-| 193 identified background contigs of 2,793-5,187 nt | median 0.1, mean 4.4, max 54.2 |
+| 193 identified background contigs of 2,793-5,187 nt | median 0.1, mean 4.5, max 54.2 |
 | **the leak arm: 34 contigs of already-referenced genomes, same library** | **median 0.0, mean 0.0, max 0.0** |
 
 Not one known contig in this water has any gap at all, and the candidate is at the **95.85th
@@ -198,14 +198,54 @@ holds 4,399 of the 7,601 contigs and has a mean of 1.9 - and the candidate has 5
 A gap requires several genes but several genes do not produce a gap.
 
 **The field exists at protein level only, and that is a constraint on it rather than a
-caveat.** On the same contig against the nucleotide index the gap is **-0.8 points, the
-22.34nd percentile** of its length band, where only 2 of 94 length-matched contigs exceed 10
-points at all. The mechanism says why: at nucleotide level the candidate has one best genome
-and its HSPs all land on that genome, so there is nothing for other subjects to add. The gap
-measures *genes drifting onto different protein records*, which is a protein-space phenomenon
-by construction. **So it is not a second axis on top of coverage - it is the protein tier's
-coverage read twice**, and a pipeline carrying it must compute it where the divergence is
-scored and not where the reads are.
+caveat.** On the same contig against the nucleotide index the gap is **exactly +0.0 points**:
+per-subject and any-subject union coverage are the *same number*, 0.7103. The mechanism says
+why - at nucleotide level the candidate has one best genome and every significant HSP lands on
+that genome, so the any-subject union has literally nothing to add. Across its length band the
+nucleotide gap has a median of 0.0 and only **2 of 94** contigs exceed 10 points at all. The
+gap measures *genes drifting onto different protein records*, which is a protein-space
+phenomenon by construction. **So it is not a second axis on top of coverage - it is the
+protein tier's coverage read twice**, and a pipeline carrying it must compute it where the
+divergence is scored and not where the reads are.
+
+**That figure is a correction, and the first version of it was impossible.** This section
+first reported **-0.8 points at the 22.34nd percentile**, which cannot happen: any-subject
+coverage *contains* per-subject coverage, so their difference is non-negative by construction.
+The cause, found by the consolidation thread, is that `union_coverage` applied no E-value
+floor while `union_coverage_any` applied one, so the two sides of the subtraction were not two
+definitions but two **filters** - and the gap came out negative on 394 of 7,734 protein rows
+and 508 of 2,269 nucleotide rows, to -0.50. **A sign that cannot occur is the cheapest
+possible tell and it was sitting in the committed file**; the reason it was not caught here is
+that the negative rows are a few percent of a column nothing was plotting.
+
+With the floor applied to both sides and re-derived from the raw search output: **the protein
+figure does not move at all** - 0.4624 against 0.8286, +36.6 points, 95.85th percentile of its
+band - because every HSP in the candidate's protein hits already cleared 1e-5. The nucleotide
+figure moves from an impossible -0.8 to a clean 0.0. **So the protein-only claim survives and
+is now stated in its stronger form**: not "smaller at nucleotide level" but *zero* there.
+
+Two things about the percentile that would otherwise mislead. The candidate sits at the
+**64.89th percentile** of the nucleotide band rather than the 22nd, and that number is close to
+meaningless because the band's median gap is 0.0 - it is a tie, and where a tie falls is an
+artefact of sort order, which is a bias this repo has already had to withdraw a result over.
+And `coverage_gap_null.py` was never affected, because it floors both sides deliberately: it
+independently produced the identical 0.4624 and 0.8286, which is why the +36.6 was safe to
+quote throughout.
+
+**The same invariant then failed a second time, on one row, and that is the more useful
+failure.** After the floor was added, 41,270 of 41,271 gap cells were non-negative and **one**
+read -0.0453. The cause was `>` against `>=`: the floor was written twice and the two
+spellings disagree on an HSP at **exactly** E = 1e-5, so one side kept it and the other
+dropped it. **A filter written twice will differ on the boundary even when both authors mean
+the same thing** - which is the argument for one shared function taking one `evalue_below`,
+not for being more careful.
+
+**So the check is now asserted where the number is computed, and it raises.** A negative gap
+means the two unions disagree about which HSPs exist, which makes everything derived from
+either unreadable, so it is not a row to drop or a count to report - it stops the run. Worth
+recording that neither failure was visible to any tell this project relies on: *the control
+moving with the test* and *an explicit census* both work by reading a distribution, and
+nothing was plotting this column. **An impossible sign needs an invariant, not a reader.**
 
 **Where it gets suspicious, and the limit is mine not the field's.** Four cuts - gap > 30
 points, identity 50-70%, any-subject coverage >= 0.70, length >= 1500 nt - select **7
@@ -359,7 +399,7 @@ contigs - and it is the ground-truth confirmation reported further down.
 **The consequence for this report is that I now have less external support, not more.** The
 coverage axis was the one recommendation here with a second instrument behind it, and that
 instrument has withdrawn its reading. Coverage is still what the ground truth in this
-experiment points at - it is what turns a 93.46th-percentile identity into a 0.92% cell - but
+experiment points at - it is what turns a 93.46th-percentile identity into a 0.91% cell - but
 that is now **one measurement on one library with one positive**, not two converging ones.
 Stated plainly because the earlier version of this section claimed the convergence.
 
@@ -378,7 +418,7 @@ contig from the same water enters**.
 the top of the report, and the measurement says what the box could honestly be: not a verdict,
 and not the top row. Within its own cell the candidate ranks fourth on bitscore at nucleotide
 level and second at protein, so a box that fires on the top row would have missed it. What is
-defensible is the **cell**, not the ranking inside it: a section that says *70 contigs were
+defensible is the **cell**, not the ranking inside it: a section that says *69 contigs were
 removed at family-level distance over a quarter to a half of their length, and no
 already-known contig in this library looks like that*. The red box, honestly built, is a
 shortlist with a count on it.
@@ -429,6 +469,61 @@ cites this experiment's numbers as the reason it exists. What this report adds t
 cannot measure on the Berlin library is the ground truth: **whether the output contains the one
 contig we know to be novel, and where in it.** That is the measurement above, and it is the
 only validation of that stage anyone can currently make.
+
+#### So it was run, and the answer is yes — with the position stated, not just the presence
+
+`divergent_known_s1.json`, that stage run blind over this library's 22,110 identified
+non-ribosomal contigs against the rolled-back indexes. **The withheld genome's contig is in the
+output**, and its row carries exactly the fields SPEC §5 now requires:
+
+| field | value |
+|---|---|
+| identity, alignment, E-value | **66.5%** over **620 aa**, E = **5.44e-282** |
+| nearest subject | `YP_010771404.1`, an RdRp, at **0.984** of the subject's length |
+| coverage of the contig | **0.466** |
+| divergence class | *family-level or looser; the subject is a nearest neighbour, not an identification* |
+| genes, with Pfam | polymerase 66.5% `RNA_replicase_B`, coat 77.8% `Levi_coat`, maturation 53.5% `Phage_mat-A` |
+| spread across genes | **24.3 points** |
+| read support | mean depth 30.9, breadth **1.0**, evenness 0.718, max 93 |
+
+**Three things make this a validation rather than a sighting.**
+
+**It got into the gene-level arm by contig LENGTH, not by identity.** The arm is capped at 600
+contigs per side and the cap is applied longest-first, so at 3,990 nt the candidate is in
+comfortably. That matters because this report measured identity ordering to be *actively
+wrong* on this very pile — 93.46th percentile, 7,104 contigs ahead of it — and a length cap
+cannot inherit that bias. Had the cap been applied by identity the candidate would have been
+at risk of falling outside it.
+
+**Its own control arm is empty where it sits.** Of the 600 gene-level rows on the divergent
+side, **321** have contig coverage below 0.5 and identity below 70%; of the 600 on the
+`control_near_reference` side, **zero** do. So the cell is not discriminating *within* the
+divergent arm — and it is perfectly discriminating against known material, which is the
+direction that was in question.
+
+**And it is not near the top, which is the honest half.** Sorted as that table sorts, by
+identity ascending, the candidate is **431 of 600**; ranked by polymerase identity among the
+120 rows that have a polymerase, **100 of 120**. The 321-row cell is *not* comparable to this
+report's 70-contig cell either: 70 is out of 7,601 contigs over the whole removed pile, while
+321 is out of 600 already selected for being below 90%. **Two denominators, and quoting the
+smaller fraction against the larger population is exactly how a shortlist gets flattered.**
+The stage's value is that the genome is *present and characterised*, not that it is ranked
+first.
+
+**The null is clean and is reported as a bound.** 0 of 22,110 dinucleotide-shuffled contigs
+carry a significant hit against **96.71%** of real ones, which bounds chance at roughly 1 in
+22,000 rather than establishing zero. That number is a correction: the first run of this
+stage reported **175 of 22,110, 0.79%**, and it is withdrawn, because `divergent_known.py`
+carried a **third local copy** of the dinucleotide shuffle whose fallback returns its input
+unchanged. It now imports `experiments/shuffle_control.py`, and the output carries a null
+census — offered, shuffled, dropped-as-invariant — so the denominator the percentage is taken
+against is visible rather than assumed. Validated before the run: 22,110 of 22,110 shuffled,
+zero length violations, zero dinucleotide-count violations, zero identical to input.
+
+**Provenance note, since this run straddles a commit.** Its manifest records `tree_dirty:
+true` with a `script_sha256` of `37aed98930b5d236`, which matches `divergent_known.py` at
+committed HEAD byte for byte; the dirt is the result files beside it. That is the case the
+content hash exists for.
 
 **A single whole-contig identity is the wrong unit, and this contig proves it.** Put through
 the gene-level thread's `conserved_positions.py`, the contig has **three** scorable genes,

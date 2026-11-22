@@ -1,6 +1,7 @@
 {
   "script": "experiments/classify_contigs.py",
-  "git_sha": "65520e83e9aa02b28a682a4fc897cf7da117f414-dirty",
+  "git_sha": "8eee90f6375b343d738f6c633249238c1daf9178-dirty",
+  "script_sha256": "c9b3a4a52d6b97f8d641ac329e87140c735b17ec28f75f349e19cb37ec96405b",
   "parameters": {
     "seed": 1,
     "contigs": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed.fa",
@@ -23,10 +24,10 @@
     "rrna_min_mlen": 100,
     "min_len": 200,
     "threads": 4,
-    "work": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/contigs",
+    "work": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/wk/contigs3",
     "out": "results/holdout_cascade"
   },
-  "wall_seconds": 275.3177656600001,
+  "wall_seconds": 271.41650912800105,
   "python": "3.13.18",
   "platform": "Linux-6.18.44-fc-v726-x86_64-with-glibc2.39"
 }
