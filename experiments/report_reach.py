@@ -57,7 +57,7 @@ BASELINE_ARMS = ("diamond_ultra_sensitive", "diamond_very_sensitive", "diamond_s
 
 ARM_ORDER = ("diamond_sensitive", "diamond_very_sensitive", "diamond_ultra_sensitive",
              "blastp", "sw_exhaustive", "hmmsearch_ga", "hmmsearch_open", "jackhmmer",
-             "foldseek_afdb", "foldseek_pdb", "codon")
+             "hhsearch", "foldseek_afdb", "foldseek_pdb", "codon")
 
 ARM_LABEL = {
     "diamond_sensitive": "DIAMOND --sensitive",
@@ -68,6 +68,7 @@ ARM_LABEL = {
     "hmmsearch_ga": "hmmsearch, Pfam-A at GA",
     "hmmsearch_open": "hmmsearch, Pfam-A at E<=10",
     "jackhmmer": "jackhmmer, 5 iterations",
+    "hhsearch": "HHsearch, profile vs Pfam profiles",
     "foldseek_afdb": "Foldseek vs AlphaFold/Swiss-Prot",
     "foldseek_pdb": "Foldseek vs PDB",
     "codon": "tblastn vs RefSeq viral genomes",
@@ -75,7 +76,7 @@ ARM_LABEL = {
 
 #: Arms with no pairwise identity to report. Kept explicit so a None in the identity column
 #: is a declared property of the instrument rather than a missing value.
-NO_IDENTITY = {"hmmsearch_ga", "hmmsearch_open", "jackhmmer"}
+NO_IDENTITY = {"hmmsearch_ga", "hmmsearch_open", "jackhmmer", "hhsearch"}
 
 
 def significant(row: dict) -> bool:
@@ -311,13 +312,24 @@ def main(argv: list[str] | None = None) -> int:
 
     # §4 the two controls, which decide every row above
     lines.append("\n## 4. The controls\n")
-    lines.append("| arm | significant alignments on the null | null contigs with one | "
-                 "near-reference contigs with one | test contigs with one |")
+    lines.append("Five null piles, one per shuffle seed. The null column is the per-seed "
+                 "range, not a pooled total: a null that reads zero once is one draw, and "
+                 "the range is what makes it a result.\n")
+    lines.append("| arm | significant alignments on the null, per seed (min-max) | "
+                 "null contigs with one | near-reference contigs with one | "
+                 "test contigs with one |")
     lines.append("|---|---|---|---|---|")
+    null_seeds = panel.get("null_seeds") or [1]
+    seed_of_query = {r["qid"]: r.get("null_seed") for r in panel["rows"]}
     control_rows = []
     for arm in arms_present:
         null_hits = [r for r in sig if r["arm"] == arm and r["pile"] == "shuffled"]
+        per_seed = {sd: sum(1 for r in null_hits if seed_of_query.get(r["query"]) == sd)
+                    for sd in null_seeds}
         row = dict(arm=arm, null_alignments=len(null_hits),
+                   null_alignments_per_seed=per_seed,
+                   null_alignments_min=min(per_seed.values()) if per_seed else 0,
+                   null_alignments_max=max(per_seed.values()) if per_seed else 0,
                    null_queries_with_one=len({r["query"] for r in null_hits}),
                    null_queries=len(queries_by_pile.get("shuffled", [])),
                    near_reference_with_one=per_arm_pile.get(
@@ -325,17 +337,20 @@ def main(argv: list[str] | None = None) -> int:
                    divergent_with_one=per_arm_pile.get(
                        (arm, "divergent"), {}).get("with_a_hit"))
         control_rows.append(row)
+        span = (f"{row['null_alignments_min']}" if
+                row['null_alignments_min'] == row['null_alignments_max']
+                else f"{row['null_alignments_min']}-{row['null_alignments_max']}")
         lines.append(
-            f"| {ARM_LABEL.get(arm, arm)} | {row['null_alignments']} | "
+            f"| {ARM_LABEL.get(arm, arm)} | {span} | "
             f"{row['null_queries_with_one']}/{row['null_queries']} | "
             f"{fmt(row['near_reference_with_one'], '.0f')}/"
             f"{len(queries_by_pile.get('near_reference', []))} | "
             f"{fmt(row['divergent_with_one'], '.0f')}/"
             f"{len(queries_by_pile.get('divergent', []))} |")
     out["controls"] = control_rows
-    lines.append(f"\nThe null is {panel['shuffle']['implementation']}, fallback rate "
-                 f"{panel['shuffle']['fallback_records']} of "
-                 f"{sum(panel['arms'].values()) - panel['arms']['shuffled']} records. "
+    lines.append(f"\nThe null is {panel['shuffle']['implementation']}, fallback per seed "
+                 f"{panel['shuffle']['fallback_records']} out of "
+                 f"{panel['shuffle'].get('records_shuffled_per_seed')} records each. "
                  f"{panel['shuffle']['note']}.\n")
 
     # §5 cost
