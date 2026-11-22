@@ -231,6 +231,8 @@ def arm_rollup(rows: list) -> dict:
     both = [r for r in rows if r["identity_inside_percent"] is not None
             and r["identity_outside_percent"] is not None]
     diffs = [r["identity_inside_percent"] - r["identity_outside_percent"] for r in both]
+    ratios = [r["mismatch_rate_ratio_outside_over_inside"] for r in both
+              if r["mismatch_rate_ratio_outside_over_inside"] is not None]
     return {
         "orfs_with_a_significant_hit": len(rows),
         "orfs_with_a_pfam_domain": sum(1 for r in rows if r["domains"]),
@@ -242,12 +244,18 @@ def arm_rollup(rows: list) -> dict:
                                 if diffs else None),
         "median_columns_inside": med([r["columns_inside"] for r in both]),
         "median_columns_outside": med([r["columns_outside"] for r in both]),
-        "median_mismatch_rate_ratio": med(
-            [r["mismatch_rate_ratio_outside_over_inside"] for r in both]),
-        "share_ratio_above_one": (
-            round(sum(1 for r in both
-                      if (r["mismatch_rate_ratio_outside_over_inside"] or 0) > 1)
-                  / len(both), 4) if both else None),
+        # The ratio is undefined for an ORF at exactly 100% identity inside its envelope,
+        # which is common on the near-reference arm and absent on the divergent one. An
+        # earlier version medianed over the ORFs where it is defined and took the share
+        # over all of them, so the near-reference arm read a median of 1.12 with only 37%
+        # above 1 - arithmetically impossible, and it made the two arms look alike on the
+        # one field claimed to have no ceiling. Both now use the same denominator, and the
+        # count that was dropped is reported rather than hidden.
+        "orfs_with_a_defined_mismatch_ratio": len(ratios),
+        "orfs_at_100_percent_inside": len(both) - len(ratios),
+        "median_mismatch_rate_ratio": med(ratios),
+        "share_ratio_above_one": (round(sum(1 for r in ratios if r > 1) / len(ratios), 4)
+                                  if ratios else None),
         "reading": ("the difference in points has a ceiling on the near-reference arm "
                     "and none on the divergent arm, so read it beside the mismatch rate "
                     "ratio, which has no ceiling on either"),
@@ -294,9 +302,9 @@ def paired_roles(per_contig: list) -> dict:
     against distance from a contig to the nearest reference the database holds. This
     function reports ours in the form that can be compared, which is pairwise and paired.
     """
-    g = collections.defaultdict(lambda: [0, 0, []])
+    g = collections.defaultdict(lambda: [0, 0, [], 0, 0, [], 0])
     for r in per_contig:
-        roles = r["by_role"]
+        roles, orfs = r["by_role"], r["role_orfs"]
         for a in roles:
             for b in roles:
                 if a >= b:
@@ -305,16 +313,39 @@ def paired_roles(per_contig: list) -> dict:
                 g[k][0] += 1
                 g[k][1] += 1 if roles[a] > roles[b] else 0
                 g[k][2].append(round(roles[a] - roles[b], 2))
+                # TWO ROLES ON ONE ORF ARE NOT TWO GENES. A picorna-like polyprotein
+                # carries protease, helicase and RdRp in a single ORF, and this script
+                # credits that ORF's identity to every role its domains name. Those pairs
+                # are identical by construction, which is why helicase-against-polymerase
+                # read a median difference of exactly 0.0 points over 31 contigs and a
+                # share-higher of 0.000 - not an agreement between two genes, one number
+                # compared with itself. They are counted and reported separately, and the
+                # claim is made on the distinct-ORF subset only.
+                if set(orfs.get(a, ())) & set(orfs.get(b, ())):
+                    g[k][6] += 1
+                    continue
+                g[k][3] += 1
+                g[k][4] += 1 if roles[a] > roles[b] else 0
+                g[k][5].append(round(roles[a] - roles[b], 2))
     out = {}
-    for k, (n, higher, diffs) in sorted(g.items()):
+    for k, (n, higher, diffs, nd, hd, dd, shared) in sorted(g.items()):
         if n < 5:
             continue
-        out[k] = {"contigs_with_both": n,
-                  "share_first_higher": round(higher / n, 3),
-                  "median_difference_points": round(statistics.median(diffs), 2)}
+        out[k] = {
+            "contigs_with_both": n,
+            "share_first_higher": round(higher / n, 3),
+            "median_difference_points": round(statistics.median(diffs), 2),
+            "contigs_where_the_two_roles_share_an_orf": shared,
+            "distinct_orf_contigs": nd,
+            "distinct_orf_share_first_higher": round(hd / nd, 3) if nd else None,
+            "distinct_orf_median_difference_points": (
+                round(statistics.median(dd), 2) if dd else None),
+        }
     return {"readout": ("role against role on contigs carrying both, so the comparison "
                         "is paired. A share near 0.5 means the two roles are "
-                        "indistinguishable on this material"),
+                        "indistinguishable on this material. Read the distinct_orf "
+                        "fields: the unqualified ones include contigs where one ORF "
+                        "carries both roles and so compares a number with itself"),
             "pairs": out}
 
 
@@ -510,10 +541,11 @@ def main() -> None:
     for r in real_rows:
         cg[(r["arm"], r["contig"])].append(r)
     for (arm, contig), rs in cg.items():
-        roles = {}
+        roles, role_orfs = {}, {}
         for r in rs:
             for d in r["domains"]:
                 roles.setdefault(d["role"], []).append(r["pident"])
+                role_orfs.setdefault(d["role"], []).append(r["orf"])
         if len(roles) < 2:
             continue
         flat = {k: round(statistics.median(v), 1) for k, v in roles.items()}
@@ -521,6 +553,7 @@ def main() -> None:
         hi = max(flat, key=lambda k: flat[k])
         per_contig.append({
             "arm": arm, "contig": contig, "by_role": flat,
+            "role_orfs": {k: sorted(v) for k, v in role_orfs.items()},
             "most_diverged_role": lo, "least_diverged_role": hi,
             "spread_points": round(flat[hi] - flat[lo], 1),
         })
