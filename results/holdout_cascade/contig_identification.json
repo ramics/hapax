@@ -108,6 +108,13 @@
     "frac_over_500nt_and_2x": 0.3066830353717486
   },
   "tier2_min_len": 200,
+  "removal_evidence": {
+    "file": "results/holdout_cascade/removal_evidence.tsv",
+    "rows": 22400,
+    "a_row_is": "one route's justification for removing one contig. There is no score on this table and no ordering in this file",
+    "routes_are_not_pooled": "protein carries identity and coverage, kraken2 a taxid and a confidence, rrna matching bases; three kinds of number, so group on `route`",
+    "upper_bound_warning": "every identity is measured against the indexes this run was given, so it is an upper bound on distance"
+  },
   "files": {
     "identified": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_identified.fa",
     "identified_excluding_rrna": "/tmp/claude-0/-home-user/3d681c8d-db15-5b89-af68-9d2c64455e4a/scratchpad/asm/contigs_renamed_identified_norrna.fa",
@@ -120,12 +127,12 @@
     "sprot": 294430316
   },
   "timings_seconds": {
-    "silva_contigs": 3.6113586000001305,
-    "kraken2_conf0.0": 5.053466485999934,
-    "kraken2_conf0.05": 0.49694247699994776,
-    "kraken2_conf0.1": 0.477664243999925,
-    "kraken2_conf0.2": 0.416925332999881,
-    "diamond_viral_holdout": 108.53004313800011,
-    "diamond_sprot": 156.3366509120001
+    "silva_contigs": 3.341394263999973,
+    "kraken2_conf0.0": 0.48585751399878063,
+    "kraken2_conf0.05": 0.6486999330008985,
+    "kraken2_conf0.1": 0.41008559400142985,
+    "kraken2_conf0.2": 0.412767972000438,
+    "diamond_viral_holdout": 108.09901335000177,
+    "diamond_sprot": 157.29671788400083
   }
 }

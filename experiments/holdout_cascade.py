@@ -236,7 +236,13 @@ def union_coverage(tsv: Path, evalue: float = SIGNIFICANCE_EVALUE) -> dict[str, 
         f = line.rstrip("\n").split("\t")
         if len(f) < 14:
             continue
-        if float(f[10]) > evalue:
+        # `>= evalue`, matching union_coverage_any EXACTLY. This was `> evalue` for one
+        # commit, and the single-row difference it made is the whole lesson: an HSP at
+        # E == 1e-5 was then kept by one side of the subtraction and dropped by the other,
+        # and the gap came out at -0.0453 on exactly one contig of 41,271 cells. A filter
+        # written twice will differ on the boundary even when both authors mean the same
+        # thing, which is why the floor belongs in one shared function.
+        if float(f[10]) >= evalue:
             continue
         q, s = f[0], f[1]
         a, b = sorted((int(f[6]), int(f[7])))
@@ -530,8 +536,25 @@ def main() -> int:
                 row[f"{label}_coverage_any"] = ca
                 # The gap, stored rather than left to be derived, so that a reader of the
                 # TSV cannot accidentally compare the two definitions the wrong way round.
-                row[f"{label}_coverage_gap"] = (
-                    round(ca - cu, 4) if (ca is not None and cu is not None) else None)
+                gap = round(ca - cu, 4) if (ca is not None and cu is not None) else None
+                # AN INVARIANT, ASSERTED WHERE IT IS COMPUTED, BECAUSE THIS ONE SHIPPED
+                # BROKEN TWICE. The any-subject union CONTAINS the per-subject union, so
+                # the gap cannot be negative. Both failures were filter mismatches between
+                # the two functions - first a missing E-value floor on one side (394 of
+                # 7,734 protein rows and 508 of 2,269 nucleotide rows negative, to -0.50),
+                # then `>` against `>=` on the boundary (one row of 41,271, at -0.0453).
+                # Neither was visible to any tell this project uses, because the tells read
+                # distributions and nothing was plotting this column. An impossible sign is
+                # the cheapest check there is, so it raises rather than being counted: a
+                # violation here means the two unions disagree about which HSPs exist, and
+                # every number derived from either is then unreadable.
+                if gap is not None and gap < 0:
+                    raise SystemExit(
+                        f"coverage gap {gap} is negative for {nm} on {label}: "
+                        f"per-subject {cu}, any-subject {ca}. The any-subject union "
+                        f"contains the per-subject union, so the two are not applying the "
+                        f"same HSP filter. Fix the filter, do not relax this check.")
+                row[f"{label}_coverage_gap"] = gap
                 row[f"{label}_significant_subjects"] = (
                     ua or {}).get("significant_subjects")
                 row[f"{label}_evalue"] = b["evalue"]

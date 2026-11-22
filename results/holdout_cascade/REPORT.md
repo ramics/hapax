@@ -232,6 +232,21 @@ And `coverage_gap_null.py` was never affected, because it floors both sides deli
 independently produced the identical 0.4624 and 0.8286, which is why the +36.6 was safe to
 quote throughout.
 
+**The same invariant then failed a second time, on one row, and that is the more useful
+failure.** After the floor was added, 41,270 of 41,271 gap cells were non-negative and **one**
+read -0.0453. The cause was `>` against `>=`: the floor was written twice and the two
+spellings disagree on an HSP at **exactly** E = 1e-5, so one side kept it and the other
+dropped it. **A filter written twice will differ on the boundary even when both authors mean
+the same thing** - which is the argument for one shared function taking one `evalue_below`,
+not for being more careful.
+
+**So the check is now asserted where the number is computed, and it raises.** A negative gap
+means the two unions disagree about which HSPs exist, which makes everything derived from
+either unreadable, so it is not a row to drop or a count to report - it stops the run. Worth
+recording that neither failure was visible to any tell this project relies on: *the control
+moving with the test* and *an explicit census* both work by reading a distribution, and
+nothing was plotting this column. **An impossible sign needs an invariant, not a reader.**
+
 **Where it gets suspicious, and the limit is mine not the field's.** Four cuts - gap > 30
 points, identity 50-70%, any-subject coverage >= 0.70, length >= 1500 nt - select **7
 background contigs, 0.092% of the removed pile, 0 of 34 leak contigs**, and the candidate
