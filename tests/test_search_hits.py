@@ -139,16 +139,20 @@ def test_union_any_matches_holdout_cascade(tmp_path):
         assert new[q]["significant_subjects"] == ref[q]["significant_subjects"]
 
 
-def test_union_per_subject_matches_holdout_cascade_unfloored(tmp_path):
+def test_union_per_subject_matches_holdout_cascade(tmp_path):
+    """Since PR #33's fix, holdout_cascade.union_coverage takes the same floor as its
+    any-subject union. Matches at the floor and with no floor at all."""
     old = _extract("holdout_cascade.py", "union_coverage")
     if old is None:
         pytest.skip("holdout_cascade.union_coverage is gone")
     p = _write(tmp_path, _synth(seed=5))
-    new = sh.union_query_coverage(sh.read_hits(p, program="diamond_blastx"),
-                                  per_subject=True)
-    ref = old(p)
-    assert {q: round(v["covered_fraction"], 4) for q, v in new.items()} == \
-           {q: v["covered_fraction"] for q, v in ref.items()}
+    rows = sh.read_hits(p, program="diamond_blastx")
+    for floor in (FLOOR, float("inf")):
+        new = sh.union_query_coverage(rows, per_subject=True,
+                                      evalue_below=None if floor == float("inf") else floor)
+        ref = old(p, floor)
+        assert {q: round(v["covered_fraction"], 4) for q, v in new.items()} == \
+               {q: v["covered_fraction"] for q, v in ref.items()}
 
 
 def test_gap_matches_coverage_gap_null_with_matched_floors(tmp_path):
@@ -241,3 +245,46 @@ def test_columns_must_include_evalue(tmp_path):
 def test_outfmt_args_round_trip():
     assert sh.outfmt_args(diamond=True)[:2] == ["--outfmt", "6"]
     assert sh.outfmt_args(diamond=False) == ["-outfmt", "6 " + " ".join(sh.DEFAULT_COLUMNS)]
+
+
+# ------------------------------------------------------------------ the gap, asserted
+def test_coverage_gap_matches_the_two_unions(tmp_path):
+    p = _write(tmp_path, _synth(seed=9, n_queries=200))
+    rows = sh.read_hits(p, program="diamond_blastx")
+    g = sh.coverage_gap(rows, evalue_below=FLOOR)
+    per = sh.union_query_coverage(rows, per_subject=True, evalue_below=FLOOR)
+    anyu = sh.union_query_coverage(rows, per_subject=False, evalue_below=FLOOR)
+    assert set(g) == set(per)
+    for q, v in g.items():
+        assert v["gap"] >= 0
+        assert v["gap"] == anyu[q]["covered_fraction"] - per[q]["covered_fraction"]
+
+
+def test_floor_is_strict_at_exactly_the_floor():
+    """The > versus >= bug: a row AT the floor is not significant, on every path."""
+    at = {"evalue": FLOOR}
+    assert not sh.passes_floor(at, FLOOR)
+    assert sh.passes_floor({"evalue": FLOOR * 0.999}, FLOOR)
+    assert sh.passes_floor(at, None)
+
+
+def test_coverage_gap_stops_the_run_on_a_violation(monkeypatch, tmp_path):
+    """Simulate the drift the function exists to prevent: a per-subject union that saw a
+    row the any-subject union did not. It must raise, not write a negative gap."""
+    p = _write(tmp_path, _synth(seed=10, n_queries=50))
+    rows = sh.read_hits(p, program="diamond_blastx")
+    real = sh.union_query_coverage
+
+    def drifted(rs, *, per_subject, evalue_below=None):
+        if not per_subject:                         # any-subject side loses one HSP
+            rs = [r for r in rs if r is not rows[0]]
+        return real(rs, per_subject=per_subject, evalue_below=evalue_below)
+
+    monkeypatch.setattr(sh, "union_query_coverage", drifted)
+    # Make query 0's widest HSP visible to the per-subject side only.
+    q0 = [r for r in rows if r["qseqid"] == rows[0]["qseqid"]]
+    widest = max(q0, key=lambda r: abs(r["qend"] - r["qstart"]))
+    rows.remove(widest)
+    rows.insert(0, widest)
+    with pytest.raises(sh.InvariantViolation):
+        sh.coverage_gap(rows, evalue_below=None)

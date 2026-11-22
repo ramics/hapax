@@ -197,7 +197,7 @@ def union_query_coverage(rows: Iterable[dict], *, per_subject: bool,
     qlen: dict[str, int] = {}
     subs: dict[str, set] = {}
     for r in rows:
-        if evalue_below is not None and not r["evalue"] < evalue_below:
+        if not passes_floor(r, evalue_below):
             continue
         q = r["qseqid"]
         aligned_query_nt(r)                                 # raises without coordinates
@@ -222,4 +222,52 @@ def union_query_coverage(rows: Iterable[dict], *, per_subject: bool,
         else:
             row["significant_subjects"] = len(subs[q])
             out[q] = row
+    return out
+
+
+def passes_floor(row: dict, evalue_below: float | None) -> bool:
+    """The one significance comparison: strictly below the floor.
+
+    It is a function so that no union can carry its own copy. After the two unions in
+    `holdout_cascade` were given the same floor, one used `> floor` to drop and the other
+    `>= floor`, which left one row in 41,271 at exactly the floor counted on one side only.
+    The gap that produced was negative, which no consistent definition allows. Neither
+    "read the control first" nor "look at the distribution" can see one row.
+    """
+    return evalue_below is None or row["evalue"] < evalue_below
+
+
+class InvariantViolation(SearchOutputError):
+    """A computed number broke a property it cannot break under its own definition."""
+
+
+def coverage_gap(rows: Iterable[dict], *, evalue_below: float | None) -> dict[str, dict]:
+    """Per query: per-subject union, any-subject union, and the gap between them.
+
+    Both unions are formed from the SAME rows under the SAME floor, here, in one call, so
+    they cannot drift apart. The gap is any-subject minus per-subject coverage. It is the
+    extra share of the query that known proteins explain between them beyond the best
+    single one. Because the any-subject union contains every per-subject union, the gap is
+    >= 0 by definition. That is asserted on covered bases, which are integers, before any
+    fraction is formed. A violation stops the run instead of reaching a table.
+    """
+    rows = [r for r in rows if passes_floor(r, evalue_below)]
+    per = union_query_coverage(rows, per_subject=True)
+    anyu = union_query_coverage(rows, per_subject=False)
+    if set(per) != set(anyu):
+        raise InvariantViolation("per-subject and any-subject unions cover different "
+                                 "queries from the same rows")
+    out = {}
+    for q, a in anyu.items():
+        p = per[q]
+        if a["covered_bases"] < p["covered_bases"]:
+            raise InvariantViolation(
+                f"coverage gap negative for {q}: any-subject {a['covered_bases']} < "
+                f"per-subject {p['covered_bases']} covered bases; the two unions did not "
+                f"see the same HSPs")
+        out[q] = {"per_subject": p["covered_fraction"], "any_subject": a["covered_fraction"],
+                  "gap": a["covered_fraction"] - p["covered_fraction"],
+                  "best_subject": p["subject"],
+                  "significant_subjects": a["significant_subjects"], "qlen": a["qlen"],
+                  "evalue_below": evalue_below}
     return out
