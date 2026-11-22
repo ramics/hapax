@@ -340,6 +340,70 @@ def arm_exhaustive(dbs: dict, out: Path, threads: int) -> list[dict]:
     return [row for batch in batches for row in batch]
 
 
+#: Zero-based column positions of `--domtblout`, named because two of them are the ones a
+#: reader gets wrong. HMMER's "hmm coord" pair is on the QUERY and its "ali coord" pair is on
+#: the TARGET - and which of those is our ORF depends on the program. hmmsearch searches a
+#: profile library against our sequences, so the ORF is the target; jackhmmer searches our
+#: sequence against a sequence database, so the ORF is the query. Using one mapping for both
+#: silently puts the profile's length in the ORF's column, which the first run did: it
+#: produced query coverages above 1.0, and 1.156 is the only reason it was noticed.
+DOM_TARGET_NAME, DOM_TLEN = 0, 2
+DOM_QUERY_NAME, DOM_QLEN = 3, 5
+DOM_FULL_EVALUE, DOM_FULL_SCORE = 6, 7
+DOM_C_EVALUE, DOM_I_EVALUE, DOM_DOM_SCORE = 11, 12, 13
+DOM_HMM_FROM, DOM_HMM_TO = 15, 16          # on the query
+DOM_ALI_FROM, DOM_ALI_TO = 17, 18          # on the target
+
+
+def parse_domtbl(path: Path, *, arm: str, program: str, db: str,
+                 orf_is_target: bool, accession_as_subject: bool = False) -> list[dict]:
+    """One `--domtblout` file, with the ORF's own length and span in the ORF's columns.
+
+    `orf_is_target` is the whole point of this function existing. Everything reported about
+    the query here - `qlen`, `qstart`, `qend` and therefore `qcov` - is about our ORF, and
+    everything reported about the subject is about the profile or the database sequence,
+    whichever side that was. A coverage above 1.0 is the symptom of getting this wrong, so
+    the caller is handed a value that cannot exceed 1.0 unless HMMER itself is inconsistent.
+    """
+    rows = []
+    if not path.exists():
+        return rows
+    with open(path) as handle:
+        for line in handle:
+            if line.startswith("#"):
+                continue
+            f = line.split()
+            if len(f) < 23:
+                continue
+            if orf_is_target:
+                orf, subject = f[DOM_TARGET_NAME], f[DOM_QUERY_NAME]
+                orf_len, subject_len = int(f[DOM_TLEN]), int(f[DOM_QLEN])
+                orf_from, orf_to = int(f[DOM_ALI_FROM]), int(f[DOM_ALI_TO])
+                sub_from, sub_to = int(f[DOM_HMM_FROM]), int(f[DOM_HMM_TO])
+                accession = f[4]
+            else:
+                orf, subject = f[DOM_QUERY_NAME], f[DOM_TARGET_NAME]
+                orf_len, subject_len = int(f[DOM_QLEN]), int(f[DOM_TLEN])
+                orf_from, orf_to = int(f[DOM_HMM_FROM]), int(f[DOM_HMM_TO])
+                sub_from, sub_to = int(f[DOM_ALI_FROM]), int(f[DOM_ALI_TO])
+                accession = f[1]
+            span = orf_to - orf_from + 1
+            rows.append(dict(
+                arm=arm, program=program, db=db, orf=orf,
+                subject=(accession if accession_as_subject and accession != "-"
+                         else subject),
+                profile_name=(subject if orf_is_target else None),
+                pident=None, aln=span, qlen=orf_len, slen=subject_len,
+                evalue=float(f[DOM_FULL_EVALUE]),
+                domain_evalue=float(f[DOM_I_EVALUE]),
+                conditional_evalue=float(f[DOM_C_EVALUE]),
+                bitscore=float(f[DOM_FULL_SCORE]),
+                domain_bitscore=float(f[DOM_DOM_SCORE]),
+                qcov=span / max(orf_len, 1),
+                qstart=orf_from, qend=orf_to, sstart=sub_from, send=sub_to))
+    return rows
+
+
 def arm_hmmsearch(bins: dict, dbs: dict, out: Path, threads: int) -> list[dict]:
     """Pfam-A at the curators' gathering cutoffs, and every domain rather than the best.
 
@@ -363,23 +427,10 @@ def arm_hmmsearch(bins: dict, dbs: dict, out: Path, threads: int) -> list[dict]:
         cmd += [flag] if tag == "ga" else [flag, "10"]
         cmd += [dbs["pfam"], out / "orfs.faa"]
         sh(cmd, stdout=subprocess.DEVNULL)
-        with open(dom) as handle:
-            for line in handle:
-                if line.startswith("#"):
-                    continue
-                f = line.split()
-                if len(f) < 23:
-                    continue
-                qlen = int(f[5])
-                rows.append(dict(
-                    arm=f"hmmsearch_{tag}", program=f"hmmsearch {flag}", db="Pfam-A",
-                    orf=f[0], subject=f[4] or f[3], profile_name=f[3],
-                    pident=None, aln=int(f[18]) - int(f[17]) + 1, qlen=qlen,
-                    slen=int(f[2]), evalue=float(f[6]), domain_evalue=float(f[12]),
-                    bitscore=float(f[7]), domain_bitscore=float(f[13]),
-                    qcov=(int(f[18]) - int(f[17]) + 1) / max(qlen, 1),
-                    qstart=int(f[17]), qend=int(f[18]),
-                    sstart=int(f[15]), send=int(f[16])))
+        # The profile library is the query and our ORFs are the targets, which is the
+        # opposite way round from jackhmmer below.
+        rows += parse_domtbl(dom, arm=f"hmmsearch_{tag}", program=f"hmmsearch {flag}",
+                             db="Pfam-A", orf_is_target=True, accession_as_subject=True)
     return rows
 
 
@@ -406,24 +457,10 @@ def arm_jackhmmer(bins: dict, dbs: dict, out: Path, threads: int) -> list[dict]:
     sh([bins["jackhmmer"], "-N", 5, "--cpu", threads, "--noali",
         "--domtblout", tbl, "-A", out / "jackhmmer.sto", "-E", 10, "--incE", 1e-3,
         out / "orfs.faa", dbs["prot_fasta"]], stdout=subprocess.DEVNULL)
-    rows = []
-    with open(tbl) as handle:
-        for line in handle:
-            if line.startswith("#"):
-                continue
-            f = line.split()
-            if len(f) < 23:
-                continue
-            qlen = int(f[5])
-            rows.append(dict(
-                arm="jackhmmer", program="jackhmmer -N 5", db="swissprot+viral",
-                orf=f[3], subject=f[0], pident=None,
-                aln=int(f[18]) - int(f[17]) + 1, qlen=qlen, slen=int(f[2]),
-                evalue=float(f[6]), domain_evalue=float(f[12]),
-                bitscore=float(f[7]), domain_bitscore=float(f[13]),
-                qcov=(int(f[18]) - int(f[17]) + 1) / max(qlen, 1),
-                qstart=int(f[17]), qend=int(f[18]), sstart=int(f[15]), send=int(f[16])))
-    return rows
+    # Our ORF is the query here and the database sequences are the targets, so the
+    # coordinate pairs mean the opposite of what they mean for hmmsearch above.
+    return parse_domtbl(tbl, arm="jackhmmer", program="jackhmmer -N 5",
+                        db="swissprot+viral", orf_is_target=False)
 
 
 def arm_hhsearch(bins: dict, dbs: dict, out: Path, threads: int) -> list[dict]:
@@ -574,8 +611,21 @@ def arm_foldseek(bins: dict, dbs: dict, out: Path, threads: int, target: str) ->
     qdb, resdb = out / f"fsq_{target}", out / f"fsr_{target}"
     tsv = out / f"foldseek_{target}.tsv"
     if not qdb.with_suffix(".dbtype").exists():
-        sh([bins["foldseek"], "createdb", out / "orfs.faa", qdb,
-            "--prostt5-model", dbs["prostt5"], "--threads", threads])
+        # `--prostt5-model` wants the DIRECTORY foldseek's own `databases ProstT5` would
+        # have written, not the weights file inside it. Passing the file is what the first
+        # run did, and foldseek accepted the option, printed it back, and then exited 1 - so
+        # the file form is tried as a fallback rather than assumed wrong, and whichever
+        # worked goes in the row.
+        model = dbs["prostt5"]
+        try:
+            sh([bins["foldseek"], "createdb", out / "orfs.faa", qdb,
+                "--prostt5-model", model, "--threads", threads])
+        except subprocess.CalledProcessError:
+            inner = next(iter(sorted(Path(model).glob("*.gguf"))), None)
+            if inner is None:
+                raise
+            sh([bins["foldseek"], "createdb", out / "orfs.faa", qdb,
+                "--prostt5-model", inner, "--threads", threads])
     # `--exhaustive-search` skips the prefilter, which is the whole point of the arm: a
     # structural relative this far out is exactly what a k-mer prefilter would drop. It is
     # affordable only because the query set is 35 ORFs. If this build of foldseek will not
@@ -843,7 +893,7 @@ def main(argv: list[str] | None = None) -> int:
         blast_prot=args.db_dir / "prot",
         prot_fasta=args.db_dir / "prot.faa",
         pfam=args.db_dir / "Pfam-A.hmm",
-        prostt5=args.db_dir / "prostt5-f16.gguf",
+        prostt5=args.db_dir / "prostt5",
         fs_afdb=args.db_dir / "fs_afdb_sprot" / "afdb_sprot",
         fs_pdb=args.db_dir / "fs_pdb" / "pdb",
         viral_nt=args.db_dir / "viral_nt",
