@@ -208,13 +208,24 @@ echo "query rows: $QN"
 # ---------------------------------------------------------------- phase 2: scan, in shards
 ls /opt/hapax/out/sample/sample_*.json | sed 's#.*/sample_##; s#\.json##' > /opt/hapax/sampled.txt
 "$PYBIN" - <<'PY' || die "the shards could not be built"
+import random
 from pathlib import Path
 ok = set(Path("/opt/hapax/sampled.txt").read_text().split())
 subs = [s for s in Path("/opt/hapax/subjects.txt").read_text().split() if s.split(":")[0] in ok]
 n = max(1, @@SHARDS@@)
+# The subject list is sorted by project and date, so a shard that runs out of budget
+# part-way would otherwise leave whole projects unscanned - a cross-plant matrix with no
+# cross. Each shard's order is shuffled under a fixed seed instead, which makes any prefix
+# an even sample over projects and dates: a short run is a smaller panel, not a biased one.
+order = []
 for i in range(n):
-    Path(f"/opt/hapax/shard{i}.txt").write_text("\n".join(subs[i::n]) + "\n")
-    print(f"shard {i}: {len(subs[i::n])} subjects")
+    part = subs[i::n]
+    random.Random(f"shard|{i}|@@COMMIT@@").shuffle(part)
+    Path(f"/opt/hapax/shard{i}.txt").write_text("\n".join(part) + "\n")
+    order.append({"shard": i, "subjects": len(part), "order": part})
+    print(f"shard {i}: {len(part)} subjects")
+import json
+json.dump(order, open("/opt/hapax/out/shard_order.json", "w"))
 PY
 set +e
 PIDS=""
