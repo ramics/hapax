@@ -167,6 +167,48 @@ blind spot said, and the measured size of that bound is now one in six at nucleo
 level. `blastx` against nr is running on the same instance and will put the same bound on
 the protein numbers, which are the ones section 6's ordering rests on.
 
+## 8. The protein pass against nr did not run, and the rate is the result
+
+**Nothing landed. No rows, no identities, no bound.** The matching protein measurement for
+section 7 -- `blastx` of the same 284 contigs against nr, the 319 GB nucleotide index's
+protein counterpart -- was attempted twice on 2026-11-22 and produced zero alignments both
+times. The gene-level ordering in section 6 therefore still carries its unmeasured caveat,
+and nothing in this report says how much of the divergent panel a full-size *protein* index
+explains.
+
+What the two failures measured instead is the rate, which this project had never had.
+
+| attempt | chunking | threads | started | ended | contigs finished |
+|---|---|---|---|---|---|
+| 1 | all 284 contigs in one `blastx` call | 8 | 2026-11-22 ~11:4x | killed by the hard stop | 0 |
+| 2 | 12 contigs per call (`--nr-chunk 12`) | 8 | 2026-11-22 13:54:42Z | budget expiry 16:25:48Z | 0 of 12 |
+
+**The number: over 12.6 minutes per multi-kb contig, on 8 threads, and that is a lower
+bound.** The second chunk held 12 contigs and had not finished one call in 2 h 31 min, so
+the per-contig figure is the whole window divided by 12 and the true value is higher. The
+nucleotide pass over the same queries took about an hour for all 284. A protein pass is
+therefore not the nucleotide pass with a different flag: at this rate 284 contigs is a
+tens-of-hours job and roughly 30x the nucleotide cost, which is the number that decides
+whether anyone attempts it again.
+
+**The first failure also measured something separate, and it is a method rule.** Attempt 1
+ran every contig as one `blastx` invocation, so when the hard stop fired, BLAST had written
+nothing: one call either finishes or leaves nothing. Attempt 2's chunking is what makes a
+partial result possible, and it is why attempt 2 at least left a timing record saying what
+it had been doing. **Chunk every long BLAST call.**
+
+**Cost:** $1.54 for attempt 1 and $1.52 for attempt 2 (r6i.2xlarge at $0.504/h, 3.02 h),
+$3.06 in total, for no alignments. Both instances terminated.
+
+**If this is attempted again**, the thing to change is not the budget. Either query one
+contig per call with a per-contig timeout, so a pathological contig cannot absorb the whole
+window and the finished ones survive, or drop `blastx` against nr for DIAMOND, which is the
+instrument the rest of this project uses on protein and which `results/divergent_known/`
+shows returns the same nearest relative as full Smith-Waterman on this material. A 319 GB
+nucleotide bound exists (section 7) because `blastn` on that index is fast. There is no
+evidence `blastx` on nr can be made fast, and this is the evidence that it cannot be made
+fast cheaply.
+
 ## Blind spots
 
 - An ORF with no subject and no domain is unexplained, not non-coding. Past roughly 20-30%
@@ -181,8 +223,9 @@ the protein numbers, which are the ones section 6's ordering rests on.
 - Every name in sections 1 to 6 came from RefSeq viral proteins plus Swiss-Prot, which are
   narrow, so every identity there is an upper bound on distance from what is known.
   Section 7 measures that bound against core_nt and finds it is one contig in six at
-  nucleotide level; the matching protein pass against nr is not in yet, so the gene-level
-  ordering in section 6 still carries the unmeasured version of this caveat.
+  nucleotide level; the matching protein pass against nr was attempted twice and returned
+  nothing (section 8), so the gene-level ordering in section 6 still carries the unmeasured
+  version of this caveat, and will until a protein index of that size is actually read.
 - Section 7 ran `blastn -task dc-megablast`, which is more sensitive than megablast and
   less sensitive than the `blastn` task. The direction is fixed: a more sensitive search
   can only collapse more of the divergent arm, never less, so 16.8% is a floor on how much
@@ -191,6 +234,11 @@ the protein numbers, which are the ones section 6's ordering rests on.
   135 contigs, but a near-reference arm cannot show that for divergent sequence.
 - Section 7 keeps one best alignment per contig, so a contig whose segments match
   different subjects reads as the single best of them.
+- Section 8 reports a rate, not a bound. Over 12.6 min per contig is what two runs of
+  `blastx` against nr failed to beat on 8 threads; it is not a benchmark, it was never
+  profiled, and a single pathological contig inside the chunk could account for most of
+  it. The direction is safe -- the true per-contig figure is higher, not lower -- which is
+  all that is claimed from it.
 
 ## Single seed
 
