@@ -158,11 +158,18 @@ def _trim_ranking(R: dict, seed: int, cards: int = 400, per_facet: int = 60,
     rows = R.get("subjects") or []
     if not rows:
         return R
-    mix = {}
+    mix, readmix = {}, {}
     for r in rows:
         mix[r["host_group"]] = mix.get(r["host_group"], 0) + 1
+        readmix[r["host_group"]] = (readmix.get(r["host_group"], 0)
+                                    + (r.get("residue_reads") or 0))
     R["host_mix"] = mix
+    # Reads, not subjects. A share of subjects is a share of the database; a share of
+    # reads is a share of the water, which is the question a reader is actually asking,
+    # and it is the occurrence-weighted unit this repo reports everything else in.
+    R["host_mix_reads"] = readmix
     R["subjects_total"] = len(rows)
+    R["reads_total"] = sum(readmix.values())
 
     rng = random.Random(seed)
     withx = [r for r in rows if r.get("median_identity_percent") is not None]
@@ -227,6 +234,16 @@ def _trim_workup(w):
              "aa_len": o["aa_len"], "title": o["best_title"],
              "pfam": [d["id"] for d in o["pfam"]]}
             for o in r.get("orf_rows", []) if o.get("significant")]
+        # Coordinates, for the genome maps. A gene list without them can only be drawn
+        # as a bar chart of identities, which is the thing the reader could not read:
+        # with them the picture is the molecule, and the identity is a label on a part
+        # of it rather than a number beside a name.
+        rows[-1]["orfs_drawn"] = [
+            {"s": o["start"], "e": o["end"], "d": o["strand"], "aa": o["aa_len"],
+             "role": o["gene_role"], "pident": o["pident"],
+             "title": o["best_title"], "sig": bool(o.get("significant")),
+             "pfam": [x["id"] for x in o["pfam"]]}
+            for o in r.get("orf_rows", [])]
     return {k: w[k] for k in ("summary", "operating_point", "the_number_to_rank_by",
                               "bands", "blind_spots", "seed", "git_sha",
                               "script_sha256") if k in w} | {"rows": rows}
@@ -671,6 +688,14 @@ text.ax { font-size: 11px; fill: var(--dim); font-family: var(--sans); }
 }
 .ditem { border-top: 1px solid var(--edge); padding: 0.55rem 0; }
 .gline { border-top: 1px solid var(--edge); padding: 0.5rem 0; line-height: 1.5; }
+.maplegend { display: flex; flex-wrap: wrap; gap: 0.35rem 1.1rem; font-size: 12px;
+  color: var(--dim); margin: 0.1rem 0 0.7rem; }
+.maplegend span { display: inline-flex; align-items: center; gap: 0.35rem; }
+.maplegend i { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+.gmap { border-top: 1px solid var(--edge); padding: 0.7rem 0 0.9rem; }
+.gmaphead { font-size: 14.5px; margin-bottom: 0.1rem; }
+.gintro { font-size: 13.5px; line-height: 1.55; margin: 0.1rem 0 0.6rem; }
+.gsay { font-size: 13.5px; line-height: 1.55; color: var(--fg); margin-top: 0.15rem; }
 .gline:first-of-type { border-top: 0; }
 .ditem > summary { font-size: 13.5px; color: var(--fg); padding: 0.15rem 0; }
 .ditem > summary b { font-weight: 600; }
@@ -993,6 +1018,39 @@ const METHODS = [
       'points below half coverage against +7.1 above 90%, which is why coverage is on ' +
       'the colour ramp rather than in a column.'],
   ]},
+  {id: 'concern', t: 'What the named leftovers point at', rows: [
+    ['Input', 'Every unplaced mate in the library, 2,744,042 of them, and the named ' +
+      'relative each one points at where it has a significant one. 214,502 reads over ' +
+      '41,829 distinct records.'],
+    ['Procedure', 'DIAMOND --sensitive against RefSeq viral proteins plus Swiss-Prot, ' +
+      'then the matched record is placed in a host group by an auditable keyword table ' +
+      'rather than a classifier, so a reader can disagree with one line. Two separate ' +
+      'axes are kept: what the record IS, and what it INFECTS. A cellular record is ' +
+      'not given a host, because it is the organism.'],
+    ['Threshold', 'E < 1e-5. Host confidence ramps with identity from 40% to 90% and ' +
+      'with aligned length from 20 to 60 aa, so a distant or short match is damped ' +
+      'towards unknown rather than counted at face value.'],
+    ['Denominator', 'Reads, not records: a share of records is a share of the ' +
+      'database. Both are shown on hover.'],
+    ['Control arm', 'The same search over 400,000 reads the cascade had already named, ' +
+      'and a dinucleotide-shuffled null that returns no significant hit at all.'],
+    ['Bias direction', 'Towards the well-sequenced. A group is large here when its ' +
+      'members are in the reference sets, not when it is abundant in the water, and ' +
+      'phage records dominate both. The 22.7% whose host could not be placed is counted ' +
+      'as unknown and never as safe. Nothing in this is a measure of harm.']]},
+  {id: 'crossplant', t: 'Recurrence across plants', rows: [
+    ['Input', '512 panel libraries from 32 wastewater plants on three continents, ' +
+      'against reads held out of the library searched.'],
+    ['Procedure', 'K-mer witnessing of each query read against the union of the panel, ' +
+      'paired within plant so that plants are compared with themselves.'],
+    ['Threshold', 'Exact 31-mer witness; depth of the query read recorded beside it, ' +
+      'because depth decides the outcome far more than the pile a read came from.'],
+    ['Denominator', 'Read pairs of the held-out library.'],
+    ['Control arm', 'Identified reads at matched depth, and a swap control against ' +
+      'reads from the library itself, which grow 54% by construction.'],
+    ['Bias direction', 'Blind to anything present once rather than to anything novel: ' +
+      'at depth 1 residue survives 79.0% and identified reads 70.5%, a gap of 8.5 ' +
+      'points. Contigs have not been put through it.']]},
   {id: 'nulls', t: 'Shuffled nulls', rows: [
     ['Input', 'The same reads or contigs, shuffled with composition preserved.'],
     ['Procedure', 'The identical search at the identical threshold, in the same pass ' +
@@ -3270,39 +3328,220 @@ function interval(iv) {
       'wherever one is called.' + cite('genespread')));
   }
 
-  /* THE FEW THAT MATTER, written out. A sentence a reader can check beats a bar whose
-     scale they have to learn. */
+  /* THE FEW THAT MATTER, DRAWN AS WHAT THEY ARE. A bar chart of identities beside a Latin
+     name tells a reader neither what the thing is nor what the number is a property of.
+     The molecule itself is the picture: genes at their real coordinates, coloured by the
+     job they do, with the identity written on the gene it belongs to. */
+  const ROLE = {polymerase: ['var(--v1)', 'copies the genome'],
+                coat: ['var(--v3)', 'builds the shell'],
+                maturation: ['var(--v2)', 'attaches to the host cell'],
+                other: ['var(--null)', 'another gene, role not called']};
+  const roleOf = o => (o && ROLE[o.role] ? o.role : 'other');
+
   if (deep.length) {
     const d = el('div', 'bites');
-    d.append(el('div', 'pghead', 'the finished genomes, in words'));
-    deep.slice().sort((a, b) => a.rank_pident - b.rank_pident).forEach(r => {
-      const rs = r.read_support || {};
-      const others = (r.genes || []).map(o => o.pident)
-        .filter(v => v != null && Math.abs(v - r.rank_pident) > 0.05)
-        .sort((a, b) => b - a);
-      const line = el('div', 'gline');
-      line.innerHTML = '<b>' + esc(r.taxon) + '</b> &mdash; ' +
-        (r.contig_nt / 1000).toFixed(1) + ' kb, covered ' +
-        (rs.breadth_covered > 0.98 ? 'end to end' : pct(rs.breadth_covered) + ' of its ' +
-          'length') + ' at ' + Math.round(rs.mapped_mean_depth) + ' reads deep. Its ' +
-        (r.ranked_on === 'polymerase' ? 'polymerase' : 'best-scoring gene') + ' is <b>' +
-        num(r.rank_pident, 1) + '% identical</b> to the closest published protein' +
-        (others.length ? '; its other genes read ' +
-          others.map(v => num(v, 1) + '%').join(' and ') : '') + '. ' +
+    d.append(el('div', 'pghead', 'the finished genomes, drawn to scale'));
+    const allPhage = deep.every(r => (r.orfs_drawn || []).some(o =>
+      /ssRNA phage|Levi_coat|Phage_mat-A|RNA_replicase_B/i
+        .test((o.title || '') + ' ' + o.pfam.join(' '))));
+    if (allPhage) {
+      const intro = el('p', 'gintro');
+      intro.innerHTML = 'All ' + deep.length + ' are <b>single-stranded RNA ' +
+        'bacteriophages</b>: viruses that infect bacteria, not people. Each is a strand ' +
+        'of RNA a few kilobases long carrying the three genes such a phage needs, drawn ' +
+        'below at their real positions. The arrow is the direction the gene is read and ' +
+        'the number on it is identity to the closest published protein.';
+      d.append(intro);
+    }
+    const lg = el('div', 'maplegend');
+    lg.innerHTML = ['polymerase', 'coat', 'maturation', 'other'].map(k =>
+      '<span><i style="background:' + ROLE[k][0] + '"></i>' + k + ' &mdash; ' +
+      ROLE[k][1] + '</span>').join('');
+    d.append(lg);
+
+    deep.slice().sort((a, b) => (b.read_support || {}).mapped_mean_depth -
+                                (a.read_support || {}).mapped_mean_depth).forEach(r => {
+      const rs = r.read_support || {}, os = (r.orfs_drawn || []).slice()
+        .sort((a, b) => a.s - b.s);
+      const card = el('div', 'gmap');
+      const kb = (r.contig_nt / 1000).toFixed(1);
+      const hd = el('div', 'gmaphead');
+      hd.innerHTML = '<b>' + esc(r.taxon) + '</b> <span class="dim">&mdash; the name of ' +
+        'its nearest published relative, not an identification</span>';
+      card.append(hd);
+
+      // the molecule
+      const MW = 1000, ML = 8, MR = 8, MH = 74, TRK = 46;
+      const mx = v => ML + (v / r.contig_nt) * (MW - ML - MR);
+      let g = '<svg viewBox="0 0 ' + MW + ' ' + MH + '" width="100%" ' +
+        'style="min-width:520px" role="img" aria-label="gene map of ' + esc(r.taxon) +
+        '"><line x1="' + mx(0) + '" y1="' + TRK + '" x2="' + mx(r.contig_nt) + '" y2="' +
+        TRK + '" stroke="var(--edge)" stroke-width="3"/>';
+      os.forEach(o => {
+        const k = roleOf(o), x0 = mx(Math.min(o.s, o.e)), x1 = mx(Math.max(o.s, o.e));
+        const w = Math.max(3, x1 - x0), tip = Math.min(10, w / 3);
+        // drawn as an arrow, because strand is a fact about the molecule and a plain
+        // rectangle throws it away
+        const pts = o.d < 0
+          ? [[x0, TRK], [x0 + tip, TRK - 11], [x0 + w, TRK - 11], [x0 + w, TRK + 11],
+             [x0 + tip, TRK + 11]]
+          : [[x0, TRK - 11], [x0 + w - tip, TRK - 11], [x0 + w, TRK],
+             [x0 + w - tip, TRK + 11], [x0, TRK + 11]];
+        g += '<polygon points="' + pts.map(q => q[0].toFixed(1) + ',' + q[1]).join(' ') +
+          '" fill="' + ROLE[k][0] + '" opacity="' + (o.sig ? 1 : 0.45) + '"><title>' +
+          esc(o.role || 'role not called') + ', ' + o.aa + ' aa' +
+          (o.sig ? ', ' + num(o.pident, 1) + '% to ' + esc(o.title || '') : ', no ' +
+            'significant protein hit') + (o.pfam.length ? '\\\ndomain ' +
+            esc(o.pfam.join(', ')) : '') + '</title></polygon>';
+        if (o.sig && w > 74) {
+          g += '<text x="' + (x0 + w / 2) + '" y="' + (TRK + 4) +
+            '" text-anchor="middle" style="font-size:12px;font-weight:600;' +
+            'fill:var(--panel);font-family:var(--sans)">' + num(o.pident, 0) +
+            '%</text>';
+        }
+        if (w > 54) {
+          g += '<text x="' + (x0 + w / 2) + '" y="' + (TRK - 18) +
+            '" text-anchor="middle" class="ax">' + esc(k === 'other'
+              ? (o.sig ? 'other' : 'no hit') : k) + '</text>';
+        }
+      });
+      g += '<text x="' + mx(0) + '" y="' + (TRK + 26) + '" class="ax">0</text>';
+      g += '<text x="' + mx(r.contig_nt) + '" y="' + (TRK + 26) +
+        '" text-anchor="end" class="ax">' + kb + ' kb</text>';
+      g += '</svg>';
+      const hostd = el('div', 'scroll'); hostd.innerHTML = g; card.append(hostd);
+
+      // what it is, in words a reader can check against the picture above
+      const roles = os.filter(o => o.sig).map(roleOf);
+      const phage = os.some(o => /ssRNA phage|Levi_coat|Phage_mat-A|RNA_replicase_B/i
+        .test((o.title || '') + ' ' + o.pfam.join(' ')));
+      const envOnly = os.filter(o => o.sig).length &&
+        os.filter(o => o.sig).every(o => /ssRNA phage SRR|MAG:/.test(o.title || ''));
+      const far = os.filter(o => o.sig).sort((a, b) => a.pident - b.pident)[0];
+      const say = el('div', 'gsay');
+      say.innerHTML =
+        (allPhage ? '' : (phage ? '<b>A single-stranded RNA bacteriophage.</b> ' :
+          '<b>A virus</b>, architecture not called from its genes. ')) +
+        '<b>' + kb + ' kb</b> at <b>' + Math.round(rs.mapped_mean_depth) +
+        'x</b>, covered ' + (rs.breadth_covered > 0.98 ? 'end to end'
+          : pct(rs.breadth_covered) + ' of its length') +
         (rs.evenness_within_2x_of_median < 0.6
-          ? 'Its coverage is uneven, so part of it may be a different molecule. ' : '') +
-        '<span class="dim">The name is the nearest relative, not an identification.' +
-        '</span>';
-      d.append(line);
+          ? ' but unevenly, so part of it may be a different molecule' : '') + '. ' +
+        (far ? 'Furthest from anything published: the <b>' +
+          esc(far.role || 'unnamed gene') + '</b> at ' + num(far.pident, 1) + '%. ' : '') +
+        (roles.length < os.length
+          ? (os.length - roles.length === 1
+             ? 'One of its ' + os.length + ' genes has no significant match at all. '
+             : (os.length - roles.length) + ' of its ' + os.length + ' genes have no ' +
+               'significant match at all. ') : '') +
+        (envOnly ? '<span class="dim">Its nearest published relative is itself an ' +
+          'unnamed sequence from another wastewater sample.</span>' : '');
+      card.append(say);
+      d.append(card);
     });
     p.append(d);
+  }
+
+  /* "CAN WE RANK BY SCARINESS." No, and the reason is measured rather than cautious: a
+     rank over sequence is a rank over database proximity, and the host attached to a
+     matched record is a property of that record. What can be shown is what the water's
+     unplaceable reads point at, in reads rather than in database entries, with the
+     confidence that the host label transfers at all. */
+  const R = D.ranking;
+  if (R && R.host_mix_reads && R.reads_total) {
+    const GL = ((R.host_table || {}).groups) || {};
+    const ORD = ['bacteriophage', 'unknown_host', 'plant', 'vertebrate_non_human',
+                 'human_associated', 'invertebrate', 'fungal_or_protist'];
+    const hc = R.host_confidence_summary || {};
+    const seen = Object.keys(R.host_mix_reads).sort(
+      (a, b) => R.host_mix_reads[b] - R.host_mix_reads[a]);
+    const tot = R.reads_total;
+    const hum = R.host_mix_reads.human_associated || 0;
+    const COL = {bacteriophage: 'var(--v1)', unknown_host: 'var(--null)',
+                 plant: 'var(--v3)', vertebrate_non_human: 'var(--tier2)',
+                 human_associated: 'var(--v2)', invertebrate: 'var(--cv3)',
+                 fungal_or_protist: 'var(--cv2)'};
+
+    const blk = el('div', 'bites');
+    blk.append(el('div', 'pghead', 'could any of it infect a person'));
+    const lead = el('div', 'callout');
+    lead.innerHTML =
+      'Of the <b>' + tot.toLocaleString() + '</b> leftover reads that point at a named ' +
+      'relative at all, <b>' + pct((R.host_mix_reads.bacteriophage || 0) / tot) +
+      '</b> point at viruses of bacteria and <b>' + pct(hum / tot) + '</b> at anything ' +
+      'human-associated' + cite('concern') + '. Those ' + hum + ' reads are the enteric ' +
+      'viruses sewage is expected to carry, matched over about 34 amino acids. ' +
+      '<b>Host confidence never exceeds ' + num(hc.max, 2) + '</b> anywhere in the ' +
+      Number(hc.subjects || 0).toLocaleString() + ' records, so no relative here is ' +
+      'close enough for its host to transfer: these are labels on the database, not ' +
+      'claims about the water.';
+    blk.append(lead);
+
+    // one bar, in reads, direct-labelled. A share of records would be a share of the
+    // database; a share of reads is a share of the sample.
+    const BW = 1000, BH = 100, BY = 28, BAR = 26;
+    let bs = '<svg viewBox="0 0 ' + BW + ' ' + BH + '" width="100%" ' +
+      'style="min-width:560px" role="img" aria-label="what the named leftovers point ' +
+      'at, by read">';
+    let cx = 0, lab = [];
+    seen.forEach(k => {
+      const w = (R.host_mix_reads[k] / tot) * BW;
+      if (w <= 0) return;
+      bs += '<rect x="' + cx + '" y="' + BY + '" width="' + Math.max(0.6, w - 2) +
+        '" height="' + BAR + '" rx="2" fill="' + (COL[k] || 'var(--null)') +
+        '"><title>' + esc((GL[k] || {}).label || k) + ': ' +
+        R.host_mix_reads[k].toLocaleString() + ' reads, ' +
+        (R.host_mix[k] || 0).toLocaleString() + ' records</title></rect>';
+      lab.push([cx + w / 2, k, w]);
+      cx += w;
+    });
+    // only the shares with room get an inline label; the rest are called out beneath
+    lab.forEach(l => {
+      if (l[2] < 110) return;
+      bs += '<text x="' + l[0] + '" y="' + (BY + BAR + 16) +
+        '" text-anchor="middle" class="ax">' + esc((GL[l[1]] || {}).label || l[1]) +
+        ' ' + pct(R.host_mix_reads[l[1]] / tot) + '</text>';
+    });
+    const hx = lab.filter(l => l[1] === 'human_associated')[0];
+    if (hx) {
+      bs += '<line x1="' + hx[0] + '" y1="' + (BY - 2) + '" x2="' + hx[0] + '" y2="' +
+        (BY - 14) + '" stroke="var(--v2)" stroke-width="1.5"/>';
+      bs += '<text x="' + Math.min(BW - 4, hx[0] + 6) + '" y="' + (BY - 18) +
+        '" text-anchor="end" class="ax">human-associated, ' + pct(hum / tot) +
+        ' of named reads</text>';
+    }
+    bs += '</svg>';
+    const bh = el('div', 'scroll'); bh.innerHTML = bs; blk.append(bh);
+
+    const ha = (R.subjects || []).filter(x => x.host_group === 'human_associated')
+      .sort((a, b) => (b.residue_reads || 0) - (a.residue_reads || 0)).slice(0, 6);
+    if (ha.length) {
+      blk.append(el('p', 'note', 'The human-associated records, largest first: ' +
+        ha.map(x => esc(x.organism || x.subject) + ' (' + x.residue_reads + ' reads, ' +
+          num(x.median_identity_percent, 1) + '% over ' + x.median_aligned_aa + ' aa)')
+          .join('; ') + '. At that alignment length a phage protein and a bacterial one ' +
+        'cannot be told apart either, so read these as the direction of a match rather ' +
+        'than as a finding.'));
+    }
+
+    const no = el('div', 'callout');
+    no.innerHTML = '<b>There is no scariness number here, and that is a result rather ' +
+      'than a gap.</b> Ordering by distance from the database orders by the database' +
+      cite('nulls') + ', and the host attached to a match is a property of the matched ' +
+      'record. What can be ranked is how much of something is present, which is a ' +
+      'property of the water, and the table below is ordered that way. What would earn ' +
+      'the word is recurrence: the same sequence appearing at one plant, then climbing ' +
+      'across dates. That is measured at read level across 512 libraries' +
+      cite('crossplant') + ' and has not yet been run over these contigs.';
+    blk.append(no);
+    p.append(blk);
   }
 
   /* EVERYTHING ELSE, as one table behind a disclosure. */
   if (rows.length) {
     const det = el('details', 'more');
     const sm = document.createElement('summary');
-    sm.textContent = 'all ' + rows.length + ' divergent contigs, with their numbers';
+    sm.textContent = 'all ' + rows.length + ' divergent contigs, most abundant first';
     det.append(sm);
     const sc = el('div', 'scroll');
     const tb = el('table');
@@ -3310,7 +3549,9 @@ function interval(iv) {
       '<th>ranked on</th><th>genes disagree by</th><th>length</th><th>depth</th>' +
       '</tr></thead>';
     const body = el('tbody');
-    rows.forEach(r => {
+    rows.slice().sort((a, b) => ((b.read_support || {}).mapped_mean_depth || 0) -
+                                ((a.read_support || {}).mapped_mean_depth || 0))
+      .forEach(r => {
       const tr = el('tr');
       tr.innerHTML = '<td>' + esc(r.taxon) + '</td><td class="mono">' +
         num(r.rank_pident, 1) + '%</td><td class="dim">' + esc(r.ranked_on) +
