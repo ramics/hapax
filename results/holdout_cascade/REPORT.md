@@ -198,14 +198,39 @@ holds 4,399 of the 7,601 contigs and has a mean of 1.9 - and the candidate has 5
 A gap requires several genes but several genes do not produce a gap.
 
 **The field exists at protein level only, and that is a constraint on it rather than a
-caveat.** On the same contig against the nucleotide index the gap is **-0.8 points, the
-22.34nd percentile** of its length band, where only 2 of 94 length-matched contigs exceed 10
-points at all. The mechanism says why: at nucleotide level the candidate has one best genome
-and its HSPs all land on that genome, so there is nothing for other subjects to add. The gap
-measures *genes drifting onto different protein records*, which is a protein-space phenomenon
-by construction. **So it is not a second axis on top of coverage - it is the protein tier's
-coverage read twice**, and a pipeline carrying it must compute it where the divergence is
-scored and not where the reads are.
+caveat.** On the same contig against the nucleotide index the gap is **exactly +0.0 points**:
+per-subject and any-subject union coverage are the *same number*, 0.7103. The mechanism says
+why - at nucleotide level the candidate has one best genome and every significant HSP lands on
+that genome, so the any-subject union has literally nothing to add. Across its length band the
+nucleotide gap has a median of 0.0 and only **2 of 94** contigs exceed 10 points at all. The
+gap measures *genes drifting onto different protein records*, which is a protein-space
+phenomenon by construction. **So it is not a second axis on top of coverage - it is the
+protein tier's coverage read twice**, and a pipeline carrying it must compute it where the
+divergence is scored and not where the reads are.
+
+**That figure is a correction, and the first version of it was impossible.** This section
+first reported **-0.8 points at the 22.34nd percentile**, which cannot happen: any-subject
+coverage *contains* per-subject coverage, so their difference is non-negative by construction.
+The cause, found by the consolidation thread, is that `union_coverage` applied no E-value
+floor while `union_coverage_any` applied one, so the two sides of the subtraction were not two
+definitions but two **filters** - and the gap came out negative on 394 of 7,734 protein rows
+and 508 of 2,269 nucleotide rows, to -0.50. **A sign that cannot occur is the cheapest
+possible tell and it was sitting in the committed file**; the reason it was not caught here is
+that the negative rows are a few percent of a column nothing was plotting.
+
+With the floor applied to both sides and re-derived from the raw search output: **the protein
+figure does not move at all** - 0.4624 against 0.8286, +36.6 points, 95.85th percentile of its
+band - because every HSP in the candidate's protein hits already cleared 1e-5. The nucleotide
+figure moves from an impossible -0.8 to a clean 0.0. **So the protein-only claim survives and
+is now stated in its stronger form**: not "smaller at nucleotide level" but *zero* there.
+
+Two things about the percentile that would otherwise mislead. The candidate sits at the
+**64.89th percentile** of the nucleotide band rather than the 22nd, and that number is close to
+meaningless because the band's median gap is 0.0 - it is a tie, and where a tie falls is an
+artefact of sort order, which is a bias this repo has already had to withdraw a result over.
+And `coverage_gap_null.py` was never affected, because it floors both sides deliberately: it
+independently produced the identical 0.4624 and 0.8286, which is why the +36.6 was safe to
+quote throughout.
 
 **Where it gets suspicious, and the limit is mine not the field's.** Four cuts - gap > 30
 points, identity 50-70%, any-subject coverage >= 0.70, length >= 1500 nt - select **7

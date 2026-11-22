@@ -210,13 +210,23 @@ def parse_best(tsv: Path, aa: bool = False) -> dict[str, dict]:
     return best
 
 
-def union_coverage(tsv: Path) -> dict[str, dict]:
-    """Per query-subject pair, the union of HSP intervals on the query.
+def union_coverage(tsv: Path, evalue: float = SIGNIFICANCE_EVALUE) -> dict[str, dict]:
+    """Per query-subject pair, the union of SIGNIFICANT HSP intervals on the query.
 
     A single HSP cannot cover a multi-gene genome - this project already demoted exactly
     the right candidates with a coverage flag defined on one HSP, because a levivirus's
     best blastx HSP covers about 45% of it. Attribution therefore uses the union of
     intervals, so a contig re-derived in several pieces counts as covered.
+
+    THE E-VALUE FLOOR IS NOT OPTIONAL AND ITS ABSENCE HERE PRODUCED AN IMPOSSIBLE NUMBER.
+    This function had no floor while `union_coverage_any` had one, so the two sides of the
+    "coverage gap" saw different HSPs and their difference was not a difference of
+    definitions but of filters. Any-subject coverage CONTAINS per-subject coverage under
+    matched filters, so the gap cannot be negative - and it was negative on 394 of 7,734
+    protein rows and 508 of 2,269 nucleotide rows, to -0.50. The floor is now a parameter
+    with the same default as the other function's, so a mismatch has to be written
+    deliberately rather than inherited. Attribution is unaffected either way: that pass is
+    run at `evalue="1e-10"`, so every HSP it sees already clears this floor.
     """
     iv: dict[tuple[str, str], list] = {}
     qlen: dict[str, int] = {}
@@ -225,6 +235,8 @@ def union_coverage(tsv: Path) -> dict[str, dict]:
     for line in open(tsv):
         f = line.rstrip("\n").split("\t")
         if len(f) < 14:
+            continue
+        if float(f[10]) > evalue:
             continue
         q, s = f[0], f[1]
         a, b = sorted((int(f[6]), int(f[7])))
