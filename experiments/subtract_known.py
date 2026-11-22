@@ -85,6 +85,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir
 
 from berlin_io import read_pairs, revcomp
+from loud import (Consulted, Preflight, cache_is_current, mark_cache, require_output,
+                  run_tool)
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -180,7 +182,9 @@ def kraken2(db: Path, fq1: Path, fq2: Path, classify_bin: Path, threads: int,
     cmd = [str(classify_bin), "-H", str(db / "hash.k2d"), "-t", str(db / "taxo.k2d"),
            "-o", str(db / "opts.k2d"), "-M", "-p", str(threads), "-P",
            "-T", str(confidence), "-O", str(out), str(fq1), str(fq2)]
-    subprocess.run(cmd, check=True, capture_output=True)
+    run_tool(cmd, f"Kraken2 {db.name} at confidence {confidence}",
+             stdout=subprocess.DEVNULL)
+    require_output(out, f"Kraken2 {db.name}")
     wall = time.perf_counter() - t0
     calls: dict[str, int] = {}
     with open(out) as h:
@@ -339,7 +343,46 @@ def main() -> None:
                     help="subtracted pairs kept as the known-positive comparison set")
     ap.add_argument("--rows-out", action="store_true",
                     help="write the per-pair evidence table for the residue")
+    ap.add_argument("--preflight", action="store_true",
+                    help="check every input, index and tool, then exit: 0 if the run "
+                         "could start, 2 if not. hapax.py calls this before any stage runs")
     args = ap.parse_args()
+
+    # Every index named on the command line is one the result depends on, so an absent,
+    # empty or half-built one is a refusal, not a tier quietly dropped from the curve. The
+    # old behaviour was `continue`: the curve lost a row, the manifest still listed the
+    # index, and nothing said so. To run without a tier, do not name it.
+    pf = Preflight("subtract_known.py")
+    pf.file(args.r1, "--r1")
+    pf.file(args.r2, "--r2")
+    for db in args.k2_dbs:
+        pf.kraken2_db(db)
+    if args.k2_dbs:
+        pf.exe(args.classify_bin, "--classify-bin (Kraken2 classify)")
+        pf.require(args.k2_operating_confidence in args.k2_confidence,
+                   f"--k2-operating-confidence {args.k2_operating_confidence} is not in "
+                   f"the --k2-confidence sweep {args.k2_confidence}, so every Kraken2 tier "
+                   f"would remove nothing and report it as a measurement")
+    for p in args.silva:
+        pf.file(p, "--silva")
+    for p in args.selfasm:
+        pf.file(p, "--selfasm")
+    for p in args.observe:
+        pf.file(p, "--observe")
+    for p in args.dmnd:
+        pf.file(p, "--dmnd")
+    if args.dmnd:
+        pf.exe(args.diamond_bin, "--diamond-bin")
+    stems = [p.stem for p in [*args.selfasm, *args.observe]]
+    pf.require(len(stems) == len(set(stems)),
+               f"--selfasm/--observe references share a file stem ({stems}); tiers and "
+               f"cached indexes are keyed by stem, so one would overwrite the other")
+    names = [d.name for d in args.k2_dbs]
+    pf.require(len(names) == len(set(names)),
+               f"--k2-dbs share a directory name ({names}); tiers are keyed by it")
+    pf.module("mappy", "nucleotide tiers")
+    pf.done(args.preflight)
+    consulted = Consulted()
 
     args.out.mkdir(parents=True, exist_ok=True)
     args.work.mkdir(parents=True, exist_ok=True)
@@ -357,6 +400,10 @@ def main() -> None:
     n = len(rows)
     if n == 0:
         raise SystemExit("no pairs read")
+    if n < args.pairs:
+        # Not fatal - a short library is a real library - but it changes every
+        # denominator, so it is said out loud and recorded in the result.
+        print(f"WARNING: asked for {args.pairs} pairs and the block held {n}", flush=True)
 
     fq1, fq2 = args.work / f"s{args.seed}_1.fq", args.work / f"s{args.seed}_2.fq"
     write_fastq(fq1, rows, 1)
@@ -388,9 +435,12 @@ def main() -> None:
     rrna_hits = {}
     if args.silva:
         silva_fa = args.work / "silva.fa"
-        if not silva_fa.exists():
+        # Keyed to its sources: a work directory reused with a different --silva would
+        # otherwise serve the old reference under the new one's name.
+        if not cache_is_current(silva_fa, args.silva):
             t0 = time.perf_counter()
             _silva_to_dna(args.silva, silva_fa)
+            mark_cache(silva_fa, args.silva)
             timings["silva_prepare"] = time.perf_counter() - t0
         t0 = time.perf_counter()
         idx = _mm_index(silva_fa, args.work / "silva.mmi", args.threads)
@@ -400,19 +450,22 @@ def main() -> None:
         timings["rrna"] = time.perf_counter() - t0
         index_bytes["rrna"] = sum(dir_bytes(p) for p in args.silva)
         removed["rrna"] = set(rrna_hits)
+        for p in args.silva:
+            consulted.searched("rrna", p, queries=n, hits=len(rrna_hits))
         tier_meta["rrna"] = {"mlen_sweep": _mlen_sweep(rrna_hits, n)}
         del idx
 
     # ---- tiers: kraken2 at several index sizes
     for db in args.k2_dbs:
-        if not (db / "hash.k2d").exists():
-            continue
         tier = db.name
         out = args.work / f"{tier}_s{args.seed}.k2"
         sweep, taxa, wall_total = {}, None, 0.0
         for conf in args.k2_confidence:
             calls, wall, rss = kraken2(db, fq1, fq2, args.classify_bin, args.threads,
                                        out, conf)
+            if len(calls) != n:
+                raise SystemExit(f"Kraken2 {tier} at {conf} returned {len(calls)} calls "
+                                 f"for {n} pairs; Kraken2 writes one line per pair")
             hit = {k for k, tx in calls.items() if tx != 0}
             sweep[f"{conf:.2f}"] = len(hit) / n
             wall_total += wall
@@ -422,7 +475,11 @@ def main() -> None:
             out.unlink(missing_ok=True)
         timings[tier] = wall_total
         index_bytes[tier] = dir_bytes(db / "hash.k2d") + dir_bytes(db / "taxo.k2d")
-        removed.setdefault(tier, set())
+        if tier not in removed:
+            raise SystemExit(f"internal: Kraken2 {tier} never ran at the operating "
+                             f"confidence {args.k2_operating_confidence}")
+        consulted.searched(tier, db, queries=n, hits=len(removed[tier]),
+                           confidence=args.k2_operating_confidence)
         tier_meta[tier] = {
             "peak_rss_bytes": rss,
             "wall_seconds_per_run": wall_total / max(len(args.k2_confidence), 1),
@@ -433,8 +490,6 @@ def main() -> None:
 
     # ---- tier: the environment's own assembled sequence
     for asm in args.selfasm:
-        if not asm.exists():
-            continue
         tier = f"selfasm_{asm.stem}"
         t0 = time.perf_counter()
         idx = _mm_index(asm, args.work / f"{asm.stem}.mmi", args.threads)
@@ -444,6 +499,7 @@ def main() -> None:
         timings[tier] = time.perf_counter() - t0
         index_bytes[tier] = dir_bytes(asm)
         removed[tier] = set(hits)
+        consulted.searched(tier, asm, queries=n, hits=len(hits))
         tier_meta[tier] = {"mlen_sweep": _mlen_sweep(hits, n)}
         del idx
 
@@ -458,14 +514,13 @@ def main() -> None:
     # unidentifiable contig are tier 2's read-level population, not residue.
     observed: dict[str, set[str]] = {}
     for ref in args.observe:
-        if not ref.exists():
-            continue
         tier = f"observe_{ref.stem}"
         t0 = time.perf_counter()
         idx = _mm_index(ref, args.work / f"{ref.stem}.mmi", args.threads)
         hits = map_filter(idx, seqs, args.min_mlen)
         timings[tier] = time.perf_counter() - t0
         observed[tier] = set(hits)
+        consulted.searched(tier, ref, queries=n, hits=len(hits), subtracted=False)
         index_bytes[tier] = dir_bytes(ref)
         tier_meta[tier] = {"subtracted": False, "mlen_sweep": _mlen_sweep(hits, n),
                            "tier_alone": len(hits) / n}
@@ -479,17 +534,18 @@ def main() -> None:
         fa = args.work / f"residue_s{args.seed}.fa"
         write_fasta(fa, survivors)
         for db in args.dmnd:
-            if not db.exists():
-                continue
             tier = f"prot_{db.stem}"
             t0 = time.perf_counter()
             tsv = args.work / f"{tier}_s{args.seed}.tsv"
-            subprocess.run([str(args.diamond_bin), "blastx", "--db", str(db), "--query", str(fa),
-                            "--out", str(tsv), "--threads", str(args.threads),
-                            "--outfmt", "6", "qseqid", "sseqid", "pident", "length",
-                            "evalue", "bitscore", "--max-target-seqs", "1",
-                            "--evalue", "10", args.diamond_sensitivity, "--quiet"],
-                           check=True)
+            tsv.unlink(missing_ok=True)
+            run_tool([str(args.diamond_bin), "blastx", "--db", str(db), "--query", str(fa),
+                      "--out", str(tsv), "--threads", str(args.threads),
+                      "--outfmt", "6", "qseqid", "sseqid", "pident", "length",
+                      "evalue", "bitscore", "--max-target-seqs", "1",
+                      "--evalue", "10", args.diamond_sensitivity, "--quiet"],
+                     f"DIAMOND blastx against {db.name}")
+            # An empty table is a real answer (searched, zero hits); a missing one is not.
+            require_output(tsv, f"DIAMOND {db.name}", allow_empty=True)
             timings[tier] = time.perf_counter() - t0
             index_bytes[tier] = dir_bytes(db)
             best = {}
@@ -502,6 +558,9 @@ def main() -> None:
                         best[name] = (bits, s, float(pid), int(length), float(ev))
             prot_rows[tier] = best
             removed[tier] = {k for k, v in best.items() if v[0] >= args.diamond_bitscore}
+            consulted.searched(tier, db, queries=len(survivors), hits=len(best),
+                               removed=len(removed[tier]),
+                               conditioned_on="survivors of all nucleotide tiers")
             tier_meta[tier] = {
                 "conditioned_on": "survivors of all nucleotide tiers",
                 "survivors_in": len(survivors),
@@ -511,6 +570,12 @@ def main() -> None:
                                               for b in (30, 40, 50, 60, 80, 100)},
             }
             tsv.unlink(missing_ok=True)
+
+    elif args.dmnd:
+        for db in args.dmnd:
+            consulted.not_searched(f"prot_{db.stem}", db,
+                                   "no pair survived the nucleotide tiers, so there was "
+                                   "nothing to search; this is not a zero-hit search")
 
     # ---- cumulative curve in cheapest-first order
     #
@@ -573,8 +638,11 @@ def main() -> None:
     # The residue and a matched sample of SUBTRACTED pairs are both kept, because every
     # field in the residue report is calibrated against the subtracted reads: a field that
     # reads the same on both carries no information about the residue.
-    write_fasta(args.work / f"residue_s{args.seed}.fa",
-                [r for r in rows if r[0] not in seen])
+    residue_rows = [r for r in rows if r[0] not in seen]
+    if len(residue_rows) != result["residue_pairs"]:
+        raise SystemExit(f"internal: {len(residue_rows)} residue rows against "
+                         f"residue_pairs {result['residue_pairs']}")
+    write_fasta(args.work / f"residue_s{args.seed}.fa", residue_rows)
     import random as _random
     known_pairs = [r for r in rows if r[0] in seen]
     _random.Random(args.seed).shuffle(known_pairs)
@@ -582,6 +650,7 @@ def main() -> None:
 
     if args.rows_out:
         resid = args.out / f"residue_rows_s{args.seed}.jsonl"
+        written = 0
         with open(resid, "w") as h:
             for name, s1, s2, q1, q2 in rows:
                 if name in seen:
@@ -605,10 +674,19 @@ def main() -> None:
                 if name in rrna_hits:
                     row["rrna_mlen"] = rrna_hits[name][0]
                 h.write(json.dumps(row) + "\n")
+                written += 1
+        if written != result["residue_pairs"]:
+            raise SystemExit(f"internal: wrote {written} residue rows against "
+                             f"residue_pairs {result['residue_pairs']}")
 
     (args.out / f"manifest_s{args.seed}.json").write_text(json.dumps({
         "script": "experiments/subtract_known.py",
-        "git_sha": git_sha(),
+        **provenance(__file__),
+        "pairs_requested": args.pairs,
+        "pairs_read": n,
+        # What was opened, with its size at the time, beside `parameters` (what was asked
+        # for). hapax.py refuses a stage whose two lists disagree.
+        "consulted": consulted.as_list(),
         "parameters": {k: (str(v) if isinstance(v, (Path,)) else
                            [str(x) for x in v] if isinstance(v, list) else v)
                        for k, v in vars(args).items()},
@@ -652,13 +730,23 @@ def _mm_index(fa: Path, mmi: Path, threads: int):
     The index is a function of the reference alone, so rebuilding it per seed would put
     tens of seconds of constant cost into every tier's wall time and make the
     cost-per-tier comparison - the point of the experiment - read wrong.
+
+    The cache is keyed to the reference's path, size and mtime. It used to be keyed to the
+    file STEM alone, so a work directory reused with a different reference of the same name
+    served the old index under the new name - the index named in the provenance not being
+    the index used.
     """
     import mappy
-    if mmi.exists():
-        return mappy.Aligner(str(mmi), preset="sr", n_threads=threads)
+    if cache_is_current(mmi, [fa]):
+        a = mappy.Aligner(str(mmi), preset="sr", n_threads=threads)
+        if not a:
+            raise SystemExit(f"could not load cached index {mmi}")
+        return a
+    mmi.unlink(missing_ok=True)
     a = mappy.Aligner(str(fa), preset="sr", n_threads=threads, fn_idx_out=str(mmi))
     if not a:
         raise SystemExit(f"could not index {fa}")
+    mark_cache(mmi, [fa])
     return a
 
 

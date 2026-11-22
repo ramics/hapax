@@ -21,10 +21,22 @@ WHAT IT ADDS, which is the part worth having:
   3. **The declared blind spots travel with the run**, copied from the committed
      `blind_spots.json` with its hash, so a run directory cannot be read without them.
 
-WHY A STAGE MAY REFUSE RATHER THAN DEGRADE. A stage whose reference data is absent writes
-`status: "skipped"` with the reason, and the run is marked incomplete. It does not fall back
-to a cheaper index and report the number as if it were the real one - the project has
-already had to withdraw a figure whose index silently differed from the one named.
+WHY THE RUN REFUSES RATHER THAN DEGRADES. Before any stage runs, every selected stage is
+preflighted: hapax checks its own inputs, and each experiment script is called with
+`--preflight` and the exact argv it will get, so the script's own list of required indexes
+and tools is the one checked. Anything absent, empty or not executable stops the run in its
+first seconds with every problem listed, exit status 2, and a manifest saying it refused.
+A stage is `skipped` only when the command line asked for that (`--stages`, no
+`--calibrate`, no `--unidentified-contigs`); an input that vanishes mid-run is `failed`.
+Neither falls back to a cheaper index - the project has already had to withdraw a figure
+whose index silently differed from the one named.
+
+WHAT WAS CONSULTED, NOT WHAT WAS ASKED FOR. hapax validated three indexes and never passed
+them on, so runs used the defaults while the manifest named the indexes requested; the
+existence check made it harder to see, because it proved the files were there. So every
+path a stage is asked to use is asserted (a) to appear in the argv actually built and (b)
+where the script writes a `consulted` record, to appear there as opened. A mismatch fails
+the stage.
 
 THE RESIDUE IS LAYERED, NOT SCORED. `layers.json` orders the residue from most to least
 worth a human's attention using only fields whose direction has been measured on known
@@ -98,9 +110,17 @@ class Run:
         (self.dir / "stages").mkdir(parents=True, exist_ok=True)
         self.work: Path = args.work or (self.dir / "work")
         self.work.mkdir(parents=True, exist_ok=True)
+        #: True while every stage is being checked before any runs: `call` then runs each
+        #: script with --preflight, and `missing` ignores what an earlier stage will write.
+        self.preflighting = False
+        self.problems: list[str] = []
 
     # -- stage plumbing -------------------------------------------------------
     def record(self, name: str, status: str, **kw) -> dict:
+        if self.preflighting:
+            if status == "failed":
+                self.problems.append(f"{name}: {kw.get('reason')}")
+            return {"stage": name, "status": status, **kw}
         entry = {"stage": name, "status": status, **kw}
         self.stages.append(entry)
         print(f"[{name}] {status}" + (f": {kw.get('reason')}" if kw.get("reason") else ""),
@@ -112,13 +132,41 @@ class Run:
 
         A stage that starts without its reference data fails deep inside a subprocess,
         often hours in, and on a machine that cannot be debugged. `test -f` first is the
-        cheapest rule this project keeps.
+        cheapest rule this project keeps. An EMPTY file is as absent as a missing one: a
+        zero-byte index is a failed download, not an index with nothing in it.
+
+        During preflight, a path under the work directory is an earlier stage's output and
+        is not expected to exist yet, provided that stage is selected.
         """
-        return [str(p) for p in paths if not Path(p).exists()]
+        out = []
+        for p in map(Path, paths):
+            if self.preflighting and "cascade" in self.args.stages and \
+                    self.work in p.parents:
+                continue
+            if not p.exists():
+                out.append(str(p))
+            elif p.is_file() and p.stat().st_size == 0:
+                out.append(f"{p} (0 bytes)")
+        return out
 
     def call(self, name: str, script: str, argv: list[str],
-             expect: dict[str, Path], manifest: Path | None) -> dict:
-        """Run one experiment script and adopt its outputs into the run directory."""
+             expect: dict[str, Path], manifest: Path | None,
+             requested: list[Path] | None = None) -> dict:
+        """Run one experiment script and adopt its outputs into the run directory.
+
+        `requested` is every index or reference this stage was asked to use. Each must
+        appear in `argv` - the check that would have caught the cascade being validated
+        against three indexes and then run without them - and, where the script records
+        what it opened, in that record.
+        """
+        dropped = [str(p) for p in (requested or []) if str(p) not in argv]
+        if dropped:
+            return self.record(name, "failed", script=script,
+                               reason=f"asked to use {dropped} but they are not in the "
+                                      f"argv this stage would be run with, so the script "
+                                      f"would fall back to its own defaults")
+        if self.preflighting:
+            return self._preflight_script(name, script, argv)
         t = time.perf_counter()
         log = self.dir / "stages" / f"{name}.log"
         cmd = [PY, "-I", str(ROOT / "experiments" / script), *argv]
@@ -132,25 +180,88 @@ class Run:
             return self.record(name, "failed", script=script, seconds=seconds,
                                argv=argv, log=str(log.relative_to(self.dir)),
                                reason=f"exit {proc.returncode}", tail=tail)
-        prov = {}
-        if manifest and manifest.exists():
+        # A stage's manifest is its provenance, and a stage without one has produced
+        # numbers nobody can attribute to code. That used to be recorded as an empty dict.
+        if manifest is None or not manifest.exists():
+            return self.record(name, "failed", script=script, seconds=seconds, argv=argv,
+                               reason=f"exit 0 but its manifest {manifest} was not written")
+        try:
             m = json.loads(manifest.read_text())
-            prov = {k: m[k] for k in ("git_sha", "tree_dirty", "script_sha256") if k in m}
-            if "script_sha256" not in prov:
-                prov["script_sha256"] = "absent from this stage's own manifest"
+        except ValueError as e:
+            return self.record(name, "failed", script=script, seconds=seconds, argv=argv,
+                               reason=f"its manifest {manifest} is not JSON: {e}")
+        prov = {k: m[k] for k in ("git_sha", "tree_dirty", "script_sha256") if k in m}
+        if "script_sha256" not in prov:
+            return self.record(name, "failed", script=script, seconds=seconds, argv=argv,
+                               reason=f"its manifest carries no script_sha256, so the code "
+                                      f"that produced this stage cannot be pinned")
+        consulted = m.get("consulted")
+        if consulted is not None and requested:
+            seen = {e.get("path") for e in consulted}
+            never = [str(p) for p in requested if str(p) not in seen]
+            if never:
+                return self.record(name, "failed", script=script, seconds=seconds,
+                                   argv=argv, consulted=consulted,
+                                   reason=f"asked to use {never}; the stage's own record "
+                                          f"of what it opened does not include them")
         outputs = {}
         for label, src in expect.items():
             if not src.exists():
                 return self.record(name, "failed", script=script, seconds=seconds,
                                    argv=argv, reason=f"{src} was not written")
+            if src.stat().st_size == 0:
+                return self.record(name, "failed", script=script, seconds=seconds,
+                                   argv=argv, reason=f"{src} was written empty")
             dst = self.dir / label
             dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(src, dst)
             outputs[label] = {"bytes": dst.stat().st_size, "sha256_16": sha256(dst)[:16],
                               "from": str(src)}
+        extra = {"consulted": consulted} if consulted is not None else {
+            "consulted": "this script does not record what it opened; every path in argv "
+                         "was checked to exist before the run"}
         return self.record(name, "ok", script=script, seconds=seconds, argv=argv,
-                           provenance=prov, outputs=outputs,
+                           provenance=prov, outputs=outputs, **extra,
                            log=str(log.relative_to(self.dir)))
+
+    def _preflight_script(self, name: str, script: str, argv: list[str]) -> dict:
+        """Ask the script itself whether it could start with this argv.
+
+        The script owns the list of what it needs, so hapax does not keep a second copy
+        that drifts. Scripts that have no --preflight are checked by hapax alone.
+        """
+        if script not in PREFLIGHT_SCRIPTS:
+            return {"stage": name, "status": "ok"}
+        cmd = [PY, "-I", str(ROOT / "experiments" / script), *argv, "--preflight"]
+        proc = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
+        if proc.returncode != 0:
+            lines = [ln.strip() for ln in (proc.stderr or proc.stdout).splitlines()
+                     if ln.strip()][-15:]
+            self.problems.append(f"{name} ({script} --preflight, exit {proc.returncode}):"
+                                 + "".join(f"\n      {ln}" for ln in lines))
+        return {"stage": name, "status": "ok"}
+
+    def preflight(self) -> None:
+        """Check every selected stage before any of them runs, and refuse if one cannot.
+
+        A run used to discover a missing index when it reached the stage that needed it,
+        which for the per-read report is after the cascade - tens of minutes in, on a
+        machine that may have been launched for that run alone.
+        """
+        a = self.args
+        for p, what in ((a.r1, "r1"), (a.r2, "r2")):
+            if self.missing("inputs", [p]):
+                self.problems.append(f"inputs: {what} {p} is absent or empty")
+        self.preflighting = True
+        try:
+            for name in STAGE_ORDER:
+                if name in a.stages and name in SCRIPT_STAGES:
+                    getattr(self, name)()
+        finally:
+            self.preflighting = False
+        if a.unidentified_contigs and "contigs" in a.stages:
+            for p in self.missing("contigs", a.unidentified_contigs):
+                self.problems.append(f"contigs: {p} is absent or empty")
 
     # -- stages ---------------------------------------------------------------
     def cascade(self) -> dict:
@@ -164,7 +275,7 @@ class Run:
         need = [a.r1, a.r2, *a.k2_dbs, *a.silva, *a.dmnd, *(a.contigs or [])]
         gone = self.missing("cascade", need)
         if gone:
-            return self.record("cascade", "skipped", reason=f"absent inputs: {gone}")
+            return self.record("cascade", "failed", reason=f"absent inputs: {gone}")
         out = self.work / "cascade"
         argv = ["--seed", str(a.seed), "--pairs", str(a.pairs),
                 "--r1", str(a.r1), "--r2", str(a.r2), "--trim-r2", str(a.trim_r2),
@@ -179,29 +290,40 @@ class Run:
                           "stages/cascade_manifest.json": out / f"manifest_s{a.seed}.json",
                           "stages/cascade_rows.jsonl":
                               out / f"residue_rows_s{a.seed}.jsonl"},
-                         out / f"manifest_s{a.seed}.json")
+                         out / f"manifest_s{a.seed}.json",
+                         requested=[*a.k2_dbs, *a.silva, *a.dmnd, *(a.contigs or []),
+                                    *(a.unidentified_contigs or [])])
 
     def reads(self) -> dict:
         """Tier 3: the per-read report, un-thresholded, every field beside its calibration."""
         a = self.args
         res = self.work / "cascade_work" / f"residue_s{a.seed}.fa"
         sub = self.work / "cascade_work" / f"subtracted_s{a.seed}.fa"
-        gone = self.missing("reads", [res, a.r1, a.r2])
+        gone = self.missing("reads", [res, sub, a.r1, a.r2])
         if gone:
-            return self.record("reads", "skipped",
-                               reason=f"the cascade's residue is the input and {gone} is "
-                                      f"absent; run the cascade stage first")
+            return self.record("reads", "failed",
+                               reason=f"the cascade's residue and its subtracted pile are "
+                                      f"the inputs, and {gone} is absent or empty. An "
+                                      f"empty subtracted pile leaves every field without "
+                                      f"its known-positive control")
         out = self.work / "reads"
         argv = ["--seed", str(a.seed), "--residue", str(res), "--reads", str(res),
                 "--max-pairs", str(a.report_pairs), "--threads", str(a.threads),
                 "--library-r1", str(a.r1), "--library-r2", str(a.r2),
                 "--work", str(self.work / "reads_work"), "--out", str(out)]
-        if sub.exists():
-            argv += ["--subtracted-reads", str(sub)]
+        # The subtracted pile is the known-positive control for every field, so it is
+        # always passed, and its absence fails the stage rather than silently leaving the
+        # report with no control.
+        argv += ["--subtracted-reads", str(sub)]
+        if a.report_without:
+            # Fields left out on purpose are named, and the per-read report records each
+            # as "not searched: --without" - never as a zero.
+            argv += ["--without", *a.report_without]
         return self.call("reads", "residue_report.py", argv,
                          {"reads.jsonl": out / f"rows_s{a.seed}.jsonl",
                           "fields.json": out / f"calibration_s{a.seed}.json"},
-                         out / f"manifest_s{a.seed}.json")
+                         out / f"manifest_s{a.seed}.json",
+                         requested=list(a.dmnd))
 
     def linkage(self) -> dict:
         """The grouping calibration: can a read find a read it is genuinely related to?
@@ -216,7 +338,7 @@ class Run:
         tool = ROOT / "experiments/kmer_coverage/target/release/kmer_coverage"
         gone = self.missing("linkage", [tool, a.r1, a.r2])
         if gone:
-            return self.record("linkage", "skipped",
+            return self.record("linkage", "failed",
                                reason=f"absent inputs: {gone}. cargo build --release in "
                                       f"experiments/kmer_coverage builds the counter")
         out = self.work / "linkage"
@@ -242,7 +364,7 @@ class Run:
         binary = ROOT / "experiments/kmer_coverage/target/release/census"
         gone = self.missing("census", [binary, res, a.r1, a.r2])
         if gone:
-            return self.record("census", "skipped", reason=f"absent inputs: {gone}")
+            return self.record("census", "failed", reason=f"absent inputs: {gone}")
         out = self.work / "census"
         argv = ["--seed", str(a.seed), "--queries", str(a.census_queries),
                 "--cascade-work", str(self.work / "cascade_work"),
@@ -270,9 +392,9 @@ class Run:
                                reason="--calibrate not given. The run's divergence ladder "
                                       "is therefore absent rather than assumed, and no "
                                       "sensitivity-at-divergence figure may be read off it")
-        gone = self.missing("calibration", [a.r1, a.r2, ROOT / "data/spike"])
+        gone = self.missing("calibration", [a.r1, a.r2, a.spike_genome])
         if gone:
-            return self.record("calibration", "skipped", reason=f"absent inputs: {gone}")
+            return self.record("calibration", "failed", reason=f"absent inputs: {gone}")
         out = self.work / "calibration"
         argv = ["--seed", str(a.seed), "--out", str(out),
                 "--genome", str(a.spike_genome),
@@ -297,8 +419,8 @@ class Run:
                                reason="--unidentified-contigs not given, so tier 2 has no "
                                       "population in this run")
         p = Path(a.unidentified_contigs[0])
-        if not p.exists():
-            return self.record("contigs", "skipped", reason=f"{p} is absent")
+        if self.missing("contigs", [p]):
+            return self.record("contigs", "failed", reason=f"{p} is absent or empty")
         rows = self.dir / "contigs.jsonl"
         n = 0
         with open(p) as fh, open(rows, "w") as out:
@@ -331,6 +453,10 @@ class Run:
                 else:
                     buf.append(line.strip())
             flush()
+        if n == 0:
+            return self.record("contigs", "failed",
+                               reason=f"{p} holds no sequence, so tier 2 would read as an "
+                                      f"empty population rather than an unreadable file")
         return self.record("contigs", "ok", rows=n,
                            outputs={"contigs.jsonl": {
                                "bytes": rows.stat().st_size, "rows": n,
@@ -366,7 +492,35 @@ class Run:
         """
         p = self.dir / "reads.jsonl"
         if not p.exists():
-            return self.record("strains", "skipped", reason="reads.jsonl is absent")
+            return self.record("strains", "skipped" if "reads" not in self.args.stages
+                               else "failed", reason="reads.jsonl is absent")
+        # WHETHER ANYTHING WAS SEARCHED decides what an empty table means, and it is read
+        # from the per-read report's own record of what it opened - never inferred from
+        # the rows, where "searched, no hit" and "never searched" look identical (a
+        # missing `closest_*` key). This stage once wrote an empty strains.json that read
+        # as "no divergent relatives found" when the protein index had never been passed.
+        fp = self.dir / "fields.json"
+        calib = json.loads(fp.read_text()) if fp.exists() else {}
+        cons = [e for e in calib.get("consulted", []) or []
+                if str(e.get("role", "")).startswith("closest_")]
+        res_searched = [e for e in cons if e.get("state") == "searched"
+                        and e["role"].endswith(" residue")]
+        known_cons = [e for e in cons if e.get("state") == "searched"
+                      and e["role"].endswith(" known")]
+        if not res_searched:
+            searched = {"searched": False, "indexes": [],
+                        "why": ("no --dmnd given, so no read was searched for a relative"
+                                if not self.args.dmnd else
+                                "the per-read report records no protein search, although "
+                                f"{[str(d) for d in self.args.dmnd]} was requested")}
+            (self.dir / "strains.json").write_text(json.dumps({
+                "state": "not searched", **searched, "subjects": None,
+                "subjects_total": None,
+                "reading": "NOT a negative result: nothing was searched, so this run says "
+                           "nothing about divergent relatives"}, indent=2))
+            if self.args.dmnd:
+                return self.record("strains", "failed", reason=searched["why"])
+            return self.record("strains", "skipped", reason=searched["why"])
         by: dict[str, dict] = {}
         for line in open(p):
             r = json.loads(line)
@@ -390,13 +544,9 @@ class Run:
                         s[f].append(best[f])
         # Whether the control pile was searched at all decides what a zero in its column
         # means, so it is counted rather than assumed. The same check saved the layer
-        # table from reporting a separation nobody had measured.
-        known_searched = 0
-        for line in open(p):
-            r = json.loads(line)
-            if r.get("set") == "known" and any(k.startswith("closest_") and r[k]
-                                               for k in r):
-                known_searched += 1
+        # table from reporting a separation nobody had measured. It used to count known
+        # rows WITH a hit, so a control searched with no hits read as "not searched".
+        known_searched = max((e["queries"] for e in known_cons), default=0)
         rows = []
         for s in by.values():
             if not s["pident"]:
@@ -421,6 +571,10 @@ class Run:
             })
         rows.sort(key=lambda d: (-d["residue_reads"], d["median_identity_percent"]))
         out = {
+            "state": "searched",
+            "searched": True,
+            "indexes": [{"path": e["path"], "queries": e["queries"], "hits": e["hits"]}
+                        for e in res_searched],
             "significance_evalue": SIGNIFICANCE_EVALUE,
             "subjects": rows[:500],
             "subjects_total": len(rows),
@@ -450,14 +604,26 @@ class Run:
         """
         p = self.dir / "tiers.json"
         if not p.exists():
-            return self.record("intervals", "skipped", reason="tiers.json is absent")
+            return self.record("intervals", "skipped" if "cascade" not in self.args.stages
+                               else "failed", reason="tiers.json is absent")
         d = json.loads(p.read_text())
         n = d.get("pairs") or d.get("pairs_scored") or 0
+        if not n:
+            return self.record("intervals", "failed",
+                               reason="tiers.json carries no pair count, so no interval "
+                                      "can be computed; refusing rather than writing nulls")
+        if d.get("union_removed") is None:
+            return self.record("intervals", "failed",
+                               reason="tiers.json carries no union_removed")
         # The operating point lives in the cascade's own manifest rather than in its result
         # file, so it is read from there. Reading it from the result file would have
         # produced a row of nulls and called it an operating point.
         mp = self.dir / "stages" / "cascade_manifest.json"
-        par = json.loads(mp.read_text()).get("parameters", {}) if mp.exists() else {}
+        if not mp.exists():
+            return self.record("intervals", "failed",
+                               reason="the cascade's manifest is absent, so the tier rows "
+                                      "would ship without their operating point")
+        par = json.loads(mp.read_text()).get("parameters", {})
         op = {"k2_confidence": par.get("k2_operating_confidence"),
               "min_match_length_nt": par.get("min_mlen"),
               "diamond_bitscore": par.get("diamond_bitscore"),
@@ -565,7 +731,8 @@ class Run:
         """
         p = self.dir / "reads.jsonl"
         if not p.exists():
-            return self.record("layers", "skipped", reason="reads.jsonl is absent")
+            return self.record("layers", "skipped" if "reads" not in self.args.stages
+                               else "failed", reason="reads.jsonl is absent")
         order = ["recurs_and_unplaceable", "distant_relative", "profile_only", "placed",
                  "artefact_shaped", "undetermined"]
         counts: dict[str, dict[str, int]] = {}
@@ -704,9 +871,12 @@ class Run:
         rows = self.dir / "reads.jsonl"
         known_positive_rows = 0
         if rows.exists():
+            # Parsed, not string-matched: the old test counted a row as known whenever the
+            # text "residue" appeared nowhere in it, so a subject name or any field
+            # containing that word moved a row between piles.
             with open(rows) as fh:
                 for line in fh:
-                    if '"set"' in line and '"residue"' not in line:
+                    if json.loads(line).get("set", "residue") != "residue":
                         known_positive_rows += 1
         field_check: dict | str = {}
         if fields.exists():
@@ -867,6 +1037,12 @@ LAYER_FIELDS = {
     "undetermined": ["closest_*", "library_abundance"],
 }
 
+#: Stages that run an experiment script, and so are preflighted by calling it.
+SCRIPT_STAGES = ["cascade", "reads", "linkage", "census", "calibration"]
+#: Scripts that implement --preflight: they check their own required inputs and tools.
+PREFLIGHT_SCRIPTS = {"subtract_known.py", "residue_report.py", "linkage_census.py",
+                     "spike_holdout.py"}
+
 STAGE_ORDER = ["cascade", "contigs", "reads", "linkage", "census", "calibration",
                "intervals", "layers", "strains"]
 
@@ -885,6 +1061,12 @@ def main() -> int:
     r.add_argument("--report-pairs", type=int, default=20_000,
                    help="residue pairs through the per-read report, whose per-read fields "
                         "are far costlier than the cascade's")
+    r.add_argument("--report-without", nargs="+", default=[],
+                   choices=["abundance", "cross_sample", "rfam", "crispr", "pfam",
+                            "chimaera"],
+                   help="per-read report fields to leave out ON PURPOSE. Without this, a "
+                        "field whose reference or tool is absent stops the run before it "
+                        "starts, rather than being dropped and read as a zero")
     r.add_argument("--linkage-pairs", type=int, default=20_000)
     r.add_argument("--census-queries", type=int, default=3_000,
                    help="pairs per pile through the linkage census. Both piles "
@@ -927,6 +1109,14 @@ def main() -> int:
     r.add_argument("--work", type=Path, default=None)
     r.add_argument("--plan", action="store_true", help="print the stages and exit")
     args = ap.parse_args()
+    # Every stage runs with cwd at the repo root, so a relative path that hapax checked
+    # from the caller's directory would name a different file (or none) inside the stage.
+    # Made absolute once here, so what is checked, passed and recorded is one path.
+    for k, v in vars(args).items():
+        if isinstance(v, Path):
+            setattr(args, k, v.absolute())
+        elif isinstance(v, list) and v and all(isinstance(x, Path) for x in v):
+            setattr(args, k, [x.absolute() for x in v])
 
     if args.plan:
         print("hapax run would execute, in order:")
@@ -935,6 +1125,21 @@ def main() -> int:
         return 0
 
     run = Run(args)
+    run.preflight()
+    if run.problems:
+        print("hapax run: REFUSING TO START - the run would not have done what was asked:",
+              file=sys.stderr)
+        for p in run.problems:
+            print(f"  - {p}", file=sys.stderr)
+        (run.dir / "manifest.json").write_text(json.dumps({
+            "tool": "hapax run", "script_sha256": sha256(ROOT / "hapax.py"),
+            "git_sha": git("rev-parse", "HEAD"), "seed": args.seed,
+            "status": "refused to start", "complete": False,
+            "problems": run.problems,
+            "parameters": {k: (str(v) if isinstance(v, Path) else
+                               [str(x) for x in v] if isinstance(v, list) else v)
+                           for k, v in vars(args).items()}}, indent=2))
+        return 2
     for name in STAGE_ORDER:
         if name not in args.stages:
             run.record(name, "skipped", reason="not selected with --stages")

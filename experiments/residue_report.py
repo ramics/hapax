@@ -79,6 +79,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from berlin_io import revcomp
+from loud import Consulted, Preflight, require_output, run_tool
 from subtract_known import (artefact_fields, dir_bytes, provenance, shannon_entropy,
                             spread, _mm_index)
 
@@ -563,7 +564,50 @@ def main() -> None:
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--work", type=Path, default=Path("/tmp/claude-0/wk/residue"))
     ap.add_argument("--out", type=Path, default=ROOT / "results/residue_report")
+    ap.add_argument("--without", nargs="+", default=[], choices=sorted(FIELD_INPUTS),
+                    help="fields to leave out ON PURPOSE. Each is recorded as 'not "
+                         "searched: --without' in the calibration file. A field whose "
+                         "input is absent and is not named here is a refusal to start, "
+                         "not a field quietly dropped")
+    ap.add_argument("--preflight", action="store_true",
+                    help="check every input, index and tool, then exit: 0 if the run "
+                         "could start, 2 if not")
     args = ap.parse_args()
+
+    # A field whose reference is absent used to be skipped by `if path.exists()`, and its
+    # absence then read downstream as a measured zero (`motif_rate` was 0.0 with no Pfam
+    # on disk). Now every field is either computed, or left out by name and recorded so.
+    pf = Preflight("residue_report.py")
+    if not args.preflight:
+        # The read piles are an earlier stage's products, so a preflight run before that
+        # stage cannot check them; everything else it can.
+        pf.file(args.reads, "--reads")
+        if args.subtracted_reads is not None:
+            pf.file(args.subtracted_reads, "--subtracted-reads")
+    for db in args.dmnd:
+        pf.file(db, "--dmnd")
+    if args.dmnd:
+        pf.exe(args.diamond_bin, "--diamond-bin")
+    for field, inputs in FIELD_INPUTS.items():
+        if not field_on(args, field):
+            continue
+        for attr, kind in inputs:
+            v = attr if kind == "module" else getattr(args, attr)
+            if kind == "exe":
+                pf.exe(v, f"{field} field (--{attr.replace('_', '-')}); or pass "
+                          f"--without {field}")
+            elif kind == "module":
+                pf.module(v, f"{field} field; or pass --without {field}")
+            else:
+                pf.file(v, f"{field} field (--{attr.replace('_', '-')}); or pass "
+                           f"--without {field}")
+    pf.module("RNA", "fold field (ViennaRNA), computed on every row")
+    pf.done(args.preflight)
+    consulted = Consulted()
+    field_state = {f: ("computed" if field_on(args, f) else
+                       "not searched: --skip-fields" if args.skip_fields else
+                       "not searched: --without")
+                   for f in FIELD_INPUTS}
 
     args.out.mkdir(parents=True, exist_ok=True)
     args.work.mkdir(parents=True, exist_ok=True)
@@ -593,17 +637,19 @@ def main() -> None:
 
     # ---- closest relative, however far: no bitscore floor
     for db in args.dmnd:
-        if not db.exists():
-            continue
         tag = f"closest_{db.stem}"
         best = _diamond_best(args.diamond_bin, db, pairs, args.work / f"{tag}_s{args.seed}.fa",
                              args.threads, args.diamond_mode)
         for name, v in best.items():
             rows[name][tag] = v
+        consulted.searched(f"{tag} residue", db, queries=len(pairs), hits=len(best))
+    if not args.dmnd:
+        consulted.not_searched("closest_*", None, "no --dmnd given: no read in this run "
+                               "was searched for a relative")
 
     # ---- abundance in the library itself: rare-and-unknown vs abundant-and-unsequenced
     abund = None
-    if args.library_r1.exists() and not args.skip_fields:
+    if field_on(args, "abundance"):
         from berlin_io import read_pairs as _rp
         t0 = time.perf_counter()
         sk = LibraryAbundance(bits=args.abundance_bits)
@@ -649,7 +695,7 @@ def main() -> None:
 
     # ---- recurrence ACROSS samples: the one field no database can be incomplete about
     cross = None
-    if args.cross_sample_ref.exists() and not args.skip_fields:
+    if field_on(args, "cross_sample"):
         # Everything else in this report is bounded by what some catalogue contains. This
         # field is not: it asks whether the same sequence turns up in OTHER wastewater
         # samples from the same works, which is answered by the samples themselves. A rare
@@ -695,11 +741,13 @@ def main() -> None:
                                   for c in (1, 2, 3, 5, 10)} if kn_counts else None),
             "wall_seconds": time.perf_counter() - t0,
         }
+        consulted.searched("cross_sample", args.cross_sample_ref, queries=len(pairs),
+                           hits=sum(1 for x in counts if x))
         del idx
 
     # ---- Rfam structure search, with a shuffled control for its false-positive rate
     rfam = None
-    if args.rfam.exists() and not args.skip_fields:
+    if field_on(args, "rfam"):
         t0 = time.perf_counter()
         q = {}
         for name, (s1, s2) in pairs.items():
@@ -734,7 +782,7 @@ def main() -> None:
 
     # ---- CRISPR spacers: positive identity with no database in it
     crispr = None
-    if args.spacers.exists() and not args.skip_fields:
+    if field_on(args, "crispr"):
         si = SpacerIndex(args.spacers)
         hits = 0
         for name, (s1, s2) in pairs.items():
@@ -755,7 +803,8 @@ def main() -> None:
 
     # ---- motifs
     pf = {}
-    if args.pfam.exists() and not args.skip_fields:
+    pf_known_rate = None
+    if field_on(args, "pfam"):
         prot = {}
         for name, (s1, s2) in pairs.items():
             for i, (strand, off, s) in enumerate(six_frames(s1 + "NN" + s2)):
@@ -785,12 +834,10 @@ def main() -> None:
                     known_rows[name]["motif"] = sorted(hits,
                                                        key=lambda h: h["evalue"])[:3]
             pf_known_rate = len(kpf) / len(known)
-        else:
-            pf_known_rate = None
 
     # ---- chimaera evidence, and its own false-positive rate on subtracted reads
     chim_fp = None
-    if args.chimaera_ref.exists() and not args.skip_fields:
+    if field_on(args, "chimaera"):
         idx = _mm_index(args.chimaera_ref, args.work / f"{args.chimaera_ref.stem}.mmi",
                         args.threads)
         for name, (s1, s2) in pairs.items():
@@ -830,7 +877,9 @@ def main() -> None:
             "primer_dimer": sum(1 for r in rows.values() if r["primer_dimer"]) / len(rows),
             "low_entropy_0.5": sum(1 for r in rows.values() if r["entropy3"] < 0.5) / len(rows),
         },
-        "motif_rate": len(pf) / len(rows) if pf else 0.0,
+        # 0.0 only when Pfam ran and matched nothing; otherwise the reason it did not run.
+        "motif_rate": (len(pf) / len(rows) if field_on(args, "pfam")
+                       else field_state["pfam"]),
         "motif_rate_on_subtracted_reads": pf_known_rate,
         "library_abundance": abund,
         "crispr": crispr,
@@ -854,8 +903,6 @@ def main() -> None:
         "chimaera_split_rate_on_subtracted_reads": chim_fp,
     }
     for db in args.dmnd:
-        if not db.exists():
-            continue
         tag = f"closest_{db.stem}"
         got = [r[tag] for r in rows.values() if tag in r]
         calib["fields"][tag] = {
@@ -869,6 +916,7 @@ def main() -> None:
             kb = _diamond_best(args.diamond_bin, db, known,
                                args.work / f"{tag}_known_s{args.seed}.fa",
                                args.threads, args.diamond_mode)
+            consulted.searched(f"{tag} known", db, queries=len(known), hits=len(kb))
             calib["fields"][tag]["subtracted_reads_any_hit_frac"] = len(kb) / len(known)
             calib["fields"][tag]["subtracted_reads_bitscore"] = (
                 spread(v["bitscore"] for v in kb.values()) if kb else None)
@@ -882,6 +930,12 @@ def main() -> None:
                 if kname in known_rows:
                     known_rows[kname][tag] = v
 
+    # Which fields ran, and which piles each search covered. A reader of rows_s*.jsonl
+    # cannot tell a missing `closest_*` key (searched, no hit) from an index never searched
+    # without this; `hapax.py strains` reads it rather than inferring from hits.
+    calib["field_state"] = field_state
+    calib["consulted"] = consulted.as_list()
+    calib["known_pile_pairs"] = len(known)
     (args.out / f"calibration_s{args.seed}.json").write_text(json.dumps(calib, indent=2))
     with open(args.out / f"rows_s{args.seed}.jsonl", "w") as h:
         for name, r in rows.items():
@@ -892,6 +946,8 @@ def main() -> None:
     (args.out / f"manifest_s{args.seed}.json").write_text(json.dumps({
         "script": "experiments/residue_report.py",
         **provenance(__file__),
+        "consulted": consulted.as_list(),
+        "field_state": field_state,
         "parameters": {k: (str(v) if isinstance(v, Path) else
                            [str(x) for x in v] if isinstance(v, list) else v)
                        for k, v in vars(args).items()},
@@ -903,6 +959,23 @@ def main() -> None:
                         if p.exists()},
     }, indent=2))
     print(json.dumps(calib, indent=2)[:3000])
+
+
+#: The optional per-read fields and the inputs each one reads. Every input listed is
+#: checked before the run starts; a field is computed unless named in --without (or
+#: --skip-fields is given), and never dropped because its input happened to be absent.
+FIELD_INPUTS = {
+    "abundance": [("library_r1", "file"), ("library_r2", "file")],
+    "cross_sample": [("cross_sample_ref", "file"), ("mappy", "module")],
+    "rfam": [("rfam", "file"), ("cmscan_bin", "exe")],
+    "crispr": [("spacers", "file")],
+    "pfam": [("pfam", "file"), ("pyhmmer", "module")],
+    "chimaera": [("chimaera_ref", "file"), ("mappy", "module")],
+}
+
+
+def field_on(args, field: str) -> bool:
+    return not args.skip_fields and field not in args.without
 
 
 def _row(name: str, s1: str, s2: str, rng: random.Random) -> dict:
@@ -936,8 +1009,10 @@ def _sample_of(ctg: str) -> str:
 
 
 def _load_fasta_pairs(path: Path | None, limit: int) -> dict[str, tuple[str, str]]:
+    """Pairs from a FASTA of /1 /2 records. An absent file is fatal, not an empty pile:
+    returning {} made a missing control pile read as "no known-positive in this run"."""
     if path is None or not path.exists():
-        return {}
+        raise SystemExit(f"{path}: pair FASTA is absent")
     out: dict[str, list] = {}
     name = None
     with open(path) as h:
@@ -949,7 +1024,14 @@ def _load_fasta_pairs(path: Path | None, limit: int) -> dict[str, tuple[str, str
                 out.setdefault(base, ["", ""])[0 if mate == "1" else 1] = line.strip()
             if len(out) > limit:
                 break
-    return {k: (v[0], v[1]) for k, v in list(out.items())[:limit] if v[0] and v[1]}
+    kept = list(out.items())[:limit]
+    broken = [k for k, v in kept if not (v[0] and v[1])]
+    if broken:
+        # The cascade writes both mates of every pair, so a pair with one mate is a
+        # truncated or foreign file, and dropping it would shrink the pile unannounced.
+        raise SystemExit(f"{path}: {len(broken)} of {len(kept)} pairs lack a mate "
+                         f"(first: {broken[0]})")
+    return {k: (v[0], v[1]) for k, v in kept}
 
 
 def _diamond_best(dbin: Path, db: Path, pairs: dict, fa: Path, threads: int, mode: str):
@@ -957,11 +1039,13 @@ def _diamond_best(dbin: Path, db: Path, pairs: dict, fa: Path, threads: int, mod
         for name, (s1, s2) in pairs.items():
             h.write(f">{name}/1\n{s1}\n>{name}/2\n{s2}\n")
     tsv = fa.with_suffix(".tsv")
-    subprocess.run([str(dbin), "blastx", "--db", str(db), "--query", str(fa),
-                    "--out", str(tsv), "--threads", str(threads), "--outfmt", "6",
-                    "qseqid", "sseqid", "pident", "length", "evalue", "bitscore",
-                    "--max-target-seqs", "1", "--evalue", "100", mode, "--quiet"],
-                   check=True)
+    tsv.unlink(missing_ok=True)
+    run_tool([str(dbin), "blastx", "--db", str(db), "--query", str(fa),
+              "--out", str(tsv), "--threads", str(threads), "--outfmt", "6",
+              "qseqid", "sseqid", "pident", "length", "evalue", "bitscore",
+              "--max-target-seqs", "1", "--evalue", "100", mode, "--quiet"],
+             f"DIAMOND blastx against {db.name}")
+    require_output(tsv, f"DIAMOND {db.name}", allow_empty=True)
     best: dict[str, dict] = {}
     with open(tsv) as h:
         for line in h:
