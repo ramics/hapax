@@ -53,6 +53,8 @@ import numpy as np
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir
 
+import library_facts
+
 from insert_profile import read_pairs, revcomp  # same trimming and streaming
 from peptide_absence import Scorer, build_index
 
@@ -104,7 +106,8 @@ def main() -> None:
                     help="contigs to measure each pair's insert against")
     ap.add_argument("--pairs", type=int, default=100_000)
     ap.add_argument("--block", type=int, default=2_000_000)
-    ap.add_argument("--trim-r2", type=int, default=14)
+    library_facts.add_argument(ap)
+    ap.add_argument("--trim-r2", type=int, default=None)
     ap.add_argument("--k", type=int, default=10)
     ap.add_argument("--faa", type=Path, nargs="+",
                     default=[Path("data/prot/viral.1.protein.faa.gz")])
@@ -113,6 +116,12 @@ def main() -> None:
     ap.add_argument("--quantiles", type=float, nargs="+", default=[0.9, 0.99, 0.999])
     ap.add_argument("--out", type=Path, default=Path("results/mate_rho"))
     args = ap.parse_args()
+    # A trim length is a fact about a sequencing run, not a default. It is resolved
+    # from experiments/libraries.json so a library this repo has no entry for is
+    # refused by name rather than silently given Berlin's 14 nt, which on a library
+    # with no non-template prefix deletes real bases from every mate, in the
+    # direction of less recognition.
+    library_facts.resolve_args(args, ["trim_r2"])
 
     rng = random.Random(args.seed)
     np.random.seed(args.seed)

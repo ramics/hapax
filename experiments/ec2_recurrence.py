@@ -40,6 +40,8 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import library_facts
+
 import ec2_common as ec2lib
 from ec2_bigindex import AUTO_APPROVED_USD, projected_cost, render
 
@@ -136,7 +138,9 @@ def main(argv: list[str] | None = None) -> int:
                     help="the pass stops starting subjects after this long, inside the "
                          "dead-man timer, so an underestimated rate costs a short table "
                          "rather than a dead run")
-    ap.add_argument("--trim-r2", type=int, default=14)
+    ap.add_argument("--trim-r2", type=int, default=None,
+                    help="mate 2's non-template prefix for the panel scan. From "
+                         "experiments/libraries.json for --query-run unless given")
     ap.add_argument("--threads", type=int, default=8)
     ap.add_argument("--shards", type=int, default=1,
                     help="how many subjects to process at once. The scan is one "
@@ -164,6 +168,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--dry-run", action="store_true", help="authorize only, launch nothing")
     ap.add_argument("--print-user-data", action="store_true")
     args = ap.parse_args(argv)
+
+    # The trim goes into the UserData and is applied to every panel library the pass
+    # scans, not only to the query run. It is read from the query run's entry because
+    # that is the library this repo has measured; the panel is the same study and the
+    # same kit, which is the assumption, and naming it here is the point of not having
+    # a default. A query run with no entry is refused rather than given Berlin's 14.
+    args.trim_r2 = library_facts.resolve(args.query_run, "trim_r2", args.trim_r2)
 
     cost, cost_note = projected_cost(args.instance_type, args.hard_stop_minutes,
                                      not args.no_spot, args.volume_size)

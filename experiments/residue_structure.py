@@ -80,18 +80,27 @@ import json
 import math
 import random
 import subprocess
+import sys
 import time
 from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-BLOCK = 1_500_000      # pairs skipped per seed, the cascade's convention
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir
+import library_facts
+# These are facts about one sequencing run, and they were module-level literals: a
+# reader of this file could not tell which library they describe, and a run against
+# another library would have used them anyway. They come from experiments/libraries.json
+# by accession, which raises for a library it does not know.
+LIBRARY = "SRR23973193"
+BLOCK = library_facts.fact(LIBRARY, "block")   # pairs skipped per seed
 PAIRS = 100_000        # pairs per block, as the cascade used
-TRIM_R2 = 14           # mate 2's non-template prefix (experiments/berlin_io.py)
+TRIM_R2 = library_facts.fact(LIBRARY, "trim_r2")
 INSERT_Q = [(0.50, 194), (0.75, 246), (0.95, 363), (0.99, 485), (1.0, 600)]
 ERR1, ERR2 = 0.00089, 0.00117
 READ_LEN = 107
-LIBRARY_PAIRS = 8_731_224
+LIBRARY_PAIRS = library_facts.fact(LIBRARY, "pairs")
 ARMS = [("1e-3", 1e-3), ("1e-4", 1e-4), ("1e-5", 1e-5), ("1e-6", 1e-6)]
 ALT = {"A": "CGT", "C": "AGT", "G": "ACT", "T": "ACG"}
 

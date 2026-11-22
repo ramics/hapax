@@ -41,6 +41,10 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir
+
+import library_facts
+
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -115,7 +119,8 @@ def main() -> None:
     ap.add_argument("--geo", type=Path, default=ROOT / "data/geo/GSE228220_Spades_RNA_all.fa.gz")
     ap.add_argument("--silva", type=Path, nargs="+",
                     default=[ROOT / "data/silva/SSU.fa.gz", ROOT / "data/silva/LSU.fa.gz"])
-    ap.add_argument("--trim-r2", type=int, default=14)
+    library_facts.add_argument(ap)
+    ap.add_argument("--trim-r2", type=int, default=None)
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--chunk", type=int, default=20000)
     ap.add_argument("--limit", type=int, default=0, help="pairs to label; 0 = all")
@@ -123,6 +128,12 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=1,
                     help="recorded for the convention; the labelling is deterministic")
     args = ap.parse_args()
+    # A trim length is a fact about a sequencing run, not a default. It is resolved
+    # from experiments/libraries.json so a library this repo has no entry for is
+    # refused by name rather than silently given Berlin's 14 nt, which on a library
+    # with no non-template prefix deletes real bases from every mate, in the
+    # direction of less recognition.
+    library_facts.resolve_args(args, ["trim_r2"])
     args.work.mkdir(parents=True, exist_ok=True)
     import mappy
 

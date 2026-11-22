@@ -62,6 +62,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import library_facts
+
 from shuffle_control import dinuc_shuffle  # noqa: E402
 from divergent_contig_workup import (BANDS, MIN_ALN_AA, SIGNIFICANT_EVALUE, band,
                                      call_orfs, diamond_blastp, gene_role, map_back,
@@ -388,7 +390,14 @@ def main() -> None:
                          "whole-contig distance is reported for all of them regardless")
     ap.add_argument("--r1", type=Path, default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
     ap.add_argument("--r2", type=Path, default=ROOT / "data/berlin/SRR23973193_2.fastq.gz")
-    ap.add_argument("--trim-r2", type=int, default=16)
+    library_facts.add_argument(ap)
+    ap.add_argument("--trim-r2", type=int, default=None,
+                    help="mate 2 bases trimmed when mapping reads back. This stage "
+                         "trimmed 16 where the measured prefix is 14, so the value "
+                         "comes from trim_r2_for_mapback in "
+                         "experiments/libraries.json, which pins what these results "
+                         "were produced with and states the discrepancy. Reconciling "
+                         "it to 14 means re-running this stage")
     ap.add_argument("--map-limit", type=int, default=0)
     ap.add_argument("--dmnd", type=Path, default=ROOT / "data/prot/viral.dmnd")
     ap.add_argument("--dmnd-sprot", type=Path, default=ROOT / "data/prot/sprot.dmnd")
@@ -399,6 +408,11 @@ def main() -> None:
     ap.add_argument("--work", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args()
+    # The map-back trim was a bare default of 16 here while the measured prefix is 14.
+    # It is resolved from experiments/libraries.json under its own key, so the value these
+    # results were produced with is pinned and the discrepancy is recorded rather than
+    # silently reconciled; changing it means re-running this stage.
+    library_facts.resolve_args(a, {"trim_r2": "trim_r2_for_mapback"})
 
     # --dmnd-sprot was missing from this check and then skipped with `continue` wherever
     # it was absent, so a run without it reported Swiss-Prot-free distances under the
