@@ -154,10 +154,10 @@
    "definition": "< 80.0% identity, or covered over < 50% of the contig"
   }
  },
- "git_sha": "9c9ba31980529c2d198fbb7a023274d3995824c6-dirty",
- "tree_dirty": true,
+ "git_sha": "abb2398ed369579b8c126526903e7b7562cd72c1",
+ "tree_dirty": false,
  "script_sha256": "c4d7b5ce76b7db6f15571af61421d0ab347c24cb520739f06625d0c28be79ee5",
  "timings_seconds": {
-  "total": 0.011
+  "total": 0.017
  }
 }
