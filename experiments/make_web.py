@@ -236,6 +236,144 @@ def load(p: Path):
     return json.loads(p.read_text()) if p.exists() else None
 
 
+ROOT = Path(__file__).resolve().parent.parent
+
+#: The point on the spectrum below which a reported identity cannot be read. Both are
+#: measured, not chosen. Below half the contig covered, per-read identity flatters towards
+#: "familiar" by +17.2 points against +7.1 above 90% coverage (`results/holdout_run/`), and
+#: below about 100 aligned residues identity is quantised in steps a reader will
+#: over-interpret. A contig that fails either does not get a position on the axis; it goes
+#: into a lane of its own, because a point drawn at a number that cannot be read is worse
+#: than an admission.
+SPECTRUM_MIN_COVERAGE = 0.5
+SPECTRUM_MIN_ALN_AA = 100
+
+
+def spectrum() -> dict | None:
+    """The distance spectrum: one continuous axis, no bucket boundary anywhere on it.
+
+    WHY A SPECTRUM AND NOT TIERS. Identity against a reference orders contigs by database
+    proximity, so any line drawn across it is a statement about the database rather than
+    about novelty. The whole pile is therefore one ranked continuum, and the only
+    categorical thing the panel draws is whether the measurement can be read at all.
+
+    WHY THE POSITION COMES FROM ONE GENE AND NOT THE CONTIG. A whole-contig identity is
+    whichever gene won on bitscore, and a divergent contig's own genes disagree by a median
+    12.8 points against the near-reference arm's 2.45 (`results/divergent_known/`). So the
+    axis takes the polymerase where one is called, the whole-contig hit otherwise, says
+    which on every row, and draws the spread between a contig's genes as a whisker. A dot
+    without its whisker is the error this panel exists to stop.
+
+    WHY COVERAGE IS THE COLOUR. Identity and coverage are not two optional readouts; an
+    identity without the fraction covered cannot tell a diverged full-length protein from a
+    conserved fragment of one, and those are different findings. Putting coverage on the
+    colour ramp means a thin alignment cannot be read as a confident number by accident.
+
+    WHY THE BIG-INDEX RESULT IS A RING AND NOT AN ARROW. core_nt is a nucleotide index and
+    this axis is protein identity. Drawing a contig as moving from one to the other would be
+    comparing two instruments, which is the move this project refuses. So the 166 contigs
+    that also went to core_nt carry a mark saying what the larger index did to them, in its
+    own units, and the slot for a true displacement arrow waits on the protein pass against
+    nr, which is the same instrument at a larger size.
+    """
+    dk = load(ROOT / "results/divergent_known/divergent_known_s1.json")
+    if dk is None:
+        return None
+    big = {}
+    cn = ROOT / "results/divergent_contigs/core_nt_block_001.jsonl"
+    if cn.exists():
+        for line in cn.read_text().splitlines():
+            if not line.strip():
+                continue
+            r = json.loads(line)
+            if not r.get("hit") or r["evalue"] >= 1e-5:
+                big[r["read"]] = {"state": "no significant hit"}
+                continue
+            state = ("collapsed to a strain-level identification"
+                     if r["pident"] >= 90 and r["aln_frac"] >= 0.5
+                     else "still distant" if r["pident"] < 80 or r["aln_frac"] < 0.5
+                     else "closer, still not an identification")
+            big[r["read"]] = {"state": state, "pident": round(r["pident"], 1),
+                              "frac": round(r["aln_frac"], 3)}
+
+    on_axis, lane = [], []
+    for r in dk["rows"]:
+        glist = [g for g in r.get("genes") or [] if g.get("pident") is not None]
+        genes = [g["pident"] for g in glist]
+        # The coverage that belongs beside a gene-level identity is the fraction of THAT
+        # gene aligned, not the fraction of the contig. A 4 kb contig with one scorable
+        # gene covers a tenth of itself and the gene can still be aligned end to end; the
+        # measured familiarity bias is a property of how much of the scored sequence the
+        # alignment spans, so it is read on the same unit the identity came from.
+        rank = next((g for g in glist if g.get("role") == "polymerase"), None)
+        x = r.get("polymerase_pident")
+        src = "polymerase"
+        if x is None or rank is None:
+            x, src, rank = r["pident"], "whole contig", None
+        if rank is not None:
+            cov = round(rank["aln_aa"] / max(1, rank.get("aa_len") or 1), 3)
+            aln = rank["aln_aa"]
+        else:
+            cov, aln = r["subject_coverage"], r["aln_aa"]
+        why = ("under half the scored gene covered" if cov < SPECTRUM_MIN_COVERAGE
+               else "alignment under 100 aa" if aln < SPECTRUM_MIN_ALN_AA else None)
+        row = {
+            "name": r["contig"], "arm": r["arm"], "x": x, "src": src,
+            "lo": min(genes) if len(genes) > 1 else None,
+            "hi": max(genes) if len(genes) > 1 else None,
+            "genes": len(genes), "cov": cov, "aln": aln,
+            "nt": r["contig_nt"], "evalue": r["evalue"],
+            "depth": (r.get("read_support") or {}).get("mapped_median_depth"),
+            "subject": (r.get("subject_title") or r.get("subject") or "")[:90],
+            "big": big.get(r["contig"]),
+        }
+        (lane if why else on_axis).append({**row, "why": why} if why else row)
+
+    # THE ONE POINT ON THE PLOT WHOSE TRUE DISTANCE IS KNOWN. Everything else on this
+    # axis is a distance to the nearest thing a database happens to hold, which is an
+    # upper bound on identity. The holdout genome was deposited after the reference cutoff
+    # and withheld from every index, so its real divergence is a measured 30.28% at
+    # nucleotide level rather than an inference, and it belongs on the plot labelled as
+    # such. Its three genes also show the gene spread doing its job: 24.3 points.
+    hv = load(ROOT / "results/conserved_positions/conserved_positions_s1.json") or {}
+    hold = None
+    for row in hv.get("per_contig_roles") or []:
+        if row.get("arm") == "extra_candidate_withheld":
+            hold = {"by_role": row["by_role"], "spread": row["spread_points"],
+                    "true_nucleotide_divergence_percent": 30.28,
+                    "note": ("a genome withheld from every index; its position here is a "
+                             "measurement of this axis, not an estimate of the genome")}
+    ex = dk.get("external_positive_control") or {}
+    return {
+        "on_axis": on_axis,
+        "cannot_read": lane,
+        "floors": {"min_coverage": SPECTRUM_MIN_COVERAGE,
+                   "min_aln_aa": SPECTRUM_MIN_ALN_AA},
+        "census": {
+            "searched": (dk.get("discrimination") or {}).get("existence", {})
+                        .get("contigs_searched"),
+            "with_a_significant_hit": (dk.get("discrimination") or {})
+                                      .get("existence", {}).get("real_with_a_significant_hit"),
+            "shuffled_with_a_significant_hit": (dk.get("discrimination") or {})
+                                               .get("existence", {})
+                                               .get("shuffled_with_a_significant_hit"),
+            "drawn": len(on_axis) + len(lane),
+            "note": ("the panel draws the gene-level subset, which is every contig short "
+                     "enough for per-ORF scoring; the census above it is the whole pile"),
+        },
+        "holdout": hold,
+        "holdout_scope": ex or None,
+        # Left empty on purpose rather than omitted, so the page says the axis is coming
+        # instead of the reader discovering later that it was never there. Filled when the
+        # structure pass reports, and only if it reaches past the protein search.
+        "structure_axis": {"state": "not measured yet",
+                           "what_would_fill_it": ("a per-gene structural distance - "
+                                                  "ProstT5 plus Foldseek, or "
+                                                  "profile-to-profile - taken only if it "
+                                                  "reaches past DIAMOND on this material")},
+    }
+
+
 def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int) -> dict:
     rng = random.Random(seed)
     manifest = load(rundir / "manifest.json")
@@ -280,6 +418,7 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int) -> d
                  "field_calibration", "known_positive_rows", "known_positive_note",
                  "interface_rules", "stages")},
         "parameters": manifest.get("parameters", {}),
+        "spectrum": spectrum(),
         "tier_table": load(rundir / "tier_table.json"),
         "layers": load(rundir / "layers.json"),
         "fields": load(rundir / "fields.json"),
@@ -339,6 +478,8 @@ PAGE = """<title>Hapax run viewer</title>
      --pairs all: all checks pass, with one light-mode contrast WARN on --v3 that
      obliges the visible direct labels every ranked row and donut legend carries. */
   --v1: #2a78d6; --v2: #eb6834; --v3: #1baf7a;
+  --cv1: #d6e3ea; --cv2: #a9c6d5; --cv3: #7ba6bf; --cv4: #4f85a5;
+  --cv5: #2a5b76;
   --v2-soft: #f6c3ac; --v-mute: #9aa39e; --v-faint: #e4e8e3;
   --sans: "IBM Plex Sans", system-ui, -apple-system, Segoe UI, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -350,6 +491,8 @@ PAGE = """<title>Hapax run viewer</title>
   --g-phage: #93a3b4; --g-plant: #74b069; --g-fungal: #a68cc8; --g-invert: #4fa89f;
   --g-vert: #d2a04a; --g-human: #e0695c; --g-unknown: #68756f;
   --v1: #3987e5; --v2: #d95926; --v3: #199e70;
+  --cv1: #22333d; --cv2: #33566a; --cv3: #497e99; --cv4: #6ea2bf;
+  --cv5: #9cc6dc;
   --v2-soft: #7d3f26; --v-mute: #68756f; --v-faint: #222b27;
 } }
 :root[data-theme="dark"] {
@@ -359,6 +502,8 @@ PAGE = """<title>Hapax run viewer</title>
   --g-phage: #93a3b4; --g-plant: #74b069; --g-fungal: #a68cc8; --g-invert: #4fa89f;
   --g-vert: #d2a04a; --g-human: #e0695c; --g-unknown: #68756f;
   --v1: #3987e5; --v2: #d95926; --v3: #199e70;
+  --cv1: #22333d; --cv2: #33566a; --cv3: #497e99; --cv4: #6ea2bf;
+  --cv5: #9cc6dc;
   --v2-soft: #7d3f26; --v-mute: #68756f; --v-faint: #222b27;
 }
 body { background: var(--bg); color: var(--fg); font-family: var(--sans);
@@ -430,6 +575,7 @@ details > summary { cursor: pointer; font-size: 13px; color: var(--dim); }
 .callout { border: 1px solid var(--warn); border-left-width: 3px; border-radius: 4px;
   padding: 0.7rem 0.8rem; font-size: 13px; line-height: 1.5; max-width: 76ch; }
 .rankno { font-family: var(--mono); font-size: 11.5px; color: var(--dim); }
+text.ax { font-size: 11px; fill: var(--dim); font-family: var(--sans); }
 .axrow { display: grid; grid-template-columns: 4.2rem 1fr auto; gap: 0.5rem;
   align-items: center; font-size: 11.5px; color: var(--dim); margin-top: 0.3rem; }
 .axlab { font-family: var(--mono); }
@@ -813,6 +959,37 @@ const METHODS = [
       'against 6% under the swap control, so queries come from outside the library ' +
       'searched. The median depth of this pile is 1, which is the floor of what any ' +
       'read-level field can read.'],
+  ]},
+  {id: 'spectrum', t: 'The distance spectrum', rows: [
+    ['Input', 'Every identified contig of at least 300 nt that is short enough for ' +
+      'per-ORF scoring, from the divergent stage, both arms.'],
+    ['Procedure', 'ORFs called by Prodigal in metagenome mode, DIAMOND blastx and blastp ' +
+      'against RefSeq viral proteins and Swiss-Prot, roles read from Pfam at gathering ' +
+      'cutoffs. Position on the axis is the identity of the polymerase where one is ' +
+      'called and the whole-contig hit otherwise, stated per row. The bar is the range ' +
+      'across that contig own scorable genes. Colour is the fraction of the scored gene ' +
+      'the alignment spans. Height is median mapped depth from minimap2.'],
+    ['Threshold', 'E below 1e-5 and at least 60 aa aligned for a hit to exist. A contig ' +
+      'is drawn at an identity only if at least 50% of the scored gene is aligned over ' +
+      'at least 100 aa; the rest go to a lane off the axis.'],
+    ['Denominator', 'Contigs with a significant protein hit and a scorable gene. The ' +
+      'panel prints that count against the whole searched pile.'],
+    ['Control', 'Two, drawn by the same code. The near-reference arm, contigs matching ' +
+      'their reference at 95% or above, lands at the right-hand end by construction and ' +
+      'is what makes the left-hand end readable. And a dinucleotide-preserving shuffle ' +
+      'of the same contigs, which produces 0 significant alignments from 11,361, so the ' +
+      'existence of every point on this axis is calibrated even though no identity on ' +
+      'it is.'],
+    ['Bias', 'Identity against a reference orders contigs by database proximity, so no ' +
+      'threshold is drawn on the axis and the three-bucket overlay is off by default. ' +
+      'Both reference sets are narrow, so each position is an upper bound on identity; ' +
+      'against core_nt, 319 GB, 25 of 149 divergent contigs collapsed to a strain-level ' +
+      'identification and 83 stayed distant, which is the measured size of that bound at ' +
+      'nucleotide level. The ring recording that is a label, not a move along this axis, ' +
+      'because comparing a nucleotide identity with a protein one compares two ' +
+      'instruments. Identity also flatters towards familiar as coverage falls, by +17.2 ' +
+      'points below half coverage against +7.1 above 90%, which is why coverage is on ' +
+      'the colour ramp rather than in a column.'],
   ]},
   {id: 'nulls', t: 'Shuffled nulls', rows: [
     ['Input', 'The same reads or contigs, shuffled with composition preserved.'],
@@ -2295,6 +2472,271 @@ function interval(iv) {
   }));
   const tb2 = el('table'); tb2.innerHTML = th + '</tbody>';
   sc2.append(tb2); det.append(sc2); p.append(det);
+  app.append(p);
+})();
+
+// ---------- the distance spectrum
+/* ONE AXIS, NO BUCKET EDGE ON IT. Identity against a reference orders contigs by how
+   close the database happens to sit, so a line drawn across this axis is a statement
+   about the database and not about novelty. The only categorical call the panel makes is
+   whether the measurement can be read at all, and those rows leave the axis entirely
+   rather than being placed at a number nobody should read. */
+(function () {
+  const S = D.spectrum;
+  const p = panel('The distance spectrum, one contig per row',
+    'Every identified contig scored gene by gene, laid out by how far its conserved gene ' +
+    'sits from the closest protein two reference sets hold. Far on the left, near on the ' +
+    'right, and no boundary anywhere between them. ' + cite('spectrum'));
+  if (!S || !S.on_axis || !S.on_axis.length) {
+    p.append(el('div', 'absent', 'no divergent-stage result in this build'));
+    app.append(p); return;
+  }
+  const RAMP = ['var(--cv1)', 'var(--cv2)', 'var(--cv3)', 'var(--cv4)', 'var(--cv5)'];
+  function covColour(c) {
+    if (c == null) return 'var(--null)';
+    return RAMP[Math.min(4, Math.max(0, Math.floor(c * 5 - 0.0001)))];
+  }
+  const BIG = {
+    'collapsed to a strain-level identification': 'var(--v3)',
+    'closer, still not an identification': 'var(--v1)',
+    'still distant': 'var(--v2)',
+    'no significant hit': 'var(--null)'
+  };
+
+  const ctl = el('div', 'controls');
+  const armSel = el('select');
+  ['both arms', 'divergent only', 'near-reference only'].forEach(v => {
+    const o = document.createElement('option'); o.textContent = v; armSel.append(o); });
+  const bands = el('input'); bands.type = 'checkbox'; bands.id = 'spec-bands';
+  const bl = el('label'); bl.htmlFor = 'spec-bands';
+  bl.textContent = 'draw the old three buckets';
+  const asTable = el('input'); asTable.type = 'checkbox'; asTable.id = 'spec-table';
+  const tl = el('label'); tl.htmlFor = 'spec-table'; tl.textContent = 'as a table';
+  ctl.append(el('span', 'dim', 'show'), armSel, bands, bl, asTable, tl);
+  p.append(ctl);
+
+  // The chart keeps a minimum width and scrolls inside its own box on a narrow screen,
+  // rather than shrinking its labels to four pixels. The page itself still never
+  // scrolls sideways.
+  const host = el('div', 'scroll'); p.append(host);
+  const foot = el('div', 'note'); p.append(foot);
+
+  function rowsNow() {
+    const want = armSel.value;
+    return S.on_axis.filter(r => want === 'both arms' ||
+      (want === 'divergent only' ? r.arm === 'divergent'
+                                 : r.arm !== 'divergent'));
+  }
+
+  function drawTable(rows) {
+    const sc = el('div', 'scroll');
+    const tb = el('table');
+    tb.innerHTML = '<thead><tr><th>contig</th><th>arm</th><th>ranked on</th>' +
+      '<th>identity</th><th>gene spread</th><th>gene covered</th><th>aligned</th>' +
+      '<th>depth</th><th>closest protein</th></tr></thead>';
+    const body = el('tbody');
+    rows.slice().sort((a, b) => a.x - b.x).slice(0, 400).forEach(r => {
+      const tr = el('tr');
+      tr.innerHTML = '<td class="mono">' + esc(short(r.name)) + '</td><td class="dim">' +
+        (r.arm === 'divergent' ? 'divergent' : 'near-reference') + '</td><td class="dim">' +
+        esc(r.src) + '</td><td class="mono">' + num(r.x, 1) + '%</td><td class="mono">' +
+        (r.hi == null ? '<span class="dim">one gene</span>'
+                      : num(r.hi - r.lo, 1) + ' pts over ' + r.genes) +
+        '</td><td class="mono">' + num(r.cov * 100, 0) + '%</td><td class="mono">' +
+        r.aln + ' aa</td><td class="mono">' + (r.depth == null ? '-' : num(r.depth, 0)) +
+        '</td><td>' + esc(r.subject) + '</td>';
+      body.append(tr);
+    });
+    tb.append(body); sc.append(tb);
+    return sc;
+  }
+
+  function short(n) {
+    const m = String(n).match(/NODE_(\\d+)_length_(\\d+)/);
+    return m ? 'NODE ' + m[1] + ' / ' + m[2] + ' nt' : String(n).slice(0, 28);
+  }
+
+  function draw() {
+    host.innerHTML = '';
+    const rows = rowsNow();
+    if (asTable.checked) { host.append(drawTable(rows)); setFoot(rows); return; }
+    const W = 1000, PAD_L = 54, PAD_R = 18, PAD_T = 48;
+    const H_MAIN = 300, H_LANE = 92, GAP = 30;
+    const H = PAD_T + H_MAIN + GAP + H_LANE + 46;
+    const x = v => PAD_L + (Math.min(100, Math.max(20, v)) - 20) / 80 * (W - PAD_L - PAD_R);
+    const dmax = 600;
+    const y = d => {
+      const v = Math.log10(Math.max(1, Math.min(dmax, d == null ? 1 : d)));
+      return PAD_T + H_MAIN - v / Math.log10(dmax) * (H_MAIN - 14);
+    };
+    let s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" ' +
+      'style="min-width:720px" role="img" ' +
+      'aria-label="contigs by the identity of their conserved gene against mapped depth">';
+
+    if (bands.checked) {
+      [[20, 40, 'no name survives'], [40, 90, 'intermediate'], [90, 100, 'strain']]
+        .forEach((b, i) => {
+          s += '<rect x="' + x(b[0]) + '" y="' + PAD_T + '" width="' +
+            (x(b[1]) - x(b[0])) + '" height="' + H_MAIN + '" fill="var(--v-faint)" ' +
+            'opacity="' + (i === 1 ? 0.9 : 0.5) + '"/>';
+          s += '<text x="' + (x(b[0]) + 6) + '" y="' + (PAD_T + 13) +
+            '" class="ax">' + b[2] + '</text>';
+        });
+    }
+
+    for (let v = 20; v <= 100; v += 10) {
+      s += '<line x1="' + x(v) + '" y1="' + PAD_T + '" x2="' + x(v) + '" y2="' +
+        (PAD_T + H_MAIN) + '" stroke="var(--edge)" stroke-width="1"/>';
+      s += '<text x="' + x(v) + '" y="' + (PAD_T + H_MAIN + 16) +
+        '" text-anchor="middle" class="ax">' + v + '%</text>';
+    }
+    [1, 10, 100].forEach(d => {
+      s += '<line x1="' + PAD_L + '" y1="' + y(d) + '" x2="' + (W - PAD_R) + '" y2="' +
+        y(d) + '" stroke="var(--edge)" stroke-width="1" stroke-dasharray="2 4"/>';
+      s += '<text x="' + (PAD_L - 8) + '" y="' + (y(d) + 4) +
+        '" text-anchor="end" class="ax">' + d + 'x</text>';
+    });
+    s += '<text x="' + (PAD_L - 8) + '" y="' + (PAD_T - 10) +
+      '" text-anchor="end" class="ax">depth</text>';
+
+    rows.forEach(r => {
+      const yy = y(r.depth);
+      if (r.hi != null && r.hi - r.lo > 0.05) {
+        s += '<line x1="' + x(r.lo) + '" y1="' + yy + '" x2="' + x(r.hi) + '" y2="' +
+          yy + '" stroke="' + covColour(r.cov) + '" stroke-width="2" ' +
+          'stroke-linecap="round" opacity="0.55"/>';
+      }
+      const ring = r.big && BIG[r.big.state];
+      s += '<circle cx="' + x(r.x) + '" cy="' + yy + '" r="' + (ring ? 5 : 4) +
+        '" fill="' + covColour(r.cov) + '" stroke="' +
+        (ring ? ring : 'var(--panel)') + '" stroke-width="' + (ring ? 2 : 1) + '">' +
+        '<title>' + esc(short(r.name)) + ' - ' +
+        (r.arm === 'divergent' ? 'divergent arm' : 'near-reference arm') + '\\n' +
+        num(r.x, 1) + '% identity, ranked on the ' + r.src + ', E=' + r.evalue + '\\n' +
+        (r.hi == null ? 'one scorable gene'
+          : r.genes + ' scorable genes spanning ' + num(r.lo, 1) + ' to ' +
+            num(r.hi, 1) + '%, a spread of ' + num(r.hi - r.lo, 1) + ' points') + '\\n' +
+        num(r.cov * 100, 0) + '% of that gene aligned over ' + r.aln + ' aa\\n' +
+        'mapped depth ' + (r.depth == null ? 'not measured' : num(r.depth, 0) + 'x') +
+        '\\n' + esc(r.subject) +
+        (r.big ? '\\nagainst core_nt, a 319 GB nucleotide index: ' + r.big.state +
+          (r.big.pident ? ' (' + num(r.big.pident, 1) + '% over ' +
+            num(r.big.frac * 100, 0) + '% of the contig)' : '') : '') +
+        '</title></circle>';
+    });
+
+    const hv = S.holdout;
+    if (hv && hv.by_role) {
+      const ids = Object.keys(hv.by_role).map(k => hv.by_role[k]);
+      const lo = Math.min.apply(null, ids), hi = Math.max.apply(null, ids);
+      const yy = PAD_T - 20;
+      s += '<line x1="' + x(lo) + '" y1="' + yy + '" x2="' + x(hi) + '" y2="' + yy +
+        '" stroke="var(--warn)" stroke-width="2" stroke-linecap="round"/>';
+      Object.keys(hv.by_role).forEach(k => {
+        s += '<circle cx="' + x(hv.by_role[k]) + '" cy="' + yy + '" r="4.5" ' +
+          'fill="var(--panel)" stroke="var(--warn)" stroke-width="2"><title>' +
+          'the withheld genome, ' + esc(k) + ' at ' + num(hv.by_role[k], 1) +
+          '% - true divergence 30.28% at nucleotide level</title></circle>';
+      });
+      s += '<text x="' + (x(lo) - 10) + '" y="' + (yy + 4) +
+        '" text-anchor="end" class="ax">the one genome whose true distance is known, ' +
+        num(hv.spread, 1) + ' points across three genes</text>';
+    }
+
+    const LY = PAD_T + H_MAIN + GAP + 34;
+    s += '<rect x="' + PAD_L + '" y="' + (LY - 26) + '" width="' + (W - PAD_L - PAD_R) +
+      '" height="62" fill="var(--v-faint)" rx="3"/>';
+    s += '<text x="' + (PAD_L + 8) + '" y="' + (LY - 10) + '" class="ax">' +
+      'off the axis: ' + S.cannot_read.length + ' contigs whose identity cannot be read' +
+      '</text>';
+    const perRow = Math.ceil(S.cannot_read.length / 3);
+    const lw = (W - PAD_L - PAD_R - 16) / Math.max(1, perRow);
+    S.cannot_read.forEach((r, i) => {
+      s += '<circle cx="' + (PAD_L + 8 + (i % perRow) * lw + lw / 2) + '" cy="' +
+        (LY + 2 + Math.floor(i / perRow) * 9) +
+        '" r="2.6" fill="var(--null)" opacity="0.85"><title>' +
+        esc(short(r.name)) + ' - ' + esc(r.why) +
+        '\\nreported identity ' + num(r.x, 1) + '%, which is why it is not drawn at it' +
+        '</title></circle>';
+    });
+    s += '<text x="' + ((PAD_L + W - PAD_R) / 2) + '" y="' + (PAD_T + H_MAIN + 34) +
+      '" text-anchor="middle" class="ax">identity of the conserved gene, against the ' +
+      'closest protein in RefSeq viral plus Swiss-Prot</text>';
+    const LGY = H - 10;
+    let lx = PAD_L;
+    s += '<text x="' + lx + '" y="' + (LGY - 1) + '" class="ax">gene covered</text>';
+    lx += 78;
+    RAMP.forEach((c, i) => {
+      s += '<rect x="' + (lx + i * 15) + '" y="' + (LGY - 11) + '" width="13" ' +
+        'height="10" rx="2" fill="' + c + '"/>';
+    });
+    s += '<text x="' + (lx - 4) + '" y="' + (LGY - 1) +
+      '" text-anchor="end" class="ax"></text>';
+    s += '<text x="' + (lx + 78) + '" y="' + (LGY - 1) + '" class="ax">' +
+      '20% to 100%</text>';
+    lx += 150;
+    s += '<line x1="' + lx + '" y1="' + (LGY - 6) + '" x2="' + (lx + 26) + '" y2="' +
+      (LGY - 6) + '" stroke="var(--cv4)" stroke-width="2" stroke-linecap="round"/>';
+    s += '<text x="' + (lx + 32) + '" y="' + (LGY - 1) + '" class="ax">' +
+      'the spread between the genes of one contig</text>';
+    lx += 250;
+    [['var(--v3)', 'core_nt identifies it'], ['var(--v1)', 'core_nt gets closer'],
+     ['var(--v2)', 'core_nt leaves it distant'],
+     ['var(--warn)', 'the withheld genome']].forEach(g => {
+      s += '<circle cx="' + (lx + 6) + '" cy="' + (LGY - 6) + '" r="4.5" ' +
+        'fill="var(--panel)" stroke="' + g[0] + '" stroke-width="2"/>';
+      s += '<text x="' + (lx + 15) + '" y="' + (LGY - 1) + '" class="ax">' + g[1] +
+        '</text>';
+      lx += 14 + g[1].length * 5.6;
+    });
+    s += '</svg>';
+    host.innerHTML = s;
+    setFoot(rows);
+  }
+
+  function setFoot(rows) {
+    const c = S.census || {};
+    const thin = S.cannot_read.filter(r => /covered/.test(r.why)).length;
+    const shortAln = S.cannot_read.length - thin;
+    foot.innerHTML =
+      '<b>How to read it.</b> Position is the identity of the conserved gene - the ' +
+      'polymerase on ' + S.on_axis.filter(r => r.src === 'polymerase').length +
+      ' of ' + S.on_axis.length + ' contigs, the whole-contig hit on the rest, stated ' +
+      'per row - because a contig that carries one identity carries whichever gene won ' +
+      'on bitscore, and the genes of a divergent contig disagree by a median 12.8 ' +
+      'points. The ' +
+      'bar through each dot is that disagreement. Colour is how much of the scored gene ' +
+      'the alignment spans, pale to deep, because identity flatters towards familiar by ' +
+      '+17.2 points when coverage is under half against +7.1 above 90%. Height is ' +
+      'mapped depth. ' +
+      '<b>No line is drawn across the axis</b>, because identity against a reference ' +
+      'orders contigs by database proximity and any threshold on it would be a ' +
+      'statement about the database. ' +
+      '<b>The lane underneath is not a middle bucket</b>: it holds the ' +
+      S.cannot_read.length + ' contigs where the measurement failed - ' + thin +
+      ' with under ' + Math.round(S.floors.min_coverage * 100) +
+      '% of the scored gene aligned and ' + shortAln + ' aligned over under ' +
+      S.floors.min_aln_aa + ' aa - and it is a census, not a verdict. ' +
+      '<b>A ring</b> marks the ' + S.on_axis.filter(r => r.big).length + ' contigs that ' +
+      'also went to core_nt, 319 GB: green collapsed to a strain-level identification ' +
+      'there, blue got closer without reaching one, orange stayed distant. The ring ' +
+      'is a label and not a move along this axis, ' +
+      'because core_nt is a nucleotide index and this axis is protein identity; a ' +
+      'displacement arrow waits on the protein pass against nr, which is the same ' +
+      'instrument at a larger size. ' +
+      (S.structure_axis ? '<b>Structure.</b> ' + esc(S.structure_axis.state) + ': ' +
+        esc(S.structure_axis.what_would_fill_it) + '. ' : '') +
+      '<b>Scope.</b> ' + (c.searched || '?') + ' identified contigs searched, ' +
+      (c.with_a_significant_hit || '?') + ' with a significant protein hit and ' +
+      (c.shuffled_with_a_significant_hit === 0 ? 'none at all from ' + c.searched +
+        ' dinucleotide shuffles of the same contigs'
+        : c.shuffled_with_a_significant_hit + ' from the shuffled null') + '. This panel ' +
+      'draws the ' + c.drawn + ' scored gene by gene; ' + rows.length + ' shown at the ' +
+      'current filter.';
+  }
+
+  armSel.onchange = draw; bands.onchange = draw; asTable.onchange = draw;
+  draw();
   app.append(p);
 })();
 
