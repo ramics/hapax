@@ -21,10 +21,22 @@ WHAT IT ADDS, which is the part worth having:
   3. **The declared blind spots travel with the run**, copied from the committed
      `blind_spots.json` with its hash, so a run directory cannot be read without them.
 
-WHY A STAGE MAY REFUSE RATHER THAN DEGRADE. A stage whose reference data is absent writes
-`status: "skipped"` with the reason, and the run is marked incomplete. It does not fall back
-to a cheaper index and report the number as if it were the real one - the project has
-already had to withdraw a figure whose index silently differed from the one named.
+WHY THE RUN REFUSES RATHER THAN DEGRADES. Before any stage runs, every selected stage is
+preflighted: hapax checks its own inputs, and each experiment script is called with
+`--preflight` and the exact argv it will get, so the script's own list of required indexes
+and tools is the one checked. Anything absent, empty or not executable stops the run in its
+first seconds with every problem listed, exit status 2, and a manifest saying it refused.
+A stage is `skipped` only when the command line asked for that (`--stages`, no
+`--calibrate`, no `--unidentified-contigs`); an input that vanishes mid-run is `failed`.
+Neither falls back to a cheaper index - the project has already had to withdraw a figure
+whose index silently differed from the one named.
+
+WHAT WAS CONSULTED, NOT WHAT WAS ASKED FOR. hapax validated three indexes and never passed
+them on, so runs used the defaults while the manifest named the indexes requested; the
+existence check made it harder to see, because it proved the files were there. So every
+path a stage is asked to use is asserted (a) to appear in the argv actually built and (b)
+where the script writes a `consulted` record, to appear there as opened. A mismatch fails
+the stage.
 
 THE RESIDUE IS LAYERED, NOT SCORED. `layers.json` orders the residue from most to least
 worth a human's attention using only fields whose direction has been measured on known
@@ -98,9 +110,17 @@ class Run:
         (self.dir / "stages").mkdir(parents=True, exist_ok=True)
         self.work: Path = args.work or (self.dir / "work")
         self.work.mkdir(parents=True, exist_ok=True)
+        #: True while every stage is being checked before any runs: `call` then runs each
+        #: script with --preflight, and `missing` ignores what an earlier stage will write.
+        self.preflighting = False
+        self.problems: list[str] = []
 
     # -- stage plumbing -------------------------------------------------------
     def record(self, name: str, status: str, **kw) -> dict:
+        if self.preflighting:
+            if status == "failed":
+                self.problems.append(f"{name}: {kw.get('reason')}")
+            return {"stage": name, "status": status, **kw}
         entry = {"stage": name, "status": status, **kw}
         self.stages.append(entry)
         print(f"[{name}] {status}" + (f": {kw.get('reason')}" if kw.get("reason") else ""),
@@ -112,13 +132,54 @@ class Run:
 
         A stage that starts without its reference data fails deep inside a subprocess,
         often hours in, and on a machine that cannot be debugged. `test -f` first is the
-        cheapest rule this project keeps.
+        cheapest rule this project keeps. An EMPTY file is as absent as a missing one: a
+        zero-byte index is a failed download, not an index with nothing in it.
+
+        During preflight, a path under the work directory is an earlier stage's output and
+        is not expected to exist yet, provided that stage is selected.
         """
-        return [str(p) for p in paths if not Path(p).exists()]
+        out = []
+        for p in map(Path, paths):
+            if self.preflighting and "cascade" in self.args.stages and \
+                    self.work in p.parents:
+                continue
+            if not p.exists():
+                out.append(str(p))
+            elif p.is_file() and p.stat().st_size == 0:
+                out.append(f"{p} (0 bytes)")
+        return out
 
     def call(self, name: str, script: str, argv: list[str],
-             expect: dict[str, Path], manifest: Path | None) -> dict:
-        """Run one experiment script and adopt its outputs into the run directory."""
+             expect: dict[str, Path], manifest: Path | None,
+             requested: list[Path] | None = None) -> dict:
+        """Run one experiment script and adopt its outputs into the run directory.
+
+        `requested` is every index or reference this stage was asked to use. Each must
+        appear in `argv` - the check that would have caught the cascade being validated
+        against three indexes and then run without them - and, where the script records
+        what it opened, in that record.
+        """
+        # A script's built-in default for a sample-specific input is one particular
+        # sample's file (Berlin's assembly, Berlin's CRISPR arrays, Berlin's trim). On a
+        # machine where that file exists the stage runs happily against the wrong sample
+        # and nothing in the output says so, which is worse than a missing file. So hapax
+        # must pass every such flag itself; one absent from the argv is a refusal.
+        without = set(getattr(self.args, "report_without", []) or [])
+        defaulted = [flag for flag, field in SAMPLE_SPECIFIC.get(script, [])
+                     if flag not in argv and not (field and field in without)]
+        if defaulted:
+            return self.record(name, "failed", script=script,
+                               reason=f"{defaulted} not passed, so {script} would use its "
+                                      f"built-in default, which is one specific sample's "
+                                      f"file or setting rather than this run's")
+        dropped = [str(p) for p in (requested or []) if str(p) not in argv]
+        if dropped:
+            return self.record(name, "failed", script=script,
+                               reason=f"asked to use {dropped} but they are not in the "
+                                      f"argv this stage would be run with, so the script "
+                                      f"would fall back to its own defaults")
+        if self.preflighting:
+            return self._preflight_script(name, script, argv)
         t = time.perf_counter()
         log = self.dir / "stages" / f"{name}.log"
         cmd = [PY, "-I", str(ROOT / "experiments" / script), *argv]
@@ -132,25 +193,88 @@ class Run:
             return self.record(name, "failed", script=script, seconds=seconds,
                                argv=argv, log=str(log.relative_to(self.dir)),
                                reason=f"exit {proc.returncode}", tail=tail)
-        prov = {}
-        if manifest and manifest.exists():
+        # A stage's manifest is its provenance, and a stage without one has produced
+        # numbers nobody can attribute to code. That used to be recorded as an empty dict.
+        if manifest is None or not manifest.exists():
+            return self.record(name, "failed", script=script, seconds=seconds, argv=argv,
+                               reason=f"exit 0 but its manifest {manifest} was not written")
+        try:
             m = json.loads(manifest.read_text())
-            prov = {k: m[k] for k in ("git_sha", "tree_dirty", "script_sha256") if k in m}
-            if "script_sha256" not in prov:
-                prov["script_sha256"] = "absent from this stage's own manifest"
+        except ValueError as e:
+            return self.record(name, "failed", script=script, seconds=seconds, argv=argv,
+                               reason=f"its manifest {manifest} is not JSON: {e}")
+        prov = {k: m[k] for k in ("git_sha", "tree_dirty", "script_sha256") if k in m}
+        if "script_sha256" not in prov:
+            return self.record(name, "failed", script=script, seconds=seconds, argv=argv,
+                               reason=f"its manifest carries no script_sha256, so the code "
+                                      f"that produced this stage cannot be pinned")
+        consulted = m.get("consulted")
+        if consulted is not None and requested:
+            seen = {e.get("path") for e in consulted}
+            never = [str(p) for p in requested if str(p) not in seen]
+            if never:
+                return self.record(name, "failed", script=script, seconds=seconds,
+                                   argv=argv, consulted=consulted,
+                                   reason=f"asked to use {never}; the stage's own record "
+                                          f"of what it opened does not include them")
         outputs = {}
         for label, src in expect.items():
             if not src.exists():
                 return self.record(name, "failed", script=script, seconds=seconds,
                                    argv=argv, reason=f"{src} was not written")
+            if src.stat().st_size == 0:
+                return self.record(name, "failed", script=script, seconds=seconds,
+                                   argv=argv, reason=f"{src} was written empty")
             dst = self.dir / label
             dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(src, dst)
             outputs[label] = {"bytes": dst.stat().st_size, "sha256_16": sha256(dst)[:16],
                               "from": str(src)}
+        extra = {"consulted": consulted} if consulted is not None else {
+            "consulted": "this script does not record what it opened; every path in argv "
+                         "was checked to exist before the run"}
         return self.record(name, "ok", script=script, seconds=seconds, argv=argv,
-                           provenance=prov, outputs=outputs,
+                           provenance=prov, outputs=outputs, **extra,
                            log=str(log.relative_to(self.dir)))
+
+    def _preflight_script(self, name: str, script: str, argv: list[str]) -> dict:
+        """Ask the script itself whether it could start with this argv.
+
+        The script owns the list of what it needs, so hapax does not keep a second copy
+        that drifts. Scripts that have no --preflight are checked by hapax alone.
+        """
+        if script not in PREFLIGHT_SCRIPTS:
+            return {"stage": name, "status": "ok"}
+        cmd = [PY, "-I", str(ROOT / "experiments" / script), *argv, "--preflight"]
+        proc = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
+        if proc.returncode != 0:
+            lines = [ln.strip() for ln in (proc.stderr or proc.stdout).splitlines()
+                     if ln.strip()][-15:]
+            self.problems.append(f"{name} ({script} --preflight, exit {proc.returncode}):"
+                                 + "".join(f"\n      {ln}" for ln in lines))
+        return {"stage": name, "status": "ok"}
+
+    def preflight(self) -> None:
+        """Check every selected stage before any of them runs, and refuse if one cannot.
+
+        A run used to discover a missing index when it reached the stage that needed it,
+        which for the per-read report is after the cascade - tens of minutes in, on a
+        machine that may have been launched for that run alone.
+        """
+        a = self.args
+        for p, what in ((a.r1, "r1"), (a.r2, "r2")):
+            if self.missing("inputs", [p]):
+                self.problems.append(f"inputs: {what} {p} is absent or empty")
+        self.preflighting = True
+        try:
+            for name in STAGE_ORDER:
+                if name in a.stages and name in SCRIPT_STAGES:
+                    getattr(self, name)()
+        finally:
+            self.preflighting = False
+        if a.unidentified_contigs and "contigs" in a.stages:
+            for p in self.missing("contigs", a.unidentified_contigs):
+                self.problems.append(f"contigs: {p} is absent or empty")
 
     # -- stages ---------------------------------------------------------------
     def cascade(self) -> dict:
@@ -161,10 +285,16 @@ class Run:
         or 3.5% of this library depending only on confidence.
         """
         a = self.args
+        if a.contigs is None:
+            return self.record("cascade", "failed",
+                               reason="--contigs not given. It has no default because any "
+                                      "default is one sample's own assembly; give this "
+                                      "sample's identified contigs, or `--contigs` with "
+                                      "no paths to run the cascade without them")
         need = [a.r1, a.r2, *a.k2_dbs, *a.silva, *a.dmnd, *(a.contigs or [])]
         gone = self.missing("cascade", need)
         if gone:
-            return self.record("cascade", "skipped", reason=f"absent inputs: {gone}")
+            return self.record("cascade", "failed", reason=f"absent inputs: {gone}")
         out = self.work / "cascade"
         argv = ["--seed", str(a.seed), "--pairs", str(a.pairs),
                 "--r1", str(a.r1), "--r2", str(a.r2), "--trim-r2", str(a.trim_r2),
@@ -198,8 +328,9 @@ class Run:
             argv += ["--diamond-bin", str(a.diamond_bin)]
         if a.k2_no_memory_map:
             argv += ["--no-k2-memory-map"]
-        if a.contigs:
-            argv += ["--selfasm", *[str(c) for c in a.contigs]]
+        # Always passed, even empty: an absent --selfasm makes subtract_known.py fall back
+        # to Berlin's assembly.
+        argv += ["--selfasm", *[str(c) for c in a.contigs]]
         if a.unidentified_contigs:
             argv += ["--observe", *[str(c) for c in a.unidentified_contigs]]
         return self.call("cascade", "subtract_known.py", argv,
@@ -207,25 +338,50 @@ class Run:
                           "stages/cascade_manifest.json": out / f"manifest_s{a.seed}.json",
                           "stages/cascade_rows.jsonl":
                               out / f"residue_rows_s{a.seed}.jsonl"},
-                         out / f"manifest_s{a.seed}.json")
+                         out / f"manifest_s{a.seed}.json",
+                         requested=[*a.k2_dbs, *a.silva, *a.dmnd, *(a.contigs or []),
+                                    *(a.unidentified_contigs or [])])
 
     def reads(self) -> dict:
         """Tier 3: the per-read report, un-thresholded, every field beside its calibration."""
         a = self.args
         res = self.work / "cascade_work" / f"residue_s{a.seed}.fa"
         sub = self.work / "cascade_work" / f"subtracted_s{a.seed}.fa"
-        gone = self.missing("reads", [res, a.r1, a.r2])
+        gone = self.missing("reads", [res, sub, a.r1, a.r2])
         if gone:
-            return self.record("reads", "skipped",
-                               reason=f"the cascade's residue is the input and {gone} is "
-                                      f"absent; run the cascade stage first")
+            return self.record("reads", "failed",
+                               reason=f"the cascade's residue and its subtracted pile are "
+                                      f"the inputs, and {gone} is absent or empty. An "
+                                      f"empty subtracted pile leaves every field without "
+                                      f"its known-positive control")
         out = self.work / "reads"
         argv = ["--seed", str(a.seed), "--residue", str(res), "--reads", str(res),
                 "--max-pairs", str(a.report_pairs), "--threads", str(a.threads),
                 "--library-r1", str(a.r1), "--library-r2", str(a.r2),
                 "--work", str(self.work / "reads_work"), "--out", str(out)]
-        if sub.exists():
-            argv += ["--subtracted-reads", str(sub)]
+        # The subtracted pile is the known-positive control for every field, so it is
+        # always passed, and its absence fails the stage rather than silently leaving the
+        # report with no control.
+        argv += ["--subtracted-reads", str(sub), "--trim-r2", str(a.trim_r2)]
+        # The references that belong to ONE sample. Each is this run's or the field is
+        # left out by name; the script's own defaults are Berlin's files.
+        without = set(a.report_without or [])
+        for field, flag, value, what in (
+                ("chimaera", "--chimaera-ref", a.assembly,
+                 "--assembly (this sample's own full assembly)"),
+                ("cross_sample", "--cross-sample-ref", a.cross_sample_ref,
+                 "--cross-sample-ref (assemblies of other samples from the same works)"),
+                ("crispr", "--spacers", a.spacers,
+                 "--spacers (CRISPR spacers from this sample's assemblies)")):
+            if field in without:
+                continue
+            if value is None:
+                return self.record("reads", "failed",
+                                   reason=f"the {field} field needs {what}, which has no "
+                                          f"default because any default is another "
+                                          f"sample's file; give it, or pass "
+                                          f"--report-without {field}")
+            argv += [flag, str(value)]
         # The protein indexes were NOT passed through before, so the report fell back to
         # its own defaults. Where those are absent every `closest_*` field is missing, and
         # the `strains` stage - which reads exactly those fields - writes an empty file
@@ -236,10 +392,18 @@ class Run:
             argv += ["--diamond-bin", str(a.diamond_bin)]
         if a.single_end:
             argv += ["--single-end"]
+        if a.report_without:
+            # Fields left out on purpose are named, and the per-read report records each
+            # as "not searched: --without" - never as a zero.
+            argv += ["--without", *a.report_without]
         return self.call("reads", "residue_report.py", argv,
                          {"reads.jsonl": out / f"rows_s{a.seed}.jsonl",
                           "fields.json": out / f"calibration_s{a.seed}.json"},
-                         out / f"manifest_s{a.seed}.json")
+                         out / f"manifest_s{a.seed}.json",
+                         requested=list(a.dmnd) + [
+                             v for f, v in (("chimaera", a.assembly),
+                                            ("cross_sample", a.cross_sample_ref))
+                             if v is not None and f not in (a.report_without or [])])
 
     #: Why these two stages refuse on a single-end library rather than running: both are
     #: mate-linkage instruments whose ground truth is "these two sequences came from one
@@ -270,7 +434,7 @@ class Run:
         tool = ROOT / "experiments/kmer_coverage/target/release/kmer_coverage"
         gone = self.missing("linkage", [tool, a.r1, a.r2])
         if gone:
-            return self.record("linkage", "skipped",
+            return self.record("linkage", "failed",
                                reason=f"absent inputs: {gone}. cargo build --release in "
                                       f"experiments/kmer_coverage builds the counter")
         out = self.work / "linkage"
@@ -294,21 +458,33 @@ class Run:
         a = self.args
         if a.single_end:
             return self.record("census", "skipped", reason=self.SINGLE_END_SKIP)
+        # All three label classes are this sample's own contigs. The script's defaults
+        # are Berlin's, so on any other library every neighbour would have been labelled
+        # against the wrong assembly.
+        absent = [f for f, v in (("--rrna-contigs", a.rrna_contigs),
+                                 ("--identified-contigs", a.identified_contigs),
+                                 ("--unidentified-contigs", a.unidentified_contigs))
+                  if not v]
+        if absent:
+            return self.record("census", "failed",
+                               reason=f"the census labels neighbours against this "
+                                      f"sample's own contigs and needs {absent}")
         res = self.work / "cascade_work" / f"residue_s{a.seed}.fa"
         binary = ROOT / "experiments/kmer_coverage/target/release/census"
         gone = self.missing("census", [binary, res, a.r1, a.r2])
         if gone:
-            return self.record("census", "skipped", reason=f"absent inputs: {gone}")
+            return self.record("census", "failed", reason=f"absent inputs: {gone}")
         out = self.work / "census"
         argv = ["--seed", str(a.seed), "--queries", str(a.census_queries),
                 "--cascade-work", str(self.work / "cascade_work"),
                 "--r1", str(a.r1), "--r2", str(a.r2), "--trim-r2", str(a.trim_r2),
                 "--threads", str(a.threads),
                 "--work", str(self.work / "census_work"), "--out", str(out)]
-        if a.unidentified_contigs:
-            # The census labels a neighbour against the contigs that assembled without
-            # being identified, so it takes the first of these sets only.
-            argv += ["--unidentified-contigs", str(a.unidentified_contigs[0])]
+        # The census labels a neighbour against the contigs that assembled without being
+        # identified, so it takes the first of these sets only.
+        argv += ["--unidentified-contigs", str(a.unidentified_contigs[0]),
+                 "--rrna-contigs", str(a.rrna_contigs),
+                 "--identified-contigs", str(a.identified_contigs)]
         return self.call("census", "linkage_census.py", argv,
                          {"census.json": out / f"linkage_census_s{a.seed}.json"},
                          out / f"linkage_census_s{a.seed}.json")
@@ -326,17 +502,50 @@ class Run:
                                reason="--calibrate not given. The run's divergence ladder "
                                       "is therefore absent rather than assumed, and no "
                                       "sensitivity-at-divergence figure may be read off it")
-        gone = self.missing("calibration", [a.r1, a.r2, ROOT / "data/spike"])
+        # The ladder's tier 1 has to be THIS run's tier 1: the same Kraken2 databases and
+        # protein indexes as the cascade, and this sample's own contigs. None of them was
+        # passed before, so the ladder measured Berlin's subtrahend for any library. The
+        # spike genome is sample-specific too: it is a clean holdout only if it is absent
+        # from this sample's assembly.
+        absent = [f for f, v in (("--spike-genome", a.spike_genome),
+                                 ("--contigs", a.contigs),
+                                 ("--unidentified-contigs", a.unidentified_contigs),
+                                 ("--cross-sample-ref", a.cross_sample_ref)) if not v]
+        if absent:
+            return self.record("calibration", "failed",
+                               reason=f"the ladder needs this sample's {absent}")
+        silva = self.work / "cascade_work" / "silva.fa"
+        gone = self.missing("calibration", [a.r1, a.r2, a.spike_genome, silva, *a.contigs])
         if gone:
-            return self.record("calibration", "skipped", reason=f"absent inputs: {gone}")
+            return self.record("calibration", "failed", reason=f"absent inputs: {gone}")
+        # The ladder takes one identified-contig file and the cascade subtracts several,
+        # so the cascade's set is concatenated: the ladder's tier 1 is then the cascade's.
+        ident = self.work / "calibration_identified.fa"
+        if not self.preflighting:
+            with open(ident, "w") as h:
+                for c in a.contigs:
+                    h.write(Path(c).read_text())
         out = self.work / "calibration"
         argv = ["--seed", str(a.seed), "--out", str(out),
                 "--genome", str(a.spike_genome),
                 "--r1", str(a.r1), "--r2", str(a.r2), "--threads", str(a.threads),
+                "--trim-r2", str(a.trim_r2),
+                "--silva", str(silva),
+                "--identified", str(ident),
+                "--unidentified", str(a.unidentified_contigs[0]),
+                "--cross-sample-ref", str(a.cross_sample_ref),
+                "--k2-dbs", *[str(d) for d in a.k2_dbs],
+                "--dmnd", *[str(d) for d in a.dmnd],
                 "--work", str(self.work / "calibration_work")]
+        if a.classify_bin:
+            argv += ["--classify-bin", str(a.classify_bin)]
+        if a.diamond_bin:
+            argv += ["--diamond-bin", str(a.diamond_bin)]
         return self.call("calibration", "spike_holdout.py", argv,
-                         {"calibration_ladder.json": out / f"spike_s{a.seed}.json"},
-                         out / f"spike_s{a.seed}.json")
+                         {"calibration_ladder.json": out / f"spike_s{a.seed}.json",
+                          "stages/calibration_manifest.json":
+                              out / f"manifest_s{a.seed}.json"},
+                         out / f"manifest_s{a.seed}.json")
 
     # -- assembled-but-unidentifiable ----------------------------------------
     def contigs(self) -> dict:
@@ -353,8 +562,8 @@ class Run:
                                reason="--unidentified-contigs not given, so tier 2 has no "
                                       "population in this run")
         p = Path(a.unidentified_contigs[0])
-        if not p.exists():
-            return self.record("contigs", "skipped", reason=f"{p} is absent")
+        if self.missing("contigs", [p]):
+            return self.record("contigs", "failed", reason=f"{p} is absent or empty")
         rows = self.dir / "contigs.jsonl"
         n = 0
         with open(p) as fh, open(rows, "w") as out:
@@ -387,6 +596,10 @@ class Run:
                 else:
                     buf.append(line.strip())
             flush()
+        if n == 0:
+            return self.record("contigs", "failed",
+                               reason=f"{p} holds no sequence, so tier 2 would read as an "
+                                      f"empty population rather than an unreadable file")
         return self.record("contigs", "ok", rows=n,
                            outputs={"contigs.jsonl": {
                                "bytes": rows.stat().st_size, "rows": n,
@@ -424,18 +637,30 @@ class Run:
         src = Path(src)
         gone = self.missing("divergent", [src, a.r1, a.r2])
         if gone:
-            return self.record("divergent", "skipped", missing=gone)
+            return self.record("divergent", "failed", reason=f"absent inputs: {gone}")
+        # The script takes its two protein indexes as separate flags, and was given
+        # NEITHER, so it used its own defaults whatever --dmnd said - the same dropped
+        # argument as the cascade's. hapax's --dmnd is (viral, Swiss-Prot) in that order.
+        if len(a.dmnd) != 2:
+            return self.record("divergent", "failed",
+                               reason=f"needs exactly two --dmnd indexes (viral, then "
+                                      f"Swiss-Prot); got {[str(d) for d in a.dmnd]}")
         out = self.work / "divergent"
-        out.mkdir(parents=True, exist_ok=True)
+        if not self.preflighting:
+            out.mkdir(parents=True, exist_ok=True)
         argv = ["--seed", str(a.seed), "--contigs", str(src),
                 "--r1", str(a.r1), "--r2", str(a.r2),
                 "--trim-r2", str(a.trim_r2),
+                "--dmnd", str(a.dmnd[0]), "--dmnd-sprot", str(a.dmnd[1]),
                 "--work", str(out / "work"),
                 "--out", str(out / f"divergent_known_s{a.seed}.json")]
+        if a.diamond_bin:
+            argv += ["--diamond-bin", str(a.diamond_bin)]
         return self.call("divergent", "divergent_known.py", argv,
                          {f"divergent_known_s{a.seed}.json":
                               out / f"divergent_known_s{a.seed}.json"},
-                         out / f"divergent_known_s{a.seed}.json")
+                         out / f"divergent_known_s{a.seed}.json",
+                         requested=[src, *a.dmnd])
 
     # -- new strains of known viruses ----------------------------------------
     def strains(self) -> dict:
@@ -464,7 +689,35 @@ class Run:
         """
         p = self.dir / "reads.jsonl"
         if not p.exists():
-            return self.record("strains", "skipped", reason="reads.jsonl is absent")
+            return self.record("strains", "skipped" if "reads" not in self.args.stages
+                               else "failed", reason="reads.jsonl is absent")
+        # WHETHER ANYTHING WAS SEARCHED decides what an empty table means, and it is read
+        # from the per-read report's own record of what it opened - never inferred from
+        # the rows, where "searched, no hit" and "never searched" look identical (a
+        # missing `closest_*` key). This stage once wrote an empty strains.json that read
+        # as "no divergent relatives found" when the protein index had never been passed.
+        fp = self.dir / "fields.json"
+        calib = json.loads(fp.read_text()) if fp.exists() else {}
+        cons = [e for e in calib.get("consulted", []) or []
+                if str(e.get("role", "")).startswith("closest_")]
+        res_searched = [e for e in cons if e.get("state") == "searched"
+                        and e["role"].endswith(" residue")]
+        known_cons = [e for e in cons if e.get("state") == "searched"
+                      and e["role"].endswith(" known")]
+        if not res_searched:
+            searched = {"searched": False, "indexes": [],
+                        "why": ("no --dmnd given, so no read was searched for a relative"
+                                if not self.args.dmnd else
+                                "the per-read report records no protein search, although "
+                                f"{[str(d) for d in self.args.dmnd]} was requested")}
+            (self.dir / "strains.json").write_text(json.dumps({
+                "state": "not searched", **searched, "subjects": None,
+                "subjects_total": None,
+                "reading": "NOT a negative result: nothing was searched, so this run says "
+                           "nothing about divergent relatives"}, indent=2))
+            if self.args.dmnd:
+                return self.record("strains", "failed", reason=searched["why"])
+            return self.record("strains", "skipped", reason=searched["why"])
         by: dict[str, dict] = {}
         for line in open(p):
             r = json.loads(line)
@@ -488,13 +741,9 @@ class Run:
                         s[f].append(best[f])
         # Whether the control pile was searched at all decides what a zero in its column
         # means, so it is counted rather than assumed. The same check saved the layer
-        # table from reporting a separation nobody had measured.
-        known_searched = 0
-        for line in open(p):
-            r = json.loads(line)
-            if r.get("set") == "known" and any(k.startswith("closest_") and r[k]
-                                               for k in r):
-                known_searched += 1
+        # table from reporting a separation nobody had measured. It used to count known
+        # rows WITH a hit, so a control searched with no hits read as "not searched".
+        known_searched = max((e["queries"] for e in known_cons), default=0)
         rows = []
         for s in by.values():
             if not s["pident"]:
@@ -519,6 +768,10 @@ class Run:
             })
         rows.sort(key=lambda d: (-d["residue_reads"], d["median_identity_percent"]))
         out = {
+            "state": "searched",
+            "searched": True,
+            "indexes": [{"path": e["path"], "queries": e["queries"], "hits": e["hits"]}
+                        for e in res_searched],
             "significance_evalue": SIGNIFICANCE_EVALUE,
             "subjects": rows[:500],
             "subjects_total": len(rows),
@@ -548,14 +801,26 @@ class Run:
         """
         p = self.dir / "tiers.json"
         if not p.exists():
-            return self.record("intervals", "skipped", reason="tiers.json is absent")
+            return self.record("intervals", "skipped" if "cascade" not in self.args.stages
+                               else "failed", reason="tiers.json is absent")
         d = json.loads(p.read_text())
         n = d.get("pairs") or d.get("pairs_scored") or 0
+        if not n:
+            return self.record("intervals", "failed",
+                               reason="tiers.json carries no pair count, so no interval "
+                                      "can be computed; refusing rather than writing nulls")
+        if d.get("union_removed") is None:
+            return self.record("intervals", "failed",
+                               reason="tiers.json carries no union_removed")
         # The operating point lives in the cascade's own manifest rather than in its result
         # file, so it is read from there. Reading it from the result file would have
         # produced a row of nulls and called it an operating point.
         mp = self.dir / "stages" / "cascade_manifest.json"
-        par = json.loads(mp.read_text()).get("parameters", {}) if mp.exists() else {}
+        if not mp.exists():
+            return self.record("intervals", "failed",
+                               reason="the cascade's manifest is absent, so the tier rows "
+                                      "would ship without their operating point")
+        par = json.loads(mp.read_text()).get("parameters", {})
         op = {"k2_confidence": par.get("k2_operating_confidence"),
               "min_match_length_nt": par.get("min_mlen"),
               "diamond_bitscore": par.get("diamond_bitscore"),
@@ -628,6 +893,14 @@ class Run:
             iv["lo_block_corrected"] = max(0.0, iv["point"] - half)
             iv["hi_block_corrected"] = min(1.0, iv["point"] + half)
         breakdown["design_effect"] = DESIGN_EFFECT
+        # Advisory, not fatal: the factor is the only estimate there is, and it is a
+        # property of flow-cell layout rather than of the classifier. But on any library
+        # other than the one it was measured on it is BORROWED, and the file says so.
+        breakdown["design_effect_borrowed"] = "SRR23973193" not in str(self.args.r1)
+        if breakdown["design_effect_borrowed"]:
+            breakdown["design_effect_note"] = (
+                "measured on SRR23973193 and applied here unmeasured; the block-corrected "
+                "intervals are an estimate borrowed from another library")
         out = {"pairs": n, "operating_point": op, "breakdown": breakdown, "curve": rows,
                "interval_method": "wilson_95_on_this_run's_counts; a multi-seed run "
                                   "reports across-seed spread instead",
@@ -663,7 +936,8 @@ class Run:
         """
         p = self.dir / "reads.jsonl"
         if not p.exists():
-            return self.record("layers", "skipped", reason="reads.jsonl is absent")
+            return self.record("layers", "skipped" if "reads" not in self.args.stages
+                               else "failed", reason="reads.jsonl is absent")
         order = ["recurs_and_unplaceable", "distant_relative", "profile_only", "placed",
                  "artefact_shaped", "undetermined"]
         counts: dict[str, dict[str, int]] = {}
@@ -802,9 +1076,12 @@ class Run:
         rows = self.dir / "reads.jsonl"
         known_positive_rows = 0
         if rows.exists():
+            # Parsed, not string-matched: the old test counted a row as known whenever the
+            # text "residue" appeared nowhere in it, so a subject name or any field
+            # containing that word moved a row between piles.
             with open(rows) as fh:
                 for line in fh:
-                    if '"set"' in line and '"residue"' not in line:
+                    if json.loads(line).get("set", "residue") != "residue":
                         known_positive_rows += 1
         field_check: dict | str = {}
         if fields.exists():
@@ -965,6 +1242,33 @@ LAYER_FIELDS = {
     "undetermined": ["closest_*", "library_abundance"],
 }
 
+#: Stages that run an experiment script, and so are preflighted by calling it.
+SCRIPT_STAGES = ["cascade", "reads", "linkage", "census", "calibration", "divergent"]
+#: Flags whose script default is one specific sample's file or setting, which hapax must
+#: therefore always pass. The second element names the per-read field that may be left out
+#: with --report-without instead.
+SAMPLE_SPECIFIC = {
+    "subtract_known.py": [("--r1", None), ("--r2", None), ("--trim-r2", None),
+                          ("--selfasm", None)],
+    "residue_report.py": [("--library-r1", "abundance"), ("--library-r2", "abundance"),
+                          ("--trim-r2", None), ("--chimaera-ref", "chimaera"),
+                          ("--cross-sample-ref", "cross_sample"), ("--spacers", "crispr")],
+    "linkage_census.py": [("--r1", None), ("--r2", None), ("--trim-r2", None),
+                          ("--rrna-contigs", None), ("--identified-contigs", None),
+                          ("--unidentified-contigs", None)],
+    "spike_holdout.py": [("--r1", None), ("--r2", None), ("--trim-r2", None),
+                         ("--genome", None), ("--identified", None),
+                         ("--unidentified", None), ("--cross-sample-ref", None),
+                         ("--silva", None)],
+    "mate_friends.py": [("--r1", None), ("--r2", None), ("--trim-r2", None)],
+    "divergent_known.py": [("--r1", None), ("--r2", None), ("--trim-r2", None),
+                           ("--contigs", None)],
+}
+
+#: Scripts that implement --preflight: they check their own required inputs and tools.
+PREFLIGHT_SCRIPTS = {"subtract_known.py", "residue_report.py", "linkage_census.py",
+                     "spike_holdout.py"}
+
 STAGE_ORDER = ["cascade", "contigs", "reads", "linkage", "census", "calibration",
                "intervals", "layers", "strains", "divergent"]
 
@@ -990,12 +1294,22 @@ def main() -> int:
     r.add_argument("--report-pairs", type=int, default=20_000,
                    help="residue pairs through the per-read report, whose per-read fields "
                         "are far costlier than the cascade's")
+    r.add_argument("--report-without", nargs="+", default=[],
+                   choices=["abundance", "cross_sample", "rfam", "crispr", "pfam",
+                            "chimaera"],
+                   help="per-read report fields to leave out ON PURPOSE. Without this, a "
+                        "field whose reference or tool is absent stops the run before it "
+                        "starts, rather than being dropped and read as a zero")
     r.add_argument("--linkage-pairs", type=int, default=20_000)
     r.add_argument("--census-queries", type=int, default=3_000,
                    help="pairs per pile through the linkage census. Both piles "
                         "always run: the control is what makes the residue "
                         "number readable")
-    r.add_argument("--trim-r2", type=int, default=14)
+    r.add_argument("--trim-r2", type=int, required=True,
+                   help="non-template bases to cut from the start of mate 2. REQUIRED: it "
+                        "is a property of the library kit (14 on SRR23973193, 0 on most "
+                        "others), and the old default of 14 silently cut 14 real bases off "
+                        "every other library's mate 2")
     r.add_argument("--single-end", action="store_true",
                    help="the library has no second mate, so r2 is r1 again and --trim-r2 "
                         "must be 0. Every cascade tier is a min, max or union over the "
@@ -1013,10 +1327,11 @@ def main() -> int:
                         "Identical calls and confidences; wall time and peak RSS only, "
                         "so those two fields are comparable only across runs that agreed "
                         "on this")
-    r.add_argument("--contigs", type=Path, nargs="+",
-                   default=[ROOT / "data/geo/sample_contigs_rrna.fa",
-                            ROOT / "data/geo/sample_contigs_identified_norrna.fa"],
-                   help="the sample's own IDENTIFIED contigs, the most efficient "
+    r.add_argument("--contigs", type=Path, nargs="*", default=None,
+                   help="REQUIRED for the cascade, no default: the default was Berlin's "
+                        "assembly, which would have been subtracted from any library. "
+                        "Pass it with no paths to run without. "
+                        "The sample's own IDENTIFIED contigs, the most efficient "
                         "subtrahend this project has measured by orders of magnitude - "
                         "1.4 MB of its own ribosomal contigs beats all 272 MB of SILVA. "
                         "It must be the identified ones only: the subtrahend is "
@@ -1035,6 +1350,17 @@ def main() -> int:
                         "reference that identified it, which the cascade computes and "
                         "then discards. A ribosomal match says what the sequence is and "
                         "not whose, so that pile is a different question")
+    r.add_argument("--rrna-contigs", type=Path, default=None,
+                   help="this sample's own ribosomal contigs; the census's rRNA class")
+    r.add_argument("--assembly", type=Path, default=None,
+                   help="this sample's own full assembly: the per-read chimaera test's "
+                        "reference. No default: the old one was Berlin's assembly, which "
+                        "on any other library is the wrong sample")
+    r.add_argument("--cross-sample-ref", type=Path, default=None,
+                   help="assemblies of OTHER samples from the same works, for cross-sample "
+                        "recurrence (per-read report) and the ladder")
+    r.add_argument("--spacers", type=Path, default=None,
+                   help="CRISPR spacers extracted from this sample's assemblies")
     r.add_argument("--k2-dbs", type=Path, nargs="+",
                    default=[ROOT / "data/k2_viral", ROOT / "data/k2_standard08",
                             ROOT / "data/k2_pluspf08", ROOT / "data/k2_pluspf16"])
@@ -1042,8 +1368,10 @@ def main() -> int:
                    default=[ROOT / "data/silva/SSU.fa.gz", ROOT / "data/silva/LSU.fa.gz"])
     r.add_argument("--dmnd", type=Path, nargs="*",
                    default=[ROOT / "data/prot/viral.dmnd", ROOT / "data/prot/sprot.dmnd"])
-    r.add_argument("--spike-genome", type=Path, default=ROOT / "data/spike/holdout.fa",
-                   help="genomes for the divergence ladder. Only a genome ABSENT from "
+    r.add_argument("--spike-genome", type=Path, default=None,
+                   help="REQUIRED with --calibrate, no default: it was chosen as absent "
+                        "from Berlin's assembly, which says nothing about another sample's. "
+                        "Genomes for the divergence ladder. Only a genome ABSENT from "
                         "this sample's own assembly is a clean holdout - a resident one "
                         "is removed by the sample's own contigs at every rung and reads "
                         "as the tool working when it is the sample working "
@@ -1055,6 +1383,14 @@ def main() -> int:
     r.add_argument("--work", type=Path, default=None)
     r.add_argument("--plan", action="store_true", help="print the stages and exit")
     args = ap.parse_args()
+    # Every stage runs with cwd at the repo root, so a relative path that hapax checked
+    # from the caller's directory would name a different file (or none) inside the stage.
+    # Made absolute once here, so what is checked, passed and recorded is one path.
+    for k, v in vars(args).items():
+        if isinstance(v, Path):
+            setattr(args, k, v.absolute())
+        elif isinstance(v, list) and v and all(isinstance(x, Path) for x in v):
+            setattr(args, k, [x.absolute() for x in v])
 
     if args.plan:
         print("hapax run would execute, in order:")
@@ -1063,6 +1399,21 @@ def main() -> int:
         return 0
 
     run = Run(args)
+    run.preflight()
+    if run.problems:
+        print("hapax run: REFUSING TO START - the run would not have done what was asked:",
+              file=sys.stderr)
+        for p in run.problems:
+            print(f"  - {p}", file=sys.stderr)
+        (run.dir / "manifest.json").write_text(json.dumps({
+            "tool": "hapax run", "script_sha256": sha256(ROOT / "hapax.py"),
+            "git_sha": git("rev-parse", "HEAD"), "seed": args.seed,
+            "status": "refused to start", "complete": False,
+            "problems": run.problems,
+            "parameters": {k: (str(v) if isinstance(v, Path) else
+                               [str(x) for x in v] if isinstance(v, list) else v)
+                           for k, v in vars(args).items()}}, indent=2))
+        return 2
     for name in STAGE_ORDER:
         if name not in args.stages:
             run.record(name, "skipped", reason="not selected with --stages")

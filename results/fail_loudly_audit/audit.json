@@ -1,0 +1,545 @@
+{
+  "script": "experiments/fail_loudly_audit.py",
+  "seed": 1,
+  "manifests_read": 131,
+  "verdict": {
+    "relative_paths_in_hapax": {
+      "hapax_runs": [
+        "results/holdout_cascade/run_s1/manifest.json",
+        "results/holdout_cascade/run_s2/manifest.json",
+        "results/holdout_cascade/run_s3/manifest.json",
+        "results/holdout_cascade/run_s4/manifest.json"
+      ],
+      "affected": [],
+      "checked": "every committed hapax run manifest, for a relative input path",
+      "verdict": "every committed hapax run was given absolute paths"
+    },
+    "cascade_silent_tier_skip_and_k2_operating_point": {
+      "runs": [
+        {
+          "manifest": "results/holdout_cascade/run_s1/stages/cascade_manifest.json",
+          "requested_tiers_missing_from_curve": [],
+          "operating_confidence_in_sweep": true,
+          "kraken2_tiers_removing_nothing": [],
+          "has_script_sha256": false,
+          "git_sha": "65520e83e9aa02b28a682a4fc897cf7da117f414-dirty"
+        },
+        {
+          "manifest": "results/holdout_cascade/run_s2/stages/cascade_manifest.json",
+          "requested_tiers_missing_from_curve": [],
+          "operating_confidence_in_sweep": true,
+          "kraken2_tiers_removing_nothing": [],
+          "has_script_sha256": false,
+          "git_sha": "65520e83e9aa02b28a682a4fc897cf7da117f414-dirty"
+        },
+        {
+          "manifest": "results/holdout_cascade/run_s3/stages/cascade_manifest.json",
+          "requested_tiers_missing_from_curve": [],
+          "operating_confidence_in_sweep": true,
+          "kraken2_tiers_removing_nothing": [],
+          "has_script_sha256": false,
+          "git_sha": "5134e4297494c9d9b71d316e10380969fbaf95c0"
+        },
+        {
+          "manifest": "results/subtract_known/manifest_s1.json",
+          "requested_tiers_missing_from_curve": [],
+          "operating_confidence_in_sweep": true,
+          "kraken2_tiers_removing_nothing": [],
+          "has_script_sha256": false,
+          "git_sha": "c7dfe7f93bba6ba32d0fa0a1497f3f3189dbec56-dirty"
+        },
+        {
+          "manifest": "results/subtract_known/manifest_s2.json",
+          "requested_tiers_missing_from_curve": [],
+          "operating_confidence_in_sweep": true,
+          "kraken2_tiers_removing_nothing": [],
+          "has_script_sha256": false,
+          "git_sha": "c7dfe7f93bba6ba32d0fa0a1497f3f3189dbec56-dirty"
+        },
+        {
+          "manifest": "results/subtract_known/manifest_s3.json",
+          "requested_tiers_missing_from_curve": [],
+          "operating_confidence_in_sweep": true,
+          "kraken2_tiers_removing_nothing": [],
+          "has_script_sha256": false,
+          "git_sha": "74ea377cb370d3a26c8505a828f789dda5e3d3e9"
+        },
+        {
+          "manifest": "results/subtract_known/manifest_s4.json",
+          "requested_tiers_missing_from_curve": [],
+          "operating_confidence_in_sweep": true,
+          "kraken2_tiers_removing_nothing": [],
+          "has_script_sha256": false,
+          "git_sha": "74ea377cb370d3a26c8505a828f789dda5e3d3e9-dirty"
+        },
+        {
+          "manifest": "results/subtract_known/manifest_s5.json",
+          "requested_tiers_missing_from_curve": [],
+          "operating_confidence_in_sweep": true,
+          "kraken2_tiers_removing_nothing": [],
+          "has_script_sha256": false,
+          "git_sha": "74ea377cb370d3a26c8505a828f789dda5e3d3e9-dirty"
+        },
+        {
+          "manifest": "results/subtract_recut/manifest_s1.json",
+          "requested_tiers_missing_from_curve": [],
+          "operating_confidence_in_sweep": true,
+          "kraken2_tiers_removing_nothing": [],
+          "has_script_sha256": false,
+          "git_sha": "1278233f7b05bf135200ccb2ddf22e4e95f6d97d"
+        },
+        {
+          "manifest": "results/subtract_recut/manifest_s2.json",
+          "requested_tiers_missing_from_curve": [],
+          "operating_confidence_in_sweep": true,
+          "kraken2_tiers_removing_nothing": [],
+          "has_script_sha256": false,
+          "git_sha": "1278233f7b05bf135200ccb2ddf22e4e95f6d97d"
+        },
+        {
+          "manifest": "results/subtract_recut/manifest_s3.json",
+          "requested_tiers_missing_from_curve": [],
+          "operating_confidence_in_sweep": true,
+          "kraken2_tiers_removing_nothing": [],
+          "has_script_sha256": false,
+          "git_sha": "1278233f7b05bf135200ccb2ddf22e4e95f6d97d"
+        },
+        {
+          "manifest": "results/subtract_recut/manifest_s4.json",
+          "requested_tiers_missing_from_curve": [],
+          "operating_confidence_in_sweep": true,
+          "kraken2_tiers_removing_nothing": [],
+          "has_script_sha256": false,
+          "git_sha": "1278233f7b05bf135200ccb2ddf22e4e95f6d97d"
+        },
+        {
+          "manifest": "results/subtract_recut/manifest_s5.json",
+          "requested_tiers_missing_from_curve": [],
+          "operating_confidence_in_sweep": true,
+          "kraken2_tiers_removing_nothing": [],
+          "has_script_sha256": false,
+          "git_sha": "1278233f7b05bf135200ccb2ddf22e4e95f6d97d"
+        }
+      ],
+      "affected": [],
+      "verdict": "every committed cascade run has every requested tier in its curve, its operating confidence in its sweep, and every Kraken2 tier removing something"
+    },
+    "cascade_manifest_without_script_hash": {
+      "affected": [
+        "results/holdout_cascade/run_s1/stages/cascade_manifest.json",
+        "results/holdout_cascade/run_s2/stages/cascade_manifest.json",
+        "results/holdout_cascade/run_s3/stages/cascade_manifest.json",
+        "results/subtract_known/manifest_s1.json",
+        "results/subtract_known/manifest_s2.json",
+        "results/subtract_known/manifest_s3.json",
+        "results/subtract_known/manifest_s4.json",
+        "results/subtract_known/manifest_s5.json",
+        "results/subtract_recut/manifest_s1.json",
+        "results/subtract_recut/manifest_s2.json",
+        "results/subtract_recut/manifest_s3.json",
+        "results/subtract_recut/manifest_s4.json",
+        "results/subtract_recut/manifest_s5.json"
+      ],
+      "git_shas_per_directory": {
+        "results/holdout_cascade/run_s1/stages": [
+          "65520e83e9aa02b28a682a4fc897cf7da117f414-dirty"
+        ],
+        "results/holdout_cascade/run_s2/stages": [
+          "65520e83e9aa02b28a682a4fc897cf7da117f414-dirty"
+        ],
+        "results/holdout_cascade/run_s3/stages": [
+          "5134e4297494c9d9b71d316e10380969fbaf95c0"
+        ],
+        "results/subtract_known": [
+          "74ea377cb370d3a26c8505a828f789dda5e3d3e9",
+          "74ea377cb370d3a26c8505a828f789dda5e3d3e9-dirty",
+          "c7dfe7f93bba6ba32d0fa0a1497f3f3189dbec56-dirty"
+        ],
+        "results/subtract_recut": [
+          "1278233f7b05bf135200ccb2ddf22e4e95f6d97d"
+        ]
+      },
+      "verdict": "numbers unaffected; provenance gap. A directory whose seeds carry more than one SHA, or a -dirty SHA, cannot be pinned to code without a content hash"
+    },
+    "census_class_without_reference": {
+      "runs": [
+        {
+          "manifest": "results/linkage_census/linkage_census_s1.json",
+          "references": [
+            "identified_contig",
+            "rrna",
+            "unidentified_contig"
+          ],
+          "silva_in_parameters_but_unread": true
+        },
+        {
+          "manifest": "results/linkage_census/linkage_census_s2.json",
+          "references": [
+            "identified_contig",
+            "rrna",
+            "unidentified_contig"
+          ],
+          "silva_in_parameters_but_unread": true
+        },
+        {
+          "manifest": "results/linkage_census/linkage_census_s3.json",
+          "references": [
+            "identified_contig",
+            "rrna",
+            "unidentified_contig"
+          ],
+          "silva_in_parameters_but_unread": true
+        },
+        {
+          "manifest": "results/linkage_census/linkage_census_s4.json",
+          "references": [
+            "identified_contig",
+            "rrna",
+            "unidentified_contig"
+          ],
+          "silva_in_parameters_but_unread": true
+        },
+        {
+          "manifest": "results/linkage_census/linkage_census_s5.json",
+          "references": [
+            "identified_contig",
+            "rrna",
+            "unidentified_contig"
+          ],
+          "silva_in_parameters_but_unread": true
+        }
+      ],
+      "affected": [],
+      "verdict": "every committed census run labelled all three classes"
+    },
+    "census_silva_accepted_never_read": {
+      "affected": [
+        "results/linkage_census/linkage_census_s1.json",
+        "results/linkage_census/linkage_census_s2.json",
+        "results/linkage_census/linkage_census_s3.json",
+        "results/linkage_census/linkage_census_s4.json",
+        "results/linkage_census/linkage_census_s5.json"
+      ],
+      "verdict": "numbers unaffected (the census never read SILVA); these manifests name an index in `parameters` that was not consulted"
+    },
+    "residue_report_unmeasured_zero": {
+      "runs": [
+        {
+          "manifest": "results/residue_fields/manifest_s1.json",
+          "skip_fields": false,
+          "motif_rate": 0.050666666666666665,
+          "motif_rate_is_unmeasured_zero": false,
+          "closest_fields": [
+            "closest_sprot",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "dmnd_requested": [
+            "closest_sprot",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "pfam_index_listed_in_index_bytes": false,
+          "chimaera_rate_is_unmeasured_zero": false,
+          "fields_silently_absent": []
+        },
+        {
+          "manifest": "results/residue_fields/manifest_s2.json",
+          "skip_fields": false,
+          "motif_rate": 0.048666666666666664,
+          "motif_rate_is_unmeasured_zero": false,
+          "closest_fields": [
+            "closest_sprot",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "dmnd_requested": [
+            "closest_sprot",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "pfam_index_listed_in_index_bytes": false,
+          "chimaera_rate_is_unmeasured_zero": false,
+          "fields_silently_absent": []
+        },
+        {
+          "manifest": "results/residue_fields/manifest_s3.json",
+          "skip_fields": false,
+          "motif_rate": 0.0495,
+          "motif_rate_is_unmeasured_zero": false,
+          "closest_fields": [
+            "closest_sprot",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "dmnd_requested": [
+            "closest_sprot",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "pfam_index_listed_in_index_bytes": false,
+          "chimaera_rate_is_unmeasured_zero": false,
+          "fields_silently_absent": []
+        },
+        {
+          "manifest": "results/residue_fields/manifest_s4.json",
+          "skip_fields": false,
+          "motif_rate": 0.052333333333333336,
+          "motif_rate_is_unmeasured_zero": false,
+          "closest_fields": [
+            "closest_sprot",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "dmnd_requested": [
+            "closest_sprot",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "pfam_index_listed_in_index_bytes": false,
+          "chimaera_rate_is_unmeasured_zero": false,
+          "fields_silently_absent": []
+        },
+        {
+          "manifest": "results/residue_fields/manifest_s5.json",
+          "skip_fields": false,
+          "motif_rate": 0.05216666666666667,
+          "motif_rate_is_unmeasured_zero": false,
+          "closest_fields": [
+            "closest_sprot",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "dmnd_requested": [
+            "closest_sprot",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "pfam_index_listed_in_index_bytes": false,
+          "chimaera_rate_is_unmeasured_zero": false,
+          "fields_silently_absent": []
+        },
+        {
+          "manifest": "results/residue_protladder/manifest_s1.json",
+          "skip_fields": true,
+          "motif_rate": 0.0,
+          "motif_rate_is_unmeasured_zero": true,
+          "closest_fields": [
+            "closest_sprot",
+            "closest_uniref50_02pct",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "dmnd_requested": [
+            "closest_sprot",
+            "closest_uniref50_02pct",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "pfam_index_listed_in_index_bytes": true,
+          "chimaera_rate_is_unmeasured_zero": true,
+          "fields_silently_absent": []
+        },
+        {
+          "manifest": "results/residue_protladder/manifest_s2.json",
+          "skip_fields": true,
+          "motif_rate": 0.0,
+          "motif_rate_is_unmeasured_zero": true,
+          "closest_fields": [
+            "closest_sprot",
+            "closest_uniref50_02pct",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "dmnd_requested": [
+            "closest_sprot",
+            "closest_uniref50_02pct",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "pfam_index_listed_in_index_bytes": true,
+          "chimaera_rate_is_unmeasured_zero": true,
+          "fields_silently_absent": []
+        },
+        {
+          "manifest": "results/residue_protladder/manifest_s3.json",
+          "skip_fields": true,
+          "motif_rate": 0.0,
+          "motif_rate_is_unmeasured_zero": true,
+          "closest_fields": [
+            "closest_sprot",
+            "closest_uniref50_02pct",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "dmnd_requested": [
+            "closest_sprot",
+            "closest_uniref50_02pct",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "pfam_index_listed_in_index_bytes": true,
+          "chimaera_rate_is_unmeasured_zero": true,
+          "fields_silently_absent": []
+        },
+        {
+          "manifest": "results/residue_protladder/manifest_s4.json",
+          "skip_fields": true,
+          "motif_rate": 0.0,
+          "motif_rate_is_unmeasured_zero": true,
+          "closest_fields": [
+            "closest_sprot",
+            "closest_uniref50_02pct",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "dmnd_requested": [
+            "closest_sprot",
+            "closest_uniref50_02pct",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "pfam_index_listed_in_index_bytes": true,
+          "chimaera_rate_is_unmeasured_zero": true,
+          "fields_silently_absent": []
+        },
+        {
+          "manifest": "results/residue_protladder/manifest_s5.json",
+          "skip_fields": true,
+          "motif_rate": 0.0,
+          "motif_rate_is_unmeasured_zero": true,
+          "closest_fields": [
+            "closest_sprot",
+            "closest_uniref50_02pct",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "dmnd_requested": [
+            "closest_sprot",
+            "closest_uniref50_02pct",
+            "closest_uniref50_10pct",
+            "closest_viral"
+          ],
+          "pfam_index_listed_in_index_bytes": true,
+          "chimaera_rate_is_unmeasured_zero": true,
+          "fields_silently_absent": []
+        },
+        {
+          "manifest": "results/holdout_cascade/run_s1/fields.json",
+          "skip_fields": null,
+          "motif_rate": "not measured: no profile database in this run",
+          "motif_rate_is_unmeasured_zero": false,
+          "closest_fields": [
+            "closest_sprot",
+            "closest_viral_holdout"
+          ],
+          "dmnd_requested": [],
+          "pfam_index_listed_in_index_bytes": false,
+          "chimaera_rate_is_unmeasured_zero": true,
+          "fields_silently_absent": [
+            "crispr",
+            "cross_sample",
+            "rfam"
+          ]
+        },
+        {
+          "manifest": "results/holdout_cascade/run_s2/fields.json",
+          "skip_fields": null,
+          "motif_rate": "not measured: no profile database in this run",
+          "motif_rate_is_unmeasured_zero": false,
+          "closest_fields": [
+            "closest_sprot",
+            "closest_viral_holdout"
+          ],
+          "dmnd_requested": [],
+          "pfam_index_listed_in_index_bytes": false,
+          "chimaera_rate_is_unmeasured_zero": true,
+          "fields_silently_absent": [
+            "crispr",
+            "cross_sample",
+            "rfam"
+          ]
+        },
+        {
+          "manifest": "results/holdout_cascade/run_s3/fields.json",
+          "skip_fields": null,
+          "motif_rate": "not measured: no profile database in this run",
+          "motif_rate_is_unmeasured_zero": false,
+          "closest_fields": [
+            "closest_sprot",
+            "closest_viral_holdout"
+          ],
+          "dmnd_requested": [],
+          "pfam_index_listed_in_index_bytes": false,
+          "chimaera_rate_is_unmeasured_zero": true,
+          "fields_silently_absent": [
+            "crispr",
+            "cross_sample",
+            "rfam"
+          ]
+        }
+      ],
+      "affected": [
+        "results/residue_protladder/manifest_s1.json",
+        "results/residue_protladder/manifest_s2.json",
+        "results/residue_protladder/manifest_s3.json",
+        "results/residue_protladder/manifest_s4.json",
+        "results/residue_protladder/manifest_s5.json",
+        "results/holdout_cascade/run_s1/fields.json",
+        "results/holdout_cascade/run_s2/fields.json",
+        "results/holdout_cascade/run_s3/fields.json"
+      ],
+      "fields_silently_absent": {
+        "results/holdout_cascade/run_s1/fields.json": [
+          "crispr",
+          "cross_sample",
+          "rfam"
+        ],
+        "results/holdout_cascade/run_s2/fields.json": [
+          "crispr",
+          "cross_sample",
+          "rfam"
+        ],
+        "results/holdout_cascade/run_s3/fields.json": [
+          "crispr",
+          "cross_sample",
+          "rfam"
+        ]
+      },
+      "dmnd_dropped": [],
+      "verdict": "see affected: a rate of 0.0 written where the test never ran (motif: Pfam absent or --skip-fields; chimaera: reference absent)"
+    },
+    "spike_ladder_index_skipped": {
+      "runs": [
+        {
+          "manifest": "results/spike_holdout/manifest_s1.json",
+          "missing": []
+        },
+        {
+          "manifest": "results/spike_holdout/manifest_s2.json",
+          "missing": []
+        },
+        {
+          "manifest": "results/spike_holdout/manifest_s3.json",
+          "missing": []
+        },
+        {
+          "manifest": "results/spike_holdout/manifest_s4.json",
+          "missing": []
+        },
+        {
+          "manifest": "results/spike_holdout/manifest_s5.json",
+          "missing": []
+        }
+      ],
+      "affected": [],
+      "verdict": "every committed ladder run consulted every requested index it recorded",
+      "limit": "Kraken2 databases are not recorded in this script's index_bytes, so their presence cannot be checked from committed output"
+    },
+    "stale_index_cache": {
+      "affected": {},
+      "verdict": "no two committed runs sharing a work directory used different references under one cache name",
+      "limit": "a reference regenerated in place under the same path is invisible here"
+    }
+  }
+}

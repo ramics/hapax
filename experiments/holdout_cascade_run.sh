@@ -118,6 +118,11 @@ ID_NORRNA="$S/asm/contigs_renamed_identified_norrna.fa"
 ID_ALL="$S/asm/contigs_renamed_identified.fa"
 UNID="$S/asm/contigs_renamed_unidentified.fa"
 
+# The per-read report now refuses to start when a field's reference is absent, rather than
+# dropping the field and writing 0.0 for it. The committed run_s1-3 were made without the
+# cross-sample assemblies, Rfam, the CRISPR spacers, Pfam and the chimaera reference
+# (results/fail_loudly_audit/), so those five are left out BY NAME here and recorded as
+# "not searched: --without".
 # ---- 1. the committed cascade, one run directory per seed -----------------------------
 # Five seeds are five disjoint 200k-read blocks of ONE read pool, so the spread between
 # them is subsampling noise and nothing else. It is not library variation and it is not
@@ -128,6 +133,7 @@ for sd in $SEEDS; do
     --seed "$sd" --out "$OUT/run_s$sd" --work "$S/wk/hapax_shared" \
     --single-end --trim-r2 0 --pairs "$PAIRS" --block "$BLOCK" --threads "$THREADS" \
     --report-pairs "$REPORT_PAIRS" \
+    --report-without cross_sample rfam crispr pfam chimaera \
     --k2-no-memory-map \
     --k2-dbs "$S/db/k2_viral_20210517.d" "$S/db/k2_standard08.d" "$S/db/k2_pluspf08.d" \
     --silva "$S/db/SSURef_NR99_1381.fasta.gz" "$S/db/LSURef_NR99_1381.fasta.gz" \

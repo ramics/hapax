@@ -1,0 +1,76 @@
+{
+  "script": "experiments/shuffle_fallback_audit.py",
+  "git_sha": "78c3a5270bd39b06bdd86b7a41d7e9988aa3346b",
+  "tree_dirty": false,
+  "script_sha256": "72ed63703124f52f",
+  "seed": 5,
+  "fasta": "/mnt/project-files/shared/resasm/final.contigs.fa",
+  "fasta_sha256_16": "580543932d8a8047",
+  "sequences": 3695,
+  "results": {
+    "holdout_run": {
+      "read_windows": {
+        "n": 2000,
+        "returned_input": 0,
+        "returned_input_frac": 0.0,
+        "returned_none": 0,
+        "broke_dinucleotide_counts": 0
+      },
+      "whole_contigs": {
+        "n": 2632,
+        "returned_input": 0,
+        "returned_input_frac": 0.0,
+        "returned_none": 0,
+        "broke_dinucleotide_counts": 0
+      }
+    },
+    "divergent_known": {
+      "read_windows": {
+        "n": 2000,
+        "returned_input": 15,
+        "returned_input_frac": 0.0075,
+        "returned_none": 0,
+        "broke_dinucleotide_counts": 0
+      },
+      "whole_contigs": {
+        "n": 2632,
+        "returned_input": 12,
+        "returned_input_frac": 0.00456,
+        "returned_none": 0,
+        "broke_dinucleotide_counts": 0
+      }
+    },
+    "residue_structure": {
+      "read_windows": {
+        "n": 2000,
+        "returned_input": 0,
+        "returned_input_frac": 0.0,
+        "returned_none": 0,
+        "broke_dinucleotide_counts": 0
+      },
+      "whole_contigs": {
+        "n": 2632,
+        "returned_input": 0,
+        "returned_input_frac": 0.0,
+        "returned_none": 0,
+        "broke_dinucleotide_counts": 0
+      }
+    },
+    "residue_contig_annotation": {
+      "read_windows": {
+        "n": 2000,
+        "returned_input": 0,
+        "returned_input_frac": 0.0,
+        "returned_none": 0,
+        "broke_dinucleotide_counts": 0
+      },
+      "whole_contigs": {
+        "n": 2632,
+        "returned_input": 0,
+        "returned_input_frac": 0.0,
+        "returned_none": 0,
+        "broke_dinucleotide_counts": 0
+      }
+    }
+  }
+}
