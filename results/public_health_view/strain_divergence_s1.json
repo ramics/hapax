@@ -1,0 +1,3201 @@
+{
+ "unit": "one row per taxon, over this sample's own assembled contigs",
+ "question": "when we find a virus we already know, is it the one in the database or a divergent strain of it",
+ "operating_point": {
+  "contigs": "data/geo/sample_contigs.fa",
+  "min_contig_nt": 500,
+  "kraken2_confidence": 0.0,
+  "kraken2_database": "k2_pluspf08",
+  "protein_database": "data/prot/viral.dmnd",
+  "diamond_mode": "--sensitive",
+  "diamond_evalue": 1e-05,
+  "min_alignment_aa_for_an_identity": 60
+ },
+ "confidence_is_length_dependent": {
+  "viral_contigs_by_confidence": {
+   "0.0": 1021,
+   "0.1": 11
+  },
+  "reading": "Kraken2 confidence is the fraction of a sequence's minimizers in the called clade, so the threshold a 107 nt read is scored at does not transfer to a 9 kb contig: the survivors at the higher threshold are the SHORT contigs, which is the opposite of what a reader would assume. This script therefore takes the assignment at the lower threshold and requires a protein alignment before a row exists"
+ },
+ "contigs_considered": 10274,
+ "contigs_viral_or_watchlist": 377,
+ "contigs_with_protein_hit": 368,
+ "how_to_read": "low identity over a LONG alignment is a divergent strain and is the row worth attention. Low identity over a short alignment says nothing and is marked as unreadable rather than scored",
+ "blind_spots": [
+  "protein identity understates nucleotide divergence, because synonymous changes are invisible to it. Direction known, magnitude not: a nucleotide comparison needs reference genomes this sandbox cannot fetch",
+  "a contig is a consensus over reads, and assembly fuses lineages below about 3.8% divergence at any depth (results/pair_ladder/), so this finds divergence from the DATABASE and is blind to strain mixtures WITHIN the sample",
+  "a virus present at low depth never assembles, so absence from this table is a weaker statement than absence from the read-level panel",
+  "at read level this measurement is impossible: 107 nt is about 35 amino acids, where strain-level variation is mostly synonymous and the identity sits in the chance band this repo measured"
+ ],
+ "seed": 1,
+ "wall_seconds": 69.4,
+ "git_sha": "b6b23316ab5fb9d57273c3138b51babc64b9b7e3-dirty",
+ "tree_dirty": true,
+ "script_sha256": "39b326ced57950e7",
+ "taxa": [
+  {
+   "name": "Locarnavirus derisii",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 9,
+   "total_nt": 13599,
+   "longest_nt": 2462,
+   "with_protein_hit": 9,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1106_length_2462_cov_3.128376",
+     "nt": 2462,
+     "subject": "YP_009666361.1",
+     "pident": 48.8,
+     "aln_aa": 727,
+     "evalue": 1.38e-207,
+     "bitscore": 613.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1155_length_2362_cov_4.103598",
+     "nt": 2362,
+     "subject": "YP_009666360.1",
+     "pident": 93.1,
+     "aln_aa": 418,
+     "evalue": 7.76e-272,
+     "bitscore": 804.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1233_length_2200_cov_5.014918",
+     "nt": 2200,
+     "subject": "YP_009666360.1",
+     "pident": 97.2,
+     "aln_aa": 497,
+     "evalue": 0.0,
+     "bitscore": 945.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1433_length_1972_cov_3.321335",
+     "nt": 1972,
+     "subject": "YP_009666361.1",
+     "pident": 96.5,
+     "aln_aa": 649,
+     "evalue": 0.0,
+     "bitscore": 1241.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_2613_length_1239_cov_4.832770",
+     "nt": 1239,
+     "subject": "YP_009666360.1",
+     "pident": 88.9,
+     "aln_aa": 396,
+     "evalue": 5.11e-249,
+     "bitscore": 729.0
+    }
+   ],
+   "scorable_alignments": 9,
+   "median_identity_percent": 95.8,
+   "identity_range": [
+    48.8,
+    98.3
+   ],
+   "median_aligned_aa": 396,
+   "longest_aligned_aa": 727,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_1106_length_2462_cov_3.128376",
+    "nt": 2462,
+    "subject": "YP_009666361.1",
+    "pident": 48.8,
+    "aln_aa": 727,
+    "evalue": 1.38e-207,
+    "bitscore": 613.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Wahdswovirus lutenecus",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 10,
+   "total_nt": 12833,
+   "longest_nt": 2210,
+   "with_protein_hit": 10,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1226_length_2210_cov_31.855220",
+     "nt": 2210,
+     "subject": "YP_010770245.1",
+     "pident": 92.9,
+     "aln_aa": 666,
+     "evalue": 0.0,
+     "bitscore": 1275.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1582_length_1822_cov_43.035654",
+     "nt": 1822,
+     "subject": "YP_010770243.1",
+     "pident": 76.8,
+     "aln_aa": 526,
+     "evalue": 2.32e-303,
+     "bitscore": 835.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1606_length_1802_cov_12.714940",
+     "nt": 1802,
+     "subject": "YP_010770243.1",
+     "pident": 72.0,
+     "aln_aa": 525,
+     "evalue": 2.16e-276,
+     "bitscore": 767.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1918_length_1565_cov_25.528477",
+     "nt": 1565,
+     "subject": "YP_010770243.1",
+     "pident": 92.2,
+     "aln_aa": 515,
+     "evalue": 0.0,
+     "bitscore": 971.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_2234_length_1388_cov_22.702926",
+     "nt": 1388,
+     "subject": "YP_010770243.1",
+     "pident": 90.5,
+     "aln_aa": 452,
+     "evalue": 2.12e-308,
+     "bitscore": 842.0
+    }
+   ],
+   "scorable_alignments": 10,
+   "median_identity_percent": 91.3,
+   "identity_range": [
+    72.0,
+    97.2
+   ],
+   "median_aligned_aa": 439,
+   "longest_aligned_aa": 666,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_1606_length_1802_cov_12.714940",
+    "nt": 1802,
+    "subject": "YP_010770243.1",
+    "pident": 72.0,
+    "aln_aa": 525,
+    "evalue": 2.16e-276,
+    "bitscore": 767.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Tobamovirus viridimaculae",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 4,
+   "total_nt": 12000,
+   "longest_nt": 5034,
+   "with_protein_hit": 4,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_78_length_5034_cov_832.757984",
+     "nt": 5034,
+     "subject": "NP_044577.1",
+     "pident": 99.5,
+     "aln_aa": 744,
+     "evalue": 0.0,
+     "bitscore": 1481.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_761_length_3239_cov_364.332286",
+     "nt": 3239,
+     "subject": "NP_044577.1",
+     "pident": 97.9,
+     "aln_aa": 605,
+     "evalue": 0.0,
+     "bitscore": 1195.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1304_length_2115_cov_646.667476",
+     "nt": 2115,
+     "subject": "NP_044577.1",
+     "pident": 97.2,
+     "aln_aa": 680,
+     "evalue": 0.0,
+     "bitscore": 1331.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1851_length_1612_cov_644.550417",
+     "nt": 1612,
+     "subject": "NP_044577.1",
+     "pident": 100.0,
+     "aln_aa": 512,
+     "evalue": 0.0,
+     "bitscore": 1033.0
+    }
+   ],
+   "scorable_alignments": 4,
+   "median_identity_percent": 98.7,
+   "identity_range": [
+    97.2,
+    100.0
+   ],
+   "median_aligned_aa": 642,
+   "longest_aligned_aa": 744,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_1304_length_2115_cov_646.667476",
+    "nt": 2115,
+    "subject": "NP_044577.1",
+    "pident": 97.2,
+    "aln_aa": 680,
+    "evalue": 0.0,
+    "bitscore": 1331.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Tobamovirus tabaci",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 6,
+   "total_nt": 11550,
+   "longest_nt": 3267,
+   "with_protein_hit": 6,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_753_length_3267_cov_11.662516",
+     "nt": 3267,
+     "subject": "NP_056764.1",
+     "pident": 96.6,
+     "aln_aa": 1063,
+     "evalue": 0.0,
+     "bitscore": 2043.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_999_length_2693_cov_24.673616",
+     "nt": 2693,
+     "subject": "NP_597747.1",
+     "pident": 98.6,
+     "aln_aa": 416,
+     "evalue": 1.07e-304,
+     "bitscore": 848.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1258_length_2172_cov_94.034483",
+     "nt": 2172,
+     "subject": "NP_597747.1",
+     "pident": 99.5,
+     "aln_aa": 416,
+     "evalue": 5.85e-309,
+     "bitscore": 852.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_2308_length_1361_cov_6.085758",
+     "nt": 1361,
+     "subject": "NP_056764.1",
+     "pident": 96.3,
+     "aln_aa": 434,
+     "evalue": 1.71e-297,
+     "bitscore": 836.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_2812_length_1175_cov_9.695536",
+     "nt": 1175,
+     "subject": "NP_056764.1",
+     "pident": 100.0,
+     "aln_aa": 391,
+     "evalue": 3.56e-273,
+     "bitscore": 771.0
+    }
+   ],
+   "scorable_alignments": 6,
+   "median_identity_percent": 99.0,
+   "identity_range": [
+    96.3,
+    100.0
+   ],
+   "median_aligned_aa": 416,
+   "longest_aligned_aa": 1063,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_2308_length_1361_cov_6.085758",
+    "nt": 1361,
+    "subject": "NP_056764.1",
+    "pident": 96.3,
+    "aln_aa": 434,
+    "evalue": 1.71e-297,
+    "bitscore": 836.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Chimpavirus luticola",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 6,
+   "total_nt": 10430,
+   "longest_nt": 4526,
+   "with_protein_hit": 6,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_112_length_4526_cov_26.779468",
+     "nt": 4526,
+     "subject": "YP_010771316.1",
+     "pident": 84.8,
+     "aln_aa": 785,
+     "evalue": 0.0,
+     "bitscore": 1343.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1178_length_2315_cov_45.378319",
+     "nt": 2315,
+     "subject": "YP_010771316.1",
+     "pident": 98.7,
+     "aln_aa": 387,
+     "evalue": 6.03e-273,
+     "bitscore": 775.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_2828_length_1170_cov_33.430493",
+     "nt": 1170,
+     "subject": "YP_010771316.1",
+     "pident": 94.1,
+     "aln_aa": 389,
+     "evalue": 3.18e-266,
+     "bitscore": 742.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3498_length_1004_cov_30.396207",
+     "nt": 1004,
+     "subject": "YP_010771314.1",
+     "pident": 77.3,
+     "aln_aa": 321,
+     "evalue": 8.49e-185,
+     "bitscore": 523.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_4758_length_815_cov_20.225000",
+     "nt": 815,
+     "subject": "YP_010771314.1",
+     "pident": 70.8,
+     "aln_aa": 271,
+     "evalue": 5.51e-136,
+     "bitscore": 396.0
+    }
+   ],
+   "scorable_alignments": 6,
+   "median_identity_percent": 89.4,
+   "identity_range": [
+    70.8,
+    98.7
+   ],
+   "median_aligned_aa": 354,
+   "longest_aligned_aa": 785,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_4758_length_815_cov_20.225000",
+    "nt": 815,
+    "subject": "YP_010771314.1",
+    "pident": 70.8,
+    "aln_aa": 271,
+    "evalue": 5.51e-136,
+    "bitscore": 396.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Sholavirus sp. 'caenicola'",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 3,
+   "total_nt": 10130,
+   "longest_nt": 3821,
+   "with_protein_hit": 3,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_322_length_3821_cov_12.363781",
+     "nt": 3821,
+     "subject": "YP_010769867.1",
+     "pident": 76.8,
+     "aln_aa": 544,
+     "evalue": 2.25e-308,
+     "bitscore": 874.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_416_length_3725_cov_82.670027",
+     "nt": 3725,
+     "subject": "YP_010769867.1",
+     "pident": 83.8,
+     "aln_aa": 544,
+     "evalue": 0.0,
+     "bitscore": 955.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1037_length_2584_cov_10.551997",
+     "nt": 2584,
+     "subject": "YP_010769865.1",
+     "pident": 94.3,
+     "aln_aa": 349,
+     "evalue": 3.67e-233,
+     "bitscore": 660.0
+    }
+   ],
+   "scorable_alignments": 3,
+   "median_identity_percent": 83.8,
+   "identity_range": [
+    76.8,
+    94.3
+   ],
+   "median_aligned_aa": 544,
+   "longest_aligned_aa": 544,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_322_length_3821_cov_12.363781",
+    "nt": 3821,
+    "subject": "YP_010769867.1",
+    "pident": 76.8,
+    "aln_aa": 544,
+    "evalue": 2.25e-308,
+    "bitscore": 874.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Picalivirus A",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 1,
+   "total_nt": 9300,
+   "longest_nt": 9300,
+   "with_protein_hit": 1,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_4_length_9300_cov_29.019470",
+     "nt": 9300,
+     "subject": "YP_009552091.1",
+     "pident": 96.0,
+     "aln_aa": 2032,
+     "evalue": 0.0,
+     "bitscore": 3786.0
+    }
+   ],
+   "scorable_alignments": 1,
+   "median_identity_percent": 96.0,
+   "identity_range": [
+    96.0,
+    96.0
+   ],
+   "median_aligned_aa": 2032,
+   "longest_aligned_aa": 2032,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_4_length_9300_cov_29.019470",
+    "nt": 9300,
+    "subject": "YP_009552091.1",
+    "pident": 96.0,
+    "aln_aa": 2032,
+    "evalue": 0.0,
+    "bitscore": 3786.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Cripavirus drosophilae",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 1,
+   "total_nt": 9121,
+   "longest_nt": 9121,
+   "with_protein_hit": 1,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_8_length_9121_cov_6.911979",
+     "nt": 9121,
+     "subject": "NP_044945.1",
+     "pident": 81.2,
+     "aln_aa": 1850,
+     "evalue": 0.0,
+     "bitscore": 3072.0
+    }
+   ],
+   "scorable_alignments": 1,
+   "median_identity_percent": 81.2,
+   "identity_range": [
+    81.2,
+    81.2
+   ],
+   "median_aligned_aa": 1850,
+   "longest_aligned_aa": 1850,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_8_length_9121_cov_6.911979",
+    "nt": 9121,
+    "subject": "NP_044945.1",
+    "pident": 81.2,
+    "aln_aa": 1850,
+    "evalue": 0.0,
+    "bitscore": 3072.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Human astrovirus",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 2,
+   "total_nt": 8906,
+   "longest_nt": 6823,
+   "with_protein_hit": 2,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_37_length_6823_cov_11.736554",
+     "nt": 6823,
+     "subject": "NP_059443.2",
+     "pident": 95.8,
+     "aln_aa": 929,
+     "evalue": 0.0,
+     "bitscore": 1705.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1338_length_2083_cov_7.301775",
+     "nt": 2083,
+     "subject": "NP_059443.2",
+     "pident": 88.7,
+     "aln_aa": 595,
+     "evalue": 0.0,
+     "bitscore": 1009.0
+    }
+   ],
+   "scorable_alignments": 2,
+   "median_identity_percent": 92.2,
+   "identity_range": [
+    88.7,
+    95.8
+   ],
+   "median_aligned_aa": 762,
+   "longest_aligned_aa": 929,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_1338_length_2083_cov_7.301775",
+    "nt": 2083,
+    "subject": "NP_059443.2",
+    "pident": 88.7,
+    "aln_aa": 595,
+    "evalue": 0.0,
+    "bitscore": 1009.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Hubei picorna-like virus 61",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 1,
+   "total_nt": 8725,
+   "longest_nt": 8725,
+   "with_protein_hit": 1,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_10_length_8725_cov_20.058016",
+     "nt": 8725,
+     "subject": "YP_009337062.1",
+     "pident": 98.6,
+     "aln_aa": 2741,
+     "evalue": 0.0,
+     "bitscore": 5322.0
+    }
+   ],
+   "scorable_alignments": 1,
+   "median_identity_percent": 98.6,
+   "identity_range": [
+    98.6,
+    98.6
+   ],
+   "median_aligned_aa": 2741,
+   "longest_aligned_aa": 2741,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_10_length_8725_cov_20.058016",
+    "nt": 8725,
+    "subject": "YP_009337062.1",
+    "pident": 98.6,
+    "aln_aa": 2741,
+    "evalue": 0.0,
+    "bitscore": 5322.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Hubei picorna-like virus 63",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 4,
+   "total_nt": 8435,
+   "longest_nt": 4202,
+   "with_protein_hit": 4,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_157_length_4202_cov_6.957560",
+     "nt": 4202,
+     "subject": "YP_009337038.1",
+     "pident": 88.5,
+     "aln_aa": 1403,
+     "evalue": 0.0,
+     "bitscore": 2423.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_990_length_2720_cov_4.907692",
+     "nt": 2720,
+     "subject": "YP_009337160.1",
+     "pident": 97.8,
+     "aln_aa": 880,
+     "evalue": 0.0,
+     "bitscore": 1697.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3448_length_1013_cov_2.121086",
+     "nt": 1013,
+     "subject": "YP_009337038.1",
+     "pident": 67.2,
+     "aln_aa": 338,
+     "evalue": 1.21e-145,
+     "bitscore": 457.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_10252_length_500_cov_1.617978",
+     "nt": 500,
+     "subject": "YP_009337160.1",
+     "pident": 93.9,
+     "aln_aa": 163,
+     "evalue": 3.21e-100,
+     "bitscore": 318.0
+    }
+   ],
+   "scorable_alignments": 4,
+   "median_identity_percent": 91.2,
+   "identity_range": [
+    67.2,
+    97.8
+   ],
+   "median_aligned_aa": 609,
+   "longest_aligned_aa": 1403,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_3448_length_1013_cov_2.121086",
+    "nt": 1013,
+    "subject": "YP_009337038.1",
+    "pident": 67.2,
+    "aln_aa": 338,
+    "evalue": 1.21e-145,
+    "bitscore": 457.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Hohrdovirus edaphohabitans",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 3,
+   "total_nt": 8337,
+   "longest_nt": 4887,
+   "with_protein_hit": 3,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_84_length_4887_cov_20.230339",
+     "nt": 4887,
+     "subject": "YP_010770687.1",
+     "pident": 70.6,
+     "aln_aa": 721,
+     "evalue": 0.0,
+     "bitscore": 959.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1191_length_2291_cov_10.420841",
+     "nt": 2291,
+     "subject": "YP_010770687.1",
+     "pident": 70.2,
+     "aln_aa": 732,
+     "evalue": 0.0,
+     "bitscore": 962.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_2864_length_1159_cov_5.169384",
+     "nt": 1159,
+     "subject": "YP_010770687.1",
+     "pident": 65.5,
+     "aln_aa": 391,
+     "evalue": 2.65e-161,
+     "bitscore": 472.0
+    }
+   ],
+   "scorable_alignments": 3,
+   "median_identity_percent": 70.2,
+   "identity_range": [
+    65.5,
+    70.6
+   ],
+   "median_aligned_aa": 721,
+   "longest_aligned_aa": 732,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_2864_length_1159_cov_5.169384",
+    "nt": 1159,
+    "subject": "YP_010770687.1",
+    "pident": 65.5,
+    "aln_aa": 391,
+    "evalue": 2.65e-161,
+    "bitscore": 472.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Wenzhou picorna-like virus 47",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 4,
+   "total_nt": 8313,
+   "longest_nt": 3334,
+   "with_protein_hit": 4,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_718_length_3334_cov_5.043001",
+     "nt": 3334,
+     "subject": "YP_009337399.1",
+     "pident": 96.8,
+     "aln_aa": 1128,
+     "evalue": 0.0,
+     "bitscore": 2056.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1213_length_2236_cov_3.641449",
+     "nt": 2236,
+     "subject": "YP_009337399.1",
+     "pident": 98.1,
+     "aln_aa": 634,
+     "evalue": 0.0,
+     "bitscore": 1244.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1351_length_2072_cov_4.402082",
+     "nt": 2072,
+     "subject": "YP_009337399.1",
+     "pident": 98.8,
+     "aln_aa": 685,
+     "evalue": 0.0,
+     "bitscore": 1362.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_6348_length_671_cov_3.600649",
+     "nt": 671,
+     "subject": "YP_009337399.1",
+     "pident": 89.0,
+     "aln_aa": 155,
+     "evalue": 9.41e-82,
+     "bitscore": 268.0
+    }
+   ],
+   "scorable_alignments": 4,
+   "median_identity_percent": 97.4,
+   "identity_range": [
+    89.0,
+    98.8
+   ],
+   "median_aligned_aa": 659,
+   "longest_aligned_aa": 1128,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_6348_length_671_cov_3.600649",
+    "nt": 671,
+    "subject": "YP_009337399.1",
+    "pident": 89.0,
+    "aln_aa": 155,
+    "evalue": 9.41e-82,
+    "bitscore": 268.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Lonzbavirus sp. 'caenadaptatum'",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 7,
+   "total_nt": 8174,
+   "longest_nt": 1755,
+   "with_protein_hit": 7,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1662_length_1755_cov_7.006471",
+     "nt": 1755,
+     "subject": "YP_010770192.1",
+     "pident": 84.3,
+     "aln_aa": 408,
+     "evalue": 1.77e-257,
+     "bitscore": 715.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1959_length_1542_cov_15.694687",
+     "nt": 1542,
+     "subject": "YP_010770194.1",
+     "pident": 95.1,
+     "aln_aa": 514,
+     "evalue": 0.0,
+     "bitscore": 1011.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_2735_length_1201_cov_6.952880",
+     "nt": 1201,
+     "subject": "YP_010770192.1",
+     "pident": 88.2,
+     "aln_aa": 398,
+     "evalue": 1.08e-273,
+     "bitscore": 748.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3120_length_1090_cov_12.308213",
+     "nt": 1090,
+     "subject": "YP_010770194.1",
+     "pident": 88.2,
+     "aln_aa": 363,
+     "evalue": 9.75e-245,
+     "bitscore": 679.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3215_length_1067_cov_7.748024",
+     "nt": 1067,
+     "subject": "YP_010770192.1",
+     "pident": 87.4,
+     "aln_aa": 182,
+     "evalue": 1.12e-112,
+     "bitscore": 338.0
+    }
+   ],
+   "scorable_alignments": 7,
+   "median_identity_percent": 87.4,
+   "identity_range": [
+    76.4,
+    95.1
+   ],
+   "median_aligned_aa": 363,
+   "longest_aligned_aa": 514,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_7745_length_594_cov_3.105751",
+    "nt": 594,
+    "subject": "YP_010770194.1",
+    "pident": 76.4,
+    "aln_aa": 195,
+    "evalue": 8.48e-102,
+    "bitscore": 308.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Mamastrovirus",
+   "on_the_panel": true,
+   "panel_group": "enteric virus",
+   "contigs": 6,
+   "total_nt": 7811,
+   "longest_nt": 2780,
+   "with_protein_hit": 6,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_963_length_2780_cov_4.375413",
+     "nt": 2780,
+     "subject": "YP_002290966.1",
+     "pident": 100.0,
+     "aln_aa": 320,
+     "evalue": 7.12e-213,
+     "bitscore": 627.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1845_length_1615_cov_5.480769",
+     "nt": 1615,
+     "subject": "YP_009275017.1",
+     "pident": 96.4,
+     "aln_aa": 534,
+     "evalue": 0.0,
+     "bitscore": 999.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3107_length_1093_cov_5.486513",
+     "nt": 1093,
+     "subject": "YP_002290968.1",
+     "pident": 99.4,
+     "aln_aa": 361,
+     "evalue": 1.01e-255,
+     "bitscore": 713.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3714_length_963_cov_5.629956",
+     "nt": 963,
+     "subject": "YP_002290968.1",
+     "pident": 98.1,
+     "aln_aa": 316,
+     "evalue": 3.92e-216,
+     "bitscore": 610.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_4988_length_787_cov_2.801913",
+     "nt": 787,
+     "subject": "YP_002290966.1",
+     "pident": 98.0,
+     "aln_aa": 254,
+     "evalue": 2.27e-171,
+     "bitscore": 495.0
+    }
+   ],
+   "scorable_alignments": 6,
+   "median_identity_percent": 98.2,
+   "identity_range": [
+    96.4,
+    100.0
+   ],
+   "median_aligned_aa": 318,
+   "longest_aligned_aa": 534,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_1845_length_1615_cov_5.480769",
+    "nt": 1615,
+    "subject": "YP_009275017.1",
+    "pident": 96.4,
+    "aln_aa": 534,
+    "evalue": 0.0,
+    "bitscore": 999.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Kobuvirus",
+   "on_the_panel": true,
+   "panel_group": "enteric virus",
+   "contigs": 2,
+   "total_nt": 7768,
+   "longest_nt": 4507,
+   "with_protein_hit": 2,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_114_length_4507_cov_3.350180",
+     "nt": 4507,
+     "subject": "YP_010774698.1",
+     "pident": 96.8,
+     "aln_aa": 1431,
+     "evalue": 0.0,
+     "bitscore": 2790.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_756_length_3261_cov_3.686213",
+     "nt": 3261,
+     "subject": "YP_010774698.1",
+     "pident": 96.0,
+     "aln_aa": 846,
+     "evalue": 0.0,
+     "bitscore": 1640.0
+    }
+   ],
+   "scorable_alignments": 2,
+   "median_identity_percent": 96.4,
+   "identity_range": [
+    96.0,
+    96.8
+   ],
+   "median_aligned_aa": 1138,
+   "longest_aligned_aa": 1431,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_756_length_3261_cov_3.686213",
+    "nt": 3261,
+    "subject": "YP_010774698.1",
+    "pident": 96.0,
+    "aln_aa": 846,
+    "evalue": 0.0,
+    "bitscore": 1640.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Apeevirus quebecense",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 3,
+   "total_nt": 7715,
+   "longest_nt": 4303,
+   "with_protein_hit": 3,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_139_length_4303_cov_9.956921",
+     "nt": 4303,
+     "subject": "NP_085473.1",
+     "pident": 89.3,
+     "aln_aa": 590,
+     "evalue": 0.0,
+     "bitscore": 1097.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1558_length_1855_cov_4.913333",
+     "nt": 1855,
+     "subject": "NP_085473.1",
+     "pident": 91.1,
+     "aln_aa": 369,
+     "evalue": 1.84e-240,
+     "bitscore": 679.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1932_length_1557_cov_3.768309",
+     "nt": 1557,
+     "subject": "NP_085471.2",
+     "pident": 85.6,
+     "aln_aa": 430,
+     "evalue": 2.16e-269,
+     "bitscore": 746.0
+    }
+   ],
+   "scorable_alignments": 3,
+   "median_identity_percent": 89.3,
+   "identity_range": [
+    85.6,
+    91.1
+   ],
+   "median_aligned_aa": 430,
+   "longest_aligned_aa": 590,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_1932_length_1557_cov_3.768309",
+    "nt": 1557,
+    "subject": "NP_085471.2",
+    "pident": 85.6,
+    "aln_aa": 430,
+    "evalue": 2.16e-269,
+    "bitscore": 746.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Puirovirus sp. 'lutenecus'",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 3,
+   "total_nt": 7617,
+   "longest_nt": 3605,
+   "with_protein_hit": 3,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_533_length_3605_cov_4.795211",
+     "nt": 3605,
+     "subject": "YP_010770115.1",
+     "pident": 72.0,
+     "aln_aa": 589,
+     "evalue": 3.79e-292,
+     "bitscore": 834.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_868_length_2985_cov_12.811263",
+     "nt": 2985,
+     "subject": "YP_010770115.1",
+     "pident": 90.9,
+     "aln_aa": 406,
+     "evalue": 3.88e-259,
+     "bitscore": 743.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3376_length_1027_cov_8.736626",
+     "nt": 1027,
+     "subject": "YP_010770115.1",
+     "pident": 92.8,
+     "aln_aa": 319,
+     "evalue": 1.24e-215,
+     "bitscore": 606.0
+    }
+   ],
+   "scorable_alignments": 3,
+   "median_identity_percent": 90.9,
+   "identity_range": [
+    72.0,
+    92.8
+   ],
+   "median_aligned_aa": 406,
+   "longest_aligned_aa": 589,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_533_length_3605_cov_4.795211",
+    "nt": 3605,
+    "subject": "YP_010770115.1",
+    "pident": 72.0,
+    "aln_aa": 589,
+    "evalue": 3.79e-292,
+    "bitscore": 834.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Paysduvirus asiocola",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 3,
+   "total_nt": 7342,
+   "longest_nt": 3485,
+   "with_protein_hit": 3,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_624_length_3485_cov_112.230904",
+     "nt": 3485,
+     "subject": "YP_010769695.1",
+     "pident": 92.5,
+     "aln_aa": 547,
+     "evalue": 0.0,
+     "bitscore": 1045.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_980_length_2743_cov_23.581473",
+     "nt": 2743,
+     "subject": "YP_010769695.1",
+     "pident": 94.7,
+     "aln_aa": 547,
+     "evalue": 0.0,
+     "bitscore": 1080.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3019_length_1114_cov_12.684608",
+     "nt": 1114,
+     "subject": "YP_010769693.1",
+     "pident": 91.2,
+     "aln_aa": 272,
+     "evalue": 2.85e-180,
+     "bitscore": 507.0
+    }
+   ],
+   "scorable_alignments": 3,
+   "median_identity_percent": 92.5,
+   "identity_range": [
+    91.2,
+    94.7
+   ],
+   "median_aligned_aa": 547,
+   "longest_aligned_aa": 547,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_3019_length_1114_cov_12.684608",
+    "nt": 1114,
+    "subject": "YP_010769693.1",
+    "pident": 91.2,
+    "aln_aa": 272,
+    "evalue": 2.85e-180,
+    "bitscore": 507.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Tobamovirus capsici",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 8,
+   "total_nt": 7103,
+   "longest_nt": 1774,
+   "with_protein_hit": 8,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1638_length_1774_cov_284.774287",
+     "nt": 1774,
+     "subject": "NP_619740.1",
+     "pident": 99.4,
+     "aln_aa": 313,
+     "evalue": 5.3e-215,
+     "bitscore": 645.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_2255_length_1382_cov_119.901281",
+     "nt": 1382,
+     "subject": "NP_619741.1",
+     "pident": 100.0,
+     "aln_aa": 432,
+     "evalue": 4.54e-310,
+     "bitscore": 868.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3962_length_921_cov_20.212471",
+     "nt": 921,
+     "subject": "NP_619741.1",
+     "pident": 97.4,
+     "aln_aa": 306,
+     "evalue": 9.22e-205,
+     "bitscore": 593.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_6344_length_671_cov_113.801948",
+     "nt": 671,
+     "subject": "NP_619743.1",
+     "pident": 100.0,
+     "aln_aa": 156,
+     "evalue": 1.45e-105,
+     "bitscore": 303.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_6441_length_664_cov_293.642036",
+     "nt": 664,
+     "subject": "NP_619741.1",
+     "pident": 100.0,
+     "aln_aa": 221,
+     "evalue": 2.24e-148,
+     "bitscore": 443.0
+    }
+   ],
+   "scorable_alignments": 8,
+   "median_identity_percent": 100.0,
+   "identity_range": [
+    97.4,
+    100.0
+   ],
+   "median_aligned_aa": 210,
+   "longest_aligned_aa": 432,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_3962_length_921_cov_20.212471",
+    "nt": 921,
+    "subject": "NP_619741.1",
+    "pident": 97.4,
+    "aln_aa": 306,
+    "evalue": 9.22e-205,
+    "bitscore": 593.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Andihavirus borborohabitans",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 1,
+   "total_nt": 7047,
+   "longest_nt": 7047,
+   "with_protein_hit": 1,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_34_length_7047_cov_502.261585",
+     "nt": 7047,
+     "subject": "YP_010770048.1",
+     "pident": 94.6,
+     "aln_aa": 559,
+     "evalue": 0.0,
+     "bitscore": 1073.0
+    }
+   ],
+   "scorable_alignments": 1,
+   "median_identity_percent": 94.6,
+   "identity_range": [
+    94.6,
+    94.6
+   ],
+   "median_aligned_aa": 559,
+   "longest_aligned_aa": 559,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_34_length_7047_cov_502.261585",
+    "nt": 7047,
+    "subject": "YP_010770048.1",
+    "pident": 94.6,
+    "aln_aa": 559,
+    "evalue": 0.0,
+    "bitscore": 1073.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Kahshuvirus borborenecus",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 3,
+   "total_nt": 7014,
+   "longest_nt": 3484,
+   "with_protein_hit": 3,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_625_length_3484_cov_127.079032",
+     "nt": 3484,
+     "subject": "YP_010769695.1",
+     "pident": 44.9,
+     "aln_aa": 564,
+     "evalue": 1.53e-132,
+     "bitscore": 417.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1170_length_2330_cov_2.650110",
+     "nt": 2330,
+     "subject": "YP_010769017.1",
+     "pident": 94.8,
+     "aln_aa": 561,
+     "evalue": 0.0,
+     "bitscore": 1097.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_2739_length_1200_cov_3.978166",
+     "nt": 1200,
+     "subject": "YP_010769015.1",
+     "pident": 90.8,
+     "aln_aa": 390,
+     "evalue": 1.87e-264,
+     "bitscore": 726.0
+    }
+   ],
+   "scorable_alignments": 3,
+   "median_identity_percent": 90.8,
+   "identity_range": [
+    44.9,
+    94.8
+   ],
+   "median_aligned_aa": 561,
+   "longest_aligned_aa": 564,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_625_length_3484_cov_127.079032",
+    "nt": 3484,
+    "subject": "YP_010769695.1",
+    "pident": 44.9,
+    "aln_aa": 564,
+    "evalue": 1.53e-132,
+    "bitscore": 417.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Lirnavirus borborovicinum",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 2,
+   "total_nt": 6981,
+   "longest_nt": 3790,
+   "with_protein_hit": 2,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_354_length_3790_cov_2.959839",
+     "nt": 3790,
+     "subject": "YP_010770189.1",
+     "pident": 88.6,
+     "aln_aa": 498,
+     "evalue": 0.0,
+     "bitscore": 923.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_774_length_3191_cov_4.437500",
+     "nt": 3191,
+     "subject": "YP_010770191.1",
+     "pident": 91.7,
+     "aln_aa": 684,
+     "evalue": 0.0,
+     "bitscore": 1279.0
+    }
+   ],
+   "scorable_alignments": 2,
+   "median_identity_percent": 90.2,
+   "identity_range": [
+    88.6,
+    91.7
+   ],
+   "median_aligned_aa": 591,
+   "longest_aligned_aa": 684,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_354_length_3790_cov_2.959839",
+    "nt": 3790,
+    "subject": "YP_010770189.1",
+    "pident": 88.6,
+    "aln_aa": 498,
+    "evalue": 0.0,
+    "bitscore": 923.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Steitzviridae",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 2,
+   "total_nt": 6786,
+   "longest_nt": 4219,
+   "with_protein_hit": 2,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_151_length_4219_cov_12.412584",
+     "nt": 4219,
+     "subject": "YP_010770927.1",
+     "pident": 48.1,
+     "aln_aa": 607,
+     "evalue": 5.47e-164,
+     "bitscore": 508.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1045_length_2567_cov_3.328822",
+     "nt": 2567,
+     "subject": "YP_010770948.1",
+     "pident": 47.1,
+     "aln_aa": 391,
+     "evalue": 2.17e-100,
+     "bitscore": 321.0
+    }
+   ],
+   "scorable_alignments": 2,
+   "median_identity_percent": 47.6,
+   "identity_range": [
+    47.1,
+    48.1
+   ],
+   "median_aligned_aa": 499,
+   "longest_aligned_aa": 607,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_1045_length_2567_cov_3.328822",
+    "nt": 2567,
+    "subject": "YP_010770948.1",
+    "pident": 47.1,
+    "aln_aa": 391,
+    "evalue": 2.17e-100,
+    "bitscore": 321.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Sholavirus caenivivens",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 2,
+   "total_nt": 6577,
+   "longest_nt": 3734,
+   "with_protein_hit": 2,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_405_length_3734_cov_10.670019",
+     "nt": 3734,
+     "subject": "YP_010769881.1",
+     "pident": 96.5,
+     "aln_aa": 543,
+     "evalue": 0.0,
+     "bitscore": 1073.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_927_length_2843_cov_4.465925",
+     "nt": 2843,
+     "subject": "YP_010769881.1",
+     "pident": 83.9,
+     "aln_aa": 329,
+     "evalue": 7.21e-193,
+     "bitscore": 568.0
+    }
+   ],
+   "scorable_alignments": 2,
+   "median_identity_percent": 90.2,
+   "identity_range": [
+    83.9,
+    96.5
+   ],
+   "median_aligned_aa": 436,
+   "longest_aligned_aa": 543,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_927_length_2843_cov_4.465925",
+    "nt": 2843,
+    "subject": "YP_010769881.1",
+    "pident": 83.9,
+    "aln_aa": 329,
+    "evalue": 7.21e-193,
+    "bitscore": 568.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Tobamovirus fructirugosum",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 5,
+   "total_nt": 6391,
+   "longest_nt": 2069,
+   "with_protein_hit": 5,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1357_length_2069_cov_1228.368421",
+     "nt": 2069,
+     "subject": "YP_009182168.1",
+     "pident": 99.8,
+     "aln_aa": 577,
+     "evalue": 0.0,
+     "bitscore": 1143.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1830_length_1628_cov_3056.710744",
+     "nt": 1628,
+     "subject": "NP_597747.1",
+     "pident": 96.0,
+     "aln_aa": 348,
+     "evalue": 1.94e-254,
+     "bitscore": 706.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_2732_length_1202_cov_1455.666085",
+     "nt": 1202,
+     "subject": "YP_009182168.1",
+     "pident": 99.5,
+     "aln_aa": 400,
+     "evalue": 6.84e-273,
+     "bitscore": 787.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3685_length_968_cov_1794.231106",
+     "nt": 968,
+     "subject": "YP_009182171.1",
+     "pident": 100.0,
+     "aln_aa": 159,
+     "evalue": 5.77e-107,
+     "bitscore": 311.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_9491_length_524_cov_2288.635394",
+     "nt": 524,
+     "subject": "YP_009182169.1",
+     "pident": 100.0,
+     "aln_aa": 174,
+     "evalue": 3.77e-107,
+     "bitscore": 333.0
+    }
+   ],
+   "scorable_alignments": 5,
+   "median_identity_percent": 99.8,
+   "identity_range": [
+    96.0,
+    100.0
+   ],
+   "median_aligned_aa": 348,
+   "longest_aligned_aa": 577,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_1830_length_1628_cov_3056.710744",
+    "nt": 1628,
+    "subject": "NP_597747.1",
+    "pident": 96.0,
+    "aln_aa": 348,
+    "evalue": 1.94e-254,
+    "bitscore": 706.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Tobamovirus mititessellati",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 1,
+   "total_nt": 6362,
+   "longest_nt": 6362,
+   "with_protein_hit": 1,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_49_length_6362_cov_33.325511",
+     "nt": 6362,
+     "subject": "NP_062913.2",
+     "pident": 97.8,
+     "aln_aa": 1610,
+     "evalue": 0.0,
+     "bitscore": 3111.0
+    }
+   ],
+   "scorable_alignments": 1,
+   "median_identity_percent": 97.8,
+   "identity_range": [
+    97.8,
+    97.8
+   ],
+   "median_aligned_aa": 1610,
+   "longest_aligned_aa": 1610,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_49_length_6362_cov_33.325511",
+    "nt": 6362,
+    "subject": "NP_062913.2",
+    "pident": 97.8,
+    "aln_aa": 1610,
+    "evalue": 0.0,
+    "bitscore": 3111.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Tobamovirus tomatotessellati",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 1,
+   "total_nt": 6321,
+   "longest_nt": 6321,
+   "with_protein_hit": 1,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_51_length_6321_cov_24.529205",
+     "nt": 6321,
+     "subject": "NP_078446.1",
+     "pident": 99.9,
+     "aln_aa": 1616,
+     "evalue": 0.0,
+     "bitscore": 3200.0
+    }
+   ],
+   "scorable_alignments": 1,
+   "median_identity_percent": 99.9,
+   "identity_range": [
+    99.9,
+    99.9
+   ],
+   "median_aligned_aa": 1616,
+   "longest_aligned_aa": 1616,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_51_length_6321_cov_24.529205",
+    "nt": 6321,
+    "subject": "NP_078446.1",
+    "pident": 99.9,
+    "aln_aa": 1616,
+    "evalue": 0.0,
+    "bitscore": 3200.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Kemicevirus caenicola",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 2,
+   "total_nt": 5956,
+   "longest_nt": 3726,
+   "with_protein_hit": 2,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_415_length_3726_cov_11.591392",
+     "nt": 3726,
+     "subject": "YP_010769444.1",
+     "pident": 59.0,
+     "aln_aa": 588,
+     "evalue": 6.07e-229,
+     "bitscore": 672.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1218_length_2230_cov_5.969655",
+     "nt": 2230,
+     "subject": "YP_010769444.1",
+     "pident": 59.2,
+     "aln_aa": 591,
+     "evalue": 3.43e-235,
+     "bitscore": 671.0
+    }
+   ],
+   "scorable_alignments": 2,
+   "median_identity_percent": 59.1,
+   "identity_range": [
+    59.0,
+    59.2
+   ],
+   "median_aligned_aa": 589,
+   "longest_aligned_aa": 591,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_415_length_3726_cov_11.591392",
+    "nt": 3726,
+    "subject": "YP_010769444.1",
+    "pident": 59.0,
+    "aln_aa": 588,
+    "evalue": 6.07e-229,
+    "bitscore": 672.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Haeldovirus asiohabitans",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 3,
+   "total_nt": 5901,
+   "longest_nt": 3578,
+   "with_protein_hit": 3,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_553_length_3578_cov_11.953733",
+     "nt": 3578,
+     "subject": "YP_010769114.1",
+     "pident": 88.3,
+     "aln_aa": 581,
+     "evalue": 0.0,
+     "bitscore": 1061.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_2371_length_1333_cov_20.917058",
+     "nt": 1333,
+     "subject": "YP_010769114.1",
+     "pident": 77.6,
+     "aln_aa": 170,
+     "evalue": 9.76e-87,
+     "bitscore": 278.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3575_length_990_cov_3.709091",
+     "nt": 990,
+     "subject": "YP_010769112.1",
+     "pident": 90.7,
+     "aln_aa": 270,
+     "evalue": 3.73e-173,
+     "bitscore": 488.0
+    }
+   ],
+   "scorable_alignments": 3,
+   "median_identity_percent": 88.3,
+   "identity_range": [
+    77.6,
+    90.7
+   ],
+   "median_aligned_aa": 270,
+   "longest_aligned_aa": 581,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_2371_length_1333_cov_20.917058",
+    "nt": 1333,
+    "subject": "YP_010769114.1",
+    "pident": 77.6,
+    "aln_aa": 170,
+    "evalue": 9.76e-87,
+    "bitscore": 278.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Gmuhndevirus pelovivens",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 3,
+   "total_nt": 5628,
+   "longest_nt": 3642,
+   "with_protein_hit": 3,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_493_length_3642_cov_7.304711",
+     "nt": 3642,
+     "subject": "YP_010769366.1",
+     "pident": 71.9,
+     "aln_aa": 612,
+     "evalue": 0.0,
+     "bitscore": 910.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3121_length_1090_cov_3.795169",
+     "nt": 1090,
+     "subject": "YP_010769366.1",
+     "pident": 98.9,
+     "aln_aa": 180,
+     "evalue": 1.59e-122,
+     "bitscore": 369.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_4120_length_896_cov_3.607610",
+     "nt": 896,
+     "subject": "YP_010769364.1",
+     "pident": 96.7,
+     "aln_aa": 239,
+     "evalue": 3.53e-163,
+     "bitscore": 461.0
+    }
+   ],
+   "scorable_alignments": 3,
+   "median_identity_percent": 96.7,
+   "identity_range": [
+    71.9,
+    98.9
+   ],
+   "median_aligned_aa": 239,
+   "longest_aligned_aa": 612,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_493_length_3642_cov_7.304711",
+    "nt": 3642,
+    "subject": "YP_010769366.1",
+    "pident": 71.9,
+    "aln_aa": 612,
+    "evalue": 0.0,
+    "bitscore": 910.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Kowinovirus pelenecus",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 6,
+   "total_nt": 5579,
+   "longest_nt": 1270,
+   "with_protein_hit": 6,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_2539_length_1270_cov_12.326038",
+     "nt": 1270,
+     "subject": "YP_010769465.1",
+     "pident": 91.4,
+     "aln_aa": 175,
+     "evalue": 2.02e-112,
+     "bitscore": 342.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3419_length_1017_cov_10.635135",
+     "nt": 1017,
+     "subject": "YP_010769463.1",
+     "pident": 89.2,
+     "aln_aa": 148,
+     "evalue": 6.17e-90,
+     "bitscore": 277.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3423_length_1016_cov_19.154006",
+     "nt": 1016,
+     "subject": "YP_010769463.1",
+     "pident": 97.3,
+     "aln_aa": 148,
+     "evalue": 2.55e-97,
+     "bitscore": 296.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3653_length_976_cov_54.350706",
+     "nt": 976,
+     "subject": "YP_010769465.1",
+     "pident": 98.1,
+     "aln_aa": 324,
+     "evalue": 1.23e-234,
+     "bitscore": 649.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_6675_length_650_cov_29.709244",
+     "nt": 650,
+     "subject": "YP_010769463.1",
+     "pident": 92.3,
+     "aln_aa": 169,
+     "evalue": 6.04e-106,
+     "bitscore": 313.0
+    }
+   ],
+   "scorable_alignments": 6,
+   "median_identity_percent": 91.8,
+   "identity_range": [
+    89.2,
+    98.1
+   ],
+   "median_aligned_aa": 169,
+   "longest_aligned_aa": 324,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_3419_length_1017_cov_10.635135",
+    "nt": 1017,
+    "subject": "YP_010769463.1",
+    "pident": 89.2,
+    "aln_aa": 148,
+    "evalue": 6.17e-90,
+    "bitscore": 277.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Potexvirus pepini",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 2,
+   "total_nt": 5504,
+   "longest_nt": 3733,
+   "with_protein_hit": 2,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_406_length_3733_cov_5.488853",
+     "nt": 3733,
+     "subject": "NP_663724.1",
+     "pident": 98.3,
+     "aln_aa": 1239,
+     "evalue": 0.0,
+     "bitscore": 2470.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1642_length_1771_cov_4.581585",
+     "nt": 1771,
+     "subject": "NP_663728.1",
+     "pident": 100.0,
+     "aln_aa": 235,
+     "evalue": 2.52e-158,
+     "bitscore": 455.0
+    }
+   ],
+   "scorable_alignments": 2,
+   "median_identity_percent": 99.2,
+   "identity_range": [
+    98.3,
+    100.0
+   ],
+   "median_aligned_aa": 737,
+   "longest_aligned_aa": 1239,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_406_length_3733_cov_5.488853",
+    "nt": 3733,
+    "subject": "NP_663724.1",
+    "pident": 98.3,
+    "aln_aa": 1239,
+    "evalue": 0.0,
+    "bitscore": 2470.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Tobamovirus rapae",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 3,
+   "total_nt": 5376,
+   "longest_nt": 3303,
+   "with_protein_hit": 3,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_733_length_3303_cov_3.165948",
+     "nt": 3303,
+     "subject": "NP_046151.1",
+     "pident": 98.4,
+     "aln_aa": 1096,
+     "evalue": 0.0,
+     "bitscore": 2146.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1979_length_1531_cov_4.432249",
+     "nt": 1531,
+     "subject": "NP_046153.1",
+     "pident": 98.1,
+     "aln_aa": 267,
+     "evalue": 1.38e-180,
+     "bitscore": 509.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_8977_length_542_cov_2.246407",
+     "nt": 542,
+     "subject": "NP_046152.1",
+     "pident": 98.9,
+     "aln_aa": 175,
+     "evalue": 6.68e-120,
+     "bitscore": 367.0
+    }
+   ],
+   "scorable_alignments": 3,
+   "median_identity_percent": 98.4,
+   "identity_range": [
+    98.1,
+    98.9
+   ],
+   "median_aligned_aa": 267,
+   "longest_aligned_aa": 1096,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_1979_length_1531_cov_4.432249",
+    "nt": 1531,
+    "subject": "NP_046153.1",
+    "pident": 98.1,
+    "aln_aa": 267,
+    "evalue": 1.38e-180,
+    "bitscore": 509.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Bicehmovirus limenecus",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 3,
+   "total_nt": 5051,
+   "longest_nt": 1746,
+   "with_protein_hit": 3,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1676_length_1746_cov_2.736842",
+     "nt": 1746,
+     "subject": "YP_010771001.1",
+     "pident": 79.6,
+     "aln_aa": 578,
+     "evalue": 0.0,
+     "bitscore": 931.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1764_length_1675_cov_3.244444",
+     "nt": 1675,
+     "subject": "YP_010770999.1",
+     "pident": 70.9,
+     "aln_aa": 382,
+     "evalue": 1.26e-202,
+     "bitscore": 572.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1823_length_1630_cov_2.645714",
+     "nt": 1630,
+     "subject": "YP_010771007.1",
+     "pident": 73.3,
+     "aln_aa": 424,
+     "evalue": 1.5e-218,
+     "bitscore": 622.0
+    }
+   ],
+   "scorable_alignments": 3,
+   "median_identity_percent": 73.3,
+   "identity_range": [
+    70.9,
+    79.6
+   ],
+   "median_aligned_aa": 424,
+   "longest_aligned_aa": 578,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_1764_length_1675_cov_3.244444",
+    "nt": 1675,
+    "subject": "YP_010770999.1",
+    "pident": 70.9,
+    "aln_aa": 382,
+    "evalue": 1.26e-202,
+    "bitscore": 572.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Hohrdovirus caenadaptatum",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 3,
+   "total_nt": 5043,
+   "longest_nt": 2492,
+   "with_protein_hit": 3,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1086_length_2492_cov_2.390644",
+     "nt": 2492,
+     "subject": "YP_010771443.1",
+     "pident": 98.0,
+     "aln_aa": 294,
+     "evalue": 6.48e-193,
+     "bitscore": 567.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1528_length_1876_cov_3.222405",
+     "nt": 1876,
+     "subject": "YP_010771440.1",
+     "pident": 98.0,
+     "aln_aa": 550,
+     "evalue": 0.0,
+     "bitscore": 1093.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_6303_length_675_cov_1.424194",
+     "nt": 675,
+     "subject": "YP_010771443.1",
+     "pident": 83.3,
+     "aln_aa": 174,
+     "evalue": 1.64e-94,
+     "bitscore": 291.0
+    }
+   ],
+   "scorable_alignments": 3,
+   "median_identity_percent": 98.0,
+   "identity_range": [
+    83.3,
+    98.0
+   ],
+   "median_aligned_aa": 294,
+   "longest_aligned_aa": 550,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_6303_length_675_cov_1.424194",
+    "nt": 675,
+    "subject": "YP_010771443.1",
+    "pident": 83.3,
+    "aln_aa": 174,
+    "evalue": 1.64e-94,
+    "bitscore": 291.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Nehpavirus caenenecus",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 4,
+   "total_nt": 4950,
+   "longest_nt": 2136,
+   "with_protein_hit": 4,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1287_length_2136_cov_109.648246",
+     "nt": 2136,
+     "subject": "YP_010770203.1",
+     "pident": 96.1,
+     "aln_aa": 355,
+     "evalue": 2.29e-229,
+     "bitscore": 655.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_2545_length_1269_cov_110.780066",
+     "nt": 1269,
+     "subject": "YP_010770201.1",
+     "pident": 97.3,
+     "aln_aa": 400,
+     "evalue": 3.26e-295,
+     "bitscore": 807.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_4460_length_851_cov_12.925879",
+     "nt": 851,
+     "subject": "YP_010770201.1",
+     "pident": 87.8,
+     "aln_aa": 278,
+     "evalue": 1.21e-177,
+     "bitscore": 503.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_6049_length_694_cov_139.528951",
+     "nt": 694,
+     "subject": "YP_010770203.1",
+     "pident": 97.7,
+     "aln_aa": 220,
+     "evalue": 1.05e-154,
+     "bitscore": 445.0
+    }
+   ],
+   "scorable_alignments": 4,
+   "median_identity_percent": 96.7,
+   "identity_range": [
+    87.8,
+    97.7
+   ],
+   "median_aligned_aa": 316,
+   "longest_aligned_aa": 400,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_4460_length_851_cov_12.925879",
+    "nt": 851,
+    "subject": "YP_010770201.1",
+    "pident": 87.8,
+    "aln_aa": 278,
+    "evalue": 1.21e-177,
+    "bitscore": 503.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Hodnevirus neoedaphadaptatum",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 2,
+   "total_nt": 4884,
+   "longest_nt": 4089,
+   "with_protein_hit": 2,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_185_length_4089_cov_9.497521",
+     "nt": 4089,
+     "subject": "YP_010771237.1",
+     "pident": 63.3,
+     "aln_aa": 592,
+     "evalue": 3.03e-263,
+     "bitscore": 764.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_4923_length_795_cov_2.336486",
+     "nt": 795,
+     "subject": "YP_010770891.1",
+     "pident": 87.7,
+     "aln_aa": 244,
+     "evalue": 1.88e-150,
+     "bitscore": 436.0
+    }
+   ],
+   "scorable_alignments": 2,
+   "median_identity_percent": 75.5,
+   "identity_range": [
+    63.3,
+    87.7
+   ],
+   "median_aligned_aa": 418,
+   "longest_aligned_aa": 592,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_185_length_4089_cov_9.497521",
+    "nt": 4089,
+    "subject": "YP_010771237.1",
+    "pident": 63.3,
+    "aln_aa": 592,
+    "evalue": 3.03e-263,
+    "bitscore": 764.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Tobamovirus paprikae",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 2,
+   "total_nt": 4884,
+   "longest_nt": 2825,
+   "with_protein_hit": 2,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_938_length_2825_cov_5.204332",
+     "nt": 2825,
+     "subject": "NP_671718.1",
+     "pident": 98.8,
+     "aln_aa": 729,
+     "evalue": 0.0,
+     "bitscore": 1415.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1367_length_2059_cov_3.314371",
+     "nt": 2059,
+     "subject": "NP_671720.1",
+     "pident": 97.4,
+     "aln_aa": 269,
+     "evalue": 2.51e-177,
+     "bitscore": 508.0
+    }
+   ],
+   "scorable_alignments": 2,
+   "median_identity_percent": 98.1,
+   "identity_range": [
+    97.4,
+    98.8
+   ],
+   "median_aligned_aa": 499,
+   "longest_aligned_aa": 729,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_1367_length_2059_cov_3.314371",
+    "nt": 2059,
+    "subject": "NP_671720.1",
+    "pident": 97.4,
+    "aln_aa": 269,
+    "evalue": 2.51e-177,
+    "bitscore": 508.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Wahbolevirus lutadaptatum",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 3,
+   "total_nt": 4707,
+   "longest_nt": 2638,
+   "with_protein_hit": 3,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1022_length_2638_cov_2.758033",
+     "nt": 2638,
+     "subject": "YP_010768986.1",
+     "pident": 83.6,
+     "aln_aa": 426,
+     "evalue": 7.8e-260,
+     "bitscore": 731.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_2749_length_1198_cov_1.813648",
+     "nt": 1198,
+     "subject": "YP_010768988.1",
+     "pident": 59.7,
+     "aln_aa": 385,
+     "evalue": 1.9e-149,
+     "bitscore": 437.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_4313_length_871_cov_1.911765",
+     "nt": 871,
+     "subject": "YP_010768988.1",
+     "pident": 92.3,
+     "aln_aa": 261,
+     "evalue": 6.56e-180,
+     "bitscore": 510.0
+    }
+   ],
+   "scorable_alignments": 3,
+   "median_identity_percent": 83.6,
+   "identity_range": [
+    59.7,
+    92.3
+   ],
+   "median_aligned_aa": 385,
+   "longest_aligned_aa": 426,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_2749_length_1198_cov_1.813648",
+    "nt": 1198,
+    "subject": "YP_010768988.1",
+    "pident": 59.7,
+    "aln_aa": 385,
+    "evalue": 1.9e-149,
+    "bitscore": 437.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Pepevirus faecicola",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 2,
+   "total_nt": 4702,
+   "longest_nt": 3698,
+   "with_protein_hit": 2,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_439_length_3698_cov_28.568488",
+     "nt": 3698,
+     "subject": "YP_013609461.1",
+     "pident": 96.1,
+     "aln_aa": 557,
+     "evalue": 0.0,
+     "bitscore": 1122.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3502_length_1004_cov_2.295047",
+     "nt": 1004,
+     "subject": "YP_013609459.1",
+     "pident": 75.7,
+     "aln_aa": 144,
+     "evalue": 1.35e-71,
+     "bitscore": 232.0
+    }
+   ],
+   "scorable_alignments": 2,
+   "median_identity_percent": 85.9,
+   "identity_range": [
+    75.7,
+    96.1
+   ],
+   "median_aligned_aa": 350,
+   "longest_aligned_aa": 557,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_3502_length_1004_cov_2.295047",
+    "nt": 1004,
+    "subject": "YP_013609459.1",
+    "pident": 75.7,
+    "aln_aa": 144,
+    "evalue": 1.35e-71,
+    "bitscore": 232.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Koteshevirus lutadaptatum",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 2,
+   "total_nt": 4672,
+   "longest_nt": 3058,
+   "with_protein_hit": 2,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_829_length_3058_cov_22.692974",
+     "nt": 3058,
+     "subject": "YP_010769505.1",
+     "pident": 46.6,
+     "aln_aa": 461,
+     "evalue": 1.11e-120,
+     "bitscore": 383.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1848_length_1614_cov_8.757537",
+     "nt": 1614,
+     "subject": "YP_010769641.1",
+     "pident": 83.5,
+     "aln_aa": 486,
+     "evalue": 1.53e-312,
+     "bitscore": 856.0
+    }
+   ],
+   "scorable_alignments": 2,
+   "median_identity_percent": 65.0,
+   "identity_range": [
+    46.6,
+    83.5
+   ],
+   "median_aligned_aa": 473,
+   "longest_aligned_aa": 486,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_829_length_3058_cov_22.692974",
+    "nt": 3058,
+    "subject": "YP_010769505.1",
+    "pident": 46.6,
+    "aln_aa": 461,
+    "evalue": 1.11e-120,
+    "bitscore": 383.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Lohngkovirus defluviicola",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 3,
+   "total_nt": 4660,
+   "longest_nt": 2691,
+   "with_protein_hit": 3,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1002_length_2691_cov_5.227997",
+     "nt": 2691,
+     "subject": "YP_010769154.1",
+     "pident": 93.0,
+     "aln_aa": 556,
+     "evalue": 0.0,
+     "bitscore": 1102.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3331_length_1039_cov_2.484756",
+     "nt": 1039,
+     "subject": "YP_010769353.1",
+     "pident": 49.5,
+     "aln_aa": 366,
+     "evalue": 1.96e-117,
+     "bitscore": 353.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3914_length_930_cov_2.955429",
+     "nt": 930,
+     "subject": "YP_010769152.1",
+     "pident": 87.1,
+     "aln_aa": 263,
+     "evalue": 5.16e-165,
+     "bitscore": 466.0
+    }
+   ],
+   "scorable_alignments": 3,
+   "median_identity_percent": 87.1,
+   "identity_range": [
+    49.5,
+    93.0
+   ],
+   "median_aligned_aa": 366,
+   "longest_aligned_aa": 556,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_3331_length_1039_cov_2.484756",
+    "nt": 1039,
+    "subject": "YP_010769353.1",
+    "pident": 49.5,
+    "aln_aa": 366,
+    "evalue": 1.96e-117,
+    "bitscore": 353.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Jupbevirus asiocola",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 2,
+   "total_nt": 4628,
+   "longest_nt": 4124,
+   "with_protein_hit": 1,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_177_length_4124_cov_10.198820",
+     "nt": 4124,
+     "subject": "YP_010769425.1",
+     "pident": 85.9,
+     "aln_aa": 651,
+     "evalue": 0.0,
+     "bitscore": 1139.0
+    }
+   ],
+   "scorable_alignments": 1,
+   "median_identity_percent": 85.9,
+   "identity_range": [
+    85.9,
+    85.9
+   ],
+   "median_aligned_aa": 651,
+   "longest_aligned_aa": 651,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_177_length_4124_cov_10.198820",
+    "nt": 4124,
+    "subject": "YP_010769425.1",
+    "pident": 85.9,
+    "aln_aa": 651,
+    "evalue": 0.0,
+    "bitscore": 1139.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Jupbevirus asiohabitans",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 2,
+   "total_nt": 4610,
+   "longest_nt": 4087,
+   "with_protein_hit": 2,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_186_length_4087_cov_11.749752",
+     "nt": 4087,
+     "subject": "YP_010769425.1",
+     "pident": 68.4,
+     "aln_aa": 651,
+     "evalue": 5.12e-311,
+     "bitscore": 889.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_9546_length_523_cov_0.985043",
+     "nt": 523,
+     "subject": "YP_010769425.1",
+     "pident": 55.4,
+     "aln_aa": 177,
+     "evalue": 1.74e-51,
+     "bitscore": 177.0
+    }
+   ],
+   "scorable_alignments": 2,
+   "median_identity_percent": 61.9,
+   "identity_range": [
+    55.4,
+    68.4
+   ],
+   "median_aligned_aa": 414,
+   "longest_aligned_aa": 651,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_9546_length_523_cov_0.985043",
+    "nt": 523,
+    "subject": "YP_010769425.1",
+    "pident": 55.4,
+    "aln_aa": 177,
+    "evalue": 1.74e-51,
+    "bitscore": 177.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Mintuvirus",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 2,
+   "total_nt": 4520,
+   "longest_nt": 3034,
+   "with_protein_hit": 2,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_844_length_3034_cov_6.703927",
+     "nt": 3034,
+     "subject": "YP_010769607.1",
+     "pident": 52.4,
+     "aln_aa": 317,
+     "evalue": 1.09e-88,
+     "bitscore": 298.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_2051_length_1486_cov_2.502446",
+     "nt": 1486,
+     "subject": "YP_013609342.1",
+     "pident": 44.4,
+     "aln_aa": 342,
+     "evalue": 1.64e-81,
+     "bitscore": 265.0
+    }
+   ],
+   "scorable_alignments": 2,
+   "median_identity_percent": 48.4,
+   "identity_range": [
+    44.4,
+    52.4
+   ],
+   "median_aligned_aa": 329,
+   "longest_aligned_aa": 342,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_2051_length_1486_cov_2.502446",
+    "nt": 1486,
+    "subject": "YP_013609342.1",
+    "pident": 44.4,
+    "aln_aa": 342,
+    "evalue": 1.64e-81,
+    "bitscore": 265.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Iapetusvirus EaH1",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 1,
+   "total_nt": 4439,
+   "longest_nt": 4439,
+   "with_protein_hit": 1,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_124_length_4439_cov_8.847172",
+     "nt": 4439,
+     "subject": "YP_010770011.1",
+     "pident": 58.6,
+     "aln_aa": 643,
+     "evalue": 1.01e-239,
+     "bitscore": 709.0
+    }
+   ],
+   "scorable_alignments": 1,
+   "median_identity_percent": 58.6,
+   "identity_range": [
+    58.6,
+    58.6
+   ],
+   "median_aligned_aa": 643,
+   "longest_aligned_aa": 643,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_124_length_4439_cov_8.847172",
+    "nt": 4439,
+    "subject": "YP_010770011.1",
+    "pident": 58.6,
+    "aln_aa": 643,
+    "evalue": 1.01e-239,
+    "bitscore": 709.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Tuwendivirus caenenecus",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 4,
+   "total_nt": 4393,
+   "longest_nt": 1697,
+   "with_protein_hit": 4,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1745_length_1697_cov_3.016443",
+     "nt": 1697,
+     "subject": "YP_010771180.1",
+     "pident": 92.8,
+     "aln_aa": 334,
+     "evalue": 1.81e-224,
+     "bitscore": 638.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3191_length_1074_cov_5.354269",
+     "nt": 1074,
+     "subject": "YP_010771180.1",
+     "pident": 96.3,
+     "aln_aa": 328,
+     "evalue": 5.21e-229,
+     "bitscore": 641.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3300_length_1044_cov_3.897877",
+     "nt": 1044,
+     "subject": "YP_010771178.1",
+     "pident": 92.4,
+     "aln_aa": 327,
+     "evalue": 3.6e-218,
+     "bitscore": 603.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_8068_length_578_cov_2.011472",
+     "nt": 578,
+     "subject": "YP_010771180.1",
+     "pident": 58.0,
+     "aln_aa": 188,
+     "evalue": 1.14e-65,
+     "bitscore": 215.0
+    }
+   ],
+   "scorable_alignments": 4,
+   "median_identity_percent": 92.6,
+   "identity_range": [
+    58.0,
+    96.3
+   ],
+   "median_aligned_aa": 327,
+   "longest_aligned_aa": 334,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_8068_length_578_cov_2.011472",
+    "nt": 578,
+    "subject": "YP_010771180.1",
+    "pident": 58.0,
+    "aln_aa": 188,
+    "evalue": 1.14e-65,
+    "bitscore": 215.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Yahnavirus asienecus",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 2,
+   "total_nt": 4391,
+   "longest_nt": 3118,
+   "with_protein_hit": 2,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_808_length_3118_cov_6.481881",
+     "nt": 3118,
+     "subject": "YP_010769031.1",
+     "pident": 95.9,
+     "aln_aa": 587,
+     "evalue": 0.0,
+     "bitscore": 1181.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_2532_length_1273_cov_6.479475",
+     "nt": 1273,
+     "subject": "YP_010769028.1",
+     "pident": 92.7,
+     "aln_aa": 383,
+     "evalue": 1.26e-269,
+     "bitscore": 736.0
+    }
+   ],
+   "scorable_alignments": 2,
+   "median_identity_percent": 94.3,
+   "identity_range": [
+    92.7,
+    95.9
+   ],
+   "median_aligned_aa": 485,
+   "longest_aligned_aa": 587,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_2532_length_1273_cov_6.479475",
+    "nt": 1273,
+    "subject": "YP_010769028.1",
+    "pident": 92.7,
+    "aln_aa": 383,
+    "evalue": 1.26e-269,
+    "bitscore": 736.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Qubevirus escherichienecus",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 4,
+   "total_nt": 4360,
+   "longest_nt": 1840,
+   "with_protein_hit": 4,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_1573_length_1840_cov_3.836415",
+     "nt": 1840,
+     "subject": "YP_011242557.1",
+     "pident": 97.9,
+     "aln_aa": 380,
+     "evalue": 1.81e-268,
+     "bitscore": 749.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_3878_length_935_cov_5.050000",
+     "nt": 935,
+     "subject": "YP_011242554.1",
+     "pident": 94.4,
+     "aln_aa": 180,
+     "evalue": 6.8e-121,
+     "bitscore": 356.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_4640_length_829_cov_4.821705",
+     "nt": 829,
+     "subject": "YP_011242554.1",
+     "pident": 96.7,
+     "aln_aa": 243,
+     "evalue": 2.25e-175,
+     "bitscore": 493.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_5322_length_756_cov_3.231098",
+     "nt": 756,
+     "subject": "YP_011242557.1",
+     "pident": 96.9,
+     "aln_aa": 226,
+     "evalue": 3.12e-159,
+     "bitscore": 457.0
+    }
+   ],
+   "scorable_alignments": 4,
+   "median_identity_percent": 96.8,
+   "identity_range": [
+    94.4,
+    97.9
+   ],
+   "median_aligned_aa": 234,
+   "longest_aligned_aa": 380,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_3878_length_935_cov_5.050000",
+    "nt": 935,
+    "subject": "YP_011242554.1",
+    "pident": 94.4,
+    "aln_aa": 180,
+    "evalue": 6.8e-121,
+    "bitscore": 356.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Haeldovirus borboradaptatum",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 3,
+   "total_nt": 4358,
+   "longest_nt": 2788,
+   "with_protein_hit": 3,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_958_length_2788_cov_7.720454",
+     "nt": 2788,
+     "subject": "YP_010769121.1",
+     "pident": 86.0,
+     "aln_aa": 407,
+     "evalue": 3.27e-246,
+     "bitscore": 698.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_4772_length_813_cov_4.178100",
+     "nt": 813,
+     "subject": "YP_010769123.1",
+     "pident": 94.4,
+     "aln_aa": 249,
+     "evalue": 1.02e-176,
+     "bitscore": 502.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_5312_length_757_cov_3.472934",
+     "nt": 757,
+     "subject": "YP_010769121.1",
+     "pident": 90.8,
+     "aln_aa": 250,
+     "evalue": 6.62e-165,
+     "bitscore": 464.0
+    }
+   ],
+   "scorable_alignments": 3,
+   "median_identity_percent": 90.8,
+   "identity_range": [
+    86.0,
+    94.4
+   ],
+   "median_aligned_aa": 250,
+   "longest_aligned_aa": 407,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_958_length_2788_cov_7.720454",
+    "nt": 2788,
+    "subject": "YP_010769121.1",
+    "pident": 86.0,
+    "aln_aa": 407,
+    "evalue": 3.27e-246,
+    "bitscore": 698.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Mahqeavirus limicola",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 2,
+   "total_nt": 4336,
+   "longest_nt": 3605,
+   "with_protein_hit": 2,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_532_length_3605_cov_17.941127",
+     "nt": 3605,
+     "subject": "YP_010769492.1",
+     "pident": 53.1,
+     "aln_aa": 578,
+     "evalue": 5.26e-187,
+     "bitscore": 562.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_5595_length_731_cov_0.797337",
+     "nt": 731,
+     "subject": "YP_010769492.1",
+     "pident": 74.0,
+     "aln_aa": 242,
+     "evalue": 3.11e-115,
+     "bitscore": 344.0
+    }
+   ],
+   "scorable_alignments": 2,
+   "median_identity_percent": 63.5,
+   "identity_range": [
+    53.1,
+    74.0
+   ],
+   "median_aligned_aa": 410,
+   "longest_aligned_aa": 578,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_532_length_3605_cov_17.941127",
+    "nt": 3605,
+    "subject": "YP_010769492.1",
+    "pident": 53.1,
+    "aln_aa": 578,
+    "evalue": 5.26e-187,
+    "bitscore": 562.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Eetrevirus E3",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 1,
+   "total_nt": 4320,
+   "longest_nt": 4320,
+   "with_protein_hit": 1,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_137_length_4320_cov_14.799062",
+     "nt": 4320,
+     "subject": "YP_010770696.1",
+     "pident": 46.8,
+     "aln_aa": 617,
+     "evalue": 7.38e-163,
+     "bitscore": 506.0
+    }
+   ],
+   "scorable_alignments": 1,
+   "median_identity_percent": 46.8,
+   "identity_range": [
+    46.8,
+    46.8
+   ],
+   "median_aligned_aa": 617,
+   "longest_aligned_aa": 617,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_137_length_4320_cov_14.799062",
+    "nt": 4320,
+    "subject": "YP_010770696.1",
+    "pident": 46.8,
+    "aln_aa": 617,
+    "evalue": 7.38e-163,
+    "bitscore": 506.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Bicehmovirus limihabitans",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 2,
+   "total_nt": 4155,
+   "longest_nt": 3521,
+   "with_protein_hit": 2,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_601_length_3521_cov_7.576168",
+     "nt": 3521,
+     "subject": "YP_010771004.1",
+     "pident": 58.5,
+     "aln_aa": 301,
+     "evalue": 1.48e-106,
+     "bitscore": 352.0
+    },
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_6939_length_634_cov_6.146805",
+     "nt": 634,
+     "subject": "YP_010771007.1",
+     "pident": 92.7,
+     "aln_aa": 96,
+     "evalue": 1.66e-52,
+     "bitscore": 181.0
+    }
+   ],
+   "scorable_alignments": 2,
+   "median_identity_percent": 75.6,
+   "identity_range": [
+    58.5,
+    92.7
+   ],
+   "median_aligned_aa": 198,
+   "longest_aligned_aa": 301,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_601_length_3521_cov_7.576168",
+    "nt": 3521,
+    "subject": "YP_010771004.1",
+    "pident": 58.5,
+    "aln_aa": 301,
+    "evalue": 1.48e-106,
+    "bitscore": 352.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Olmsdivirus lutivivens",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 1,
+   "total_nt": 4128,
+   "longest_nt": 4128,
+   "with_protein_hit": 1,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_176_length_4128_cov_5.516082",
+     "nt": 4128,
+     "subject": "YP_010769648.1",
+     "pident": 92.8,
+     "aln_aa": 622,
+     "evalue": 0.0,
+     "bitscore": 1194.0
+    }
+   ],
+   "scorable_alignments": 1,
+   "median_identity_percent": 92.8,
+   "identity_range": [
+    92.8,
+    92.8
+   ],
+   "median_aligned_aa": 622,
+   "longest_aligned_aa": 622,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_176_length_4128_cov_5.516082",
+    "nt": 4128,
+    "subject": "YP_010769648.1",
+    "pident": 92.8,
+    "aln_aa": 622,
+    "evalue": 0.0,
+    "bitscore": 1194.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Hodnevirus limicola",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 1,
+   "total_nt": 4115,
+   "longest_nt": 4115,
+   "with_protein_hit": 1,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_180_length_4115_cov_13.746059",
+     "nt": 4115,
+     "subject": "YP_010770788.1",
+     "pident": 67.1,
+     "aln_aa": 650,
+     "evalue": 8.62e-306,
+     "bitscore": 875.0
+    }
+   ],
+   "scorable_alignments": 1,
+   "median_identity_percent": 67.1,
+   "identity_range": [
+    67.1,
+    67.1
+   ],
+   "median_aligned_aa": 650,
+   "longest_aligned_aa": 650,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_180_length_4115_cov_13.746059",
+    "nt": 4115,
+    "subject": "YP_010770788.1",
+    "pident": 67.1,
+    "aln_aa": 650,
+    "evalue": 8.62e-306,
+    "bitscore": 875.0
+   },
+   "reading": "a divergent strain of something known: the alignment is long enough for the identity to be a measurement"
+  },
+  {
+   "name": "Behlfluvirus lutadaptatum",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 1,
+   "total_nt": 4096,
+   "longest_nt": 4096,
+   "with_protein_hit": 1,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_183_length_4096_cov_5.852512",
+     "nt": 4096,
+     "subject": "YP_010769090.1",
+     "pident": 91.9,
+     "aln_aa": 554,
+     "evalue": 0.0,
+     "bitscore": 1039.0
+    }
+   ],
+   "scorable_alignments": 1,
+   "median_identity_percent": 91.9,
+   "identity_range": [
+    91.9,
+    91.9
+   ],
+   "median_aligned_aa": 554,
+   "longest_aligned_aa": 554,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_183_length_4096_cov_5.852512",
+    "nt": 4096,
+    "subject": "YP_010769090.1",
+    "pident": 91.9,
+    "aln_aa": 554,
+    "evalue": 0.0,
+    "bitscore": 1039.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Fahrmivirus limadaptatum",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 1,
+   "total_nt": 4079,
+   "longest_nt": 4079,
+   "with_protein_hit": 1,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_191_length_4079_cov_6.799950",
+     "nt": 4079,
+     "subject": "YP_010770066.1",
+     "pident": 97.2,
+     "aln_aa": 637,
+     "evalue": 0.0,
+     "bitscore": 1296.0
+    }
+   ],
+   "scorable_alignments": 1,
+   "median_identity_percent": 97.2,
+   "identity_range": [
+    97.2,
+    97.2
+   ],
+   "median_aligned_aa": 637,
+   "longest_aligned_aa": 637,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_191_length_4079_cov_6.799950",
+    "nt": 4079,
+    "subject": "YP_010770066.1",
+    "pident": 97.2,
+    "aln_aa": 637,
+    "evalue": 0.0,
+    "bitscore": 1296.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Trotivirus neoasiovicinum",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 1,
+   "total_nt": 4047,
+   "longest_nt": 4047,
+   "with_protein_hit": 1,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_200_length_4047_cov_8.159820",
+     "nt": 4047,
+     "subject": "YP_010769566.1",
+     "pident": 99.2,
+     "aln_aa": 616,
+     "evalue": 0.0,
+     "bitscore": 1255.0
+    }
+   ],
+   "scorable_alignments": 1,
+   "median_identity_percent": 99.2,
+   "identity_range": [
+    99.2,
+    99.2
+   ],
+   "median_aligned_aa": 616,
+   "longest_aligned_aa": 616,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_200_length_4047_cov_8.159820",
+    "nt": 4047,
+    "subject": "YP_010769566.1",
+    "pident": 99.2,
+    "aln_aa": 616,
+    "evalue": 0.0,
+    "bitscore": 1255.0
+   },
+   "reading": "close to the reference over a long alignment"
+  },
+  {
+   "name": "Piponevirus borborenecus",
+   "on_the_panel": false,
+   "panel_group": null,
+   "contigs": 1,
+   "total_nt": 4032,
+   "longest_nt": 4032,
+   "with_protein_hit": 1,
+   "rows": [
+    {
+     "contig": "WW_211013_20-22hmix_S5_L001_NODE_208_length_4032_cov_23.187327",
+     "nt": 4032,
+     "subject": "YP_010769732.1",
+     "pident": 96.2,
+     "aln_aa": 637,
+     "evalue": 0.0,
+     "bitscore": 1278.0
+    }
+   ],
+   "scorable_alignments": 1,
+   "median_identity_percent": 96.2,
+   "identity_range": [
+    96.2,
+    96.2
+   ],
+   "median_aligned_aa": 637,
+   "longest_aligned_aa": 637,
+   "most_divergent": {
+    "contig": "WW_211013_20-22hmix_S5_L001_NODE_208_length_4032_cov_23.187327",
+    "nt": 4032,
+    "subject": "YP_010769732.1",
+    "pident": 96.2,
+    "aln_aa": 637,
+    "evalue": 0.0,
+    "bitscore": 1278.0
+   },
+   "reading": "close to the reference over a long alignment"
+  }
+ ],
+ "taxa_total": 191
+}

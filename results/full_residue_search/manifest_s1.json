@@ -1,0 +1,312 @@
+{
+ "unit": "one row per subject; counts are MATES, since a hit is per mate",
+ "library_pairs": 8731224,
+ "unplaced_pairs": 1372021,
+ "unplaced_fraction": 0.15714,
+ "operating_point": {
+  "diamond_mode": "--sensitive",
+  "reporting_evalue": 100,
+  "significance_evalue": 1e-05,
+  "max_target_seqs": 1,
+  "trim_r2": 14
+ },
+ "bias": "the pile comes from a nucleotide-only label table, so it is MORE generous than the cascade's residue and the named-relative rate here is if anything a small overestimate. One direction, not two.",
+ "not_comparable_with": "the per-read report's subject table, which ran --very-sensitive on 6,000 pairs. Different instrument; do not merge the two.",
+ "wall_seconds": 899.8,
+ "seed": 1,
+ "git_sha": "c3fa49d22c5123cd98f239acc66fa35809632a0f",
+ "tree_dirty": false,
+ "script_sha256": "1d13c4673dbc4e11",
+ "piles": {
+  "residue": {
+   "pairs": 1372021,
+   "mates": 2744042,
+   "searched_mates_with_any_hit": 1273084,
+   "mates_with_significant_hit": 214502,
+   "subject_count": 41829,
+   "extract_seconds_all_piles": 22.0,
+   "diamond_seconds": {
+    "viral": 325.6,
+    "sprot": 354.8
+   }
+  },
+  "control": {
+   "pairs": 200000,
+   "mates": 400000,
+   "searched_mates_with_any_hit": 183897,
+   "mates_with_significant_hit": 39992,
+   "subject_count": 3243,
+   "extract_seconds_all_piles": 22.0,
+   "diamond_seconds": {
+    "viral": 91.1,
+    "sprot": 99.9
+   }
+  }
+ },
+ "subject_table": {
+  "rows": 41829,
+  "top_20_by_reads": [
+   {
+    "subject": "YP_010770115.1",
+    "index": "viral",
+    "residue_reads": 1401,
+    "median_identity_percent": 78.8,
+    "identity_range": [
+     50.0,
+     100.0
+    ],
+    "median_aligned_aa": 33,
+    "median_evalue": 1.17e-10,
+    "worst_evalue": 9.32e-06
+   },
+   {
+    "subject": "YP_010769693.1",
+    "index": "viral",
+    "residue_reads": 1300,
+    "median_identity_percent": 82.9,
+    "identity_range": [
+     54.3,
+     100.0
+    ],
+    "median_aligned_aa": 33,
+    "median_evalue": 6.3650000000000004e-12,
+    "worst_evalue": 9.38e-06
+   },
+   {
+    "subject": "YP_010769695.1",
+    "index": "viral",
+    "residue_reads": 887,
+    "median_identity_percent": 75.9,
+    "identity_range": [
+     45.5,
+     100.0
+    ],
+    "median_aligned_aa": 34,
+    "median_evalue": 9.64e-12,
+    "worst_evalue": 9.33e-06
+   },
+   {
+    "subject": "YP_010770113.1",
+    "index": "viral",
+    "residue_reads": 821,
+    "median_identity_percent": 80.8,
+    "identity_range": [
+     46.7,
+     100.0
+    ],
+    "median_aligned_aa": 33,
+    "median_evalue": 1.32e-11,
+    "worst_evalue": 9.36e-06
+   },
+   {
+    "subject": "YP_010769641.1",
+    "index": "viral",
+    "residue_reads": 567,
+    "median_identity_percent": 71.4,
+    "identity_range": [
+     50.0,
+     100.0
+    ],
+    "median_aligned_aa": 32,
+    "median_evalue": 3.68e-09,
+    "worst_evalue": 9.33e-06
+   },
+   {
+    "subject": "YP_010769505.1",
+    "index": "viral",
+    "residue_reads": 492,
+    "median_identity_percent": 74.1,
+    "identity_range": [
+     47.1,
+     100.0
+    ],
+    "median_aligned_aa": 33,
+    "median_evalue": 8.3e-10,
+    "worst_evalue": 9.33e-06
+   },
+   {
+    "subject": "YP_010769962.1",
+    "index": "viral",
+    "residue_reads": 474,
+    "median_identity_percent": 80.0,
+    "identity_range": [
+     48.6,
+     100.0
+    ],
+    "median_aligned_aa": 34,
+    "median_evalue": 4.62e-12,
+    "worst_evalue": 9.33e-06
+   },
+   {
+    "subject": "YP_010769017.1",
+    "index": "viral",
+    "residue_reads": 449,
+    "median_identity_percent": 68.6,
+    "identity_range": [
+     47.1,
+     86.2
+    ],
+    "median_aligned_aa": 34,
+    "median_evalue": 1.05e-09,
+    "worst_evalue": 9.33e-06
+   },
+   {
+    "subject": "YP_010769465.1",
+    "index": "viral",
+    "residue_reads": 436,
+    "median_identity_percent": 87.5,
+    "identity_range": [
+     50.0,
+     100.0
+    ],
+    "median_aligned_aa": 33,
+    "median_evalue": 5.895e-11,
+    "worst_evalue": 9.34e-06
+   },
+   {
+    "subject": "YP_010769694.1",
+    "index": "viral",
+    "residue_reads": 433,
+    "median_identity_percent": 69.7,
+    "identity_range": [
+     45.7,
+     100.0
+    ],
+    "median_aligned_aa": 33,
+    "median_evalue": 2.13e-08,
+    "worst_evalue": 9.79e-06
+   },
+   {
+    "subject": "YP_010769342.1",
+    "index": "viral",
+    "residue_reads": 427,
+    "median_identity_percent": 69.0,
+    "identity_range": [
+     48.6,
+     96.9
+    ],
+    "median_aligned_aa": 30,
+    "median_evalue": 1.9e-08,
+    "worst_evalue": 9.33e-06
+   },
+   {
+    "subject": "YP_010769463.1",
+    "index": "viral",
+    "residue_reads": 427,
+    "median_identity_percent": 90.0,
+    "identity_range": [
+     45.7,
+     100.0
+    ],
+    "median_aligned_aa": 31,
+    "median_evalue": 8.47e-13,
+    "worst_evalue": 9.62e-06
+   },
+   {
+    "subject": "YP_010769230.1",
+    "index": "viral",
+    "residue_reads": 425,
+    "median_identity_percent": 67.6,
+    "identity_range": [
+     48.6,
+     100.0
+    ],
+    "median_aligned_aa": 33,
+    "median_evalue": 4.51e-08,
+    "worst_evalue": 9.34e-06
+   },
+   {
+    "subject": "YP_010769373.1",
+    "index": "viral",
+    "residue_reads": 420,
+    "median_identity_percent": 71.4,
+    "identity_range": [
+     48.5,
+     100.0
+    ],
+    "median_aligned_aa": 33,
+    "median_evalue": 1.97e-09,
+    "worst_evalue": 9.33e-06
+   },
+   {
+    "subject": "YP_010769023.1",
+    "index": "viral",
+    "residue_reads": 410,
+    "median_identity_percent": 67.2,
+    "identity_range": [
+     45.5,
+     93.3
+    ],
+    "median_aligned_aa": 33,
+    "median_evalue": 6.16e-08,
+    "worst_evalue": 9.33e-06
+   },
+   {
+    "subject": "YP_013609554.1",
+    "index": "viral",
+    "residue_reads": 396,
+    "median_identity_percent": 71.4,
+    "identity_range": [
+     51.4,
+     94.3
+    ],
+    "median_aligned_aa": 32,
+    "median_evalue": 1.01e-08,
+    "worst_evalue": 9.53e-06
+   },
+   {
+    "subject": "YP_010770112.1",
+    "index": "viral",
+    "residue_reads": 391,
+    "median_identity_percent": 68.6,
+    "identity_range": [
+     45.2,
+     97.1
+    ],
+    "median_aligned_aa": 32,
+    "median_evalue": 1.28e-08,
+    "worst_evalue": 9.32e-06
+   },
+   {
+    "subject": "YP_004421762.1",
+    "index": "viral",
+    "residue_reads": 386,
+    "median_identity_percent": 68.6,
+    "identity_range": [
+     44.1,
+     91.3
+    ],
+    "median_aligned_aa": 33,
+    "median_evalue": 3.03e-09,
+    "worst_evalue": 9.97e-06
+   },
+   {
+    "subject": "YP_010769353.1",
+    "index": "viral",
+    "residue_reads": 361,
+    "median_identity_percent": 68.6,
+    "identity_range": [
+     50.0,
+     100.0
+    ],
+    "median_aligned_aa": 33,
+    "median_evalue": 1.9e-08,
+    "worst_evalue": 9.33e-06
+   },
+   {
+    "subject": "YP_010770245.1",
+    "index": "viral",
+    "residue_reads": 357,
+    "median_identity_percent": 91.4,
+    "identity_range": [
+     50.0,
+     100.0
+    ],
+    "median_aligned_aa": 34,
+    "median_evalue": 3.47e-14,
+    "worst_evalue": 9.31e-06
+   }
+  ],
+  "where": "the full table is full_residue_search_s1.json in the run directory"
+ }
+}
