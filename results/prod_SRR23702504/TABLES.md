@@ -83,47 +83,49 @@ MEGAHIT `MEGAHIT v1.2.9`, minimap2 `2.31-r1302`, reads sha256 `1c636acef565fa5f`
 
 ## The cascade
 
-Operating point: `{"k2_confidence": 0.1, "min_match_length_nt": 40, "diamond_bitscore": 50.0, "diamond_sensitivity": "--sensitive", "entropy_min": 0.5, "homopolymer_max": 25, "trim_r2": 0}`. Percentages are of read **pairs**, the occurrence-weighted unit. Spread is the observed range over 1 seed and is not a dispersion estimate.
+Operating point: `{"k2_confidence": 0.1, "min_match_length_nt": 40, "diamond_bitscore": 50.0, "diamond_sensitivity": "--sensitive", "entropy_min": 0.5, "homopolymer_max": 25, "trim_r2": 0}`. Percentages are of read **pairs**, the occurrence-weighted unit. Spread is the observed range over 5 seeds and is not a dispersion estimate.
 
 | quantity | mean (min-max) |
 |---|---|
 | pairs read per seed | 200000 |
-| union removed | 78.31 |
-| residue | 21.69 |
-| tier 3 (unplaceable reads) | 11.71 |
+| union removed | 78.42 (78.31-78.59) |
+| residue | 21.58 (21.41-21.69) |
+| tier 3 (unplaceable reads) | 11.74 (11.64-11.82) |
 
 | tier | alone | marginal | cumulative | index GB |
 |---|---|---|---|---|
-| artefact | 2.31 | 2.31 | 2.31 | 0.000 |
-| rrna | 0.75 | 0.52 | 2.83 | 0.265 |
-| k2_viral_20261022.d | 0.01 | 0.01 | 2.84 | 0.667 |
-| k2_standard_08_GB_20261022.d | 0.15 | 0.12 | 2.96 | 8.005 |
-| k2_pluspf_08_GB_20261022.d | 0.13 | 0.00 | 2.96 | 8.005 |
-| k2_pluspf_16_GB_20261022.d | 0.65 | 0.42 | 3.38 | 16.005 |
-| selfasm_sample_contigs_rrna | 4.53 | 3.43 | 6.81 | 0.003 |
-| selfasm_sample_contigs_identified_norrna | 71.92 | 69.06 | 75.87 | 0.163 |
-| prot_viral | 0.54 | 0.54 | 76.41 | 0.239 |
-| prot_sprot | 2.27 | 1.91 | 78.31 | 0.294 |
+| artefact | 2.30 (2.23-2.38) | 2.30 (2.23-2.38) | 2.30 (2.23-2.38) | 0.000 |
+| rrna | 0.77 (0.75-0.78) | 0.55 (0.52-0.58) | 2.86 (2.80-2.93) | 0.265 |
+| k2_viral_20261022.d | 0.02 (0.01-0.03) | 0.02 (0.01-0.03) | 2.88 (2.82-2.95) | 0.667 |
+| k2_standard_08_GB_20261022.d | 0.16 (0.14-0.17) | 0.13 (0.12-0.14) | 3.00 (2.95-3.09) | 8.005 |
+| k2_pluspf_08_GB_20261022.d | 0.13 (0.12-0.14) | 0.00 | 3.00 (2.95-3.09) | 8.005 |
+| k2_pluspf_16_GB_20261022.d | 0.66 (0.65-0.68) | 0.42 (0.40-0.45) | 3.42 (3.35-3.49) | 16.005 |
+| selfasm_sample_contigs_rrna | 4.58 (4.53-4.64) | 3.47 (3.43-3.54) | 6.89 (6.78-6.98) | 0.003 |
+| selfasm_sample_contigs_identified_norrna | 71.92 (71.85-72.05) | 69.04 (68.94-69.15) | 75.93 (75.82-76.10) | 0.163 |
+| prot_viral | 0.55 (0.54-0.55) | 0.55 (0.54-0.55) | 76.48 (76.37-76.65) | 0.239 |
+| prot_sprot | 2.29 (2.24-2.35) | 1.94 (1.89-2.00) | 78.42 (78.31-78.59) | 0.294 |
 
 Measured and not subtracted, so carrying no row above: `observe_sample_contigs_unidentified`. Matching sequence nobody has named is recorded against the read and does not remove it.
 
-## What every stage did, per seed
+## What every stage did, with the seeds that agree collapsed
 
-| seed | stage | status | reason |
+| seeds | stage | status | reason |
 |---|---|---|---|
-| run_s1 | cascade | ok |  |
-| run_s1 | contigs | ok |  |
-| run_s1 | reads | ok |  |
-| run_s1 | linkage | ok |  |
-| run_s1 | census | ok |  |
-| run_s1 | calibration | skipped | not selected with --stages |
-| run_s1 | intervals | ok |  |
-| run_s1 | layers | ok |  |
-| run_s1 | strains | ok |  |
-| run_s1 | divergent | skipped | not selected with --stages |
-| run_s1 | shortlist | ok |  |
-| run_s1 | panel | skipped | not selected with --stages |
-| run_s1 | crossplant | ok |  |
+| all 5 | cascade | ok |  |
+| all 5 | contigs | ok |  |
+| all 5 | reads | ok |  |
+| all 5 | linkage | ok |  |
+| all 5 | census | ok |  |
+| all 5 | calibration | skipped | not selected with --stages |
+| all 5 | intervals | ok |  |
+| all 5 | layers | ok |  |
+| all 5 | strains | ok |  |
+| all 5 | divergent | skipped | not selected with --stages |
+| all 5 | shortlist | ok |  |
+| all 5 | panel | skipped | not selected with --stages |
+| all 5 | crossplant | ok |  |
 
-Complete runs: 0 of 1. Wall clock per seed: [67.1] minutes.
+Every stage returned the same status and reason on all 5 seeds, so no row here names a seed.
+
+Stages that failed: **0** across 5 seeds. No run is marked `complete` because 3 stages are not part of a production pass (`calibration`, `divergent`, `panel`), which is the manifest recording a deliberate omission and not a failure. Wall clock per seed: [67.1, 61.9, 61.9, 63.2, 65.0] minutes.
 

@@ -39,6 +39,29 @@ not-a-member half is the one refusal that would invent recurrence.
 It is also, deliberately, **effluent** rather than influent, and that turned out to be the single
 most consequential difference between it and Berlin (see the trim, below).
 
+## What the run produced
+
+Five seeds, 200,000 pairs each, disjoint blocks at the registry's stride. Every figure is in
+`TABLES.md`, generated from the committed run directories; the three that say whether the pass
+worked are:
+
+- **Nothing failed.** Zero failed stages across 5 seeds x 13 stages. Three stages are skipped with
+  their committed reason because SPEC 13.4 keeps them out of production, and three more declined
+  with a reason rather than returning a number (the trim measurement, the truth panel, and the
+  four-nickname prefix map before it was fixed).
+- **Identifiable material removes 78.42% of read pairs** (observed range over the five seeds
+  78.31 to 78.59), leaving a residue of 21.58% of which 11.74% is unplaceable at the read level.
+  Berlin reads 77.10% and about 11.1% on the same cascade, so a library nobody had measured lands
+  within about 1.3 points of the one every threshold was set on. That is a statement about these
+  two waters and not an accuracy claim.
+- **The sample's own assembly removes 71.92% alone where the 16 GB Kraken2 database removes 0.66%**,
+  the sharpest version of this repo's indexing result so far (Berlin: +30.3 points for 1.4 MB of
+  self-contigs). Efficiency, not sensitivity: self-assembly removes 0.0% of a genuinely novel
+  virus, measured in `results/crossplant/`.
+
+All five seed manifests carry the same `script_sha256`, so one body of code produced all of them.
+They carry no commit, which is bug 4 below.
+
 ## What the run refused, and what had to be supplied
 
 | # | Where | What it refused | What I supplied | Was the refusal right? |
@@ -139,6 +162,21 @@ than adaptations, so they are recorded as such.
    checked against the scripts' own source rather than retyped
    (`tests/test_hapax_stages.py::test_every_library_aware_script_is_told_which_library`). Fixed in
    `e7ab28f`; this is the defect that made a fourth production launch necessary.
+4. **`hapax.py` kept a private `git()` that returns `""`, so every seed manifest of this run
+   records an empty commit and asserts a clean tree it never checked.** `provenance.py` was fixed
+   for exactly this machine — an instance has a payload tarball and no `git`, so the launcher
+   passes the commit in `HAPAX_GIT_SHA` — and the driver never imported it. It has its own helper
+   that swallows the exception and returns the empty string, which `git_sha()` raises on. Two
+   consequences, and the second is worse than the first. `git_sha` reads `""`, which a reader can
+   at least see is nothing. But `tree_dirty` is `bool(git("status", "--porcelain"))`, and an empty
+   string is `False`, so the manifest states positively that the tree was clean when no check ran.
+   A refusal would have been a third launch; a silent `False` is a provenance claim nobody made.
+   What pins this run's code is therefore `script_sha256` alone, identical across all five seeds —
+   which is the field CLAUDE.md says earns the manifest its place, working as intended, but working
+   alone. **The fix is deliberately not in the same commit as these results**: changing `hapax.py`
+   changes its hash, and the five manifests pin `78dcb6cb…`, so a fix landing beside them would
+   leave a directory whose pin matches no committed file. It lands in the commit after, where the
+   history shows the results pinned to the code that produced them and the fix following.
 
 ## What the tool could not show while it ran
 
@@ -240,8 +278,14 @@ commit message.
 | i-0e44a2d889f41d119 | 90060fa | the assembly: 2h07 of MEGAHIT over 32.1 M pairs, kept in S3 and reused by every launch after it | ~2h53 | ~$1.45 |
 | i-05594b6c0bc02e744 | 0bd82f8 | terminated: the tier-2 stage was 1h45 into a per-seed hash that should take seconds (bug 1) | ~3h35 | ~$1.80 |
 | i-0b62260310974e946 | 50c2e97 | terminated: `linkage` refused because the driver never passed `--library` (bug 3) | ~1h45 | ~$0.90 |
-| i-034b76bf8e2a55734 | e7ab28f | the production pass, seeds 1 upward. All thirteen stages `ok` or `skipped` on seed 1; no stage failed | (pending) | projected worst case $2.93 |
-| i-01073d986644e28cc | e7ab28f | the same pass, seeds 5 downward, so five seeds fit inside two dead-man timers | (pending) | projected worst case $1.78 |
+| i-034b76bf8e2a55734 | e7ab28f | the production pass, seeds 1 upward: seeds 1, 2 and 3, then terminated mid-seed-4 once the other instance had it | 4h35 | $2.31 |
+| i-01073d986644e28cc | e7ab28f | the same pass, seeds 5 downward: seeds 5 and 4, which completed the set, then terminated | 2h47 | $1.41 |
+
+The two production instances cost **$3.72** together, against the $4.71 their timers would have
+billed if both had run to the end — the saving is only that seed 4 landed on one of them while the
+other was still working on it, so that one could be killed early. Running the same five seeds on one
+instance would have cost about **$3.15**: the duplication is the price of a timer that cannot be
+moved, and it is about 18% of the pass.
 
 The three dead staging launches cost about **$0.12** in total. Every one of them was a failure in
 staging, not in the pipeline, and each is now a test or an assertion. The two terminated production

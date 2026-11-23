@@ -33,9 +33,15 @@ def spread(xs, pct=True, dp=2):
     if not xs:
         return "-"
     k = 100 if pct else 1
-    if len(xs) == 1:
-        return f"{xs[0] * k:.{dp}f}"
-    return (f"{st.mean(xs) * k:.{dp}f} ({min(xs) * k:.{dp}f}-{max(xs) * k:.{dp}f})")
+    lo, hi = f"{min(xs) * k:.{dp}f}", f"{max(xs) * k:.{dp}f}"
+    # A range printed over identical values is noise that reads like a measurement. It
+    # fired on every index size and on the per-seed pair count, which are fixed by
+    # construction across seeds: "0.000 (0.000-0.000)" invites the reader to look for a
+    # spread in a quantity that cannot have one. Collapse to the single figure, which also
+    # keeps a one-seed run and a five-seed run of a constant looking the same.
+    if len(xs) == 1 or lo == hi:
+        return lo
+    return (f"{st.mean(xs) * k:.{dp}f} ({lo}-{hi})")
 
 
 def load(path: Path):
@@ -258,21 +264,49 @@ def main() -> int:
                 w("")
 
     # ---- what every stage did, and what it refused: for this sample that IS the result
-    w("## What every stage did, per seed")
+    # THE STAGE CENSUS IS COLLAPSED ACROSS SEEDS, AND WHY. Every stage has to appear, because
+    # "ran and found nothing" and "never ran" look identical in an absence - that is the census
+    # rule. But five seeds of a thirteen-stage run is 65 rows of which 65 were identical here,
+    # and a table nobody reads to the end hides a disagreement as effectively as omitting it.
+    # So the row is keyed by (stage, status, reason) with the seeds that produced it named:
+    # agreement collapses to one line, and a seed that differs becomes its own line, which is
+    # the only case worth looking at. The stage order is the run's own, never sorted.
+    w("## What every stage did, with the seeds that agree collapsed")
     w("")
-    w("| seed | stage | status | reason |")
+    w("| seeds | stage | status | reason |")
     w("|---|---|---|---|")
+    census: dict[tuple, list[str]] = {}
     for p in runs:
         m = load(p / "manifest.json") or {}
         for s in m.get("stages", []):
             reason = (s.get("reason") or "").replace("|", "/").replace("\n", " ")
             if len(reason) > 220:
                 reason = reason[:217] + "..."
-            w(f"| {p.name} | {s.get('stage')} | {s.get('status')} | {reason} |")
+            census.setdefault((s.get("stage"), s.get("status"), reason), []).append(p.name)
+    n = len(runs)
+    for (stage, status, reason), seeds in census.items():
+        cell = (f"all {n}" if len(seeds) == n
+                else ", ".join(s.removeprefix("run_") for s in seeds))
+        w(f"| {cell} | {stage} | {status} | {reason} |")
     w("")
+    if all(len(v) == n for v in census.values()):
+        w(f"Every stage returned the same status and reason on all {n} seeds, so no row here "
+          f"names a seed.")
+        w("")
     done = [load(p / "manifest.json") or {} for p in runs]
-    w(f"Complete runs: {sum(1 for m in done if m.get('complete'))} of {len(done)}. "
-      f"Wall clock per seed: "
+    # `complete` is false whenever any stage did not produce output, and a stage left out of
+    # production by SPEC 13.4 is one of those - so a correct production run reports
+    # "complete runs: 0 of 5", which reads as five failures. The count a reader wants is how
+    # many stages FAILED, with the unselected ones named separately, so the line says both
+    # and never prints a bare completeness figure.
+    failed = sum(len([s for s in (m.get("stages") or []) if s.get("status") == "failed"])
+                 for m in done)
+    unsel = sorted({s.get("stage") for m in done for s in (m.get("stages") or [])
+                    if s.get("status") == "skipped"})
+    w(f"Stages that failed: **{failed}** across {len(done)} seeds. No run is marked "
+      f"`complete` because {len(unsel)} stages are not part of a production pass "
+      f"(`{'`, `'.join(str(u) for u in unsel)}`), which is the manifest recording a "
+      f"deliberate omission and not a failure. Wall clock per seed: "
       f"{[round(m.get('wall_seconds', 0) / 60, 1) for m in done]} minutes.")
     w("")
 
