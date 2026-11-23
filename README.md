@@ -1,44 +1,45 @@
 <h1 align="center">hapax</h1>
-<p align="center"><strong>Wastewater in, a measurement out.</strong><br>
-Subtract the known. Assemble what survives. Score the rest as a distance, with a shuffled null beside it.</p>
+<p align="center">Find what is already known in a wastewater sample, take it out, and measure how far the rest sits from anything published.</p>
 
-<p align="center"><img src="docs/hapax-overview.svg" alt="Three-panel figure. Panel a: the seven stages of one run, each with one input, one output and one measured quantity — resolve (14 nt non-template prefix, modal in 5 of 5 seeds), merge (35.1% of pairs), assemble (20 of 25 depositor genomes at 90% breadth), identify (77.10% of read pairs removed as already known), score the distance (shuffled null 0.00%), report the residue (median depth 1), subtract other plants (87.5%, still falling at 512 libraries). Panel b: a to-scale bar of 100% of read pairs, 77.10% identified and 22.90% residue. Panel c: the one distance axis, far from anything published to matched, with no novelty score, no threat score and no per-read verdict." width="100%"></p>
+<p align="center"><img src="docs/hapax-overview.svg" alt="Three-panel figure. Panel a lists the seven stages of a run with one input, one output and one measured number each: resolve (14 nt non-template prefix on mate 2, the mode in 5 of 5 seeds), merge (35.1% of pairs), assemble (20 of 25 depositor genomes at 90% breadth), identify (77.10% of read pairs removed as already known), score the distance (shuffled null 0.00%), report the residue (median depth 1), subtract other plants (87.5%, still falling at 512 libraries). Panel b is a bar of 100% of read pairs drawn to scale, 77.10% identified and 22.90% residue. Panel c is the distance axis, running from far from anything published to matched, and notes that the tool gives no novelty score, no threat score and no per-read call." width="100%"></p>
 
-It runs on any sample, reports in the same format every time, and assumes nothing about the
-water. The output is one three-way breakdown — what is known and by what, what assembled but
-nothing can name, what never assembled at all — every row carrying both halves of the answer,
-*how far* from anything published and *like what*, with the operating point that produced it
-and the cost of getting there.
+hapax runs on any library and prints the same sections every time. It starts with no
+assumption about what the water holds. The output comes in three parts: the reads and contigs
+an index can name, the contigs that assembled but nothing names, and the reads that never
+assembled at all. Every row gives two things, how far it sits from its closest published
+relative and what that relative is.
 
-**Three numbers that say what the tool is.** A 0.015 GB index built from the sample's own
-contigs removes 30 points of the library where 16 GB of Kraken2 removes 0.42 — which is why
-the cascade is ordered by cost, not by size ([`results/subtract_known/`](results/subtract_known/REPORT.md)).
-Merging the mates of a pair, which is free, lifts recognition at 20% divergence from 10.5% to
-38.4% — the one wall this project has found that moves without new sequencing or new money
-([`results/profile_reach/`](results/profile_reach/REPORT.md)). And a union of 512 other plants'
-libraries removes 87.5% of a held-out one, but at matched depth 1 it takes 79.0% of the residue
-against 70.5% of already-identified reads: it is blind to anything seen once, not to novelty
-([`results/crossplant/`](results/crossplant/REPORT.md)).
+Three measured results set the shape of the tool.
 
-**And what it will not do.** No novelty score, no threat score, no per-read verdict, and never
-"matches nothing" — a search can say whether something is already known and cannot say that
-something is new, which is measured here repeatedly rather than assumed. The declared blind
-spots ship as part of the output (`SPEC.md` §7, §9).
+- 0.015 GB of contigs assembled from the sample itself removes 30 points of the library,
+  where 16 GB of Kraken2 adds 0.42. The cascade is ordered by cost for that reason
+  ([`results/subtract_known/`](results/subtract_known/REPORT.md)).
+- Merging the two mates of a pair costs nothing and lifts recognition at 20% divergence from
+  10.5% to 38.4% ([`results/profile_reach/`](results/profile_reach/REPORT.md)).
+- A panel of 512 libraries from other plants removes 87.5% of a held-out library. At matched
+  depth 1 it still takes 79.0% of the residue and 70.5% of identified reads, so what it is
+  blind to is anything seen once, not novelty
+  ([`results/crossplant/`](results/crossplant/REPORT.md)).
 
-The figure above is generated, not drawn: every quantity on it lives once in
-[`experiments/make_overview_figure.py`](experiments/make_overview_figure.py) beside the
-`results/` directory it was read from, the one to-scale panel computes its geometry from
-those percentages, and `tests/test_overview_figure.py` fails if the committed SVG stops
-matching the table. What the script does not yet do, and says so in its docstring, is parse
-the result files: the values are transcribed from the committed reports.
+There is no novelty score, no threat score and no per-read call, and the tool never reports
+that something matches nothing. A search can say whether sequence is already known. It cannot
+say that sequence is new. The blind spots are listed in `SPEC.md` §7 and §9, and they ship
+with the output.
 
-**Start here: [`SPEC.md`](SPEC.md).** It is the production tool spec and the source of truth
-for intent. It is short by design and every number in it is measured on real data with a
-committed script and a seed behind it.
+The figure is generated by
+[`experiments/make_overview_figure.py`](experiments/make_overview_figure.py). Each number on
+it sits in one table beside the `results/` directory it came from, the panel drawn to scale
+works out its own widths from those percentages, and `tests/test_overview_figure.py` fails if
+the committed SVG stops matching the table. The script does not read the result files; the
+values are copied from their reports.
 
-Then: [`CLAUDE.md`](CLAUDE.md) for how to work in the repo, and
-**[`results/README.md`](results/README.md) for the experiment archive** — one line per
-experiment saying what it measured, what it killed, and where its report is.
+Read [`SPEC.md`](SPEC.md) first. It is the spec for the production tool and the source of
+truth for what we are building. It is short, and every number in it comes from a committed
+script run under a stated seed.
+
+After that, [`CLAUDE.md`](CLAUDE.md) covers how to work in the repo, and
+[`results/README.md`](results/README.md) indexes the experiments, one line each: what it
+measured, what it killed, and where its report is.
 
 ## Setting up
 
@@ -47,8 +48,8 @@ python3 -m pip install -r requirements.txt     # Python side, pinned where a num
 python3 -m pytest                              # the suite; needs no external tool
 ```
 
-The binaries a run drives (BLAST, DIAMOND, Kraken2, foldseek, ...) are listed with their
-pins in [`TOOLS.md`](TOOLS.md).
+The binaries a run drives (BLAST, DIAMOND, Kraken2, foldseek and the rest) are listed with
+their pins in [`TOOLS.md`](TOOLS.md).
 
 ## Running it
 
@@ -61,64 +62,65 @@ python3 hapax.py run SAMPLE_1.fastq.gz SAMPLE_2.fastq.gz --seed 1 --out RUNDIR \
 python3 experiments/make_web.py results/web/pages/SAMPLE.json   # the run viewer
 ```
 
-The web view is built by one command for every sample. What a page says about its sample
-that is not in the run directory - its title, one sentence on what the water is, and every
-result file outside the run that a panel reads, each as a path or as `not_run` with a
-reason - is in that sample's descriptor under `results/web/pages/`. Methods entries live in
-`results/web/methods.json`, with any row measured on one library stored under its
-accession; on another sample's page that row reads "Not measured on this library".
+One command builds the web view for every sample. Anything a page says about its sample that
+is not in the run directory goes in that sample's descriptor under `results/web/pages/`: the
+title, one sentence on what the water is, and every result file outside the run that a panel
+reads, given either as a path or as `not_run` with a reason. Methods entries live in
+`results/web/methods.json`. A row measured on one library is stored under that accession, and
+on another sample's page it reads "Not measured on this library".
 
-Everything that belongs to one sample - its trim, its own contigs, its assembly - has to
-be given: there are no defaults for those, because a default is some other sample's file
-and the run would use it without complaint. A per-read field whose reference you do not
-have is left out by name (`--report-without cross_sample crispr ...`) and recorded as not
-searched. The run checks every input, index and tool before it starts and refuses, exit
-status 2, if anything is missing.
+Anything that belongs to one sample has to be given on the command line: its trim, its own
+contigs, its assembly. None of them have defaults, because a default here is some other
+sample's file and the run would use it without complaint. If you do not have the reference a
+per-read field needs, drop that field by name (`--report-without cross_sample crispr ...`)
+and the run records it as not searched. Every input, index and tool is checked before the run
+starts, and a missing one stops it with exit status 2.
 
-`hapax.py` is an orchestrator: every number in `RUNDIR` comes from the `experiments/`
-script that already measures it, with that script's own seed and manifest. The web view is
-a thin reader over `RUNDIR` and contains no number that is not in a committed file. Add
-`--plan` to print the stages without running them.
+`hapax.py` only orchestrates. Each number in `RUNDIR` comes from the `experiments/` script
+that measures it, under that script's own seed and manifest. The web view reads `RUNDIR` and
+shows no number that is not in a committed file. Add `--plan` to print the stages without
+running them.
 
-## How far signal-to-noise gets today, and where it stops
+## How far this gets, and where it stops
 
-**It gets to:** a three-way breakdown of the library with intervals and operating points
-(77.0% identified, 11.9% assembled-but-unidentified, 11.1% residual reads on this sample);
-per read, the distance to its closest relative with the alignment's coverage and E-value,
-what kind of sequence it is, whether it recurs in the library, and what it physically sits
-next to; per subject, how many residue reads point at one known relative from how far,
-which is where a new strain of a known virus appears; and a divergence ladder from a spiked
-holdout genome that says what the whole cascade would have missed at 10% and 20%.
+It gets to a three-way breakdown of the library with intervals and operating points: on this
+sample, 77.0% identified, 11.9% assembled but unidentified, 11.1% residual reads. For each
+read it reports the distance to its closest relative with the alignment's coverage and
+E-value, what kind of sequence it is, whether it recurs in the library, and what it sits next
+to on the molecule. For each subject it reports how many residue reads point at one known
+relative and from how far, which is where a new strain of a known virus shows up. A spiked
+holdout genome gives the divergence ladder, which says what the whole cascade would have
+missed at 10% and 20%.
 
-**It stops at:** any per-read verdict, and grouping. A mate finds its own partner in its ten
-nearest neighbours 23 times above chance with no shared sequence, which says the geometry
-carries real molecule-level information — but the rate falls as the space grows, so at
-library scale a read cannot find even its own mate, let alone a stranger from the same
-genome ([`results/mate_friends/`](results/mate_friends/REPORT.md)). Nothing here approaches
-one false positive per million.
+It stops at per-read verdicts and at grouping. A mate finds its own partner among its ten
+nearest neighbours 23 times above chance with no shared sequence, so the geometry does carry
+something real about the molecule. The rate falls as the space grows. At library scale a read
+cannot find even its own mate, never mind a stranger from the same genome
+([`results/mate_friends/`](results/mate_friends/REPORT.md)). Nothing here comes close to one
+false positive per million.
 
 ## What this is not
 
-It does not emit a novel-or-not call. The target is a multidimensional measurement of signal
-against noise, because every feature this project has tried as a novelty score has been
-measured to fail as a threshold on one axis (`SPEC.md` §1.1). The declared blind spots are
-part of the deliverable: no read-level rule approaches one false positive per million,
-recognition of a known virus falls away between 10% and 20% divergence, and detection below
-about one in a million is not available at all (`SPEC.md` §7).
+It does not call anything novel or not novel. Every feature this project has tried as a
+novelty score has been measured and fails as a threshold on one axis (`SPEC.md` §1.1), so
+what it reports instead is a measurement of signal against noise across several axes at once.
+The blind spots are part of what ships: no read-level rule comes close to one false positive
+per million, recognition of a known virus falls away between 10% and 20% divergence, and
+anything below roughly one in a million is out of reach (`SPEC.md` §7).
 
 ## History
 
-Two earlier directions are archived rather than deleted, because what they killed is the
-reason the current one is shaped as it is.
+Two earlier directions are archived rather than deleted. What they ruled out is why the
+current one looks the way it does.
 
-- **The codon-aware assembler**, the first attempt, is under
+- **The codon-aware assembler** was the first attempt. It is under
   [`experiments/codon_assembler/`](experiments/codon_assembler/) with its own spec and all
   its results, laid out as the repo root once was so its scripts still run from there. It
-  ships as a negative: scoring overlaps in codon space gave a small gain over nucleotide
-  scoring that showed only at high simulated diversity, and on real multi-host swarms it
-  lost to metaSPAdes and MEGAHIT by merging sister swarms.
-- **Strain separation during assembly** produced the measured benchmark in
-  [`results/pair_ladder/`](results/pair_ladder/REPORT.md): below about 3.8% divergence every
-  assembler fuses lineages at any depth, and the reads carry enough information to separate
-  them, so what is missing is path selection rather than signal. That result is live and is
-  cited by the spec.
+  ships as a negative result. Scoring overlaps in codon space gave a small gain over
+  nucleotide scoring, and only at high simulated diversity. On real multi-host swarms it lost
+  to metaSPAdes and MEGAHIT by merging sister swarms.
+- **Strain separation during assembly** produced the benchmark in
+  [`results/pair_ladder/`](results/pair_ladder/REPORT.md). Below about 3.8% divergence every
+  assembler fuses lineages at any depth, and the reads carry enough information to tell them
+  apart, so what is missing is path selection rather than signal. That result is live and the
+  spec cites it.
