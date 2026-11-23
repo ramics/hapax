@@ -896,6 +896,69 @@ words, rank and hide the tail, names not accessions, and **phage, virus and bact
 separately on the two axes of §5.2**. Every figure ships its control row, drawn by the same
 code.
 
+### 13.3 Every sensitivity control the reader can honestly move, moves
+
+Imo, 2026-11-23: *"all sensitivity controls within reason adjustable at output time. we want
+this page to feel like a playground, but uncluttered and with sensible defaults."*
+
+This is cheap because of a decision already taken: **the report is un-thresholded by
+construction**. Every per-read and per-contig row already carries the continuous numbers —
+identity, alignment length, E-value, bitscore, coverage, depth, occupancy — and the cascade
+already writes the per-tier per-read outcome. So moving a control is **re-filtering and
+re-sorting what was computed**, not recomputing it, and the page is a reader over committed
+files either way (§13.1).
+
+**Four rules, enforced in the generator.** They are what stops a playground from
+manufacturing the numbers this project has had to withdraw.
+
+1. **A control moves its null, its known-positive control arm and its census with it.** A
+   threshold quoted without its own null is the exact shape behind the withdrawn readings of
+   §8, and the withdrawn "92.3% of shuffled reads hit" was a figure taken with no E-value
+   floor at all. So the shuffled rows and the identified-material rows are filtered by the
+   same predicate in the same pass, and the panel redraws all three or none. The sliders
+   are **bounded to the range where the null and the control exist**; past that edge the
+   panel renders `null not measured at this setting` rather than a clean-looking number.
+2. **Discrete where the measurement is discrete.** Kraken2 confidence was *run* at
+   0 / 0.1 / 0.2, so that control **snaps to the measured points and never interpolates** —
+   a factor of twelve lives between them and a smooth slider would invent the middle. Same
+   for the index-size axis: measured points only, and the unflattened far end stays absent
+   (§9).
+3. **Every reading carries its setting, and the shipped default is marked.** Defaults are
+   the operating points this spec measured; a moved control is shown as moved, every export
+   and copied figure carries the setting string, and the page state is in the URL so a
+   reading is citable. One click returns to the shipped defaults.
+4. **A control may change what is shown, never what was computed**, and where moving it
+   re-labels material the label re-renders with it. Thresholds move contigs between tiers, so
+   a contig reads *tier 1 at your setting, tier 2 as shipped* rather than silently changing
+   pile (§4.4).
+
+**Adjustable, because the numbers already exist at every setting:** the significance floor
+(E-value or bitscore) on any search panel; identity and coverage bands, including the two
+axes that define class A's shortlist cell, with its count and its control count recomputing
+together; the minimum contig length and depth for the characterisable set (shipped at 500 nt
+and 2×); ranking by the conserved gene against whole-contig best hit, with the spread always
+drawn; which cascade tiers are in the union, with the **marginals recomputed rather than
+reused**, because marginal contribution depends on order; merged-read against per-mate view;
+the recurrence depth stratum and occupancy cut; and the residue table's filters, with
+`cannot discriminate here` always a visible value and never filtered away by default.
+
+**Not adjustable, and the page says why rather than leaving it off silently:**
+
+| control | why it cannot move at output time |
+|---|---|
+| database size or choice beyond what was run | a measurement at a size we did not run cannot be synthesised; the cost curve shows measured points and marks the far end absent |
+| the mate-2 trim | it changes the reads, so it changes every number downstream. It ships as **two measured runs** (14 and 16, 1.7 points apart) with the curve, not a slider |
+| assembly path settings | they move the residue by 8.79 points and need re-assembly and re-identification; they ship as arms with their flags (§3b, §4.3) |
+| search sensitivity and seeding | DIAMOND at three sensitivities, BLASTP and full Smith-Waterman return the same nearest relative to the decimal, so there is nothing to tune; the constraint is the significance statistics (§11.16) |
+| the interval and the design effect | not a control. The Wilson interval is widened by the measured overdispersion (1.57× / 1.43×) and cannot be switched off (§8) |
+| the two cross-plant operating points | they disagree by a factor of four and **neither travels alone**, so both are shown rather than one being selectable (§7.1) |
+| anything that would produce a novelty call | there is no threshold to expose, because there is no score (§0, §11.1) |
+
+**Uncluttered means a handful visible and the rest behind one disclosure**, in the same
+summary-then-detail shape as the panels: the controls that change a headline sit with that
+headline, and the rest live in a Detail list. A control the reader never moves should be
+invisible, and a control that cannot move honestly should be visible as a stated constraint.
+
 ---
 
 ## 14. What this is not
