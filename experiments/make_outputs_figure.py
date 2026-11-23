@@ -45,7 +45,7 @@ OUTPUTS = [
         "row": "one row per contig, whether or not an index named it",
         "carries": "distance to the closest published relative, identity and coverage per "
                    "gene, nucleotide and protein, with depth and evenness",
-        "spec": "5.1",
+        "spec": "6.1",
         "accent": "known",
     },
     {
@@ -53,7 +53,7 @@ OUTPUTS = [
         "row": "one row per published relative the residue points at",
         "carries": "how many reads point at it and from how far, which is where a novel "
                    "strain of a known virus appears",
-        "spec": "6",
+        "spec": "5",
         "accent": "known",
     },
     {

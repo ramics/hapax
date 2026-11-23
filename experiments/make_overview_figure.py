@@ -80,7 +80,11 @@ STAGES = [
     },
 ]
 
-# The three output classes of SPEC 5, 6 and 7. `qualifier` is the sentence that travels with
+# The three output classes of SPEC 5, 6 and 7, in increasing order of distance
+# from published sequence, which is the order the scale in panel c runs in
+# (Imo, 2026-11-23: "swap A and B, so everything is increasing order of
+# divergence"). `note` is drawn only where a class carries one; B has one
+# because the gene-level ranking is where this project's novelty work sits. `qualifier` is the sentence that travels with
 # the class and keeps a reader from reading more into it than was measured. Each one is
 # written as what the row states, because the first version wrote them as refusals ("no
 # species call") and a page of negatives says less about the tool than the same facts
@@ -88,16 +92,21 @@ STAGES = [
 CLASSES = [
     {
         "key": "A",
-        "name": "divergent but related contigs",
-        "reports": "distance from published sequence with the closest relative named, per gene",
-        "qualifier": "ranked by the conserved gene, with the per-gene spread shown",
+        "name": "novel strains of known viruses",
+        "reports": "the near end of the scale, treated as a first-class case",
+        "qualifier": "lineages inside the assembler's fusion limit are reported as fused",
+        "note": "",
         "accent": "known",
     },
     {
         "key": "B",
-        "name": "novel strains of known viruses",
-        "reports": "the near end of the same scale, treated as a first-class case",
-        "qualifier": "lineages inside the assembler's fusion limit are reported as fused",
+        "name": "divergent but related contigs",
+        "reports": "distance from published sequence, ranked on the conserved gene, with "
+                   "the closest relative named",
+        "qualifier": "the per-gene spread travels with the rank, and a shortlist is cut on "
+                     "coverage",
+        "note": "One contig's genes sit at different distances, and the gene that is "
+                "conserved across a family is the one a novel lineage shows up on.",
         "accent": "known",
     },
     {
@@ -105,9 +114,11 @@ CLASSES = [
         "name": "the unplaceable residue",
         "reports": "distance measured, identity still open, with the depth it was seen at",
         "qualifier": "carries the index it was measured against and the depth it was seen at",
+        "note": "",
         "accent": "residue",
     },
 ]
+
 
 # The pill row. It used to list what the tool never emits; stated forwards, the same four
 # facts say what every row does carry, which is the more useful sentence on a front page.
@@ -134,8 +145,10 @@ W = 1120
 ROW_TOP, ROW_STEP = 162, 58
 NOTE_Y = ROW_TOP + ROW_STEP * (len(STAGES) - 1) + 50
 B_TOP = NOTE_Y + 58
-CLASS_STEP = 50
-C_TOP = B_TOP + 36 + CLASS_STEP * len(CLASSES) + 24
+CLASS_STEP = 62
+NOTE_EXTRA = 20  # a class that carries a note needs a line under its row
+C_TOP = (B_TOP + 36 + CLASS_STEP * len(CLASSES)
+         + NOTE_EXTRA * sum(1 for c in CLASSES if c["note"]) + 24)
 REFUSAL_Y = C_TOP + 100
 H = REFUSAL_Y + 92
 
@@ -161,8 +174,8 @@ def render() -> str:
         "travels with it: "
         + "; ".join(f"{c['key']}, {c['name']}, reports {c['reports']}, {c['qualifier']}"
                     for c in CLASSES)
-        + ". Panel c is the distance scale all three sit on, running from far from published "
-        "sequence to matched, and the row beneath it lists what every output carries: "
+        + ". Panel c is the distance scale all three sit on, running from matched to far "
+        "from published sequence, and the row beneath it lists what every output carries: "
         + ", ".join(CARRIES) + "."
     )
     add(f'  <desc id="figdesc">{desc}</desc>')
@@ -239,8 +252,8 @@ def render() -> str:
         "the qualifier it carries</text>")
     add("")
     add("  <g>")
-    for i, cls in enumerate(CLASSES):
-        cy = b_top + 36 + i * CLASS_STEP
+    cy = b_top + 36
+    for cls in CLASSES:
         colour = _accent(cls["accent"])
         add(f'    <rect x="40" y="{cy - 14}" width="4" height="32" fill="{colour}"/>')
         add(f'    <text class="cls" x="60" y="{cy - 1}" fill="{colour}">{cls["key"]}'
@@ -248,6 +261,9 @@ def render() -> str:
         add(f'    <text class="io" x="60" y="{cy + 17}">{cls["reports"]}</text>')
         add(f'    <text class="ref" x="1080" y="{cy - 1}" text-anchor="end">'
             f'{cls["qualifier"]}</text>')
+        if cls["note"]:
+            add(f'    <text class="note" x="60" y="{cy + 34}">{cls["note"]}</text>')
+        cy += CLASS_STEP + (NOTE_EXTRA if cls["note"] else 0)
     add("  </g>")
     add("")
 
@@ -262,8 +278,9 @@ def render() -> str:
         add(f'      <line x1="{a}" y1="-8" x2="{a}" y2="0"/>'
             f'<line x1="{b}" y1="-8" x2="{b}" y2="0"/>')
     add("    </g>")
-    add('    <text class="ax" x="0" y="16">far from published sequence</text>')
-    add('    <text class="ax" x="300" y="16" text-anchor="end">matched</text>')
+    add('    <text class="ax" x="0" y="16">matched</text>')
+    add('    <text class="ax" x="300" y="16" text-anchor="end">far from published '
+        "sequence</text>")
     add('    <text class="note" x="360" y="-14">One mark per contig, every contig kept. A row '
         "gives the distance to its closest</text>")
     add('    <text class="note" x="360" y="2">published relative and the identity of that '

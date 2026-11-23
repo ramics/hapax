@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 1020" width="1120" height="1020" role="img" aria-labelledby="figtitle figdesc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 1076" width="1120" height="1076" role="img" aria-labelledby="figtitle figdesc">
   <title id="figtitle">hapax: the stages of a run, the three output classes, and the scale they share</title>
-  <desc id="figdesc">Panel a lists the seven stages of a run, with what each is given and what it writes: resolve, library accession → its trim, block size and panels, writes every value with how it was established, or a refusal to run; merge, read pairs → one read per overlapping molecule, writes a merged read where a pair overlaps, per-mate rows where it does not; assemble, the whole library → contigs, writes contigs with mapped depth and evenness, and recovery against a truth panel; identify, reads and contigs against indexes, cheapest first → tiers, writes the tier table and the evidence behind every removal, per route; score the distance, every contig, removed or kept → one row on one scale, writes identity and coverage per gene, nucleotide and protein, with the index used; report the residue, the reads left after identification → one row per pair, writes every row kept, each field beside its shuffled and known-positive controls; subtract other plants, a panel of libraries from elsewhere → witnessed or not, writes the witnessed fraction at both operating points, paired by plant. Panel b lists the three output classes, what each reports and the qualifier that travels with it: A, divergent but related contigs, reports distance from published sequence with the closest relative named, per gene, ranked by the conserved gene, with the per-gene spread shown; B, novel strains of known viruses, reports the near end of the same scale, treated as a first-class case, lineages inside the assembler's fusion limit are reported as fused; C, the unplaceable residue, reports distance measured, identity still open, with the depth it was seen at, carries the index it was measured against and the depth it was seen at. Panel c is the distance scale all three sit on, running from far from published sequence to matched, and the row beneath it lists what every output carries: a distance, the closest relative, with coverage and E-value, the operating point behind it, its controls.</desc>
+  <desc id="figdesc">Panel a lists the seven stages of a run, with what each is given and what it writes: resolve, library accession → its trim, block size and panels, writes every value with how it was established, or a refusal to run; merge, read pairs → one read per overlapping molecule, writes a merged read where a pair overlaps, per-mate rows where it does not; assemble, the whole library → contigs, writes contigs with mapped depth and evenness, and recovery against a truth panel; identify, reads and contigs against indexes, cheapest first → tiers, writes the tier table and the evidence behind every removal, per route; score the distance, every contig, removed or kept → one row on one scale, writes identity and coverage per gene, nucleotide and protein, with the index used; report the residue, the reads left after identification → one row per pair, writes every row kept, each field beside its shuffled and known-positive controls; subtract other plants, a panel of libraries from elsewhere → witnessed or not, writes the witnessed fraction at both operating points, paired by plant. Panel b lists the three output classes, what each reports and the qualifier that travels with it: A, novel strains of known viruses, reports the near end of the scale, treated as a first-class case, lineages inside the assembler's fusion limit are reported as fused; B, divergent but related contigs, reports distance from published sequence, ranked on the conserved gene, with the closest relative named, the per-gene spread travels with the rank, and a shortlist is cut on coverage; C, the unplaceable residue, reports distance measured, identity still open, with the depth it was seen at, carries the index it was measured against and the depth it was seen at. Panel c is the distance scale all three sit on, running from matched to far from published sequence, and the row beneath it lists what every output carries: a distance, the closest relative, with coverage and E-value, the operating point behind it, its controls.</desc>
 
   <defs>
     <style>
@@ -23,7 +23,7 @@
     </marker>
   </defs>
 
-  <rect x="0.5" y="0.5" width="1119" height="1019" fill="#ffffff" stroke="#dfe4ea"/>
+  <rect x="0.5" y="0.5" width="1119" height="1075" fill="#ffffff" stroke="#dfe4ea"/>
 
   <text class="figh" x="40" y="48">hapax</text>
   <text class="figs" x="40" y="72">Known sequence is identified and removed. The remainder is measured against published sequence.</text>
@@ -98,21 +98,22 @@
 
   <g>
     <rect x="40" y="640" width="4" height="32" fill="#2f6fd0"/>
-    <text class="cls" x="60" y="653" fill="#2f6fd0">A<tspan class="cls" dx="10" fill="#14181d">divergent but related contigs</tspan></text>
-    <text class="io" x="60" y="671">distance from published sequence with the closest relative named, per gene</text>
-    <text class="ref" x="1080" y="653" text-anchor="end">ranked by the conserved gene, with the per-gene spread shown</text>
-    <rect x="40" y="690" width="4" height="32" fill="#2f6fd0"/>
-    <text class="cls" x="60" y="703" fill="#2f6fd0">B<tspan class="cls" dx="10" fill="#14181d">novel strains of known viruses</tspan></text>
-    <text class="io" x="60" y="721">the near end of the same scale, treated as a first-class case</text>
-    <text class="ref" x="1080" y="703" text-anchor="end">lineages inside the assembler's fusion limit are reported as fused</text>
-    <rect x="40" y="740" width="4" height="32" fill="#c77700"/>
-    <text class="cls" x="60" y="753" fill="#c77700">C<tspan class="cls" dx="10" fill="#14181d">the unplaceable residue</tspan></text>
-    <text class="io" x="60" y="771">distance measured, identity still open, with the depth it was seen at</text>
-    <text class="ref" x="1080" y="753" text-anchor="end">carries the index it was measured against and the depth it was seen at</text>
+    <text class="cls" x="60" y="653" fill="#2f6fd0">A<tspan class="cls" dx="10" fill="#14181d">novel strains of known viruses</tspan></text>
+    <text class="io" x="60" y="671">the near end of the scale, treated as a first-class case</text>
+    <text class="ref" x="1080" y="653" text-anchor="end">lineages inside the assembler's fusion limit are reported as fused</text>
+    <rect x="40" y="702" width="4" height="32" fill="#2f6fd0"/>
+    <text class="cls" x="60" y="715" fill="#2f6fd0">B<tspan class="cls" dx="10" fill="#14181d">divergent but related contigs</tspan></text>
+    <text class="io" x="60" y="733">distance from published sequence, ranked on the conserved gene, with the closest relative named</text>
+    <text class="ref" x="1080" y="715" text-anchor="end">the per-gene spread travels with the rank, and a shortlist is cut on coverage</text>
+    <text class="note" x="60" y="750">One contig's genes sit at different distances, and the gene that is conserved across a family is the one a novel lineage shows up on.</text>
+    <rect x="40" y="784" width="4" height="32" fill="#c77700"/>
+    <text class="cls" x="60" y="797" fill="#c77700">C<tspan class="cls" dx="10" fill="#14181d">the unplaceable residue</tspan></text>
+    <text class="io" x="60" y="815">distance measured, identity still open, with the depth it was seen at</text>
+    <text class="ref" x="1080" y="797" text-anchor="end">carries the index it was measured against and the depth it was seen at</text>
   </g>
 
-  <text class="pan" x="40" y="828">c<tspan class="pant" dx="12">What a row reports</tspan></text>
-  <g transform="translate(40,868)">
+  <text class="pan" x="40" y="884">c<tspan class="pant" dx="12">What a row reports</tspan></text>
+  <g transform="translate(40,924)">
     <line x1="0" y1="0" x2="300" y2="0" stroke="#4a525c" marker-end="url(#arr)"/>
     <g stroke="#4a525c">
       <line x1="22" y1="-8" x2="22" y2="0"/><line x1="38" y1="-8" x2="38" y2="0"/>
@@ -121,24 +122,24 @@
       <line x1="166" y1="-8" x2="166" y2="0"/><line x1="193" y1="-8" x2="193" y2="0"/>
       <line x1="224" y1="-8" x2="224" y2="0"/><line x1="246" y1="-8" x2="246" y2="0"/>
     </g>
-    <text class="ax" x="0" y="16">far from published sequence</text>
-    <text class="ax" x="300" y="16" text-anchor="end">matched</text>
+    <text class="ax" x="0" y="16">matched</text>
+    <text class="ax" x="300" y="16" text-anchor="end">far from published sequence</text>
     <text class="note" x="360" y="-14">One mark per contig, every contig kept. A row gives the distance to its closest</text>
     <text class="note" x="360" y="2">published relative and the identity of that relative, and states which of the</text>
     <text class="note" x="360" y="18">two it has. Search establishes prior knowledge, and score ordering tracks</text>
     <text class="note" x="360" y="34">proximity to the database, so the report stops at the distance it measured.</text>
   </g>
 
-  <text class="ax" x="40" y="947">Every row carries</text>
-    <rect x="160" y="928" width="82" height="28" rx="14" fill="#fffaf2" stroke="#e6d3b3"/>
-    <text class="ref" x="201" y="947" text-anchor="middle">a distance</text>
-    <rect x="256" y="928" width="326" height="28" rx="14" fill="#fffaf2" stroke="#e6d3b3"/>
-    <text class="ref" x="419" y="947" text-anchor="middle">the closest relative, with coverage and E-value</text>
-    <rect x="596" y="928" width="207" height="28" rx="14" fill="#fffaf2" stroke="#e6d3b3"/>
-    <text class="ref" x="700" y="947" text-anchor="middle">the operating point behind it</text>
-    <rect x="817" y="928" width="95" height="28" rx="14" fill="#fffaf2" stroke="#e6d3b3"/>
-    <text class="ref" x="864" y="947" text-anchor="middle">its controls</text>
+  <text class="ax" x="40" y="1003">Every row carries</text>
+    <rect x="160" y="984" width="82" height="28" rx="14" fill="#fffaf2" stroke="#e6d3b3"/>
+    <text class="ref" x="201" y="1003" text-anchor="middle">a distance</text>
+    <rect x="256" y="984" width="326" height="28" rx="14" fill="#fffaf2" stroke="#e6d3b3"/>
+    <text class="ref" x="419" y="1003" text-anchor="middle">the closest relative, with coverage and E-value</text>
+    <rect x="596" y="984" width="207" height="28" rx="14" fill="#fffaf2" stroke="#e6d3b3"/>
+    <text class="ref" x="700" y="1003" text-anchor="middle">the operating point behind it</text>
+    <rect x="817" y="984" width="95" height="28" rx="14" fill="#fffaf2" stroke="#e6d3b3"/>
+    <text class="ref" x="864" y="1003" text-anchor="middle">its controls</text>
 
-  <line x1="40" y1="982" x2="1080" y2="982" stroke="#eef1f4"/>
-  <text class="note" x="40" y="1000">Stage by stage in <tspan font-weight="700">SPEC.md</tspan>, with the measurement behind each one in <tspan font-weight="700">results/</tspan>.</text>
+  <line x1="40" y1="1038" x2="1080" y2="1038" stroke="#eef1f4"/>
+  <text class="note" x="40" y="1056">Stage by stage in <tspan font-weight="700">SPEC.md</tspan>, with the measurement behind each one in <tspan font-weight="700">results/</tspan>.</text>
 </svg>

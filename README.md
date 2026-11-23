@@ -9,9 +9,11 @@ relative, which relative that is, over how much of the contig, and at what signi
 Identity is given per gene, nucleotide and protein, with the index it was measured against.
 Removal applies to read pairs, so every contig is measured, named or not.
 
-The output is three classes on one scale. **A**, contigs at real distance from anything
-published. **B**, novel strains of named viruses, at the near end of the same scale. **C**,
-sequence nothing places, with the depth it was seen at.
+The output is three classes on one scale, ordered by distance from published sequence. A,
+novel strains of known viruses, at the near end. B, contigs at real distance from anything
+published, ranked on the gene that is conserved across a family and carrying the spread
+between a contig's own genes, which is where the system's novelty work sits. C, sequence
+nothing places, with the depth it was seen at.
 
 [`SPEC.md`](SPEC.md) is the spec, including the bounds on every claim in it.
 [`results/README.md`](results/README.md) indexes the experiments behind it, failures included.
