@@ -266,3 +266,22 @@ def test_a_gzipped_rows_file_is_read_and_two_spellings_refuse(tmp_path):
     plain.unlink()
     b = make_web.bundle(run, 20, 20, 1, page)
     assert b["scatter"]["residue"]["n_total"] > 0
+
+
+def test_the_row_reader_is_imported_and_not_re_typed():
+    """One copy of gzipped-or-plain, as for the shuffle and the search parser.
+
+    Four scripts read a run directory's row dumps by name. A second copy of this logic
+    is how the shuffle bug shipped twice in two days, so the reader lives in
+    experiments/run_rows.py and anything reading those dumps imports it.
+    """
+    import run_rows
+    assert "run_rows" in (ROOT / "experiments/make_web.py").read_text()
+    for f in sorted((ROOT / "experiments").glob("*.py")):
+        if f.name == "run_rows.py":
+            continue
+        src = f.read_text()
+        for name in ("reads.jsonl", "layers.jsonl", "contigs.jsonl"):
+            if f'{name}.gz' in src:
+                assert "run_rows" in src, f"{f.name} opens {name}.gz on its own"
+    assert run_rows.jsonl(ROOT / "results/holdout_cascade/run_s1", "reads.jsonl")

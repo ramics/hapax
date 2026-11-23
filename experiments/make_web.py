@@ -32,7 +32,6 @@ is what signal against noise is actually read off.
 from __future__ import annotations
 
 import argparse
-import gzip
 import json
 import re
 import platform
@@ -46,6 +45,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import library_facts
 import page_descriptor
+import run_rows
 import web_controls
 from subtract_known import provenance
 
@@ -626,31 +626,6 @@ def search_table(piles: dict[str, list[dict]]) -> dict:
     return out
 
 
-def jsonl(rundir: Path, name: str):
-    """Rows of a run's .jsonl, gzipped or not, and a refusal where it is neither.
-
-    The production run writes `reads.jsonl.gz`; the earlier runs in this repo write
-    `reads.jsonl`. The reader looked for the plain name only, so the first real
-    production directory built a page with **zero per-read rows and said nothing**: the
-    residue table, the scatter and both search arms drew empty, which is the page
-    reporting "nothing here" for a run of 32 M pairs. A default where a refusal belongs,
-    the family this repo keeps paying for. So both spellings are read, and a directory
-    that carries both refuses rather than picking one, because nothing says which is
-    current.
-    """
-    plain, gz = rundir / name, rundir / (name + ".gz")
-    if plain.exists() and gz.exists():
-        raise SystemExit(f"{rundir} carries both {name} and {name}.gz and nothing says "
-                         f"which the run wrote; remove one")
-    if gz.exists():
-        with gzip.open(gz, "rt") as fh:
-            return [json.loads(ln) for ln in fh if ln.strip()]
-    if plain.exists():
-        with open(plain) as fh:
-            return [json.loads(ln) for ln in fh if ln.strip()]
-    return None
-
-
 def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int,
            page: dict) -> dict:
     rng = random.Random(seed)
@@ -659,7 +634,7 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int,
         raise SystemExit(f"{rundir}/manifest.json is absent; this is not a hapax run "
                          f"directory")
     piles: dict[str, list[dict]] = {"residue": [], "known": []}
-    for r in jsonl(rundir, "reads.jsonl") or []:
+    for r in run_rows.jsonl(rundir, "reads.jsonl") or []:
         piles.setdefault("residue" if r.get("set", "residue") == "residue"
                          else "known", []).append(r)
 
@@ -675,7 +650,7 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int,
     res = piles.get("residue", [])
     table = res if len(res) <= table_rows else rng.sample(res, table_rows)
     layers = {}
-    for d in jsonl(rundir, "layers.jsonl") or []:
+    for d in run_rows.jsonl(rundir, "layers.jsonl") or []:
         layers[d["name"]] = d["layer"]
 
     strains_subjects = [r.get("subject") for r in
