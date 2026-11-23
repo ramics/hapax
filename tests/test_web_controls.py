@@ -216,9 +216,11 @@ def test_a_run_with_fields_dropped_by_name_still_builds(tmp_path):
                         "--out", str(tmp_path / "p.html")],
                        capture_output=True, text=True, cwd=ROOT)
     assert r.returncode == 0, r.stdout + r.stderr
-    # And the control over a field that was not searched states that, rather than
-    # offering a cut over numbers that do not exist.
+    # And the control over a field that was not searched states that in the run's own
+    # words, rather than offering a cut over numbers that do not exist. hapax writes the
+    # reason as a plain string into the field where the value would be.
     page = make_web.load_page(HOLDOUT_PAGE, run)
-    got = {c["id"]: c for c in make_web.bundle(run, 20, 20, 1, page)["controls"]
-           ["controls"]}
-    assert got["min_occupancy"].get("absent")
+    b = make_web.bundle(run, 20, 20, 1, page)
+    assert b["not_searched"]["cross_sample"].startswith("not searched")
+    got = {c["id"]: c for c in b["controls"]["controls"]}
+    assert "--report-without cross_sample" in got["min_occupancy"]["absent"]

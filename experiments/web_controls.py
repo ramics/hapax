@@ -194,7 +194,12 @@ def _resolve_one(c: dict, rundir: Path, bundle: dict, search: dict,
         out["bounds"] = _bounds([r[5] for r in search["all"]], 1, c["shipped"])
         if out["bounds"] is None:
             out.pop("bounds")
-            out["absent"] = ("this run measured no cross-sample occupancy, so there is "
+            # Where the run itself said why, those are its words and not ours: a run
+            # that dropped the field by name wrote the reason into the rows.
+            said = (bundle.get("not_searched") or {}).get("cross_sample")
+            out["absent"] = (f"this run reports cross-sample occupancy as {said!r}, so "
+                             f"there is no count to cut on" if said else
+                             "this run measured no cross-sample occupancy, so there is "
                              "no count to cut on. Occupancy comes from the recurrence "
                              "pass over the other dates of the same plant, and a run "
                              "without it has not searched them rather than found nothing")

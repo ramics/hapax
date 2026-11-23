@@ -576,6 +576,27 @@ SEARCH_FIELDS = ["evalue_mate1", "bitscore_mate1", "evalue_mate2", "bitscore_mat
                  "library_depth", "other_samples"]
 
 
+def not_searched(piles: dict[str, list[dict]]) -> dict:
+    """The fields a run dropped by name, with the run's own reason, from the rows.
+
+    `hapax run --report-without X` writes the reason into the field where the value would
+    be, as a plain string, so the rows themselves say which fields were not searched and
+    why. That census is read once here and carried, rather than each reader inventing its
+    own wording for an absence: *searched and found nothing* and *not searched* must not
+    render the same, and this is the sentence that keeps them apart.
+    """
+    out = {}
+    for rows in piles.values():
+        for r in rows:
+            for k, v in r.items():
+                if isinstance(v, str) and k not in ("name", "set", "adapter") \
+                        and v.lower().startswith("not searched"):
+                    out.setdefault(k, v)
+        if out:
+            break
+    return out
+
+
 def search_table(piles: dict[str, list[dict]]) -> dict:
     """The per-read search numbers the significance controls filter, both arms together.
 
@@ -730,6 +751,7 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int,
                                          else None)}
                            for r in table],
                   "n_drawn": len(table), "n_total": len(res), "sample_seed": seed},
+        "not_searched": not_searched(piles),
         "search": {"fields": SEARCH_FIELDS,
                    "piles": {k: v for k, v in search.items()},
                    "n": {k: len(v) for k, v in search.items()}},
@@ -3365,6 +3387,13 @@ function interval(iv) {
       (relabelled ? '<span class="relabel">' + relabelled + ' of the rows shown would ' +
         'have been subtracted as identified at your floor and are labelled as such, not ' +
         'moved.</span> ' : '') +
+      (Object.keys(D.not_searched || {}).length
+        ? '<b>Not searched on this run:</b> ' +
+          Object.keys(D.not_searched).map(k => esc(k) + ' (' +
+            esc(D.not_searched[k]) + ')').join(', ') + '. A column that is empty for ' +
+          'that reason is a field nobody looked at, which is not the same as a field ' +
+          'that found nothing. '
+        : '') +
       undet + ' of the rows shown are <i>undetermined</i> - the fields cannot ' +
       'discriminate on them - which is a value and not a missing one, so it is never ' +
       'filtered away unless the switch above is turned on. The full rows are in ' +
