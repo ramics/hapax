@@ -51,8 +51,11 @@ die() {
   echo "=== shutting down: $1 ==="
   echo "$1" > /opt/hapax/why.txt 2>/dev/null || true
   sync || true
+  # --exclude venv: `--include "*.json"` over /opt/hapax walks the virtualenv too, and
+  # the first run wrote some 1,500 botocore paginator files into a bucket with no delete.
   aws s3 cp /opt/hapax/ "$LOGS/" --recursive --exclude "*" --include "log-*.txt" \
-    --include "why.txt" --include "*.json" --region "$REGION" || true
+    --include "why.txt" --include "*.json" --exclude "venv/*" --exclude "venv64/*" \
+    --exclude "*/site-packages/*" --region "$REGION" || true
   aws s3 cp /opt/hapax/out/ "$OUTS3/" --recursive --region "$REGION" || true
   shutdown -c || true
   shutdown -h now || systemctl --no-block poweroff || halt -p || true
@@ -69,7 +72,8 @@ die() {
     { df -h /; free -g; uptime; ls -la /opt/hapax/out/ 2>/dev/null; } \
       > /opt/hapax/log-machine.txt 2>&1 || true
     aws s3 cp /opt/hapax/ "$LOGS/" --recursive --exclude "*" --include "log-*.txt" \
-      --include "*.json" --region "$REGION" >/dev/null 2>&1 || true
+      --include "*.json" --exclude "venv/*" --exclude "venv64/*" \
+      --exclude "*/site-packages/*" --region "$REGION" >/dev/null 2>&1 || true
     aws s3 cp /opt/hapax/out/ "$OUTS3/" --recursive --region "$REGION" >/dev/null 2>&1 || true
   done
 ) &
@@ -355,7 +359,26 @@ fi
 # the block sized to this library's read count, and the index set.
 S=/opt/hapax/stage
 mkdir -p "$S"
-ACC="$ACC" S="$S" OUT="/opt/hapax/out/prod_$ACC" \
+
+# An assembly staged from the store, when one was given. The first production pass spent
+# two hours assembling and then refused every seed on two files missing from its payload;
+# the assembly itself survived in the store, so the second pass reads it rather than
+# paying for it again. Empty means assemble.
+ASSEMBLY_FA=""
+if [ -n "@@ASSEMBLY_FROM@@" ]; then
+  mkdir -p "$S/wk/asm_baseline"
+  aws s3 cp "@@ASSEMBLY_FROM@@" /opt/hapax/staged_contigs.fa.gz --region "$REGION" \
+    || die "cannot read the staged assembly @@ASSEMBLY_FROM@@"
+  gunzip -f /opt/hapax/staged_contigs.fa.gz \
+    || die "the staged assembly is not gzip"
+  ASSEMBLY_FA=/opt/hapax/staged_contigs.fa
+  grep -c "^>" "$ASSEMBLY_FA" > /opt/hapax/log-staged-assembly.txt \
+    || die "the staged assembly holds no FASTA records"
+  echo "=== assembly staged from @@ASSEMBLY_FROM@@:" \
+       "$(cat /opt/hapax/log-staged-assembly.txt) contigs ==="
+fi
+
+ACC="$ACC" S="$S" OUT="/opt/hapax/out/prod_$ACC" ASSEMBLY_FA="$ASSEMBLY_FA" \
   R1="$READS/${ACC}_1.fastq.gz" R2="$READS/${ACC}_2.fastq.gz" \
   TRIM_R2="$TRIM" BLOCK="@@BLOCK@@" PAIRS="@@PAIRS@@" SEEDS="@@SEEDS@@" PY="$PY" \
   REPORT_PAIRS="@@REPORT_PAIRS@@" THREADS="$THREADS" MEMORY="@@MEGAHIT_MEMORY@@" \
@@ -366,6 +389,7 @@ ACC="$ACC" S="$S" OUT="/opt/hapax/out/prod_$ACC" \
   SILVA="$SSU $LSU" \
   DMND="/opt/hapax/prot/viral.dmnd /opt/hapax/prot/sprot.dmnd" \
   AFTER_SEED='aws s3 cp /opt/hapax/out/ '"$OUTS3"'/ --recursive --region '"$REGION"' || true' \
+  AFTER_ASSEMBLY='gzip -c "$CONTIGS" > /opt/hapax/sample_contigs.fa.gz && aws s3 cp /opt/hapax/sample_contigs.fa.gz '"$OUTS3"'/sample_contigs.fa.gz --region '"$REGION"' || true' \
   bash experiments/prod_run.sh || die "prod_run.sh exited non-zero; its manifests say where" 1
 
 # The assembly itself, so a later pass over this sample never re-assembles: it is the

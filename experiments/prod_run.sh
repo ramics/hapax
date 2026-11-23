@@ -128,7 +128,23 @@ fi
 # place in this repo that records the full argv, the MEGAHIT version and the timing of an
 # assembly, and `results/path_settings/` measured the whole ladder of alternatives against
 # this arm. `--arms baseline` is MEGAHIT's defaults plus `--min-contig-len 200`.
-if [ ! -s "$S/wk/asm_baseline/final.contigs.fa" ]; then
+# A STAGED ASSEMBLY SKIPS THIS STEP, and that is not an optimisation. The assembly of a
+# 32 M-pair library is two hours of the pass; the first production run spent them, then
+# refused at the next step over two files missing from its payload, and the assembly died
+# with the instance because the final upload ran under a filter that excluded it. An
+# expensive intermediate that only exists on a machine with a dead-man timer is an
+# intermediate that will be paid for twice. So: ASSEMBLY_FA names a relabelled assembly
+# staged from somewhere else, and it is used as-is.
+if [ -n "${ASSEMBLY_FA:-}" ]; then
+  test -s "$ASSEMBLY_FA" || { echo "ASSEMBLY_FA=$ASSEMBLY_FA is empty or absent" >&2; exit 2; }
+  mkdir -p "$S/wk/asm_baseline"
+  if [ "$ASSEMBLY_FA" != "$S/wk/asm_baseline/sample_contigs.fa" ]; then
+    cp -f "$ASSEMBLY_FA" "$S/wk/asm_baseline/sample_contigs.fa"
+  fi
+  echo "=== assembly staged from $ASSEMBLY_FA; MEGAHIT is not run and no assembly" \
+       "manifest is written by this pass ==="
+  rm -f "$S/asm_in/${ACC}_1.fq" "$S/asm_in/${ACC}_2.fq"
+elif [ ! -s "$S/wk/asm_baseline/final.contigs.fa" ]; then
   "$PY" -I experiments/path_settings.py --seed 1 \
     --stages assemble --arms baseline \
     --reads "$S/asm_in/${ACC}_1.fq" --r2 "$S/asm_in/${ACC}_2.fq" \
@@ -138,9 +154,11 @@ if [ ! -s "$S/wk/asm_baseline/final.contigs.fa" ]; then
     --work "$S/wk" --out "$OUT/assembly"
 fi
 ASM="$S/wk/asm_baseline/final.contigs.fa"
-test -s "$ASM" || { echo "the assembly is missing at $ASM" >&2; exit 2; }
-# The trimmed copies are an intermediate of the assembly and nothing downstream reads them.
-rm -f "$S/asm_in/${ACC}_1.fq" "$S/asm_in/${ACC}_2.fq"
+if [ -z "${ASSEMBLY_FA:-}" ]; then
+  test -s "$ASM" || { echo "the assembly is missing at $ASM" >&2; exit 2; }
+  # The trimmed copies are an intermediate of the assembly and nothing reads them after.
+  rm -f "$S/asm_in/${ACC}_1.fq" "$S/asm_in/${ACC}_2.fq"
+fi
 
 # ---- 2a. MEGAHIT header -> the SPAdes-like form the committed scripts parse -----------
 # NAMED sample_contigs.fa DELIBERATELY. crossplant_stage.py's `queries` arm
@@ -155,6 +173,10 @@ if [ ! -s "$CONTIGS" ]; then
   "$PY" -I experiments/megahit_rename.py --contigs "$ASM" --out "$CONTIGS" --tag "$ACC" \
     --manifest "$OUT/rename_manifest.json"
 fi
+# Published HERE, the moment it exists, rather than with the rest of the outputs at the
+# end: whatever runs after this can refuse, and two hours of assembly must not depend on
+# the pass that follows it reaching its own last line.
+if [ -n "${AFTER_ASSEMBLY:-}" ]; then eval "$AFTER_ASSEMBLY"; fi
 
 # ---- 2b. the SILVA index classify_contigs.py reads -----------------------------------
 # Built from subtract_known.py's own two functions rather than from a copy of them: a

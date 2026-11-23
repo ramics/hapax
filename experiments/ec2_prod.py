@@ -105,8 +105,10 @@ PAYLOAD_MODULES = ("hapax.py", "requirements.txt", "SPEC.md", "blind_spots.json"
                    "experiments/prod_run.sh")
 
 
-def payload_files(root: Path) -> list[str]:
-    """Everything the instance runs: the listed files plus all of `experiments/`.
+def payload_files(root: Path, library: str | None = None) -> list[str]:
+    """Everything the instance runs: the listed files, all of `experiments/`, the one
+    module the current code still imports from the ARCHIVE, and the committed reference
+    tables the selected stages read.
 
     The reference project twice shipped a payload missing a module and the instance died
     having read nothing, which is why `ec2_crossplant.py` lists its four files by hand.
@@ -114,6 +116,22 @@ def payload_files(root: Path) -> list[str]:
     which import each other and read three JSON registries, and a missing one is a stage
     that refuses mid-run after the expensive half. So the unit is the directory, and the
     named files above are asserted on the instance one by one.
+
+    THE DIRECTORY IS NOT THE WHOLE UNIT, MEASURED. The first production pass assembled
+    for two hours and then refused every seed, on two files this rule does not catch:
+
+    - `experiments/codon_assembler/experiments/common.py`. `readlevel_features.py` imports
+      `common`, which lives only in the archived tree, and `residue_report.py` puts that
+      tree on `sys.path` at import time to read one constant from it. The archive is
+      excluded here to keep its results and its crate out of the payload - so the exclusion
+      removed a module the live code imports. It is shipped by name, and the coupling is
+      recorded in `experiments/SHARED.md` rather than hidden by a wider glob.
+    - `results/crossplant/panel.tsv` and the rest of the panel the library resolves to.
+      Those are committed RESULTS, read as reference data by a stage, and nothing under
+      `results/` was in the payload at all.
+
+    Both are the same shape as the rest of this file's lessons: the thing that was missing
+    was the thing nobody listed, so the list is derived from the registry that names it.
     """
     files = list(PAYLOAD_MODULES)
     for p in sorted((root / "experiments").rglob("*")):
@@ -121,7 +139,34 @@ def payload_files(root: Path) -> list[str]:
             continue
         if p.suffix in (".py", ".json", ".sh", ".md", ".toml", ".lock", ".rs"):
             files.append(str(p.relative_to(root)))
+    files.extend(ARCHIVE_MODULES)
+    files.extend(reference_files(root, library))
     return sorted(set(files))
+
+
+#: Modules the live code imports from the archived assembler tree. Shipped by name so that
+#: a payload cannot quietly lose one, and short enough to read: if it grows, the live code
+#: has a dependency on an archive that should be lifted out of it instead.
+ARCHIVE_MODULES = ("experiments/codon_assembler/experiments/common.py",)
+
+
+def reference_files(root: Path, library: str | None) -> list[str]:
+    """Committed files under `results/` that this library's stages read as reference data.
+
+    Resolved from `experiments/stage_references.json`, so a panel that gains a file ships
+    it without anybody editing this launcher. Only the production references are taken:
+    `truth_panel` is validation and a production run does not select that stage.
+    """
+    if library is None:
+        return []
+    sys.path.insert(0, str(root / "experiments"))
+    import stage_refs
+    out = []
+    r = stage_refs.resolve_optional(library, "crossplant_panel")
+    for path in (r.get("files") or {}).values():
+        rel = Path(path).resolve().relative_to(root)
+        out.append(str(rel))
+    return out
 
 
 def build_payload(root: Path, files: list[str]) -> bytes:
@@ -212,6 +257,14 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--allow-dirty", action="store_true")
     ap.add_argument("--timeout-minutes", type=float, default=700.0)
     ap.add_argument("--poll-seconds", type=float, default=300.0)
+    ap.add_argument("--assembly-from", default=None,
+                    help="s3:// URI of a gzipped, already-relabelled assembly of THIS "
+                         "library to use instead of assembling. Two hours and about a "
+                         "dollar of a 32 M-pair pass is MEGAHIT, and the first production "
+                         "run spent them and then refused at the next step: the assembly "
+                         "survived in the store, so the next pass reads it. It is used "
+                         "as-is and no assembly manifest is written, so the run's "
+                         "provenance for that step is the pass that produced it")
     ap.add_argument("--attach", help="watch an already-running instance")
     ap.add_argument("--detach", action="store_true")
     ap.add_argument("--dry-run", action="store_true", help="authorize only, launch nothing")
@@ -282,7 +335,7 @@ def main(argv: list[str] | None = None) -> int:
             f"--allow-price-change once he has answered, or shorten --hard-stop-minutes: "
             f"the projection is the timer's worst case, not the expected bill.")
 
-    files = payload_files(ROOT)
+    files = payload_files(ROOT, args.library)
     commit, shipped_dirty, tree_dirty = git_head(ROOT, files)
     if shipped_dirty and not args.allow_dirty:
         raise SystemExit(
@@ -309,6 +362,7 @@ def main(argv: list[str] | None = None) -> int:
         KRAKEN2_URL=KRAKEN2_URL, MEGAHIT_URL=MEGAHIT_URL, MINIMAP2_URL=MINIMAP2_URL,
         SILVA_SSU_URL=SILVA_SSU_URL, SILVA_LSU_URL=SILVA_LSU_URL,
         K2_DBS=" ".join(K2_DBS), K2_DB_CONTIGS=K2_DB_CONTIGS,
+        ASSEMBLY_FROM=(args.assembly_from or ""),
     )
     run_script = render(TEMPLATE, None, **tokens)
     run_key = (f"{prefix}/code/prod-run-{commit[:12]}-"

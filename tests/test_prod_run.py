@@ -314,3 +314,49 @@ def test_a_library_with_no_entry_is_not_a_refusal_for_a_launcher():
         stage_refs.resolve("SRR00000000", "crossplant_panel")
     r = stage_refs.resolve_optional("SRR00000000", "crossplant_panel")
     assert r["state"] == "unregistered" and "SRR00000000" in r["reason"]
+
+
+# ------------------------------------------------- the payload is the instance's whole repo
+def payload_tree(tmp_path, library=PROD_LIBRARY):
+    """A directory holding exactly what the launcher ships, and nothing else."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("ec2_prod", ROOT / "experiments/ec2_prod.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    tree = tmp_path / "payload"
+    for rel in mod.payload_files(ROOT, library):
+        src = ROOT / rel
+        assert src.exists(), f"{rel} is in the payload list and not on disk"
+        dst = tree / rel
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        dst.write_bytes(src.read_bytes())
+    return tree
+
+
+def test_every_preflighting_script_imports_from_the_payload_alone(tmp_path):
+    """The one test that would have caught the first production run's refusal.
+
+    A payload that is missing a module looks fine until a stage starts, which on this run
+    was two hours and one assembly in. `residue_report.py` fails at IMPORT time there: it
+    reads a constant out of `readlevel_features.py`, which imports `common` from the
+    archived assembler tree, which the payload excluded. --help exercises exactly the
+    module-level work that failed and nothing expensive.
+    """
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("hapax_mod", ROOT / "hapax.py")
+    hp = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(hp)
+    tree = payload_tree(tmp_path)
+    for script in sorted(hp.PREFLIGHT_SCRIPTS):
+        r = subprocess.run([sys.executable, "-I", f"experiments/{script}", "--help"],
+                           cwd=tree, capture_output=True, text=True)
+        assert r.returncode == 0, f"{script} cannot start from the payload:\n{r.stderr}"
+
+
+def test_the_reference_tables_a_stage_reads_are_in_the_payload(tmp_path):
+    """Committed results read as reference data, which nothing under results/ shipped."""
+    tree = payload_tree(tmp_path)
+    cp = stage_refs.resolve(PROD_LIBRARY, "crossplant_panel")
+    for path in cp["files"].values():
+        rel = Path(path).resolve().relative_to(ROOT)
+        assert (tree / rel).exists(), f"{rel} is read by the crossplant stage and not shipped"
