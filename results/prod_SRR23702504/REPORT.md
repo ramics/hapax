@@ -122,11 +122,23 @@ than adaptations, so they are recorded as such.
    to fail on the old code.
 2. **The stage list was typed in three places and the launcher's copy is the one that ran.** `panel`
    and `calibration` came out of production (SPEC 13.4) in `hapax.py` and in `prod_run.sh`, and
-   `ec2_prod.py`'s own `--stages` default still carried `panel`. So launch 5 ran a validation stage
+   `ec2_prod.py`'s own `--stages` default still carried `panel`. So `i-05594b6c0bc02e744` ran a validation stage
    in a production pass. It refused — correctly, with the committed reason, which is the design
    working — but the disagreement should not have been possible. The launcher now imports
    `hapax.PRODUCTION_STAGES`, and a test asserts the two cannot differ. Same family as a default
    where a refusal belongs: a literal in a second place.
+3. **`hapax run --library X` told two of its thirteen stages which library they were running.**
+   The other stage scripts take the library through `library_facts.add_argument`, whose default is
+   the discriminating dataset so that every committed command reproduces unchanged — so a stage
+   that was not told asked for **Berlin's** facts while reading this library's reads. It surfaced
+   because `linkage` needs a block stride, was not given one, and refused: the read path named
+   SRR23702504 while `--library` said SRR23973193, which is `resolve_args`' path check catching the
+   hole one layer in. Under a read path that names no run — a work directory, which is the common
+   case — there is no disagreement to catch and the stage would have used Berlin's stride in
+   silence. `Run.call` now appends `--library` for every script that takes one, and the registry is
+   checked against the scripts' own source rather than retyped
+   (`tests/test_hapax_stages.py::test_every_library_aware_script_is_told_which_library`). Fixed in
+   `e7ab28f`; this is the defect that made a fourth production launch necessary.
 
 ## What the tool could not show while it ran
 
@@ -137,6 +149,36 @@ progress line is worth most, and its absence is indistinguishable from a hang. I
 family as the refusals above — an empty output and a step that never ran look identical — one
 layer out: the run says nothing rather than saying it is working. Noted here rather than fixed,
 because fixing it mid-run would have stamped a new script hash onto this run's output.
+
+## The dead-man timer sizes the run, so five seeds needed two instances
+
+The instance is held by `shutdown -h +N` and terminate-on-shutdown, which is what stops a forgotten
+run from billing for days. It also cannot be moved once the instance is up: the timer is set in
+UserData, this account's instances carry no SSM agent (`describe-instance-information` returns an
+empty list for them), and there is no other way in. So the timer has to be right at launch, and
+sizing it needs a per-seed wall clock that only the first seed of a new library can give.
+
+Measured here: seed 1 of this library is **67 min** of stages after a **38 min** setup — fetching
+the assembly from S3, trimming, classifying the contigs — which puts five seeds at about 5h45 past
+a 5h30 timer. Rather than accept a run directory with a hole in it, or relaunch and pay for the
+setup a fifth time, the remaining seeds were split across two instances working the same seed list
+from opposite ends: `i-034b76bf8e2a55734` upward from seed 1, `i-01073d986644e28cc` downward from
+seed 5. The two produce interchangeable seeds because everything that decides what a seed reads is
+stated rather than discovered — the same commit, the same payload tarball, the same assembly object
+in S3, and `block = 6,000,000` from `libraries.json` — and each seed's own manifest carries the
+commit, the script hashes and the seed, so which instance ran it is recorded and not load-bearing.
+
+Two notes fall out of that arithmetic rather than being designed:
+
+- **The launcher's stride is advisory and the registry's is the one that runs.** `ec2_prod.py`
+  preflights with the `block` in `libraries.json` (6,000,000) and hands it to the instance;
+  `measure_library.py` independently derives 7,100,000 from the 32,125,614 pairs it counts in the
+  file. Both fit five disjoint blocks, the stated value wins because stating it is the override,
+  and the measurement ships beside the run unused. That is the intended behaviour, but the block in
+  the registry is a value **I supplied**, and the file could have supplied it: it belongs in the
+  ledger above as hand-supplied, not as measured.
+- Per-seed cost on this instance type is about **$0.56**, so a seed is cheap and the setup is not.
+  `--assembly-from` is what makes a relaunch cost one seed rather than a whole pass.
 
 ## What the generator could not build
 
@@ -149,10 +191,17 @@ because fixing it mid-run would have stamped a new script hash onto this run's o
 | i-0c35504358c8f69e3 | ed01fc3 | `pip install` exited 0, `import mappy` failed under `-I`; `--quiet` hid the reason | ~3 min | ~$0.03 |
 | i-0d20d59fe31946d78 | c76d6a5 | Kraken2 smoke test piped through `head` under `pipefail`: SIGPIPE read as a broken binary | ~90 s | ~$0.02 |
 | i-00007d94fdc55f541 | bb0f48b | provenance raised with no `git`, and the shell reported a refusal that had not happened — plus the real prefix measurement | ~13 min | ~$0.07 |
-| i-0e44a2d889f41d119 | 90060fa | the production pass | (pending) | projected worst case $5.86 |
+| i-0e44a2d889f41d119 | 90060fa | the assembly: 2h07 of MEGAHIT over 32.1 M pairs, kept in S3 and reused by every launch after it | ~2h53 | ~$1.45 |
+| i-05594b6c0bc02e744 | 0bd82f8 | terminated: the tier-2 stage was 1h45 into a per-seed hash that should take seconds (bug 1) | ~3h35 | ~$1.80 |
+| i-0b62260310974e946 | 50c2e97 | terminated: `linkage` refused because the driver never passed `--library` (bug 3) | ~1h45 | ~$0.90 |
+| i-034b76bf8e2a55734 | e7ab28f | the production pass, seeds 1 upward. All thirteen stages `ok` or `skipped` on seed 1; no stage failed | (pending) | projected worst case $2.93 |
+| i-01073d986644e28cc | e7ab28f | the same pass, seeds 5 downward, so five seeds fit inside two dead-man timers | (pending) | projected worst case $1.78 |
 
-The three dead launches cost about **$0.12** in total. Every one of them was a failure in staging,
-not in the pipeline, and each is now a test or an assertion.
+The three dead staging launches cost about **$0.12** in total. Every one of them was a failure in
+staging, not in the pipeline, and each is now a test or an assertion. The two terminated production
+launches cost **$2.70** and each bought one defect that only a library nobody had measured could
+show: a stage whose cost is quadratic in contig count, and a driver that handed the wrong library's
+facts to eleven of its thirteen stages.
 
 ## Provenance
 
