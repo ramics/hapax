@@ -1,0 +1,19 @@
+{
+ "instance_id": "i-055ea9ae3eaf1809c",
+ "instance_type": "c6i.2xlarge",
+ "commit": "491abe8a4292a6aeecfcf928a8b8f70e6077f671",
+ "seed": 1,
+ "threads": 8,
+ "arms_staged": "diamond blastp exhaustive hmmsearch jackhmmer hhsearch codon",
+ "blast_version": "2.17.0",
+ "diamond_version": "2.1.10",
+ "hmmer_version": "3.4",
+ "hhsuite_version": "3.3.0",
+ "null_piles": "/opt/hapax/queries/null_s1.fa /opt/hapax/queries/null_s2.fa /opt/hapax/queries/null_s3.fa /opt/hapax/queries/null_s4.fa /opt/hapax/queries/null_s5.fa ",
+ "foldseek": "not staged: the structure arm runs in-container",
+ "ncbi_blast_snapshot": "2026-10-22-01-05-01",
+ "refseq_viral_protein_files": 1,
+ "refseq_viral_genomic_files": 1,
+ "shared_subject_sequences": 1210551,
+ "pfam_version": "Pfam release       : 39.0 Pfam-A families    : 53275 Date               : 2026-09 "
+}
