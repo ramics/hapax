@@ -12,6 +12,16 @@ Then: [`CLAUDE.md`](CLAUDE.md) for how to work in the repo, and
 **[`results/README.md`](results/README.md) for the experiment archive** — one line per
 experiment saying what it measured, what it killed, and where its report is.
 
+## Setting up
+
+```
+python3 -m pip install -r requirements.txt     # Python side, pinned where a number depends on it
+python3 -m pytest                              # the suite; needs no external tool
+```
+
+The binaries a run drives (BLAST, DIAMOND, Kraken2, foldseek, ...) are listed with their
+pins in [`TOOLS.md`](TOOLS.md).
+
 ## Running it
 
 ```
