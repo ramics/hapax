@@ -5,10 +5,19 @@ intent. Then [`results/README.md`](results/README.md), the experiment archive, w
 one line each what has been measured and what has been killed. This file covers how to work
 in the repo.
 
-**Current direction (Imo, 2026-11-20): the production tool in `SPEC.md`** — subtract
-everything identifiable, check what assembled but could not be identified, characterise the
-residual reads, and report the whole thing as a multidimensional measurement of signal
-against noise rather than a novel-or-not call.
+**Current direction (Imo, 2026-11-20, recut 2026-11-23): the production system in
+`SPEC.md`** — subtract everything identifiable, check what assembled but could not be
+identified, characterise the residual reads, and report the whole thing as a
+multidimensional measurement of signal against noise rather than a novel-or-not call.
+
+The spec is now organised around **three output classes on one distance continuum** —
+divergent-but-related contigs, novel strains of known viruses, and the unplaceable residue —
+each with what it reports and what it refuses to claim, plus three sections that are the
+spec's working memory: **what is measured** (§10), **what is dead and must not be
+re-proposed** (§11), and **what is open, with the experiment that would settle it** (§12).
+Read §11 before proposing anything. The goal the whole thing serves, in Imo's words, is
+flagging a novel virus that might be pointed at humans, and the combined signal is **"new
+AND like X"**: distance without a nearest-relative identity is half an answer.
 
 Two earlier directions are archived rather than deleted, because what they killed is why the
 current one is shaped as it is: the codon-aware assembler under

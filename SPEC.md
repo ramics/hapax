@@ -1,77 +1,267 @@
-# hapax — production tool spec
+# hapax — production system spec
 
-One sample in, one breakdown out. What is known, what assembled, what did not, what codes
-and what does not — each pile quantified, with its own confidence interval and its own
-declared blind spot.
+**The goal, in Imo's words (2026-11-23): flag a novel virus that might be pointed at
+humans.** This document is what the measurements of the last weeks say a system aimed at
+that goal can and cannot be. It is an account of what was measured, not a design sketch:
+every number in it is reproducible from a committed script plus a seed, and anything that
+has not been measured is in §12 marked as open rather than asserted anywhere else.
 
-**The target is not a novel-or-not call. It is a multidimensional measurement of signal
-against noise.** That is a deliberate change of goal, and §1.1 gives the measured reason
-for it.
+The system emits **three output classes on one distance continuum**, and for each class it
+states what it reports and what it refuses to claim:
 
-Every number in this spec is measured on Berlin wastewater SRR23973193, five seeds,
-and is reproducible from a committed script plus a seed. Nothing here is a projection.
-Provenance: `results/subtract_recut/`, `results/spike_holdout/`, `results/nucleotide_ladder/`,
-`results/blast_check/`, `results/subtract_known/REPORT.md`.
+| class | what it is | §|
+|---|---|---|
+| **A — divergent but related contigs** | assembled, identified, at real distance from anything published | §5 |
+| **B — novel strains of known viruses** | the near end of the same continuum; a first-class case, not an edge case | §6 |
+| **C — the unplaceable residue** | reads and contigs nothing names, at median depth 1 | §7 |
 
----
+A and B are one table with a column, not two products, because *"the line between 'new
+strain of old thing' and 'new thing' doesn't exist in evolution"* (Imo, 2026-11-22). They
+are separated below because they carry different measured constraints and different
+refusals, not because the system scores them differently.
 
-## 1. The architecture
+**Two things the system never emits.** There is no novelty score and no novel-or-not call:
+score ordering tracks database proximity, measured repeatedly, so a search can say *is this
+already known* and can never say *is this new*. And there is **no threat score**. Over
+41,829 subjects reached by the residue search, host confidence maxes at 0.40 with a median
+of 0.17 and nothing is human-associated (`results/full_residue_search/`), so a host label
+describes **a database entry, not the water**, and the system prints it that way.
 
-Three tiers, in Imo's words:
-
-1. **Subtract everything identifiable at all.**
-2. **Check what assembled but could not be identified** for novelty.
-3. **Characterise the residual reads** that neither assembled nor identified.
-
-One rule governs the whole thing: **searching only ever removes background. It is never used
-to score novelty.** An index can answer *is this already known*; it cannot answer *is this
-new*, because score ordering tracks database proximity, not novelty (measured, PR #8/#11:
-only 11.6% of spike reads hit at all, and background outranked spike at every threshold).
-The subtrahend is therefore defined by **identification**, not by assembly — otherwise tier 2
-is swallowed whole by tier 1.
-
-**A second rule sits beside it, and it is the newer one: subtracting a read is not the same as
-dismissing the sequence it came from.** The three tiers describe what is *removed from the
-read residue*. They do not describe where novel material can be, and a contig removed in tier
-1 at real distance is still reportable material — §5. Measured: the withheld genome of
-`results/holdout_cascade/` was correctly removed as identified and should still have reached
-a reader. **So every removal carries the distance and coverage that justified it, and the
-boolean alone is a defect.**
-
-The output is a **breakdown plus a cost-versus-completeness curve**, together with the
-distance continuum of §5. It is not a discovery claim. The residue is the honest remainder,
-not a finding.
-
-### 1.1 Why the target is a measurement and not a call
-
-Every feature this project has killed, it killed **as a threshold on one axis**: peptide
-absence, read-level translated homology, ORF-likeness, k-mer composition, codon usage, GC,
-and every paired-end rule. The joint distribution of those axes has never been measured.
-So the kills do not say there is no signal in the residue; they say **no single axis carries
-a call**, which is a weaker and much more useful statement.
-
-The machinery was already built for this. The per-read report is deliberately
-un-thresholded and already ships, per field, a shuffled null and a comparison against reads
-the cascade did subtract. Changing the target from a call to a measurement does not change
-the machinery; it changes what the kills mean. They stop being failures and become the
-calibration.
-
-**And the noise here is mostly not instrument noise.** It is index incompleteness — which is
-what made 86% of this library look novel until the sample's own assembly was indexed —
-annotation artefacts, where a handful of automatically annotated public entries make
-ribosomal reads look known through a conservation multiplier of 388, and library artefacts
-of the kind a match-nothing pile collects by construction. Those have different signatures
-from biology. That is the reason a multidimensional separation is plausible where a
-threshold was not, and it is the reason every noise source below is measured per sample
-rather than assumed.
+Provenance for the headline numbers: `results/subtract_known/REPORT.md`,
+`results/subtract_recut/`, `results/holdout_cascade/REPORT.md`, `results/holdout_run/`,
+`results/divergent_contigs/`, `results/reach/`, `results/path_settings/`,
+`results/crossplant/`, `results/residue_census/`, `results/recurrence/`. The one-line index
+to all of them, including everything killed, is [`results/README.md`](results/README.md).
 
 ---
 
-## 2. Tier 1 — subtract the identifiable
+## 1. What a positive output looks like
 
-Cheapest index first. Measured on 5 × 100,000 pairs; percentages are of read pairs, which is
-the occurrence-weighted unit (per distinct k-mer the same quantity differs by two orders —
-mean reach 3.49 vs 388 on curated SSU — and a read sees the occurrence-weighted one).
+One row, and it is a sentence with two halves:
+
+> **This contig is 66.5% identical at protein level over 620 aa to *X*, covering 46% of
+> itself, at 452× even mapped depth, assembled from this water on this date — and its three
+> genes span 24.3 identity points with the polymerase at 66.5% and the maturation protein at
+> 53.5%.**
+
+That is the withheld genome of `results/holdout_cascade/`, a real virus deposited after the
+library that contains it, and it is the system's positive control. The distance half says
+*how new*; the identity half says *like what*.
+
+**Both halves are required, and that is Imo's correction of 2026-11-23: "what it IS is as
+important as whether it's new — 'new AND like X' is the combined signal that says
+trouble."** Novelty alone is a curiosity. A distance beside a named nearest relative and a
+gene role is the sentence somebody can act on. So every row of every output class carries its
+nearest-relative identity beside its distance, and where one half is missing the system says
+which half is missing rather than reporting the other half alone. For class C that is the
+current state: **distance without identity** (§7, §12.2).
+
+---
+
+## 2. The three settled facts the design rests on
+
+### 2.1 It cannot be done from a single read
+
+Measured, from several directions, and this is why no stage of the system emits a per-read
+verdict.
+
+- **No read-level rule gets near one false positive per million.** Peptide absence gives
+  160,774 false flags per million at the strictest expressible threshold; read-level
+  homology gives 8–10% sensitivity at 93,478 flags per million at bitscore ≥ 40 and 0%
+  sensitivity at 1,489 flags at ≥ 80. ORF-likeness, k-mer composition, codon usage and GC
+  have no novelty polarity at all, because a wastewater background is coding too
+  (`results/readlevel_features/`, `results/peptide_absence_noise/`).
+- **Thirteen axes, ~10.5 of them independent, and none discriminating**: the largest
+  standardised difference between residue and identified reads is 0.40 once abundance is
+  controlled (`results/residue_fields/`). The joint space beats the best single axis by
+  **0.013 AUC** and shows no cluster count beating 1 in 5/5 seeds
+  (`results/residue_structure/`).
+- **At real distance a read recognises its own relative about one time in sixteen.** On the
+  holdout at 30.3% nucleotide divergence, 5.25–7.00% of 145 nt reads clear E < 1e-5 at
+  nucleotide level and 2.45–2.80% at protein, against 56.65–59.30% for referenced sequence,
+  with a clean 0.00% shuffled null (`results/holdout_run/`).
+- **And a per-read identity readout is biased towards *familiar*.** The same reads report
+  82.56–83.33% identity where the truth is 69.72% — flattering by 12.8–13.6 points at 61–64%
+  coverage, falling to +7.1 above 90% coverage. Coverage is the control that removes most of
+  it and never all. Contig-level identity is essentially unbiased by comparison: 66.5%
+  measured against 66.45% genome truth.
+
+**Nucleotide beats protein at read level at every distance**, the reverse of the
+contig-level result, because a 145 nt blastx alignment is ~48 residues. The protein tier's
+contig-level advantage must not be carried down to reads.
+
+So reads are used for three things only: subtraction, depth, and the measured boundary of
+§7. Characterisation happens on contigs.
+
+### 2.2 Novelty shows up as different genes at different distances
+
+This is the discriminating shape the project found, and it is what class A ranks on.
+
+- **Whole-contig identity is not a property of the contig.** A whole-contig best hit reports
+  whichever gene won on bitscore. The median spread between a divergent contig's own genes
+  is **17.4 points against a near-reference control arm's 2.35**, and it runs both ways:
+  one contig reads 88.6% whole-contig with its polymerase at 39.8%, another 41.8%
+  whole-contig with its polymerase at 58.6% (`results/divergent_contigs/`).
+- By role, divergent against control: polymerase 66.8% / 97.4%, maturation 63.5% / 97.0%,
+  coat 77.9% / 98.2%. **So the ranking is on the conserved gene — the polymerase — with the
+  spread shown**, where there is one (103 of 149 contigs).
+- **The holdout confirms it at a distance nobody chose**: three scorable genes spanning
+  **24.3 points** inside one genome, maturation 53.5%, replicase 66.5%, coat 77.8% — the
+  same role ordering, ground truth, in a genome withheld from every index.
+
+A wider version of this (the role ordering holding on 122 of 131 contigs, with both artefact
+objections tested) exists in `results/divergent_known/`, which **is not on `main`** — it
+sits on thread branches with no open pull request, the same state `results/reach/REPORT.md`
+records. This spec therefore rests on `divergent_contigs/` and the holdout, and §12.5 lists
+the merge as open work rather than citing unmerged numbers.
+
+### 2.3 Novel strains of existing viruses are first class
+
+Imo's call of 2026-11-22 supersedes every earlier framing: there is no separate strain
+product. There is one continuum over everything that got a significant hit, ranked by
+distance with coverage beside it, and **the tier a contig ended up in is a column on that
+table**. §6 holds the constraints that are specific to the near end — chiefly that below
+~3.8% divergence every assembler fuses lineages, so the system reports a fused lineage as
+fused.
+
+---
+
+## 3. Why this is not one step
+
+Imo, 2026-11-23: *"why isn't this one step? we just assemble everything, then see what reads
+are left that don't match any assembly?"*
+
+It is one **assembly**. It is not one **question**, and the difference is measured four
+times over.
+
+**(a) The subtrahend is identification, not assembly.** Subtracting every contig, including
+the ones nothing identifies, removes **85.9%** of the library against **77.0%** for the
+identified contigs alone, on the same block. The extra 8.9 points are not background: they
+are the assembled-but-unnameable pile, which is the candidate material. Subtracting it
+swallows class C's contig half whole. The run therefore records `"subtracted": false`
+against that set rather than relying on the reader knowing the rule
+(`results/holdout_cascade/`, and the defect that found it is in
+[`hapax.py`](hapax.py)'s history).
+
+**(b) "Reads that match no assembly" is not a stable quantity.** Ten whole-library
+assemblies of the same library under different path settings move the residue by **8.79
+points — 33.84% to 42.63%** — against a paired same-setting null of 0.01, while genome
+recovery barely moves (20 of 25 genomes at ≥ 90% breadth for the default and four arms;
+nothing beats the default). Turning off read rescue alone adds **+7.22 points, 8.24 of them
+into tier 3**: reads that lose their contig rather than gaining a name
+(`results/path_settings/`). So the leftover pile is substantially a property of the
+assembler's path choices, and it ships with the flags that produced it or it is not a
+number. *This is also why re-assembly of the residue is dead (§11): residue membership is
+decided by identification, so residue-only assembly bakes in the previous run's paths and
+cannot see a novel read that laxer settings absorb into a known contig.*
+
+**(c) Assembly is not the bottleneck, and the leftover pile is not where the answer was.**
+The withheld genome came out of 4.29 M reads as one 3,990 nt contig covering 96% of itself —
+and was then **removed as known** at 66.5% protein identity, bitscore 812 against the tier's
+threshold of 50, with 99.82% of identified contigs scoring at or below it. It never reached
+the residue at all. **The thing we are looking for assembled perfectly and the pipeline
+deleted it.** A design that only inspects leftovers would have missed the one positive
+control whose distance nobody chose.
+
+**(d) The most efficient index is the sample's own assembly, and it finds nothing novel.**
+1.4 MB of the sample's own ribosomal contigs removes 38.85% — more than all 272 MB of SILVA
+— and 15 MB of its identified non-rRNA contigs adds 30.33 marginal points where 16 GB of
+Kraken2 adds 0.42. But the per-genome reanalysis of the spike shows it removes **0.0% of a
+genuinely novel virus at every rung**, because a virus absent from the sample cannot be in
+the sample's assembly (`results/spike_holdout/`). It is an **efficiency** instrument, never
+a sensitivity one, and the 20.8% that had been read as the sample's own data catching novel
+viruses was entirely an artefact of spiking resident material.
+
+**So the shape is: assemble once, identify, and then run the distance continuum over what
+was removed as well as over what was not.** The leftover reads are an output in their own
+right (§7), reported as a measured boundary at median depth 1 — never as the candidate pile.
+
+---
+
+## 4. The pipeline
+
+### 4.1 Resolve the per-library parameters, refusing rather than defaulting
+
+Imo, 2026-11-23, on the mate-2 prefix: *"you mean trim primers?"* — close, and the
+difference is why this is a stage of its own.
+
+It is **not** adapter or primer trimming. Mate 2 of SRR23973193 carries ~14 nt of
+**non-template 5' sequence from the kit itself**: measured by mapping untrimmed reads to
+SILVA with the other end of the same read as the control, the R2 5' clip has **mode exactly
+14 in 5/5 seeds on both RNA libraries**, 95% of anchored R2 reads clip ≥ 10 while 94.6% of
+the *same* reads sit flush at their 3' end, and mate 1's mode is 0
+(`results/nontemplate_prefix/`).
+
+Three rules follow, and all three are refusals:
+
+1. **It is a distribution, not a constant** (14 at 51%, 13 at 16%, with a tail), so there
+   are **two operating points and a run uses one**: 14 is right for anything that reads
+   sequence, because those bases are real template; **16 is the better Kraken2 setting**,
+   because Kraken2's confidence is the *fraction* of a read's minimizers in the called clade,
+   and two extra variable bases lower every read's confidence. Re-running at 14 moved the
+   identified fraction **down** 1.03–1.11 points on this library and 1.60–1.84 on the 2022
+   one. The trim ships as a curve (`trim_sensitivity_*.json`), and the run manifest states
+   which point it used and what that costs.
+2. **It is per library and the system refuses to guess.** `--trim-r2` is required in
+   [`hapax.py`](hapax.py); the old default of 14 silently cut 14 real bases off every other
+   library's mate 2. A refusing resolver, not a default — which is the general rule of §8.
+3. **Mate 1 is never trimmed by a fixed amount.** It has ~2 bases of 5' excess but **no
+   mode**, which is exactly what separates priming bias from a non-template prefix.
+
+The same stage resolves the block stride (`--block`), which is not optional in practice: it
+is a property of the library, and left at the Berlin default two of five seeds of a smaller
+library read nothing while the directory still looked like a five-seed result.
+
+### 4.2 Merge the mates before anything clever runs
+
+A pair is one molecule of ~194 nt median insert, and **35.1% of this library's pairs merge
+into a single read**. Measured on the spike ladder against mate 1 *of the same molecule*,
+with the shuffled null searched at the merged length (`results/profile_reach/`):
+
+| divergence | merged (~140 nt) | mate 1 (~105 nt) |
+|---|---|---|
+| 10% | 75.5 (72.0–78.9) | 59.6 (55.7–64.3) |
+| 20% | 38.4 (33.2–43.5) | 10.5 (8.9–11.6) |
+| 30% | 7.1 (5.1–9.2) | 0.0 (0.0–0.2) |
+| real library reads | 16.0 (14.1–17.7) | 8.9 (7.2–10.6) |
+| shuffled null, both lengths | 0.0 | 0.0 |
+
+**So part of the 10–20% recognition wall is a read-length wall, not an index wall** — the one
+wall this project has found that moves without new sequencing, new indexes or new money.
+
+And it is a **test**, not a longer ruler: observed over length-predicted bitscore runs 0.987
+on identical sequence and 0.745 on shuffles, so a merged read gains *less* bitscore than its
+length predicts and least on noise. An E-value penalises a longer query, so only a true
+alignment clears the penalty — which is why conversion of weak hits to significant runs
+34.6% at 20% divergence and **0.0% of 387 shuffled weak hits in 5/5 seeds**
+(`results/weak_hits/`). Two limits travel with it: no error-correction credit is claimed for
+the overlap, and the ladder is one picornavirus with a single long polyprotein ORF, which
+favours a translated search.
+
+Merging runs **before** the cascade. Every read-level number is reported for the merged read
+where one exists and per mate where it does not — never pooled, because the mates are not
+interchangeable (§8).
+
+### 4.3 Assemble the whole library
+
+Default settings, and the flags travel with the residue number (§3b). Nothing beats the
+default for recovery, and the levers that sound like levers are not: `--min-count` and `k`
+were killed by holding them fixed across ten arms, and zero absorbed genomes, zero
+inter-molecule joins and zero false joins appear in any arm against 53 zero-read panel
+genomes (`results/path_settings/`).
+
+**Measure chimaeras before claiming contiguity**, and read the chimaera number beside its
+own false-positive rate: split-mapping fires on 46.3% of the divergent arm and 39.3% of a
+near-reference control, so it describes how the assembler joins genes rather than divergence,
+and nothing is dropped on it. **Coverage evenness is the field that does separate.** The
+assembler's coverage header understates mapped depth about **fourfold** (37.7× header against
+170.7× over 17,462,448 mates mapped back), so depth claims come from mapping reads back,
+never from the header.
+
+### 4.4 Identify — the cascade
+
+Cheapest index first. Measured on 5 × 100,000 pairs; percentages are of read **pairs**, the
+occurrence-weighted unit.
 
 | tier | index GB | alone | marginal | cumulative |
 |---|---|---|---|---|
@@ -88,452 +278,312 @@ mean reach 3.49 vs 388 on curated SSU — and a read sees the occurrence-weighte
 
 **Union 77.10% (77.02–77.28 across seeds). Residue 22.90%.**
 
-Three things the production tool must inherit from this table.
+Four design requirements come out of this table.
 
-**The sample's own assembly is the most efficient index by orders of magnitude.** 1.4 MB of
-ribosomal contigs assembled from the sample itself removes 38.85% alone — slightly more than
-all 272 MB of SILVA. 15 MB of its identified non-rRNA contigs adds 30.33 points marginally,
-where 16 GB of Kraken2 adds 0.42. *Known to a database* and *known here* are different
-questions and the cheap one is the second. The tool therefore assembles the sample and
-subtracts against itself as a first-class tier, not as an afterthought.
+**Ordering is a requirement, not an accident.** rRNA is subtracted with a *nucleotide* index
+before any protein index is consulted. Against a large protein index, ribosomal reads stop
+looking novel faster than anything else, because of automatically annotated public entries
+that are really translated rRNA — **63 entries out of 4.12 M** carry most of it, amplified by
+a conservation multiplier of 388 per occurrence against 3.49 per distinct k-mer. A protein
+index fails on rRNA in the *dangerous* direction: not "no match" but a spurious match, so the
+read looks known.
 
 **Thresholds dominate database size.** PlusPF-16 removes 42.82% at confidence 0, 21.67% at
-0.1, 3.52% at 0.2 — a factor of twelve inside one database, against a factor of 1.01 between
-8 GB and 16 GB at fixed threshold. **Every reported fraction carries its operating point.**
-A "% unknown" without a stated threshold is unreadable and the tool will not emit one.
+0.1 and 3.52% at 0.2 — a factor of twelve inside one database against a factor of 1.01
+between 8 GB and 16 GB. Every reported fraction carries its operating point; a "% unknown"
+without a stated threshold is unreadable and the tool will not emit one. The same effect is
+length-dependent in the direction nobody assumes: on contigs, confidence 0.1 collapses the
+viral calls from 1,021 to 11 and **the survivors are the short ones**
+(`results/public_health_view/`).
 
-**Ordering is a design requirement, not an accident.** rRNA must be subtracted with a
-*nucleotide* index before any protein index is consulted. Against a large protein index,
-ribosomal reads stop looking novel faster than anything else, caused by automatically
-annotated public entries that are really translated rRNA — 63 entries out of 4.12 M carry
-most of it. A protein index fails on rRNA in the *dangerous* direction: not "no match" but a
-spurious match, so the read looks known. Without this ordering, a third of the library's
-score measures public annotation quality rather than what is in the water.
+**Tier order is a property of the library, not of the tool.** On the DNA library from the
+same water on the same morning — a virome, 0.01% ribosomal, 99.1% unidentified — 0.24 GB of
+viral protein identifies **8.5×** what the 16 GB nucleotide index does, while on the RNA
+library the 16 GB index wins sixfold. The order is chosen per sample by the calibration run
+(§8).
 
-### 2.1 The three requirements on the subtraction index
+**Both index kinds are needed because the length reverses the verdict.** On contigs,
+protein-only identifies **26.30%** and nucleotide-only **5.73%** (34.78% of contigs, 49.13%
+of bases overall); at read level nucleotide wins at every distance (§2.1). One index does not
+serve both stages.
 
-Imo's, and each is a reported field rather than a threshold:
+### 4.5 Score the distance on everything identified
 
-**(i) Divergence of anything that is not a close homolog.** Closest relative is reported as a
-continuous number — bitscore, percent identity, alignment length — never thresholded into a
-call.
+The cascade already computes identity, alignment length, E-value, bitscore and coverage for
+every contig it removes **and used to keep only a yes/no**. That discard is the defect, not
+the removal: two sequences thirty identity points apart received the same single word
+`identified`. `classify_contigs.py` therefore writes the removal evidence per contig, and
+`removal_evidence.tsv` is a first-class output (§13). Nothing about *what* is subtracted
+changes; what changes is that the subtraction is no longer silent about how far away the
+thing it removed was.
 
-**This is a requirement on the output, not on the computation, and that distinction is where
-it was being failed.** The cascade already computed every one of those numbers for every
-contig it removed and kept only a yes/no, so a contig removed at 66.5% and one removed at
-99.9% were indistinguishable downstream. `classify_contigs.py` therefore writes the removal
-evidence per contig — subject, identity, alignment length, E-value, bitscore and union
-coverage on the query — and the tier remains exactly as wide as it was. **Nothing about what
-is subtracted changes; what changes is that the subtraction is no longer silent about how far
-away the thing it removed was.** The continuum it feeds is §5.
+### 4.6 Report the residue
 
-**(ii) Reads where part aligns well and the rest does not.** This was written as the sharpest
-open question in the design, on the grounds that for the residue it is the *normal case* — a
-ribosomal read aligning end to end at 100% identity against a residue read aligning over
-about a third of itself at 89%.
-
-**That premise is withdrawn, and it was withdrawn because nobody had read the E-value.**
-BLAST reports to E=10 by default, so the "third of the read at 89%" was a description of
-chance matches: the median E-value in that pile is 0.24, and a 107 nt nucleotide query finds
-40 bases at 88% by chance in 318.8 GB. Demanding significance inverts the shape
-(`results/subtract_known/REPORT.md` §3.4):
-
-| readout, at E < 1e-5 | residue reads against core_nt |
-|---|---|
-| reads with a significant hit | 73 of 500 (14.6%) |
-| median fraction of the read aligned, among those | **0.96** |
-| median identity, among those | 90.1% |
-| significant *and* partial (< 0.95 of the read) | 28 of 500 (5.6%), aligning 87 of 107 bases |
-
-**A real relative aligns end to end. Partial alignment is the signature of a chance match
-rather than of divergence** — so at read level the shape this requirement was written about
-has almost no population, and what little it has aligns 87 of 107 bases rather than half.
-
-A second instrument reaches the same place with a control
-(`results/partial_match_subjects/REPORT.md`): among reads whose best hit covers part of them,
-the chance band is **identical between the residue and reads the cascade already identified**
-— median E 0.82 against 0.81, identity 87.8% against 87.2%, 38 matched bases against 39. A
-separator that reads the same on the residue and on known material is describing the
-database. 218 of 231 such hits cannot even be reproduced by a short-read aligner against the
-reference BLAST named.
-
-So the two competing explanations are no longer symmetric:
-
-- a **chimaera** — amplicon chimaera rates exceed 70% for the rarest taxa, and they form
-  reproducibly across replicates so replicate agreement cannot filter them. But the
-  split-mapping test fires on **0.04% of unidentifiable contigs against 0.15% of identified
-  ones**, indistinguishable from its own 26% false-positive rate on known background, and at
-  read level the question cannot be asked at all: once a 107 nt read matches ~74% of itself
-  the leftover is ~10 aa, below any search's floor;
-- a **genuinely divergent molecule** where only a conserved domain is still recognisable —
-  which is what the significant pile looks like, holding its identity into reference sequence
-  past the reported match.
-
-**Consequences for the tool.** This question moves from the read stage to **after assembly**,
-where the separator is continuous and clean: unidentifiable contigs align over 31.5% of
-themselves at 35.0% identity against 56.7% at 40.6% for identified ones, with no overlap. At
-read level the tool reports coverage and identity **with the E-value beside them** and makes
-no chimaera claim. The field name stays; the threshold never existed and now the premise
-does not either.
-
-**(iii) Evidence that no-match sequence really sits below ~80% identity.** This is the job of
-a translated search against nr, and partly discharged already by ground truth against NCBI
-core_nt (133 M sequences, 1.1 Tbase — two orders of magnitude beyond any local index):
-
-The per-class table lives in `results/blast_check/TABLES.md` and is generated from the run
-rather than typed here. **Read it at the strong-hit column, not the any-hit column**: an
-"any hit" rate against 318.8 GB counts chance matches, which is the error §(ii) above
-records. At 95% identity over 80% of the read the classes separate — rRNA 90.0%, public
-nucleotide 94.4%, identified by the sample's own assembly 25.2%, residue 9.3% and 5.6%,
-tier-2 contigs 3.9% — where at "any hit" they all read 85–100% and say nothing.
-
-This still corrected our own language in the direction that matters: **most residue reads do
-hit something, and "matches nothing" always meant "matches nothing in an index that fits on
-this disk".** The tool says the former and never the latter. But it says it with an E-value,
-because without one the sentence is true and empty.
-
-Two things sharpen (iii) rather than soften it. **14.6% of residue reads have a significant
-relative in core_nt and it is ~90% identical over their whole length** — a divergent strain,
-which is §5's business and not novelty — while **~85% have no significant relative in the
-largest nucleotide database there is**. And bigger databases buy hits, not identifications:
-across four cumulative protein indexes the residue's "any hit" runs 77.7 → 92.4 → 97.6 →
-98.9%, flat only against a ceiling, while at bitscore ≥ 50 it runs 0.00 → 0.00 → 0.36 →
-1.15% and is still tripling. **The headroom is in turning weak hits into identifications, not
-in finding more weak hits.**
-
-**What the minimal production index still needs, and it is disk.** A DIAMOND database of full
-UniRef50 is ~30 GB against ~15 GB of writable disk left here after the nucleotide indexes, so
-UniRef50 currently enters as streamed nested 2% and 10% subsets. A run against full UniRef50
-or nr needs roughly **160 GB**. The streaming recipe in `experiments/subsample_uniref.py`
-already does the hard part — 41,243,524 records, verified complete against UniProt's own
-count — so only the disk is missing. That one machine closes requirement (iii) properly and
-puts the measured far end on the cost curve instead of an extrapolation. It is the single
-highest-value piece of infrastructure in this spec.
+§7, and with the two calibrations of §8 beside every field.
 
 ---
 
-## 3. Tier 2 — assembled but unidentifiable
+## 5. Output class A — divergent but related contigs
 
-Contig-level identification reverses the read-level picture, and the tool needs both indexes
-for that reason: **protein-only identifies 26.30% of contigs, nucleotide-only 5.73%** — at
-read length the nucleotide index does the work, at contig length the protein index does, by a
-factor of 4.6. Overall 34.78% of contigs and 49.13% of bases identified.
+The largest and best-characterised of the three, and the one the goal of §0 actually runs
+through.
 
-**Tier 2 is never subtracted, and the output says so rather than relying on the reader
-knowing the rule.** `tiers.json` records this set with `"subtracted": false` and the tier
-table carries the note in prose, because both piles are "the sample's own contigs" and only
-one of them is a subtrahend. The scale of what that protects is large: subtracted, the
-unidentified set would remove a further **21.06–21.41%** of a library (five seeds,
-`results/holdout_cascade/`). **And protecting it is not sufficient** — the line between tier 1
-and tier 2 is drawn by whether an index recognises the contig, so the recognisable-but-distant
-lands in tier 1 and is removed. That is what §5 exists for.
+### 5.1 What the system reports
 
-**Tier 2 is real but thin, and the tool reports it that way.** 46,157 contigs cannot be
-identified at all (14.3 Mb, median 254 nt, median coverage 1.12×). Only 3.87% — about **1,784
-contigs** — clear both 500 nt and 2× coverage, which is where assembly and classification
-begin to work at all (PR #5). Those 1,784 are the right size for per-contig characterisation;
-the rest are reported as a count and a length distribution, not as candidates.
-
----
-
-## 4. Tier 3 — the residual reads
-
-The 22.90% residue, measured by mapping back to assemblies rather than to public databases:
-
-| pile | % of library | across seeds |
-|---|---|---|
-| abundant but unplaceable (tier 2's read-level population) | 8.42 | 8.33–8.51 |
-| maps a contig from one of the other 115 samples | 9.97 | 9.86–10.04 |
-| genuinely missing — nothing public, nothing here, nothing in the other 115 | 10.90 | 10.76–11.07 |
-
-The first two overlap, so they do not sum.
-
-**Cross-sample material is context, never a subtrahend.** Subtracting the other 115 samples'
-contigs would make cross-sample recurrence zero by construction and destroy a field the
-per-read report needs. It is reported as a reference axis and nothing else.
-
-Subtracting the sample's *own* data is what turns the residue from "merely undeposited" into
-"genuinely rare". That is the narrow replacement for the claim withdrawn in PR #13.
-
-### 4.1 The per-read evidence report
-
-One row per surviving pair. Every field ships with two calibrations measured on the same
-data: a **null** (the field on composition-matched shuffles of the same reads) and a
-**known-positive** (the field on reads the cascade did subtract). A field that reads the same
-on both carries no information about the residue, and that is its honest calibration rather
-than a reason to hide it.
-
-| field | what it says | calibration that must travel with it |
-|---|---|---|
-| `closest_relative` | best translated hit, however far: bitscore, identity, alignment length | never thresholded; score tracks database proximity |
-| `frame_evidence` | stop-free frames, longest ORF per frame, **and how many frames are candidates** | at 107 nt the true frame is the only stop-free frame in just 0.528 of coding reads |
-| `gc`, `entropy3` | composition | shuffled null + subtracted-read comparison |
-| `repetitive` | recurring 16-mers, tandem period | separates "no information" from "information we cannot place" |
-| `artefact` | adapter, primer dimer, homopolymer, N content | residue is enriched for these by construction |
-| `chimaera` | split-mapping evidence | **26% false positives on known background** — reported, never used for a call |
-| `motif` | Pfam-A profile hits, six frames, per-domain E-value | **not** a longer reach than DIAMOND — measured weaker at every rung (`results/profile_reach/`); reported at the families' gathering thresholds, which unlike an E-value cut are stable between runs |
-| `mean_error_prob` | from the quality string | lets an unexplainable read read as "probably instrument" |
-| `recurrence` | occurrences across the run and the other 115 samples | sketch only overstates, so "rare" is safe |
-
-**Nothing is combined into a score.** `cannot discriminate here` is a legitimate row, not a
-gap — it is what honest calibration of a 107 nt read produces about half the time.
-
-### 4.2 The axes of the signal-versus-noise measurement
-
-Five dimensions, each either already measured or cheap, chosen because each is continuous
-and each has a noise source whose signature differs from biology's.
-
-**1. Coverage × identity × significance, never hit versus no-hit.** Two numbers per index,
-never collapsed to a boolean — but **three**, because coverage × identity on its own is what
-produced the withdrawn reading in §2.1. The "residue read aligning over a third of itself at
-89%" that this axis was built on was a chance match, and without the E-value beside them
-coverage and identity are a pile of noise that looks like a gradient. A ribosomal read
-aligns end to end at 100% identity at E ≈ 0; a residue read with a *significant* hit aligns
-over 0.96 of itself at 90.1%; a residue read's *median* hit is 40 bases at 88% at E = 0.24
-and means nothing. All three numbers travel together or none of them is reportable.
-
-**2. A read's trajectory across the index-size ladder.** Something recognised only by the
-largest index is further away than something caught at 0.67 GB. That is a continuous
-divergence estimate, and the per-tier per-read outcome is already computed and written to
-the result files — it is currently unused. Costs nothing new.
-
-**3. Recurrence shape across the other 115 samples.** Two-sided, which is rare here: a real
-organism recurs with a pattern, random error recurs never, a systematic artefact recurs
-everywhere. The project has only ever used recurrence as a yes or no. Shape — how many
-samples, how evenly, alongside what else — is the unused half. Still a reference axis and
-never a subtrahend.
-
-**4. Mate disagreement as a per-sample error-floor estimator.** Instrument error is
-independent between mates; organism-level absence is shared. That orthogonality is dead as
-a detection rule (no pair rule approaches one per million) but it measures *this sample's*
-noise floor for free, which is exactly what the calibration requirement in §6 needs.
-
-**5. Profile reach — MEASURED AND WITHDRAWN.** This axis read: *Pfam-A profiles are the
-only axis still alive past 20% divergence, where DIAMOND and every nucleotide index read
-zero; the gap between "no sequence hit" and "yes profile hit" is itself a distance
-measurement.* Both halves are false, measured on the spike ladder with its own controls in
-the same pass (`results/profile_reach/`). Pfam-A is **weaker than translated search at
-every rung** (91.5% against 39.9% at 0% divergence, 61.3% against 18.6% at 10%, 10.0%
-against 5.8% at 20%), and DIAMOND does not read zero past 20% — it recognises 39.9% at 20%
-and 5.7% at 30% at a bitscore floor of 40. The "reads zero" belief came from reading
-`results/spike_holdout/`'s *cascade removal* table as a search's reach; the cascade's
-operating point is chosen so a false removal is expensive, which is a different question.
-And the gap carries nothing: 3.8% (2.2–4.8) on the holdout at its best rung against 2.6%
-(2.2–3.1) on reads the cascade already identifies, ranges overlapping.
-
-**What replaces it.** The profile field stays in §4.1 as a reported `motif` field with its
-calibration — its shuffled null is clean, so it measures structure rather than
-composition — and loses its claim to reach. The axis that does extend reach is the pair:
-see §4.3.
-
-**That first experiment has been run, and the answer is cloud.** It asked whether the residue
-is *structured* or *diffuse* in the joint space — whether clusters appear that behave like a
-genome. **No cluster count beats 1 in 5/5 seeds** against a null carrying the residue's own
-mean and covariance, and multidimensionality buys **0.013 AUC** over the best single axis
-(library coverage, itself partly circular), with composition and quality fields together
-reaching 0.686.
-
-So the joint-space view ships as a **density with reference clouds, and never as a
-clustering**. The axes above stay, because a per-read report with its calibration beside it
-is the deliverable; what does not ship is any claim that the residue separates into
-populations. Nothing downstream should be built on structure that was looked for and is not
-there.
-
-### 4.3 Merge the mates before anything clever runs
-
-A pair is one molecule of ~194 nt median insert, not two independent 107 nt and 93 nt
-reads, and the mates of a short-insert pair overlap: 35.1% of this library's pairs merge
-into a single read. Measured on the spike ladder against mate 1 **of the same molecule**,
-with the shuffled null searched at the merged length so a fixed bitscore floor cannot be
-cleared by chance (`results/profile_reach/` §2):
-
-| divergence | merged (~140 nt) | mate 1 (~105 nt) |
-|---|---|---|
-| 10% | 75.5 (72.0–78.9) | 59.6 (55.7–64.3) |
-| 20% | 38.4 (33.2–43.5) | 10.5 (8.9–11.6) |
-| 30% | 7.1 (5.1–9.2) | 0.0 (0.0–0.2) |
-| real library reads | 16.0 (14.1–17.7) | 8.9 (7.2–10.6) |
-| shuffled null, both lengths | 0.0 | 0.0 |
-
-**So part of the 10-20% recognition wall in §7 is a read-length wall, not an index wall.**
-That is the one wall this project has found that moves without new sequencing, new indexes
-or new money: the information is already in about a third of the pairs of the library we
-have. Merging runs before the cascade, and every read-level number is reported for the
-merged read where one exists and per mate where it does not.
-
-Two limits travel with it. The merged reads measured here carry no error-correction credit
-for their overlap — we have a measured error rate but no quality model, and awarding
-merging an accuracy benefit we cannot falsify would be worse than leaving it out — so the
-gain is a lower bound against a real merger. And it is one genome, a picornavirus with a
-single long polyprotein ORF, which is favourable to a translated search.
-
----
-
-## 5. For identified material: one distance continuum, not a strain question
-
-**Imo's call, 2026-11-22, and it supersedes the earlier framing of this section:** *"those
-identified genomes belong in bucket 1. The line between 'new strain of old thing' and 'new
-thing' doesn't exist in evolution."* So there is no strain product and no novelty product.
-There is **one continuum over everything that got a significant hit, ranked by distance with
-coverage beside it**, and the tier a contig ended up in is a column on that table rather than
-a different table.
-
-**The measurement that forces it** (`results/holdout_cascade/`, PR #31). A genome withheld
-from every index, in a library carrying it, assembles into one contig covering 96% of itself
-and is removed in tier 1 at **66.5% protein identity over 620 aa, E = 5.4e-282, bitscore 812
-against this tier's threshold of 50**. The already-referenced comparator from the same water
-reads **99.905%**. Two sequences thirty identity points apart receive the same single word,
-`identified`, and 66.5% is further than most within-species diversity — further than HIV
-quasispecies within one host. The distance that justified the removal is computed and then
-discarded. **That discard is the defect, not the removal.**
-
-**So tier 1 emits a distance, not a boolean.** Per removed contig, into the output:
+Per contig, as a row on one continuum with no threshold on it:
 
 | field | why it is there |
 |---|---|
 | best subject, percent identity, alignment length, E-value, bitscore | an identity without its E-value is unreadable, and identity is quantised at short alignment lengths |
-| per-subject union coverage on the query | identity alone flatters towards *familiar*, by +17.2 points below 50% coverage; coverage is the control that removes most of it |
-| per-gene identity with the role, and the spread across genes | whole-contig identity is **not a property of the contig**: median spread between genes is 17.4 points on Berlin and **24.3 points** on the holdout, and the single figure is whichever gene won on bitscore |
-| which tier removed it and at which operating point | the same contig moves tier when a threshold moves, so the tier is meaningless without it |
-| mapped depth, breadth and evenness | assembler coverage headers understate mapped depth ~4×, and a length claim without a chimaera number is not a claim |
+| per-subject union coverage on the query | identity alone flatters towards *familiar*; coverage is the control that removes most of it |
+| **per-gene identity with the role, and the spread across genes** | whole-contig identity is not a property of the contig: 17.4 points median spread on Berlin, 24.3 on the holdout (§2.2) |
+| nucleotide **and** protein identity, both columns | three holdout candidates sit at 10.4–11.7% nucleotide divergence while 97.1–97.7% identical at protein level, so one column alone mis-ranks (`results/holdout_candidates/`) |
+| which tier removed it, at which operating point | the same contig moves tier when a threshold moves |
+| mapped depth, breadth, evenness, chimaera number | from reads mapped back, with the test's own false-positive rate beside it (§4.3) |
+| the index the distance was measured against | a narrow index makes every distance an **upper bound** |
 
-**Rank by the conserved gene — the polymerase — with the per-gene spread shown.** Ranking on
-whole-contig identity ranks on which gene happened to win.
+**Ranked by the conserved gene — the polymerase — with the per-gene spread shown.** Ranking
+on whole-contig identity ranks on which gene happened to win.
 
-**What must never appear on this table, and the reason is the project's founding rule.**
-Ordering by distance from a database is ordering by **database proximity**, so the table is a
-measurement and never a verdict: no novelty score, no threshold that says *novel*, no flag.
-Measured on the holdout: ordering the removed pile by identity puts the withheld genome at the
-**93.46th percentile** with 7,104 contigs ahead of it, so identity ordering is not merely
-uncalibrated, it is **actively wrong**. Adding coverage gives a cell of **70 contigs, 0.92% of
-the removed pile**, with **zero** of the 34 known contigs from the same water anywhere in it.
-That is the defensible output: **a shortlist with a count on it.** The withheld genome is not
-the top row of its own cell and the tool does not pretend otherwise.
+**And the shortlist is ranked by how much of the contig its best hit explains, not by
+identity.** This is the one mechanism measured to catch the positive control. Ordering the
+removed pile by identity puts the withheld genome at the **93.46th percentile**, with 7,104
+contigs ahead of it — identity ordering is not merely uncalibrated, it is *actively wrong*,
+and `results/holdout_cascade/` also kills "flag the low-identity removals" directly: removed
+contigs with a significant protein hit sit at a median 40% identity, so the holdout at 66.5%
+is in the top decile of them. Its best hit covers **0.4624** of it, and identity-plus-coverage
+gives a cell of **69 contigs, 0.91% of the removed pile**, with **not one** of the leak arm's
+34 known contigs from the same water in it. Against core_nt, 319 GB, about a sixth of a
+comparable panel collapses to strain level while the rest holds, so the cell shrinks by
+roughly a sixth rather than dissolving.
 
-**Every row ships with its control arm, drawn and scored by the same code in the same pass** —
-known material from the same library — and with the index the distance was measured against,
-because a narrow index makes every distance an **upper bound**. Against core_nt, 319 GB, about
-a sixth of a divergent panel collapses to strain level while the rest holds, so the shortlist
-shrinks by roughly a sixth rather than dissolving.
+**The candidate is not the top row of its own cell.** So the defensible output is **a short
+ranked list with a count on it** — never a flag, never a score.
 
-**Band labels are readings, not calls.** *Reference or near-reference* ≥97%, *divergent strain
-of the named taxon* ≥90%, *same genus or thereabouts* ≥70%, *family-level or looser — the
-subject is a nearest neighbour, not an identification* ≥40%, and below that *below any band a
-name survives*. They are printed as prose beside the number they came from, never substituted
-for it.
+**Band labels are readings, not calls**, printed beside the number they came from and never
+substituted for it: *reference or near-reference* ≥ 97%, *divergent strain of the named
+taxon* ≥ 90%, *same genus or thereabouts* ≥ 70%, *family-level or looser — the subject is a
+nearest neighbour, not an identification* ≥ 40%, and below that *below any band a name
+survives*. A reading at 30–45% amino-acid identity is a **new species or genus borrowing a
+named relative's name** — a bigger claim than a strain, not a smaller one.
 
-**The near end of the continuum keeps its measured constraints**, which is all the old strain
-section ever contained:
+**Every row ships with its control arm, drawn and scored by the same code in the same pass**:
+near-reference material from the same library.
 
-- Below about **3.8% divergence every assembler fuses lineages at any depth**; MEGAHIT
-  separates from roughly 5% up (PR #12, 2,205 assemblies, 21 pairs, 5 seeds, 0 false mosaics
-  in 630 controls).
-- The reads carry enough information: PenguiN's raw output holds clean multi-kb pieces of
-  both lineages at 2% divergence, buried among ~1,000 mostly mosaic contigs. What is missing
-  is **choosing the right paths**, not signal.
-- Coverage pooling across lineages is dead: it fabricates mosaics (PR #5).
-- Pair scores cannot separate two hosts' swarms — two HBV hosts share 709 exact 150-mers.
-  Only population structure can.
+### 5.2 What this class refuses to claim
 
-So a reading at the near end ships with the divergence at which it was made, and below ~4%
-the tool reports a fused lineage as fused.
-
-**And the far end is where this stops being a strain question at all.** Six contigs on the
-Berlin panel are finished or near-finished genomes, 1.8–3.9 kb at 171–467× mapped depth with
-even coverage end to end, at family-level distance from anything published. On the continuum
-those sit beside the withheld genome, which is the point: **one axis, and the interesting
-material is at one end of it, not in a separate bucket.**
-
-### 5.1 The four residues, and which of them this table covers
-
-Imo's enumeration of where novel material can be, 2026-11-22:
-
-1. **Distant-relative contigs** — identified, at real distance. **This section's table**, and
-   the largest and best-characterised of the four.
-2. **Single reads with strong hits** — rare. Nucleotide beats protein at read level at every
-   distance, because 145 nt is only ~48 residues, so the protein tier's contig-level advantage
-   must not be carried down here (`results/holdout_run/`).
-3. **Unidentified contigs — explicitly NOT a subtrahend.** Tier 2, §3. The output records
-   `"subtracted": false` against this set rather than relying on the reader knowing the rule;
-   subtracted it would remove a further 21.1–21.4% of a library.
-4. **Single reads without strong hits** — the dark matter, at median depth 1. §4. No per-read
-   verdict is defensible here and *cannot discriminate here* is a legitimate row.
-
-**Bucket 3 being protected is not sufficient, and bucket 1 is why.** The line between 1 and 3
-is drawn by whether an index recognises the contig, so the recognisable-but-distant lands in
-1 and gets subtracted. The standing rule *the subtrahend is identification, not assembly*
-protects what nothing can recognise; it does not protect what is recognised from a long way
-away. That is the gap this section closes.
+- **No host and no threat.** Host confidence over 41,829 subjects maxes at 0.40; a host
+  colour labels a database record. And **what a record IS and what it INFECTS are two axes**
+  — a phage record has a bacterial host and is not a bacterium; conflating them turned a
+  *Bacillus subtilis* transporter into a bacteriophage in a live view. A cellular record
+  reports host as *not applicable — it IS the organism*. The phage bucket is a **name test**,
+  so its complement reads *virus, nothing says phage*, never *not a phage*; phage against
+  bacterial is irreducible at ~50% identity over ~34 aa, and the reason is biological —
+  prophages mean one protein can truthfully be both.
+- **No public-health reading from architecture alone.** The seven near-complete divergent
+  genomes on the Berlin panel are single-stranded RNA bacteriophage, so the reading is
+  indirect and the system says so rather than implying a human target. geNomad calls 98.3%
+  of contigs > 3 kb viral, so *"is it viral"* carries almost nothing.
+- **No importance.** Six or seven of these are near-finished genomes, 1.8–3.9 kb at 171–467×
+  with even coverage end to end, at family-level distance from anything published: the
+  material worth real effort. But **importance will not come out of sequence.** Sequence
+  gives distance and gene-level shape; occurrence across dates and plants gives the reason to
+  care, and that axis is §12.6.
 
 ---
 
-## 6. Calibration and versioning — the two run-time requirements
+## 6. Output class B — novel strains of known viruses
 
-**Per-sample calibration run.** Every score is referenced to *this sample's own background*:
-the shuffled nulls, the subtracted-read comparisons, the chimaera false-positive rate and the
-error profile are all recomputed per sample. A threshold imported from another run is a
-threshold measuring the other run.
+Same table, same ranking, near end of the continuum, tier as a column. What is specific to
+this end is a set of measured limits, and all of them are refusals.
+
+- **Below about 3.8% divergence every assembler fuses lineages at any depth**; MEGAHIT
+  separates from roughly 5% up (2,205 assemblies, 21 real genome pairs, 5 seeds, 0 false
+  mosaics in 630 controls). **So below ~4% the system reports a fused lineage as fused**, and
+  a reading at the near end ships with the divergence at which it was made
+  (`results/pair_ladder/`).
+- **The reads carry enough information; path selection is what is missing.** PenguiN's raw
+  output holds clean multi-kb pieces of both lineages at 2% divergence, buried among ~1,000
+  mostly mosaic contigs. That is a statement about tooling, not about the library.
+- **Coverage pooling across lineages is dead**: it fabricates mosaics.
+- **Pair scores cannot separate two hosts' swarms** — two HBV hosts share 709 exact 150-mers.
+  Only population structure can.
+- **A strain is 90–99% identity**, and the per-read identity bias of §2.1 lands squarely
+  here: reads report ~83% where the truth is 69.72%, always towards *familiar*. Strain
+  readings therefore come from contigs with coverage beside them, never from per-read
+  identity.
+- **Both identity columns ship** (§5.1), because a nucleotide band does not transfer to
+  protein: 10.4–11.7% nucleotide divergence at 97.1–97.7% protein identity is the measured
+  counter-example, and above 5% divergence the protein tier does essentially all the work.
+- The lineage labeller's strand bug **voids every mosaic count published before its fix**
+  (`results/labeller_audit/`): 0% false mosaics on forward-strand contigs, 65.8% on reverse.
+  Any new mosaic number states that it was produced after the fix.
+
+---
+
+## 7. Output class C — the unplaceable residue
+
+**This is a measured boundary, not a discovery pile**, and the system's language says so.
+What lands here is mostly a function of read length and database reach: hypervariable
+regions of textbook viruses land here too.
+
+### 7.1 What the system reports
+
+| measurement | value | control in the same pass |
+|---|---|---|
+| residue after the cascade | 22.90% of pairs | union 77.10% (77.02–77.28, 5 seeds) |
+| of which tier 2 (assembled, unidentifiable) | ~8.4 points, 46,157 contigs, median depth 6 | 3.87% clear 500 nt and 2× — ~1,784 contigs are the characterisable set |
+| of which tier 3 (no contig at all) | ~11.1 points, **median depth 1** | 86.6 for identified reads, ~3,000 for ribosomal |
+| a significant named relative in the largest nucleotide database there is | 7.82% of all unplaced pairs | **10.00% of already-placed material** — a 2.2-point gap, not an order of magnitude |
+| artefact signatures (hairpins, same-strand mates, poly(A/T), vector, PhiX) | under 1%, and the two fields that point anywhere point at the *identified* pile | shuffles, same pass |
+| absent from the plant's own other 40 dates, at matched within-run depth | **21.5%** against **0.9%** for identified reads (± 0.6, 5 seeds) | own library 1.0000, every shuffle 0.0000 in 0 of 115 |
+| both mates unwitnessed over exactly one | 2.03 residue, 0.29 identified, 0.00 rRNA, ~1,000 on shuffles | so absence is **missing molecules, not misread ones** |
+
+**Depth decides, and the pile label almost nothing.** A union of 512 other libraries removes
+87.5% of a held-out library and has **not saturated**; read down the depth column, not across
+the pile row — at depth 100+ it takes everything including our own abundant residue, and at
+depth 1 **identified reads survive at 0.7050 against the residue's 0.7900**. That 8.5-point
+gap is the whole known-versus-unknown difference at matched depth, so a cross-plant union is
+blind to *anything present once*, not to novelty. The two operating points disagree by a
+factor of four and neither travels alone (`results/crossplant/`).
+
+**At contig level the same instrument reverses and gets stronger**: tier 2 contigs cut into
+90 nt windows separate from identified contigs in every length band, and **17.6% of tier 2
+contigs have no exact 31-mer anywhere in four continents of wastewater against 9.0% of
+identified ones**, with every shuffled contig untouched. The residue is **local**: its own
+plant's other dates witness it 13.4× more than the median foreign plant.
+
+**And the residue's two halves point in opposite directions, which is itself the finding.**
+The 2,832 genuinely new contigs assembled from unplaced pairs carry **11.7% RdRp against
+0.70%** for a length-matched control, dominated by Leviviridae replicase — they look viral.
+The 200 highest-mass unidentifiable contigs are **less coding** than length-matched ones
+(0.604 against 0.818) and lead every pile on Rfam — the deepest unnameable sequence is
+non-coding and not a hidden virus. *"Not ribosomal" is scoped to a threshold, not
+established*: those 200 read a median 0 matching bases against SILVA where true rRNA contigs
+all clear the line, and that instrument cannot see divergent rRNA.
+
+**One row per surviving pair, un-thresholded, each field with a shuffled null and a
+known-positive comparison beside it** (`closest_relative`, `frame_evidence`, `gc`/`entropy3`,
+`repetitive`, `artefact`, `chimaera` with its 26% false-positive rate on known background,
+`motif` at the families' gathering thresholds, `mean_error_prob`, `recurrence`). **Nothing is
+combined into a score, and `cannot discriminate here` is a legitimate row** — it is what
+honest calibration of a 107 nt read produces about half the time.
+
+The joint space ships as **a density with reference clouds and never as a clustering**
+(§2.1). Cross-sample material is **context, never a subtrahend**: subtracting the other
+libraries' contigs would make recurrence zero by construction.
+
+### 7.2 What this class refuses to claim
+
+- **No per-read verdict, ever**, and no aggregate called novelty.
+- **No "matches nothing".** It always meant *matches nothing in an index that fits on this
+  disk* — 86.8% of residue reads get *some* alignment, and the median one has E = 0.24 and is
+  a chance match. The system says the former with an E-value and never the latter.
+- **No depth claim.** A doubling of sequencing buys a second observation, not assembly depth:
+  44.0% of fully unwitnessed reads gain a witness at full library and **0.3% reach depth ≥ 5**
+  (41.0% and 0.3% measured on the unplaced pile itself). Below ~1 in 100,000 anything needing
+  two observations of a molecule has nothing to work with.
+- **No identity.** This is the honest gap of §1: for the pile sequence cannot name, we have
+  distance and no identity. Structure is the candidate instrument and it is in flight in
+  another thread (§12.2).
+
+---
+
+## 8. Calibration, controls and operating points
+
+**Every score is referenced to this sample's own background.** The shuffled nulls, the
+subtracted-read comparisons, the chimaera false-positive rate and the error profile are all
+recomputed per sample. A threshold imported from another run is a threshold measuring the
+other run.
 
 This stopped being a precaution and became a measurement. Two RNA libraries from **the same
-plant, the same group and the same naming series, eight months apart** differ like this
-(`results/dna_rna_pair/`): rRNA **38.0% → 67.1%**, Kraken2 PlusPF-16 at confidence 0.1
-**22.7% → 40.7%**, virus-identifiable **12.0% → 6.5%** as ribosomal sequence crowds it out.
-The ribosomal fraction nearly doubled and the identifiable fraction with it. **So every
-removal percentage in this repo is a statement about one sample on one day**, and should be
-read as "on SRR23973193" rather than as a property of the method — including the holdout
-spike's survival, which rides on a quantity that moved 29 points.
+plant, the same group, the same naming series, eight months apart**: rRNA **38.0% → 67.1%**,
+Kraken2 PlusPF-16 at confidence 0.1 **22.7% → 40.7%**, virus-identifiable **12.0% → 6.5%** as
+ribosomal sequence crowds it out. **So every removal percentage in this repo is a statement
+about one sample on one day** and is read as "on SRR23973193", not as a property of the
+method. Drift is the biggest caveat on every figure.
 
-A second constraint follows from the same comparison: **tier order is a property of the
-library, not of the tool.** On the matched DNA library — which is a virome, 0.01% ribosomal
-and 99.1% unidentified — 0.24 GB of viral protein identifies **8.5×** what the 16 GB
-nucleotide index does, while on the RNA library of the same water the 16 GB index wins
-six-fold. A cascade tuned on one and pointed at the other spends its largest index to remove
-under one percent, so the tier order is chosen per sample by the calibration run and is not
-baked in.
+**A null is not a bias statement, and a number needs both.** A null says what a field reads
+on meaningless input; a bias statement says what it reads on *real* input for the wrong
+reason, and only the second can be removed by a control. Every field states the **direction**
+of its bias and the control that removes it, or the direction alone where no control exists.
+Read the control first: three publishable-looking results on one day were wrong until their
+bias was named, and the tell in all three was the control moving with the test.
 
-**Operating points include the ones that look like plumbing.** Mate 2's non-template trim
-moves the Kraken2 removal fraction by **1.7 points** between 14 and 16 bases — the size of
-effects reported here as findings — because the prefix length is a distribution and Kraken2's
-confidence is a fraction of a read's minimizers (`results/nontemplate_prefix/`). The trim
-ships as a declared parameter with its curve, like every threshold.
+**The bugs to watch are the ones that fake a result**, and the common shape is **a default
+where a refusal belongs**:
+
+- **the shuffle fallback** — a dinucleotide shuffle whose Eulerian walk dead-ends returned
+  its input, so real sequence entered the null. It can only move the null *towards* the test,
+  which makes "null scored zero" conservative and **"test and null are indistinguishable"
+  the dangerous shape**: two kills were withdrawn. Dead ends happen in repetitive sequence,
+  which is also what throws chance alignments, so 2.85% contamination supplied 100% of one
+  null's hits. One shared module now (`shuffle_control.py`), raising rather than falling
+  back, with a tripwire test on any new shuffle;
+- a chimaera test that never ran and wrote `0.0`;
+- a stage that silently skipped a missing index;
+- an unexposed block stride that left two of five seeds reading nothing.
+
+So: **controls, search-output parsing and provenance come from shared modules, imported,
+never re-typed** (`shuffle_control.py`, `search_hits.py`, `provenance.py`), each raising where
+a copy used to fall back. A stage whose reference data is absent writes
+`status: "skipped"` with the reason and the run is marked incomplete; it never falls back to
+a cheaper index and reports the number as if it were the real one, and it never guesses a
+sample's reference.
+
+**Sign flips, found twice, so every field states its direction measured on known material:**
+"the unmatched half returns to the same subject" fires 8× more on *identified* contigs, and
+the coverage-shape family has **familiarity polarity** — 0.78 AUC that means *already seen*
+(a within-read depth step marks sequence shared between molecules, +0.577 with the number of
+distinct contigs a read aligns to, not a junction).
+
+**Five seeds give an honest range and a useless variance.** The min–max is an observed
+spread, not an estimate of dispersion, and it reverses sign off a run's own seeds: the
+inflation reading 1.44 and 1.61 over the whole library's 87 windows reads 0.65 and 0.44 off
+five of them. **Any correction factor comes from the full series, never from the run's own
+seeds.** The five cascade blocks are **contiguous blocks of one flow cell**: location is fine
+(within 0.14 points of the whole library on every class) and dispersion is not
+(**overdispersion 1.57× on identified, 1.43× on rRNA**, adjacent blocks correlated at +0.28),
+so those Wilson intervals are that much too narrow and the design effect is applied and shown
+beside the interval. The residue classes are nearly clean at 1.13–1.15×.
 
 **The sample's own assembly is versioned.** It is the most powerful thing the tool subtracts
-(30.33 marginal points from 15 MB) and it is produced at run time, so two runs of the same
-sample would otherwise disagree about what is known. The assembly gets an identifier, a
-digest and a manifest entry, and every removal number names the assembly version that
-produced it.
+and it is produced at run time, so it gets an identifier, a digest and a manifest entry, and
+every removal number names the assembly version that produced it.
 
-Both are in addition to the repo-wide rules: `--seed`, a run manifest beside every result
-(seed, git SHA, parameters, timings), release builds for timings, five seeds minimum for any
-headline, and spread reported rather than averaged away.
+**The mates are not interchangeable** and any pair-symmetric field inherits that: 107 against
+93 nt is 76 scorable 31-mers against 62, and the mate direction asymmetry in linkage is
+**entirely length** — matching the lengths turns 2.311/2.653 into 4.093/4.087 and nearly
+doubles recovery. Report per mate, or show the length-matched control.
+
+Plus the repo-wide rules: `--seed`, a run manifest beside every result (seed, git SHA,
+**`script_sha256`** taken when the manifest is written, parameters, timings), release builds
+for timings, five seeds minimum for a headline, spread reported rather than averaged away,
+percentages of read pairs, figures generated from committed files and never hand-written.
 
 ---
 
-## 7. Declared blind spots
+## 9. Declared blind spots
 
-These are measured, not cautious. The tool states them in its own output.
+Measured, not cautious, and the tool states them in its own output
+([`blind_spots.json`](blind_spots.json) travels into every run directory).
 
-**Dimensionality does not move either wall, and the spec must not imply it does.** The
-recognition limit is a property of the indexes, not of the decision rule, so adding axes
-cannot shift it. And at one in a million there is nothing to aggregate — the molecules are
-not there. What §4.2 buys is a deliverable that is honest at depth, which is where the
-1–5% divergence band this project cares about actually sits. It does not buy abundance.
+**Four walls.** Nothing below ~1 in a million. No recognition past ~10–20% divergence, and
+the band is stated at **protein** level because a nucleotide band does not transfer. Reads
+find kin only to ~1 in 100,000. The unplaceable residue sits at **median depth 1**.
 
-**No read-level rule gets near one false positive per million.** Peptide absence gives
-160,774 false flags per million at the strictest expressible threshold (PR #11/#13).
-Read-level homology gives 8–10% sensitivity at 93,478 flags per million at bitscore ≥40, and
-0% sensitivity at 1,489 flags at ≥80. Single-read features — ORF-likeness, k-mer composition,
-codon usage, GC — all lack novelty polarity (PR #8). The pair is a multiplier on aggregation,
-not a rule: no pair rule reaches one per million either.
+**Detection below about one in a million is not available at all.** At that abundance a virus
+contributes ~8.7 read pairs in an 8.7 M-pair run. Detection is abundance-limited;
+**characterisation at depth is where the 1–5% divergence band sits**, and that is the honest
+headline.
 
-**Recognition stops between 10% and 20% divergence — partly because of read length.** The
-table below is a *cascade removal* ladder at the cascade's operating point, and §4.3 shows
-that merging the mates moves it: at 20% divergence a merged read is recognised 3.7x more
-often than its own mate 1, and at 30% it goes from nothing to 7.1%. So read this wall as a
-property of the cascade AND of the 107 nt read, not of the indexes alone. The holdout spike
-— three real genomes simulated into this library's own measured insert distribution (median
-194, p95 363) and error rates (0.00089 R1, 0.00117 R2), walked away from themselves, pushed
-through every index:
+**Dimensionality does not move either wall.** The recognition limit is a property of the
+indexes, not of the decision rule, so adding axes cannot shift it; and at one in a million
+there is nothing to aggregate.
+
+**Recognition stops between 10% and 20% divergence, partly because of read length.** The
+holdout spike — three real genomes simulated into this library's own measured insert
+distribution and error rates, walked away from themselves, pushed through every index:
 
 | divergence | spike pairs surviving tier 1 |
 |---|---|
@@ -543,8 +593,7 @@ through every index:
 | 20% | 82.2% (73.8–89.8) |
 | 30% | 99.5% (98.2–100.0) |
 
-That band is this pipeline's measured boundary between *already known* and *new*. Which tier
-does the recognising, as removal falls away:
+Which tier does the recognising, as removal falls away:
 
 | divergence | sample's contigs | Kraken2 viral | PlusPF-16 | viral proteins | Swiss-Prot |
 |---|---|---|---|---|---|
@@ -553,56 +602,254 @@ does the recognising, as removal falls away:
 | 20% | 0.2 | 0.0 | 0.0 | 17.4 | 17.6 |
 | 30% | 0.0 | 0.0 | 0.0 | 0.5 | 0.5 |
 
-The nucleotide side dies first; the protein index is the last thing standing. That is the
-argument for keeping a protein tier in a cascade whose cheapest and most effective tiers are
-nucleotide.
-
-Two caveats that ship with the ladder. Uniform substitution is a crude model of real
-divergence, so read the rungs as **ordinal**, not as family distances. And two of the three
-spiked genomes are already in the sample — PMMoV at 285× and human astrovirus as a 6,823 nt
-contig at 11.7× — so part of the 0% removal is the sample recognising itself. Human
-rhinovirus 1 is the only clean holdout. The ladder's *shape* is unaffected because the
-per-tier table separates own contigs from public indexes.
-
-**Detection below about one in a million is not available at all.** At that abundance a virus
-contributes ~8.7 read pairs in an 8.7 M-pair run; the survival ladder implies roughly one
-reaches the per-read report at 10% divergence and seven at 20%. That is arithmetic on top of
-per-read behaviour measured at a resolvable spike rate — a sample holding 8.7 pairs cannot
-resolve a rate, and pretending otherwise was the error of PR #11. Detection is
-abundance-limited; **characterisation at depth is where the 1–5% divergence band sits**, and
-that is the honest headline.
+**The nucleotide side dies first and the protein index is the last thing standing** — the
+argument for keeping a protein tier in a cascade whose cheapest tiers are nucleotide. Read
+the rungs as **ordinal**: uniform substitution is a crude model of real divergence. And on the
+clean holdout the sample's own assembly removes 0.0% at every rung (§3d), so the per-genome
+table is the one to read.
 
 **Removal is a lower bound on "known".** An index cannot distinguish sequence with no
-relative anywhere from sequence whose relative sits below the matching threshold. The sweeps
-are the honest form of that limit.
+relative anywhere from sequence whose relative sits below the matching threshold.
 
 **Subtraction is not free.** SURPI+ measured pre-processing removing 0.43% of true viral
-reads. Anything this cascade removes could be a divergent member of a known family, and at a
-one-in-a-million target a small false-removal rate matters more than the headline removal.
+reads, and at a one-in-a-million target a small false-removal rate matters more than the
+headline removal.
 
 **The cost curve has not flattened, so the far end is not quoted.** Each tenfold step of
-protein index still buys ~20 points at the largest size reachable here. On the nucleotide
-side a reference-content ladder shows the last doubling still buying 15–26 points, but the
-instrument is weak and we say so: reads concentrate over few taxa (the top taxon carries
-49.0% of classified reads, the top ten 86.4%), so that step is largely one dominant taxon
-being in or out of the subset. The curve's shape is measured; its value at 100% is not, and
-the tool reports measured points only.
+protein index still buys ~20 points at the largest size reachable here; the nucleotide
+reference ladder's last doubling still buys 15–26 points, but that instrument is weak and we
+say so — reads concentrate over few taxa (top taxon 49.0% of classified reads, top ten
+86.4%), so a step is largely one dominant taxon being in or out. Measured points only.
+
+**Background is a baseline too.** Anything rising well above the panel's own level gets
+reported, not removed — and the growth detector as built **points the wrong way**: the 100×
+tail is 14× commoner in sequence most of the panel also carries, so it finds a common
+organism blooming locally. The pooled contig growth figure is an artefact and must not be
+quoted (93.2% of tier 2 contigs have zero panel depth under them).
+
+**Provenance gaps, stated rather than tidied.** No cascade manifest carries `script_sha256`
+and `subtract_known/`'s five seeds sit under three SHAs, two `-dirty`; the 77.10% headline is
+read from `subtract_recut/`, whose five seeds share one clean SHA. `linkage_census/`
+manifests name SILVA though the census never read it.
 
 ---
 
-## 8. Interface
+## 10. What is measured — the provenance index
 
-### 8.1 Command line is the contract
+Load-bearing numbers and where each comes from. Nothing else in this document is a claim.
+
+| claim | where |
+|---|---|
+| Identification removes 77.10% (77.02–77.28, 5 seeds); residue 22.90% | `results/subtract_known/`, `results/subtract_recut/` |
+| The subtrahend is identification, not assembly — 85.9% against 77.0% | `results/holdout_cascade/` |
+| The sample's own assembly is the most efficient index (+30.33 marginal) and removes 0.0% of a genuinely novel virus | `results/subtract_known/`, `results/spike_holdout/` |
+| Residue size spans 8.79 points on assembler path flags; recovery does not move | `results/path_settings/` |
+| The holdout assembles at 96% breadth and is removed as known at 66.5% / bitscore 812 | `results/holdout_cascade/` |
+| Identity ordering is actively wrong (93.46th percentile); coverage gives a 69-contig cell | `results/holdout_cascade/` |
+| Whole-contig identity is not a property of the contig — 17.4 points median gene spread, 24.3 on the holdout | `results/divergent_contigs/`, `results/holdout_cascade/` |
+| Nucleotide beats protein at read level at every distance; the reverse holds on contigs | `results/holdout_run/`, `results/subtract_known/` |
+| Per-read identity flatters by 12.8–13.6 points; coverage is the control; contig-level identity is unbiased | `results/holdout_run/`, `results/holdout_cascade/` |
+| Merging the mates takes 20%-divergence recognition from 10.5% to 38.4%; the null stays at 0.0% | `results/profile_reach/`, `results/weak_hits/` |
+| Nothing beats the production search — 11 arms, identical to the decimal; the constraint is the significance statistics | `results/reach/` |
+| Structure reads fold, not distance (32.6% against 31.2% on near-reference) | `results/reach/` |
+| No single-read axis discriminates (largest standardised difference 0.40); joint space +0.013 AUC; no clusters | `results/residue_fields/`, `results/residue_structure/` |
+| Mate-2 prefix mode exactly 14 in 5/5 seeds, two operating points, 1.7 points apart | `results/nontemplate_prefix/` |
+| Depth decides, not the pile label: 8.5 points at depth 1 after a 512-library union | `results/crossplant/` |
+| 21.5% against 0.9% absent from the plant's other dates at matched depth | `results/recurrence/` |
+| Residue is thin, recurring, not artefact: median depth 1, artefact under 1% | `results/residue_census/` |
+| Host confidence maxes at 0.40 over 41,829 subjects | `results/full_residue_search/` |
+| Below ~3.8% divergence every assembler fuses lineages; MEGAHIT separates from ~5% | `results/pair_ladder/` |
+| Blocks are contiguous: overdispersion 1.57×/1.43×, design effect applied | `results/block_position_bias/` |
+| Which committed claims rest on a null that did not shuffle, and which way it points | `results/fail_loudly_audit/SHUFFLES.md` |
+
+---
+
+## 11. What is dead — do not re-propose
+
+Each of these was measured and failed, and the record is in
+[`results/README.md`](results/README.md). Re-proposing one is the specific failure mode this
+section exists to prevent.
+
+1. **Any novelty score, any novel-or-not threshold, any flag** — score ordering tracks
+   database proximity. And **any threat score**: host confidence cannot carry one.
+2. **The weak-hit headroom.** "92.3% of shuffled reads hit" was taken without an E-value
+   floor; with one it is 0.00%. Bigger databases buy hits, not identifications.
+3. **Composition in any form** — k-mer composition, codon usage, GC, ORF-likeness: no novelty
+   polarity, because a wastewater background is coding too.
+4. **Peptide k-mer absence** as a detection rule: 160,774 false flags per million.
+5. **Read-level Pfam / profile reach.** Pfam-A is weaker than translated search at every rung,
+   and the "DIAMOND reads zero past 20%" belief was a cascade removal figure misread as a
+   search's reach.
+6. **Coverage-shape fields as novelty axes** — 0.78 AUC with *familiarity* polarity.
+7. **Read-level chimaera and partial-match tests.** Once a 107 nt read matches ~74% of
+   itself the leftover is ~10 aa, under any search's floor; the chance band is identical
+   between residue and identified reads. This question belongs after assembly.
+8. **Clustering the joint space** — no cluster count beats 1 in 5/5 seeds.
+9. **Read-level nucleotide BLAST hit rates without an E-value**, and identity quoted without
+   one at any level.
+10. **Coverage pooling across lineages** — fabricates mosaics. And **`k` / `--min-count` as
+    the assembly levers that matter.**
+11. **"Absence in wastewater means absence"**, and *"93% unclassified"* as a statement about
+    the water: it is one index's reach. Most of what we remove as known, we remove by matching
+    sequence nobody has named — one index names 6.88%, all name-returning tiers 7.49%, and the
+    69.54% between is recognised-but-unnameable (`results/public_health_view/`, of which
+    37.90% is a SILVA match and most of the rest a contig from this sample).
+12. **Flagging the low-identity removals**, and **ranking the removed pile by identity** — the
+    holdout sits in the top decile of significant-hit removals and at the 93.46th percentile
+    overall.
+13. **Re-assembling only the residue** — residue membership is decided by identification, so
+    it bakes in the previous run's path choices (Imo's correction; vary settings on the whole
+    library).
+14. **"Most distant relative recovered" as a statistic** — it reads 20.7–22.2% on every pile
+    including a companion at 99.8% identity, because at a fixed E-value the furthest surviving
+    alignment is set by database size and query length.
+15. **The "all subjects explain more than the best single one" gap as a second axis** — it is
+    protein-only and is coverage read twice (−0.8 at nucleotide). The field itself is untested
+    rather than killed (§12.7) and nothing rests on it.
+16. **Seeding as the binding constraint.** DIAMOND at three sensitivities, BLASTP and full
+    Smith-Waterman over 1,210,551 subjects return the same nearest relative on all 16 contigs.
+    **The constraint is the significance statistics.** Codon awareness saturates above ~30%
+    protein divergence: right tool, wrong distance (11 of 22 divergent genes have no
+    measurable synonymous divergence left).
+
+---
+
+## 12. What is open — with the experiment that would settle it
+
+### 12.1 Paired search mode — the one live candidate (untested)
+
+Imo, 2026-11-23: *"even when mates aren't overlapping, many tools have a paired mode that
+lets them work together to find homology. have we tried that?"*
+
+**Honest answer: not as a search mode.** What exists today:
+
+- The Kraken2 tiers **do** run paired (`-P` in `experiments/subtract_known.py`), so a pair's
+  minimizers are already pooled in the k-mer tiers — **and that has never been ablated
+  against per-mate classification**, so we do not know what it is worth.
+- Every **homology** tier searches mate by mate. No tier anywhere combines two
+  non-overlapping mates into one significance statement.
+- §4.2's merge covers only the 35.1% of pairs that **overlap**. The other ~65% carry two
+  reads of one molecule and are searched as if they were two molecules.
+- Mate linkage has been measured at the **geometry** level — a read's own partner is in its
+  10 nearest neighbours 23× more often than chance with no shared 31-mer, null on chance —
+  but that **did not move the 1-in-100,000 kin wall** (`results/mate_friends/`). It bounds
+  what pairing can buy as a *locator*; it says nothing about what it buys as a *significance
+  statistic*.
+- Prior art makes the gap sharper, not softer: Viromancer/Lyra-Virus **has pairs and never
+  uses them** (`results/readlevel_features/`).
+
+**The experiment.** Arms, all in one pass on the holdout ladder and the Berlin spike, scored
+at the same operating point:
+
+1. best single mate (today's behaviour);
+2. merged read where the pair overlaps (§4.2, as the known-positive comparator);
+3. **joint significance over the two mates**: both mates against the same subject, requiring
+   insert-compatible coordinates and orientation, with the two E-values combined explicitly
+   (Fisher) rather than by taking the better one;
+4. Kraken2 `-P` against per-mate classification — the ablation of what we already ship.
+
+**Controls, and arm 3 is worthless without the first of them:**
+
+- **swapped partners** — mates paired with random partners from the same library. Any joint
+  statistic gains on *any* pair; if the swap control gains as much, the statistic is reading
+  query length and database size, not linkage. This is the control that killed the "most
+  distant relative recovered" statistic (§11.14) and it is the same shape here;
+- dinucleotide shuffles at matched lengths, through `shuffle_control.py` (raising, not
+  falling back — §8);
+- reads the cascade already identifies, as the known-positive arm.
+
+**Metric**: recognition at a fixed false-pair rate per million, per divergence rung, **and
+whether the nearest relative changes** — not merely whether a hit appears. An arm that finds
+more hits without improving the identity or the named subject has bought nothing (§5.1).
+
+**The rule it must respect**: paired mode may improve **identification and distance**. It may
+never become a novelty score. No pair rule reaches one false positive per million
+(`results/mate_width/`), and that kill stands.
+
+**Caveat on the instrument**: the strongest holdout libraries are single-end, so §4.2's
+mate merge is untestable there and this experiment needs the Berlin spike ladder plus a paired
+holdout library.
+
+### 12.2 Identity for the pile sequence cannot name
+
+Class C currently reports distance with no identity (§1, §7.2). Structure is the candidate:
+against all 178,660 chains of every solved virus structure, the divergent placements are the
+right proteins and the holdout's polymerase lands at E = 1.1e-22 with a shuffled null of 0 of
+80 — but **the field reads fold and not distance** (32.6% median 3Di identity on the divergent
+pile against 31.2% on near-reference contigs 95–99% identical to published sequence), and on
+the reach panel it placed 8 of 24 divergent genes against sequence's 22, the 8 a subset. That
+is an identity instrument with no distance half, which under §1 is a **row in the report, not
+a failed experiment** — and the place to point it is exactly where sequence gives no identity
+at all. A databank-wide structure library is being measured in a separate thread; until it
+lands, class C says *no identity*.
+
+### 12.3 The full protein index — this is disk, not science
+
+Requirement (iii) (evidence that no-match sequence really sits below ~80% identity) needs a
+translated search against full UniRef50 or nr: **~160 GB**, against ~15 GB of writable disk
+after the nucleotide indexes. The streaming recipe already does the hard part (41,243,524
+records, verified against UniProt's own count). One machine closes the requirement and puts
+the measured far end on the cost curve instead of an extrapolation. **Still the single
+highest-value piece of infrastructure in this spec.**
+
+### 12.4 The Berlin arm of the path-settings sweep
+
+`results/path_settings/` ran on SRR23421544 because the Berlin arm is ~8 h (Imo's call). So
+how much *the discriminating dataset's* residue moves under path settings is unmeasured,
+and the 8.79-point swing is quoted as a property of that library.
+
+### 12.5 The gene-spread result needs merging, and one half of it is untestable
+
+`results/divergent_known/` — the role ordering across 131 contigs with both artefact
+objections tested — is on thread branches with no open pull request (§2.2). It should be
+merged and then cited. **The within-genome spread as a novelty signal appears unclaimed in
+the literature** (the closest precedent, Friedman et al. 2009, has maturation most divergent
+*between* lineages with replicase closest — our ordering; capsid-first is *within* a
+lineage), so it is the most interesting unclaimed thing here.
+
+Conservation **inside** a protein is **cannot tell, not killed**: there are no shuffled
+alignments to compare against, because all 148 shuffled ORFs give depth-1 alignments and
+`hhmake` refuses them. That applies to any profile-based novelty claim, not just this panel.
+Domain *presence* does have a clean null on `main` — **0 of 932 shuffled ORFs** and 0 of
+11,361 shuffled contigs produce a significant protein alignment under the fixed walk
+(`results/fail_loudly_audit/SHUFFLES.md`) — so what is missing is the comparison *conditional
+on* an alignment, not the existence test.
+
+### 12.6 Occurrence as the importance axis
+
+**Importance will not come out of sequence.** Sequence gives distance and gene-level shape;
+occurrence across dates and plants gives the reason to care. What is measured: 21.5% of
+once-seen residue reads appear on none of the plant's other 40 dates against 0.9% of
+identified reads at the same depth, and transience is ruled out for whatever recurs at all.
+What is **not** measured: **"appears, then climbs across dates"** — the shape that would
+actually matter — and the growth detector as built points the wrong way (§9). Report
+occupancy over runs, waters **and** dates, because PRJNA948850's 215 RNA runs are **85
+distinct waters over 41 dates** (116 paired `RNA_WW_*` plus 99 single-end `xh_*` runs are the
+same libraries through a hybrid-capture panel).
+
+### 12.7 The coverage-explained gap as a field
+
+The any-subject-union against per-subject coverage gap (+36.6 points on the holdout) fires at
+the 94.2nd percentile of real identified background — a few hundred contigs per library — and
+correct nulls on two libraries read 0 of 22,110 and 0 of 11,361, which **bounds chance at ~1
+in 11,000–22,000 rather than establishing zero**. **Untested, not killed, and nothing rests on
+it.** As a *second axis* it is dead (§11.15).
+
+---
+
+## 13. Interface
+
+### 13.1 The command line is the contract
 
 ```
-hapax run SAMPLE.R1.fq.gz SAMPLE.R2.fq.gz --seed N --out RUNDIR
+hapax run SAMPLE.R1.fq.gz SAMPLE.R2.fq.gz --seed N --trim-r2 K --out RUNDIR
 ```
 
-`RUNDIR` holds the manifest, the tier table, the per-read rows as JSONL, the per-contig
-rows, **`removal_evidence.tsv` — one row per route per removed contig, carrying the identity,
-alignment length, E-value, bitscore and query coverage that justified the removal (§2.1(i),
-§5)** — the calibration block and the assembly version. Everything downstream — including the
-web interface — reads those committed files and nothing else.
+`RUNDIR` holds the manifest, the tier table, the per-read rows as JSONL, the per-contig rows,
+**`removal_evidence.tsv`** — one row per route per removed contig, carrying the identity,
+alignment length, E-value, bitscore and query coverage that justified the removal (§4.5,
+§5.1) — the calibration block, the assembly version and `blind_spots.json`. Everything
+downstream, including the web view, reads those committed files and nothing else.
 
 `removal_evidence.tsv` is emitted in input order with no score and no ranking on it, and
 `route` is a column because a protein row carries an identity and a coverage, a Kraken2 row a
@@ -612,67 +859,81 @@ not be pooled.
 **Implemented in [`hapax.py`](hapax.py)**, deliberately as an orchestrator: every number in
 the run directory comes from the `experiments/` script that already measures it, with that
 script's own seed and manifest, because a parallel implementation would be a second
-instrument and this project does not compare two. What the command adds is one provenance
-record per run, enforcement of §8.3's three rules at write time rather than in review, and
-the declared blind spots travelling with the run. Stages: `cascade`, `contigs`, `reads`,
-`linkage`, `census`, `calibration`, `intervals`, `layers`, `strains`. A stage whose
-reference data is absent writes `status: "skipped"` with the reason and the run is marked
-incomplete; it never falls back to a cheaper index and reports the number as if it were the
-real one. `divergent` is the stage that reads §5's continuum over the removed pile, and
-`--block` is not optional in practice: it is the stride each seed skips into the FASTQ and it
-is a property of the library, so a run on a library smaller than the default's 1.5 M pairs per
-seed silently loses its later seeds unless it is set. The driver refuses to start when the
-arithmetic does not fit the library's counted reads.
+instrument and this project does not compare two. Stages: `cascade`, `contigs`, `reads`,
+`linkage`, `census`, `calibration`, `intervals`, `layers`, `strains`, `divergent` — where
+`divergent` reads the continuum of §5 over the removed pile.
 
-### 8.2 Visual results reuse the existing generator
+**The driver refuses rather than defaults**, which is §8's rule as code: `--trim-r2` is
+required, `--block` arithmetic is checked against the library's counted reads before the run
+starts, a per-read field whose reference or tool is absent stops the run unless it is dropped
+*on purpose* with `--report-without`, and a stage whose inputs are missing writes
+`status: "skipped"` with a reason and marks the run incomplete. It separates *searched, zero
+hits* from *not searched*, and it never guesses a sample's reference.
 
-`experiments/make_infographic.py` already builds a one-page figure from committed result
-JSONs, deliberately as a generator rather than a hand-written page: a figure with numbers
-typed into it is a number without provenance, and this project has withdrawn claims whose
-prose drifted from its outputs. Missing runs are left out rather than filled in.
+### 13.2 Figures and the web view are generators, not pages
 
-The production figure is that generator pointed at a `RUNDIR`, not a parallel build. New
-panels are added to it.
+`experiments/make_infographic.py` and `experiments/make_web.py` read a `RUNDIR` and write
+their output; a number typed into a figure is a number without provenance, and this project
+has withdrawn claims whose prose drifted from its outputs. Missing runs are left out rather
+than filled in.
 
-### 8.3 Web interface
+Panels: the breakdown as one stacked bar with intervals and operating points; the cascade
+table with the threshold sweep live on a slider, so the reader sees the factor of twelve
+inside one database; the cost curve with measured points only and the unflattened far end
+shown as **absent** rather than extrapolated; the divergence ladder labelled ordinal; **the
+class A continuum, ranked by polymerase identity with the per-gene spread drawn and the
+coverage-explained shortlist shown as a cell with a count**; the residue table with every
+field's null and known-positive beside it; the joint space as a density with its two
+reference clouds; blind spots as a fixed panel, not a footnote.
 
-A thin reader over `RUNDIR`. It adds navigation and nothing else — no number appears in it
-that is not in a committed file.
+**Three rules, enforced in the generator and not in review**: no figure without its operating
+point, no pile without its interval, no score without the calibration run behind it. A panel
+whose operating point is missing renders the words `operating point absent`; a fraction with
+no interval is drawn as a bare tick; `cannot discriminate here` renders as a value.
 
-**Implemented in [`experiments/make_web.py`](experiments/make_web.py)**, a generator rather
-than a page: it reads the run directory, bundles exactly what the panels draw and writes one
-self-contained HTML file. The three rules are enforced in the generator — a panel whose
-operating point is missing from the files renders the words `operating point absent` rather
-than rendering clean, a fraction with no interval is drawn as a bare tick, and
-`cannot discriminate here` is rendered as a value in the field table.
-
-- **The breakdown** as one stacked bar: identified / assembled-unidentifiable / residual,
-  split coding and non-coding, each segment labelled with its interval and its operating
-  point.
-- **The cascade** as the tier table, with the threshold sweep live on a slider, so the reader
-  sees the factor of twelve inside one database rather than being told about it.
-- **The cost curve**: removal against index bytes, measured points only, with the
-  unflattened far end shown as absent rather than extrapolated.
-- **The divergence ladder** from this run's calibration spike, labelled ordinal.
-- **The residue table**, filterable, one row per surviving pair, with every field's null and
-  known-positive beside it and `cannot discriminate here` rendered as a value.
-- **The joint space** of §4.2's axes, as the one view that is the actual deliverable: each
-  surviving read a point, each axis selectable, the shuffled null and the subtracted-read
-  population drawn underneath as the two reference clouds. This is where signal against
-  noise is read off, and it replaces any panel that would have shown a novelty score.
-- **Blind spots** as a fixed panel, not a footnote.
-
-Three rules for the interface, all inherited from how numbers died in this project: no
-figure without its operating point; no pile without its interval; no score without the
-calibration run behind it.
+Imo's reading preferences are part of the contract: summary first then detail, pictures over
+words, rank and hide the tail, names not accessions, and **phage, virus and bacteria shown
+separately on the two axes of §5.2**. Every figure ships its control row, drawn by the same
+code.
 
 ---
 
-## 9. What this is not
+## 14. What this is not
 
-It is not a novel-virus detector, and it does not emit a novel-or-not call. It is an
-instrument that says, for one sample, how much is known and by what, how much assembles,
-how much can be characterised and how much cannot — and prices each answer. The deliverable
-is the breakdown, the cost-versus-completeness curve, and a multidimensional measurement of
-signal against noise in which every axis carries its own null and its own per-sample
-calibration. The residue is reported as residue.
+It is not a novel-virus detector and it emits no novel-or-not call. It is an instrument that
+says, for one sample: how much is known and by what, how much assembles, what sits at real
+distance from anything published and **what that distant thing is most like**, how much
+cannot be characterised at all, and what each answer cost. The deliverable is the three
+output classes on one distance continuum, the cost-versus-completeness curve, and a
+multidimensional measurement of signal against noise in which every axis carries its own null
+and its own per-sample calibration.
+
+The residue is reported as residue. The known is reported with the distance that justified
+removing it. And nothing in the output says *threat*.
+
+---
+
+## Appendix — where the old section numbers went
+
+This revision renumbers the spec around the three output classes. Committed scripts and
+reports cite the previous numbering, and **they are deliberately not edited**: a comment-only
+change would put their committed `script_sha256` out of step with the manifests they shipped,
+which is the exact condition that hash exists to rule out. They get corrected the next time
+those scripts run. Until then, read citations through this table.
+
+| cited as | now |
+|---|---|
+| §1, §1.1 (architecture; why a measurement, not a call) | §2, §3 |
+| §2 (tier 1, the cascade table) | §4.4 |
+| §2.1(i) (divergence of anything not a close homolog) | §4.5, §5.1 |
+| §2.1(ii) (part aligns, rest does not) | §11.7 — withdrawn at read level, lives after assembly |
+| §2.1(iii) (evidence that no-match sits below ~80%) | §12.3 |
+| §3 (tier 2, assembled but unidentifiable) | §7 |
+| §4, §4.1 (tier 3; the per-read evidence report) | §7, §7.1 |
+| §4.2 (the axes of the measurement; item 5 withdrawn) | §7.1, §2.1, §11.5 |
+| §4.3 (merge the mates first) | §4.2 |
+| §5, §5.1 (the distance continuum; the four residues) | §5, §6, §7 |
+| §6 (calibration and versioning) | §8 |
+| §7 (declared blind spots) | §9 |
+| §8.1 / §8.2 / §8.3 (CLI, figures, web view) | §13.1 / §13.2 / §13.2 |
+| §9 (what this is not) | §14 |
