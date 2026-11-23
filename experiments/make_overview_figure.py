@@ -68,8 +68,8 @@ STAGES = [
     },
     {
         "name": "report the residue",
-        "io": "reads nothing named → one row per pair",
-        "writes": "no threshold applied, each field beside its shuffled and known-positive controls",
+        "io": "the reads left after identification → one row per pair",
+        "writes": "every row kept, each field beside its shuffled and known-positive controls",
         "spec": "4.6, 7",
     },
     {
@@ -80,38 +80,43 @@ STAGES = [
     },
 ]
 
-# The three output classes of SPEC 5, 6 and 7. `refuses` is the claim the class will not
-# make, which belongs on the front door as much as what it reports: the refusals are the
-# part a reader is most likely to assume away.
+# The three output classes of SPEC 5, 6 and 7. `qualifier` is the sentence that travels with
+# the class and keeps a reader from reading more into it than was measured. Each one is
+# written as what the row states, because the first version wrote them as refusals ("no
+# species call") and a page of negatives says less about the tool than the same facts
+# stated forwards (Imo, 2026-11-23: "please remove ALL negatives").
 CLASSES = [
     {
         "key": "A",
         "name": "divergent but related contigs",
         "reports": "distance from published sequence with the closest relative named, per gene",
-        "refuses": "no species call; whole-contig identity is whichever gene won",
+        "qualifier": "ranked by the conserved gene, with the per-gene spread shown",
         "accent": "known",
     },
     {
         "key": "B",
         "name": "novel strains of known viruses",
         "reports": "the near end of the same scale, treated as a first-class case",
-        "refuses": "no separation below the assembler's fusion limit; reported as fused",
+        "qualifier": "lineages inside the assembler's fusion limit are reported as fused",
         "accent": "known",
     },
     {
         "key": "C",
         "name": "the unplaceable residue",
-        "reports": "distance without identity, with the depth it was observed at",
-        "refuses": "no “matches nothing”, and no claim that more sequencing would place it",
+        "reports": "distance measured, identity still open, with the depth it was seen at",
+        "qualifier": "carries the index it was measured against and the depth it was seen at",
         "accent": "residue",
     },
 ]
 
-REFUSALS = [
-    "no novelty score",
-    "no threat score",
-    "no per-read call",
-    "no host or risk label",
+# The pill row. It used to list what the tool never emits; stated forwards, the same four
+# facts say what every row does carry, which is the more useful sentence on a front page.
+# SPEC 1 and 7.2 keep the refusals themselves, in full.
+CARRIES = [
+    "a distance",
+    "the closest relative, with coverage and E-value",
+    "the operating point behind it",
+    "its controls",
 ]
 
 # Panel c's rug is one mark per contig in a schematic. Positions are fixed so the drawing is
@@ -152,12 +157,13 @@ def render() -> str:
     desc = (
         "Panel a lists the seven stages of a run, with what each is given and what it writes: "
         + "; ".join(f"{s['name']}, {s['io']}, writes {s['writes']}" for s in STAGES)
-        + ". Panel b lists the three output classes, what each reports and what it refuses to "
-        "claim: "
-        + "; ".join(f"{c['key']}, {c['name']}, reports {c['reports']}, {c['refuses']}"
+        + ". Panel b lists the three output classes, what each reports and the qualifier that "
+        "travels with it: "
+        + "; ".join(f"{c['key']}, {c['name']}, reports {c['reports']}, {c['qualifier']}"
                     for c in CLASSES)
         + ". Panel c is the distance scale all three sit on, running from far from published "
-        "sequence to matched. The figure carries no result from any sample."
+        "sequence to matched, and the row beneath it lists what every output carries: "
+        + ", ".join(CARRIES) + "."
     )
     add(f'  <desc id="figdesc">{desc}</desc>')
     add("")
@@ -220,12 +226,12 @@ def render() -> str:
     add("  </g>")
     note_y = NOTE_Y
     add(f'  <line x1="40" y1="{note_y - 18}" x2="1080" y2="{note_y - 18}" stroke="#e7ebf0"/>')
-    add(f'  <text class="note" x="40" y="{note_y}">Removal applies to read pairs. Contigs are '
-        "measured whether or not an index names them. A stage missing an input is recorded as "
-        "skipped and the run marked incomplete.</text>")
-    add(f'  <text class="note" x="40" y="{note_y + 17}">No parameter is inferred from another '
-        "sample, and no stage falls back to a cheaper index. How much each tier removes is a "
-        "property of the library and is measured per run.</text>")
+    add(f'  <text class="note" x="40" y="{note_y}">Removal applies to read pairs. Every contig '
+        "is measured, named or unnamed. A stage missing an input is recorded as skipped and "
+        "the run marked incomplete.</text>")
+    add(f'  <text class="note" x="40" y="{note_y + 17}">Every parameter comes from the '
+        "library&#39;s own entry with its basis, and every stage runs the index it names. How "
+        "much a tier removes is a property of the library, measured per run.</text>")
     add("")
 
     # ---- panel b: the output classes ------------------------------------------------
@@ -233,7 +239,7 @@ def render() -> str:
     add(f'  <text class="pan" x="40" y="{b_top}">b<tspan class="pant" dx="12">Three output '
         "classes, on one scale</tspan></text>")
     add(f'  <text class="ax" x="1080" y="{b_top}" text-anchor="end">what each reports, and '
-        "what it will not claim</text>")
+        "the qualifier that travels with it</text>")
     add("")
     add("  <g>")
     for i, cls in enumerate(CLASSES):
@@ -243,8 +249,8 @@ def render() -> str:
         add(f'    <text class="cls" x="60" y="{cy - 1}" fill="{colour}">{cls["key"]}'
             f'<tspan class="cls" dx="10" fill="{INK}">{cls["name"]}</tspan></text>')
         add(f'    <text class="io" x="60" y="{cy + 17}">{cls["reports"]}</text>')
-        add(f'    <text class="ref" x="1080" y="{cy - 1}" text-anchor="end">{cls["refuses"]}'
-            "</text>")
+        add(f'    <text class="ref" x="1080" y="{cy - 1}" text-anchor="end">'
+            f'{cls["qualifier"]}</text>')
     add("  </g>")
     add("")
 
@@ -261,33 +267,33 @@ def render() -> str:
     add("    </g>")
     add('    <text class="ax" x="0" y="16">far from published sequence</text>')
     add('    <text class="ax" x="300" y="16" text-anchor="end">matched</text>')
-    add('    <text class="note" x="360" y="-14">One mark per contig, no thresholds. A row '
+    add('    <text class="note" x="360" y="-14">One mark per contig, every contig kept. A row '
         "gives the distance to its closest</text>")
     add('    <text class="note" x="360" y="2">published relative and the identity of that '
-        "relative. Where one is absent,</text>")
-    add('    <text class="note" x="360" y="18">the report states which. Search establishes '
-        "prior knowledge. It does not</text>")
-    add('    <text class="note" x="360" y="34">establish novelty, because score ordering '
-        "tracks proximity to the database.</text>")
+        "relative, and states which of the</text>")
+    add('    <text class="note" x="360" y="18">two it has. Search establishes prior knowledge, '
+        "and score ordering tracks</text>")
+    add('    <text class="note" x="360" y="34">proximity to the database, so the report stops '
+        "at the distance it measured.</text>")
     add("  </g>")
     add("")
 
-    # ---- the refusals ----------------------------------------------------------------
+    # ---- what every output carries ---------------------------------------------------
     r_y = REFUSAL_Y
-    add(f'  <text class="ax" x="40" y="{r_y + 19}">Never emitted</text>')
-    x = 152
-    for refusal in REFUSALS:
-        width = 16 + int(len(refusal) * 7.1)
+    add(f'  <text class="ax" x="40" y="{r_y + 19}">Every row carries</text>')
+    x = 160
+    for carried in CARRIES:
+        width = 16 + int(len(carried) * 6.6)
         add(f'    <rect x="{x}" y="{r_y}" width="{width}" height="28" rx="14" fill="#fffaf2" '
             'stroke="#e6d3b3"/>')
         add(f'    <text class="ref" x="{x + width / 2:.0f}" y="{r_y + 19}" '
-            f'text-anchor="middle">{refusal}</text>')
+            f'text-anchor="middle">{carried}</text>')
         x += width + 14
     add("")
     add(f'  <line x1="40" y1="{H - 38}" x2="1080" y2="{H - 38}" stroke="#eef1f4"/>')
-    add(f'  <text class="note" x="40" y="{H - 20}">This figure describes the report, not a '
-        "result: it carries no number from any sample. The measurements behind each rule are "
-        'in <tspan font-weight="700">results/</tspan>, on the libraries named there.</text>')
+    add(f'  <text class="note" x="40" y="{H - 20}">This figure describes the report a run '
+        "writes on any library. The measurements behind each rule are in "
+        '<tspan font-weight="700">results/</tspan>, on the libraries named there.</text>')
     add("</svg>")
     return "\n".join(out) + "\n"
 

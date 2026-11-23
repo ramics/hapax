@@ -41,14 +41,19 @@ def test_every_stage_states_input_output_and_what_it_writes():
         assert stage["spec"]
 
 
-def test_every_output_class_carries_a_refusal():
+def test_every_output_class_carries_its_qualifier():
+    """What keeps a class honest travels with it. The qualifiers are written forwards, as
+    what the row states, so the test asserts they are present rather than looking for a
+    "no ..." string: the front door says what the report contains (SPEC 1, 7.2 keep the
+    refusals in full)."""
     assert [c["key"] for c in fig.CLASSES] == ["A", "B", "C"]
     for cls in fig.CLASSES:
-        assert cls["reports"] and cls["refuses"]
+        assert cls["reports"] and cls["qualifier"]
 
 
-def test_the_figure_makes_no_verdict_claim():
+def test_the_figure_claims_no_verdict_and_states_the_limit():
     svg = fig.render()
-    for refusal in ("no novelty score", "no threat score", "no per-read call"):
-        assert refusal in svg
-    assert "It does not" in svg and "establish novelty" in svg
+    assert "score ordering tracks" in svg
+    assert "the report stops at the distance it measured" in svg
+    for word in ("novelty score", "threat score", "risk label"):
+        assert word not in svg, f"{word} belongs in SPEC, not on the figure"
