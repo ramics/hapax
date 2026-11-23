@@ -1,0 +1,52 @@
+# Python dependencies for hapax.py, experiments/ and tests/.
+#
+#   python3 -m pip install -r requirements.txt
+#   python3 -m pytest                 # testpaths and skip reporting come from pytest.ini
+#
+# Tested on Python 3.13 (142 of 143 committed manifests record 3.13.18).
+#
+# PINNED (==) where a committed manifest records the version that produced a committed
+# number. Moving one of these pins is a provenance change, which by CLAUDE.md forces a
+# re-run of what it describes, so move it on purpose and never in passing.
+#
+# FLOORED (>=) where no committed manifest records a version, so no number is known to
+# depend on one. The floor is the version this file was resolved against on 2026-11-23,
+# not a measured requirement. These scripts are a provenance gap of their own: their
+# manifests do not say which version ran. tests/test_dependencies.py fails on any
+# third-party import that is not declared here.
+#
+# External binaries (BLAST, DIAMOND, Kraken2, minimap2, MEGAHIT, foldseek, ...) are not
+# pip-installable and are listed with their pins in TOOLS.md.
+
+# --- pinned: recorded in committed manifests --------------------------------------------
+# subtract_known.py (tier-1 nucleotide tiers), library_labels.py and 14 other scripts;
+# 15 manifests record 2.31. It is minimap2 2.31 underneath, the same release as the
+# minimap2 2.31-r1302 binary in the assembly manifests. tests/test_loud.py needs it: the
+# cascade correctly refuses to start without it.
+mappy==2.31
+# 19 manifests record 2.5.3.
+numpy==2.5.3
+# 10 manifests under results/rrna_content/ record 3.7.1; also divergent_contig_workup,
+# absence_residual, mate_separation and prodigal_on_rrna.
+pyrodigal==3.7.1
+
+# --- floored: imported, version not recorded --------------------------------------------
+# residue_report.py, divergent_contig_workup.py, profile_reach.py, novelty_blocks.py,
+# residue_contig_annotation.py. Not the same thing as the HMMER 3.4 binary in TOOLS.md.
+pyhmmer>=0.12.3
+# residue_report.py (`import RNA`): secondary-structure fields.
+ViennaRNA>=2.8.0
+# mate_friends.py, residue_structure_analyse.py
+scikit-learn>=1.9.1
+# labeller_audit.py and codon_assembler experiments (records "unknown": edlib has no
+# __version__, which is why its version is missing from the manifest that tried).
+edlib>=1.3.9
+# reach_arms.py: the exhaustive Smith-Waterman arm.
+parasail>=1.3.4
+# residue_structure_figure.py, codon_assembler/experiments/report_ladder.py
+matplotlib>=3.11.2
+# ec2_*.py launchers only. Nothing that computes a number imports it.
+boto3>=1.44.9
+
+# --- tests ------------------------------------------------------------------------------
+pytest>=9.1.1

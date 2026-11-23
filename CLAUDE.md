@@ -158,6 +158,8 @@ SPEC.md              the production tool; source of truth for intent
 CLAUDE.md            this file
 README.md            front door
 results/README.md    experiment archive index — read this before adding an experiment
+requirements.txt     Python dependencies; pinned where a manifest records the version
+TOOLS.md             external binaries and their pins (foldseek, DIAMOND, BLAST, ...)
 experiments/*.py     current experiments, one per results/ directory
 experiments/codon_assembler/
                      the first direction, moved here unchanged with its results so
