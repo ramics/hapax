@@ -1,0 +1,146 @@
+{
+  "n_truth": 2,
+  "n_contigs": 8,
+  "total_contig_bp": 46919,
+  "unplaced_contigs": 0,
+  "genomes_recovered": 1,
+  "viral_genomes_recovered": 1,
+  "novel_recovered": 0,
+  "novel_collapsed": 0,
+  "chimaeras": 0,
+  "cross_host_chimaeras": 0,
+  "chimaeras_explained_by_shared_sequence": 0,
+  "shared_sequence_pairs": [],
+  "pairs": [
+    {
+      "novel": "member_b",
+      "known": "member_a",
+      "novel_recovered": false,
+      "novel_own_contigs": 7,
+      "novel_covered": 0.5694,
+      "known_recovered": true,
+      "collapsed": false
+    }
+  ],
+  "per_genome": {
+    "member_a": {
+      "role": "known",
+      "relative": "member_b",
+      "length": 29903,
+      "coverage_sim": 100.0,
+      "covered_frac": 0.9999,
+      "identity": 0.9999,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "member_b": {
+      "role": "novel",
+      "relative": "member_a",
+      "length": 29855,
+      "coverage_sim": 25.0,
+      "covered_frac": 0.5694,
+      "identity": 0.99888,
+      "own_contigs": 7,
+      "recovered": false
+    }
+  },
+  "chimaera_detail": [],
+  "per_contig": [
+    {
+      "contig": "k141_4",
+      "length": 932,
+      "assigned": "member_b",
+      "identity": 0.99889,
+      "aligned_bp": 901,
+      "windows": 1,
+      "window_genomes": [
+        "member_b"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "k141_5",
+      "length": 655,
+      "assigned": "member_b",
+      "identity": 1.0,
+      "aligned_bp": 655,
+      "windows": 1,
+      "window_genomes": [
+        "member_b"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "k141_0",
+      "length": 1927,
+      "assigned": "member_b",
+      "identity": 0.99948,
+      "aligned_bp": 1927,
+      "windows": 3,
+      "window_genomes": [
+        "member_b"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "k141_1",
+      "length": 1088,
+      "assigned": "member_b",
+      "identity": 1.0,
+      "aligned_bp": 1088,
+      "windows": 2,
+      "window_genomes": [
+        "member_b"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "k141_6",
+      "length": 2240,
+      "assigned": "member_b",
+      "identity": 0.99865,
+      "aligned_bp": 2224,
+      "windows": 4,
+      "window_genomes": [
+        "member_b"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "k141_2",
+      "length": 3443,
+      "assigned": "member_b",
+      "identity": 0.99738,
+      "aligned_bp": 3437,
+      "windows": 6,
+      "window_genomes": [
+        "member_b"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "k141_3",
+      "length": 6798,
+      "assigned": "member_b",
+      "identity": 0.99926,
+      "aligned_bp": 6795,
+      "windows": 13,
+      "window_genomes": [
+        "member_b"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "k141_7",
+      "length": 29836,
+      "assigned": "member_a",
+      "identity": 0.9999,
+      "aligned_bp": 29836,
+      "windows": 59,
+      "window_genomes": [
+        "member_a"
+      ],
+      "chimaeric": false
+    }
+  ]
+}

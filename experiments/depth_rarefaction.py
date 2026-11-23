@@ -78,10 +78,18 @@ from pathlib import Path
 
 import numpy as np
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir
+import library_facts
+
 REPO = Path(__file__).resolve().parent.parent
 LEVELS = (0.125, 0.25, 0.5, 1.0)
-TRIM_R2 = 14
-LIB_PAIRS = 8_731_224          # SRR23973193, from data/MANIFEST.md
+# These are facts about one sequencing run, and they were module-level literals: a
+# reader of this file could not tell which library they describe, and a run against
+# another library would have used them anyway. They come from experiments/libraries.json
+# by accession, which raises for a library it does not know.
+LIBRARY = "SRR23973193"
+TRIM_R2 = library_facts.fact(LIBRARY, "trim_r2")
+LIB_PAIRS = library_facts.fact(LIBRARY, "pairs")
 
 
 PILE_PRIORITY = ("rrna", "identified", "other_ctg", "tier2", "unplaced")

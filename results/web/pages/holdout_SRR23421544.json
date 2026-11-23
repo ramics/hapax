@@ -1,0 +1,16 @@
+{
+ "_what": "Everything the run viewer says about this sample that is not read from the run directory. experiments/make_web.py takes this file and nothing else that differs by sample.",
+ "title": "Holdout run viewer",
+ "sample": {
+  "accession": "SRR23421544",
+  "lede": "Treated wastewater from Russia, collected on 2022-05-10, sequenced as RNA."
+ },
+ "rundir": "results/holdout_cascade/run_s1",
+ "inputs": {
+  "spectrum": {"not_run": "the gene-level divergent stage (experiments/divergent_known.py) has not been run on this library"},
+  "spectrum_big_index": {"not_run": "follows the spectrum"},
+  "spectrum_reference_point": {"not_run": "follows the spectrum"},
+  "spectrum_reference_truth": {"not_run": "follows the spectrum"},
+  "truth_gene_map": {"path": "results/holdout_cascade/gene_map_s1.json"}
+ }
+}

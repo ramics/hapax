@@ -1,0 +1,5757 @@
+{
+  "n_truth": 33,
+  "n_contigs": 435,
+  "total_contig_bp": 736132,
+  "unplaced_contigs": 0,
+  "genomes_recovered": 12,
+  "viral_genomes_recovered": 12,
+  "novel_recovered": 1,
+  "novel_collapsed": 1,
+  "chimaeras": 10,
+  "cross_host_chimaeras": 7,
+  "chimaeras_explained_by_shared_sequence": 0,
+  "shared_sequence_pairs": [],
+  "pairs": [
+    {
+      "novel": "phage_hk97",
+      "known": "phage_lambda",
+      "novel_recovered": false,
+      "novel_own_contigs": 21,
+      "novel_covered": 0.6317,
+      "known_recovered": true,
+      "collapsed": false
+    },
+    {
+      "novel": "ratg13",
+      "known": "sars2",
+      "novel_recovered": false,
+      "novel_own_contigs": 1,
+      "novel_covered": 0.0402,
+      "known_recovered": true,
+      "collapsed": false
+    },
+    {
+      "novel": "batcov_bm4831",
+      "known": "sars2",
+      "novel_recovered": false,
+      "novel_own_contigs": 0,
+      "novel_covered": 0.0,
+      "known_recovered": true,
+      "collapsed": true
+    },
+    {
+      "novel": "hbv_a",
+      "known": "hbv_d",
+      "novel_recovered": true,
+      "novel_own_contigs": 2,
+      "novel_covered": 0.9314,
+      "known_recovered": true,
+      "collapsed": false
+    },
+    {
+      "novel": "hiv1_c",
+      "known": "hiv1_b",
+      "novel_recovered": false,
+      "novel_own_contigs": 3,
+      "novel_covered": 0.3662,
+      "known_recovered": true,
+      "collapsed": false
+    },
+    {
+      "novel": "hpv11",
+      "known": "hpv16",
+      "novel_recovered": false,
+      "novel_own_contigs": 4,
+      "novel_covered": 0.5548,
+      "known_recovered": true,
+      "collapsed": false
+    },
+    {
+      "novel": "hhv7",
+      "known": "hhv5",
+      "novel_recovered": false,
+      "novel_own_contigs": 1,
+      "novel_covered": 0.0039,
+      "known_recovered": false,
+      "collapsed": false
+    }
+  ],
+  "per_genome": {
+    "ecoli": {
+      "role": "background",
+      "relative": null,
+      "length": 4641652,
+      "coverage_sim": 3.0,
+      "covered_frac": 0.0079,
+      "identity": 0.99454,
+      "own_contigs": 56,
+      "recovered": false
+    },
+    "saureus": {
+      "role": "background",
+      "relative": null,
+      "length": 2821361,
+      "coverage_sim": 3.0,
+      "covered_frac": 0.0075,
+      "identity": 0.99385,
+      "own_contigs": 33,
+      "recovered": false
+    },
+    "pvulgatus": {
+      "role": "background",
+      "relative": null,
+      "length": 5163189,
+      "coverage_sim": 2.0,
+      "covered_frac": 0.0148,
+      "identity": 0.99426,
+      "own_contigs": 118,
+      "recovered": false
+    },
+    "phage_lambda": {
+      "role": "known",
+      "relative": "phage_hk97",
+      "length": 48502,
+      "coverage_sim": 60.0,
+      "covered_frac": 0.9979,
+      "identity": 1.0,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "phage_hk97": {
+      "role": "novel",
+      "relative": "phage_lambda",
+      "length": 39732,
+      "coverage_sim": 20.0,
+      "covered_frac": 0.6317,
+      "identity": 0.99992,
+      "own_contigs": 21,
+      "recovered": false
+    },
+    "phage_t4": {
+      "role": "known",
+      "relative": null,
+      "length": 168903,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.9941,
+      "identity": 0.90755,
+      "own_contigs": 26,
+      "recovered": false
+    },
+    "phix174": {
+      "role": "known",
+      "relative": null,
+      "length": 5386,
+      "coverage_sim": 150.0,
+      "covered_frac": 0.984,
+      "identity": 1.0,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "crassphage": {
+      "role": "known",
+      "relative": null,
+      "length": 97065,
+      "coverage_sim": 40.0,
+      "covered_frac": 0.9983,
+      "identity": 1.0,
+      "own_contigs": 2,
+      "recovered": true
+    },
+    "sars2": {
+      "role": "known",
+      "relative": "ratg13",
+      "length": 29903,
+      "coverage_sim": 100.0,
+      "covered_frac": 0.9966,
+      "identity": 1.0,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "ratg13": {
+      "role": "novel",
+      "relative": "sars2",
+      "length": 29855,
+      "coverage_sim": 25.0,
+      "covered_frac": 0.0402,
+      "identity": 0.99828,
+      "own_contigs": 1,
+      "recovered": false
+    },
+    "batcov_bm4831": {
+      "role": "novel",
+      "relative": "sars2",
+      "length": 29276,
+      "coverage_sim": 10.0,
+      "covered_frac": 0.0,
+      "identity": null,
+      "own_contigs": 0,
+      "recovered": false
+    },
+    "hbv_d": {
+      "role": "known",
+      "relative": "hbv_a",
+      "length": 3182,
+      "coverage_sim": 120.0,
+      "covered_frac": 0.9742,
+      "identity": 0.98936,
+      "own_contigs": 2,
+      "recovered": true
+    },
+    "hbv_a": {
+      "role": "novel",
+      "relative": "hbv_d",
+      "length": 3221,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.9314,
+      "identity": 1.0,
+      "own_contigs": 2,
+      "recovered": true
+    },
+    "hiv1_b": {
+      "role": "known",
+      "relative": "hiv1_c",
+      "length": 9181,
+      "coverage_sim": 80.0,
+      "covered_frac": 0.9803,
+      "identity": 0.99713,
+      "own_contigs": 2,
+      "recovered": true
+    },
+    "hiv1_c": {
+      "role": "novel",
+      "relative": "hiv1_b",
+      "length": 9011,
+      "coverage_sim": 20.0,
+      "covered_frac": 0.3662,
+      "identity": 0.99487,
+      "own_contigs": 3,
+      "recovered": false
+    },
+    "hpv16": {
+      "role": "known",
+      "relative": "hpv11",
+      "length": 7906,
+      "coverage_sim": 70.0,
+      "covered_frac": 0.9866,
+      "identity": 1.0,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "hpv11": {
+      "role": "novel",
+      "relative": "hpv16",
+      "length": 7931,
+      "coverage_sim": 15.0,
+      "covered_frac": 0.5548,
+      "identity": 1.0,
+      "own_contigs": 4,
+      "recovered": false
+    },
+    "hhv5": {
+      "role": "known",
+      "relative": "hhv7",
+      "length": 235646,
+      "coverage_sim": 15.0,
+      "covered_frac": 0.6429,
+      "identity": 1.0,
+      "own_contigs": 147,
+      "recovered": false
+    },
+    "hhv7": {
+      "role": "novel",
+      "relative": "hhv5",
+      "length": 153080,
+      "coverage_sim": 5.0,
+      "covered_frac": 0.0039,
+      "identity": 1.0,
+      "own_contigs": 1,
+      "recovered": false
+    },
+    "ttv1": {
+      "role": "known",
+      "relative": null,
+      "length": 3852,
+      "coverage_sim": 60.0,
+      "covered_frac": 0.9605,
+      "identity": 1.0,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "norovirus": {
+      "role": "known",
+      "relative": null,
+      "length": 7567,
+      "coverage_sim": 50.0,
+      "covered_frac": 0.9779,
+      "identity": 1.0,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "rabies": {
+      "role": "known",
+      "relative": null,
+      "length": 11932,
+      "coverage_sim": 40.0,
+      "covered_frac": 0.9722,
+      "identity": 1.0,
+      "own_contigs": 2,
+      "recovered": true
+    },
+    "veev": {
+      "role": "known",
+      "relative": null,
+      "length": 11447,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.9784,
+      "identity": 1.0,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "swarm_EU166806.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2595,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.0,
+      "identity": null,
+      "own_contigs": 0,
+      "recovered": false
+    },
+    "swarm_EU166810.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2594,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.0,
+      "identity": null,
+      "own_contigs": 0,
+      "recovered": false
+    },
+    "swarm_JX239315.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2577,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.8149,
+      "identity": 0.96482,
+      "own_contigs": 2,
+      "recovered": false
+    },
+    "swarm_EU166780.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2595,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.3083,
+      "identity": 0.99866,
+      "own_contigs": 1,
+      "recovered": false
+    },
+    "swarm_JX239323.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2586,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.8894,
+      "identity": 0.98285,
+      "own_contigs": 2,
+      "recovered": false
+    },
+    "swarm_EU166812.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2595,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.0,
+      "identity": null,
+      "own_contigs": 0,
+      "recovered": false
+    },
+    "swarm_EU166788.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2583,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.0,
+      "identity": null,
+      "own_contigs": 0,
+      "recovered": false
+    },
+    "swarm_JX239310.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2574,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.8547,
+      "identity": 0.96851,
+      "own_contigs": 1,
+      "recovered": false
+    },
+    "swarm_JX239317.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2592,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.2315,
+      "identity": 0.97004,
+      "own_contigs": 0,
+      "recovered": false
+    },
+    "swarm_EU166797.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2591,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.6561,
+      "identity": 0.99569,
+      "own_contigs": 2,
+      "recovered": false
+    }
+  },
+  "chimaera_detail": [
+    {
+      "contig": "Contig_0_flow_69.9083_cc_0",
+      "length": 8203,
+      "genomes": [
+        "hiv1_b",
+        "swarm_EU166810.1"
+      ],
+      "cross_host": true,
+      "explained_by_shared_sequence": false
+    },
+    {
+      "contig": "Contig_3_flow_56.1009_cc_0",
+      "length": 2234,
+      "genomes": [
+        "swarm_EU166788.1",
+        "swarm_JX239315.1",
+        "swarm_JX239317.1",
+        "swarm_JX239323.1"
+      ],
+      "cross_host": false,
+      "explained_by_shared_sequence": false
+    },
+    {
+      "contig": "Contig_4_flow_31.0334_cc_0",
+      "length": 2976,
+      "genomes": [
+        "hiv1_b",
+        "swarm_JX239310.1",
+        "swarm_JX239317.1"
+      ],
+      "cross_host": true,
+      "explained_by_shared_sequence": false
+    },
+    {
+      "contig": "Contig_5_flow_23.9361_cc_0",
+      "length": 2597,
+      "genomes": [
+        "hiv1_c",
+        "swarm_JX239315.1",
+        "swarm_JX239317.1"
+      ],
+      "cross_host": true,
+      "explained_by_shared_sequence": false
+    },
+    {
+      "contig": "Contig_6_flow_15.8208_cc_0",
+      "length": 1256,
+      "genomes": [
+        "hiv1_c",
+        "swarm_JX239310.1"
+      ],
+      "cross_host": true,
+      "explained_by_shared_sequence": false
+    },
+    {
+      "contig": "Contig_7_flow_13.3859_cc_0",
+      "length": 1637,
+      "genomes": [
+        "hiv1_c",
+        "swarm_EU166806.1",
+        "swarm_JX239315.1"
+      ],
+      "cross_host": true,
+      "explained_by_shared_sequence": false
+    },
+    {
+      "contig": "Contig_8_flow_77.2959_cc_0",
+      "length": 1080,
+      "genomes": [
+        "hiv1_c",
+        "swarm_EU166780.1"
+      ],
+      "cross_host": true,
+      "explained_by_shared_sequence": false
+    },
+    {
+      "contig": "Contig_9_flow_28.9744_cc_0",
+      "length": 2329,
+      "genomes": [
+        "swarm_EU166797.1",
+        "swarm_JX239310.1",
+        "swarm_JX239323.1"
+      ],
+      "cross_host": false,
+      "explained_by_shared_sequence": false
+    },
+    {
+      "contig": "Contig_15_flow_18.3978_cc_0",
+      "length": 1431,
+      "genomes": [
+        "swarm_JX239315.1",
+        "swarm_JX239323.1"
+      ],
+      "cross_host": false,
+      "explained_by_shared_sequence": false
+    },
+    {
+      "contig": "Contig_390_flow_9.28692_cc_100",
+      "length": 2204,
+      "genomes": [
+        "hbv_a",
+        "hbv_d"
+      ],
+      "cross_host": true,
+      "explained_by_shared_sequence": false
+    }
+  ],
+  "per_contig": [
+    {
+      "contig": "Contig_0_flow_69.9083_cc_0",
+      "length": 8203,
+      "assigned": "hiv1_b",
+      "identity": 1.0,
+      "aligned_bp": 7122,
+      "windows": 16,
+      "window_genomes": [
+        "hiv1_b",
+        "swarm_EU166810.1"
+      ],
+      "chimaeric": true
+    },
+    {
+      "contig": "Contig_1_flow_16.2518_cc_0",
+      "length": 728,
+      "assigned": "hiv1_c",
+      "identity": 1.0,
+      "aligned_bp": 728,
+      "windows": 1,
+      "window_genomes": [
+        "hiv1_c"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3_flow_56.1009_cc_0",
+      "length": 2234,
+      "assigned": "swarm_JX239323.1",
+      "identity": 0.97665,
+      "aligned_bp": 1799,
+      "windows": 4,
+      "window_genomes": [
+        "swarm_EU166788.1",
+        "swarm_JX239315.1",
+        "swarm_JX239317.1",
+        "swarm_JX239323.1"
+      ],
+      "chimaeric": true
+    },
+    {
+      "contig": "Contig_4_flow_31.0334_cc_0",
+      "length": 2976,
+      "assigned": "hiv1_b",
+      "identity": 0.98658,
+      "aligned_bp": 1938,
+      "windows": 5,
+      "window_genomes": [
+        "hiv1_b",
+        "swarm_JX239310.1",
+        "swarm_JX239317.1"
+      ],
+      "chimaeric": true
+    },
+    {
+      "contig": "Contig_5_flow_23.9361_cc_0",
+      "length": 2597,
+      "assigned": "swarm_JX239315.1",
+      "identity": 0.97541,
+      "aligned_bp": 2074,
+      "windows": 5,
+      "window_genomes": [
+        "hiv1_c",
+        "swarm_JX239315.1",
+        "swarm_JX239317.1"
+      ],
+      "chimaeric": true
+    },
+    {
+      "contig": "Contig_6_flow_15.8208_cc_0",
+      "length": 1256,
+      "assigned": "swarm_JX239310.1",
+      "identity": 0.95404,
+      "aligned_bp": 1262,
+      "windows": 2,
+      "window_genomes": [
+        "hiv1_c",
+        "swarm_JX239310.1"
+      ],
+      "chimaeric": true
+    },
+    {
+      "contig": "Contig_7_flow_13.3859_cc_0",
+      "length": 1637,
+      "assigned": "swarm_JX239315.1",
+      "identity": 0.94336,
+      "aligned_bp": 1024,
+      "windows": 3,
+      "window_genomes": [
+        "hiv1_c",
+        "swarm_EU166806.1",
+        "swarm_JX239315.1"
+      ],
+      "chimaeric": true
+    },
+    {
+      "contig": "Contig_8_flow_77.2959_cc_0",
+      "length": 1080,
+      "assigned": "swarm_EU166780.1",
+      "identity": 0.99866,
+      "aligned_bp": 744,
+      "windows": 2,
+      "window_genomes": [
+        "hiv1_c",
+        "swarm_EU166780.1"
+      ],
+      "chimaeric": true
+    },
+    {
+      "contig": "Contig_9_flow_28.9744_cc_0",
+      "length": 2329,
+      "assigned": "swarm_JX239323.1",
+      "identity": 0.98773,
+      "aligned_bp": 2282,
+      "windows": 4,
+      "window_genomes": [
+        "swarm_EU166797.1",
+        "swarm_JX239310.1",
+        "swarm_JX239323.1"
+      ],
+      "chimaeric": true
+    },
+    {
+      "contig": "Contig_12_flow_13.2871_cc_0",
+      "length": 1194,
+      "assigned": "hiv1_c",
+      "identity": 1.0,
+      "aligned_bp": 1194,
+      "windows": 2,
+      "window_genomes": [
+        "hiv1_c"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_15_flow_18.3978_cc_0",
+      "length": 1431,
+      "assigned": "swarm_EU166797.1",
+      "identity": 0.99547,
+      "aligned_bp": 883,
+      "windows": 2,
+      "window_genomes": [
+        "swarm_JX239315.1",
+        "swarm_JX239323.1"
+      ],
+      "chimaeric": true
+    },
+    {
+      "contig": "Contig_32_flow_13.835_cc_0",
+      "length": 647,
+      "assigned": "hiv1_c",
+      "identity": 1.0,
+      "aligned_bp": 647,
+      "windows": 1,
+      "window_genomes": [
+        "hiv1_c"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_41_flow_16.4253_cc_0",
+      "length": 740,
+      "assigned": "swarm_EU166797.1",
+      "identity": 0.99595,
+      "aligned_bp": 740,
+      "windows": 1,
+      "window_genomes": [
+        "swarm_EU166797.1"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_42_flow_18.2607_cc_1",
+      "length": 11171,
+      "assigned": "veev",
+      "identity": 1.0,
+      "aligned_bp": 11171,
+      "windows": 22,
+      "window_genomes": [
+        "veev"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_43_flow_24.4185_cc_2",
+      "length": 7804,
+      "assigned": "rabies",
+      "identity": 1.0,
+      "aligned_bp": 7804,
+      "windows": 15,
+      "window_genomes": [
+        "rabies"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_44_flow_23.9446_cc_2",
+      "length": 3760,
+      "assigned": "rabies",
+      "identity": 1.0,
+      "aligned_bp": 3760,
+      "windows": 7,
+      "window_genomes": [
+        "rabies"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_45_flow_30.6544_cc_3",
+      "length": 7380,
+      "assigned": "norovirus",
+      "identity": 1.0,
+      "aligned_bp": 7380,
+      "windows": 14,
+      "window_genomes": [
+        "norovirus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_46_flow_37.5625_cc_4",
+      "length": 3623,
+      "assigned": "ttv1",
+      "identity": 1.0,
+      "aligned_bp": 3623,
+      "windows": 7,
+      "window_genomes": [
+        "ttv1"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_52_flow_10.1876_cc_7",
+      "length": 526,
+      "assigned": "hhv7",
+      "identity": 1.0,
+      "aligned_bp": 526,
+      "windows": 1,
+      "window_genomes": [
+        "hhv7"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_81_flow_19.7785_cc_96",
+      "length": 619,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 619,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_82_flow_13.8481_cc_96",
+      "length": 752,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 752,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_83_flow_13.6544_cc_96",
+      "length": 559,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 559,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_85_flow_13.0671_cc_96",
+      "length": 801,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 801,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_86_flow_13.0213_cc_96",
+      "length": 933,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 933,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_87_flow_13.0015_cc_96",
+      "length": 693,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 693,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_88_flow_12.989_cc_96",
+      "length": 1132,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1132,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_89_flow_12.846_cc_96",
+      "length": 554,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 554,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_90_flow_12.7175_cc_96",
+      "length": 1850,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1850,
+      "windows": 3,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_91_flow_12.6175_cc_96",
+      "length": 1003,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1003,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_93_flow_12.5053_cc_96",
+      "length": 1072,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1072,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_95_flow_12.4994_cc_96",
+      "length": 936,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 936,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_96_flow_12.4352_cc_96",
+      "length": 790,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 790,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_97_flow_12.3349_cc_96",
+      "length": 683,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 683,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_98_flow_12.0592_cc_96",
+      "length": 953,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 953,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_99_flow_12.0334_cc_96",
+      "length": 1956,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1956,
+      "windows": 3,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_100_flow_12.0039_cc_96",
+      "length": 560,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 560,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_101_flow_12.0035_cc_96",
+      "length": 617,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 617,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_102_flow_11.9878_cc_96",
+      "length": 1271,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1271,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_104_flow_11.8113_cc_96",
+      "length": 1016,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1016,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_106_flow_11.7271_cc_96",
+      "length": 1001,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1001,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_107_flow_11.6925_cc_96",
+      "length": 685,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 685,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_108_flow_11.6909_cc_96",
+      "length": 549,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 549,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_109_flow_11.665_cc_96",
+      "length": 653,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 653,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_110_flow_11.6398_cc_96",
+      "length": 985,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 985,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_111_flow_11.6014_cc_96",
+      "length": 3127,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 3127,
+      "windows": 6,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_112_flow_11.5817_cc_96",
+      "length": 916,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 916,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_113_flow_11.4448_cc_96",
+      "length": 711,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 711,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_114_flow_11.4433_cc_96",
+      "length": 3032,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 3032,
+      "windows": 6,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_115_flow_11.4211_cc_96",
+      "length": 535,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 535,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_116_flow_11.3968_cc_96",
+      "length": 971,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 971,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_117_flow_11.3175_cc_96",
+      "length": 608,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 608,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_118_flow_11.2972_cc_96",
+      "length": 1387,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1387,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_119_flow_11.2791_cc_96",
+      "length": 754,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 754,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_120_flow_11.2707_cc_96",
+      "length": 1238,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1238,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_121_flow_11.2647_cc_96",
+      "length": 1314,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1314,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_122_flow_11.2049_cc_96",
+      "length": 1627,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1627,
+      "windows": 3,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_123_flow_11.1908_cc_96",
+      "length": 1362,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1362,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_124_flow_11.1752_cc_96",
+      "length": 686,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 686,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_125_flow_11.1751_cc_96",
+      "length": 709,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 709,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_126_flow_11.0975_cc_96",
+      "length": 1651,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1651,
+      "windows": 3,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_127_flow_11.0659_cc_96",
+      "length": 1043,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1043,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_128_flow_11.0346_cc_96",
+      "length": 2756,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 2756,
+      "windows": 5,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_129_flow_11.0107_cc_96",
+      "length": 1725,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1725,
+      "windows": 3,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_130_flow_10.9762_cc_96",
+      "length": 504,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 504,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_131_flow_10.9569_cc_96",
+      "length": 761,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 761,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_132_flow_10.9556_cc_96",
+      "length": 807,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 807,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_134_flow_10.9107_cc_96",
+      "length": 926,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 926,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_135_flow_10.8901_cc_96",
+      "length": 1924,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1924,
+      "windows": 3,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_136_flow_10.8828_cc_96",
+      "length": 647,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 647,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_137_flow_10.875_cc_96",
+      "length": 1953,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1953,
+      "windows": 3,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_138_flow_10.8189_cc_96",
+      "length": 803,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 803,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_139_flow_10.786_cc_96",
+      "length": 1541,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1541,
+      "windows": 3,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_140_flow_10.7832_cc_96",
+      "length": 733,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 733,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_141_flow_10.7725_cc_96",
+      "length": 929,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 929,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_142_flow_10.7506_cc_96",
+      "length": 1741,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1741,
+      "windows": 3,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_144_flow_10.6676_cc_96",
+      "length": 1079,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1079,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_145_flow_10.6493_cc_96",
+      "length": 942,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 942,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_147_flow_10.6147_cc_96",
+      "length": 830,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 830,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_148_flow_10.577_cc_96",
+      "length": 658,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 658,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_149_flow_10.5673_cc_96",
+      "length": 591,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 591,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_151_flow_10.5369_cc_96",
+      "length": 719,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 719,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_152_flow_10.5359_cc_96",
+      "length": 2398,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 2398,
+      "windows": 4,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_153_flow_10.5024_cc_96",
+      "length": 678,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 678,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_155_flow_10.4798_cc_96",
+      "length": 758,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 758,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_156_flow_10.4748_cc_96",
+      "length": 1153,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1153,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_157_flow_10.4681_cc_96",
+      "length": 825,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 825,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_158_flow_10.4678_cc_96",
+      "length": 787,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 787,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_159_flow_10.4572_cc_96",
+      "length": 964,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 964,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_160_flow_10.4176_cc_96",
+      "length": 927,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 927,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_161_flow_10.4027_cc_96",
+      "length": 3282,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 3282,
+      "windows": 6,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_162_flow_10.3958_cc_96",
+      "length": 1552,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1552,
+      "windows": 3,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_163_flow_10.3745_cc_96",
+      "length": 1368,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1368,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_165_flow_10.3486_cc_96",
+      "length": 741,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 741,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_166_flow_10.3317_cc_96",
+      "length": 1084,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1084,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_168_flow_10.3094_cc_96",
+      "length": 1156,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1156,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_169_flow_10.2805_cc_96",
+      "length": 1453,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1453,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_170_flow_10.2735_cc_96",
+      "length": 1010,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1010,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_172_flow_10.2589_cc_96",
+      "length": 686,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 686,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_175_flow_10.1747_cc_96",
+      "length": 539,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 539,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_177_flow_10.1542_cc_96",
+      "length": 936,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 936,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_178_flow_10.1487_cc_96",
+      "length": 1702,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1702,
+      "windows": 3,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_180_flow_10.1038_cc_96",
+      "length": 850,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 850,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_181_flow_10.0892_cc_96",
+      "length": 725,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 725,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_182_flow_10.0882_cc_96",
+      "length": 1129,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1129,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_183_flow_10.0854_cc_96",
+      "length": 533,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 533,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_184_flow_10.0602_cc_96",
+      "length": 1104,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1104,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_185_flow_10.0595_cc_96",
+      "length": 629,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 629,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_186_flow_10.0561_cc_96",
+      "length": 985,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 985,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_187_flow_10.0424_cc_96",
+      "length": 607,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 607,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_189_flow_10.0289_cc_96",
+      "length": 698,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 698,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_191_flow_9.97418_cc_96",
+      "length": 893,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 893,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_192_flow_9.92226_cc_96",
+      "length": 890,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 890,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_193_flow_9.92154_cc_96",
+      "length": 691,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 691,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_194_flow_9.90926_cc_96",
+      "length": 1099,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1099,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_196_flow_9.8745_cc_96",
+      "length": 1794,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1794,
+      "windows": 3,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_198_flow_9.83788_cc_96",
+      "length": 1213,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1213,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_200_flow_9.80909_cc_96",
+      "length": 1340,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1340,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_201_flow_9.80638_cc_96",
+      "length": 2014,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 2014,
+      "windows": 4,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_202_flow_9.79668_cc_96",
+      "length": 1005,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1005,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_205_flow_9.75088_cc_96",
+      "length": 896,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 896,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_208_flow_9.68852_cc_96",
+      "length": 956,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 956,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_209_flow_9.6761_cc_96",
+      "length": 677,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 677,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_212_flow_9.61555_cc_96",
+      "length": 504,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 504,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_213_flow_9.61526_cc_96",
+      "length": 670,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 670,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_214_flow_9.61245_cc_96",
+      "length": 828,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 828,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_215_flow_9.61071_cc_96",
+      "length": 881,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 881,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_217_flow_9.60643_cc_96",
+      "length": 694,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 694,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_218_flow_9.60218_cc_96",
+      "length": 682,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 682,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_220_flow_9.49726_cc_96",
+      "length": 588,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 588,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_221_flow_9.45602_cc_96",
+      "length": 780,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 780,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_222_flow_9.42935_cc_96",
+      "length": 593,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 593,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_223_flow_9.39192_cc_96",
+      "length": 610,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 610,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_224_flow_9.37288_cc_96",
+      "length": 631,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 631,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_225_flow_9.354_cc_96",
+      "length": 815,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 815,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_231_flow_9.26419_cc_96",
+      "length": 552,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 552,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_234_flow_9.25387_cc_96",
+      "length": 1593,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1593,
+      "windows": 3,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_235_flow_9.25049_cc_96",
+      "length": 1059,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1059,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_236_flow_9.23969_cc_96",
+      "length": 1084,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1084,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_237_flow_9.23913_cc_96",
+      "length": 731,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 731,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_240_flow_9.22801_cc_96",
+      "length": 598,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 598,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_241_flow_9.22709_cc_96",
+      "length": 772,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 772,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_242_flow_9.20816_cc_96",
+      "length": 531,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 531,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_246_flow_9.16557_cc_96",
+      "length": 1406,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1406,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_247_flow_9.14967_cc_96",
+      "length": 649,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 649,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_253_flow_9.05641_cc_96",
+      "length": 1282,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1282,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_255_flow_9.04493_cc_96",
+      "length": 731,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 731,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_258_flow_8.9692_cc_96",
+      "length": 593,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 593,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_259_flow_8.93421_cc_96",
+      "length": 1181,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 1181,
+      "windows": 2,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_260_flow_8.87867_cc_96",
+      "length": 824,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 824,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_261_flow_8.85889_cc_96",
+      "length": 856,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 856,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_263_flow_8.84083_cc_96",
+      "length": 864,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 864,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_264_flow_8.83636_cc_96",
+      "length": 536,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 536,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_265_flow_8.83333_cc_96",
+      "length": 641,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 641,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_270_flow_8.74359_cc_96",
+      "length": 587,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 587,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_272_flow_8.7379_cc_96",
+      "length": 537,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 537,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_282_flow_8.61072_cc_96",
+      "length": 899,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 899,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_283_flow_8.52679_cc_96",
+      "length": 601,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 601,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_291_flow_8.42806_cc_96",
+      "length": 597,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 597,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_294_flow_8.37654_cc_96",
+      "length": 689,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 689,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_310_flow_8.13261_cc_96",
+      "length": 501,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 501,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_312_flow_8.12102_cc_96",
+      "length": 669,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 669,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_317_flow_7.96174_cc_96",
+      "length": 616,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 616,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_339_flow_7.54434_cc_96",
+      "length": 774,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 774,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_347_flow_7.34748_cc_96",
+      "length": 913,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 913,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_348_flow_7.32845_cc_96",
+      "length": 519,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 519,
+      "windows": 1,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_376_flow_15.683_cc_96",
+      "length": 2783,
+      "assigned": "hhv5",
+      "identity": 1.0,
+      "aligned_bp": 2783,
+      "windows": 5,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_377_flow_11.9406_cc_98",
+      "length": 1488,
+      "assigned": "hpv11",
+      "identity": 1.0,
+      "aligned_bp": 1488,
+      "windows": 2,
+      "window_genomes": [
+        "hpv11"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_378_flow_11.5161_cc_98",
+      "length": 944,
+      "assigned": "hpv11",
+      "identity": 1.0,
+      "aligned_bp": 944,
+      "windows": 1,
+      "window_genomes": [
+        "hpv11"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_380_flow_10.7237_cc_98",
+      "length": 620,
+      "assigned": "hpv11",
+      "identity": 1.0,
+      "aligned_bp": 620,
+      "windows": 1,
+      "window_genomes": [
+        "hpv11"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_381_flow_9.579_cc_98",
+      "length": 1117,
+      "assigned": "hpv11",
+      "identity": 1.0,
+      "aligned_bp": 1117,
+      "windows": 2,
+      "window_genomes": [
+        "hpv11"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_387_flow_42.2543_cc_99",
+      "length": 7732,
+      "assigned": "hpv16",
+      "identity": 1.0,
+      "aligned_bp": 7732,
+      "windows": 15,
+      "window_genomes": [
+        "hpv16"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_388_flow_65.3353_cc_100",
+      "length": 3057,
+      "assigned": "hbv_d",
+      "identity": 1.0,
+      "aligned_bp": 3057,
+      "windows": 6,
+      "window_genomes": [
+        "hbv_d"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_389_flow_17.6197_cc_100",
+      "length": 2339,
+      "assigned": "hbv_a",
+      "identity": 1.0,
+      "aligned_bp": 2339,
+      "windows": 4,
+      "window_genomes": [
+        "hbv_a"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_390_flow_9.28692_cc_100",
+      "length": 2204,
+      "assigned": "hbv_d",
+      "identity": 0.97459,
+      "aligned_bp": 2204,
+      "windows": 4,
+      "window_genomes": [
+        "hbv_a",
+        "hbv_d"
+      ],
+      "chimaeric": true
+    },
+    {
+      "contig": "Contig_391_flow_14.8764_cc_100",
+      "length": 694,
+      "assigned": "hbv_a",
+      "identity": 1.0,
+      "aligned_bp": 694,
+      "windows": 1,
+      "window_genomes": [
+        "hbv_a"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_392_flow_67.8532_cc_101",
+      "length": 29708,
+      "assigned": "sars2",
+      "identity": 1.0,
+      "aligned_bp": 29708,
+      "windows": 59,
+      "window_genomes": [
+        "sars2"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_464_flow_19.855_cc_101",
+      "length": 1161,
+      "assigned": "ratg13",
+      "identity": 0.99828,
+      "aligned_bp": 1161,
+      "windows": 2,
+      "window_genomes": [
+        "ratg13"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_558_flow_24.4036_cc_102",
+      "length": 32313,
+      "assigned": "crassphage",
+      "identity": 1.0,
+      "aligned_bp": 32313,
+      "windows": 64,
+      "window_genomes": [
+        "crassphage"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_559_flow_23.9499_cc_102",
+      "length": 64513,
+      "assigned": "crassphage",
+      "identity": 1.0,
+      "aligned_bp": 64513,
+      "windows": 129,
+      "window_genomes": [
+        "crassphage"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_560_flow_90.3057_cc_103",
+      "length": 5271,
+      "assigned": "phix174",
+      "identity": 1.0,
+      "aligned_bp": 5271,
+      "windows": 10,
+      "window_genomes": [
+        "phix174"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_561_flow_17.9786_cc_104",
+      "length": 1907,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 1907,
+      "windows": 3,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_562_flow_17.502_cc_104",
+      "length": 7980,
+      "assigned": "phage_t4",
+      "identity": 0.91967,
+      "aligned_bp": 8677,
+      "windows": 15,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_563_flow_19.1761_cc_104",
+      "length": 738,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 738,
+      "windows": 1,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_564_flow_16.5708_cc_104",
+      "length": 2499,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 2499,
+      "windows": 4,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_565_flow_15.9515_cc_104",
+      "length": 1010,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 1010,
+      "windows": 2,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_566_flow_19.891_cc_105",
+      "length": 3153,
+      "assigned": "phage_t4",
+      "identity": 0.99942,
+      "aligned_bp": 1734,
+      "windows": 6,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_567_flow_19.0581_cc_105",
+      "length": 8816,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 8816,
+      "windows": 17,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_568_flow_18.9539_cc_105",
+      "length": 12702,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 12702,
+      "windows": 25,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_569_flow_18.8889_cc_105",
+      "length": 16587,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 16587,
+      "windows": 33,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_570_flow_19.2777_cc_105",
+      "length": 14223,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 14223,
+      "windows": 28,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_571_flow_18.5618_cc_105",
+      "length": 5020,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 5020,
+      "windows": 10,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_572_flow_18.5312_cc_105",
+      "length": 19621,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 19621,
+      "windows": 39,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_573_flow_18.2013_cc_105",
+      "length": 10828,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 10828,
+      "windows": 21,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_574_flow_18.0815_cc_105",
+      "length": 5465,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 5465,
+      "windows": 10,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_575_flow_18.0179_cc_105",
+      "length": 9993,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 9993,
+      "windows": 19,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_576_flow_17.6511_cc_105",
+      "length": 5079,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 5079,
+      "windows": 10,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_577_flow_17.4062_cc_105",
+      "length": 7375,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 7375,
+      "windows": 14,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_578_flow_17.1364_cc_105",
+      "length": 10127,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 10127,
+      "windows": 20,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_579_flow_16.9814_cc_105",
+      "length": 7982,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 7982,
+      "windows": 15,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_580_flow_16.8277_cc_105",
+      "length": 1712,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 1712,
+      "windows": 3,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_581_flow_16.1527_cc_105",
+      "length": 1567,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 1567,
+      "windows": 3,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_582_flow_16.163_cc_105",
+      "length": 6481,
+      "assigned": "phage_t4",
+      "identity": 0.26937,
+      "aligned_bp": 22991,
+      "windows": 12,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_583_flow_16.8826_cc_105",
+      "length": 3876,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 3876,
+      "windows": 7,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_584_flow_15.8307_cc_105",
+      "length": 1577,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 1577,
+      "windows": 3,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_585_flow_15.7069_cc_105",
+      "length": 1307,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 1307,
+      "windows": 2,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_586_flow_10.4671_cc_105",
+      "length": 3970,
+      "assigned": "phage_t4",
+      "identity": 1.0,
+      "aligned_bp": 3682,
+      "windows": 7,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_588_flow_42.7932_cc_107",
+      "length": 48350,
+      "assigned": "phage_lambda",
+      "identity": 1.0,
+      "aligned_bp": 48350,
+      "windows": 96,
+      "window_genomes": [
+        "phage_lambda"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_590_flow_15.3069_cc_107",
+      "length": 862,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 862,
+      "windows": 1,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_591_flow_15.1726_cc_107",
+      "length": 1287,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 1287,
+      "windows": 2,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_592_flow_15.0361_cc_107",
+      "length": 1674,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 1674,
+      "windows": 3,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_594_flow_10.5956_cc_107",
+      "length": 2304,
+      "assigned": "phage_hk97",
+      "identity": 0.99913,
+      "aligned_bp": 2304,
+      "windows": 4,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_595_flow_14.2419_cc_107",
+      "length": 1624,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 1624,
+      "windows": 3,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_596_flow_13.8672_cc_107",
+      "length": 2165,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 2165,
+      "windows": 4,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_598_flow_13.7101_cc_107",
+      "length": 731,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 731,
+      "windows": 1,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_600_flow_13.2064_cc_107",
+      "length": 540,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 540,
+      "windows": 1,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_602_flow_12.9911_cc_107",
+      "length": 603,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 603,
+      "windows": 1,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_603_flow_12.3912_cc_107",
+      "length": 1181,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 1181,
+      "windows": 2,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_604_flow_12.3798_cc_107",
+      "length": 1189,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 1189,
+      "windows": 2,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_605_flow_12.9535_cc_107",
+      "length": 686,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 686,
+      "windows": 1,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_606_flow_12.2959_cc_107",
+      "length": 531,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 531,
+      "windows": 1,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_607_flow_12.2222_cc_107",
+      "length": 815,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 815,
+      "windows": 1,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_610_flow_12.0649_cc_107",
+      "length": 1259,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 1259,
+      "windows": 2,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_611_flow_11.9649_cc_107",
+      "length": 923,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 923,
+      "windows": 1,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_612_flow_11.7583_cc_107",
+      "length": 1063,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 1063,
+      "windows": 2,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_614_flow_11.6286_cc_107",
+      "length": 795,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 795,
+      "windows": 1,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_616_flow_11.5756_cc_107",
+      "length": 788,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 788,
+      "windows": 1,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_620_flow_14.217_cc_107",
+      "length": 1473,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 1473,
+      "windows": 2,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_648_flow_17.6771_cc_107",
+      "length": 1717,
+      "assigned": "phage_hk97",
+      "identity": 1.0,
+      "aligned_bp": 1717,
+      "windows": 3,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_680_flow_1.32982_cc_216",
+      "length": 611,
+      "assigned": "pvulgatus",
+      "identity": 0.99344,
+      "aligned_bp": 610,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_684_flow_1.34017_cc_226",
+      "length": 1114,
+      "assigned": "pvulgatus",
+      "identity": 0.99276,
+      "aligned_bp": 1105,
+      "windows": 2,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_688_flow_1.17791_cc_239",
+      "length": 693,
+      "assigned": "pvulgatus",
+      "identity": 0.99697,
+      "aligned_bp": 660,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_709_flow_1.26847_cc_349",
+      "length": 596,
+      "assigned": "pvulgatus",
+      "identity": 0.99474,
+      "aligned_bp": 570,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_717_flow_1.06944_cc_393",
+      "length": 761,
+      "assigned": "pvulgatus",
+      "identity": 0.99569,
+      "aligned_bp": 696,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_779_flow_1.39821_cc_667",
+      "length": 601,
+      "assigned": "pvulgatus",
+      "identity": 0.98955,
+      "aligned_bp": 574,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_816_flow_1.25452_cc_873",
+      "length": 650,
+      "assigned": "pvulgatus",
+      "identity": 0.99363,
+      "aligned_bp": 628,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_838_flow_1.03817_cc_969",
+      "length": 565,
+      "assigned": "pvulgatus",
+      "identity": 0.99284,
+      "aligned_bp": 559,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_847_flow_1.12646_cc_1019",
+      "length": 555,
+      "assigned": "pvulgatus",
+      "identity": 0.99452,
+      "aligned_bp": 547,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_899_flow_1.30862_cc_1247",
+      "length": 621,
+      "assigned": "pvulgatus",
+      "identity": 0.99144,
+      "aligned_bp": 584,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_917_flow_1.16795_cc_1319",
+      "length": 690,
+      "assigned": "pvulgatus",
+      "identity": 0.99699,
+      "aligned_bp": 665,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_935_flow_1.23425_cc_1443",
+      "length": 771,
+      "assigned": "pvulgatus",
+      "identity": 0.99725,
+      "aligned_bp": 728,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_936_flow_1.25081_cc_1449",
+      "length": 655,
+      "assigned": "pvulgatus",
+      "identity": 0.99211,
+      "aligned_bp": 634,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_953_flow_1.16018_cc_1521",
+      "length": 709,
+      "assigned": "pvulgatus",
+      "identity": 0.9941,
+      "aligned_bp": 678,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_956_flow_1.70474_cc_1527",
+      "length": 505,
+      "assigned": "pvulgatus",
+      "identity": 0.99581,
+      "aligned_bp": 477,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_963_flow_1.19967_cc_1550",
+      "length": 652,
+      "assigned": "pvulgatus",
+      "identity": 0.99349,
+      "aligned_bp": 614,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_964_flow_1.35606_cc_1553",
+      "length": 569,
+      "assigned": "pvulgatus",
+      "identity": 0.99241,
+      "aligned_bp": 527,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_973_flow_1.39305_cc_1591",
+      "length": 588,
+      "assigned": "pvulgatus",
+      "identity": 0.99314,
+      "aligned_bp": 583,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_980_flow_1.13166_cc_1601",
+      "length": 717,
+      "assigned": "pvulgatus",
+      "identity": 0.99561,
+      "aligned_bp": 683,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_989_flow_1.14673_cc_1644",
+      "length": 668,
+      "assigned": "pvulgatus",
+      "identity": 0.99832,
+      "aligned_bp": 595,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1020_flow_1.15176_cc_1797",
+      "length": 667,
+      "assigned": "pvulgatus",
+      "identity": 0.99026,
+      "aligned_bp": 616,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1042_flow_1.45946_cc_1882",
+      "length": 633,
+      "assigned": "pvulgatus",
+      "identity": 0.9952,
+      "aligned_bp": 625,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1044_flow_1.32137_cc_1883",
+      "length": 626,
+      "assigned": "pvulgatus",
+      "identity": 0.99327,
+      "aligned_bp": 594,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1045_flow_1.49301_cc_1884",
+      "length": 613,
+      "assigned": "pvulgatus",
+      "identity": 0.99662,
+      "aligned_bp": 592,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1050_flow_1.08884_cc_1897",
+      "length": 525,
+      "assigned": "pvulgatus",
+      "identity": 0.99608,
+      "aligned_bp": 510,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1053_flow_1.24462_cc_1904",
+      "length": 785,
+      "assigned": "pvulgatus",
+      "identity": 0.99743,
+      "aligned_bp": 778,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1065_flow_1.38612_cc_1932",
+      "length": 603,
+      "assigned": "pvulgatus",
+      "identity": 0.99832,
+      "aligned_bp": 597,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1067_flow_1.25147_cc_1939",
+      "length": 550,
+      "assigned": "pvulgatus",
+      "identity": 0.99234,
+      "aligned_bp": 522,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1127_flow_1.0935_cc_2174",
+      "length": 779,
+      "assigned": "pvulgatus",
+      "identity": 0.99861,
+      "aligned_bp": 719,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1155_flow_1.08798_cc_2248",
+      "length": 723,
+      "assigned": "pvulgatus",
+      "identity": 0.99846,
+      "aligned_bp": 649,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1158_flow_1.35026_cc_2254",
+      "length": 612,
+      "assigned": "pvulgatus",
+      "identity": 0.9931,
+      "aligned_bp": 580,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1169_flow_1.22468_cc_2297",
+      "length": 673,
+      "assigned": "pvulgatus",
+      "identity": 0.99833,
+      "aligned_bp": 600,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1171_flow_1.28822_cc_2306",
+      "length": 610,
+      "assigned": "pvulgatus",
+      "identity": 0.99826,
+      "aligned_bp": 574,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1174_flow_1.2348_cc_2325",
+      "length": 633,
+      "assigned": "pvulgatus",
+      "identity": 0.99662,
+      "aligned_bp": 591,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1184_flow_1.17043_cc_2370",
+      "length": 616,
+      "assigned": "pvulgatus",
+      "identity": 0.99477,
+      "aligned_bp": 574,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1187_flow_1.08511_cc_2379",
+      "length": 746,
+      "assigned": "pvulgatus",
+      "identity": 0.9927,
+      "aligned_bp": 685,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1192_flow_1.10573_cc_2394",
+      "length": 722,
+      "assigned": "pvulgatus",
+      "identity": 0.99204,
+      "aligned_bp": 628,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1200_flow_1.11613_cc_2408",
+      "length": 506,
+      "assigned": "pvulgatus",
+      "identity": 0.99798,
+      "aligned_bp": 494,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1206_flow_1.20063_cc_2418",
+      "length": 674,
+      "assigned": "pvulgatus",
+      "identity": 0.99387,
+      "aligned_bp": 653,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1217_flow_1.3066_cc_2471",
+      "length": 889,
+      "assigned": "pvulgatus",
+      "identity": 0.99647,
+      "aligned_bp": 851,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1221_flow_1.23971_cc_2481",
+      "length": 600,
+      "assigned": "pvulgatus",
+      "identity": 0.99831,
+      "aligned_bp": 593,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1232_flow_1.21754_cc_2527",
+      "length": 634,
+      "assigned": "pvulgatus",
+      "identity": 0.99649,
+      "aligned_bp": 570,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1250_flow_1.02845_cc_2616",
+      "length": 744,
+      "assigned": "pvulgatus",
+      "identity": 0.98893,
+      "aligned_bp": 723,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1275_flow_1.35876_cc_2714",
+      "length": 526,
+      "assigned": "pvulgatus",
+      "identity": 0.99796,
+      "aligned_bp": 491,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1300_flow_1.38703_cc_2783",
+      "length": 519,
+      "assigned": "pvulgatus",
+      "identity": 0.99807,
+      "aligned_bp": 519,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1304_flow_1.36461_cc_2792",
+      "length": 510,
+      "assigned": "pvulgatus",
+      "identity": 1.0,
+      "aligned_bp": 490,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1315_flow_1.15077_cc_2828",
+      "length": 691,
+      "assigned": "pvulgatus",
+      "identity": 0.98779,
+      "aligned_bp": 655,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1329_flow_1.17863_cc_2902",
+      "length": 612,
+      "assigned": "pvulgatus",
+      "identity": 0.9899,
+      "aligned_bp": 594,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1345_flow_1.25046_cc_2944",
+      "length": 584,
+      "assigned": "pvulgatus",
+      "identity": 0.98611,
+      "aligned_bp": 576,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1352_flow_1.39648_cc_2963",
+      "length": 553,
+      "assigned": "pvulgatus",
+      "identity": 0.99808,
+      "aligned_bp": 522,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1410_flow_1.19438_cc_3190",
+      "length": 504,
+      "assigned": "pvulgatus",
+      "identity": 0.98998,
+      "aligned_bp": 499,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1415_flow_1.30537_cc_3199",
+      "length": 637,
+      "assigned": "pvulgatus",
+      "identity": 0.99663,
+      "aligned_bp": 593,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1420_flow_1.11891_cc_3210",
+      "length": 554,
+      "assigned": "pvulgatus",
+      "identity": 0.99252,
+      "aligned_bp": 535,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1439_flow_1.17602_cc_3264",
+      "length": 700,
+      "assigned": "pvulgatus",
+      "identity": 0.99554,
+      "aligned_bp": 672,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1455_flow_1.17933_cc_3316",
+      "length": 699,
+      "assigned": "pvulgatus",
+      "identity": 0.99383,
+      "aligned_bp": 648,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1470_flow_1.33066_cc_3364",
+      "length": 915,
+      "assigned": "pvulgatus",
+      "identity": 0.99191,
+      "aligned_bp": 865,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1491_flow_1.31872_cc_3452",
+      "length": 634,
+      "assigned": "pvulgatus",
+      "identity": 0.99669,
+      "aligned_bp": 604,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1501_flow_1.08211_cc_3490",
+      "length": 723,
+      "assigned": "pvulgatus",
+      "identity": 0.99568,
+      "aligned_bp": 694,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1515_flow_1.28209_cc_3541",
+      "length": 633,
+      "assigned": "pvulgatus",
+      "identity": 0.99497,
+      "aligned_bp": 597,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1516_flow_1.21725_cc_3544",
+      "length": 667,
+      "assigned": "pvulgatus",
+      "identity": 0.9906,
+      "aligned_bp": 638,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1518_flow_1.24552_cc_3552",
+      "length": 599,
+      "assigned": "pvulgatus",
+      "identity": 0.99666,
+      "aligned_bp": 598,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1579_flow_1.1622_cc_3771",
+      "length": 713,
+      "assigned": "pvulgatus",
+      "identity": 0.99154,
+      "aligned_bp": 709,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1604_flow_1.30537_cc_3842",
+      "length": 637,
+      "assigned": "pvulgatus",
+      "identity": 0.99831,
+      "aligned_bp": 592,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1615_flow_1.30236_cc_3868",
+      "length": 633,
+      "assigned": "pvulgatus",
+      "identity": 0.99483,
+      "aligned_bp": 580,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1625_flow_1.19652_cc_3893",
+      "length": 616,
+      "assigned": "pvulgatus",
+      "identity": 0.99308,
+      "aligned_bp": 578,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1627_flow_1.06823_cc_3899",
+      "length": 554,
+      "assigned": "pvulgatus",
+      "identity": 0.99808,
+      "aligned_bp": 522,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1655_flow_1.23861_cc_3992",
+      "length": 502,
+      "assigned": "pvulgatus",
+      "identity": 0.99793,
+      "aligned_bp": 482,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1674_flow_1.0632_cc_4042",
+      "length": 579,
+      "assigned": "pvulgatus",
+      "identity": 0.99475,
+      "aligned_bp": 571,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1684_flow_1.35575_cc_4072",
+      "length": 502,
+      "assigned": "pvulgatus",
+      "identity": 0.99794,
+      "aligned_bp": 485,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1695_flow_1.18987_cc_4106",
+      "length": 673,
+      "assigned": "pvulgatus",
+      "identity": 0.99684,
+      "aligned_bp": 632,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1700_flow_1.36607_cc_4122",
+      "length": 601,
+      "assigned": "pvulgatus",
+      "identity": 0.9966,
+      "aligned_bp": 589,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1720_flow_1.28769_cc_4160",
+      "length": 618,
+      "assigned": "pvulgatus",
+      "identity": 0.9851,
+      "aligned_bp": 604,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1728_flow_1.13958_cc_4181",
+      "length": 521,
+      "assigned": "pvulgatus",
+      "identity": 0.99593,
+      "aligned_bp": 492,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1761_flow_1.22351_cc_4257",
+      "length": 645,
+      "assigned": "pvulgatus",
+      "identity": 0.98598,
+      "aligned_bp": 642,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1769_flow_1.4291_cc_4277",
+      "length": 584,
+      "assigned": "pvulgatus",
+      "identity": 0.99618,
+      "aligned_bp": 523,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1770_flow_1.09672_cc_4279",
+      "length": 682,
+      "assigned": "pvulgatus",
+      "identity": 0.99377,
+      "aligned_bp": 642,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1775_flow_1.24501_cc_4296",
+      "length": 592,
+      "assigned": "pvulgatus",
+      "identity": 0.98387,
+      "aligned_bp": 558,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1782_flow_1.41558_cc_4310",
+      "length": 580,
+      "assigned": "pvulgatus",
+      "identity": 1.0,
+      "aligned_bp": 524,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1812_flow_1.20259_cc_4397",
+      "length": 658,
+      "assigned": "pvulgatus",
+      "identity": 0.9938,
+      "aligned_bp": 645,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1813_flow_1.29022_cc_4398",
+      "length": 644,
+      "assigned": "pvulgatus",
+      "identity": 0.99662,
+      "aligned_bp": 592,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1842_flow_1.15074_cc_4451",
+      "length": 512,
+      "assigned": "pvulgatus",
+      "identity": 0.98047,
+      "aligned_bp": 512,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1862_flow_1.10661_cc_4502",
+      "length": 707,
+      "assigned": "pvulgatus",
+      "identity": 0.97737,
+      "aligned_bp": 707,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1898_flow_1.23366_cc_4610",
+      "length": 653,
+      "assigned": "pvulgatus",
+      "identity": 0.99026,
+      "aligned_bp": 616,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_1983_flow_1.2252_cc_4818",
+      "length": 676,
+      "assigned": "pvulgatus",
+      "identity": 0.99666,
+      "aligned_bp": 598,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2013_flow_1.19004_cc_4893",
+      "length": 583,
+      "assigned": "pvulgatus",
+      "identity": 0.99818,
+      "aligned_bp": 549,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2057_flow_1.12727_cc_4998",
+      "length": 701,
+      "assigned": "pvulgatus",
+      "identity": 0.99378,
+      "aligned_bp": 643,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2108_flow_1.10145_cc_5119",
+      "length": 662,
+      "assigned": "pvulgatus",
+      "identity": 0.98578,
+      "aligned_bp": 633,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2132_flow_1.04356_cc_5162",
+      "length": 569,
+      "assigned": "pvulgatus",
+      "identity": 0.99819,
+      "aligned_bp": 553,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2166_flow_1.12919_cc_5220",
+      "length": 668,
+      "assigned": "pvulgatus",
+      "identity": 0.99502,
+      "aligned_bp": 603,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2180_flow_1.27411_cc_5246",
+      "length": 632,
+      "assigned": "pvulgatus",
+      "identity": 0.99325,
+      "aligned_bp": 593,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2197_flow_1.03846_cc_5279",
+      "length": 561,
+      "assigned": "pvulgatus",
+      "identity": 0.99625,
+      "aligned_bp": 533,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2202_flow_1.24227_cc_5290",
+      "length": 623,
+      "assigned": "pvulgatus",
+      "identity": 0.99474,
+      "aligned_bp": 570,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2224_flow_1.11472_cc_5333",
+      "length": 564,
+      "assigned": "pvulgatus",
+      "identity": 0.99819,
+      "aligned_bp": 554,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2229_flow_1.33031_cc_5345",
+      "length": 592,
+      "assigned": "pvulgatus",
+      "identity": 0.99827,
+      "aligned_bp": 578,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2234_flow_1.27385_cc_5353",
+      "length": 607,
+      "assigned": "pvulgatus",
+      "identity": 0.9945,
+      "aligned_bp": 545,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2301_flow_1.19439_cc_5467",
+      "length": 540,
+      "assigned": "pvulgatus",
+      "identity": 0.99251,
+      "aligned_bp": 534,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2338_flow_1.09942_cc_5545",
+      "length": 554,
+      "assigned": "pvulgatus",
+      "identity": 0.99432,
+      "aligned_bp": 528,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2348_flow_1.15975_cc_5565",
+      "length": 523,
+      "assigned": "pvulgatus",
+      "identity": 1.0,
+      "aligned_bp": 492,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2358_flow_1.16155_cc_5577",
+      "length": 530,
+      "assigned": "pvulgatus",
+      "identity": 0.998,
+      "aligned_bp": 501,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2386_flow_1.24109_cc_5643",
+      "length": 630,
+      "assigned": "pvulgatus",
+      "identity": 0.99494,
+      "aligned_bp": 593,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2392_flow_1.10526_cc_5656",
+      "length": 668,
+      "assigned": "pvulgatus",
+      "identity": 0.98788,
+      "aligned_bp": 660,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2441_flow_1.06154_cc_5747",
+      "length": 561,
+      "assigned": "pvulgatus",
+      "identity": 0.99465,
+      "aligned_bp": 561,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2444_flow_1.20232_cc_5751",
+      "length": 644,
+      "assigned": "pvulgatus",
+      "identity": 0.99671,
+      "aligned_bp": 607,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2449_flow_1.19516_cc_5756",
+      "length": 661,
+      "assigned": "pvulgatus",
+      "identity": 0.98884,
+      "aligned_bp": 627,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2457_flow_1.29816_cc_5768",
+      "length": 638,
+      "assigned": "pvulgatus",
+      "identity": 0.99161,
+      "aligned_bp": 596,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2459_flow_1.15648_cc_5773",
+      "length": 712,
+      "assigned": "pvulgatus",
+      "identity": 0.99847,
+      "aligned_bp": 655,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2465_flow_1.21406_cc_5784",
+      "length": 681,
+      "assigned": "pvulgatus",
+      "identity": 0.99395,
+      "aligned_bp": 661,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2500_flow_1.06602_cc_5866",
+      "length": 556,
+      "assigned": "pvulgatus",
+      "identity": 0.99625,
+      "aligned_bp": 533,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2534_flow_1.10798_cc_5924",
+      "length": 680,
+      "assigned": "pvulgatus",
+      "identity": 0.9969,
+      "aligned_bp": 645,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2558_flow_1.11538_cc_5968",
+      "length": 561,
+      "assigned": "pvulgatus",
+      "identity": 0.99287,
+      "aligned_bp": 561,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2573_flow_1.20914_cc_5997",
+      "length": 610,
+      "assigned": "pvulgatus",
+      "identity": 1.0,
+      "aligned_bp": 541,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2611_flow_1.16244_cc_6065",
+      "length": 712,
+      "assigned": "pvulgatus",
+      "identity": 0.99556,
+      "aligned_bp": 676,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2621_flow_1.2385_cc_6086",
+      "length": 628,
+      "assigned": "pvulgatus",
+      "identity": 0.99363,
+      "aligned_bp": 628,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2721_flow_1.24031_cc_6254",
+      "length": 686,
+      "assigned": "pvulgatus",
+      "identity": 0.99269,
+      "aligned_bp": 684,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2756_flow_1.25926_cc_6316",
+      "length": 662,
+      "assigned": "pvulgatus",
+      "identity": 0.99533,
+      "aligned_bp": 642,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2785_flow_1.08264_cc_6366",
+      "length": 525,
+      "assigned": "pvulgatus",
+      "identity": 0.99592,
+      "aligned_bp": 490,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_2952_flow_1.06667_cc_6621",
+      "length": 581,
+      "assigned": "pvulgatus",
+      "identity": 0.99279,
+      "aligned_bp": 555,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3041_flow_1.08511_cc_6765",
+      "length": 558,
+      "assigned": "pvulgatus",
+      "identity": 0.9964,
+      "aligned_bp": 556,
+      "windows": 1,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3043_flow_1.03758_cc_6781",
+      "length": 520,
+      "assigned": "saureus",
+      "identity": 0.99588,
+      "aligned_bp": 485,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3071_flow_1.17391_cc_7047",
+      "length": 662,
+      "assigned": "saureus",
+      "identity": 0.99359,
+      "aligned_bp": 624,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3078_flow_20.2494_cc_7088",
+      "length": 883,
+      "assigned": "ecoli",
+      "identity": 1.0,
+      "aligned_bp": 883,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3104_flow_1.40659_cc_7294",
+      "length": 587,
+      "assigned": "saureus",
+      "identity": 0.99443,
+      "aligned_bp": 539,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3105_flow_1.09495_cc_7314",
+      "length": 536,
+      "assigned": "saureus",
+      "identity": 0.99438,
+      "aligned_bp": 534,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3106_flow_1.20032_cc_7317",
+      "length": 675,
+      "assigned": "saureus",
+      "identity": 0.99398,
+      "aligned_bp": 664,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3107_flow_1.30087_cc_7328",
+      "length": 503,
+      "assigned": "saureus",
+      "identity": 0.99574,
+      "aligned_bp": 470,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3129_flow_1.40211_cc_7506",
+      "length": 705,
+      "assigned": "saureus",
+      "identity": 0.99403,
+      "aligned_bp": 670,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3141_flow_1.12806_cc_7582",
+      "length": 736,
+      "assigned": "saureus",
+      "identity": 0.98966,
+      "aligned_bp": 677,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3157_flow_1.27574_cc_7746",
+      "length": 614,
+      "assigned": "saureus",
+      "identity": 0.99317,
+      "aligned_bp": 586,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3161_flow_1.36232_cc_7785",
+      "length": 593,
+      "assigned": "saureus",
+      "identity": 0.99267,
+      "aligned_bp": 546,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3175_flow_1.07194_cc_7863",
+      "length": 597,
+      "assigned": "saureus",
+      "identity": 0.99665,
+      "aligned_bp": 597,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3224_flow_1.27993_cc_8200",
+      "length": 609,
+      "assigned": "saureus",
+      "identity": 0.99634,
+      "aligned_bp": 547,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3230_flow_1.27422_cc_8223",
+      "length": 650,
+      "assigned": "saureus",
+      "identity": 0.99827,
+      "aligned_bp": 579,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3237_flow_1.1657_cc_8252",
+      "length": 729,
+      "assigned": "saureus",
+      "identity": 0.99153,
+      "aligned_bp": 708,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3262_flow_1.18317_cc_8393",
+      "length": 647,
+      "assigned": "saureus",
+      "identity": 0.99171,
+      "aligned_bp": 603,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3288_flow_1.07027_cc_8510",
+      "length": 596,
+      "assigned": "saureus",
+      "identity": 0.99822,
+      "aligned_bp": 561,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3296_flow_1.11466_cc_8562",
+      "length": 573,
+      "assigned": "saureus",
+      "identity": 0.99633,
+      "aligned_bp": 545,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3307_flow_1.17665_cc_8636",
+      "length": 709,
+      "assigned": "saureus",
+      "identity": 0.99264,
+      "aligned_bp": 679,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3330_flow_1.26429_cc_8731",
+      "length": 601,
+      "assigned": "saureus",
+      "identity": 0.98985,
+      "aligned_bp": 591,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3355_flow_1.15677_cc_8815",
+      "length": 698,
+      "assigned": "saureus",
+      "identity": 0.99067,
+      "aligned_bp": 643,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3376_flow_1.48269_cc_8882",
+      "length": 532,
+      "assigned": "saureus",
+      "identity": 0.99214,
+      "aligned_bp": 509,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3391_flow_1.23411_cc_8940",
+      "length": 639,
+      "assigned": "saureus",
+      "identity": 0.9919,
+      "aligned_bp": 617,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3412_flow_1.30808_cc_9001",
+      "length": 635,
+      "assigned": "saureus",
+      "identity": 0.99341,
+      "aligned_bp": 607,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3415_flow_1.32188_cc_9014",
+      "length": 594,
+      "assigned": "saureus",
+      "identity": 0.98822,
+      "aligned_bp": 594,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3479_flow_1.33563_cc_9218",
+      "length": 622,
+      "assigned": "saureus",
+      "identity": 0.99825,
+      "aligned_bp": 573,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3500_flow_1.29061_cc_9281",
+      "length": 595,
+      "assigned": "saureus",
+      "identity": 0.9929,
+      "aligned_bp": 563,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3511_flow_1.27603_cc_9340",
+      "length": 646,
+      "assigned": "saureus",
+      "identity": 0.99839,
+      "aligned_bp": 623,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3525_flow_1.20032_cc_9366",
+      "length": 665,
+      "assigned": "saureus",
+      "identity": 0.99528,
+      "aligned_bp": 636,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3551_flow_1.17944_cc_9425",
+      "length": 537,
+      "assigned": "saureus",
+      "identity": 0.99231,
+      "aligned_bp": 520,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3559_flow_1.31902_cc_9450",
+      "length": 530,
+      "assigned": "saureus",
+      "identity": 0.99245,
+      "aligned_bp": 530,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3682_flow_1.19739_cc_9702",
+      "length": 578,
+      "assigned": "saureus",
+      "identity": 0.99441,
+      "aligned_bp": 537,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3712_flow_1.1947_cc_9770",
+      "length": 683,
+      "assigned": "saureus",
+      "identity": 0.99531,
+      "aligned_bp": 639,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3737_flow_1.23932_cc_9813",
+      "length": 743,
+      "assigned": "saureus",
+      "identity": 0.99437,
+      "aligned_bp": 711,
+      "windows": 1,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3828_flow_1.1133_cc_10093",
+      "length": 650,
+      "assigned": "ecoli",
+      "identity": 0.99338,
+      "aligned_bp": 604,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3837_flow_1.21582_cc_10237",
+      "length": 648,
+      "assigned": "ecoli",
+      "identity": 0.99674,
+      "aligned_bp": 614,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3838_flow_1.27614_cc_10248",
+      "length": 653,
+      "assigned": "ecoli",
+      "identity": 0.99518,
+      "aligned_bp": 622,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3843_flow_1.19969_cc_10276",
+      "length": 677,
+      "assigned": "ecoli",
+      "identity": 0.99516,
+      "aligned_bp": 620,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3848_flow_1.28214_cc_10310",
+      "length": 640,
+      "assigned": "ecoli",
+      "identity": 0.99339,
+      "aligned_bp": 605,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3868_flow_1.22503_cc_10634",
+      "length": 792,
+      "assigned": "ecoli",
+      "identity": 0.99736,
+      "aligned_bp": 759,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3905_flow_1.56093_cc_11059",
+      "length": 599,
+      "assigned": "ecoli",
+      "identity": 0.99833,
+      "aligned_bp": 599,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3908_flow_1.1672_cc_11077",
+      "length": 663,
+      "assigned": "ecoli",
+      "identity": 0.99367,
+      "aligned_bp": 632,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3953_flow_1.0764_cc_11446",
+      "length": 774,
+      "assigned": "ecoli",
+      "identity": 0.98819,
+      "aligned_bp": 762,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3961_flow_1.20718_cc_11520",
+      "length": 654,
+      "assigned": "ecoli",
+      "identity": 1.0,
+      "aligned_bp": 621,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3983_flow_1.26437_cc_11678",
+      "length": 650,
+      "assigned": "ecoli",
+      "identity": 0.9949,
+      "aligned_bp": 588,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3992_flow_1.1788_cc_11745",
+      "length": 673,
+      "assigned": "ecoli",
+      "identity": 0.9908,
+      "aligned_bp": 652,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_3993_flow_1.18257_cc_11749",
+      "length": 649,
+      "assigned": "ecoli",
+      "identity": 0.9845,
+      "aligned_bp": 645,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4019_flow_1.29461_cc_11960",
+      "length": 635,
+      "assigned": "ecoli",
+      "identity": 0.98837,
+      "aligned_bp": 602,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4047_flow_1.23328_cc_12151",
+      "length": 684,
+      "assigned": "ecoli",
+      "identity": 0.99201,
+      "aligned_bp": 626,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4048_flow_1.35829_cc_12167",
+      "length": 602,
+      "assigned": "ecoli",
+      "identity": 0.99077,
+      "aligned_bp": 542,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4103_flow_1.5551_cc_12529",
+      "length": 531,
+      "assigned": "ecoli",
+      "identity": 0.99596,
+      "aligned_bp": 495,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4135_flow_1.19419_cc_12712",
+      "length": 695,
+      "assigned": "ecoli",
+      "identity": 0.99846,
+      "aligned_bp": 651,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4152_flow_1.02178_cc_12807",
+      "length": 592,
+      "assigned": "ecoli",
+      "identity": 0.98599,
+      "aligned_bp": 571,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4168_flow_1.16883_cc_12912",
+      "length": 657,
+      "assigned": "ecoli",
+      "identity": 0.99839,
+      "aligned_bp": 622,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4192_flow_1.30801_cc_13035",
+      "length": 528,
+      "assigned": "ecoli",
+      "identity": 0.99194,
+      "aligned_bp": 496,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4201_flow_1.11336_cc_13084",
+      "length": 535,
+      "assigned": "ecoli",
+      "identity": 0.99801,
+      "aligned_bp": 502,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4267_flow_1.37821_cc_13405",
+      "length": 665,
+      "assigned": "ecoli",
+      "identity": 1.0,
+      "aligned_bp": 632,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4269_flow_1.06944_cc_13406",
+      "length": 545,
+      "assigned": "ecoli",
+      "identity": 0.99261,
+      "aligned_bp": 541,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4271_flow_1.26809_cc_13426",
+      "length": 649,
+      "assigned": "ecoli",
+      "identity": 0.9968,
+      "aligned_bp": 625,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4286_flow_1.35878_cc_13483",
+      "length": 565,
+      "assigned": "ecoli",
+      "identity": 0.99064,
+      "aligned_bp": 534,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4297_flow_1.15723_cc_13533",
+      "length": 677,
+      "assigned": "ecoli",
+      "identity": 0.99843,
+      "aligned_bp": 638,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4298_flow_1.31239_cc_13548",
+      "length": 630,
+      "assigned": "ecoli",
+      "identity": 0.99136,
+      "aligned_bp": 579,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4307_flow_1.38356_cc_13603",
+      "length": 698,
+      "assigned": "ecoli",
+      "identity": 0.99699,
+      "aligned_bp": 665,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4337_flow_1.21505_cc_13726",
+      "length": 506,
+      "assigned": "ecoli",
+      "identity": 0.99787,
+      "aligned_bp": 470,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4367_flow_1.06729_cc_13847",
+      "length": 576,
+      "assigned": "ecoli",
+      "identity": 0.99109,
+      "aligned_bp": 561,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4423_flow_1.30401_cc_14020",
+      "length": 689,
+      "assigned": "ecoli",
+      "identity": 1.0,
+      "aligned_bp": 656,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4426_flow_1.38272_cc_14041",
+      "length": 527,
+      "assigned": "ecoli",
+      "identity": 0.9962,
+      "aligned_bp": 527,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4453_flow_1.39531_cc_14099",
+      "length": 595,
+      "assigned": "ecoli",
+      "identity": 0.99117,
+      "aligned_bp": 566,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4459_flow_1.27332_cc_14134",
+      "length": 652,
+      "assigned": "ecoli",
+      "identity": 1.0,
+      "aligned_bp": 586,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4470_flow_1.221_cc_14159",
+      "length": 679,
+      "assigned": "ecoli",
+      "identity": 0.99517,
+      "aligned_bp": 621,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4473_flow_1.35223_cc_14165",
+      "length": 623,
+      "assigned": "ecoli",
+      "identity": 0.99662,
+      "aligned_bp": 592,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4509_flow_1.19334_cc_14264",
+      "length": 672,
+      "assigned": "ecoli",
+      "identity": 0.98894,
+      "aligned_bp": 633,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4521_flow_1.215_cc_14298",
+      "length": 641,
+      "assigned": "ecoli",
+      "identity": 0.99199,
+      "aligned_bp": 624,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4538_flow_1.35802_cc_14337",
+      "length": 608,
+      "assigned": "ecoli",
+      "identity": 0.99138,
+      "aligned_bp": 580,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4583_flow_1.2956_cc_14470",
+      "length": 518,
+      "assigned": "ecoli",
+      "identity": 0.99795,
+      "aligned_bp": 487,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4629_flow_1.0638_cc_14595",
+      "length": 715,
+      "assigned": "ecoli",
+      "identity": 0.9941,
+      "aligned_bp": 678,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4642_flow_1.09239_cc_14619",
+      "length": 593,
+      "assigned": "ecoli",
+      "identity": 0.98261,
+      "aligned_bp": 575,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4659_flow_1.16807_cc_14659",
+      "length": 636,
+      "assigned": "ecoli",
+      "identity": 0.99366,
+      "aligned_bp": 631,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4684_flow_1.21559_cc_14715",
+      "length": 644,
+      "assigned": "ecoli",
+      "identity": 0.99674,
+      "aligned_bp": 613,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4698_flow_1.19417_cc_14750",
+      "length": 762,
+      "assigned": "ecoli",
+      "identity": 1.0,
+      "aligned_bp": 720,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4711_flow_1.26772_cc_14768",
+      "length": 549,
+      "assigned": "ecoli",
+      "identity": 0.99803,
+      "aligned_bp": 507,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4724_flow_1.06403_cc_14802",
+      "length": 572,
+      "assigned": "ecoli",
+      "identity": 0.98942,
+      "aligned_bp": 567,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4757_flow_1.38669_cc_14858",
+      "length": 597,
+      "assigned": "ecoli",
+      "identity": 0.99629,
+      "aligned_bp": 539,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4793_flow_1.24464_cc_14920",
+      "length": 507,
+      "assigned": "ecoli",
+      "identity": 0.99402,
+      "aligned_bp": 502,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4837_flow_1.14545_cc_14993",
+      "length": 536,
+      "assigned": "ecoli",
+      "identity": 0.99619,
+      "aligned_bp": 525,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4838_flow_1.26087_cc_14994",
+      "length": 501,
+      "assigned": "ecoli",
+      "identity": 0.99787,
+      "aligned_bp": 470,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4871_flow_1.27243_cc_15052",
+      "length": 643,
+      "assigned": "ecoli",
+      "identity": 0.99522,
+      "aligned_bp": 628,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4893_flow_1.10111_cc_15093",
+      "length": 674,
+      "assigned": "ecoli",
+      "identity": 0.99675,
+      "aligned_bp": 616,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "Contig_4934_flow_1.09634_cc_15162",
+      "length": 560,
+      "assigned": "ecoli",
+      "identity": 0.99427,
+      "aligned_bp": 524,
+      "windows": 1,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    }
+  ]
+}

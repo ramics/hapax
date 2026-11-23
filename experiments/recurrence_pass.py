@@ -163,7 +163,13 @@ def main() -> None:
     ap.add_argument("--queries", type=Path, required=True)
     ap.add_argument("--subjects", nargs="+", required=True,
                     help="run accessions, in the order they should be scanned")
-    ap.add_argument("--trim-r2", type=int, default=14)
+    ap.add_argument("--trim-r2", type=int, required=True,
+                    help="mate 2 bases trimmed from every subject library scanned. "
+                         "Required, with no default: this pass runs over panel "
+                         "libraries that experiments/libraries.json has no entries "
+                         "for, so the caller states the value. "
+                         "experiments/ec2_recurrence.py resolves it from the query "
+                         "run and passes it in the UserData")
     ap.add_argument("--threads", type=int, default=int(os.environ.get("THREADS", "8")))
     ap.add_argument("--tool", type=Path, required=True)
     ap.add_argument("--work", type=Path, default=Path("/mnt/work"))

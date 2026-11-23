@@ -42,6 +42,8 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import library_facts
 from insert_profile import read_pairs                        # noqa: E402
 from peptide_absence import AA_CODE, hash_kmers, proteome_chunks, six_frames  # noqa: E402
 
@@ -168,14 +170,24 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--pairs", type=int, default=20000)
     ap.add_argument("--block", type=int, default=400000)
-    ap.add_argument("--r1", type=Path, default=Path("data/ww_berlin/SRR23973193_1.fastq.gz"))
-    ap.add_argument("--r2", type=Path, default=Path("data/ww_berlin/SRR23973193_2.fastq.gz"))
-    ap.add_argument("--trim-r2", type=int, default=14)
+    # No default: a read path is a property of the sequencing run, so it resolves from
+    # --library like the trim does. The defaults these two flags used to carry named
+    # `data/ww_berlin/`, which no manifest documents (results/PROVENANCE.md §5).
+    ap.add_argument("--r1", type=Path, default=None)
+    ap.add_argument("--r2", type=Path, default=None)
+    library_facts.add_argument(ap)
+    ap.add_argument("--trim-r2", type=int, default=None)
     ap.add_argument("--k", type=int, default=10)
     ap.add_argument("--min-distinct", type=int, default=5,
                     help="a k-mer is 'complex' at this many distinct residues")
     ap.add_argument("--out", type=Path, default=Path("results/absence_curve"))
     args = ap.parse_args()
+    # A trim length is a fact about a sequencing run, not a default. It is resolved
+    # from experiments/libraries.json so a library this repo has no entry for is
+    # refused by name rather than silently given Berlin's 14 nt, which on a library
+    # with no non-template prefix deletes real bases from every mate, in the
+    # direction of less recognition.
+    library_facts.resolve_args(args, ["r1", "r2", "trim_r2"])
 
     args.out.mkdir(parents=True, exist_ok=True)
     t0 = time.perf_counter()

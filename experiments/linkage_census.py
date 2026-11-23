@@ -54,6 +54,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import library_facts
+
 from subtract_known import _mm_index, map_filter, provenance
 from loud import Preflight
 
@@ -238,7 +240,8 @@ def main() -> None:
                          "makes the residue number readable")
     ap.add_argument("--r1", type=Path, default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
     ap.add_argument("--r2", type=Path, default=ROOT / "data/berlin/SRR23973193_2.fastq.gz")
-    ap.add_argument("--trim-r2", type=int, default=14)
+    library_facts.add_argument(ap)
+    ap.add_argument("--trim-r2", type=int, default=None)
     ap.add_argument("--binary", type=Path,
                     default=ROOT / "experiments/kmer_coverage/target/release/census")
     ap.add_argument("--min-shared", type=int, default=10,
@@ -271,6 +274,12 @@ def main() -> None:
                     help="check every input and tool, then exit: 0 if the run could "
                          "start, 2 if not")
     args = ap.parse_args()
+    # A trim length is a fact about a sequencing run, not a default. It is resolved
+    # from experiments/libraries.json so a library this repo has no entry for is
+    # refused by name rather than silently given Berlin's 14 nt, which on a library
+    # with no non-template prefix deletes real bases from every mate, in the
+    # direction of less recognition.
+    library_facts.resolve_args(args, ["trim_r2"])
 
     # A class with no reference used to print a WARNING and carry on, so every neighbour
     # of that class was labelled `none` - unidentified - which inflates exactly the

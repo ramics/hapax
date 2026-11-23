@@ -66,6 +66,8 @@ from sklearn.neighbors import NearestNeighbors
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import library_facts
+
 from berlin_io import read_pairs
 from subtract_known import provenance
 
@@ -273,12 +275,13 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--pairs", type=int, default=20_000,
                     help="query pairs for this seed. 2x this many points go in the space")
-    ap.add_argument("--block", type=int, default=1_500_000,
+    ap.add_argument("--block", type=int, default=None,
                     help="pairs skipped per seed, matching subtract_known.py, so the blocks "
                          "are the same ones every other experiment here uses")
     ap.add_argument("--r1", type=Path, default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
     ap.add_argument("--r2", type=Path, default=ROOT / "data/berlin/SRR23973193_2.fastq.gz")
-    ap.add_argument("--trim-r2", type=int, default=14,
+    library_facts.add_argument(ap)
+    ap.add_argument("--trim-r2", type=int, default=None,
                     help="measured, not detected: results/nontemplate_prefix/")
     ap.add_argument("--ks", type=int, nargs="+", default=[1, 5, 10, 50])
     ap.add_argument("--tool", type=Path,
@@ -297,6 +300,12 @@ def main() -> None:
     ap.add_argument("--work", type=Path, default=Path("/tmp/claude-0/wk/matefriends"))
     ap.add_argument("--out", type=Path, default=ROOT / "results/mate_friends")
     args = ap.parse_args()
+    # A trim length is a fact about a sequencing run, not a default. It is resolved
+    # from experiments/libraries.json so a library this repo has no entry for is
+    # refused by name rather than silently given Berlin's 14 nt, which on a library
+    # with no non-template prefix deletes real bases from every mate, in the
+    # direction of less recognition.
+    library_facts.resolve_args(args, ["trim_r2", "block"])
 
     if not args.tool.exists():
         raise SystemExit(f"{args.tool} is not built; cargo build --release in its directory")

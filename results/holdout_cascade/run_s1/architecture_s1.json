@@ -1,0 +1,98 @@
+{
+ "unit": "a scored contig",
+ "question": "which architecture the committed vocabulary's rule calls for each contig, and on what evidence",
+ "nothing_here_is_measured": "the rule and every word it attaches are hand-written background knowledge in experiments/virus_vocabulary.json. This script only applies them and records what fired. A contig with no matching evidence is null, never 'not a phage'.",
+ "source": "results/holdout_cascade/gene_map_s1.json",
+ "vocabulary": "experiments/virus_vocabulary.json",
+ "census": {
+  "contigs": 2,
+  "by_architecture": {
+   "not called": 1,
+   "ssrna_phage": 1
+  },
+  "not_called": 1
+ },
+ "blind_spots": [
+  "the rule fires on a single matching domain or subject title, so one mislabelled gene calls the whole contig; the evidence that fired is recorded per contig so a reader can see how thin a call is",
+  "there is one architecture in the vocabulary, so this cannot distinguish between architectures, only recognise the one it knows or decline",
+  "a subject title is a label on a database record. 'ssRNA phage' in a title is a claim made by whoever deposited it"
+ ],
+ "rows": [
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "leak_already_referenced",
+   "arm": "already_referenced",
+   "genes_called": 4,
+   "genes_with_a_role": 4,
+   "roles_present": [
+    "capsid",
+    "helicase/methyltransferase",
+    "movement",
+    "polymerase"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "movement",
+   "least_diverged_role": "capsid",
+   "identity_spread_points": 0.4,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [
+    {
+     "role": "polymerase",
+     "pfam": "RNA_replicase_B"
+    },
+    {
+     "role": "capsid",
+     "pfam": "Levi_coat"
+    },
+    {
+     "role": "maturation",
+     "pfam": "Phage_mat-A"
+    }
+   ],
+   "evidence_title": [
+    {
+     "role": "polymerase",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "capsid",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "maturation",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 6,
+   "contig": "candidate_withheld",
+   "arm": "withheld",
+   "genes_called": 3,
+   "genes_with_a_role": 3,
+   "roles_present": [
+    "capsid",
+    "maturation",
+    "polymerase"
+   ],
+   "has_every_expected_role": true,
+   "most_diverged_role": "maturation",
+   "least_diverged_role": "capsid",
+   "identity_spread_points": 24.3,
+   "nearest_subject_provenance": "environmental_record"
+  }
+ ],
+ "seed": 1,
+ "timings_seconds": {
+  "total": 0.0
+ },
+ "git_sha": "0308944e23eff8cb65f0726b851e00df3c50cb16-dirty",
+ "tree_dirty": true,
+ "script_sha256": "dbcd7cebf1af3ec2",
+ "vocabulary_sha256": "fac234ada805d997"
+}

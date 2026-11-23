@@ -43,6 +43,11 @@ import time
 from collections import Counter
 from pathlib import Path
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir
+
+import library_facts
+
 COMP = str.maketrans("ACGTN", "TGCAN")
 
 
@@ -163,12 +168,19 @@ def main() -> None:
     ap.add_argument("--ref", type=Path, default=None,
                     help="contigs for the mapping estimator (authors' SPAdes assembly)")
     ap.add_argument("--pairs", type=int, default=200_000)
-    ap.add_argument("--trim-r2", type=int, default=14,
+    library_facts.add_argument(ap)
+    ap.add_argument("--trim-r2", type=int, default=None,
                     help="non-template 5' prefix on mate 2 (measured: mode 14 nt)")
     ap.add_argument("--block", type=int, default=2_000_000,
                     help="pairs between seeds: seed s reads the block starting at (s-1)*block")
     ap.add_argument("--out", type=Path, default=Path("results/insert_profile"))
     args = ap.parse_args()
+    # A trim length is a fact about a sequencing run, not a default. It is resolved
+    # from experiments/libraries.json so a library this repo has no entry for is
+    # refused by name rather than silently given Berlin's 14 nt, which on a library
+    # with no non-template prefix deletes real bases from every mate, in the
+    # direction of less recognition.
+    library_facts.resolve_args(args, ["trim_r2"])
 
     random.seed(args.seed)
     skip = (args.seed - 1) * args.block

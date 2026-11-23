@@ -1,0 +1,74 @@
+{
+  "n_truth": 2,
+  "n_contigs": 2,
+  "total_contig_bp": 18154,
+  "unplaced_contigs": 0,
+  "genomes_recovered": 2,
+  "viral_genomes_recovered": 2,
+  "novel_recovered": 1,
+  "novel_collapsed": 0,
+  "chimaeras": 0,
+  "cross_host_chimaeras": 0,
+  "chimaeras_explained_by_shared_sequence": 0,
+  "shared_sequence_pairs": [],
+  "pairs": [
+    {
+      "novel": "member_b",
+      "known": "member_a",
+      "novel_recovered": true,
+      "novel_own_contigs": 1,
+      "novel_covered": 0.9988,
+      "known_recovered": true,
+      "collapsed": false
+    }
+  ],
+  "per_genome": {
+    "member_a": {
+      "role": "known",
+      "relative": "member_b",
+      "length": 9181,
+      "coverage_sim": 100.0,
+      "covered_frac": 0.9912,
+      "identity": 1.0,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "member_b": {
+      "role": "novel",
+      "relative": "member_a",
+      "length": 9011,
+      "coverage_sim": 25.0,
+      "covered_frac": 0.9988,
+      "identity": 0.99966,
+      "own_contigs": 1,
+      "recovered": true
+    }
+  },
+  "chimaera_detail": [],
+  "per_contig": [
+    {
+      "contig": "k141_1",
+      "length": 9226,
+      "assigned": "member_a",
+      "identity": 1.0,
+      "aligned_bp": 6432,
+      "windows": 18,
+      "window_genomes": [
+        "member_a"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "k141_0",
+      "length": 8928,
+      "assigned": "member_b",
+      "identity": 0.99966,
+      "aligned_bp": 8907,
+      "windows": 17,
+      "window_genomes": [
+        "member_b"
+      ],
+      "chimaeric": false
+    }
+  ]
+}

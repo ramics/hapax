@@ -1,6 +1,6 @@
 """Tests for the fail-loudly pass: every check here is one this project was bitten by.
 
-Run with `python3 -m pytest tests/test_loud.py`. Needs mappy (pip install mappy). External
+Run with `python3 -m pytest tests/test_loud.py`. Needs mappy (`pip install -r requirements.txt`). External
 tools are replaced by stubs written into a temp directory, so nothing here touches a real
 index; what is under test is whether a stage refuses, and what it records, not the numbers.
 """
@@ -99,6 +99,20 @@ def kit(tmp_path):
         dmnd=tmp_path / "tiny.dmnd")
 
 
+def _needs_mappy():
+    """Fail, by name, when the cascade cannot get past its own preflight in this container.
+
+    Not a skip: mappy is pip-installable and declared in requirements.txt, so a container
+    without it is misconfigured, not a place where the test cannot run. Without this the
+    failure read `assert 2 == 0`, with the cascade's correct refusal buried in its stderr.
+    """
+    import importlib.util
+    if importlib.util.find_spec("mappy") is None:
+        pytest.fail("mappy is not installed in this interpreter, so subtract_known.py "
+                    "refuses to start (as it should); pip install -r requirements.txt",
+                    pytrace=False)
+
+
 def _sk(kit, *extra, work=None, out=None):
     kit.dmnd.write_bytes(b"x")
     return [PY, "-I", str(ROOT / "experiments/subtract_known.py"),
@@ -174,6 +188,7 @@ def test_cascade_refuses_operating_confidence_outside_sweep(kit):
 
 
 def test_cascade_records_what_it_consulted(kit):
+    _needs_mappy()
     p = subprocess.run(_sk(kit), capture_output=True, text=True)
     assert p.returncode == 0, p.stderr
     m = json.loads((kit.d / "out" / "manifest_s1.json").read_text())
@@ -188,6 +203,7 @@ def test_cascade_records_what_it_consulted(kit):
 
 def test_stale_index_cache_is_rebuilt_not_served(kit):
     """Same work dir, same file stem, different reference: the old cache must not be used."""
+    _needs_mappy()
     work = kit.d / "work"
     assert subprocess.run(_sk(kit, work=work), capture_output=True).returncode == 0
     side = work / "asm.mmi.source.json"
@@ -299,6 +315,9 @@ def test_hapax_refuses_to_start_on_a_missing_input(tmp_path):
     p = subprocess.run([PY, str(ROOT / "hapax.py"), "run", str(tmp_path / "no_1.fq.gz"),
                         str(tmp_path / "no_2.fq.gz"), "--seed", "1",
                         "--out", str(tmp_path / "run"), "--stages", "linkage",
+                        # --library is required for the same reason --trim-r2 is: the
+                        # panels a run is checked against are properties of the library.
+                        "--library", "SRR23973193",
                         "--trim-r2", "0"],
                        capture_output=True, text=True)
     assert p.returncode == 2, p.stderr
@@ -313,6 +332,7 @@ def _hapax(tmp_path, kit, *extra):
     return subprocess.run(
         [PY, str(ROOT / "hapax.py"), "run", str(kit.r1), str(kit.r2), "--seed", "1",
          "--out", str(tmp_path / "run"), "--trim-r2", "0", "--pairs", "50",
+         "--library", "SRR23973193",
          "--k2-dbs", str(kit.k2), "--silva", str(kit.silva), "--dmnd", str(kit.dmnd),
          "--classify-bin", str(kit.classify), "--diamond-bin", str(kit.diamond), *extra],
         capture_output=True, text=True)
