@@ -91,11 +91,10 @@
 
   </g>
   <line x1="40" y1="542" x2="1080" y2="542" stroke="#e7ebf0"/>
-  <text class="note" x="40" y="560">Removal applies to read pairs. Every contig is measured, named or unnamed. A stage missing an input is recorded as skipped and the run marked incomplete.</text>
-  <text class="note" x="40" y="577">Every parameter comes from the library&#39;s own entry with its basis, and every stage runs the index it names. How much a tier removes is a property of the library, measured per run.</text>
+  <text class="note" x="40" y="560">Removal applies to read pairs, so every contig is measured, named or unnamed. How much a tier removes is a property of the library and is measured per run.</text>
 
   <text class="pan" x="40" y="618">b<tspan class="pant" dx="12">Three output classes, on one scale</tspan></text>
-  <text class="ax" x="1080" y="618" text-anchor="end">what each reports, and the qualifier that travels with it</text>
+  <text class="ax" x="1080" y="618" text-anchor="end">what each reports, and the qualifier it carries</text>
 
   <g>
     <rect x="40" y="640" width="4" height="32" fill="#2f6fd0"/>
@@ -141,5 +140,5 @@
     <text class="ref" x="864" y="947" text-anchor="middle">its controls</text>
 
   <line x1="40" y1="982" x2="1080" y2="982" stroke="#eef1f4"/>
-  <text class="note" x="40" y="1000">This figure describes the report a run writes on any library. The measurements behind each rule are in <tspan font-weight="700">results/</tspan>, on the libraries named there.</text>
+  <text class="note" x="40" y="1000">Stage by stage in <tspan font-weight="700">SPEC.md</tspan>, with the measurement behind each one in <tspan font-weight="700">results/</tspan>.</text>
 </svg>

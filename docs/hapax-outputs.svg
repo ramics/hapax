@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 538" width="1120" height="538" role="img" aria-labelledby="outtitle outdesc">
+  <title id="outtitle">What a hapax run writes, by unit</title>
+  <desc id="outdesc">A table of what a run writes, one row per unit: library, one breakdown per run: identified, assembled but unnameable, unplaced, carrying each fraction with its interval and the operating point that produced it (SPEC 4.4, 7.1); contig, one row per contig, whether or not an index named it, carrying distance to the closest published relative, identity and coverage per gene, nucleotide and protein, with depth and evenness (SPEC 5.1); subject, one row per published relative the residue points at, carrying how many reads point at it and from how far, which is where a novel strain of a known virus appears (SPEC 6); read pair, one row per surviving pair, un-thresholded, carrying distance with coverage and E-value, kind of sequence, recurrence in the library, and what it sits next to on the molecule (SPEC 7.1); divergence ladder, one rung per divergence, where a library carries a genome of known distance, carrying what the cascade recovered at each rung, on an ordinal scale (SPEC 8). Every field is reported beside its shuffled null and a known-positive comparison, and a verdict is made at contig and subject level.</desc>
+
+  <defs>
+    <style>
+      text { font-family: "Helvetica Neue", Helvetica, Arial, ui-sans-serif, system-ui, sans-serif; fill: #14181d; }
+      .figh { font-size: 21px; font-weight: 700; }
+      .figs { font-size: 13px; fill: #5d6671; }
+      .un   { font-size: 14.5px; font-weight: 700; }
+      .io   { font-size: 12px; fill: #5d6671; }
+      .wr   { font-size: 12px; fill: #3c444e; }
+      .ax   { font-size: 11.5px; fill: #5d6671; }
+      .note { font-size: 11.5px; fill: #717a85; }
+    </style>
+  </defs>
+
+  <rect x="0.5" y="0.5" width="1119" height="537" fill="#ffffff" stroke="#dfe4ea"/>
+
+  <text class="figh" x="40" y="48">What a run writes</text>
+  <text class="figs" x="40" y="72">Every field is reported beside its shuffled null and a known-positive comparison.</text>
+  <line x1="40" y1="92" x2="1080" y2="92" stroke="#dfe4ea"/>
+  <text class="ax" x="40" y="118">unit</text>
+  <text class="ax" x="300" y="118">one row is</text>
+  <text class="ax" x="660" y="118">what the row carries</text>
+
+  <g>
+    <rect x="40" y="134" width="4" height="46" fill="#2f6fd0"/>
+    <text class="un" x="60" y="150">library</text>
+    <text class="ax" x="60" y="170">SPEC &#167;4.4, 7.1</text>
+    <text class="io" x="300" y="150">one breakdown per run: identified, assembled but</text>
+    <text class="io" x="300" y="168">unnameable, unplaced</text>
+    <text class="wr" x="660" y="150">each fraction with its interval and the operating point that</text>
+    <text class="wr" x="660" y="168">produced it</text>
+    <line x1="40" y1="192" x2="1080" y2="192" stroke="#f0f3f6"/>
+
+    <rect x="40" y="206" width="4" height="46" fill="#2f6fd0"/>
+    <text class="un" x="60" y="222">contig</text>
+    <text class="ax" x="60" y="242">SPEC &#167;5.1</text>
+    <text class="io" x="300" y="222">one row per contig, whether or not an index named it</text>
+    <text class="wr" x="660" y="222">distance to the closest published relative, identity and coverage</text>
+    <text class="wr" x="660" y="240">per gene, nucleotide and protein, with depth and evenness</text>
+    <line x1="40" y1="264" x2="1080" y2="264" stroke="#f0f3f6"/>
+
+    <rect x="40" y="278" width="4" height="46" fill="#2f6fd0"/>
+    <text class="un" x="60" y="294">subject</text>
+    <text class="ax" x="60" y="314">SPEC &#167;6</text>
+    <text class="io" x="300" y="294">one row per published relative the residue points at</text>
+    <text class="wr" x="660" y="294">how many reads point at it and from how far, which is where a</text>
+    <text class="wr" x="660" y="312">novel strain of a known virus appears</text>
+    <line x1="40" y1="336" x2="1080" y2="336" stroke="#f0f3f6"/>
+
+    <rect x="40" y="350" width="4" height="46" fill="#c77700"/>
+    <text class="un" x="60" y="366">read pair</text>
+    <text class="ax" x="60" y="386">SPEC &#167;7.1</text>
+    <text class="io" x="300" y="366">one row per surviving pair, un-thresholded</text>
+    <text class="wr" x="660" y="366">distance with coverage and E-value, kind of sequence, recurrence</text>
+    <text class="wr" x="660" y="384">in the library, and what it sits next to on the molecule</text>
+    <line x1="40" y1="408" x2="1080" y2="408" stroke="#f0f3f6"/>
+
+    <rect x="40" y="422" width="4" height="46" fill="#c77700"/>
+    <text class="un" x="60" y="438">divergence ladder</text>
+    <text class="ax" x="60" y="458">SPEC &#167;8</text>
+    <text class="io" x="300" y="438">one rung per divergence, where a library carries a</text>
+    <text class="io" x="300" y="456">genome of known distance</text>
+    <text class="wr" x="660" y="438">what the cascade recovered at each rung, on an ordinal scale</text>
+
+  </g>
+  <line x1="40" y1="472" x2="1080" y2="472" stroke="#e7ebf0"/>
+  <text class="note" x="40" y="492">A verdict is made at contig and subject level, where there is enough sequence to support one. Per-read fields are reported and left un-thresholded.</text>
+</svg>
