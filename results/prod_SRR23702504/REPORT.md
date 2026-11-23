@@ -98,8 +98,35 @@ The measure of genericness is how much had to change in code. Four things did:
 4. **`experiments/prod_run.sh`** — the ordering from `holdout_cascade_run.sh` with every
    sample-specific value required from the environment (`${X:?...}`) instead of defaulted. Nothing
    in it names a library.
+5. **`experiments/measure_library.py`** (new) — the pair count, the modal read length per mate, the
+   layout and the seed stride, measured from the FASTQ instead of asked of a person. Imo's question,
+   on being shown the ledger above: *"why are we not discovering the facts from the sample itself?"*
+   Three of the four things item 1 required are in the file. The registry stays what it is good for:
+   an override with a basis, and the facts that genuinely are not in the file.
 
-Nothing in `hapax.py` or in any scoring stage was touched.
+Nothing in any scoring stage was touched. Two things in the driver were, and both are bugs rather
+than adaptations, so they are recorded as such.
+
+## Bugs this pass found, which are bugs and not refusals
+
+1. **The tier-2 stage hashed its input once per contig** (`hapax.py`, fixed in `50c2e97`). Every row
+   of `contigs.jsonl` carries the digest of the fasta it was read from, and the digest was taken
+   inside the per-contig writer — so the stage re-read its whole input once for each contig. On this
+   library that is 194,703 contigs against 104 MB, about **20 TB of SHA-256** for a stage whose own
+   arithmetic is a length and a GC fraction. Measured: it had run **1h45 and was roughly two thirds
+   through**, and it is a per-seed cost, so five seeds would have spent most of a day on it. **The
+   output is byte-identical either way**, which is why no run directory ever looked wrong — only a
+   clock tells, and nobody had run this stage over a third of a million contigs before. The test
+   counts digests rather than timing anything, because a count is deterministic;
+   `tests/test_hapax_stages.py::test_the_source_digest_is_read_once_not_once_per_contig`, verified
+   to fail on the old code.
+2. **The stage list was typed in three places and the launcher's copy is the one that ran.** `panel`
+   and `calibration` came out of production (SPEC 13.4) in `hapax.py` and in `prod_run.sh`, and
+   `ec2_prod.py`'s own `--stages` default still carried `panel`. So launch 5 ran a validation stage
+   in a production pass. It refused — correctly, with the committed reason, which is the design
+   working — but the disagreement should not have been possible. The launcher now imports
+   `hapax.PRODUCTION_STAGES`, and a test asserts the two cannot differ. Same family as a default
+   where a refusal belongs: a literal in a second place.
 
 ## What the tool could not show while it ran
 
