@@ -1,5 +1,5 @@
 {
- "_what": "Every Methods entry any page can carry. See experiments/make_web.py, resolve_methods().",
+ "_what": "Every Methods entry any page can carry. See experiments/make_web.py, resolve_methods(). The withheld-genome entry was removed on 2026-11-23: the report is built on unknown water and carries nothing about a distance fixed before the run, so there was no headline left to cite it (SPEC 13.4). It is validation, and it lives in results/holdout_run/.",
  "entries": [
   {
    "id": "library",
@@ -452,37 +452,6 @@
      "Bias direction": "Blind to anything present once rather than to anything novel: at depth 1 residue survives 79.0% and identified reads 70.5%, a gap of 8.5 points. Contigs have not been put through it."
     }
    }
-  },
-  {
-   "id": "holdout",
-   "title": "The withheld genome",
-   "about": "SRR23421544",
-   "rows": [
-    [
-     "Input",
-     "SRR23421544, a wastewater library whose depositors later assembled and deposited 25 genomes from that same water. One of them, OQ722337.1, was deposited 2023-07-31, after the 2022-05-10 date every index in this run was rolled back to, so no index here could contain it."
-    ],
-    [
-     "Procedure",
-     "The cascade was run blind over the library. The contig carrying the withheld genome was then located by mapping, its genes called with the same caller and minimum length as the gene-level stage, and its identities read from that stage rather than recomputed."
-    ],
-    [
-     "Threshold",
-     "The cascade’s own: Kraken2 at confidence 0.1 and a DIAMOND bitscore of 50. The contig scores 812 against that 50."
-    ],
-    [
-     "Denominator",
-     "The deposited genome, 4,147 nt, for recovery; the run’s unidentified pile, 13,033 contigs, for whether it survived."
-    ],
-    [
-     "Control arm",
-     "A second contig from the same library carrying a genome that was already published, which reads 99.9% and is removed by the same rule. The withheld contig scores 66.5% against that control’s 99.9%, and the two get one word."
-    ],
-    [
-     "Bias direction",
-     "Towards finding the holdout easier than a real unknown would be. Its nearest relative exists and is recognisable from a long way off; a virus with no relative at all would reach tier 2 instead, which this fixture cannot test. Rolling the reference back a further 4.5 years moved nothing, so nothing leaked."
-    ]
-   ]
   },
   {
    "id": "vocab",

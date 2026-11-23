@@ -42,8 +42,8 @@ def test_every_committed_descriptor_declares_every_input():
 
 def test_an_undeclared_input_is_a_refusal_not_a_default(tmp_path):
     d = _holdout()
-    del d["inputs"]["truth_gene_map"]
-    with pytest.raises(SystemExit, match="truth_gene_map is not declared"):
+    del d["inputs"]["spectrum"]
+    with pytest.raises(SystemExit, match="spectrum is not declared"):
         make_web.load_page(_write(tmp_path, d), None)
 
 
@@ -54,15 +54,6 @@ def test_a_declared_path_that_is_absent_is_not_read_as_not_run(tmp_path):
         make_web.load_page(_write(tmp_path, d), None)
 
 
-def test_a_reference_point_needs_its_true_distance(tmp_path):
-    d = json.loads(BERLIN.read_text())
-    d["rundir"] = "results/holdout_cascade/run_s1"
-    d["sample"]["accession"] = "SRR23421544"
-    d["inputs"]["spectrum_reference_truth"] = {"not_run": "x"}
-    with pytest.raises(SystemExit, match="come together"):
-        make_web.load_page(_write(tmp_path, d), None)
-
-
 def test_a_descriptor_cannot_dress_another_samples_run(tmp_path):
     d = _holdout()
     d["sample"]["accession"] = "SRR23973193"
@@ -70,12 +61,21 @@ def test_a_descriptor_cannot_dress_another_samples_run(tmp_path):
         make_web.load_page(_write(tmp_path, d), None)
 
 
-def test_no_ground_truth_unless_named_by_path(tmp_path):
-    # The run directory has a gene map sitting next to it; declaring not_run must win.
-    d = _holdout()
-    d["inputs"]["truth_gene_map"] = {"not_run": "pretend this sample has no answer"}
-    page = make_web.load_page(_write(tmp_path, d), None)
-    assert page["_inputs"]["truth_gene_map"] is None
+def test_the_report_has_no_ground_truth_section_on_any_sample():
+    """Imo, 2026-11-23: "BY DEFAULT WE KNOW NOTHING. WE ALWAYS KNOW NOTHING."
+
+    On unknown wastewater there is never a genome whose distance was fixed before the
+    run, so the production report has no section for one - not a filled one on the
+    fixture library, and not an empty one everywhere else. Known-distance material
+    validates the tool and lives in tests/ and results/holdout_run/. This asserts the
+    generator carries no input and no panel that only a fixture could fill, because the
+    page went both wrong ways once already.
+    """
+    src = (ROOT / "experiments/make_web.py").read_text()
+    for gone in ("truth_gene_map", "holdout_gene_map", "spectrum_reference_point",
+                 "spectrum_reference_truth", "Genomes with a distance fixed"):
+        assert gone not in src.replace("NO GROUND-TRUTH SECTION", ""), gone
+    assert not [k for k in make_web.PAGE_INPUTS if "truth" in k]
 
 
 def test_a_row_measured_on_one_library_is_not_printed_on_another():
@@ -153,3 +153,50 @@ def test_one_report_format_the_same_sections_in_the_same_order(tmp_path):
     assert line, r.stdout
     drawn = [t.strip() for t in line[0][len("summary:"):].split("|")]
     assert drawn == _summary_titles()
+
+
+def test_a_sample_nobody_has_written_about_gets_its_sentences_derived(tmp_path):
+    """SPEC 13.4's operational test, one layer in: no hand-written English per sample.
+
+    The descriptor used to carry the page title and the one line saying what the water
+    was. That made a sentence a prerequisite for a page, and it was the only
+    unattributable English on a page of numbers that all carry provenance. Both now come
+    from the library's own facts.
+    """
+    import page_descriptor
+    d = _holdout()
+    d.pop("title", None)
+    d["sample"].pop("lede", None)
+    page = make_web.load_page(_write(tmp_path, d), None)
+    want = page_descriptor.derive("SRR23421544")
+    assert page["title"] == want["title"]
+    assert page["sample"]["lede"] == want["lede"]
+    assert page["overrides"] == []
+    # And the facts behind the sentence are the library's, with their own basis recorded.
+    assert want["facts"]["collected"] == "2022-05-10"
+    assert "PRJNA917124" in want["facts"]["basis"]
+
+
+def test_a_fact_the_library_does_not_carry_is_left_out_not_guessed(tmp_path):
+    import page_descriptor
+    # Berlin has no collection date in libraries.json, so no clause about one appears.
+    assert "collected" not in page_descriptor.lede("SRR23973193")
+    # A library with no sample block at all says so rather than describing nothing.
+    assert "no sample block" in page_descriptor.lede("SRR23973265") or \
+        page_descriptor.sample_facts("SRR23973265")
+
+
+def test_a_hand_written_sentence_is_recorded_as_an_override(tmp_path):
+    d = _holdout()
+    d["sample"]["lede"] = "Something somebody typed."
+    page = make_web.load_page(_write(tmp_path, d), None)
+    assert page["sample"]["lede"] == "Something somebody typed."
+    assert page["overrides"] == ["sample.lede"]
+    assert page["derived"]["lede"].startswith("Treated wastewater")
+
+
+def test_a_descriptor_for_a_library_nobody_has_described_refuses(tmp_path):
+    d = _holdout()
+    d["sample"]["accession"] = "SRR99999999"
+    with pytest.raises(SystemExit, match="not in experiments/libraries.json"):
+        make_web.load_page(_write(tmp_path, d), None)

@@ -1060,19 +1060,41 @@ about, because the first cut of the page broke both:
   that was not run says so, with what it would take, in the place its result would have
   occupied.
 
-**A genome whose answer was known before the run is one row, never a panel.** The withheld
-genome of §6 is a *fixture*, and a fixture-shaped page is the guide experiment leaking into
-the tool. So the section is `Genomes with a distance fixed before the run`, it is present on
-every library, it lists however many such genomes there are — none, one, or four hundred — in
-one table at any count, and what the tool said about each (recovered length, mapped depth,
-and which pile the cascade put it in) is a per-row fact rather than a sentence written about
-one of them. On a library with none, the section says so.
+**The report has no ground-truth section, on any sample.** Imo, 2026-11-23: *"WHY WOULD WE,
+WITH UNKNOWN WASTEWATER, HAVE A GENOME WITH A DISTANCE FIXED BEFORE THE RUN? BY DEFAULT WE
+KNOW NOTHING. WE ALWAYS KNOW NOTHING."* A genome whose true distance was settled before the
+run — the withheld genome of §6, the deposited panel of §6d — is a **fixture that validates
+this tool**, not something the tool found in anybody's water. It therefore belongs to the
+validation suite, `tests/` and `results/holdout_run/`, and **nothing in the report is built
+from it**: no panel, no row, no marker on the distance axis, and no input a descriptor could
+only fill on the fixture library. The report contains what was measured on this water and
+nothing about what we happened to know in advance.
+
+This went wrong twice, in opposite directions, and both are worth recording because both
+looked like progress. First the withheld genome was the hero panel of the one library that
+had one, which is a page shaped like a fixture. Then it became a section on *every* page that
+every other sample rendered empty, which is worse: it tells a reader of their own water that
+something is missing from it. The third answer is that the section does not exist. Three
+descriptor inputs went with it, and the Berlin page was drawing the withheld genome's point
+on its distance axis from the holdout's gene map — a fixture's known distance printed on a
+page about a different sample. A test asserts the generator carries no input and no panel
+that only a fixture could fill.
 
 **Nothing on a page is written for one sample.** Every plain-English claim is assembled from
 committed data — `experiments/virus_vocabulary.json` for the biology, `libraries.json` for
 the sample facts, the run directory for everything measured — and the renderer supplies
-grammar only (§13.2). The test of this rule is operational: **a library nobody has touched
-produces its page with nobody writing a sentence for it.**
+grammar only (§13.2). The page's own title and the one line saying what the water is were the
+last hand-written English on it; they are now derived by `experiments/page_descriptor.py`
+from the library's `sample` block, which carries the matrix, the place, the collection date
+and the molecule, each with how it was established. **A fact the library does not carry is
+left out of the sentence, never guessed**, and a library with no sample block gets a page
+that says that rather than a confident sentence nobody can attribute. A descriptor may state
+a title or a lede itself; that is an override, honoured and recorded as one beside what would
+have been said.
+
+The test of this rule is operational: **a library nobody has touched produces its page with
+nobody writing a sentence for it.** A descriptor is then a run directory, the files outside
+it the panels may read, and nothing else.
 
 ---
 

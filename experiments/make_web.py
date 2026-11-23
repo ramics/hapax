@@ -43,6 +43,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import library_facts
+import page_descriptor
 import web_controls
 from subtract_known import provenance
 
@@ -376,30 +378,6 @@ def spectrum(inputs: dict) -> dict | None:
         }
         (lane if why else on_axis).append({**row, "why": why} if why else row)
 
-    # THE ONE POINT ON THE PLOT WHOSE TRUE DISTANCE IS KNOWN. Everything else on this
-    # axis is a distance to the nearest thing a database happens to hold, which is an
-    # upper bound on identity. The holdout genome was deposited after the reference cutoff
-    # and withheld from every index, so its real divergence is a measured 30.28% at
-    # nucleotide level rather than an inference, and it belongs on the plot labelled as
-    # such. Its three genes also show the gene spread doing its job: 24.3 points.
-    hv = load(inputs["spectrum_reference_point"]) if inputs["spectrum_reference_point"] \
-        else {}
-    truth = None
-    if inputs["spectrum_reference_point"] is not None:
-        # The true distance is read from the file that fixed it, not typed here.
-        truth = (load(inputs["spectrum_reference_truth"]) or {}).get("truth") or {}
-        if truth.get("nucleotide_divergence_percent") is None:
-            raise SystemExit(f"{inputs['spectrum_reference_truth']} has no "
-                             f"truth.nucleotide_divergence_percent; the reference point "
-                             f"on the spectrum cannot be drawn without its true distance")
-    hold = None
-    for row in hv.get("per_contig_roles") or []:
-        if row.get("arm") == "extra_candidate_withheld":
-            hold = {"by_role": row["by_role"], "spread": row["spread_points"],
-                    "true_nucleotide_divergence_percent":
-                        truth["nucleotide_divergence_percent"],
-                    "note": ("a genome withheld from every index; its position here is a "
-                             "measurement of this axis, not an estimate of the genome")}
     ex = dk.get("external_positive_control") or {}
     return {
         "on_axis": on_axis,
@@ -418,7 +396,6 @@ def spectrum(inputs: dict) -> dict | None:
             "note": ("the panel draws the gene-level subset, which is every contig short "
                      "enough for per-ORF scoring; the census above it is the whole pile"),
         },
-        "holdout": hold,
         "holdout_scope": ex or None,
         # Left empty on purpose rather than omitted, so the page says the axis is coming
         # instead of the reader discovering later that it was never there. Filled when the
@@ -431,85 +408,16 @@ def spectrum(inputs: dict) -> dict | None:
     }
 
 
-def depth_truth(inputs: dict, accession: str | None) -> dict | None:
-    """What a depth figure on one genome is actually made of, from the mapping itself.
-
-    WHY THIS EXISTS. A depth printed beside a genome reads as coverage of that genome, and
-    the one this page printed was not: 452x on the withheld genome is aligned-base depth
-    over every read whose primary alignment went there, and 95.4% of those reads start at
-    one position with a median span of 48 bases out of 145. That is a pile-up on one short
-    conserved element, not a genome carried at 452x, and the sentence overstated the depth
-    of the body of the genome by about sevenfold.
-
-    The fix is not a smaller number typed in its place. The page reads the two committed
-    files that measured it - how many reads align over at least 80% of their length, and
-    where the reads start - and prints the figure with that profile beside it, so a reader
-    sees what the multiple is over. Where a library has no such measurement the page says
-    that the depth it has is aligned-base depth from mapping, which is the honest state of
-    not having looked rather than a second number.
-
-    The control is in the same files and travels with it: an abundant, already-published
-    genome from the same water has 53.7% of its reads spanning 80% or more at a median 134
-    bases. A genuine organism gives end-to-end alignments, which is what makes the
-    candidate arm's 5.7% readable as the artefact it is.
-    """
-    if inputs.get("depth_profile") is None or inputs.get("depth_positions") is None:
-        return None
-    doc = load(inputs["depth_profile"])
-    arms = (doc or {}).get("arms") or {}
-    arm = next((a for a in arms.values() if a.get("accession") == accession), None)
-    if arm is None:
-        raise SystemExit(
-            f"{inputs['depth_profile']}: no arm in it is about {accession!r}, which is "
-            f"the genome this page prints a depth for. A profile from another genome "
-            f"would caveat the wrong number")
-    control = next((k for k, a in arms.items()
-                    if a.get("accession") != accession and a.get("strict_share")), None)
-    rows = []
-    for line in inputs["depth_positions"].read_text().splitlines()[1:]:
-        f = line.split("\t")
-        if len(f) >= 4 and f[3].strip():
-            rows.append((int(f[0]), int(float(f[3]))))
-    total = sum(n for _p, n in rows) or 1
-    top = max(rows, key=lambda r: r[1]) if rows else (None, 0)
-    return {
-        "accession": accession,
-        "pool": arm.get("pool"),
-        "end_to_end": arm.get("strict"),
-        "end_to_end_share": arm.get("strict_share"),
-        "median_span": arm.get("median_alignment_span_of_pool"),
-        "min_alignment_fraction": (doc or {}).get("min_alignment_fraction"),
-        "top_start": top[0], "top_start_reads": top[1],
-        "top_start_share": round(top[1] / total, 4),
-        "control": ({"name": control,
-                     "accession": arms[control].get("accession"),
-                     "divergence": arms[control].get("nt_divergence"),
-                     "share": arms[control].get("strict_share"),
-                     "median_span": arms[control].get("median_alignment_span_of_pool")}
-                    if control else None),
-    }
-
-
 #: Every file outside the run directory that a panel may read, and what it is. A page
 #: descriptor must state each one, either as a path or as `{"not_run": reason}`: a key it
 #: leaves out is a refusal, because "nobody said" and "it does not apply" must not render
-#: the same. Nothing here is ever found by globbing - in particular a sample cannot acquire
-#: a ground truth (`truth_gene_map`) because a file with the right name happens to exist.
+#: the same. Nothing here is ever found by globbing, because a sample that acquired an
+#: input by filename would be reporting on somebody else's water.
 PAGE_INPUTS = {
     "spectrum": "experiments/divergent_known.py output: the contigs the distance "
                 "spectrum draws",
     "spectrum_big_index": "core_nt block marking what the larger index did to those "
                           "contigs",
-    "spectrum_reference_point": "experiments/conserved_positions.py output holding the "
-                                "withheld genome's per-gene identities",
-    "spectrum_reference_truth": "a gene map whose truth block fixes that genome's real "
-                                "distance",
-    "truth_gene_map": "this library's own ground truth, from "
-                      "experiments/holdout_gene_map.py",
-    "depth_profile": "experiments/pair_search.py's strict.json for this library: how "
-                     "many of the reads a depth figure counts actually align end to end",
-    "depth_positions": "the positional_profile.tsv beside it, which says where those "
-                       "reads start",
 }
 
 #: The six fixed rows of a Methods entry, in order. Two spellings of the last two are in
@@ -526,20 +434,43 @@ def load_page(path: Path, rundir: Path | None) -> dict:
     WHY A FILE AND NOT FLAGS. Two pages built from one generator with different flags are
     two generators: whatever the holdout page needed was a flag Berlin did not pass, and
     whatever Berlin said was typed into the renderer and printed on the holdout page too.
-    So everything a page says about its sample that is not in the run directory - its
-    title, the sentence that says what the water is, and every file outside the run it
-    reads - lives in one committed file per sample, and every sample goes through the same
-    command with it. A future sample needs a descriptor and nothing else.
+    So everything a page says about its sample that is not in the run directory - the
+    files outside the run it reads, and the run itself - lives in one committed file per
+    sample, and every sample goes through the same command with it.
+
+    WHAT IS NO LONGER IN IT. The title and the one-line description of the water were
+    typed here, which meant a sample nobody had touched could not have a page until
+    somebody wrote a sentence for it, and the sentence was the only unattributable English
+    on a page of numbers that all carry provenance. They are now assembled by
+    `page_descriptor.derive()` from the library's own facts. A descriptor may still state
+    either, and that is honoured - but as an override, recorded as one in the bundle
+    beside what would have been said, because a silent substitution in either direction
+    is the bug this repo keeps paying for.
     """
     d = json.loads(path.read_text())
     problems = []
-    for k in ("title", "sample", "rundir", "inputs"):
+    for k in ("sample", "rundir", "inputs"):
         if k not in d:
             problems.append(f"missing key {k!r}")
     smp = d.get("sample") or {}
-    for k in ("accession", "lede"):
-        if not smp.get(k):
-            problems.append(f"missing sample.{k}")
+    if not smp.get("accession"):
+        problems.append("missing sample.accession")
+    else:
+        try:
+            derived = page_descriptor.derive(smp["accession"])
+        except library_facts.UnknownLibrary as e:
+            problems.append(str(e))
+            derived = {}
+        # Derived unless overridden, and an override says so rather than looking derived.
+        d["derived"] = derived
+        d["overrides"] = sorted(
+            [k for k in ("title",) if d.get(k) and d[k] != derived.get(k)] +
+            [f"sample.{k}" for k in ("lede",)
+             if smp.get(k) and smp[k] != derived.get(k)])
+        d.setdefault("title", derived.get("title"))
+        if not smp.get("lede"):
+            smp["lede"] = derived.get("lede")
+            d["sample"] = smp
     inputs = d.get("inputs") or {}
     for k in sorted(set(PAGE_INPUTS) - set(inputs)):
         problems.append(f"inputs.{k} is not declared: give a path or "
@@ -561,13 +492,8 @@ def load_page(path: Path, rundir: Path | None) -> dict:
             resolved[k] = f
         else:
             resolved[k] = None
-    if resolved.get("spectrum") is None and any(
-            resolved.get(k) for k in ("spectrum_big_index", "spectrum_reference_point")):
+    if resolved.get("spectrum") is None and resolved.get("spectrum_big_index"):
         problems.append("spectrum inputs are declared without the spectrum itself")
-    if bool(resolved.get("spectrum_reference_point")) != bool(
-            resolved.get("spectrum_reference_truth")):
-        problems.append("spectrum_reference_point and spectrum_reference_truth come "
-                        "together: a point drawn without its true distance is a guess")
     run = rundir if rundir is not None else ROOT / d.get("rundir", "")
     if not (run / "manifest.json").exists():
         problems.append(f"{run}/manifest.json is absent; this is not a hapax run "
@@ -751,18 +677,11 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int,
         # vocabulary of its own and a wrong word is wrong in one place.
         "vocabulary": load(ROOT / "experiments/virus_vocabulary.json"),
         "architecture": _one(rundir, "architecture_s*.json"),
-        # Only a sample whose descriptor names one by path has a ground truth. It is
-        # never guessed from the run directory: a page that invented a ground truth for
-        # a sample that has none would be the worst failure this tool could have.
-        "holdout_gene_map": (load(page["_inputs"]["truth_gene_map"])
-                             if page["_inputs"]["truth_gene_map"] else None),
-        # What the depth beside that genome is made of. None where nobody measured it,
-        # and the panel then says so rather than printing a bare multiple.
-        "depth_truth": depth_truth(
-            page["_inputs"],
-            ((load(page["_inputs"]["truth_gene_map"]) or {}).get("truth") or {})
-            .get("accession") if page["_inputs"]["truth_gene_map"] else None),
+        # `derived` is what the library's own facts say this page should call itself and
+        # the water; `overrides` names any of it the descriptor stated by hand, so a
+        # hand-written sentence is visible as one instead of passing for a derived fact.
         "page": {"title": page["title"], "sample": page["sample"],
+                 "derived": page.get("derived"), "overrides": page.get("overrides") or [],
                  "inputs": {k: ({"path": str(v.relative_to(ROOT))} if v is not None else
                                 {"not_run": page["inputs"][k]["not_run"]})
                             for k, v in page["_inputs"].items()}},
@@ -3229,25 +3148,6 @@ function interval(iv) {
         relabel(r) + '</title></circle>';
     });
 
-    const hv = S.holdout;
-    if (hv && hv.by_role) {
-      const ids = Object.keys(hv.by_role).map(k => hv.by_role[k]);
-      const lo = Math.min.apply(null, ids), hi = Math.max.apply(null, ids);
-      const yy = PAD_T - 20;
-      s += '<line x1="' + x(lo) + '" y1="' + yy + '" x2="' + x(hi) + '" y2="' + yy +
-        '" stroke="var(--warn)" stroke-width="2" stroke-linecap="round"/>';
-      Object.keys(hv.by_role).forEach(k => {
-        s += '<circle cx="' + x(hv.by_role[k]) + '" cy="' + yy + '" r="4.5" ' +
-          'fill="var(--panel)" stroke="var(--warn)" stroke-width="2"><title>' +
-          'the withheld genome, ' + esc(k) + ' at ' + num(hv.by_role[k], 1) +
-          '% - true divergence ' + num(hv.true_nucleotide_divergence_percent, 2) +
-          '% at nucleotide level</title></circle>';
-      });
-      s += '<text x="' + (x(lo) - 10) + '" y="' + (yy + 4) +
-        '" text-anchor="end" class="ax">the one genome whose true distance is known, ' +
-        num(hv.spread, 1) + ' points across three genes</text>';
-    }
-
     const LY = PAD_T + H_MAIN + GAP + 34;
     s += '<rect x="' + PAD_L + '" y="' + (LY - 26) + '" width="' + (W - PAD_L - PAD_R) +
       '" height="62" fill="var(--v-faint)" rx="3"/>';
@@ -4399,166 +4299,17 @@ function interval(iv) {
 })();
 
 
-// ---------- genomes whose true distance was fixed before the run
-/* ONE FORMAT, EVERY SAMPLE. This section is on every page, in the same place, whether
-   the sample has none of these genomes, one, or four hundred. It used to be a panel
-   that existed only on the library that happened to have one, with that genome as the
-   page's hero - which is the shape of a fixture, not of an instrument. A genome whose
-   distance was fixed before the run is a row here like any other, and the page says
-   plainly when there are no such rows rather than quietly losing the section. */
-(function () {
-  const H = D.holdout_gene_map;
-  const p = panel('Genomes with a distance fixed before the run',
-    'Genomes in this sample whose true distance was settled before the tool ran, by a ' +
-    'deposit date rather than by anyone here, so what the tool says about them can be ' +
-    'marked right or wrong. Listed the same way at any count.' + cite('holdout'));
-  if (!H || !H.contigs || !H.contigs.length) {
-    const why = (((D.page || {}).inputs || {}).truth_gene_map || {}).not_run;
-    p.append(el('div', 'absent', 'None in this sample: ' +
-      (why || 'no ground truth is declared for this library') +
-      '. Every other section on this page reports distances whose truth nobody knows.'));
-    app.append(p); return;
-  }
-  const T = H.truth || {};
-  const w = H.contigs.filter(c => c.arm === 'withheld')[0];
-  const ctl = H.contigs.filter(c => c.arm !== 'withheld')[0];
-
-  const pol = w && w.orfs.filter(o => o.role === 'polymerase')[0];
-  const ids = w ? w.orfs.filter(o => o.pident != null).map(o => o.pident) : [];
-  /* ONE ROW PER GENOME, AND THE SAME ROW WHATEVER THE COUNT. The depth column is the
-     one that has to be read carefully: a depth printed beside a genome reads as
-     coverage of it, and the figure these runs carry is aligned-base depth over every
-     read the mapper sent there. On this library 95.4% of those reads start at one
-     position with a median span of 48 bases of 145, so the multiple is a pile-up on one
-     short conserved element. Where the profile that measured that is declared, the
-     column carries it; where it is not, the column says which kind of depth it is
-     rather than printing a bare multiple. */
-  const DT = D.depth_truth;
-  const cnt = n => n == null ? '-' : Number(n).toLocaleString('en-GB');
-  const TRUTHS = Array.isArray(H.truths) ? H.truths : (H.truth ? [H.truth] : []);
-  const depthCell = t => {
-    const d = Math.round(t.mean_depth) + 'x';
-    if (!DT || DT.accession !== t.accession) {
-      return d + ' <span class="dim">aligned bases; end to end not measured</span>';
-    }
-    return d + ' <span class="dim">aligned bases, ' +
-      (100 * DT.end_to_end_share).toFixed(1) + '% of the reads end to end</span>';
-  };
-  const sc = el('div', 'scroll');
-  const tb = el('table');
-  tb.innerHTML = '<thead><tr><th>genome</th><th>true divergence</th><th>depth</th>' +
-    '<th>recovered</th><th>where the cascade put it</th></tr></thead>';
-  const tbody = el('tbody');
-  TRUTHS.forEach(t => {
-    const c = H.contigs.filter(x => x.arm === 'withheld')[0];
-    const tr = el('tr');
-    tr.innerHTML = '<td>' + esc(t.organism || t.accession || 'unnamed') +
-      ' <span class="dim mono">' + esc(t.accession || '') + '</span></td>' +
-      '<td class="mono">' + num(t.nucleotide_divergence_percent, 1) + '%</td>' +
-      '<td class="mono">' + depthCell(t) + '</td>' +
-      '<td class="mono">' + (c ? (c.nt / 1000).toFixed(2) + ' kb, ' +
-        pct(c.nt / (t.genome_nt || c.nt)) + ' of it' : 'not assembled') + '</td>' +
-      '<td>' + (c && c.reached_the_unidentified_pile === false
-        ? '<span class="relabel">identified and subtracted</span>'
-        : c ? 'left in the pile this report draws' : '-') + '</td>';
-    tbody.append(tr);
-  });
-  tb.append(tbody); sc.append(tb); p.append(sc);
-  const depthDetail = DT
-    ? 'Depth: ' + cnt(DT.pool) + ' reads were counted, ' + cnt(DT.end_to_end) +
-      ' of them spanning ' + Math.round(100 * DT.min_alignment_fraction) + '% or more ' +
-      'of their length, and ' + cnt(DT.top_start_reads) + ' starting at one position, ' +
-      'base ' + DT.top_start + ', at a median span of ' + DT.median_span + ' bases' +
-      (DT.control ? '. An already-published genome from the same water, ' +
-        num(DT.control.divergence, 2) + '% diverged, has ' +
-        (100 * DT.control.share).toFixed(1) + '% spanning that much at a median ' +
-        DT.control.median_span + ': a real organism aligns end to end' : '') + '. '
-    : 'Depth in that column is aligned-base depth over reads the mapper selected; ' +
-      'whether they align end to end was not measured on this library. ';
-  const hero = el('div', 'note');
-  hero.innerHTML = depthDetail + 'Deposited ' + esc(T.deposited || '') +
-    ', from water collected ' + esc(T.collected || '') + '. ' +
-    esc((H.truth_note || '').replace(/^./, c => c.toUpperCase())) + '.';
-  p.append(hero);
-
-  p.append(geneLegend(['polymerase', 'capsid', 'maturation', 'other']));
-  [[w, 'the genome whose distance was fixed before the run'],
-   [ctl, 'a genome from the same water that was already published, for comparison']]
-    .forEach(pair => {
-      if (!pair[0]) return;
-      const c = pair[0], hd = el('div', 'gmaphead');
-      hd.innerHTML = '<b>' + esc(pair[1]) + '</b> <span class="dim">&mdash; ' +
-        (c.nt / 1000).toFixed(2) + ' kb, ' + c.orfs_called + ' genes called, ' +
-        c.orfs_scored + ' with a significant match</span>';
-      const card = el('div', 'gmap');
-      card.append(hd);
-      card.append(geneMap(c.nt, c.orfs, (c.nt / 1000).toFixed(2) + ' kb'));
-      d2(card, c);
-      p.append(card);
-    });
-
-  function d2(card, c) {
-    const v = c.orfs.filter(o => o.pident != null).map(o => o.pident);
-    if (!v.length) return;
-    const lo = Math.min.apply(null, v), hi = Math.max.apply(null, v);
-    const s = el('div', 'gsay');
-    const A = archOf(c.contig), AX = archWords(A);
-    s.innerHTML = (AX ? '<b>' + esc(AX.label) + '.</b> ' : (A ?
-      '<span class="dim">No architecture called from its genes.</span> ' : '')) +
-      'Its genes read <b>' + v.slice().sort((a, b) => b - a)
-      .map(x => num(x, 1) + '%').join('</b>, <b>') + '</b> against the closest protein ' +
-      'the rolled-back indexes hold, a spread of <b>' + num(hi - lo, 1) + ' points ' +
-      'inside one genome</b>.' +
-      (A && A.most_diverged_role ? ' Furthest out is its <b>' +
-        esc(A.most_diverged_role) + '</b> and closest in its <b>' +
-        esc(A.least_diverged_role) + '</b>' + cite('genespread') + '.' : '');
-    card.append(s);
-  }
-
-  if (w && ids.length) {
-    const lo = Math.min.apply(null, ids), hi = Math.max.apply(null, ids);
-    const note = el('div', 'callout');
-    // Every figure in this sentence is read from the gene map. The two it used to
-    // carry - "thirty identity points apart" and an "about 66%" fallback for a genome
-    // with no polymerase called - were typed, and the second would have printed a
-    // Berlin-shaped number on a contig it had never measured.
-    const cv = ctl ? ctl.orfs.filter(o => o.pident != null).map(o => o.pident) : [];
-    const span = v => num(Math.min.apply(null, v), 1) + ' to ' +
-      num(Math.max.apply(null, v), 1) + '%';
-    note.innerHTML = '<b>What the tool said about a genome whose answer was known.</b> ' +
-      (w.reached_the_unidentified_pile === false
-        ? 'It was identified and subtracted as known background, which is the tool ' +
-          'losing it: two contigs from one library get the same single word, ' +
-          '<i>identified</i>' +
-          (cv.length ? ', though this one&rsquo;s genes read ' + span(ids) +
-            ' and the published one&rsquo;s read ' + span(cv) : '') + '. '
-        : 'It survived into the pile this report draws' +
-          (cv.length ? ', with its genes reading ' + span(ids) + ' against ' +
-            span(cv) + ' for the published genome beside it' : '') + '. ') +
-      (pol ? 'A whole-contig identity of ' + num(pol.pident, 1) + '% is not a ' +
-        'property of the contig: ' : 'A single whole-contig identity is not a property ' +
-        'of the contig: ') + 'this genome spans ' + num(hi - lo, 1) +
-      ' points between its own genes, so that figure is whichever gene won on bitscore' +
-      cite('genespread') + '.';
-    p.append(note);
-  }
-
-  const bs = el('details', 'more');
-  const sm = document.createElement('summary');
-  sm.textContent = 'limitations of this measurement';
-  bs.append(sm);
-  const ul = document.createElement('ul');
-  ul.className = 'note';
-  (H.blind_spots || []).concat([H.identities_are_not_measured_here]).forEach(x => {
-    if (!x) return;
-    const li = document.createElement('li');
-    li.textContent = String(x).replace(/\\.$/, '') + '.';
-    ul.append(li);
-  });
-  bs.append(ul);
-  p.append(bs);
-  app.append(p);
-})();
+/* NO GROUND-TRUTH SECTION, ON ANY SAMPLE. There used to be one here: the withheld
+   genome of results/holdout_run/, first as its own panel on the one library that had
+   one, then - worse - as a section on every page that other samples would render
+   empty. Both are the fixture leaking into the tool. Imo, 2026-11-23: "WHY WOULD WE,
+   WITH UNKNOWN WASTEWATER, HAVE A GENOME WITH A DISTANCE FIXED BEFORE THE RUN? BY
+   DEFAULT WE KNOW NOTHING. WE ALWAYS KNOW NOTHING." A genome whose distance was
+   settled before the run validates this tool; it is not something the tool found in
+   anybody's water, so it is not in the report. That measurement lives in the
+   validation suite - tests/ and results/holdout_run/ - and SPEC 13.4 says so. This
+   report contains what was measured on this water and nothing about what we happened
+   to know in advance. */
 
 // ---------- summary and detail
 // Runs last, after every panel has rendered. It reorganises rather than regenerates: the
@@ -4704,8 +4455,7 @@ function interval(iv) {
      kept any one page tidy at the cost of every page having a different shape. */
   const SUMMARY = ['Watchlist screen', 'What this water is',
                    'How far the assembled viruses sit from anything published',
-                   'The unnamed remainder',
-                   'Genomes with a distance fixed before the run', 'Methods'];
+                   'The unnamed remainder', 'Methods'];
   const panels = Array.prototype.filter.call(app.children,
     n => n.tagName === 'SECTION' && n.classList.contains('panel'));
   const detail = panels.filter(n => {
