@@ -182,7 +182,42 @@ Two notes fall out of that arithmetic rather than being designed:
 
 ## What the generator could not build
 
-(to be filled once the run directory is committed)
+`experiments/report_prod.py` turns a run directory into `TABLES.md`, and the point of the
+convention that a figure is generated from committed files is that prose cannot drift from the
+outputs. Run against a directory nobody had run it against, it produced a page that rendered
+cleanly and was missing most of the run. Five things, four of them in the generator:
+
+1. **The cascade curve was a column of dashes, on this library and on the holdout.** The per-tier
+   removal a reader wants — alone, marginal, cumulative, and the index size that bought it — is one
+   row per tier in `tiers.json`'s `curve`, with the sizes in a top-level `index_bytes` dict. The
+   generator read those four fields out of `tiers["tiers"][name]`, which holds each tier's internal
+   sweep instead. **A table of dashes renders as cleanly as a table of numbers**, which is this
+   repo's recurring failure one layer out: an empty cell and a measurement that never happened look
+   identical. Fixed, and the table it now writes is the most informative thing in the file — on this
+   water the sample's own assembly removes 71.9% alone where the 16 GB Kraken2 database removes
+   0.65%.
+2. **A tier that is measured and never subtracted vanished from the table rather than being named.**
+   `observe_sample_contigs_unidentified` has no row in the curve by design, because SPEC's
+   subtrahend is identification and matching an unnamed contig does not remove the read. Its absence
+   now carries a sentence, since subtracting that tier is exactly the error that inflated removal to
+   85.9% against the true 77.0%.
+3. **The assembly section was empty, as a consequence of `--assembly-from`.** The assembly ran on
+   one instance and the seeds on another, so its manifest was not in the directory the generator
+   reads. The resume path that makes a relaunch cost one seed instead of a whole pass also splits
+   the run's provenance across prefixes, and nothing noticed. Fetched by hand into the committed
+   directory; the generator still has no way to follow a run that spans instances.
+4. **The file's own measurements were not in the report at all.** `measured_library.json` is
+   written beside every run and nothing read it, so the one comparison a reader of a new library
+   wants — what the FASTQ says against what the registry states — could not be made. It is now a
+   table, and it shows a disagreement worth seeing: the registry's stride is 6,000,000, the file's
+   own arithmetic gives 7,100,000, and the stated one is what ran.
+5. **Fractions printed to sixteen digits** at n = 323,430, and five seed-level refusals printed as
+   five near-identical sentences. Both are cosmetic and both are the kind of thing that makes a
+   generated page read as a dump rather than as a result.
+
+None of these was a wrong number. All five are a generated page that looked finished and was not,
+which is the failure mode the convention exists to prevent, so they belong here rather than in a
+commit message.
 
 ## Cost and wall clock
 

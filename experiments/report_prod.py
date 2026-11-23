@@ -95,8 +95,34 @@ def main() -> int:
         w(f"**No ground truth for this water.** {truth['reason']}")
         w("")
 
+    # ---- what was measured off the FASTQ, beside what the registry states. Imo, on being
+    # shown the hand-supplied ledger: "why are we not discovering the facts from the sample
+    # itself?" Four of these come off the file; where the registry states a different value
+    # the stated one is what ran, because stating it is the override, so both are printed
+    # and the disagreement is visible rather than reconciled.
+    meas = load(res / "measured_library.json")
+    if meas:
+        w("## Measured off the file, beside what the registry states")
+        w("")
+        w("| field | measured from the reads | registry | which one ran |")
+        w("|---|---|---|---|")
+        for k in ("pairs", "read_length", "layout", "block"):
+            mv, ev = meas.get(k), entry.get(k)
+            ran = "registry" if ev is not None else "measured"
+            w(f"| {k} | {mv} | {ev if ev is not None else '-'} | {ran} |")
+        w("")
+        w("Not measurable from the file, so supplied with a basis: "
+          + ", ".join(f"`{k}`" for k in (meas.get("not_measurable_from_the_file") or {}))
+          + ".")
+        w("")
+
     # ---- the trim, which for a new library is a measurement and not a lookup
-    dec = load(res / "nontemplate_prefix/trim_from_prefix.json")
+    # Either filename: `prod_run.sh` states `--out .../trim_from_prefix.json` while the
+    # script's own default keys the name by accession, so a run driven by the launcher and
+    # a run driven by hand leave different names. The section this builds is the one that
+    # records a REFUSAL, and a missing file would render as no section at all.
+    dec = (load(res / "nontemplate_prefix/trim_from_prefix.json")
+           or load(res / f"nontemplate_prefix/trim_from_prefix_{args.library}.json"))
     if dec:
         w("## The mate-2 non-template prefix, measured on this library")
         w("")
@@ -107,8 +133,25 @@ def main() -> int:
         w(f"| mode share per seed | {dec.get('mode_shares')} |")
         w(f"| mate-1 5' mode per seed | {dec.get('r1_modes')} |")
         w(f"| anchored mate-2 reads per seed | {dec.get('anchored_r2')} |")
-        w(f"| trim named | {dec.get('trim_r2')} |")
-        w(f"| refusals | {dec.get('problems') or 'none'} |")
+        named = dec.get("trim_r2")
+        w(f"| trim named by the measurement | "
+          f"{'refused' if named is None else named} |")
+        w(f"| trim the run used | {entry.get('trim_r2', 'unmeasured')}, stated |")
+        # One refusal per seed, five times the same sentence with one number changed, is a
+        # wall of prose that hides how many distinct reasons fired. The count is what a
+        # reader needs and the sentence is what they need once.
+        probs = dec.get("problems") or []
+        if probs:
+            seen = {}
+            for q in probs:
+                key = "".join(c for c in q if not c.isdigit())
+                seen[key] = seen.get(key, 0) + 1
+            for key, n in seen.items():
+                first = next(q for q in probs
+                             if "".join(c for c in q if not c.isdigit()) == key)
+                w(f"| refused, {n} of {len(probs)} seeds | {first} |")
+        else:
+            w("| refusals | none |")
         w("")
         w(f"Rule applied: {dec.get('rule')}")
         w("")
@@ -143,7 +186,16 @@ def main() -> int:
         w("| field | value |")
         w("|---|---|")
         for k, v in cid.items():
-            if isinstance(v, (int, float, str)) and not k.startswith("_"):
+            if isinstance(v, bool) or not isinstance(v, (int, float, str)):
+                continue
+            if k.startswith("_"):
+                continue
+            # A fraction is printed to four places. The unrounded float carries sixteen
+            # digits of which about three are meaningful at n = 323,430 contigs, and a
+            # table that shows all sixteen invites a reader to quote them.
+            if isinstance(v, float):
+                w(f"| {k} | {v:.4f} |")
+            else:
                 w(f"| {k} | {v:,} |" if isinstance(v, int) else f"| {k} | {v} |")
         w("")
 
@@ -156,7 +208,8 @@ def main() -> int:
         w("")
         w(f"Operating point: `{json.dumps(op)}`. Percentages are of read **pairs**, the "
           f"occurrence-weighted unit. Spread is the observed range over "
-          f"{len(have)} seeds and is not a dispersion estimate.")
+          f"{len(have)} seed{'' if len(have) == 1 else 's'} and is not a dispersion "
+          f"estimate.")
         w("")
         w("| quantity | mean (min-max) |")
         w("|---|---|")
@@ -167,19 +220,42 @@ def main() -> int:
             w(f"| tier 3 (unplaceable reads) | "
               f"{spread([t['tier3_pairs'] / t['pairs'] for _, t, _ in have])} |")
         w("")
-        names = [k for _, t, _ in have for k in (t.get("tiers") or {})]
-        order = list(dict.fromkeys(names))
+        # THE CASCADE CURVE LIVES IN `curve`, NOT IN `tiers`, and reading it from the wrong
+        # key is why this table rendered as a column of dashes on both libraries it has ever
+        # been run on. `tiers[name]` is each tier's own internal breakdown - the artefact
+        # tier's entropy sweep, a database's confidence sweep - while the per-tier removal
+        # a reader wants (alone, marginal, cumulative) is one row per tier in `curve`, and
+        # the index sizes are a top-level dict keyed by tier. A table of dashes renders as
+        # cleanly as a table of numbers, which is the same failure this repo keeps paying
+        # for: an empty output and a step that never ran look identical.
+        curves = [{r["tier"]: r for r in (t.get("curve") or [])} for _, t, _ in have]
+        sizes = [t.get("index_bytes") or {} for _, t, _ in have]
+        order = list(dict.fromkeys(k for c in curves for k in c))
         if order:
             w("| tier | alone | marginal | cumulative | index GB |")
             w("|---|---|---|---|---|")
             for tier in order:
-                rows = [(t["tiers"] or {}).get(tier) or {} for _, t, _ in have]
-                gb = [(r.get("index_bytes") or 0) / 1e9 for r in rows]
+                rows = [c.get(tier) or {} for c in curves]
+                gb = [(s.get(tier) or (r.get("index_bytes") or 0)) / 1e9
+                      for s, r in zip(sizes, rows)]
                 gb_cell = spread(gb, False, 3) if any(gb) else "-"
-                w(f"| {tier} | {spread([r.get('alone') for r in rows])} | "
-                  f"{spread([r.get('marginal') for r in rows])} | "
-                  f"{spread([r.get('cumulative') for r in rows])} | {gb_cell} |")
+                w(f"| {tier} | {spread([r.get('tier_alone_removed') for r in rows])} | "
+                  f"{spread([r.get('marginal_removed') for r in rows])} | "
+                  f"{spread([r.get('cumulative_removed') for r in rows])} | {gb_cell} |")
             w("")
+            # A tier that is measured and never subtracted has no row in the curve, and its
+            # absence from the table above has to be stated or it reads as a tier that was
+            # dropped. The unidentifiable-contig tier is the one this applies to: SPEC's
+            # subtrahend is identification, so matching an unnamed contig is recorded and
+            # does not remove the read. Subtracting it inflated removal to 85.9% against
+            # the true 77.0% once already.
+            observed = [k for _, t, _ in have for k in (t.get("tiers") or {})
+                        if k not in order]
+            if observed:
+                w(f"Measured and not subtracted, so carrying no row above: "
+                  f"`{'`, `'.join(dict.fromkeys(observed))}`. Matching sequence nobody has "
+                  f"named is recorded against the read and does not remove it.")
+                w("")
 
     # ---- what every stage did, and what it refused: for this sample that IS the result
     w("## What every stage did, per seed")

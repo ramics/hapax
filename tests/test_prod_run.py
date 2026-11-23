@@ -399,3 +399,44 @@ def test_the_reference_tables_a_stage_reads_are_in_the_payload(tmp_path):
     for path in cp["files"].values():
         rel = Path(path).resolve().relative_to(ROOT)
         assert (tree / rel).exists(), f"{rel} is read by the crossplant stage and not shipped"
+
+
+def test_the_generated_tables_carry_numbers_and_not_a_column_of_dashes(tmp_path):
+    """The table generator is checked for CELLS, not for exiting zero.
+
+    THE DEFECT THIS PINS. `report_prod.py` read the cascade curve's four fields out of
+    `tiers["tiers"][name]`, which holds each tier's own internal sweep, while the per-tier
+    removal lives one row per tier in `tiers["curve"]`. So the one table that says what each
+    index bought rendered as `| artefact | - | - | - | - |` for every tier, on both libraries
+    it had ever been run on, and the page looked finished. A generated file is this repo's
+    defence against prose drifting from its outputs, which makes a silently empty generated
+    file worse than no file: an empty cell and a measurement that never happened are
+    indistinguishable, which is the failure `record no significant hits as an explicit
+    census` already exists for one layer in.
+
+    So the assertion is that the tier table holds numbers. It runs against whatever
+    production run directories are committed, and skips if none is.
+    """
+    import re
+    runs = sorted(ROOT.glob("results/prod_*/run_s*/tiers.json"))
+    if not runs:
+        pytest.skip("no production run directory is committed")
+    res = runs[0].parent.parent
+    library = res.name.replace("prod_", "")
+    out = tmp_path / "TABLES.md"
+    r = subprocess.run([sys.executable, "-I", "experiments/report_prod.py",
+                        "--library", library, "--results", str(res), "--out", str(out)],
+                       cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    text = out.read_text()
+    tier_rows = [l for l in text.splitlines()
+                 if l.startswith("| ") and re.search(r"\| (rrna|prot_sprot) \|", l)]
+    assert tier_rows, "the cascade tier table has no rows at all"
+    for row in tier_rows:
+        cells = [c.strip() for c in row.strip("|").split("|")[1:4]]
+        assert all(re.fullmatch(r"[\d.]+( \([\d.]+-[\d.]+\))?", c) for c in cells), (
+            f"a cascade tier row carries no number: {row}")
+    # the sections whose absence is invisible, each of which was missing on the first run
+    for heading in ("## The assembly", "## The cascade", "## Measured off the file",
+                    "## The mate-2 non-template prefix"):
+        assert heading in text, f"{heading} did not render from {res}"

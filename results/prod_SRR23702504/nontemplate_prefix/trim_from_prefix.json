@@ -1,0 +1,62 @@
+{
+  "script": "experiments/trim_from_prefix.py",
+  "git_sha": "e7ab28f1637be82128a1d2f867e852b03a29b7fb",
+  "tree_dirty": false,
+  "script_sha256": "00e1a8465003bfda",
+  "modules_sha256": {
+    "experiments/provenance.py": "81bdbf9062586c1e"
+  },
+  "code_sha256": "b2e685e3be61bee4",
+  "parameters": {
+    "library": "SRR23702504",
+    "prefix_json": [
+      "/opt/hapax/out/nontemplate_prefix/nontemplate_prefix_s1.json",
+      "/opt/hapax/out/nontemplate_prefix/nontemplate_prefix_s2.json",
+      "/opt/hapax/out/nontemplate_prefix/nontemplate_prefix_s3.json",
+      "/opt/hapax/out/nontemplate_prefix/nontemplate_prefix_s4.json",
+      "/opt/hapax/out/nontemplate_prefix/nontemplate_prefix_s5.json"
+    ]
+  },
+  "library": "SRR23702504",
+  "seeds": 5,
+  "modes": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "mode_shares": [
+    0.4964,
+    0.5248,
+    0.5208,
+    0.471,
+    0.4803
+  ],
+  "anchored_r2": [
+    139,
+    141,
+    144,
+    138,
+    127
+  ],
+  "r1_modes": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "trim_r2": null,
+  "problems": [
+    "only 139 mate-2 reads anchored to SILVA in one seed, under the floor of 2000: the clip distribution of a library with little ribosomal content describes the reference, not the library",
+    "only 141 mate-2 reads anchored to SILVA in one seed, under the floor of 2000: the clip distribution of a library with little ribosomal content describes the reference, not the library",
+    "only 144 mate-2 reads anchored to SILVA in one seed, under the floor of 2000: the clip distribution of a library with little ribosomal content describes the reference, not the library",
+    "only 138 mate-2 reads anchored to SILVA in one seed, under the floor of 2000: the clip distribution of a library with little ribosomal content describes the reference, not the library",
+    "only 127 mate-2 reads anchored to SILVA in one seed, under the floor of 2000: the clip distribution of a library with little ribosomal content describes the reference, not the library"
+  ],
+  "min_mode_share": 0.25,
+  "min_anchored": 2000,
+  "rule": "the mate-2 5' soft-clip mode, required to be identical in every seed, to hold at least min_mode_share of anchored reads, to sit beside a mate-1 mode that is not the same number, and to rest on at least min_anchored anchored reads per seed",
+  "bias": "adapter read-through clips 3' ends and inflates the within-read control, which makes a real 5' excess harder to see rather than easier. Every failure here therefore errs towards refusing to trim, and not trimming leaves kit sequence in the reads"
+}

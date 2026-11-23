@@ -1,0 +1,20 @@
+{
+  "script": "experiments/megahit_rename.py",
+  "git_sha": "90060fa1380c377f40a77bb3b27247325d5ce136",
+  "tree_dirty": false,
+  "script_sha256": "571d98e75f2a0bfe",
+  "modules_sha256": {
+    "experiments/provenance.py": "850c8bc92afe4c82",
+    "venv/lib/python3.12/site-packages/_distutils_hack/__init__.py": "ced72e54431ecf2d"
+  },
+  "code_sha256": "8be0c6e18c430185",
+  "parameters": {
+    "contigs": "/opt/hapax/stage/wk/asm_baseline/final.contigs.fa",
+    "out": "/opt/hapax/stage/wk/asm_baseline/sample_contigs.fa",
+    "tag": "SRR23702504",
+    "manifest": "/opt/hapax/out/prod_SRR23702504/rename_manifest.json"
+  },
+  "contigs": 323430,
+  "wall_seconds": 0.8,
+  "what_this_is": "a pure relabelling: sequence is unchanged and the MEGAHIT name is kept as a suffix"
+}
