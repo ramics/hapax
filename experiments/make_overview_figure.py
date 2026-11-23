@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
-"""Draw the README overview figure from a table of measured quantities.
+"""Draw the README overview figure: what a run does and what it reports, on any library.
 
-Why this is a generator and not a hand-drawn SVG: CLAUDE.md's rule is that a number
-typed into a figure is a number without provenance, and the first cut of this figure
-had nine of them typed straight into the drawing. Here every quantity appears exactly
-once, in STAGES or LIBRARY_SPLIT below, beside the results directory it was read from,
-and the geometry of the one to-scale element (panel b) is computed from the percentages
-rather than measured off by eye -- so a figure that disagrees with the record is a
-one-line diff in a table rather than an arithmetic error hidden in path coordinates.
+The figure carries no sample's results. An earlier version drew the Berlin cascade to scale
+and put seven measured quantities in the margin, which made the front door a result from one
+library rather than a description of the tool (Imo, 2026-11-23: "these are SPECIFIC SAMPLE
+INFO. please make it GENERIC. THIS IS THE FRONT DOOR."). The split between identified,
+unnameable and unplaced is a property of a library and is measured per run; a reader arriving
+at the repo cannot tell from a Berlin bar what their own water would do, and a page shaped
+like one sample cannot be compared with another (SPEC 13.4).
 
-What this script does NOT do, stated rather than implied: it does not parse the result
-files. The values are transcribed from the committed REPORT.md of each directory, which
-is why each carries its `source` and why `--check-sources` (on by default) refuses to
-draw when a cited directory is absent from the tree. Parsing them out of the manifests
-is the obvious next step and is not done: the five directories cited here write five
-different shapes, and a parser per shape is a bigger change than the figure.
+So the content here is the pipeline, the three output classes, and the refusals attached to
+each. All of it is prose about the tool, which is why this script is a generator rather than
+a drawing: the text lives in STAGES and CLASSES below, where it can be read against SPEC.md
+in one screen, and `tests/test_overview_figure.py` fails if the committed SVG drifts from it.
+Nothing in it is a number read from a results directory, and the test asserts that too.
 
 Usage:
     python3 experiments/make_overview_figure.py --out docs/hapax-overview.svg
@@ -25,150 +24,140 @@ from __future__ import annotations
 
 import argparse
 import pathlib
+import re
 import sys
 
 REPO = pathlib.Path(__file__).resolve().parent.parent
 
 # --------------------------------------------------------------------------------------
-# The record. One row per stage of `hapax run`, each with one input, one output and one
-# measured quantity. The stage names are the driver's own (SPEC 13.1), grouped where one
-# line of the figure covers several of its stages -- `score the distance` covers
-# `divergent`, `shortlist` and `reads`; `report the residue` covers `census` and `layers`.
+# The stages of `hapax run`, in order, with what each one is given and what it writes.
+# The names are the driver's own (SPEC 13.1). Two lines cover several of its stages:
+# `score the distance` covers divergent, shortlist and reads; `report the residue` covers
+# census and layers. `spec` is the section a reader should check the line against.
 # --------------------------------------------------------------------------------------
 STAGES = [
     {
         "name": "resolve",
-        "io": "library accession → trim, block size, which panels apply",
-        "number": "14 nt",
-        "unit": "non-template prefix on mate 2. Mode in 5 of 5 seeds.",
-        "source": "results/nontemplate_prefix",
-        "accent": "open",
+        "io": "library accession → its trim, block size and panels",
+        "writes": "every value with how it was established, or a refusal to run",
+        "spec": "4.1",
     },
     {
         "name": "merge",
         "io": "read pairs → one read per overlapping molecule",
-        "number": "35.1%",
-        "unit": "of pairs merge. Recognition at 20% divergence, 10.5% to 38.4%.",
-        "source": "results/profile_reach",
-        "accent": "open",
+        "writes": "a merged read where a pair overlaps, per-mate rows where it does not",
+        "spec": "4.2",
     },
     {
         "name": "assemble",
-        "io": "whole library → contigs, plus a recovery check in the same pass",
-        "number": "20 of 25",
-        "unit": "depositor genomes at ≥90% breadth. 53 zero-read controls empty.",
-        "source": "results/path_settings",
-        "accent": "open",
+        "io": "the whole library → contigs",
+        "writes": "contigs with mapped depth and evenness, and recovery against a truth panel",
+        "spec": "4.3",
     },
     {
         "name": "identify",
-        "io": "reads and contigs against indexes, cheapest first → tier table, removal evidence",
-        "number": "77.10%",
-        "unit": "of read pairs removed as known. Range 77.02–77.28, 5 seeds.",
-        "source": "results/subtract_recut",
-        "accent": "known",
+        "io": "reads and contigs against indexes, cheapest first → tiers",
+        "writes": "the tier table and the evidence behind every removal, per route",
+        "spec": "4.4",
     },
     {
         "name": "score the distance",
-        "io": "every row, removed or not → distance, closest relative, coverage, E-value",
-        "number": "0.00%",
-        "unit": "on shuffled sequence. Reported per field.",
-        "source": "results/divergent_contigs",
-        "accent": "known",
+        "io": "every contig, removed or kept → one row on one scale",
+        "writes": "identity and coverage per gene, nucleotide and protein, with the index used",
+        "spec": "4.5, 5",
     },
     {
         "name": "report the residue",
-        "io": "unnamed reads → one row per pair, no thresholds, controls alongside",
-        "number": "depth 1",
-        "unit": "median depth of pairs with no contig. Set by read length and database reach.",
-        "source": "results/residue_census",
-        "accent": "residue",
+        "io": "reads nothing named → one row per pair",
+        "writes": "no threshold applied, each field beside its shuffled and known-positive controls",
+        "spec": "4.6, 7",
     },
     {
         "name": "subtract other plants",
-        "io": "512 libraries from other plants → witnessed or not, paired by plant",
-        "number": "87.5%",
-        "unit": "of a held-out library removed. Still falling at 512.",
-        "source": "results/crossplant",
-        "accent": "open",
+        "io": "a panel of libraries from elsewhere → witnessed or not",
+        "writes": "the witnessed fraction at both operating points, paired by plant",
+        "spec": "7.1",
     },
 ]
 
-# Panel b, to scale. `points` are percentage points of read pairs; they are the marginal
-# column of the cascade table, so they sum to the union and the bar needs no fudging.
-# The residue's two tiers are quoted to one decimal in the committed table and do not sum
-# to the residue exactly, so they are written as labels under the block and not as
-# divisions of it -- a division would assert a precision the record does not have.
-LIBRARY_SPLIT = {
-    "source": "results/subtract_recut",
-    "identified": [
-        ("ribosomal, 37.93 points", 37.93),
-        ("the sample's own contigs, 30.33", 30.33),
-        ("everything else, 8.84", 8.84),
-    ],
-    "residue": 22.90,
-    "residue_note": "≈8.4 assembled but unnamed, ≈11.1 never assembled",
-    "cost_note": (
-        "0.015 GB of the sample's own contigs removes 30.33 points. 16 GB of Kraken2 removes "
-        "0.42. Indexes are consulted in order of cost."
-    ),
-}
+# The three output classes of SPEC 5, 6 and 7. `refuses` is the claim the class will not
+# make, which belongs on the front door as much as what it reports: the refusals are the
+# part a reader is most likely to assume away.
+CLASSES = [
+    {
+        "key": "A",
+        "name": "divergent but related contigs",
+        "reports": "distance from published sequence with the closest relative named, per gene",
+        "refuses": "no species call; whole-contig identity is whichever gene won",
+        "accent": "known",
+    },
+    {
+        "key": "B",
+        "name": "novel strains of known viruses",
+        "reports": "the near end of the same scale, treated as a first-class case",
+        "refuses": "no separation below the assembler's fusion limit; reported as fused",
+        "accent": "known",
+    },
+    {
+        "key": "C",
+        "name": "the unplaceable residue",
+        "reports": "distance without identity, with the depth it was observed at",
+        "refuses": "no “matches nothing”, and no claim that more sequencing would place it",
+        "accent": "residue",
+    },
+]
 
-# Panel c's rug is one mark per contig in a schematic, not a dataset: positions come from
-# a fixed arithmetic sequence so the drawing is byte-identical on every run. It carries no
-# number and makes no claim about where contigs actually fall -- that is the web view's job.
+REFUSALS = [
+    "no novelty score",
+    "no threat score",
+    "no per-read call",
+    "no host or risk label",
+]
+
+# Panel c's rug is one mark per contig in a schematic. Positions are fixed so the drawing is
+# byte-identical on every run, and they make no claim about where contigs fall on any library.
 RUG = (22, 38, 57, 93, 110, 148, 166, 193, 224, 246)
 
 INK = "#14181d"
 KNOWN = "#2f6fd0"
-RESIDUE = "#e2a33c"
-RESIDUE_TEXT = "#b07000"
+RESIDUE = "#c77700"
 
 W = 1120
-BAR_W = 1040.0  # px for 100% of read pairs
-BAR_X = 40
-BAR_Y = 672
-ROW_TOP = 166
-ROW_STEP = 62
+# Layout, derived rather than typed: the canvas has to grow when a stage or a class is added
+# to the tables above, and the first version of this figure was clipped at the bottom because
+# its height was a literal.
+ROW_TOP, ROW_STEP = 162, 58
+NOTE_Y = ROW_TOP + ROW_STEP * (len(STAGES) - 1) + 50
+B_TOP = NOTE_Y + 58
+CLASS_STEP = 50
+C_TOP = B_TOP + 36 + CLASS_STEP * len(CLASSES) + 24
+REFUSAL_Y = C_TOP + 100
+H = REFUSAL_Y + 92
 
 
-def _accent(kind: str) -> tuple[str, str]:
-    """Fill and stroke for a stage marker. Filled markers are the two stages that produce
-    the headline split; the residue stage carries the residue colour so panel a and panel
-    b can be read against each other without a legend."""
-    if kind == "known":
-        return KNOWN, KNOWN
-    if kind == "residue":
-        return "#c77700", "#c77700"
-    return "#ffffff", KNOWN
-
-
-def check_sources() -> list[str]:
-    cited = {s["source"] for s in STAGES} | {LIBRARY_SPLIT["source"]}
-    return sorted(c for c in cited if not (REPO / c).is_dir())
+def _accent(kind: str) -> str:
+    return KNOWN if kind == "known" else RESIDUE
 
 
 def render() -> str:
     out: list[str] = []
     add = out.append
 
-    height = 918
     add(
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {height}" '
-        f'width="{W}" height="{height}" role="img" aria-labelledby="figtitle figdesc">'
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" '
+        f'width="{W}" height="{H}" role="img" aria-labelledby="figtitle figdesc">'
     )
-    add('  <title id="figtitle">hapax: the stages of one run, where a library ends up, '
-        'and what one row says</title>')
+    add('  <title id="figtitle">hapax: the stages of a run, the three output classes, and '
+        "the scale they share</title>")
     desc = (
-        "Panel a lists the seven stages of a run, each with its input, its output and one "
-        "measured quantity: "
-        + "; ".join(f"{s['name']}, {s['number']} {s['unit']}" for s in STAGES)
-        + ". Panel b is a to-scale bar of 100% of read pairs: "
-        + f"{100 - LIBRARY_SPLIT['residue']:.2f}% identified, made up of "
-        + ", ".join(label for label, _ in LIBRARY_SPLIT["identified"])
-        + f", and {LIBRARY_SPLIT['residue']:.2f}% residue, of which {LIBRARY_SPLIT['residue_note']}"
-        + ". Panel c is the one distance axis every row sits on, running from far from "
-        "anything published to matched, each row carrying what it is closest to."
+        "Panel a lists the seven stages of a run, with what each is given and what it writes: "
+        + "; ".join(f"{s['name']}, {s['io']}, writes {s['writes']}" for s in STAGES)
+        + ". Panel b lists the three output classes, what each reports and what it refuses to "
+        "claim: "
+        + "; ".join(f"{c['key']}, {c['name']}, reports {c['reports']}, {c['refuses']}"
+                    for c in CLASSES)
+        + ". Panel c is the distance scale all three sit on, running from far from published "
+        "sequence to matched. The figure carries no result from any sample."
     )
     add(f'  <desc id="figdesc">{desc}</desc>')
     add("")
@@ -182,13 +171,12 @@ def render() -> str:
     add("      .pant { font-size: 13px; font-weight: 700; fill: " + INK + "; }")
     add("      .st   { font-size: 14.5px; font-weight: 700; letter-spacing: 0.2px; }")
     add("      .io   { font-size: 12px; fill: #5d6671; }")
-    add("      .num  { font-size: 14.5px; font-weight: 700; font-variant-numeric: tabular-nums; }")
-    add("      .unit { font-size: 11.5px; fill: #5d6671; }")
+    add("      .wr   { font-size: 12px; fill: #3c444e; }")
     add("      .ax   { font-size: 11.5px; fill: #5d6671; }")
     add("      .note { font-size: 11.5px; fill: #717a85; }")
-    add("      .seg  { font-size: 11.5px; }")
-    add("      .idx  { font-size: 11px; font-weight: 700; fill: #97a0aa; "
-        "font-variant-numeric: tabular-nums; }")
+    add("      .idx  { font-size: 11px; font-weight: 700; fill: #97a0aa; }")
+    add("      .cls  { font-size: 14px; font-weight: 700; }")
+    add("      .ref  { font-size: 11.5px; fill: #8a5a12; }")
     add("    </style>")
     add('    <marker id="arr" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="6" '
         'markerHeight="6" orient="auto">')
@@ -196,7 +184,7 @@ def render() -> str:
     add("    </marker>")
     add("  </defs>")
     add("")
-    add(f'  <rect x="0.5" y="0.5" width="{W - 1}" height="{height - 1}" fill="#ffffff" '
+    add(f'  <rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" fill="#ffffff" '
         'stroke="#dfe4ea"/>')
     add("")
     add('  <text class="figh" x="40" y="48">hapax</text>')
@@ -205,77 +193,66 @@ def render() -> str:
     add('  <line x1="40" y1="92" x2="1080" y2="92" stroke="#dfe4ea"/>')
     add("")
 
-    # ---- panel a -------------------------------------------------------------------
-    add('  <text class="pan" x="40" y="122">a<tspan class="pant" dx="12">One run, stage by '
+    # ---- panel a: the stages -------------------------------------------------------
+    add('  <text class="pan" x="40" y="122">a<tspan class="pant" dx="12">A run, stage by '
         "stage</tspan></text>")
-    add('  <text class="ax" x="1080" y="122" text-anchor="end">input, output and one '
-        "measured quantity per stage</text>")
-    spine_end = ROW_TOP + ROW_STEP * (len(STAGES) - 1) + 30
-    add(f'  <line x1="54" y1="140" x2="54" y2="{spine_end}" stroke="#e7ebf0"/>')
+    add('  <text class="ax" x="1080" y="122" text-anchor="end">given → produced, and what '
+        "the run writes</text>")
+    top, step = ROW_TOP, ROW_STEP
+    add(f'  <line x1="54" y1="138" x2="54" y2="{top + step * (len(STAGES) - 1) + 26}" '
+        'stroke="#e7ebf0"/>')
     add("")
     add("  <g>")
     for i, stage in enumerate(STAGES):
-        cy = ROW_TOP + i * ROW_STEP
-        fill, stroke = _accent(stage["accent"])
-        add(f'    <circle cx="54" cy="{cy}" r="4.5" fill="{fill}" stroke="{stroke}" '
+        cy = top + i * step
+        add(f'    <circle cx="54" cy="{cy}" r="4.5" fill="#ffffff" stroke="{KNOWN}" '
             'stroke-width="2"/>')
         add(f'    <text class="idx" x="40" y="{cy + 4}" text-anchor="end">{i + 1}</text>')
-        add(f'    <text class="st" x="72" y="{cy - 3}">{stage["name"]}</text>')
-        add(f'    <text class="io" x="72" y="{cy + 15}">{stage["io"]}</text>')
-        add(f'    <text class="num" x="1080" y="{cy - 3}" text-anchor="end">{stage["number"]}</text>')
-        add(f'    <text class="unit" x="1080" y="{cy + 15}" text-anchor="end">{stage["unit"]}</text>')
+        add(f'    <text class="st" x="72" y="{cy - 2}">{stage["name"]}</text>')
+        add(f'    <text class="io" x="72" y="{cy + 16}">{stage["io"]}</text>')
+        add(f'    <text class="wr" x="1080" y="{cy - 2}" text-anchor="end">{stage["writes"]}'
+            "</text>")
+        add(f'    <text class="ax" x="1080" y="{cy + 16}" text-anchor="end">SPEC &#167;'
+            f'{stage["spec"]}</text>')
         if i < len(STAGES) - 1:
-            add(f'    <line x1="72" y1="{cy + 30}" x2="1080" y2="{cy + 30}" stroke="#f0f3f6"/>')
+            add(f'    <line x1="72" y1="{cy + 28}" x2="1080" y2="{cy + 28}" stroke="#f0f3f6"/>')
         add("")
     add("  </g>")
-    add('  <line x1="40" y1="580" x2="1080" y2="580" stroke="#e7ebf0"/>')
-    add('  <text class="note" x="40" y="598">A stage missing an input is recorded as skipped '
-        "and the run marked incomplete. No fallback to a cheaper index. No parameter is "
-        "inferred from another sample.</text>")
+    note_y = NOTE_Y
+    add(f'  <line x1="40" y1="{note_y - 18}" x2="1080" y2="{note_y - 18}" stroke="#e7ebf0"/>')
+    add(f'  <text class="note" x="40" y="{note_y}">Removal applies to read pairs. Contigs are '
+        "measured whether or not an index names them. A stage missing an input is recorded as "
+        "skipped and the run marked incomplete.</text>")
+    add(f'  <text class="note" x="40" y="{note_y + 17}">No parameter is inferred from another '
+        "sample, and no stage falls back to a cheaper index. How much each tier removes is a "
+        "property of the library and is measured per run.</text>")
     add("")
 
-    # ---- panel b -------------------------------------------------------------------
-    identified = sum(points for _, points in LIBRARY_SPLIT["identified"])
-    residue = LIBRARY_SPLIT["residue"]
-    if abs(identified + residue - 100.0) > 0.005:
-        raise SystemExit(
-            f"panel b does not close: {identified:.2f} identified + {residue:.2f} residue"
-        )
-    px = BAR_W / 100.0
-
-    add('  <text class="pan" x="40" y="636">b<tspan class="pant" dx="12">One library '
-        'by removal route</tspan><tspan class="ax" dx="14" font-weight="400">100% of read pairs, '
-        "to scale</tspan></text>")
+    # ---- panel b: the output classes ------------------------------------------------
+    b_top = B_TOP
+    add(f'  <text class="pan" x="40" y="{b_top}">b<tspan class="pant" dx="12">Three output '
+        "classes, on one scale</tspan></text>")
+    add(f'  <text class="ax" x="1080" y="{b_top}" text-anchor="end">what each reports, and '
+        "what it will not claim</text>")
     add("")
-    add(f'  <g transform="translate({BAR_X},{BAR_Y})">')
-    add(f'    <rect x="0" y="0" width="{identified * px:.1f}" height="24" fill="{KNOWN}"/>')
-    add(f'    <rect x="{identified * px:.1f}" y="0" width="{residue * px:.1f}" height="24" '
-        f'fill="{RESIDUE}"/>')
-    run = 0.0
-    for label, points in LIBRARY_SPLIT["identified"][:-1]:
-        run += points
-        add(f'    <line x1="{run * px:.1f}" y1="0" x2="{run * px:.1f}" y2="24" stroke="#ffffff"/>')
-    add(f'    <rect x="0" y="0" width="{BAR_W:.0f}" height="24" fill="none" stroke="#c9d0d8"/>')
-    add("")
-    add(f'    <text class="ax" x="0" y="-8" font-weight="700" fill="{INK}">{identified:.2f}% '
-        "identified</text>")
-    add(f'    <text class="ax" x="{BAR_W:.0f}" y="-8" text-anchor="end" font-weight="700" '
-        f'fill="{RESIDUE_TEXT}">{residue:.2f}% residue</text>')
-    add("")
-    run = 0.0
-    for label, points in LIBRARY_SPLIT["identified"]:
-        add(f'    <text class="seg" x="{run * px + 4:.0f}" y="42" fill="{KNOWN}">{label}</text>')
-        run += points
-    add(f'    <text class="seg" x="{BAR_W:.0f}" y="62" text-anchor="end" fill="{RESIDUE_TEXT}">'
-        f'{LIBRARY_SPLIT["residue_note"]}</text>')
-    add(f'    <text class="note" x="0" y="86">{LIBRARY_SPLIT["cost_note"]}</text>')
+    add("  <g>")
+    for i, cls in enumerate(CLASSES):
+        cy = b_top + 36 + i * CLASS_STEP
+        colour = _accent(cls["accent"])
+        add(f'    <rect x="40" y="{cy - 14}" width="4" height="32" fill="{colour}"/>')
+        add(f'    <text class="cls" x="60" y="{cy - 1}" fill="{colour}">{cls["key"]}'
+            f'<tspan class="cls" dx="10" fill="{INK}">{cls["name"]}</tspan></text>')
+        add(f'    <text class="io" x="60" y="{cy + 17}">{cls["reports"]}</text>')
+        add(f'    <text class="ref" x="1080" y="{cy - 1}" text-anchor="end">{cls["refuses"]}'
+            "</text>")
     add("  </g>")
     add("")
 
-    # ---- panel c -------------------------------------------------------------------
-    add('  <text class="pan" x="40" y="788">c<tspan class="pant" dx="12">What a row '
+    # ---- panel c: the scale ---------------------------------------------------------
+    c_top = C_TOP
+    add(f'  <text class="pan" x="40" y="{c_top}">c<tspan class="pant" dx="12">What a row '
         "reports</tspan></text>")
-    add('  <g transform="translate(40,828)">')
+    add(f'  <g transform="translate(40,{c_top + 40})">')
     add('    <line x1="0" y1="0" x2="300" y2="0" stroke="#4a525c" marker-end="url(#arr)"/>')
     add('    <g stroke="#4a525c">')
     for a, b in zip(RUG[0::2], RUG[1::2]):
@@ -287,19 +264,43 @@ def render() -> str:
     add('    <text class="note" x="360" y="-14">One mark per contig, no thresholds. A row '
         "gives the distance to its closest</text>")
     add('    <text class="note" x="360" y="2">published relative and the identity of that '
-        "relative. Where one is absent, the</text>")
-    add('    <text class="note" x="360" y="18">report states which. No novelty score. No threat '
-        "score. No per-read call.</text>")
-    add('    <text class="note" x="360" y="34">Search establishes prior knowledge. It does not '
-        "establish novelty.</text>")
+        "relative. Where one is absent,</text>")
+    add('    <text class="note" x="360" y="18">the report states which. Search establishes '
+        "prior knowledge. It does not</text>")
+    add('    <text class="note" x="360" y="34">establish novelty, because score ordering '
+        "tracks proximity to the database.</text>")
     add("  </g>")
     add("")
-    add('  <line x1="40" y1="880" x2="1080" y2="880" stroke="#eef1f4"/>')
-    add('  <text class="note" x="40" y="898">Berlin wastewater SRR23973193, 5 seeds. '
-        "Percentages are of read pairs. Every number comes from a committed directory under "
-        '<tspan font-weight="700">results/</tspan>.</text>')
+
+    # ---- the refusals ----------------------------------------------------------------
+    r_y = REFUSAL_Y
+    add(f'  <text class="ax" x="40" y="{r_y + 19}">Never emitted</text>')
+    x = 152
+    for refusal in REFUSALS:
+        width = 16 + int(len(refusal) * 7.1)
+        add(f'    <rect x="{x}" y="{r_y}" width="{width}" height="28" rx="14" fill="#fffaf2" '
+            'stroke="#e6d3b3"/>')
+        add(f'    <text class="ref" x="{x + width / 2:.0f}" y="{r_y + 19}" '
+            f'text-anchor="middle">{refusal}</text>')
+        x += width + 14
+    add("")
+    add(f'  <line x1="40" y1="{H - 38}" x2="1080" y2="{H - 38}" stroke="#eef1f4"/>')
+    add(f'  <text class="note" x="40" y="{H - 20}">This figure describes the report, not a '
+        "result: it carries no number from any sample. The measurements behind each rule are "
+        'in <tspan font-weight="700">results/</tspan>, on the libraries named there.</text>')
     add("</svg>")
     return "\n".join(out) + "\n"
+
+
+def numbers_in(svg: str) -> list[str]:
+    """Percentages and counts in the drawing's text, which the figure must not carry.
+
+    Section references (SPEC 4.1) and the geometry are not results; a percentage or a
+    quantity with units is. This is the check that keeps the front door generic as the
+    figure is edited, since the easy mistake is to answer a reviewer with a number.
+    """
+    text = " ".join(re.findall(r">([^<>]+)<", svg))
+    return re.findall(r"\b\d[\d,.]*\s*(?:%|GB|nt|points?|reads?|pairs?|libraries)\b", text)
 
 
 def main() -> int:
@@ -307,18 +308,14 @@ def main() -> int:
     ap.add_argument("--out", default="docs/hapax-overview.svg")
     ap.add_argument("--check", action="store_true",
                     help="exit 1 if the committed file differs from what this script draws")
-    ap.add_argument("--allow-missing-sources", action="store_true",
-                    help="draw even when a cited results/ directory is absent")
     args = ap.parse_args()
 
-    missing = check_sources()
-    if missing and not args.allow_missing_sources:
-        print("cited result directories are missing, refusing to draw:", file=sys.stderr)
-        for m in missing:
-            print(f"  {m}", file=sys.stderr)
+    svg = render()
+    stray = numbers_in(svg)
+    if stray:
+        print("the figure carries sample numbers, refusing to draw:", stray, file=sys.stderr)
         return 2
 
-    svg = render()
     target = REPO / args.out
     if args.check:
         if not target.exists():
