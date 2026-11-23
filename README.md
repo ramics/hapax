@@ -1,8 +1,29 @@
-# hapax
+<h1 align="center">hapax</h1>
+<p align="center"><strong>Wastewater in, a measurement out.</strong><br>
+Subtract the known. Assemble what survives. Score the rest as a distance, with a shuffled null beside it.</p>
 
-Take a wastewater sample, return the full breakdown: what is known and by what, what
-assembled, what did not, what codes and what does not — each pile quantified, and each
-answer priced.
+<p align="center"><img src="docs/hapax-overview.svg" alt="How hapax works: one library enters with its mates merged; a cheapest-index-first cascade removes 77.10% of read pairs as already known and 22.90% survives; what survives splits into contigs nothing can name at median depth 6, reads that never assembled at median depth 1, and a cross-plant background panel; everything, removed or not, is placed on one distance axis carrying its nearest-relative identity and a shuffled null; and the tool emits no novelty score, no threat score, no per-read verdict and no claim that anything matches nothing." width="100%"></p>
+
+It runs on any sample, reports in the same format every time, and assumes nothing about the
+water. The output is one three-way breakdown — what is known and by what, what assembled but
+nothing can name, what never assembled at all — every row carrying both halves of the answer,
+*how far* from anything published and *like what*, with the operating point that produced it
+and the cost of getting there.
+
+**Three numbers that say what the tool is.** A 0.015 GB index built from the sample's own
+contigs removes 30 points of the library where 16 GB of Kraken2 removes 0.42 — which is why
+the cascade is ordered by cost, not by size ([`results/subtract_known/`](results/subtract_known/REPORT.md)).
+Merging the mates of a pair, which is free, lifts recognition at 20% divergence from 10.5% to
+38.4% — the one wall this project has found that moves without new sequencing or new money
+([`results/profile_reach/`](results/profile_reach/REPORT.md)). And a union of 512 other plants'
+libraries removes 87.5% of a held-out one, but at matched depth 1 it takes 79.0% of the residue
+against 70.5% of already-identified reads: it is blind to anything seen once, not to novelty
+([`results/crossplant/`](results/crossplant/REPORT.md)).
+
+**And what it will not do.** No novelty score, no threat score, no per-read verdict, and never
+"matches nothing" — a search can say whether something is already known and cannot say that
+something is new, which is measured here repeatedly rather than assumed. The declared blind
+spots ship as part of the output (`SPEC.md` §7, §9).
 
 **Start here: [`SPEC.md`](SPEC.md).** It is the production tool spec and the source of truth
 for intent. It is short by design and every number in it is measured on real data with a
