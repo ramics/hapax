@@ -54,6 +54,23 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 # tool it launches.
 from hapax import PRODUCTION_STAGES  # noqa: E402
 
+#: Production stages this launcher's instance has no reference data for, each with the
+#: reason, subtracted from the list above rather than a second list typed beside it.
+#:
+#: WHY THIS IS NOT A SHORTER STAGE LIST. Importing hapax's production list, correctly, put
+#: `divergent` back into the pass - and it refused in 0.1 s on a missing `Pfam-A.hmm`,
+#: which is the designed refusal and not a defect. What IS a defect is a launcher that
+#: ships a run it knows will refuse: the instance stages no Pfam, so the stage can only
+#: fail, and a run directory with a red stage in it every time teaches a reader to ignore
+#: red stages. So the omission is stated here, by name, with what it would need - and
+#: `--stages` still accepts it explicitly for a machine that has the index.
+NO_REFERENCE_ON_THIS_INSTANCE = {
+    "divergent": "experiments/divergent_known.py needs data/pfam/Pfam-A.hmm for its "
+                 "domain-presence calibration, which this instance does not stage, and "
+                 "its gene-level workup is hours of BLAST over the removed pile",
+}
+LAUNCHER_STAGES = [s for s in PRODUCTION_STAGES if s not in NO_REFERENCE_ON_THIS_INSTANCE]
+
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = Path(__file__).resolve().parent / "prod_userdata.sh"
 BOOTSTRAP = Path(__file__).resolve().parent / "bigindex_bootstrap.sh"
@@ -242,11 +259,12 @@ def main(argv: list[str] | None = None) -> int:
                          "only with a basis written into experiments/libraries.json - on a "
                          "library with little ribosomal content the SILVA instrument "
                          "cannot anchor enough reads to measure anything")
-    ap.add_argument("--stages", default=" ".join(PRODUCTION_STAGES),
-                    help="hapax stages, defaulting to hapax.py's own production list - "
-                         "`panel` and `calibration` are validation stages and are not in "
-                         "it (SPEC 13.4), and `divergent` is left out because its "
-                         "gene-level workup is hours of BLAST over the removed pile")
+    ap.add_argument("--stages", default=" ".join(LAUNCHER_STAGES),
+                    help="hapax stages, defaulting to hapax.py's own production list minus "
+                         "the stages this instance stages no reference data for "
+                         "(NO_REFERENCE_ON_THIS_INSTANCE says which and why). `panel` and "
+                         "`calibration` are validation stages and are not in the "
+                         "production list at all (SPEC 13.4)")
     ap.add_argument("--megahit-memory", type=float, default=0.85,
                     help="MEGAHIT --memory as a fraction of RAM")
     ap.add_argument("--threads", type=int, default=8)

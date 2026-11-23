@@ -191,3 +191,52 @@ def test_the_source_digest_is_read_once_not_once_per_contig(tmp_path, monkeypatc
         f"one file read once, and this is how the stage came to cost hours")
     rows = [json.loads(l) for l in (run.dir / "contigs.jsonl").read_text().splitlines()]
     assert len({r["operating_point"]["source_sha256_16"] for r in rows}) == 1
+
+
+def test_every_library_aware_script_is_told_which_library():
+    """The driver requires --library and must hand it to every script that takes one.
+
+    THE DEFECT, measured on the first production library. `hapax run --library X` passed
+    `--library` to two of the thirteen stages. The other scripts take it through
+    `library_facts.add_argument`, whose default is the discriminating dataset so that every
+    committed command reproduces unchanged - so a stage that was not told asked for
+    BERLIN's facts while running another library's reads. The `linkage` stage needed a
+    block stride, was not given one, and refused because the read path named SRR23702504
+    and `--library` said SRR23973193: the path check catching it one layer in. Under a
+    neutral read path there is no disagreement to catch and it would have used Berlin's
+    stride in silence.
+
+    The set is checked against the scripts' own source rather than retyped, so a script
+    that becomes library-aware without being added fails here.
+    """
+    stage_scripts = set(hapax.SAMPLE_SPECIFIC) | set(hapax.PREFLIGHT_SCRIPTS)
+    takes_library = set()
+    for script in sorted(stage_scripts):
+        src = (ROOT / "experiments" / script).read_text()
+        if "library_facts.add_argument" in src or 'add_argument("--library"' in src:
+            takes_library.add(script)
+    assert takes_library == hapax.LIBRARY_AWARE, (
+        f"LIBRARY_AWARE disagrees with the scripts: missing {takes_library - hapax.LIBRARY_AWARE}, "
+        f"stale {hapax.LIBRARY_AWARE - takes_library}")
+
+
+def test_the_library_reaches_a_stage_that_was_not_passed_one(tmp_path):
+    """`Run.call` appends --library, so no stage falls back to the default library."""
+    run = hapax.Run.__new__(hapax.Run)
+    run.args = argparse.Namespace(library="SRR23702504", report_without=[])
+    run.preflighting = True
+    run.problems = []
+    seen = {}
+    run._preflight_script = lambda name, script, argv: seen.setdefault(script, argv)
+    for script in sorted(hapax.LIBRARY_AWARE):
+        # every sample-specific flag the script requires, so the refusal above does not
+        # short-circuit the call and leave the assertion vacuous
+        argv = ["--seed", "1"]
+        for flag, _field in hapax.SAMPLE_SPECIFIC.get(script, []):
+            if flag != "--library":
+                argv += [flag, "x"]
+        hapax.Run.call(run, "s", script, argv, {}, None)
+    assert set(seen) == hapax.LIBRARY_AWARE, f"only reached {sorted(seen)}"
+    for script, argv in seen.items():
+        assert "--library" in argv, f"{script} ran without --library"
+        assert argv[argv.index("--library") + 1] == "SRR23702504"

@@ -334,9 +334,17 @@ def test_the_stage_list_is_typed_once(tmp_path):
         s = importlib.util.spec_from_file_location(name, path)
         m = importlib.util.module_from_spec(s)
         s.loader.exec_module(m)
-        loaded.append(m.PRODUCTION_STAGES)
-    assert loaded[0] == loaded[1], "the launcher's list is not hapax.py's"
-    assert "panel" not in loaded[1] and "calibration" not in loaded[1]
+        loaded.append(m)
+    hp_stages, launcher = loaded[0].PRODUCTION_STAGES, loaded[1]
+    assert launcher.PRODUCTION_STAGES == hp_stages, "the launcher's list is not hapax.py's"
+    # what it actually ships is that list minus the stages the instance has no reference
+    # data for, each of which has to say why rather than simply be absent
+    omitted = set(hp_stages) - set(launcher.LAUNCHER_STAGES)
+    assert omitted == set(launcher.NO_REFERENCE_ON_THIS_INSTANCE)
+    for stage, reason in launcher.NO_REFERENCE_ON_THIS_INSTANCE.items():
+        assert stage in hp_stages and len(reason) > 40, stage
+    assert "panel" not in launcher.LAUNCHER_STAGES
+    assert "calibration" not in launcher.LAUNCHER_STAGES
 
 
 def test_a_library_with_no_entry_is_not_a_refusal_for_a_launcher():

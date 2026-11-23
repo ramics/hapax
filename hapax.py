@@ -187,6 +187,18 @@ class Run:
         # machine where that file exists the stage runs happily against the wrong sample
         # and nothing in the output says so, which is worse than a missing file. So hapax
         # must pass every such flag itself; one absent from the argv is a refusal.
+        # AND IT MUST PASS THE LIBRARY ITSELF, TO EVERY SCRIPT THAT TAKES ONE. `hapax run`
+        # requires `--library` and then handed it to two of the thirteen stages. The other
+        # scripts resolve their per-library facts through `library_facts`, whose `--library`
+        # defaults to the discriminating dataset so that every committed command reproduces
+        # unchanged - so a stage that is not told which library it is looking at asks for
+        # Berlin's facts. Measured, on the first production library: the `linkage` stage
+        # needed a block stride, was not given one, and refused because the read path named
+        # SRR23702504 while `--library` said SRR23973193. That refusal is the path check
+        # doing its job one layer in; on a library whose reads sit under a neutral path it
+        # would have used Berlin's stride silently, which is the original bug.
+        if script in LIBRARY_AWARE and "--library" not in argv:
+            argv = [*argv, "--library", self.args.library]
         without = set(getattr(self.args, "report_without", []) or [])
         defaulted = [flag for flag, field in SAMPLE_SPECIFIC.get(script, [])
                      if flag not in argv and not (field and field in without)]
@@ -1432,6 +1444,18 @@ SAMPLE_SPECIFIC = {
     "truth_panel.py": [("--library", None)],
     "crossplant_stage.py": [("--library", None)],
 }
+
+#: Scripts that accept `--library`, and are therefore told which one every time they run.
+#:
+#: `hapax run` requires `--library` of its caller and passed it on to two of them. The rest
+#: take it through `library_facts.add_argument`, whose default is the discriminating
+#: dataset, so a stage that was not told asked for Berlin's facts. `Run.call` now appends
+#: it for every script in this set. The set is asserted against the scripts' own source by
+#: `tests/test_hapax_stages.py`, so a script that becomes library-aware and is not added
+#: here fails the suite rather than quietly inheriting Berlin.
+LIBRARY_AWARE = {"subtract_known.py", "residue_report.py", "linkage_census.py",
+                 "spike_holdout.py", "mate_friends.py", "divergent_known.py",
+                 "truth_panel.py", "crossplant_stage.py"}
 
 #: Scripts that implement --preflight: they check their own required inputs and tools.
 PREFLIGHT_SCRIPTS = {"subtract_known.py", "residue_report.py", "linkage_census.py",
