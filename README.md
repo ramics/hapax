@@ -1,36 +1,46 @@
 <h1 align="center">hapax</h1>
 <p align="center">Known sequence is identified and removed. The remainder is measured against published sequence.</p>
 
-<p align="center"><img src="docs/hapax-overview.svg" alt="Three-panel figure. Panel a lists the seven stages of a run, with input, output and one measured number per stage: resolve (14 nt non-template prefix on mate 2, the mode in 5 of 5 seeds), merge (35.1% of pairs), assemble (20 of 25 depositor genomes at 90% breadth), identify (77.10% of read pairs removed as already known), score the distance (shuffled null 0.00%), report the residue (median depth 1), subtract other plants (87.5%, still falling at 512 libraries). Panel b is a bar of 100% of read pairs drawn to scale, 77.10% identified and 22.90% residue. Panel c is the distance axis, running from far from published sequence to matched, and states that the tool gives no novelty score, no threat score and no per-read call." width="100%"></p>
+<p align="center"><img src="docs/hapax-overview.svg" alt="Three-panel figure describing the report rather than any result. Panel a lists the seven stages of a run with what each is given and what it writes: resolve, merge, assemble, identify, score the distance, report the residue, subtract other plants. Panel b lists the three output classes with what each reports and what it refuses to claim: divergent but related contigs, novel strains of known viruses, and the unplaceable residue. Panel c is the distance scale all three sit on, from far from published sequence to matched. The figure carries no number from any sample, and names the four things never emitted: no novelty score, no threat score, no per-read call, no host or risk label." width="100%"></p>
 
-hapax runs on any library. The report has the same sections every time, and assumes nothing
-about the sample. It has three parts: reads and contigs an index can name, contigs that
-assembled without a name, and reads that produced no contig. Every row gives the distance to
-its closest published relative and the identity of that relative.
+hapax runs on any library. The report has the same sections every time, in the same order, and
+treats every sample as unknown. It has three parts: reads and contigs an index can name,
+contigs that assembled while the indexes stayed silent, and reads that stayed single. Every
+row gives the distance to its closest published relative and the identity of that relative,
+and states which of the two it has where it has one.
 
-Three measurements determine the design.
+Removal applies to read pairs. Every contig is measured and scored on the same distance
+scale, named or unnamed, and carries the evidence behind its classification. How much a tier
+removes is a property of the library, measured per run, so those fractions live in a run
+directory and in `results/`.
 
-- 0.015 GB of contigs assembled from the sample itself removes 30 points of the library.
-  16 GB of Kraken2 adds 0.42. Indexes are consulted in order of cost
-  ([`results/subtract_known/`](results/subtract_known/REPORT.md)).
-- Merging the mates of a pair is free. Recognition at 20% divergence rises from 10.5% to
-  38.4% ([`results/profile_reach/`](results/profile_reach/REPORT.md)).
-- A panel of 512 libraries from other plants removes 87.5% of a held-out library. At matched
-  depth 1 it removes 79.0% of the residue and 70.5% of identified reads. The separation is
-  8.5 points, so the panel bounds depth of observation
-  ([`results/crossplant/`](results/crossplant/REPORT.md)).
+Six rules fix the design. Each was measured, on the libraries named in its directory.
 
-There is no novelty score, no threat score and no per-read call. The tool never reports that
-a sequence matches nothing. Search establishes prior knowledge. It does not establish
-novelty, because score ordering tracks proximity to the database. The blind spots are listed
-in `SPEC.md` §7 and §9 and travel with the output.
+- Indexes are consulted cheapest first, and the cheapest is built from the sample's own
+  identified contigs ([`results/subtract_known/`](results/subtract_known/REPORT.md)).
+- Mates are merged before any search, which is free and extends recognition
+  ([`results/profile_reach/`](results/profile_reach/REPORT.md)).
+- Per-sample values come from a registry entry that states how each was established, and a
+  library with no entry stops the run
+  ([`results/nontemplate_prefix/`](results/nontemplate_prefix/REPORT.md)).
+- A residue fraction ships with the assembly settings and the recovery figure from the same
+  pass ([`results/path_settings/`](results/path_settings/REPORT.md)).
+- Other plants are a background panel, reported at both operating points, because they
+  disagree ([`results/crossplant/`](results/crossplant/REPORT.md)).
+- Every field carries a shuffled null and a known-positive comparison, reported even where
+  the three agree ([`results/residue_census/`](results/residue_census/REPORT.md)).
+
+Every output is a measurement with its operating point attached. Search establishes prior
+knowledge of a sequence, so a row states a distance, a closest relative with coverage and
+E-value, and the index the distance was measured against. Score ordering tracks proximity to
+the database, which is why the report stops at that distance and says how far the instrument
+reaches. `SPEC.md` §7 and §9 hold those bounds, and they travel with every run.
 
 The figure is generated by
-[`experiments/make_overview_figure.py`](experiments/make_overview_figure.py). Every quantity
-appears once in a table beside the `results/` directory it came from. The panel drawn to
-scale derives its widths from those percentages. `tests/test_overview_figure.py` fails if the
-committed SVG no longer matches the table. The script does not read the result files; the
-values are transcribed from their reports.
+[`experiments/make_overview_figure.py`](experiments/make_overview_figure.py), where its text
+sits in two tables that can be read against `SPEC.md`.
+`tests/test_overview_figure.py` fails if the committed SVG drifts from them, and also if a
+percentage or a count appears on the figure at all.
 
 Read [`SPEC.md`](SPEC.md) first. It is the spec for the production tool. Every number in it
 comes from a committed script run under a stated seed.
@@ -52,8 +62,8 @@ The binaries a run drives (BLAST, DIAMOND, Kraken2, foldseek and the rest) are p
 ## Running it
 
 ```
-python3 hapax.py run SAMPLE_1.fastq.gz SAMPLE_2.fastq.gz --seed 1 --out RUNDIR \
-    --trim-r2 14 \
+python3 hapax.py run SAMPLE_1.fastq.gz SAMPLE_2.fastq.gz --seed N --out RUNDIR \
+    --library ACCESSION --trim-r2 K \
     --contigs IDENTIFIED_RRNA.fa IDENTIFIED_OTHER.fa --unidentified-contigs UNIDENTIFIED.fa \
     --identified-contigs IDENTIFIED_OTHER.fa --rrna-contigs IDENTIFIED_RRNA.fa \
     --assembly ASSEMBLY.fa --cross-sample-ref OTHER_SAMPLES.fa --spacers SPACERS.fa
@@ -78,31 +88,31 @@ that measures it, under that script's own seed and manifest. The web view reads 
 shows no number absent from a committed file. `--plan` prints the stages without running
 them.
 
-## How far this gets, and where it stops
+## What a run delivers, and how far it reaches
 
-It reaches a three-way breakdown of the library, with intervals and operating points. On
-this sample: 77.0% identified, 11.9% assembled but unidentified, 11.1% residual reads. Per
-read it gives the distance to the closest relative, with coverage and E-value, the kind of
-sequence, whether it recurs in the library, and what it sits next to on the molecule. Per
-subject it gives how many residue reads point at one known relative, and from how far. That
-is where a new strain of a known virus appears. A spiked holdout genome supplies the
-divergence ladder, which states what the cascade would have missed at 10% and 20%.
+It reaches a three-way breakdown of the library, with intervals and the operating point that
+produced each fraction. Per read it gives the distance to the closest relative, with coverage
+and E-value, the kind of sequence, whether it recurs in the library, and what it sits next to
+on the molecule. Per subject it gives how many residue reads point at one known relative, and
+from how far. That is where a new strain of a known virus appears. Where a library carries a
+spiked genome of known distance, the run also reports the divergence ladder, which states
+what the cascade would have missed at each rung.
 
-It stops at per-read verdicts and at grouping. A mate finds its own partner among its ten
-nearest neighbours 23 times above chance, with no shared sequence, so the geometry carries
-molecule-level information. The rate falls as the search space grows. At library scale a read
-does not recover its own mate
-([`results/mate_friends/`](results/mate_friends/REPORT.md)). Nothing here approaches one
-false positive per million.
+Its reach ends at the read. The nearest-neighbour geometry carries molecule-level
+information, and the rate falls as the search space grows; at library scale a read recovers
+its own mate at chance ([`results/mate_friends/`](results/mate_friends/REPORT.md)). Grouping
+reads by origin, and calling a single read, both sit beyond that limit, so the report works
+at contig and subject level.
 
-## What this is not
+## What the report is
 
-The tool issues no novelty call. Every feature tried as a novelty score has been measured
-and fails as a threshold on a single axis (`SPEC.md` §1.1). The report is therefore a
-measurement of signal against noise over several axes at once. The blind spots are published
-with it. No read-level rule approaches one false positive per million. Recognition of a known
-virus falls away between 10% and 20% divergence. Detection below roughly one in a million is
-unavailable (`SPEC.md` §7).
+A measurement of signal against noise over several axes at once. Every feature tried as a
+single novelty score has been measured and fails as a threshold on one axis (`SPEC.md` §1.1),
+so the report keeps the axes apart and publishes the bounds with them. Recognition of a known
+virus holds to roughly 10% divergence and fades by 20%. Detection needs abundance above about
+one in a million. A verdict belongs at contig and subject level, where there is enough
+sequence to support one. Those bounds are properties of the method, measured across libraries
+(`SPEC.md` §7).
 
 ## History
 

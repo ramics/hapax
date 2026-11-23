@@ -1,14 +1,11 @@
 """Tests for the README overview figure, which is generated and not hand-drawn.
 
-Two failure modes are under test, and both have happened in this repo to other figures.
-The first is prose drift: the committed SVG is edited by hand, the generator's table is
-not, and the picture quietly stops agreeing with the record it cites. The second is a
-figure that does not close -- panel b is drawn to scale from percentage points, so a
-value edited in the table without its neighbours produces a bar that no longer sums to
-the library and nothing in the drawing says so.
-
-The third assertion is the cheap one that keeps the citations honest: every quantity in
-the table names a results/ directory, and that directory has to exist in the tree.
+Three failure modes, all of which have happened here. The first is prose drift: the committed
+SVG is edited by hand, the generator's tables are not, and the picture stops agreeing with
+the spec it cites. The second is a sample leaking onto the front door -- the first version of
+this figure drew one library's cascade to scale, which made the repo's first page a result
+rather than a description of the tool. The third is a refusal quietly falling off the figure
+during a wording pass, which nothing else would notice.
 """
 
 from __future__ import annotations
@@ -30,24 +27,33 @@ def test_committed_svg_is_what_the_script_draws():
     )
 
 
-def test_panel_b_closes_to_the_whole_library():
-    identified = sum(points for _, points in fig.LIBRARY_SPLIT["identified"])
-    assert abs(identified + fig.LIBRARY_SPLIT["residue"] - 100.0) < 0.005
+def test_the_figure_carries_no_sample_numbers():
+    """The front door describes the report. A percentage or a count on it would be a
+    property of whichever library produced it, and a reader cannot tell from one library's
+    bar what their own water would do (SPEC 13.4)."""
+    assert fig.numbers_in(fig.render()) == []
 
 
-def test_every_quantity_cites_a_directory_that_exists():
-    assert fig.check_sources() == []
+def test_every_stage_states_input_output_and_what_it_writes():
     for stage in fig.STAGES:
-        assert stage["source"].startswith("results/")
-        assert stage["number"] and stage["unit"]
+        assert "→" in stage["io"], stage["name"]
+        assert stage["writes"]
+        assert stage["spec"]
 
 
-def test_the_figure_makes_no_verdict_claim():
-    """The refusals are part of the deliverable (SPEC 1, 7.2), so a figure that drops
-    them is a regression even though nothing else would notice."""
+def test_every_output_class_carries_its_qualifier():
+    """What keeps a class honest travels with it. The qualifiers are written forwards, as
+    what the row states, so the test asserts they are present rather than looking for a
+    "no ..." string: the front door says what the report contains (SPEC 1, 7.2 keep the
+    refusals in full)."""
+    assert [c["key"] for c in fig.CLASSES] == ["A", "B", "C"]
+    for cls in fig.CLASSES:
+        assert cls["reports"] and cls["qualifier"]
+
+
+def test_the_figure_claims_no_verdict_and_states_the_limit():
     svg = fig.render()
-    for refusal in ("No novelty score.", "No threat score.", "No per-read call."):
-        assert refusal in svg
-    assert "It does not establish novelty." in svg
-    for forbidden in ("threat level", "novelty score of", "likely novel", "probably new"):
-        assert forbidden not in svg
+    assert "score ordering tracks" in svg
+    assert "the report stops at the distance it measured" in svg
+    for word in ("novelty score", "threat score", "risk label"):
+        assert word not in svg, f"{word} belongs in SPEC, not on the figure"

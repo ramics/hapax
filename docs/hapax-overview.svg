@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 918" width="1120" height="918" role="img" aria-labelledby="figtitle figdesc">
-  <title id="figtitle">hapax: the stages of one run, where a library ends up, and what one row says</title>
-  <desc id="figdesc">Panel a lists the seven stages of a run, each with its input, its output and one measured quantity: resolve, 14 nt non-template prefix on mate 2. Mode in 5 of 5 seeds.; merge, 35.1% of pairs merge. Recognition at 20% divergence, 10.5% to 38.4%.; assemble, 20 of 25 depositor genomes at ≥90% breadth. 53 zero-read controls empty.; identify, 77.10% of read pairs removed as known. Range 77.02–77.28, 5 seeds.; score the distance, 0.00% on shuffled sequence. Reported per field.; report the residue, depth 1 median depth of pairs with no contig. Set by read length and database reach.; subtract other plants, 87.5% of a held-out library removed. Still falling at 512.. Panel b is a to-scale bar of 100% of read pairs: 77.10% identified, made up of ribosomal, 37.93 points, the sample's own contigs, 30.33, everything else, 8.84, and 22.90% residue, of which ≈8.4 assembled but unnamed, ≈11.1 never assembled. Panel c is the one distance axis every row sits on, running from far from anything published to matched, each row carrying what it is closest to.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 1020" width="1120" height="1020" role="img" aria-labelledby="figtitle figdesc">
+  <title id="figtitle">hapax: the stages of a run, the three output classes, and the scale they share</title>
+  <desc id="figdesc">Panel a lists the seven stages of a run, with what each is given and what it writes: resolve, library accession → its trim, block size and panels, writes every value with how it was established, or a refusal to run; merge, read pairs → one read per overlapping molecule, writes a merged read where a pair overlaps, per-mate rows where it does not; assemble, the whole library → contigs, writes contigs with mapped depth and evenness, and recovery against a truth panel; identify, reads and contigs against indexes, cheapest first → tiers, writes the tier table and the evidence behind every removal, per route; score the distance, every contig, removed or kept → one row on one scale, writes identity and coverage per gene, nucleotide and protein, with the index used; report the residue, the reads left after identification → one row per pair, writes every row kept, each field beside its shuffled and known-positive controls; subtract other plants, a panel of libraries from elsewhere → witnessed or not, writes the witnessed fraction at both operating points, paired by plant. Panel b lists the three output classes, what each reports and the qualifier that travels with it: A, divergent but related contigs, reports distance from published sequence with the closest relative named, per gene, ranked by the conserved gene, with the per-gene spread shown; B, novel strains of known viruses, reports the near end of the same scale, treated as a first-class case, lineages inside the assembler's fusion limit are reported as fused; C, the unplaceable residue, reports distance measured, identity still open, with the depth it was seen at, carries the index it was measured against and the depth it was seen at. Panel c is the distance scale all three sit on, running from far from published sequence to matched, and the row beneath it lists what every output carries: a distance, the closest relative, with coverage and E-value, the operating point behind it, its controls.</desc>
 
   <defs>
     <style>
@@ -11,109 +11,109 @@
       .pant { font-size: 13px; font-weight: 700; fill: #14181d; }
       .st   { font-size: 14.5px; font-weight: 700; letter-spacing: 0.2px; }
       .io   { font-size: 12px; fill: #5d6671; }
-      .num  { font-size: 14.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
-      .unit { font-size: 11.5px; fill: #5d6671; }
+      .wr   { font-size: 12px; fill: #3c444e; }
       .ax   { font-size: 11.5px; fill: #5d6671; }
       .note { font-size: 11.5px; fill: #717a85; }
-      .seg  { font-size: 11.5px; }
-      .idx  { font-size: 11px; font-weight: 700; fill: #97a0aa; font-variant-numeric: tabular-nums; }
+      .idx  { font-size: 11px; font-weight: 700; fill: #97a0aa; }
+      .cls  { font-size: 14px; font-weight: 700; }
+      .ref  { font-size: 11.5px; fill: #8a5a12; }
     </style>
     <marker id="arr" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="6" markerHeight="6" orient="auto">
       <path d="M0 1 L7 4 L0 7 z" fill="#4a525c"/>
     </marker>
   </defs>
 
-  <rect x="0.5" y="0.5" width="1119" height="917" fill="#ffffff" stroke="#dfe4ea"/>
+  <rect x="0.5" y="0.5" width="1119" height="1019" fill="#ffffff" stroke="#dfe4ea"/>
 
   <text class="figh" x="40" y="48">hapax</text>
   <text class="figs" x="40" y="72">Known sequence is identified and removed. The remainder is measured against published sequence.</text>
   <line x1="40" y1="92" x2="1080" y2="92" stroke="#dfe4ea"/>
 
-  <text class="pan" x="40" y="122">a<tspan class="pant" dx="12">One run, stage by stage</tspan></text>
-  <text class="ax" x="1080" y="122" text-anchor="end">input, output and one measured quantity per stage</text>
-  <line x1="54" y1="140" x2="54" y2="568" stroke="#e7ebf0"/>
+  <text class="pan" x="40" y="122">a<tspan class="pant" dx="12">A run, stage by stage</tspan></text>
+  <text class="ax" x="1080" y="122" text-anchor="end">given → produced, and what the run writes</text>
+  <line x1="54" y1="138" x2="54" y2="536" stroke="#e7ebf0"/>
 
   <g>
-    <circle cx="54" cy="166" r="4.5" fill="#ffffff" stroke="#2f6fd0" stroke-width="2"/>
-    <text class="idx" x="40" y="170" text-anchor="end">1</text>
-    <text class="st" x="72" y="163">resolve</text>
-    <text class="io" x="72" y="181">library accession → trim, block size, which panels apply</text>
-    <text class="num" x="1080" y="163" text-anchor="end">14 nt</text>
-    <text class="unit" x="1080" y="181" text-anchor="end">non-template prefix on mate 2. Mode in 5 of 5 seeds.</text>
-    <line x1="72" y1="196" x2="1080" y2="196" stroke="#f0f3f6"/>
+    <circle cx="54" cy="162" r="4.5" fill="#ffffff" stroke="#2f6fd0" stroke-width="2"/>
+    <text class="idx" x="40" y="166" text-anchor="end">1</text>
+    <text class="st" x="72" y="160">resolve</text>
+    <text class="io" x="72" y="178">library accession → its trim, block size and panels</text>
+    <text class="wr" x="1080" y="160" text-anchor="end">every value with how it was established, or a refusal to run</text>
+    <text class="ax" x="1080" y="178" text-anchor="end">SPEC &#167;4.1</text>
+    <line x1="72" y1="190" x2="1080" y2="190" stroke="#f0f3f6"/>
 
-    <circle cx="54" cy="228" r="4.5" fill="#ffffff" stroke="#2f6fd0" stroke-width="2"/>
-    <text class="idx" x="40" y="232" text-anchor="end">2</text>
-    <text class="st" x="72" y="225">merge</text>
-    <text class="io" x="72" y="243">read pairs → one read per overlapping molecule</text>
-    <text class="num" x="1080" y="225" text-anchor="end">35.1%</text>
-    <text class="unit" x="1080" y="243" text-anchor="end">of pairs merge. Recognition at 20% divergence, 10.5% to 38.4%.</text>
-    <line x1="72" y1="258" x2="1080" y2="258" stroke="#f0f3f6"/>
+    <circle cx="54" cy="220" r="4.5" fill="#ffffff" stroke="#2f6fd0" stroke-width="2"/>
+    <text class="idx" x="40" y="224" text-anchor="end">2</text>
+    <text class="st" x="72" y="218">merge</text>
+    <text class="io" x="72" y="236">read pairs → one read per overlapping molecule</text>
+    <text class="wr" x="1080" y="218" text-anchor="end">a merged read where a pair overlaps, per-mate rows where it does not</text>
+    <text class="ax" x="1080" y="236" text-anchor="end">SPEC &#167;4.2</text>
+    <line x1="72" y1="248" x2="1080" y2="248" stroke="#f0f3f6"/>
 
-    <circle cx="54" cy="290" r="4.5" fill="#ffffff" stroke="#2f6fd0" stroke-width="2"/>
-    <text class="idx" x="40" y="294" text-anchor="end">3</text>
-    <text class="st" x="72" y="287">assemble</text>
-    <text class="io" x="72" y="305">whole library → contigs, plus a recovery check in the same pass</text>
-    <text class="num" x="1080" y="287" text-anchor="end">20 of 25</text>
-    <text class="unit" x="1080" y="305" text-anchor="end">depositor genomes at ≥90% breadth. 53 zero-read controls empty.</text>
-    <line x1="72" y1="320" x2="1080" y2="320" stroke="#f0f3f6"/>
+    <circle cx="54" cy="278" r="4.5" fill="#ffffff" stroke="#2f6fd0" stroke-width="2"/>
+    <text class="idx" x="40" y="282" text-anchor="end">3</text>
+    <text class="st" x="72" y="276">assemble</text>
+    <text class="io" x="72" y="294">the whole library → contigs</text>
+    <text class="wr" x="1080" y="276" text-anchor="end">contigs with mapped depth and evenness, and recovery against a truth panel</text>
+    <text class="ax" x="1080" y="294" text-anchor="end">SPEC &#167;4.3</text>
+    <line x1="72" y1="306" x2="1080" y2="306" stroke="#f0f3f6"/>
 
-    <circle cx="54" cy="352" r="4.5" fill="#2f6fd0" stroke="#2f6fd0" stroke-width="2"/>
-    <text class="idx" x="40" y="356" text-anchor="end">4</text>
-    <text class="st" x="72" y="349">identify</text>
-    <text class="io" x="72" y="367">reads and contigs against indexes, cheapest first → tier table, removal evidence</text>
-    <text class="num" x="1080" y="349" text-anchor="end">77.10%</text>
-    <text class="unit" x="1080" y="367" text-anchor="end">of read pairs removed as known. Range 77.02–77.28, 5 seeds.</text>
-    <line x1="72" y1="382" x2="1080" y2="382" stroke="#f0f3f6"/>
+    <circle cx="54" cy="336" r="4.5" fill="#ffffff" stroke="#2f6fd0" stroke-width="2"/>
+    <text class="idx" x="40" y="340" text-anchor="end">4</text>
+    <text class="st" x="72" y="334">identify</text>
+    <text class="io" x="72" y="352">reads and contigs against indexes, cheapest first → tiers</text>
+    <text class="wr" x="1080" y="334" text-anchor="end">the tier table and the evidence behind every removal, per route</text>
+    <text class="ax" x="1080" y="352" text-anchor="end">SPEC &#167;4.4</text>
+    <line x1="72" y1="364" x2="1080" y2="364" stroke="#f0f3f6"/>
 
-    <circle cx="54" cy="414" r="4.5" fill="#2f6fd0" stroke="#2f6fd0" stroke-width="2"/>
-    <text class="idx" x="40" y="418" text-anchor="end">5</text>
-    <text class="st" x="72" y="411">score the distance</text>
-    <text class="io" x="72" y="429">every row, removed or not → distance, closest relative, coverage, E-value</text>
-    <text class="num" x="1080" y="411" text-anchor="end">0.00%</text>
-    <text class="unit" x="1080" y="429" text-anchor="end">on shuffled sequence. Reported per field.</text>
-    <line x1="72" y1="444" x2="1080" y2="444" stroke="#f0f3f6"/>
+    <circle cx="54" cy="394" r="4.5" fill="#ffffff" stroke="#2f6fd0" stroke-width="2"/>
+    <text class="idx" x="40" y="398" text-anchor="end">5</text>
+    <text class="st" x="72" y="392">score the distance</text>
+    <text class="io" x="72" y="410">every contig, removed or kept → one row on one scale</text>
+    <text class="wr" x="1080" y="392" text-anchor="end">identity and coverage per gene, nucleotide and protein, with the index used</text>
+    <text class="ax" x="1080" y="410" text-anchor="end">SPEC &#167;4.5, 5</text>
+    <line x1="72" y1="422" x2="1080" y2="422" stroke="#f0f3f6"/>
 
-    <circle cx="54" cy="476" r="4.5" fill="#c77700" stroke="#c77700" stroke-width="2"/>
-    <text class="idx" x="40" y="480" text-anchor="end">6</text>
-    <text class="st" x="72" y="473">report the residue</text>
-    <text class="io" x="72" y="491">unnamed reads → one row per pair, no thresholds, controls alongside</text>
-    <text class="num" x="1080" y="473" text-anchor="end">depth 1</text>
-    <text class="unit" x="1080" y="491" text-anchor="end">median depth of pairs with no contig. Set by read length and database reach.</text>
-    <line x1="72" y1="506" x2="1080" y2="506" stroke="#f0f3f6"/>
+    <circle cx="54" cy="452" r="4.5" fill="#ffffff" stroke="#2f6fd0" stroke-width="2"/>
+    <text class="idx" x="40" y="456" text-anchor="end">6</text>
+    <text class="st" x="72" y="450">report the residue</text>
+    <text class="io" x="72" y="468">the reads left after identification → one row per pair</text>
+    <text class="wr" x="1080" y="450" text-anchor="end">every row kept, each field beside its shuffled and known-positive controls</text>
+    <text class="ax" x="1080" y="468" text-anchor="end">SPEC &#167;4.6, 7</text>
+    <line x1="72" y1="480" x2="1080" y2="480" stroke="#f0f3f6"/>
 
-    <circle cx="54" cy="538" r="4.5" fill="#ffffff" stroke="#2f6fd0" stroke-width="2"/>
-    <text class="idx" x="40" y="542" text-anchor="end">7</text>
-    <text class="st" x="72" y="535">subtract other plants</text>
-    <text class="io" x="72" y="553">512 libraries from other plants → witnessed or not, paired by plant</text>
-    <text class="num" x="1080" y="535" text-anchor="end">87.5%</text>
-    <text class="unit" x="1080" y="553" text-anchor="end">of a held-out library removed. Still falling at 512.</text>
+    <circle cx="54" cy="510" r="4.5" fill="#ffffff" stroke="#2f6fd0" stroke-width="2"/>
+    <text class="idx" x="40" y="514" text-anchor="end">7</text>
+    <text class="st" x="72" y="508">subtract other plants</text>
+    <text class="io" x="72" y="526">a panel of libraries from elsewhere → witnessed or not</text>
+    <text class="wr" x="1080" y="508" text-anchor="end">the witnessed fraction at both operating points, paired by plant</text>
+    <text class="ax" x="1080" y="526" text-anchor="end">SPEC &#167;7.1</text>
 
   </g>
-  <line x1="40" y1="580" x2="1080" y2="580" stroke="#e7ebf0"/>
-  <text class="note" x="40" y="598">A stage missing an input is recorded as skipped and the run marked incomplete. No fallback to a cheaper index. No parameter is inferred from another sample.</text>
+  <line x1="40" y1="542" x2="1080" y2="542" stroke="#e7ebf0"/>
+  <text class="note" x="40" y="560">Removal applies to read pairs. Every contig is measured, named or unnamed. A stage missing an input is recorded as skipped and the run marked incomplete.</text>
+  <text class="note" x="40" y="577">Every parameter comes from the library&#39;s own entry with its basis, and every stage runs the index it names. How much a tier removes is a property of the library, measured per run.</text>
 
-  <text class="pan" x="40" y="636">b<tspan class="pant" dx="12">One library by removal route</tspan><tspan class="ax" dx="14" font-weight="400">100% of read pairs, to scale</tspan></text>
+  <text class="pan" x="40" y="618">b<tspan class="pant" dx="12">Three output classes, on one scale</tspan></text>
+  <text class="ax" x="1080" y="618" text-anchor="end">what each reports, and the qualifier that travels with it</text>
 
-  <g transform="translate(40,672)">
-    <rect x="0" y="0" width="801.8" height="24" fill="#2f6fd0"/>
-    <rect x="801.8" y="0" width="238.2" height="24" fill="#e2a33c"/>
-    <line x1="394.5" y1="0" x2="394.5" y2="24" stroke="#ffffff"/>
-    <line x1="709.9" y1="0" x2="709.9" y2="24" stroke="#ffffff"/>
-    <rect x="0" y="0" width="1040" height="24" fill="none" stroke="#c9d0d8"/>
-
-    <text class="ax" x="0" y="-8" font-weight="700" fill="#14181d">77.10% identified</text>
-    <text class="ax" x="1040" y="-8" text-anchor="end" font-weight="700" fill="#b07000">22.90% residue</text>
-
-    <text class="seg" x="4" y="42" fill="#2f6fd0">ribosomal, 37.93 points</text>
-    <text class="seg" x="398" y="42" fill="#2f6fd0">the sample's own contigs, 30.33</text>
-    <text class="seg" x="714" y="42" fill="#2f6fd0">everything else, 8.84</text>
-    <text class="seg" x="1040" y="62" text-anchor="end" fill="#b07000">≈8.4 assembled but unnamed, ≈11.1 never assembled</text>
-    <text class="note" x="0" y="86">0.015 GB of the sample's own contigs removes 30.33 points. 16 GB of Kraken2 removes 0.42. Indexes are consulted in order of cost.</text>
+  <g>
+    <rect x="40" y="640" width="4" height="32" fill="#2f6fd0"/>
+    <text class="cls" x="60" y="653" fill="#2f6fd0">A<tspan class="cls" dx="10" fill="#14181d">divergent but related contigs</tspan></text>
+    <text class="io" x="60" y="671">distance from published sequence with the closest relative named, per gene</text>
+    <text class="ref" x="1080" y="653" text-anchor="end">ranked by the conserved gene, with the per-gene spread shown</text>
+    <rect x="40" y="690" width="4" height="32" fill="#2f6fd0"/>
+    <text class="cls" x="60" y="703" fill="#2f6fd0">B<tspan class="cls" dx="10" fill="#14181d">novel strains of known viruses</tspan></text>
+    <text class="io" x="60" y="721">the near end of the same scale, treated as a first-class case</text>
+    <text class="ref" x="1080" y="703" text-anchor="end">lineages inside the assembler's fusion limit are reported as fused</text>
+    <rect x="40" y="740" width="4" height="32" fill="#c77700"/>
+    <text class="cls" x="60" y="753" fill="#c77700">C<tspan class="cls" dx="10" fill="#14181d">the unplaceable residue</tspan></text>
+    <text class="io" x="60" y="771">distance measured, identity still open, with the depth it was seen at</text>
+    <text class="ref" x="1080" y="753" text-anchor="end">carries the index it was measured against and the depth it was seen at</text>
   </g>
 
-  <text class="pan" x="40" y="788">c<tspan class="pant" dx="12">What a row reports</tspan></text>
-  <g transform="translate(40,828)">
+  <text class="pan" x="40" y="828">c<tspan class="pant" dx="12">What a row reports</tspan></text>
+  <g transform="translate(40,868)">
     <line x1="0" y1="0" x2="300" y2="0" stroke="#4a525c" marker-end="url(#arr)"/>
     <g stroke="#4a525c">
       <line x1="22" y1="-8" x2="22" y2="0"/><line x1="38" y1="-8" x2="38" y2="0"/>
@@ -124,12 +124,22 @@
     </g>
     <text class="ax" x="0" y="16">far from published sequence</text>
     <text class="ax" x="300" y="16" text-anchor="end">matched</text>
-    <text class="note" x="360" y="-14">One mark per contig, no thresholds. A row gives the distance to its closest</text>
-    <text class="note" x="360" y="2">published relative and the identity of that relative. Where one is absent, the</text>
-    <text class="note" x="360" y="18">report states which. No novelty score. No threat score. No per-read call.</text>
-    <text class="note" x="360" y="34">Search establishes prior knowledge. It does not establish novelty.</text>
+    <text class="note" x="360" y="-14">One mark per contig, every contig kept. A row gives the distance to its closest</text>
+    <text class="note" x="360" y="2">published relative and the identity of that relative, and states which of the</text>
+    <text class="note" x="360" y="18">two it has. Search establishes prior knowledge, and score ordering tracks</text>
+    <text class="note" x="360" y="34">proximity to the database, so the report stops at the distance it measured.</text>
   </g>
 
-  <line x1="40" y1="880" x2="1080" y2="880" stroke="#eef1f4"/>
-  <text class="note" x="40" y="898">Berlin wastewater SRR23973193, 5 seeds. Percentages are of read pairs. Every number comes from a committed directory under <tspan font-weight="700">results/</tspan>.</text>
+  <text class="ax" x="40" y="947">Every row carries</text>
+    <rect x="160" y="928" width="82" height="28" rx="14" fill="#fffaf2" stroke="#e6d3b3"/>
+    <text class="ref" x="201" y="947" text-anchor="middle">a distance</text>
+    <rect x="256" y="928" width="326" height="28" rx="14" fill="#fffaf2" stroke="#e6d3b3"/>
+    <text class="ref" x="419" y="947" text-anchor="middle">the closest relative, with coverage and E-value</text>
+    <rect x="596" y="928" width="207" height="28" rx="14" fill="#fffaf2" stroke="#e6d3b3"/>
+    <text class="ref" x="700" y="947" text-anchor="middle">the operating point behind it</text>
+    <rect x="817" y="928" width="95" height="28" rx="14" fill="#fffaf2" stroke="#e6d3b3"/>
+    <text class="ref" x="864" y="947" text-anchor="middle">its controls</text>
+
+  <line x1="40" y1="982" x2="1080" y2="982" stroke="#eef1f4"/>
+  <text class="note" x="40" y="1000">This figure describes the report a run writes on any library. The measurements behind each rule are in <tspan font-weight="700">results/</tspan>, on the libraries named there.</text>
 </svg>
