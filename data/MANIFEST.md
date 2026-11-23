@@ -192,3 +192,20 @@ date holdout a genuine blind.
 | nucleotide reference | RefSeq viral genomic release (`viral.*.genomic.gbff.gz`) | 2026-11-21 | 19,650 records. Taken as the **release file rather than the API**: an `efetch` paging of the equivalent protein set is ~100 minutes against 6 seconds here |
 | protein reference | RefSeq viral protein release (`viral.protein.faa`) | 2026-11-21 | 722,827 proteins, 229 MB. The whole release, not a taxon-scoped subset - scoping it by hand-written order taxids previously produced "no protein relative at all" for four candidates, which was an artefact of a database that did not contain their class |
 | date key | each RefSeq record's original GenBank accession, parsed from its COMMENT provenance line | 2026-11-21 | 19,622 of 19,650 resolved (99.9%). `createdate` is NOT the deposit date: 3,926 records carry a 2023 `createdate` while wrapping decades-older sequence |
+
+## Paired search as the search unit (experiments/pair_search.py)
+
+Fetched 2026-11-23 into the gitignored container scratchpad. Nothing new was downloaded for
+the arms themselves: the genomes come from the committed
+`results/holdout_candidates/candidates.fa` and the piles from the committed whole-library
+label table in project files.
+
+| Purpose | Accession / source | Downloaded | Notes |
+|---|---|---|---|
+| Berlin reads, both mates | SRR23973193 (PRJNA948850) via ENA | 2026-11-23 | 404,863,127 and 419,810,100 bytes, matching the figures recorded for the earlier threads' copies, so it is the same file. Mate 2 trimmed of its 14 nt non-template prefix as everywhere else |
+| holdout library | SRR23421544 via ENA | 2026-11-23 | the single-end-in-practice library behind `results/holdout_run/`, re-fetched to re-map its candidate and leak pools |
+| nucleotide reference | RefSeq viral genomic release (`viral.1.1.genomic.fna.gz`) | 2026-11-23 | **19,641 records**, against 19,650 recorded on 2026-11-21. `holdout_indexes.py` refuses on the count mismatch and was run with `--allow-mismatch`; the index is therefore today's release minus the committed 439 post-cutoff accessions and is NOT byte-identical to PR #29's. See `results/pair_search/REPORT.md` §6 — PR #29's index also contained non-viral records that this file does not have, which is the larger difference and the reason its nucleotide figure is being corrected |
+| protein reference | RefSeq viral protein release (`viral.1.protein.faa.gz`) | 2026-11-23 | 722,823 proteins; after the date filter 703,330 kept, 19,493 dropped, 4 kept unmapped — reproducing PR #29's protein counts exactly |
+| protein-to-parent map | `viral.1.genomic.gbff.gz` | 2026-11-23 | for the CDS `/protein_id` parse only, as `holdout_indexes.py` requires. Checked for study leakage: **0 records in today's release reference any `OQ7223*` accession or carry the study's organism names**, so the holdout is intact for this candidate |
+| broad protein index | UniProt Swiss-Prot (`uniprot_sprot.fasta.gz`), current release | 2026-11-23 | the Berlin block's third level, because a viral protein index is the wrong denominator for a wastewater residue pile |
+| aligners | BLAST+ 2.17.0 (NCBI), DIAMOND 2.1.9 (GitHub release) | 2026-11-23 | DIAMOND `--very-sensitive` for every protein level, with the reach-arm justification recorded in the script |

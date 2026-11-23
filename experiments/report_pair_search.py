@@ -26,7 +26,7 @@ import json
 from collections import defaultdict
 from pathlib import Path
 
-MODES = ("best_mate", "concat", "concat_n", "fisher", "agree")
+MODES = ("best_mate", "concat", "concat_n", "fisher", "agree", "best_or_fisher")
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -75,22 +75,33 @@ def main() -> int:
         thr_null = {m: summary["levels"][level]["matched_null_threshold"].get(m)
                     for m in MODES}
         out.append(f"\n## {level}\n")
+        # ONE threshold for every mode in the `common` row, and it is the baseline's.
+        # A per-mode matched-null threshold cannot be compared across modes here, because
+        # several modes' nulls never fire at all (0 of 10,000 pairs), which leaves their
+        # threshold unbounded rather than strict - and reading each mode at its own
+        # unbounded point would hand the joint modes a looser test than the baseline got.
+        # So `common` evaluates every mode at the strictest E-value for which the
+        # BASELINE's null is silent, which is the one point all modes can share.
+        common = float(thr_null["best_mate"]) if thr_null["best_mate"] else None
         out.append("Pair rate, five seeds, min-max. `fixed` is E < "
-                   f"{a.fixed:g}; `null` is each mode's strictest threshold at which the "
-                   "shuffled arm still reads zero "
-                   + ", ".join(f"{m}={thr_null[m] or 'no hit at all'}" for m in MODES)
+                   f"{a.fixed:g}. `common` is "
+                   + (f"E < {common:.3g}, the strictest threshold at which the baseline's "
+                      "shuffled arm is still silent, applied to every mode. Each mode's "
+                      "own silent-null threshold: "
+                      + ", ".join(f"{m}={thr_null[m] or 'null never fires'}"
+                                  for m in MODES)
+                      if common else "not available: the baseline's null never fires")
                    + ".\n")
         out.append("| arm | point | " + " | ".join(MODES) + " |")
         out.append("|---" * (len(MODES) + 2) + "|")
         for arm in arms:
             keys = [k for k in per if k[0] == level and k[1] == arm]
-            for point in ("fixed", "null"):
+            for point in ("fixed", "common"):
                 cells = []
                 for m in MODES:
-                    thr = a.fixed if point == "fixed" else (
-                        float(thr_null[m]) if thr_null[m] else None)
+                    thr = a.fixed if point == "fixed" else common
                     cells.append(spread([rate(per[k], m, thr) for k in keys])
-                                 if thr is not None else "0 (null never hits)")
+                                 if thr is not None else "-")
                 out.append(f"| {arm} | {point} | " + " | ".join(cells) + " |")
 
         out.append("\n### What each joint mode converts, and what it loses\n")

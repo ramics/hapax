@@ -1,0 +1,73 @@
+{
+ "git_sha": "db2fffe2e06fdd92e06c5c8ca8ae8b91683632fe",
+ "tree_dirty": false,
+ "script_sha256": "4d4e30a25ec4ef08",
+ "modules_sha256": {
+  "experiments/berlin_io.py": "4d270ba3e733aaaa",
+  "experiments/codon_assembler/experiments/common.py": "4fe666dfe8bc5766",
+  "experiments/loud.py": "f4092b57016034c2",
+  "experiments/provenance.py": "82b7b511f7fe5430",
+  "experiments/residue_report.py": "db6ae3a1686214e2",
+  "experiments/search_hits.py": "bf8df74ed64dbe91",
+  "experiments/shuffle_control.py": "1185d0c48296a803",
+  "experiments/spike_holdout.py": "26b7de25dc9d05f3",
+  "experiments/subtract_known.py": "3170b246e7bb08c7"
+ },
+ "code_sha256": "fd81fb78815dd8f2",
+ "band": "near",
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5
+ ],
+ "pairs": 1000,
+ "read_len": 145,
+ "bands": {
+  "near": [
+   301,
+   430
+  ],
+  "wide": [
+   600,
+   1000
+  ]
+ },
+ "arms": {
+  "berlin_identified": {
+   "kind": "berlin",
+   "classes": [
+    "identified",
+    "identified"
+   ],
+   "role": "known material: both mates match this sample's own identified contigs. The comparison arm, and where every mode's direction is measured"
+  },
+  "berlin_residue": {
+   "kind": "berlin",
+   "classes": [
+    "none",
+    "none"
+   ],
+   "role": "the residue: neither mate matches SILVA or any own contig. The pile the production tool is trying to shrink"
+  }
+ },
+ "library": null,
+ "insert_source": "PR #10",
+ "error_rates": {
+  "r1": 0.00089,
+  "r2": 0.00117
+ },
+ "search_evalue": "10",
+ "fixed": 1e-05,
+ "levels": {
+  "nt": "blastn",
+  "prot_dmnd": "diamond_blastx",
+  "sprot_dmnd": "diamond_blastx"
+ },
+ "diamond_sensitivity": "very-sensitive",
+ "timings": {
+  "report": 11.5,
+  "total": 11.5
+ }
+}

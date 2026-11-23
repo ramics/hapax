@@ -1,0 +1,96 @@
+{
+ "git_sha": "db2fffe2e06fdd92e06c5c8ca8ae8b91683632fe-dirty",
+ "tree_dirty": true,
+ "script_sha256": "7d815688910fbfa1",
+ "modules_sha256": {
+  "experiments/berlin_io.py": "4d270ba3e733aaaa",
+  "experiments/codon_assembler/experiments/common.py": "4fe666dfe8bc5766",
+  "experiments/loud.py": "f4092b57016034c2",
+  "experiments/provenance.py": "82b7b511f7fe5430",
+  "experiments/residue_report.py": "db6ae3a1686214e2",
+  "experiments/search_hits.py": "bf8df74ed64dbe91",
+  "experiments/shuffle_control.py": "1185d0c48296a803",
+  "experiments/spike_holdout.py": "26b7de25dc9d05f3",
+  "experiments/subtract_known.py": "3170b246e7bb08c7"
+ },
+ "code_sha256": "d5c27bd794515409",
+ "band": "near",
+ "seeds": [
+  1
+ ],
+ "pairs": 1000,
+ "read_len": 145,
+ "bands": {
+  "near": [
+   301,
+   430
+  ],
+  "wide": [
+   600,
+   1000
+  ]
+ },
+ "arms": {
+  "berlin_identified": {
+   "kind": "berlin",
+   "classes": [
+    "identified",
+    "identified"
+   ],
+   "role": "known material: both mates match this sample's own identified contigs. The comparison arm, and where every mode's direction is measured"
+  },
+  "berlin_residue": {
+   "kind": "berlin",
+   "classes": [
+    "none",
+    "none"
+   ],
+   "role": "the residue: neither mate matches SILVA or any own contig. The pile the production tool is trying to shrink"
+  },
+  "candidate": {
+   "acc": "OQ722337.1",
+   "nt_div": 30.28,
+   "prot_id": 66.452,
+   "kind": "real_mate1",
+   "role": "the blind: the genome results/holdout_run/ measured at read level, 30.3% nucleotide divergent, with its real reads"
+  },
+  "candidate_sim": {
+   "acc": "OQ722337.1",
+   "nt_div": 30.28,
+   "prot_id": 66.452,
+   "kind": "simulated",
+   "role": "the same genome sampled uniformly, which is what a simulated-pair experiment would have measured"
+  },
+  "leak": {
+   "acc": "OQ722330.1",
+   "nt_div": 0.08,
+   "prot_id": 99.813,
+   "kind": "real_mate1",
+   "role": "known material: real reads of a sequence 0.08% divergent from a pre-cutoff relative. The comparison arm every rate is read against"
+  },
+  "rung17_sim": {
+   "acc": "OQ722335.1",
+   "nt_div": 17.09,
+   "prot_id": 84.459,
+   "kind": "simulated",
+   "role": "a nearer blind, uniform sampling, where single-mate recognition is partly alive and a joint rule has room to show a gain"
+  }
+ },
+ "library": null,
+ "insert_source": "PR #10",
+ "error_rates": {
+  "r1": 0.00089,
+  "r2": 0.00117
+ },
+ "search_evalue": "10",
+ "fixed": 1e-05,
+ "levels": {
+  "nt": "blastn",
+  "prot_dmnd": "diamond_blastx"
+ },
+ "diamond_sensitivity": "very-sensitive",
+ "timings": {
+  "strict": 6.4,
+  "total": 6.4
+ }
+}

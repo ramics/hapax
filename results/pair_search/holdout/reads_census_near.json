@@ -1,0 +1,329 @@
+{
+ "band": "near",
+ "insert_band": [
+  301,
+  430
+ ],
+ "insert_ladder": [
+  [
+   0.025,
+   303
+  ],
+  [
+   0.05,
+   305
+  ],
+  [
+   0.075,
+   307
+  ],
+  [
+   0.1,
+   309
+  ],
+  [
+   0.125,
+   311
+  ],
+  [
+   0.15,
+   313
+  ],
+  [
+   0.175,
+   315
+  ],
+  [
+   0.2,
+   316
+  ],
+  [
+   0.225,
+   318
+  ],
+  [
+   0.25,
+   320
+  ],
+  [
+   0.275,
+   322
+  ],
+  [
+   0.3,
+   324
+  ],
+  [
+   0.325,
+   326
+  ],
+  [
+   0.35,
+   328
+  ],
+  [
+   0.375,
+   330
+  ],
+  [
+   0.4,
+   331
+  ],
+  [
+   0.425,
+   333
+  ],
+  [
+   0.45,
+   335
+  ],
+  [
+   0.475,
+   337
+  ],
+  [
+   0.5,
+   339
+  ],
+  [
+   0.525,
+   341
+  ],
+  [
+   0.55,
+   343
+  ],
+  [
+   0.575,
+   345
+  ],
+  [
+   0.6,
+   346
+  ],
+  [
+   0.625,
+   348
+  ],
+  [
+   0.65,
+   350
+  ],
+  [
+   0.675,
+   352
+  ],
+  [
+   0.7,
+   354
+  ],
+  [
+   0.725,
+   356
+  ],
+  [
+   0.75,
+   358
+  ],
+  [
+   0.775,
+   360
+  ],
+  [
+   0.8,
+   361
+  ],
+  [
+   0.825,
+   363
+  ],
+  [
+   0.85,
+   372
+  ],
+  [
+   0.875,
+   382
+  ],
+  [
+   0.9,
+   391
+  ],
+  [
+   0.925,
+   401
+  ],
+  [
+   0.95,
+   411
+  ],
+  [
+   0.975,
+   421
+  ],
+  [
+   1.0,
+   430
+  ]
+ ],
+ "insert_ladder_note": {
+  "mode": "conditioned",
+  "band_mass_of_library": 0.128
+ },
+ "read_len": 145,
+ "pairs_per_arm": 1000,
+ "arms": {
+  "candidate": {
+   "s1": {
+    "pairs": 1000,
+    "real_reads_offered": 1000,
+    "mate1_len_median": 150,
+    "mate1_len_min": 50,
+    "mate1_len_max": 150
+   },
+   "s2": {
+    "pairs": 1000,
+    "real_reads_offered": 1001,
+    "mate1_len_median": 150,
+    "mate1_len_min": 51,
+    "mate1_len_max": 150
+   },
+   "s3": {
+    "pairs": 1000,
+    "real_reads_offered": 1000,
+    "mate1_len_median": 150,
+    "mate1_len_min": 50,
+    "mate1_len_max": 150
+   },
+   "s4": {
+    "pairs": 1000,
+    "real_reads_offered": 1001,
+    "mate1_len_median": 150,
+    "mate1_len_min": 50,
+    "mate1_len_max": 150
+   },
+   "s5": {
+    "pairs": 1000,
+    "real_reads_offered": 1001,
+    "mate1_len_median": 150,
+    "mate1_len_min": 53,
+    "mate1_len_max": 150
+   }
+  },
+  "leak": {
+   "s1": {
+    "pairs": 1000,
+    "real_reads_offered": 1855,
+    "mate1_len_median": 150,
+    "mate1_len_min": 50,
+    "mate1_len_max": 150
+   },
+   "s2": {
+    "pairs": 1000,
+    "real_reads_offered": 1835,
+    "mate1_len_median": 150,
+    "mate1_len_min": 54,
+    "mate1_len_max": 150
+   },
+   "s3": {
+    "pairs": 1000,
+    "real_reads_offered": 1901,
+    "mate1_len_median": 150,
+    "mate1_len_min": 52,
+    "mate1_len_max": 150
+   },
+   "s4": {
+    "pairs": 1000,
+    "real_reads_offered": 1954,
+    "mate1_len_median": 150,
+    "mate1_len_min": 53,
+    "mate1_len_max": 150
+   },
+   "s5": {
+    "pairs": 1000,
+    "real_reads_offered": 1880,
+    "mate1_len_median": 150,
+    "mate1_len_min": 51,
+    "mate1_len_max": 150
+   }
+  },
+  "candidate_sim": {
+   "s1": {
+    "pairs": 1000
+   },
+   "s2": {
+    "pairs": 1000
+   },
+   "s3": {
+    "pairs": 1000
+   },
+   "s4": {
+    "pairs": 1000
+   },
+   "s5": {
+    "pairs": 1000
+   }
+  },
+  "rung17_sim": {
+   "s1": {
+    "pairs": 1000
+   },
+   "s2": {
+    "pairs": 1000
+   },
+   "s3": {
+    "pairs": 1000
+   },
+   "s4": {
+    "pairs": 1000
+   },
+   "s5": {
+    "pairs": 1000
+   }
+  },
+  "shuffled": {
+   "s1": {
+    "kind": "dinuc",
+    "offered": 6000,
+    "shuffled": 6000,
+    "dropped_identical": 0,
+    "pairs_with_both_mates": 3000
+   },
+   "s2": {
+    "kind": "dinuc",
+    "offered": 6000,
+    "shuffled": 6000,
+    "dropped_identical": 0,
+    "pairs_with_both_mates": 3000
+   },
+   "s3": {
+    "kind": "dinuc",
+    "offered": 6000,
+    "shuffled": 6000,
+    "dropped_identical": 0,
+    "pairs_with_both_mates": 3000
+   },
+   "s4": {
+    "kind": "dinuc",
+    "offered": 6000,
+    "shuffled": 6000,
+    "dropped_identical": 0,
+    "pairs_with_both_mates": 3000
+   },
+   "s5": {
+    "kind": "dinuc",
+    "offered": 6000,
+    "shuffled": 6000,
+    "dropped_identical": 0,
+    "pairs_with_both_mates": 3000
+   }
+  }
+ },
+ "library": {
+  "reads_scanned": 4290429,
+  "pool_sizes": {
+   "OQ722337.1": 32575,
+   "OQ722330.1": 45265
+  }
+ }
+}
