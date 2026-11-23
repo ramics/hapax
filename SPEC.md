@@ -262,6 +262,14 @@ were killed by holding them fixed across ten arms, and zero absorbed genomes, ze
 inter-molecule joins and zero false joins appear in any arm against 53 zero-read panel
 genomes (`results/path_settings/`).
 
+**Recovery against ground truth travels with the residue number**, which is the `panel`
+stage (§13.1): the depositors' own 25 genomes from this water at 0.4×–700× with the same
+panel's 53 zero-read genomes as the false-join control. A residue fraction without a recovery
+figure from the same pass is unreadable, because a setting that shrinks the residue by fusing
+novel sequence into an abundant known contig reads as an improvement on every summary number
+here. What the panel cannot test travels with it: not sub-3.8% fusion, since it is 25
+separate molecules rather than a lineage mixture, and nothing at the median depth 1.
+
 **Measure chimaeras before claiming contiguity**, and read the chimaera number beside its
 own false-positive rate: split-mapping fires on 46.3% of the divergent arm and 39.3% of a
 near-reference control, so it describes how the assembler joins genes rather than divergence,
@@ -372,6 +380,15 @@ roughly a sixth rather than dissolving.
 **The candidate is not the top row of its own cell.** So the defensible output is **a short
 ranked list with a count on it** — never a flag, never a score.
 
+**This is the `shortlist` stage** (§13.1), which reads the `removal_evidence.tsv` the cascade
+already writes, so a run gets the cell with its count and its control arm without anyone
+re-deriving them. The band it ships at is the one measured here and it travels with the
+sentence that qualifies it: the band was drawn where the one known positive sits, on a
+positive set of size one, so it is an operating point with a provenance rather than a
+validated threshold — and §13.3 makes it a control the reader can move, over the same grid,
+with the control arm's count recomputing beside it. What orders the list inside the cell
+remains open and the output says so rather than implying its top row means anything.
+
 **Band labels are readings, not calls**, printed beside the number they came from and never
 substituted for it: *reference or near-reference* ≥ 97%, *divergent strain of the named
 taxon* ≥ 90%, *same genus or thereabouts* ≥ 70%, *family-level or looser — the subject is a
@@ -458,6 +475,12 @@ depth 1 **identified reads survive at 0.7050 against the residue's 0.7900**. Tha
 gap is the whole known-versus-unknown difference at matched depth, so a cross-plant union is
 blind to *anything present once*, not to novelty. The two operating points disagree by a
 factor of four and neither travels alone (`results/crossplant/`).
+
+**This is the `crossplant` stage** (§13.1), and the rules travel with the panel as checks
+rather than as prose: query reads come from outside the library searched, a library inside
+its own panel refuses, the per-plant reading is paired rather than pooled because within-plant
+rates run 15–96%, contig queries use the read arm's own 90 nt window, and both operating
+points ship or the stage fails.
 
 **At contig level the same instrument reverses and gets stronger**: tier 2 contigs cut into
 90 nt windows separate from identified contigs in every length band, and **17.6% of tier 2
@@ -858,8 +881,17 @@ it.** As a *second axis* it is dead (§11.15).
 ### 13.1 The command line is the contract
 
 ```
-hapax run SAMPLE.R1.fq.gz SAMPLE.R2.fq.gz --seed N --trim-r2 K --out RUNDIR
+hapax run SAMPLE.R1.fq.gz SAMPLE.R2.fq.gz --seed N --trim-r2 K --library ACC --out RUNDIR
 ```
+
+`--library` is required for the same reason `--trim-r2` is: the panels a run is checked
+against — the depositor truth panel and the cross-plant background — are properties of the
+library, and a default would score this sample against another one's ground truth. It
+resolves through `experiments/stage_refs.py`, which keeps three answers apart: a resolved
+panel runs, a library whose entry names **no** panel is skipped with the committed reason
+(Berlin's case: its positive control is the spiked ladder, not a panel), and a library with
+no entry refuses the run. Those three were one condition before, and collapsing them is how
+a run comes to report ground truth as checked when none exists for that water.
 
 `RUNDIR` holds the manifest, the tier table, the per-read rows as JSONL, the per-contig rows,
 **`removal_evidence.tsv`** — one row per route per removed contig, carrying the identity,
@@ -876,8 +908,36 @@ not be pooled.
 the run directory comes from the `experiments/` script that already measures it, with that
 script's own seed and manifest, because a parallel implementation would be a second
 instrument and this project does not compare two. Stages: `cascade`, `contigs`, `reads`,
-`linkage`, `census`, `calibration`, `intervals`, `layers`, `strains`, `divergent` — where
-`divergent` reads the continuum of §5 over the removed pile.
+`linkage`, `census`, `calibration`, `intervals`, `layers`, `strains`, `divergent`,
+`shortlist`, `panel`, `crossplant` — where `divergent` reads the continuum of §5 over the
+removed pile.
+
+**The last three are measurements that used to exist only as reports over one directory**,
+and a new sample now gets them without anyone re-deriving them. Nothing about what they
+measure changed in the promotion: `tests/test_removal_shortlist.py` reproduces the published
+cell from the committed rows, and `tests/test_truth_panel.py` and
+`tests/test_crossplant_stage.py` reproduce the published panel composition and subject count.
+
+- **`shortlist`** ranks the pile tier 1 removed by how much of each contig its best hit
+  explains, and emits `removal_shortlist.json` and `removal_shortlist.tsv`: the whole joint
+  coverage × identity table, the shipped band's cell with a count on it, and the
+  near-reference control arm's count in the same cell, drawn by the same code in the same
+  pass (§5.1). The band is the one `results/holdout_cascade/` measured, and the output
+  carries the sentence that qualifies it — it was drawn where the one known positive sits, on
+  a positive set of size one — rather than quoting a tuned cut as a property of the method.
+  The null is supplied or dropped **by name**; absent and unstated is a refusal.
+- **`panel`** scores the run's assembly against the depositors' own genomes from the same
+  water, with the 53 zero-read genomes of the same committed panel as the false-join control,
+  and carries what that panel cannot test into its own output: not sub-3.8% fusion, because
+  the panel is not a lineage mixture, and nothing at the median depth 1 where most of the
+  residue sits (§6, §7). Recovery and residue size ship as a pair (§4.3).
+- **`crossplant`** subtracts a panel of other plants' libraries with that panel's rules as
+  checks rather than as prose: a query library inside its own panel is a refusal, the contig
+  arm uses the read arm's own 90 nt window or refuses, and a report missing the paired
+  per-plant strata or either operating point fails the stage rather than being passed on
+  (§7.1). The panel resolves from the committed registry with its digest, and what is staged
+  for reuse and what each pass still re-downloads are both recorded, so a fresh download
+  cannot read as reuse.
 
 **The driver refuses rather than defaults**, which is §8's rule as code: `--trim-r2` is
 required, `--block` arithmetic is checked against the library's counted reads before the run
