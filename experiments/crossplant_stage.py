@@ -83,6 +83,23 @@ def panel_members(panel_tsv: Path) -> dict[str, dict]:
         return {r["run"]: r for r in csv.DictReader(fh, delimiter="\t")}
 
 
+def own_library_refusal(library: str, members: dict[str, dict]) -> str | None:
+    """RULE 1, as a value: why this library may not be subtracted against this panel.
+
+    A library inside the panel it is being subtracted against is searched partly against
+    itself, and own-library reads are abundant by construction - 54% false growth against
+    a 6% swap control - so the rate it returns is a property of the draw and not of the
+    water. Returned as a string rather than raised so the stage can list it beside its
+    other preflight problems, and so a test can assert the rule without a fixture library.
+    """
+    if library not in members:
+        return None
+    return (f"{library} is a member of this panel, so its query reads would be searched "
+            f"against its own library. Query reads must come from outside the library "
+            f"searched; own-library reads are abundant by construction (54% false growth "
+            f"against a 6% swap control). Hold it out of the panel or pick another panel")
+
+
 def eligible_subjects(members: dict[str, dict], depth: int,
                       headroom: int = 200_000) -> list[str]:
     """Which panel rows a pass can actually scan at the fixed subject depth.
@@ -171,15 +188,8 @@ def main() -> int:
         panel_tsv = resolved["files"].get("panel_table")
         if panel_tsv and panel_tsv.exists():
             members = panel_members(panel_tsv)
-            # RULE 1, as a refusal. A library inside the panel it is being subtracted
-            # against is searched partly against itself, and own-library reads are abundant
-            # by construction: 54% false growth against a 6% swap control.
-            pre.require(args.library not in members,
-                        f"{args.library} is a member of panel {resolved['panel']}, so its "
-                        f"query reads would be searched against its own library. Query "
-                        f"reads must come from outside the library searched; own-library "
-                        f"reads are abundant by construction (54% false growth against a "
-                        f"6% swap control). Hold it out of the panel or pick another panel")
+            own = own_library_refusal(args.library, members)
+            pre.require(own is None, f"panel {resolved['panel']}: {own}")
         want = args.window or resolved["record"]["query_length_nt"]
         # RULE 3, as a refusal: one width across both arms or the arms are two instruments.
         pre.require(want == resolved["record"]["contig_window_nt"] ==

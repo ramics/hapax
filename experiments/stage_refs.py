@@ -18,10 +18,12 @@ THE THREE ANSWERS THIS LOADER CAN GIVE, AND WHY THERE ARE THREE. "Unknown librar
     honest output for Berlin, whose positive control is the spiked ladder and not a panel;
   - the library has no entry at all -> `UnknownLibrary`. The stage refuses to start.
 
-THE FOLD-IN. `experiments/libraries.json` is meant to hold the per-library facts that
-decide what gets read (trim_r2, block, read paths). It is not in the committed tree, so
-this file holds the stage-reference half separately, and `resolve_library` is the single
-place that changes when the two become one. Two files are the interim, not the design.
+WHERE EACH HALF LIVES, AFTER THE FOLD-IN. The per-library POINTER - which truth panel and
+which cross-plant panel apply to this run - is a fact about the sequencing run, so it sits
+in `experiments/libraries.json` beside that library's trim and stride and is read through
+`library_facts`, which means an unknown library raises in exactly one place in this repo.
+The panel DEFINITIONS and the shortlist band are not properties of a run and stay in
+`stage_references.json`.
 
 WHAT THIS DELIBERATELY DOES NOT DO. It does not sniff the library from a read path, and it
 does not accept a library name that disagrees with the reads it was handed - that check
@@ -34,12 +36,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import library_facts
+from library_facts import UnknownLibrary  # noqa: F401  (re-exported: one exception type)
+
 ROOT = Path(__file__).resolve().parents[1]
 REFERENCES = Path(__file__).resolve().parent / "stage_references.json"
-
-
-class UnknownLibrary(KeyError):
-    """A library with no entry. Raised rather than defaulted, always."""
 
 
 class MissingReference(FileNotFoundError):
@@ -53,20 +54,13 @@ def load(path: Path | None = None) -> dict:
     return json.loads(p.read_text())
 
 
-def libraries(refs: dict | None = None) -> list[str]:
-    return sorted((refs or load())["libraries"])
-
-
 def resolve_library(library: str, refs: dict | None = None) -> dict:
-    """The entry for one library, or UnknownLibrary with the list of the ones that exist."""
-    refs = refs or load()
-    entry = refs["libraries"].get(library)
-    if entry is None:
-        raise UnknownLibrary(
-            f"{library} has no entry in {REFERENCES.name}, so this stage does not know "
-            f"which panel is ground truth for it and will not guess. Known libraries: "
-            f"{', '.join(libraries(refs))}. Add an entry, or run without this stage.")
-    return entry
+    """The library's own entry, from libraries.json, or `UnknownLibrary` from there.
+
+    `refs` is accepted and ignored for the library half: it exists so a test can point the
+    PANEL definitions somewhere else, and the library half has one home.
+    """
+    return library_facts.library(library)
 
 
 def resolve(library: str, kind: str, refs: dict | None = None) -> dict:
@@ -78,9 +72,17 @@ def resolve(library: str, kind: str, refs: dict | None = None) -> dict:
     there - three conditions a caller must not be able to read as a zero.
     """
     refs = refs or load()
-    entry = resolve_library(library, refs)
+    entry = resolve_library(library)
     if kind not in ("truth_panel", "crossplant_panel"):
         raise KeyError(f"no such stage reference: {kind}")
+    if kind not in entry:
+        # A library that has an entry but says nothing about this panel is not the same
+        # fact as one that says it has none: the first is an incomplete entry, and
+        # answering "absent" for it would report an unmeasured gap as a measured one.
+        raise MissingReference(
+            f"{library} has an entry in libraries.json but no {kind} key, so nothing has "
+            f"said whether a {kind.replace('_', ' ')} applies to it. Add the key, with "
+            f"the panel's name or null and a {kind}_absent_because reason.")
     name = entry.get(kind)
     if name is None:
         reason = entry.get(f"{kind}_absent_because")
