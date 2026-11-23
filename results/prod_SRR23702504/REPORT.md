@@ -293,6 +293,11 @@ launches cost **$2.70** and each bought one defect that only a library nobody ha
 show: a stage whose cost is quadratic in contig count, and a driver that handed the wrong library's
 facts to eleven of its thirteen stages.
 
+**The whole day is $7.99**, of which the pass that produced the committed result is $3.72 and the
+assembly it rests on is $1.45. The remaining $2.82 bought the three bugs above and three staging
+failures, so a second library should cost about **$5.20** on this instance type: the assembly plus
+five seeds, with no further staging. All of it sits inside the $10 pre-approved for a single run.
+
 ## Provenance
 
 - Launch manifests: `launch_i-*.json`, one per launch, keyed by the commit the payload was built
