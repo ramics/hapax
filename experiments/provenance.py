@@ -81,11 +81,22 @@ def local_modules(exclude: Path | None = None) -> dict[str, str]:
     return dict(sorted(out.items()))
 
 
-def provenance(script) -> dict:
+def provenance(script, git_sha_override: str | None = None) -> dict:
     """git_sha, tree_dirty and script_sha256 as before, plus modules_sha256 and code_sha256.
 
     `script_sha256` keeps its 16-character truncation so existing manifests and the
     aggregators that compare it across seeds read the new ones unchanged.
+
+    WHY `git_sha_override` EXISTS, added 2026-11-23. An EC2 instance has no checkout and no
+    git binary - shipping a code payload rather than a working tree is the point - so
+    `git_sha()` there does not fail to find a commit, it fails to find *git*, and this
+    module raises rather than writing "unknown", which is right. The only true answer on an
+    instance is the commit its launcher built the payload from, and a launcher knows it. So
+    it is passed in, and `git_sha_source` records which of the two answered, because "the
+    launcher said so" and "the repo said so" are different strengths of claim and a field
+    that silently means either is worse than no field. The content hashes are unaffected:
+    they pin the code whatever the commit says, which is why a launcher-supplied commit is
+    safe here and `-dirty` is still refused below.
     """
     script = Path(script).resolve()
     if not script.exists():
@@ -95,7 +106,17 @@ def provenance(script) -> dict:
     whole.update(_sha(script).encode())
     for rel, h in mods.items():
         whole.update(f"\0{rel}\0{h}".encode())
-    return {"git_sha": git_sha(), "tree_dirty": tree_dirty(),
+    if git_sha_override is None:
+        sha, dirty, source = git_sha(), tree_dirty(), "repo"
+    else:
+        sha = str(git_sha_override).strip()
+        if not sha or sha.endswith("-dirty") or sha == "unknown":
+            raise ProvenanceError(
+                f"git_sha_override is {git_sha_override!r}, which is not a commit. A "
+                f"manifest that cannot identify its code is worse than no manifest, and "
+                f"'-dirty' names HEAD rather than the code that ran.")
+        dirty, source = False, "launcher"
+    return {"git_sha": sha, "tree_dirty": dirty, "git_sha_source": source,
             "script_sha256": _sha(script)[:16],
             "modules_sha256": {k: v[:16] for k, v in mods.items()},
             "code_sha256": whole.hexdigest()[:16]}

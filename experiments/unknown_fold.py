@@ -523,6 +523,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--shards", type=int, default=2,
                     help="independent encoder processes; each loads its own 2.4 GB "
                          "copy of the model, so this is bounded by memory not cores")
+    ap.add_argument("--git-sha", default=None,
+                    help="the commit the launcher built this payload from. An instance has "
+                         "no checkout and no git, so on one this is the only true answer; "
+                         "left out, the provenance module asks the repo itself")
     ap.add_argument("--skip-subjects", action="store_true",
                     help="reuse an already-built subject database in --work")
     args = ap.parse_args(argv)
@@ -531,7 +535,7 @@ def main(argv: list[str] | None = None) -> int:
     args.work.mkdir(parents=True, exist_ok=True)
     args.out.mkdir(parents=True, exist_ok=True)
     started = time.time()
-    manifest: dict = dict(provenance(Path(__file__)),
+    manifest: dict = dict(provenance(Path(__file__), args.git_sha),
                           parameters=dict(seeds=seeds, contigs_per_seed=args.contigs_per_seed,
                                           threads=args.threads, sensitivity=args.sensitivity, shards=args.shards,
                                           min_orf_aa=MIN_ORF_AA, bands=[list(b) for b in BANDS],

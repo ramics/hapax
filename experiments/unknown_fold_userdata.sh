@@ -159,6 +159,7 @@ set +e
   --out /opt/hapax/out \
   --threads "$THREADS" \
   --shards "$SHARDS" \
+  --git-sha "@@COMMIT@@" \
   > /opt/hapax/log-unknown-fold.txt 2>&1
 RC=$?
 set -e

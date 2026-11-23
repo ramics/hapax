@@ -1,0 +1,22 @@
+{
+  "instance_id": "i-08afb0ac47876bbd6",
+  "commit": "6232031fdc7592f35bc0f9b6dc48fe94a862f8e3",
+  "shipped_dirty": false,
+  "wider_tree_dirty": false,
+  "instance_type": "r6i.2xlarge",
+  "pile_set": "p1",
+  "seeds": "1,2,3,4,5",
+  "contigs_per_seed": 400,
+  "threads": 8,
+  "shards": 8,
+  "volume_gb": 150,
+  "spot": false,
+  "hard_stop_minutes": 300,
+  "projected_worst_case_usd": 2.58,
+  "foldseek": "10-941cd33",
+  "prostt5_key": "corpora/models/prostt5/b072042c7d5b/prostt5-f16.gguf",
+  "launched": "2026-11-23T06:31:02Z",
+  "results_prefix": "s3://amazebio-corpora-897641797669/corpora/results/hapax-bigindex/results/unknown_fold/i-08afb0ac47876bbd6/",
+  "logs_prefix": "s3://amazebio-corpora-897641797669/corpora/results/hapax-bigindex/logs/unknown_fold-i-08afb0ac47876bbd6/",
+  "run_script": "s3://amazebio-corpora-897641797669/corpora/results/hapax-bigindex/code/unknown-fold-run-6232031fdc75-d1a8c4ed2859.sh"
+}
