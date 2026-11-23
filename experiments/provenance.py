@@ -110,6 +110,15 @@ def local_modules(exclude: Path | None = None) -> dict[str, str]:
         p = Path(f).resolve()
         if p.suffix != ".py" or ROOT not in p.parents:
             continue
+        # A virtualenv created INSIDE the repo root puts third-party code under it, and
+        # "every module loaded from this repo" then quietly includes site-packages. The
+        # first production run recorded `venv/lib/python3.12/site-packages/
+        # _distutils_hack/__init__.py` in its manifests beside this repo's own modules,
+        # which makes `code_sha256` change when a dependency changes - the dependency set
+        # is `pip_freeze.txt` and `loud.Consulted`'s job, and mixing the two means neither
+        # hash answers its own question.
+        if "site-packages" in p.parts or "dist-packages" in p.parts:
+            continue
         if exclude is not None and p == Path(exclude).resolve():
             continue
         out[str(p.relative_to(ROOT))] = _sha(p)
