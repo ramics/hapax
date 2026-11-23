@@ -46,6 +46,8 @@ def test_the_figure_makes_no_verdict_claim():
     """The refusals are part of the deliverable (SPEC 1, 7.2), so a figure that drops
     them is a regression even though nothing else would notice."""
     svg = fig.render()
-    assert "No novelty score, no threat score, no per-read" in svg
+    for refusal in ("No novelty score.", "No threat score.", "No per-read call."):
+        assert refusal in svg
+    assert "It does not establish novelty." in svg
     for forbidden in ("threat level", "novelty score of", "likely novel", "probably new"):
         assert forbidden not in svg
