@@ -299,6 +299,9 @@ def test_hapax_refuses_to_start_on_a_missing_input(tmp_path):
     p = subprocess.run([PY, str(ROOT / "hapax.py"), "run", str(tmp_path / "no_1.fq.gz"),
                         str(tmp_path / "no_2.fq.gz"), "--seed", "1",
                         "--out", str(tmp_path / "run"), "--stages", "linkage",
+                        # --library is required for the same reason --trim-r2 is: the
+                        # panels a run is checked against are properties of the library.
+                        "--library", "SRR23973193",
                         "--trim-r2", "0"],
                        capture_output=True, text=True)
     assert p.returncode == 2, p.stderr
@@ -313,6 +316,7 @@ def _hapax(tmp_path, kit, *extra):
     return subprocess.run(
         [PY, str(ROOT / "hapax.py"), "run", str(kit.r1), str(kit.r2), "--seed", "1",
          "--out", str(tmp_path / "run"), "--trim-r2", "0", "--pairs", "50",
+         "--library", "SRR23973193",
          "--k2-dbs", str(kit.k2), "--silva", str(kit.silva), "--dmnd", str(kit.dmnd),
          "--classify-bin", str(kit.classify), "--diamond-bin", str(kit.diamond), *extra],
         capture_output=True, text=True)

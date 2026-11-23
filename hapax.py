@@ -149,6 +149,29 @@ class Run:
                 out.append(f"{p} (0 bytes)")
         return out
 
+    def reference(self, library: str, kind: str) -> dict:
+        """Resolve a stage's per-library reference, keeping the three answers apart.
+
+        `resolved` runs the stage; `absent` is a MEASURED absence and the stage is skipped
+        with the committed reason; an unknown library is a `failed` stage and, during
+        preflight, a problem that stops the run. Those three were one condition before, and
+        collapsing them is how a run comes to report ground truth as checked when no panel
+        for this water exists - or scores it against another sample's genomes.
+        """
+        import stage_refs
+        try:
+            r = stage_refs.resolve(library, kind)
+        except (stage_refs.UnknownLibrary, stage_refs.MissingReference) as e:
+            return {"state": "unknown", "status": "failed", "reason": str(e)}
+        if r["state"] == "absent":
+            return {"state": "absent", "status": "skipped", "reason": r["reason"]}
+        gone = stage_refs.missing_files(r)
+        if gone:
+            return {"state": "incomplete", "status": "failed",
+                    "reason": f"{kind} {r['panel']}: {gone}"}
+        return {"state": "resolved", "status": "ok", "panel": r["panel"],
+                "record": r["record"], "files": r["files"]}
+
     def call(self, name: str, script: str, argv: list[str],
              expect: dict[str, Path], manifest: Path | None,
              requested: list[Path] | None = None) -> dict:
@@ -661,6 +684,135 @@ class Run:
                               out / f"divergent_known_s{a.seed}.json"},
                          out / f"divergent_known_s{a.seed}.json",
                          requested=[src, *a.dmnd])
+
+    # -- what the removal pile hides -----------------------------------------
+    def shortlist(self) -> dict:
+        """Rank the pile tier 1 removed by how much of each contig its best hit explains.
+
+        WHY THIS IS A STAGE. The one measured mechanism that catches a genuinely novel
+        genome being subtracted as known. On the only positive this project has - a virus
+        deposited after the library that contains it - identity ordering puts it at the
+        93.46th percentile of the removed pile, so `flag the low-identity removals` reaches
+        7,104 other contigs first; adding the fraction of the contig the best hit explains
+        turns the same pile into a cell of 69 contigs, 0.91% of the removals, which no
+        recognisable contig from the same water enters. Until now that lived in a report
+        over one directory and a new sample got none of it.
+
+        IT READS `removal_evidence.tsv`, which the cascade already writes and then nobody
+        reads. So the stage is skipped, not approximated, when the contig-identification
+        step that writes that file was not run in this run.
+        """
+        a = self.args
+        src = getattr(a, "removal_evidence", None)
+        if not src:
+            return self.record("shortlist", "skipped",
+                               reason="--removal-evidence not given, so there is no "
+                                      "recorded removal evidence to rank. It is written by "
+                                      "experiments/classify_contigs.py beside the contig "
+                                      "split this run's --contigs came from")
+        src = Path(src)
+        gone = self.missing("shortlist", [src])
+        if gone:
+            return self.record("shortlist", "failed", reason=f"absent inputs: {gone}")
+        out = self.work / "shortlist"
+        argv = ["--seed", str(a.seed), "--evidence", str(src), "--out", str(out)]
+        if a.shuffled_removal_evidence:
+            argv += ["--shuffled-evidence", str(a.shuffled_removal_evidence)]
+        else:
+            # The null is dropped BY NAME or not at all: a band quoted with a silently
+            # absent null is the shape this project has withdrawn figures over.
+            argv += ["--without-null"]
+        return self.call("shortlist", "removal_shortlist.py", argv,
+                         {"removal_shortlist.json": out / "removal_shortlist.json",
+                          "removal_shortlist.tsv": out / "removal_shortlist.tsv",
+                          "stages/removal_shortlist_manifest.json":
+                              out / "removal_shortlist_manifest.json"},
+                         out / "removal_shortlist_manifest.json", requested=[src])
+
+    # -- ground truth from the same water ------------------------------------
+    def panel(self) -> dict:
+        """Score this run's assembly against the depositors' own genomes from this water.
+
+        WHY EVERY RUN GETS IT. The residue fraction - the number this tool reports about
+        itself - moves 8.79 points on assembler flags that do not improve recovery of a
+        single real genome, so a residue figure without a recovery figure from the same pass
+        is unreadable: a setting that shrinks the residue by fusing novel sequence into an
+        abundant known contig reads as an improvement on every summary number here. The
+        recovery half cannot be computed from the residue, which is why it is a stage and
+        not a sweep.
+
+        A LIBRARY WITH NO PANEL IS SKIPPED WITH ITS REASON, which is Berlin's case: no
+        depositor genome set exists for that water, so its positive control is the spiked
+        ladder (`--calibrate`). That is a different fact from a panel that was scored and
+        found nothing, and the stage's output says which.
+        """
+        a = self.args
+        # Resolved HERE as well as inside the script, so a library with no panel is a
+        # skip recorded without starting a subprocess, and an unknown library is a problem
+        # the preflight lists beside the others rather than an exit status to interpret.
+        ref = self.reference(a.library, "truth_panel")
+        if ref.get("state") != "resolved":
+            return self.record("panel", ref["status"], reason=ref["reason"])
+        argv = ["--seed", str(a.seed), "--library", a.library,
+                "--work", str(self.work / "panel_work"),
+                "--out", str(self.work / "panel")]
+        if a.assembly:
+            argv += ["--contigs", str(a.assembly)]
+            if not a.minimap2:
+                return self.record("panel", "failed",
+                                   reason="--assembly given but --minimap2 is not, so the "
+                                          "panel could be composed and nothing scored "
+                                          "against it")
+            argv += ["--minimap2", str(a.minimap2), "--threads", str(a.threads)]
+        out = self.work / "panel"
+        return self.call("panel", "truth_panel.py", argv,
+                         {"truth_panel.json": out / "truth_panel.json",
+                          "stages/truth_panel_manifest.json":
+                              out / "truth_panel_manifest.json"},
+                         out / "truth_panel_manifest.json",
+                         requested=[Path(a.assembly)] if a.assembly else None)
+
+    # -- other plants' water -------------------------------------------------
+    def crossplant(self) -> dict:
+        """Subtract a panel of other plants' libraries, with that panel's rules as checks.
+
+        WHAT IT ENFORCES, because these are what get lost when a measurement is reused:
+        query reads from OUTSIDE the library searched (a library inside its own panel is a
+        refusal, not a caveat), paired per plant rather than pooled, contig queries in the
+        panel's own 90 nt window so the two arms stay one instrument, and both operating
+        points travelling together because they disagree by a factor of four.
+
+        THE PANEL IS REUSED, NOT REBUILT. It resolves from the committed registry with its
+        digest; what is staged in S3 and what each pass still re-downloads are both recorded,
+        so a fresh download cannot read as reuse.
+        """
+        a = self.args
+        ref = self.reference(a.library, "crossplant_panel")
+        if ref.get("state") != "resolved":
+            return self.record("crossplant", ref["status"], reason=ref["reason"])
+        argv = ["--seed", str(a.seed), "--library", a.library,
+                "--work", str(self.work / "crossplant_work"),
+                "--out", str(self.work / "crossplant")]
+        stages = []
+        if a.unidentified_contigs and a.identified_contigs:
+            stages.append("queries")
+            argv += ["--contig-dir", str(Path(a.unidentified_contigs[0]).parent)]
+        if a.crossplant_run_dir:
+            stages.append("report")
+            argv += ["--run-dir", str(a.crossplant_run_dir), "--arm", a.crossplant_arm]
+        if not stages:
+            return self.record("crossplant", "skipped",
+                               reason="neither a contig set to cut into panel-width query "
+                                      "windows (--unidentified-contigs with "
+                                      "--identified-contigs) nor a completed pass to "
+                                      "report (--crossplant-run-dir) was given")
+        argv += ["--stages", *stages]
+        out = self.work / "crossplant"
+        return self.call("crossplant", "crossplant_stage.py", argv,
+                         {"crossplant_stage.json": out / "crossplant_stage.json",
+                          "stages/crossplant_stage_manifest.json":
+                              out / "crossplant_stage_manifest.json"},
+                         out / "crossplant_stage_manifest.json")
 
     # -- new strains of known viruses ----------------------------------------
     def strains(self) -> dict:
@@ -1243,7 +1395,8 @@ LAYER_FIELDS = {
 }
 
 #: Stages that run an experiment script, and so are preflighted by calling it.
-SCRIPT_STAGES = ["cascade", "reads", "linkage", "census", "calibration", "divergent"]
+SCRIPT_STAGES = ["cascade", "reads", "linkage", "census", "calibration", "divergent",
+                 "shortlist", "panel", "crossplant"]
 #: Flags whose script default is one specific sample's file or setting, which hapax must
 #: therefore always pass. The second element names the per-read field that may be left out
 #: with --report-without instead.
@@ -1263,14 +1416,22 @@ SAMPLE_SPECIFIC = {
     "mate_friends.py": [("--r1", None), ("--r2", None), ("--trim-r2", None)],
     "divergent_known.py": [("--r1", None), ("--r2", None), ("--trim-r2", None),
                            ("--contigs", None)],
+    # The three promoted stages. Each resolves its reference data from the library, and
+    # `--library` is the flag that decides WHICH sample's panel is ground truth: left out,
+    # the stage would score this run against whatever panel happened to be committed.
+    "removal_shortlist.py": [("--evidence", None)],
+    "truth_panel.py": [("--library", None)],
+    "crossplant_stage.py": [("--library", None)],
 }
 
 #: Scripts that implement --preflight: they check their own required inputs and tools.
 PREFLIGHT_SCRIPTS = {"subtract_known.py", "residue_report.py", "linkage_census.py",
-                     "spike_holdout.py"}
+                     "spike_holdout.py", "removal_shortlist.py", "truth_panel.py",
+                     "crossplant_stage.py"}
 
 STAGE_ORDER = ["cascade", "contigs", "reads", "linkage", "census", "calibration",
-               "intervals", "layers", "strains", "divergent"]
+               "intervals", "layers", "strains", "divergent", "shortlist", "panel",
+               "crossplant"]
 
 
 def main() -> int:
@@ -1310,6 +1471,35 @@ def main() -> int:
                         "is a property of the library kit (14 on SRR23973193, 0 on most "
                         "others), and the old default of 14 silently cut 14 real bases off "
                         "every other library's mate 2")
+    r.add_argument("--library", required=True,
+                   help="the run accession, as experiments/stage_references.json spells "
+                        "it. REQUIRED for the same reason --trim-r2 is: the panels a run "
+                        "is checked against are properties of the library, and a default "
+                        "would score this sample against another one's ground truth. An "
+                        "unknown library refuses to start; a known library with no panel "
+                        "is skipped with the committed reason, which is a different fact")
+    r.add_argument("--removal-evidence", type=Path, default=None,
+                   help="removal_evidence.tsv from experiments/classify_contigs.py: the "
+                        "identity, coverage, E-value and bitscore that justified removing "
+                        "each contig, which the cascade computes and used to discard. The "
+                        "`shortlist` stage ranks that pile by how much of each contig its "
+                        "best hit EXPLAINS - the one mechanism measured to catch a novel "
+                        "genome being subtracted as known")
+    r.add_argument("--shuffled-removal-evidence", type=Path, default=None,
+                   help="the same table over shuffled contigs: the shortlist's null. "
+                        "Absent, the stage records the absence by name and carries the "
+                        "nulls measured elsewhere as citations rather than implying one")
+    r.add_argument("--minimap2", type=Path, default=None,
+                   help="required when --assembly is given, for the `panel` stage: the "
+                        "assembly is aligned to the truth panel with SECONDARY ALIGNMENTS "
+                        "ON, because suppressing them credits one member of each "
+                        "near-identical pair and read recovery as 9/25 instead of 20/25")
+    r.add_argument("--crossplant-run-dir", type=Path, default=None,
+                   help="a completed cross-plant pass downloaded from S3 (packed/, "
+                        "sample/). Without it the `crossplant` stage cuts this run's "
+                        "contigs into the panel's own query windows and stops there")
+    r.add_argument("--crossplant-arm", default="reads", choices=["reads", "contigs"],
+                   help="which arm of the pass in --crossplant-run-dir to report")
     r.add_argument("--single-end", action="store_true",
                    help="the library has no second mate, so r2 is r1 again and --trim-r2 "
                         "must be 0. Every cascade tier is a min, max or union over the "
