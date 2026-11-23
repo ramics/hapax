@@ -69,6 +69,12 @@ die() {
       ls -la /opt/hapax/work/ 2>/dev/null; } > /opt/hapax/log-progress.txt 2>&1 || true
     aws s3 cp /opt/hapax/ "$LOGS/" --recursive --exclude "*" --include "log-*.txt" \
       --region "$REGION" >/dev/null 2>&1 || true
+    # THE OUTPUT TOO, not only the logs. A hard stop powers the machine off from outside
+    # this script, so `die` never runs and whatever is on the disk is lost: that is how an
+    # nr pass on 2026-11-22 spent 95 minutes and $1.54 and left no rows at all. The ORFs,
+    # the blocks and the shuffle census are written before the long encoding starts, so a
+    # timer kill then still leaves the query set and the census behind to read.
+    aws s3 cp /opt/hapax/out/ "$OUT/" --recursive --region "$REGION" >/dev/null 2>&1 || true
   done
 ) &
 
