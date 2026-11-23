@@ -50,6 +50,14 @@
     },
     "SRR23702504": {
       "label": "Yeongdok plant effluent, South Korea, collected 2020-09-11, RNA: the first library run through production that nothing in this repo had touched",
+      "sample": {
+        "matrix": "treated effluent",
+        "place": "Yeongdok",
+        "country": "South Korea",
+        "molecule": "RNA",
+        "collected": "2020-09-11",
+        "basis": "PRJNA941081 run metadata and results/crossplant/panel.tsv, which carries 12 libraries from this plant and names it. The matrix is recorded as treated effluent rather than influent because it is the plant's outflow, and this pass measured a consequence of that rather than assuming one: the library anchors 0.13-0.14% of pairs to SILVA against roughly 32% for the Berlin influent, two to three orders of magnitude less ribosomal (see rrna_anchored_fraction)."
+      },
       "bioproject": "PRJNA941081",
       "layout": "paired",
       "pairs": 32125614,
