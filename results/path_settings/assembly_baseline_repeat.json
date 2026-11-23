@@ -1,0 +1,19 @@
+{
+ "arm": "baseline_repeat",
+ "flags": [
+  "--min-contig-len",
+  "200"
+ ],
+ "direction": "same setting, different thread count: the same-instrument difference, which bounds what an arm has to beat to mean anything",
+ "threads": 2,
+ "seconds": 1265.282041943,
+ "peak_rss_bytes": 0,
+ "contigs": 35330,
+ "bases": 22030733,
+ "n50": 649,
+ "max": 20695,
+ "ge500": 15111,
+ "ge1000": 3953,
+ "ge3000": 319,
+ "contigs_fa": "/home/user/stage/wk/asm_baseline_repeat/final.contigs.fa"
+}

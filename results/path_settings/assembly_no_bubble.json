@@ -1,0 +1,21 @@
+{
+ "arm": "no_bubble",
+ "flags": [
+  "--min-contig-len",
+  "200",
+  "--bubble-level",
+  "0"
+ ],
+ "direction": "no bubble merging at all. The extreme of keeping paths apart",
+ "threads": 4,
+ "seconds": 718.4425717089998,
+ "peak_rss_bytes": 0,
+ "contigs": 35715,
+ "bases": 21433865,
+ "n50": 616,
+ "max": 20695,
+ "ge500": 14797,
+ "ge1000": 3577,
+ "ge3000": 233,
+ "contigs_fa": "/home/user/stage/wk/asm_no_bubble/final.contigs.fa"
+}

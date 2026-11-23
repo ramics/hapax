@@ -1,0 +1,23 @@
+{
+ "arm": "keep_thin",
+ "flags": [
+  "--min-contig-len",
+  "200",
+  "--prune-level",
+  "0",
+  "--prune-depth",
+  "1"
+ ],
+ "direction": "keep low-depth unitigs. Expect more low-depth contigs and more junk",
+ "threads": 4,
+ "seconds": 616.5691656119998,
+ "peak_rss_bytes": 0,
+ "contigs": 35510,
+ "bases": 22019623,
+ "n50": 645,
+ "max": 21798,
+ "ge500": 15183,
+ "ge1000": 3902,
+ "ge3000": 300,
+ "contigs_fa": "/home/user/stage/wk/asm_keep_thin/final.contigs.fa"
+}

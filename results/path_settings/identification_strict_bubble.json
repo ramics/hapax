@@ -1,0 +1,131 @@
+{
+  "contigs_file": "/home/user/stage/wk/asm_strict_bubble/contigs_renamed.fa",
+  "contigs": 35567,
+  "bases": 21954518,
+  "operating_point": {
+    "kraken2_confidence": 0.1,
+    "diamond_bitscore": 50.0,
+    "kraken2_db": "k2_viral_20210517.d",
+    "protein_dbs": [
+      "holdout_prot",
+      "sprot"
+    ]
+  },
+  "kraken2_confidence_sweep": {
+    "0.00": 0.011386959822307195,
+    "0.05": 0.0027272471673180196,
+    "0.10": 0.0023055079146399753,
+    "0.20": 0.0020243484128546125
+  },
+  "protein_bitscore_sweep": {
+    "holdout_prot": {
+      "30": 0.4468749121376557,
+      "40": 0.25397137796271824,
+      "50": 0.20898585767706018,
+      "60": 0.1776928051283493,
+      "80": 0.12806815306323277,
+      "100": 0.09472263615148874
+    },
+    "sprot": {
+      "30": 0.7368909382292574,
+      "40": 0.6310625017572469,
+      "50": 0.5883262574858718,
+      "60": 0.5515787106025248,
+      "80": 0.48109202350493435,
+      "100": 0.42002417971715356
+    }
+  },
+  "identified_frac": 0.6315123569601034,
+  "identified_bases_frac": 0.7015109145188247,
+  "route_nucleotide_only": 0.00011246380071414513,
+  "route_protein_only": 0.6248488767677903,
+  "all": {
+    "contigs": 35567,
+    "bases": 21954518,
+    "len_median": 456,
+    "len_p90": 1042,
+    "len_max": 20695,
+    "cov_median": 3.0,
+    "frac_over_500nt": 0.42331374588804227,
+    "frac_over_2x": 0.9652768015295077,
+    "frac_over_500nt_and_2x": 0.42019287541822475
+  },
+  "identified": {
+    "contigs": 22461,
+    "bases": 15401334,
+    "len_median": 494,
+    "len_p90": 1211,
+    "len_max": 14940,
+    "cov_median": 3.0,
+    "frac_over_500nt": 0.4913405458350029,
+    "frac_over_2x": 0.9696807800186991,
+    "frac_over_500nt_and_2x": 0.4881349895374204
+  },
+  "rrna_contigs": {
+    "contigs": 182,
+    "bases": 131989,
+    "len_median": 533.0,
+    "len_p90": 1322,
+    "len_max": 5569,
+    "cov_median": 44.0,
+    "frac_over_500nt": 0.554945054945055,
+    "frac_over_2x": 0.989010989010989,
+    "frac_over_500nt_and_2x": 0.554945054945055
+  },
+  "rrna_contig_frac": 0.005117102932493603,
+  "rrna_bases_frac": 0.006011928843074578,
+  "identified_excluding_rrna": {
+    "contigs": 22279,
+    "bases": 15269345,
+    "len_median": 494,
+    "len_p90": 1211,
+    "len_max": 14940,
+    "cov_median": 3.0,
+    "frac_over_500nt": 0.49082095246644825,
+    "frac_over_2x": 0.9695228690695273,
+    "frac_over_500nt_and_2x": 0.4875892095695498
+  },
+  "unidentified": {
+    "contigs": 13106,
+    "bases": 6553184,
+    "len_median": 411.0,
+    "len_p90": 770,
+    "len_max": 20695,
+    "cov_median": 3.0,
+    "frac_over_500nt": 0.30672974210285364,
+    "frac_over_2x": 0.9577292842972684,
+    "frac_over_500nt_and_2x": 0.30375400579887074
+  },
+  "tier2_population": {
+    "contigs": 13106,
+    "bases": 6553184,
+    "len_median": 411.0,
+    "len_p90": 770,
+    "len_max": 20695,
+    "cov_median": 3.0,
+    "frac_over_500nt": 0.30672974210285364,
+    "frac_over_2x": 0.9577292842972684,
+    "frac_over_500nt_and_2x": 0.30375400579887074
+  },
+  "tier2_min_len": 200,
+  "files": {
+    "identified": "/home/user/stage/wk/asm_strict_bubble/contigs_renamed_identified.fa",
+    "identified_excluding_rrna": "/home/user/stage/wk/asm_strict_bubble/contigs_renamed_identified_norrna.fa",
+    "rrna_contigs": "/home/user/stage/wk/asm_strict_bubble/contigs_renamed_rrna.fa",
+    "unidentified_tier2": "/home/user/stage/wk/asm_strict_bubble/contigs_renamed_unidentified.fa"
+  },
+  "index_bytes": {
+    "kraken2": 490063024,
+    "holdout_prot": 233114131,
+    "sprot": 294430316
+  },
+  "timings_seconds": {
+    "silva_contigs": 2.8573527590015146,
+    "kraken2_conf0.0": 0.426861366000594,
+    "kraken2_conf0.05": 0.37943787400035944,
+    "kraken2_conf0.1": 0.4165911850013799,
+    "kraken2_conf0.2": 0.404932428000393,
+    "diamond_holdout_prot": 95.57700965699951,
+    "diamond_sprot": 141.9993433439995
+  }
+}

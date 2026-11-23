@@ -1,0 +1,131 @@
+{
+  "contigs_file": "/home/user/stage/wk/asm_keep_local/contigs_renamed.fa",
+  "contigs": 36345,
+  "bases": 22209442,
+  "operating_point": {
+    "kraken2_confidence": 0.1,
+    "diamond_bitscore": 50.0,
+    "kraken2_db": "k2_viral_20210517.d",
+    "protein_dbs": [
+      "holdout_prot",
+      "sprot"
+    ]
+  },
+  "kraken2_confidence_sweep": {
+    "0.00": 0.012078690328793506,
+    "0.05": 0.0029990370064658135,
+    "0.10": 0.002448754986930802,
+    "0.20": 0.0020910716742330443
+  },
+  "protein_bitscore_sweep": {
+    "holdout_prot": {
+      "30": 0.44614114733801075,
+      "40": 0.25456046223689643,
+      "50": 0.20943733663502545,
+      "60": 0.17823634612739028,
+      "80": 0.12796808364286696,
+      "100": 0.09448342275416151
+    },
+    "sprot": {
+      "30": 0.7397991470628698,
+      "40": 0.6348053377355894,
+      "50": 0.5930939606548356,
+      "60": 0.5566652909616179,
+      "80": 0.48669693217774107,
+      "100": 0.4256156280093548
+    }
+  },
+  "identified_frac": 0.6371440363186133,
+  "identified_bases_frac": 0.7024353425898768,
+  "route_nucleotide_only": 0.00011005640390700234,
+  "route_protein_only": 0.6299903700646582,
+  "all": {
+    "contigs": 36345,
+    "bases": 22209442,
+    "len_median": 457,
+    "len_p90": 1032,
+    "len_max": 21798,
+    "cov_median": 3.0,
+    "frac_over_500nt": 0.4260008254230293,
+    "frac_over_2x": 0.9678635300591553,
+    "frac_over_500nt_and_2x": 0.42264410510386574
+  },
+  "identified": {
+    "contigs": 23157,
+    "bases": 15600697,
+    "len_median": 495,
+    "len_p90": 1179,
+    "len_max": 16172,
+    "cov_median": 3.0,
+    "frac_over_500nt": 0.49194627974262645,
+    "frac_over_2x": 0.9718875502008032,
+    "frac_over_500nt_and_2x": 0.4884484173252148
+  },
+  "rrna_contigs": {
+    "contigs": 211,
+    "bases": 137323,
+    "len_median": 483,
+    "len_p90": 1079,
+    "len_max": 4494,
+    "cov_median": 11.0,
+    "frac_over_500nt": 0.46445497630331756,
+    "frac_over_2x": 0.985781990521327,
+    "frac_over_500nt_and_2x": 0.4549763033175355
+  },
+  "rrna_contig_frac": 0.005805475306094373,
+  "rrna_bases_frac": 0.006183090957440534,
+  "identified_excluding_rrna": {
+    "contigs": 22946,
+    "bases": 15463374,
+    "len_median": 495.0,
+    "len_p90": 1180,
+    "len_max": 16172,
+    "cov_median": 3.0,
+    "frac_over_500nt": 0.49219907609169355,
+    "frac_over_2x": 0.9717597838403208,
+    "frac_over_500nt_and_2x": 0.4887562102327203
+  },
+  "unidentified": {
+    "contigs": 13188,
+    "bases": 6608745,
+    "len_median": 411.0,
+    "len_p90": 774,
+    "len_max": 21798,
+    "cov_median": 3.0,
+    "frac_over_500nt": 0.3102062481043373,
+    "frac_over_2x": 0.960797694874128,
+    "frac_over_500nt_and_2x": 0.30709736123748865
+  },
+  "tier2_population": {
+    "contigs": 13188,
+    "bases": 6608745,
+    "len_median": 411.0,
+    "len_p90": 774,
+    "len_max": 21798,
+    "cov_median": 3.0,
+    "frac_over_500nt": 0.3102062481043373,
+    "frac_over_2x": 0.960797694874128,
+    "frac_over_500nt_and_2x": 0.30709736123748865
+  },
+  "tier2_min_len": 200,
+  "files": {
+    "identified": "/home/user/stage/wk/asm_keep_local/contigs_renamed_identified.fa",
+    "identified_excluding_rrna": "/home/user/stage/wk/asm_keep_local/contigs_renamed_identified_norrna.fa",
+    "rrna_contigs": "/home/user/stage/wk/asm_keep_local/contigs_renamed_rrna.fa",
+    "unidentified_tier2": "/home/user/stage/wk/asm_keep_local/contigs_renamed_unidentified.fa"
+  },
+  "index_bytes": {
+    "kraken2": 490063024,
+    "holdout_prot": 233114131,
+    "sprot": 294430316
+  },
+  "timings_seconds": {
+    "silva_contigs": 3.082221003000086,
+    "kraken2_conf0.0": 0.46169319300133793,
+    "kraken2_conf0.05": 0.476725542001077,
+    "kraken2_conf0.1": 0.4467098290006106,
+    "kraken2_conf0.2": 0.44207508100043924,
+    "diamond_holdout_prot": 98.13116825600082,
+    "diamond_sprot": 142.33244133299922
+  }
+}

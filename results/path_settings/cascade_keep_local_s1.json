@@ -1,0 +1,408 @@
+{
+  "seed": 1,
+  "pairs": 200000,
+  "block_skipped": 0,
+  "curve": [
+    {
+      "tier": "artefact",
+      "index_bytes": 120,
+      "cumulative_index_bytes": 120,
+      "tier_alone_removed": 0.00161,
+      "marginal_removed": 0.00161,
+      "cumulative_removed": 0.00161,
+      "residue": 0.99839,
+      "wall_seconds": 16.4196464380002
+    },
+    {
+      "tier": "rrna",
+      "index_bytes": 264632415,
+      "cumulative_index_bytes": 264632535,
+      "tier_alone_removed": 0.095195,
+      "marginal_removed": 0.093645,
+      "cumulative_removed": 0.095255,
+      "residue": 0.904745,
+      "wall_seconds": 24.95246486999895
+    },
+    {
+      "tier": "k2_viral_20210517.d",
+      "index_bytes": 491352095,
+      "cumulative_index_bytes": 755984630,
+      "tier_alone_removed": 0.01618,
+      "marginal_removed": 0.016085,
+      "cumulative_removed": 0.11134,
+      "residue": 0.88866,
+      "wall_seconds": 4.05306985700372
+    },
+    {
+      "tier": "selfasm_contigs_renamed_rrna",
+      "index_bytes": 151104,
+      "cumulative_index_bytes": 756135734,
+      "tier_alone_removed": 0.206955,
+      "marginal_removed": 0.129985,
+      "cumulative_removed": 0.241325,
+      "residue": 0.758675,
+      "wall_seconds": 2.8794745129998773
+    },
+    {
+      "tier": "selfasm_contigs_renamed_identified_norrna",
+      "index_bytes": 16946569,
+      "cumulative_index_bytes": 773082303,
+      "tier_alone_removed": 0.404125,
+      "marginal_removed": 0.337935,
+      "cumulative_removed": 0.57926,
+      "residue": 0.42074,
+      "wall_seconds": 5.539129347002017
+    },
+    {
+      "tier": "prot_holdout_prot",
+      "index_bytes": 233114131,
+      "cumulative_index_bytes": 1006196434,
+      "tier_alone_removed": 0.009985,
+      "marginal_removed": 0.009985,
+      "cumulative_removed": 0.589245,
+      "residue": 0.410755,
+      "wall_seconds": 85.00520278900149
+    },
+    {
+      "tier": "prot_sprot",
+      "index_bytes": 294430316,
+      "cumulative_index_bytes": 1300626750,
+      "tier_alone_removed": 0.05722,
+      "marginal_removed": 0.05174,
+      "cumulative_removed": 0.640985,
+      "residue": 0.359015,
+      "wall_seconds": 111.27795690999847
+    }
+  ],
+  "tiers": {
+    "artefact": {
+      "adapter_any": 0.001585,
+      "primer_dimer": 0.0,
+      "low_entropy": 0.00159,
+      "homopolymer": 0.00157,
+      "n_rich": 0.0,
+      "entropy_sweep": {
+        "0.30": 0.00156,
+        "0.40": 0.001565,
+        "0.50": 0.00159,
+        "0.60": 0.00175,
+        "0.70": 0.00222,
+        "0.80": 0.008675
+      }
+    },
+    "rrna": {
+      "mlen_sweep": {
+        "30": 0.095195,
+        "40": 0.095195,
+        "50": 0.08987,
+        "60": 0.085035,
+        "80": 0.077115,
+        "100": 0.069085
+      }
+    },
+    "k2_viral_20210517.d": {
+      "peak_rss_bytes": 5665988608,
+      "wall_seconds_per_run": 1.01326746425093,
+      "operating_confidence": 0.1,
+      "confidence_sweep": {
+        "0.00": 0.021655,
+        "0.05": 0.01765,
+        "0.10": 0.01618,
+        "0.20": 0.014615
+      },
+      "top_taxa": [
+        [
+          1761477,
+          2160
+        ],
+        [
+          12235,
+          452
+        ],
+        [
+          1923144,
+          225
+        ],
+        [
+          12239,
+          79
+        ],
+        [
+          10678,
+          51
+        ],
+        [
+          12253,
+          39
+        ],
+        [
+          12242,
+          27
+        ],
+        [
+          12241,
+          21
+        ],
+        [
+          12234,
+          20
+        ],
+        [
+          1815968,
+          19
+        ],
+        [
+          2508196,
+          18
+        ],
+        [
+          1923451,
+          18
+        ],
+        [
+          2563343,
+          17
+        ],
+        [
+          28883,
+          13
+        ],
+        [
+          196894,
+          11
+        ]
+      ]
+    },
+    "selfasm_contigs_renamed_rrna": {
+      "mlen_sweep": {
+        "30": 0.206955,
+        "40": 0.206955,
+        "50": 0.19866,
+        "60": 0.192915,
+        "80": 0.183185,
+        "100": 0.1721
+      }
+    },
+    "selfasm_contigs_renamed_identified_norrna": {
+      "mlen_sweep": {
+        "30": 0.404125,
+        "40": 0.404125,
+        "50": 0.39084,
+        "60": 0.375515,
+        "80": 0.35566,
+        "100": 0.33915
+      }
+    },
+    "observe_contigs_renamed_unidentified": {
+      "subtracted": false,
+      "mlen_sweep": {
+        "30": 0.17663,
+        "40": 0.17663,
+        "50": 0.163095,
+        "60": 0.15585,
+        "80": 0.14509,
+        "100": 0.135435
+      },
+      "tier_alone": 0.17663
+    },
+    "prot_holdout_prot": {
+      "conditioned_on": "survivors of all nucleotide tiers",
+      "survivors_in": 84148,
+      "bitscore_sweep": {
+        "30": 0.10986595046822266,
+        "40": 0.040345581594333796,
+        "50": 0.023731996007035225,
+        "60": 0.014403194371821077,
+        "80": 0.004860483909302657,
+        "100": 0.0012478014926082617
+      },
+      "bitscore_sweep_of_library": {
+        "30": 0.046225,
+        "40": 0.016975,
+        "50": 0.009985,
+        "60": 0.00606,
+        "80": 0.002045,
+        "100": 0.000525
+      },
+      "removed_at_what_distance": {
+        "unit": "read pairs removed by this tier at the cascade's bitscore",
+        "bitscore_threshold": 50.0,
+        "removed": 1997,
+        "alignment_at_least_30_aa": 1980,
+        "alignment_under_30_aa_unscorable": 17,
+        "identity_histogram": [
+          {
+            "from_percent": 0,
+            "to_percent": 30,
+            "reads": 0
+          },
+          {
+            "from_percent": 30,
+            "to_percent": 40,
+            "reads": 1
+          },
+          {
+            "from_percent": 40,
+            "to_percent": 50,
+            "reads": 143
+          },
+          {
+            "from_percent": 50,
+            "to_percent": 60,
+            "reads": 581
+          },
+          {
+            "from_percent": 60,
+            "to_percent": 70,
+            "reads": 601
+          },
+          {
+            "from_percent": 70,
+            "to_percent": 80,
+            "reads": 262
+          },
+          {
+            "from_percent": 80,
+            "to_percent": 90,
+            "reads": 131
+          },
+          {
+            "from_percent": 90,
+            "to_percent": 95,
+            "reads": 78
+          },
+          {
+            "from_percent": 95,
+            "to_percent": 100,
+            "reads": 149
+          },
+          {
+            "from_percent": 100,
+            "to_percent": 100.1,
+            "reads": 34
+          }
+        ],
+        "median_identity_percent": 63.9,
+        "median_alignment_aa": 48,
+        "barely_recognisable_share": 0.6697,
+        "barely_recognisable_means": "under 70% identity over at least 30 aa: removed as known, but at a distance where the subject lends its name rather than establishing an identity",
+        "bias": "per-read identity reads high towards familiar, by +17.2 points below 50% alignment coverage and +7.1 above 90% on the holdout's known distance, so these are upper bounds on identity"
+      }
+    },
+    "prot_sprot": {
+      "conditioned_on": "survivors of all nucleotide tiers",
+      "survivors_in": 84148,
+      "bitscore_sweep": {
+        "30": 0.3071730760089366,
+        "40": 0.1928031563435851,
+        "50": 0.13599847887056138,
+        "60": 0.10177306650187765,
+        "80": 0.04850976850311356,
+        "100": 0.0076056471930408326
+      },
+      "bitscore_sweep_of_library": {
+        "30": 0.12924,
+        "40": 0.08112,
+        "50": 0.05722,
+        "60": 0.04282,
+        "80": 0.02041,
+        "100": 0.0032
+      },
+      "removed_at_what_distance": {
+        "unit": "read pairs removed by this tier at the cascade's bitscore",
+        "bitscore_threshold": 50.0,
+        "removed": 11444,
+        "alignment_at_least_30_aa": 11242,
+        "alignment_under_30_aa_unscorable": 202,
+        "identity_histogram": [
+          {
+            "from_percent": 0,
+            "to_percent": 30,
+            "reads": 0
+          },
+          {
+            "from_percent": 30,
+            "to_percent": 40,
+            "reads": 11
+          },
+          {
+            "from_percent": 40,
+            "to_percent": 50,
+            "reads": 443
+          },
+          {
+            "from_percent": 50,
+            "to_percent": 60,
+            "reads": 2001
+          },
+          {
+            "from_percent": 60,
+            "to_percent": 70,
+            "reads": 2342
+          },
+          {
+            "from_percent": 70,
+            "to_percent": 80,
+            "reads": 2198
+          },
+          {
+            "from_percent": 80,
+            "to_percent": 90,
+            "reads": 1836
+          },
+          {
+            "from_percent": 90,
+            "to_percent": 95,
+            "reads": 969
+          },
+          {
+            "from_percent": 95,
+            "to_percent": 100,
+            "reads": 909
+          },
+          {
+            "from_percent": 100,
+            "to_percent": 100.1,
+            "reads": 533
+          }
+        ],
+        "median_identity_percent": 73.5,
+        "median_alignment_aa": 49,
+        "barely_recognisable_share": 0.4267,
+        "barely_recognisable_means": "under 70% identity over at least 30 aa: removed as known, but at a distance where the subject lends its name rather than establishing an identity",
+        "bias": "per-read identity reads high towards familiar, by +17.2 points below 50% alignment coverage and +7.1 above 90% on the holdout's known distance, so these are upper bounds on identity"
+      }
+    }
+  },
+  "union_removed": 0.640985,
+  "residue_pairs": 71803,
+  "residue_composition": {
+    "observe_contigs_renamed_unidentified": 0.14027
+  },
+  "tier3_pairs": 43749,
+  "timings_seconds": {
+    "read_block": 0.7881788529994083,
+    "artefact": 16.4196464380002,
+    "silva_prepare": 11.193520666998666,
+    "silva_index": 18.318566903999454,
+    "rrna": 24.95246486999895,
+    "k2_viral_20210517.d": 4.05306985700372,
+    "selfasm_contigs_renamed_rrna_index": 0.060201664000487654,
+    "selfasm_contigs_renamed_rrna": 2.8794745129998773,
+    "selfasm_contigs_renamed_identified_norrna_index": 0.600202730998717,
+    "selfasm_contigs_renamed_identified_norrna": 5.539129347002017,
+    "observe_contigs_renamed_unidentified": 4.221690654998383,
+    "prot_holdout_prot": 85.00520278900149,
+    "prot_sprot": 111.27795690999847
+  },
+  "index_bytes": {
+    "artefact": 120,
+    "rrna": 264632415,
+    "k2_viral_20210517.d": 491352095,
+    "selfasm_contigs_renamed_rrna": 151104,
+    "selfasm_contigs_renamed_identified_norrna": 16946569,
+    "observe_contigs_renamed_unidentified": 7459242,
+    "prot_holdout_prot": 233114131,
+    "prot_sprot": 294430316
+  }
+}
