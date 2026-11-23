@@ -1,0 +1,53 @@
+{
+  "what_this_is": "Per-library facts that are properties of a sequencing run, not of this code. They were written as defaults in roughly fifteen scripts and as bare literals inside five more, one copy each, which is how a value measured on one library silently applies itself to another.",
+  "how_to_use_it": "Ask for a library by accession. A script that cannot name its library must be told the values explicitly; it must never fall back to another library's. Adding a library means adding an entry here with how each value was established.",
+  "libraries": {
+    "SRR23973193": {
+      "label": "Berlin influent, the discriminating dataset",
+      "bioproject": "PRJNA948850",
+      "layout": "paired",
+      "pairs": 8731224,
+      "trim_r2": 14,
+      "trim_r2_basis": "mate 2 carries about 14 nt of non-template 5' sequence, mapped base by base in results/nontemplate_prefix_map/. After trimming R1 is 107 nt and R2 93, which is why any field computed symmetrically over a pair has to be reported per mate.",
+      "trim_r2_for_kraken2": 16,
+      "trim_r2_for_kraken2_basis": "two further bases are trimmed before Kraken2 only, measured separately; other kits take 0.",
+      "block": 1500000,
+      "block_basis": "pairs skipped per seed so that five seeds read five distinct contiguous regions of the flow cell. Sized to this library: 5 x 1.5 M sits inside 8.73 M pairs. A larger block on a smaller library runs off the end of the file, and the five seeds are contiguous blocks rather than a random sample, which is why DESIGN_EFFECT is never re-estimated from them.",
+      "r1": "data/berlin/SRR23973193_1.fastq.gz",
+      "r2": "data/berlin/SRR23973193_2.fastq.gz",
+      "trim_r2_for_mapback": 16,
+      "trim_r2_for_mapback_basis": "16, not 14, is what divergent_known.py and divergent_contig_workup.py trimmed when mapping reads back onto contigs, and every depth and evenness number in results/divergent_known/ and results/divergent_contigs/ was produced with it. It is recorded as its own key rather than quietly reconciled to 14, because 14 is the measured prefix and a 2-base over-trim is a real if small difference: changing it means re-running both stages, so the value is pinned here with the discrepancy stated instead of being a bare literal in two scripts."
+    },
+    "SRR23421544": {
+      "label": "the holdout library, the positive control",
+      "bioproject": "PRJNA917124",
+      "layout": "single",
+      "layout_note": "the metadata says library_layout=PAIRED and the library is single-end. Everything SPEC 4.3 gains from merging the mates is untestable here, so this instrument is weaker than production, in the direction that makes the withheld genome harder to find.",
+      "pairs": 4290429,
+      "trim_r2": 0,
+      "trim_r2_basis": "single-end: there is no mate 2 to trim, and trimming 14 nt off anything here would delete real sequence.",
+      "block": 1000000,
+      "block_basis": "5 x 1.5 M does not fit in 4.29 M reads, so the Berlin default leaves seeds 4 and 5 reading nothing. Measured, and it produced a directory that looked like a five-seed result."
+    },
+    "SRR23973265": {
+      "label": "Berlin influent 2022-06-16, RNA: the drift comparison",
+      "bioproject": "PRJNA948850",
+      "layout": "paired",
+      "trim_r2": 14,
+      "trim_r2_basis": "the same non-template prefix as SRR23973193: results/nontemplate_prefix_map/ measures a 5' soft-clip mode of 14 in 5 of 5 seeds on both RNA libraries.",
+      "block": 1500000,
+      "block_basis": "inherited from results/dna_rna_pair/, which used one 1.5 M stride for all three of its libraries because the seeds have to select the same block of each. It is not measured against this library's own read count, which is the weaker claim of the two block entries in this file."
+    },
+    "SRR23973375": {
+      "label": "Berlin influent 2022-06-16, DNA: the kind control for the RNA pair",
+      "bioproject": "PRJNA948850",
+      "layout": "paired",
+      "trim_r2": 14,
+      "trim_r2_basis": "NOT measured on this library. The prefix was mapped on the two RNA libraries only, and results/dna_rna_pair/ applied their 14 to this DNA library as well. It is written here so that the assumption is visible and attributable rather than a default; a DNA kit has no reason to carry an RNA kit's prefix, and nothing has checked it.",
+      "trim_r2_unverified": true,
+      "block": 1500000,
+      "block_basis": "inherited from results/dna_rna_pair/, which used one 1.5 M stride for all three of its libraries because the seeds have to select the same block of each. It is not measured against this library's own read count, which is the weaker claim of the two block entries in this file."
+    }
+  },
+  "status": "hand-written from measurements recorded elsewhere in results/. Each value names what established it. Nothing here is derived at run time."
+}

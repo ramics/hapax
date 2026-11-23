@@ -53,6 +53,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import library_facts
 from berlin_io import read_pairs
 from subtract_known import provenance
 
@@ -142,11 +143,12 @@ def build_queries(reads1: Path, reads2: Path, calls: Path, out: Path, pairs: int
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=1)
+    library_facts.add_argument(ap, default="SRR23973265")
     ap.add_argument("--query-r1", type=Path,
                     default=ROOT / "data/berlin_pair/SRR23973265_1.fastq.gz")
     ap.add_argument("--query-r2", type=Path,
                     default=ROOT / "data/berlin_pair/SRR23973265_2.fastq.gz")
-    ap.add_argument("--query-trim-r2", type=int, default=14,
+    ap.add_argument("--query-trim-r2", type=int, default=None,
                     help="MEASURED, not detected. The first pass used 16, taken from "
                          "dna_rna_pair.py's composition detector; mapping untrimmed reads "
                          "to SILVA gives a 5' soft-clip mode of 14 in 5/5 seeds on both RNA "
@@ -158,7 +160,7 @@ def main() -> None:
                     help="Kraken2 per-read output for the query library, from the same "
                          "block: dna_rna_pair.py leaves it in its work dir")
     ap.add_argument("--pairs", type=int, default=200_000)
-    ap.add_argument("--query-block", type=int, default=1_500_000,
+    ap.add_argument("--query-block", type=int, default=None,
                     help="pairs skipped per seed, matching dna_rna_pair.py, so that --seed "
                          "selects the same block of the library the classifier output came "
                          "from. dna_rna_pair.py overwrites that output once per seed")
@@ -172,6 +174,14 @@ def main() -> None:
     ap.add_argument("--work", type=Path, default=Path("/tmp/claude-0/wk/crosswitness"))
     ap.add_argument("--out", type=Path, default=ROOT / "results/dna_rna_pair")
     args = ap.parse_args()
+
+    # The query library's trim and stride are properties of that library, and the query
+    # here is not the discriminating dataset, so --library names it. A query path whose
+    # accession disagrees with --library is refused rather than given these values: that
+    # is the case where one library's prefix would be cut off another library's reads.
+    library_facts.resolve_args(args, {"query_trim_r2": "trim_r2",
+                                      "query_block": "block"},
+                               path_attrs=("query_r1", "query_r2"))
 
     if len(args.subject) < 2:
         raise SystemExit("one subject library is not a measurement; pass --subject twice")

@@ -1,0 +1,58 @@
+{
+  "n_truth": 5,
+  "n_contigs": 3,
+  "total_contig_bp": 7582,
+  "n50": 2529,
+  "recovered": 1,
+  "recovered_frac": 0.2,
+  "recovered_names": [
+    "JX239322.1"
+  ],
+  "best_identity_median": 0.98802,
+  "cross_host_chimaeras": 0,
+  "within_host_switches": 1,
+  "contigs_with_frameshift": 3,
+  "frameshifts_total": 39,
+  "frameshifts_per_kb": 5.1438,
+  "per_contig": [
+    {
+      "contig": "haplotype_0_length_2482_abundance_0.6018258426966292_number_of_reads_1714_depth_1546.450809956539",
+      "length": 2529,
+      "best": "EU166809.1",
+      "identity": 0.98616,
+      "orientation": "+",
+      "frameshifts": 9,
+      "indels": 12,
+      "fs_per_kb": 3.559,
+      "cross_host_chimaera": false,
+      "within_host_switch": false,
+      "window_haplotypes": 1
+    },
+    {
+      "contig": "haplotype_1_length_2489_abundance_0.2029494382022472_number_of_reads_578_depth_520.672195892575",
+      "length": 2548,
+      "best": "JX239322.1",
+      "identity": 0.99019,
+      "orientation": "+",
+      "frameshifts": 13,
+      "indels": 14,
+      "fs_per_kb": 5.102,
+      "cross_host_chimaera": false,
+      "within_host_switch": false,
+      "window_haplotypes": 1
+    },
+    {
+      "contig": "haplotype_2_length_2454_abundance_0.1952247191011236_number_of_reads_556_depth_508.11536926147704",
+      "length": 2505,
+      "best": "JX239308.1",
+      "identity": 0.98802,
+      "orientation": "+",
+      "frameshifts": 17,
+      "indels": 18,
+      "fs_per_kb": 6.786,
+      "cross_host_chimaera": false,
+      "within_host_switch": true,
+      "window_haplotypes": 2
+    }
+  ]
+}

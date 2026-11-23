@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import platform
 import random
 import subprocess
@@ -154,14 +155,27 @@ def _trim_ranking(R: dict, seed: int, cards: int = 400, per_facet: int = 60,
 
     The archive keeps the whole file. This only decides what travels into the HTML.
     """
+    # An empty dict is not an absent file to a JS truth test, and the panels that read
+    # this key check `if (!R)`. Returning {} for a run that never had the stage therefore
+    # sailed past every absent guard and threw on the first field access, taking every
+    # panel after it off the page. Absent is None.
+    if not R:
+        return None
     rows = R.get("subjects") or []
     if not rows:
         return R
-    mix = {}
+    mix, readmix = {}, {}
     for r in rows:
         mix[r["host_group"]] = mix.get(r["host_group"], 0) + 1
+        readmix[r["host_group"]] = (readmix.get(r["host_group"], 0)
+                                    + (r.get("residue_reads") or 0))
     R["host_mix"] = mix
+    # Reads, not subjects. A share of subjects is a share of the database; a share of
+    # reads is a share of the water, which is the question a reader is actually asking,
+    # and it is the occurrence-weighted unit this repo reports everything else in.
+    R["host_mix_reads"] = readmix
     R["subjects_total"] = len(rows)
+    R["reads_total"] = sum(readmix.values())
 
     rng = random.Random(seed)
     withx = [r for r in rows if r.get("median_identity_percent") is not None]
@@ -226,6 +240,16 @@ def _trim_workup(w):
              "aa_len": o["aa_len"], "title": o["best_title"],
              "pfam": [d["id"] for d in o["pfam"]]}
             for o in r.get("orf_rows", []) if o.get("significant")]
+        # Coordinates, for the genome maps. A gene list without them can only be drawn
+        # as a bar chart of identities, which is the thing the reader could not read:
+        # with them the picture is the molecule, and the identity is a label on a part
+        # of it rather than a number beside a name.
+        rows[-1]["orfs_drawn"] = [
+            {"s": o["start"], "e": o["end"], "d": o["strand"], "aa": o["aa_len"],
+             "role": o["gene_role"], "pident": o["pident"],
+             "title": o["best_title"], "sig": bool(o.get("significant")),
+             "pfam": [x["id"] for x in o["pfam"]]}
+            for o in r.get("orf_rows", [])]
     return {k: w[k] for k in ("summary", "operating_point", "the_number_to_rank_by",
                               "bands", "blind_spots", "seed", "git_sha",
                               "script_sha256") if k in w} | {"rows": rows}
@@ -235,7 +259,297 @@ def load(p: Path):
     return json.loads(p.read_text()) if p.exists() else None
 
 
-def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int) -> dict:
+ROOT = Path(__file__).resolve().parent.parent
+
+#: The point on the spectrum below which a reported identity cannot be read. Both are
+#: measured, not chosen. Below half the contig covered, per-read identity flatters towards
+#: "familiar" by +17.2 points against +7.1 above 90% coverage (`results/holdout_run/`), and
+#: below about 100 aligned residues identity is quantised in steps a reader will
+#: over-interpret. A contig that fails either does not get a position on the axis; it goes
+#: into a lane of its own, because a point drawn at a number that cannot be read is worse
+#: than an admission.
+SPECTRUM_MIN_COVERAGE = 0.5
+SPECTRUM_MIN_ALN_AA = 100
+
+
+def spectrum(inputs: dict) -> dict | None:
+    """The distance spectrum: one continuous axis, no bucket boundary anywhere on it.
+
+    WHY A SPECTRUM AND NOT TIERS. Identity against a reference orders contigs by database
+    proximity, so any line drawn across it is a statement about the database rather than
+    about novelty. The whole pile is therefore one ranked continuum, and the only
+    categorical thing the panel draws is whether the measurement can be read at all.
+
+    WHY THE POSITION COMES FROM ONE GENE AND NOT THE CONTIG. A whole-contig identity is
+    whichever gene won on bitscore, and a divergent contig's own genes disagree by a median
+    12.8 points against the near-reference arm's 2.45 (`results/divergent_known/`). So the
+    axis takes the polymerase where one is called, the whole-contig hit otherwise, says
+    which on every row, and draws the spread between a contig's genes as a whisker. A dot
+    without its whisker is the error this panel exists to stop.
+
+    WHY COVERAGE IS THE COLOUR. Identity and coverage are not two optional readouts; an
+    identity without the fraction covered cannot tell a diverged full-length protein from a
+    conserved fragment of one, and those are different findings. Putting coverage on the
+    colour ramp means a thin alignment cannot be read as a confident number by accident.
+
+    WHY THE BIG-INDEX RESULT IS A RING AND NOT AN ARROW. core_nt is a nucleotide index and
+    this axis is protein identity. Drawing a contig as moving from one to the other would be
+    comparing two instruments, which is the move this project refuses. So the 166 contigs
+    that also went to core_nt carry a mark saying what the larger index did to them, in its
+    own units, and the slot for a true displacement arrow waits on the protein pass against
+    nr, which is the same instrument at a larger size.
+    """
+    # Every file this panel reads is one the page descriptor declared, by path, for THIS
+    # sample. It used to read three repo-root result files whatever run directory it was
+    # given, so the holdout page drew the Berlin contigs as its own spectrum and nothing
+    # on the page said so.
+    if inputs["spectrum"] is None:
+        return None
+    dk = load(inputs["spectrum"])
+    big = {}
+    cn = inputs["spectrum_big_index"]
+    if cn is not None:
+        for line in cn.read_text().splitlines():
+            if not line.strip():
+                continue
+            r = json.loads(line)
+            if not r.get("hit") or r["evalue"] >= 1e-5:
+                big[r["read"]] = {"state": "no significant hit"}
+                continue
+            state = ("collapsed to a strain-level identification"
+                     if r["pident"] >= 90 and r["aln_frac"] >= 0.5
+                     else "still distant" if r["pident"] < 80 or r["aln_frac"] < 0.5
+                     else "closer, still not an identification")
+            big[r["read"]] = {"state": state, "pident": round(r["pident"], 1),
+                              "frac": round(r["aln_frac"], 3)}
+
+    on_axis, lane = [], []
+    for r in dk["rows"]:
+        glist = [g for g in r.get("genes") or [] if g.get("pident") is not None]
+        genes = [g["pident"] for g in glist]
+        # The coverage that belongs beside a gene-level identity is the fraction of THAT
+        # gene aligned, not the fraction of the contig. A 4 kb contig with one scorable
+        # gene covers a tenth of itself and the gene can still be aligned end to end; the
+        # measured familiarity bias is a property of how much of the scored sequence the
+        # alignment spans, so it is read on the same unit the identity came from.
+        rank = next((g for g in glist if g.get("role") == "polymerase"), None)
+        x = r.get("polymerase_pident")
+        src = "polymerase"
+        if x is None or rank is None:
+            x, src, rank = r["pident"], "whole contig", None
+        if rank is not None:
+            cov = round(rank["aln_aa"] / max(1, rank.get("aa_len") or 1), 3)
+            aln = rank["aln_aa"]
+        else:
+            cov, aln = r["subject_coverage"], r["aln_aa"]
+        why = ("under half the scored gene covered" if cov < SPECTRUM_MIN_COVERAGE
+               else "alignment under 100 aa" if aln < SPECTRUM_MIN_ALN_AA else None)
+        row = {
+            "name": r["contig"], "arm": r["arm"], "x": x, "src": src,
+            "lo": min(genes) if len(genes) > 1 else None,
+            "hi": max(genes) if len(genes) > 1 else None,
+            "genes": len(genes), "cov": cov, "aln": aln,
+            "nt": r["contig_nt"], "evalue": r["evalue"],
+            "depth": (r.get("read_support") or {}).get("mapped_median_depth"),
+            "subject": (r.get("subject_title") or r.get("subject") or "")[:90],
+            "big": big.get(r["contig"]),
+        }
+        (lane if why else on_axis).append({**row, "why": why} if why else row)
+
+    # THE ONE POINT ON THE PLOT WHOSE TRUE DISTANCE IS KNOWN. Everything else on this
+    # axis is a distance to the nearest thing a database happens to hold, which is an
+    # upper bound on identity. The holdout genome was deposited after the reference cutoff
+    # and withheld from every index, so its real divergence is a measured 30.28% at
+    # nucleotide level rather than an inference, and it belongs on the plot labelled as
+    # such. Its three genes also show the gene spread doing its job: 24.3 points.
+    hv = load(inputs["spectrum_reference_point"]) if inputs["spectrum_reference_point"] \
+        else {}
+    truth = None
+    if inputs["spectrum_reference_point"] is not None:
+        # The true distance is read from the file that fixed it, not typed here.
+        truth = (load(inputs["spectrum_reference_truth"]) or {}).get("truth") or {}
+        if truth.get("nucleotide_divergence_percent") is None:
+            raise SystemExit(f"{inputs['spectrum_reference_truth']} has no "
+                             f"truth.nucleotide_divergence_percent; the reference point "
+                             f"on the spectrum cannot be drawn without its true distance")
+    hold = None
+    for row in hv.get("per_contig_roles") or []:
+        if row.get("arm") == "extra_candidate_withheld":
+            hold = {"by_role": row["by_role"], "spread": row["spread_points"],
+                    "true_nucleotide_divergence_percent":
+                        truth["nucleotide_divergence_percent"],
+                    "note": ("a genome withheld from every index; its position here is a "
+                             "measurement of this axis, not an estimate of the genome")}
+    ex = dk.get("external_positive_control") or {}
+    return {
+        "on_axis": on_axis,
+        "cannot_read": lane,
+        "floors": {"min_coverage": SPECTRUM_MIN_COVERAGE,
+                   "min_aln_aa": SPECTRUM_MIN_ALN_AA},
+        "census": {
+            "searched": (dk.get("discrimination") or {}).get("existence", {})
+                        .get("contigs_searched"),
+            "with_a_significant_hit": (dk.get("discrimination") or {})
+                                      .get("existence", {}).get("real_with_a_significant_hit"),
+            "shuffled_with_a_significant_hit": (dk.get("discrimination") or {})
+                                               .get("existence", {})
+                                               .get("shuffled_with_a_significant_hit"),
+            "drawn": len(on_axis) + len(lane),
+            "note": ("the panel draws the gene-level subset, which is every contig short "
+                     "enough for per-ORF scoring; the census above it is the whole pile"),
+        },
+        "holdout": hold,
+        "holdout_scope": ex or None,
+        # Left empty on purpose rather than omitted, so the page says the axis is coming
+        # instead of the reader discovering later that it was never there. Filled when the
+        # structure pass reports, and only if it reaches past the protein search.
+        "structure_axis": {"state": "not measured yet",
+                           "what_would_fill_it": ("a per-gene structural distance - "
+                                                  "ProstT5 plus Foldseek, or "
+                                                  "profile-to-profile - taken only if it "
+                                                  "reaches past DIAMOND on this material")},
+    }
+
+
+#: Every file outside the run directory that a panel may read, and what it is. A page
+#: descriptor must state each one, either as a path or as `{"not_run": reason}`: a key it
+#: leaves out is a refusal, because "nobody said" and "it does not apply" must not render
+#: the same. Nothing here is ever found by globbing - in particular a sample cannot acquire
+#: a ground truth (`truth_gene_map`) because a file with the right name happens to exist.
+PAGE_INPUTS = {
+    "spectrum": "experiments/divergent_known.py output: the contigs the distance "
+                "spectrum draws",
+    "spectrum_big_index": "core_nt block marking what the larger index did to those "
+                          "contigs",
+    "spectrum_reference_point": "experiments/conserved_positions.py output holding the "
+                                "withheld genome's per-gene identities",
+    "spectrum_reference_truth": "a gene map whose truth block fixes that genome's real "
+                                "distance",
+    "truth_gene_map": "this library's own ground truth, from "
+                      "experiments/holdout_gene_map.py",
+}
+
+#: The six fixed rows of a Methods entry, in order. Two spellings of the last two are in
+#: use and both are accepted; anything else is a refusal.
+METHOD_ROWS = [("Input",), ("Procedure",), ("Threshold",), ("Denominator",),
+               ("Control", "Control arm"), ("Bias", "Bias direction")]
+METHODS_FILE = ROOT / "results/web/methods.json"
+NOT_MEASURED = "Not measured on this library."
+
+
+def load_page(path: Path, rundir: Path | None) -> dict:
+    """Read and check a page descriptor: the only per-sample input the generator takes.
+
+    WHY A FILE AND NOT FLAGS. Two pages built from one generator with different flags are
+    two generators: whatever the holdout page needed was a flag Berlin did not pass, and
+    whatever Berlin said was typed into the renderer and printed on the holdout page too.
+    So everything a page says about its sample that is not in the run directory - its
+    title, the sentence that says what the water is, and every file outside the run it
+    reads - lives in one committed file per sample, and every sample goes through the same
+    command with it. A future sample needs a descriptor and nothing else.
+    """
+    d = json.loads(path.read_text())
+    problems = []
+    for k in ("title", "sample", "rundir", "inputs"):
+        if k not in d:
+            problems.append(f"missing key {k!r}")
+    smp = d.get("sample") or {}
+    for k in ("accession", "lede"):
+        if not smp.get(k):
+            problems.append(f"missing sample.{k}")
+    inputs = d.get("inputs") or {}
+    for k in sorted(set(PAGE_INPUTS) - set(inputs)):
+        problems.append(f"inputs.{k} is not declared: give a path or "
+                        f'{{"not_run": "why"}} ({PAGE_INPUTS[k]})')
+    for k in sorted(set(inputs) - set(PAGE_INPUTS)):
+        problems.append(f"inputs.{k} is not an input any panel reads")
+    resolved = {}
+    for k, v in inputs.items():
+        if k not in PAGE_INPUTS:
+            continue
+        if not isinstance(v, dict) or (("path" in v) == ("not_run" in v)):
+            problems.append(f"inputs.{k} must be exactly one of path or not_run")
+            continue
+        if "path" in v:
+            f = ROOT / v["path"]
+            if not f.exists():
+                # Declared but absent is not "not run": somebody said it exists.
+                problems.append(f"inputs.{k}: {v['path']} does not exist")
+            resolved[k] = f
+        else:
+            resolved[k] = None
+    if resolved.get("spectrum") is None and any(
+            resolved.get(k) for k in ("spectrum_big_index", "spectrum_reference_point")):
+        problems.append("spectrum inputs are declared without the spectrum itself")
+    if bool(resolved.get("spectrum_reference_point")) != bool(
+            resolved.get("spectrum_reference_truth")):
+        problems.append("spectrum_reference_point and spectrum_reference_truth come "
+                        "together: a point drawn without its true distance is a guess")
+    run = rundir if rundir is not None else ROOT / d.get("rundir", "")
+    if not (run / "manifest.json").exists():
+        problems.append(f"{run}/manifest.json is absent; this is not a hapax run "
+                        f"directory (pass --rundir if the run lives elsewhere)")
+    else:
+        # The descriptor and the run must be the same sample. Without this a descriptor
+        # could dress any run directory in another library's words.
+        inp = (json.loads((run / "manifest.json").read_text()).get("inputs") or {})
+        if smp.get("accession") and smp["accession"] not in str(inp.get("r1", "")):
+            problems.append(f"sample.accession {smp['accession']} is not in the run's "
+                            f"own input path {inp.get('r1')!r}")
+    if problems:
+        raise SystemExit(f"{path}: the page descriptor is refused:\n  - " +
+                         "\n  - ".join(problems))
+    d["_inputs"] = resolved
+    d["_rundir"] = run
+    return d
+
+
+def resolve_methods(accession: str) -> list[dict]:
+    """The Methods entries as this sample's page prints them.
+
+    Every page carries every entry, in one order, so a citation number means the same
+    thing on every page. What differs is which rows are filled. A row that states a
+    procedure or a threshold holds for every run and is written once. A row that states a
+    number measured on one library is stored under that library's accession and printed
+    only on that library's page; on any other page the row reads "Not measured on this
+    library." That is the fix for the holdout page printing "SRR23973193, Berlin
+    influent" as its own input row.
+
+    An entry `about` one fixed sample (the withheld-genome fixture) is a claim about that
+    sample wherever it is printed, so it must name the sample in its own Input row and can
+    then never be read as a statement about the page it sits on.
+    """
+    doc = json.loads(METHODS_FILE.read_text())
+    out, seen = [], set()
+    for e in doc["entries"]:
+        if e["id"] in seen:
+            raise SystemExit(f"{METHODS_FILE}: entry {e['id']!r} appears twice")
+        seen.add(e["id"])
+        rows = e["rows"]
+        labels = [r[0] for r in rows]
+        if len(rows) != len(METHOD_ROWS) or any(
+                lab not in ok for lab, ok in zip(labels, METHOD_ROWS)):
+            raise SystemExit(f"{METHODS_FILE}: entry {e['id']!r} rows are {labels}; a "
+                             f"Methods entry has exactly the six fixed rows in order")
+        meas = (e.get("measured") or {}).get(accession) or {}
+        if e["about"] != "tool":
+            if e["about"] not in (rows[0][1] or ""):
+                raise SystemExit(f"{METHODS_FILE}: entry {e['id']!r} is about "
+                                 f"{e['about']} but its Input row does not say so")
+            filled = rows
+        else:
+            for lab in meas:
+                if lab not in labels:
+                    raise SystemExit(f"{METHODS_FILE}: {e['id']!r} measured row {lab!r} "
+                                     f"for {accession} is not one of its rows")
+            filled = [[lab, meas.get(lab, txt if txt is not None else NOT_MEASURED)]
+                      for lab, txt in rows]
+        out.append({"id": e["id"], "t": e["title"], "rows": filled})
+    return out
+
+
+def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int,
+           page: dict) -> dict:
     rng = random.Random(seed)
     manifest = load(rundir / "manifest.json")
     if manifest is None:
@@ -279,6 +593,22 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int) -> d
                  "field_calibration", "known_positive_rows", "known_positive_note",
                  "interface_rules", "stages")},
         "parameters": manifest.get("parameters", {}),
+        "spectrum": spectrum(page["_inputs"]),
+        # The page's biology, as data. Every plain-English claim it makes about what
+        # a gene does or what an organism is comes from here, so the renderer has no
+        # vocabulary of its own and a wrong word is wrong in one place.
+        "vocabulary": load(ROOT / "experiments/virus_vocabulary.json"),
+        "architecture": _one(rundir, "architecture_s*.json"),
+        # Only a sample whose descriptor names one by path has a ground truth. It is
+        # never guessed from the run directory: a page that invented a ground truth for
+        # a sample that has none would be the worst failure this tool could have.
+        "holdout_gene_map": (load(page["_inputs"]["truth_gene_map"])
+                             if page["_inputs"]["truth_gene_map"] else None),
+        "page": {"title": page["title"], "sample": page["sample"],
+                 "inputs": {k: ({"path": str(v.relative_to(ROOT))} if v is not None else
+                                {"not_run": page["inputs"][k]["not_run"]})
+                            for k, v in page["_inputs"].items()}},
+        "methods": resolve_methods(page["sample"]["accession"]),
         "tier_table": load(rundir / "tier_table.json"),
         "layers": load(rundir / "layers.json"),
         "fields": load(rundir / "fields.json"),
@@ -305,7 +635,7 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int) -> d
         # table between them name a few hundred.
         "names": _names_for(rundir, strains_subjects, table),
         "significant_evalue": SIGNIFICANT_EVALUE,
-        "ranking": _trim_ranking(load(rundir / "ranking.json") or {}, seed),
+        "ranking": _trim_ranking(load(rundir / "ranking.json"), seed),
         "axes": [{"key": k, "label": l} for k, l, _f in SCATTER_AXES],
         "scatter": scatter,
         "table": {"rows": [{"name": r.get("name"),
@@ -319,7 +649,8 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int) -> d
                            for r in table],
                   "n_drawn": len(table), "n_total": len(res), "sample_seed": seed},
         "built": {"script": "experiments/make_web.py", **provenance(__file__),
-                  "rundir": str(rundir)},
+                  "rundir": (str(rundir.resolve().relative_to(ROOT))
+                             if rundir.resolve().is_relative_to(ROOT) else str(rundir))},
     }
 
 
@@ -338,6 +669,8 @@ PAGE = """<title>Hapax run viewer</title>
      --pairs all: all checks pass, with one light-mode contrast WARN on --v3 that
      obliges the visible direct labels every ranked row and donut legend carries. */
   --v1: #2a78d6; --v2: #eb6834; --v3: #1baf7a;
+  --cv1: #d6e3ea; --cv2: #a9c6d5; --cv3: #7ba6bf; --cv4: #4f85a5;
+  --cv5: #2a5b76;
   --v2-soft: #f6c3ac; --v-mute: #9aa39e; --v-faint: #e4e8e3;
   --sans: "IBM Plex Sans", system-ui, -apple-system, Segoe UI, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -349,6 +682,8 @@ PAGE = """<title>Hapax run viewer</title>
   --g-phage: #93a3b4; --g-plant: #74b069; --g-fungal: #a68cc8; --g-invert: #4fa89f;
   --g-vert: #d2a04a; --g-human: #e0695c; --g-unknown: #68756f;
   --v1: #3987e5; --v2: #d95926; --v3: #199e70;
+  --cv1: #22333d; --cv2: #33566a; --cv3: #497e99; --cv4: #6ea2bf;
+  --cv5: #9cc6dc;
   --v2-soft: #7d3f26; --v-mute: #68756f; --v-faint: #222b27;
 } }
 :root[data-theme="dark"] {
@@ -358,6 +693,8 @@ PAGE = """<title>Hapax run viewer</title>
   --g-phage: #93a3b4; --g-plant: #74b069; --g-fungal: #a68cc8; --g-invert: #4fa89f;
   --g-vert: #d2a04a; --g-human: #e0695c; --g-unknown: #68756f;
   --v1: #3987e5; --v2: #d95926; --v3: #199e70;
+  --cv1: #22333d; --cv2: #33566a; --cv3: #497e99; --cv4: #6ea2bf;
+  --cv5: #9cc6dc;
   --v2-soft: #7d3f26; --v-mute: #68756f; --v-faint: #222b27;
 }
 body { background: var(--bg); color: var(--fg); font-family: var(--sans);
@@ -429,6 +766,7 @@ details > summary { cursor: pointer; font-size: 13px; color: var(--dim); }
 .callout { border: 1px solid var(--warn); border-left-width: 3px; border-radius: 4px;
   padding: 0.7rem 0.8rem; font-size: 13px; line-height: 1.5; max-width: 76ch; }
 .rankno { font-family: var(--mono); font-size: 11.5px; color: var(--dim); }
+text.ax { font-size: 11px; fill: var(--dim); font-family: var(--sans); }
 .axrow { display: grid; grid-template-columns: 4.2rem 1fr auto; gap: 0.5rem;
   align-items: center; font-size: 11.5px; color: var(--dim); margin-top: 0.3rem; }
 .axlab { font-family: var(--mono); }
@@ -523,6 +861,16 @@ details > summary { cursor: pointer; font-size: 13px; color: var(--dim); }
   .bnum { grid-area: v; text-align: left; } .bsize { grid-area: s; }
 }
 .ditem { border-top: 1px solid var(--edge); padding: 0.55rem 0; }
+.gline { border-top: 1px solid var(--edge); padding: 0.5rem 0; line-height: 1.5; }
+.maplegend { display: flex; flex-wrap: wrap; gap: 0.35rem 1.1rem; font-size: 12px;
+  color: var(--dim); margin: 0.1rem 0 0.7rem; }
+.maplegend span { display: inline-flex; align-items: center; gap: 0.35rem; }
+.maplegend i { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+.gmap { border-top: 1px solid var(--edge); padding: 0.7rem 0 0.9rem; }
+.gmaphead { font-size: 14.5px; margin-bottom: 0.1rem; }
+.gintro { font-size: 13.5px; line-height: 1.55; margin: 0.1rem 0 0.6rem; }
+.gsay { font-size: 13.5px; line-height: 1.55; color: var(--fg); margin-top: 0.15rem; }
+.gline:first-of-type { border-top: 0; }
 .ditem > summary { font-size: 13.5px; color: var(--fg); padding: 0.15rem 0; }
 .ditem > summary b { font-weight: 600; }
 .ditem > summary .dim { font-weight: 400; }
@@ -608,6 +956,29 @@ details > summary { cursor: pointer; font-size: 13px; color: var(--dim); }
   .donutlg { max-width: none; }
 }
 a { color: var(--identified); }
+/* ---- citations ------------------------------------------------------------
+   Every headline figure carries a link to the entry that states how it was
+   computed. The link is an anchor and the highlight is :target, so a citation
+   works with scripting disabled and cannot drift from its target. */
+.cite { font-family: var(--mono); font-size: 0.68em; vertical-align: super;
+  text-decoration: none; color: var(--v1); padding: 0 0.08em; }
+.cite:hover { text-decoration: underline; }
+.meth { border-top: 1px solid var(--edge); padding: 0.7rem 0;
+  display: grid; grid-template-columns: 1.7rem minmax(0, 1fr); gap: 0 0.4rem;
+  scroll-margin-top: 1rem; }
+.meth .mno { font-family: var(--mono); font-size: 12px; color: var(--dim); }
+.meth h3 { font-size: 13.5px; font-weight: 600; margin: 0 0 0.35rem; }
+.mgrid { display: grid; grid-template-columns: 6.6rem minmax(0, 1fr);
+  gap: 0.2rem 0.7rem; margin: 0; font-size: 12.5px; }
+.mgrid dt { color: var(--dim); }
+.mgrid dd { margin: 0; }
+.meth:target { background: var(--v2-soft); border-radius: 6px;
+  box-shadow: 0 0 0 0.5rem var(--v2-soft); }
+@media (max-width: 680px) {
+  .meth { grid-template-columns: 1.3rem minmax(0, 1fr); }
+  .mgrid { grid-template-columns: minmax(0, 1fr); gap: 0 0; }
+  .mgrid dt { margin-top: 0.3rem; }
+}
 :focus-visible { outline: 2px solid var(--identified); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
@@ -628,6 +999,101 @@ function panel(title, sub) { const p = el('section', 'panel');
   p.append(el('h2', null, esc(title)));
   if (sub) p.append(el('p', 'note', sub));
   return p; }
+
+/* ---- GENE MAPS ------------------------------------------------------------
+   A genome drawn as the molecule, shared by every panel that draws one, so the
+   colour of a polymerase cannot mean one thing in the summary and another in the
+   holdout panel. Roles carry a plain-English gloss because a reader who does not
+   know what a maturation protein is cannot read a legend that only names it. */
+/* Built from D.vocabulary, never written here. A gloss the renderer invents is a
+   biological claim with no provenance sitting beside numbers that have one. */
+const VOC = D.vocabulary || {roles: {}, architectures: {}};
+const GENE_ROLE = {};
+Object.keys(VOC.roles || {}).forEach(k => {
+  GENE_ROLE[k] = ['var(' + VOC.roles[k].colour_token + ')', VOC.roles[k].plain];
+});
+if (!GENE_ROLE.other) GENE_ROLE.other = ['var(--null)', 'role not called'];
+const geneRoleOf = o => (o && GENE_ROLE[o.role] ? o.role : 'other');
+
+/* The architecture call for a contig, from the file experiments/architecture_call.py
+   wrote. Returns null where the rule declined, which is a census entry and not a verdict
+   of "not a phage". */
+const ARCH = {};
+((D.architecture || {}).rows || []).forEach(r => { ARCH[r.contig] = r; });
+const archOf = c => ARCH[c] || null;
+function archWords(a) {
+  if (!a || !a.architecture) return null;
+  return (VOC.architectures || {})[a.architecture] || null;
+}
+
+function geneLegend(keys) {
+  const lg = el('div', 'maplegend');
+  lg.innerHTML = (keys || ['polymerase', 'coat', 'maturation', 'other']).map(k =>
+    '<span><i style="background:' + GENE_ROLE[k][0] + '"></i>' + k + ' &mdash; ' +
+    GENE_ROLE[k][1] + '</span>').join('');
+  return lg;
+}
+
+/* nt: the contig length. orfs: {s, e, d, aa, role, pident, title, pfam, sig}.
+   Returns an element, scrollable, so a long genome keeps its scale on a phone
+   rather than being squeezed until the short genes vanish. */
+function geneMap(nt, orfs, rightLabel) {
+  const MW = 1000, ML = 8, MR = 8, MH = 74, TRK = 46;
+  const mx = v => ML + (v / nt) * (MW - ML - MR);
+  let g = '<svg viewBox="0 0 ' + MW + ' ' + MH + '" width="100%" ' +
+    'style="min-width:520px" role="img" aria-label="gene map"><line x1="' + mx(0) +
+    '" y1="' + TRK + '" x2="' + mx(nt) + '" y2="' + TRK +
+    '" stroke="var(--edge)" stroke-width="3"/>';
+  orfs.slice().sort((a, b) => a.s - b.s).forEach(o => {
+    const k = geneRoleOf(o), x0 = mx(Math.min(o.s, o.e)), x1 = mx(Math.max(o.s, o.e));
+    const w = Math.max(3, x1 - x0), tip = Math.min(10, w / 3);
+    // an arrow, not a rectangle: strand is a fact about the molecule
+    const pts = o.d < 0
+      ? [[x0, TRK], [x0 + tip, TRK - 11], [x0 + w, TRK - 11], [x0 + w, TRK + 11],
+         [x0 + tip, TRK + 11]]
+      : [[x0, TRK - 11], [x0 + w - tip, TRK - 11], [x0 + w, TRK],
+         [x0 + w - tip, TRK + 11], [x0, TRK + 11]];
+    g += '<polygon points="' + pts.map(q => q[0].toFixed(1) + ',' + q[1]).join(' ') +
+      '" fill="' + GENE_ROLE[k][0] + '" opacity="' + (o.sig === false ? 0.45 : 1) +
+      '"><title>' + esc(o.role || 'role not called') + ', ' + o.aa + ' aa' +
+      (o.pident != null ? ', ' + num(o.pident, 1) + '% to ' + esc(o.title || '')
+        : ', no significant protein hit') +
+      ((o.pfam || []).length ? '\\\ndomain ' + esc(o.pfam.join(', ')) : '') +
+      '</title></polygon>';
+    if (o.pident != null && w > 74) {
+      g += '<text x="' + (x0 + w / 2) + '" y="' + (TRK + 4) + '" text-anchor="middle" ' +
+        'style="font-size:12px;font-weight:600;fill:var(--panel);' +
+        'font-family:var(--sans)">' + num(o.pident, 0) + '%</text>';
+    }
+    if (w > 54) {
+      g += '<text x="' + (x0 + w / 2) + '" y="' + (TRK - 18) +
+        '" text-anchor="middle" class="ax">' + esc(k === 'other'
+          ? (o.pident != null ? 'other' : 'no hit') : k) + '</text>';
+    }
+  });
+  g += '<text x="' + mx(0) + '" y="' + (TRK + 26) + '" class="ax">0</text>';
+  g += '<text x="' + mx(nt) + '" y="' + (TRK + 26) + '" text-anchor="end" class="ax">' +
+    esc(rightLabel || ((nt / 1000).toFixed(1) + ' kb')) + '</text></svg>';
+  const hostd = el('div', 'scroll'); hostd.innerHTML = g;
+  return hostd;
+}
+
+
+
+/* ---- METHODS: ONE ENTRY PER HEADLINE FIGURE -------------------------------
+   The page states numbers at the top and how they were obtained at the bottom, and
+   the two are joined by a link rather than by the reader remembering. Each entry
+   carries the six things that make a figure readable here: its input, the procedure,
+   the threshold, the denominator, the control arm, and the direction of the bias that
+   the control does not remove. The entries are data, from results/web/methods.json,
+   resolved for this page's sample by make_web.py: a row measured on another library
+   reads "Not measured on this library" here rather than borrowing that library's number.
+   The numbering is positional and the same on every page. */
+const METHODS = D.methods || [];
+const MIDX = {};
+METHODS.forEach((m, i) => { MIDX[m.id] = i + 1; });
+const cite = id => '<a class="cite" href="#m-' + id + '" title="' +
+  (MIDX[id] ? 'method ' + MIDX[id] : 'method') + '">[' + (MIDX[id] || '?') + ']</a>';
 
 
 /* A PILE FANNING INTO ITS PARTS, WITH ITS CONTROL DRAWN THE SAME WAY UNDERNEATH.
@@ -762,14 +1228,13 @@ function interval(iv) {
   // Name the sample, not the tool. Whoever opens this is looking at one water on one
   // day, and the accession is the only thing that lets them find it again or compare it
   // with another; "run viewer" told them which program wrote the page.
-  const acc = ((inp.r1 || '').match(/([A-Z]{3}\d{6,})/) || [])[1];
+  const acc = ((inp.r1 || '').match(/([A-Z]{3}\\d{6,})/) || [])[1];
   h.append(el('h1', null, acc ? esc(acc) + ', untreated wastewater'
                               : 'Hapax run viewer'));
   h.append(el('p', 'lede',
-    'Untargeted RNA sequencing of untreated wastewater. Screening results, ' +
-    'composition, divergence of assembled viruses from their references, and the ' +
-    'unnamed remainder. Every figure carries its operating point and control. No ' +
-    'figure on this page scores novelty.'));
+    'Untargeted RNA sequencing of untreated wastewater. Screening, composition, ' +
+    'divergence of assembled viruses, and the unnamed remainder. Every figure carries ' +
+    'its operating point and control. No figure scores novelty.'));
   // Two scopes on one page, said once at the top. The classified profile and the
   // residue search read every pair; the cascade reads a block, because it cannot be run
   // over the library in this container. A reader who assumes one scope for all of it
@@ -801,8 +1266,8 @@ function interval(iv) {
   const t = D.tier_table, b = (t && t.breakdown) || {};
   if (!b.identified || !b.residual) return;
   const p = panel('Library partition, one square per percent',
-    'Each square is one percent of the read pairs in this run. Pale squares were named ' +
-    'by searching; the dark ones are what no search could name.');
+    'One square is one percent of this run read pairs. Pale squares were named by ' +
+    'searching; dark squares were not.');
   const frac = {identified: b.identified.point,
     assembled_unidentified: (b.assembled_unidentified || {}).point || 0,
     residual: b.residual.point};
@@ -873,10 +1338,9 @@ function interval(iv) {
   }
   p.append(g);
   p.append(el('p', 'note',
-    'The dark squares are the subject of this page. They are not a discovery: ' +
-    'unnameable sequence is the normal state of a wastewater metagenome, and the ' +
-    'measurements below are an attempt to say what is actually in that pile, how far ' +
-    'from anything known it sits, and where the instrument stops being able to tell.'));
+    'The dark squares are the subject of this page. Unnameable sequence is the normal ' +
+    'state of a wastewater metagenome. What follows measures its composition, its ' +
+    'distance from anything known, and where the instrument stops reading.'));
   p.append(opChips((t || {}).operating_point || {}));
   app.append(p);
 })();
@@ -888,13 +1352,13 @@ function interval(iv) {
 (function () {
   const t = D.tier_table, S = D.strains, L = D.linkage, C = D.census;
   const p = panel('Run summary',
-    'What this run did, and what came out of it.');
+    'Inputs, thresholds and outputs of this run.');
   const b = (t && t.breakdown) || {};
   const lede = el('p', 'lede',
-    'Sewage from one treatment plant in Berlin, sequenced as RNA. The cascade removes ' +
-    'identifiable sequence; the remainder is characterised, not scored. Reported ' +
-    'quantity is distance to the nearest known relative and the confidence in that ' +
-    'distance.');
+    esc(((D.page || {}).sample || {}).lede || '') + ' The cascade removes ' +
+    'identifiable sequence and the remainder is characterised. The reported quantity ' +
+    'is distance to the nearest known relative, with the confidence in that ' +
+    'distance.' + cite('cascade'));
   p.append(lede);
   const g = el('div', 'big');
   function big(v, lab) { const d = el('div');
@@ -955,8 +1419,8 @@ function interval(iv) {
   const R = D.ranking, K = R && R.kind_summary;
   if (!b.identified || !K) return;
   const p = panel('Cascade partition, nested',
-    'Every read pair in this run, taken apart in three steps. Each panel is the ' +
-    'highlighted slice of the one before it, blown up to full height.');
+    'Every read pair in three steps. Each panel is the highlighted slice of the one ' +
+    'before it, at full height.');
 
   const COL = {identified: 'var(--identified)', assembled_unidentified: 'var(--tier2)',
     residual: 'var(--residue)', named: 'var(--identified)', none: 'var(--null)',
@@ -1059,12 +1523,11 @@ function interval(iv) {
     });
   });
   p.append(el('p', 'note',
-    '<b>The second join changes the unit and the sample, and that is marked on it.</b> ' +
-    'The first two panels are read PAIRS over the whole block this run read. The third ' +
-    'and fourth are MATES, and only the ' + K.searched.toLocaleString() + ' of them the ' +
-    'per-read report searched, so the wedge between them is a re-basing and not a ' +
-    'subdivision. Reading a percentage straight across the whole figure would be wrong, ' +
-    'which is why none is drawn that way.'));
+    '<b>The second join changes unit and sample.</b> Panels one and two are read ' +
+    'PAIRS over the whole block. Panels three and four are MATES, and only the ' +
+    K.searched.toLocaleString() + ' the per-read report searched, so the wedge between ' +
+    'them is a re-basing. No percentage runs straight across this figure.' +
+    cite('library')));
   app.append(p);
 })();
 
@@ -1078,8 +1541,8 @@ function interval(iv) {
   const t = D.tier_table, curve = (t && t.curve) || [];
   if (!curve.length) return;
   const p = panel('Marginal removal per index',
-    'The cascade, one row per index, in the order they ran. The dark slice is what that ' +
-    'index removed that nothing before it had already taken.');
+    'One row per index, in run order. The dark slice is what that index removed and ' +
+    'nothing before it had.');
   const rows = el('div', 'bites');
   curve.forEach((c, i) => {
     const before = c.cumulative_removed - c.marginal_removed;
@@ -1105,8 +1568,8 @@ function interval(iv) {
   p.append(rows);
   const last = curve[curve.length - 1];
   p.append(el('p', 'note',
-    'Two things this shape says that the numbers alone do not. <b>The sample\\'s own ' +
-    'assembly is the biggest single bite in the cascade</b> at ' +
+    '<b>The assembly of this sample is the biggest single bite in the cascade</b>, ' +
+    'at ' +
     num(100 * (curve.filter(c => /selfasm_sample_contigs_identified/.test(c.tier))[0]
       || {marginal_removed: 0}).marginal_removed, 1) +
     ' points from ' + gb((curve.filter(c => /selfasm_sample_contigs_identified/
@@ -1128,8 +1591,7 @@ function interval(iv) {
 (function () {
   const R = D.ranking, K = R && R.kind_summary;
   const p = panel('Kind assignment of matched subjects',
-    'Of the leftover reads, the few that have a named relative at all, and what kind of ' +
-    'thing that relative is.');
+    'Leftover reads with a named relative, by what kind of thing that relative is.');
   if (!K) { p.append(el('div', 'absent', 'no kind summary in ranking.json'));
     app.append(p); return; }
   const KCOL = {putative_phage: 'var(--g-phage)',
@@ -1229,9 +1691,8 @@ function interval(iv) {
 (function () {
   const R = D.ranking;
   const p = panel('Subject ranking, four axes',
-    'The named relatives the leftover reads point at, ordered by how much of a person\\'s ' +
-    'attention each one deserves. Four measured things go in and all four are shown on ' +
-    'every row, so the order can be argued with one row at a time.');
+    'Named relatives of the leftover reads, ordered on four measured axes. All four ' +
+    'are shown on every row.');
   if (!R) { p.append(el('div', 'absent',
     'ranking.json absent: run experiments/concern_ranking.py over this directory'));
     app.append(p); return; }
@@ -1242,16 +1703,14 @@ function interval(iv) {
   // will read the host colours as claims about the sample.
   const hc = R.host_confidence_summary || {};
   const warn = el('div', 'callout');
-  warn.innerHTML = '<b>Read this before the colours below.</b> Nothing in this residue is ' +
-    'close enough to a known organism for that organism\\'s host to transfer. The best ' +
-    'match of all ' + hc.subjects + ' is ' + num(hc.best_identity_percent, 1) +
-    '% identity over ' + hc.best_aligned_aa + ' amino acids, <b>' + hc['at_or_above_0.5'] +
-    ' of ' + hc.subjects + '</b> clear even half confidence, and the median is ' +
-    num(hc.median, 2) + '. So the host groups here are labels on the matched database ' +
-    'record, not claims about what is in the water, and the ranking below is really ' +
-    'distance and quantity wearing a colour. <b>That is the finding, not a caveat:</b> ' +
-    'this is what it looks like when a surveillance question runs past the edge of what ' +
-    'the references can answer.';
+  warn.innerHTML = '<b>Read this before the colours below.</b> No residue subject is ' +
+    'close enough for its host to transfer. The best of all ' + hc.subjects + ' is ' +
+    num(hc.best_identity_percent, 1) + '% identity over ' + hc.best_aligned_aa +
+    ' amino acids, <b>' + hc['at_or_above_0.5'] + ' of ' + hc.subjects +
+    '</b> clear half confidence, and the median is ' + num(hc.median, 2) +
+    '. The host groups below label a database record. The surveillance question has ' +
+    'run past the edge of what the references answer, which is itself the ' +
+    'finding.' + cite('residue');
   p.append(warn);
 
   const GCOL = {bacteriophage: 'var(--g-phage)', plant: 'var(--g-plant)',
@@ -1409,9 +1868,7 @@ function interval(iv) {
   if (!R || !(R.subjects || []).length) return;
   const pn = R.points_note;
   const p = panel('Identity against read support, per subject',
-    'The named relatives at once: how far the reads are from each one, against how many ' +
-    'reads point at it. One picture of what the leftovers are related to, and how ' +
-    'distantly.' + (pn ? ' Drawn from a seeded sample of ' + pn.drawn.toLocaleString() +
+    'Distance from each named relative against the number of reads pointing at it.' + (pn ? ' Drawn from a seeded sample of ' + pn.drawn.toLocaleString() +
     ' of the ' + pn.of.toLocaleString() + ' subjects, because a cut by rank would empty ' +
     'the lower left corner and that is where most of the residue is.' : ''));
   const GCOL = {bacteriophage: 'var(--g-phage)', plant: 'var(--g-plant)',
@@ -1506,9 +1963,8 @@ function interval(iv) {
 (function () {
   const t = D.tier_table;
   const p = panel('Class fractions with intervals',
-    'One bar over the library: what was identified, what assembled without being ' +
-    'identified, and what is left. Each segment carries the interval from this run\\'s ' +
-    'own counts.');
+    'Identified, assembled without identification, and left over. Each segment ' +
+    'carries its interval.');
   if (!t) { p.append(el('div', 'absent', 'tier_table.json absent: the cascade did not run'));
     app.append(p); return; }
   const last = (t.curve || [])[(t.curve || []).length - 1];
@@ -1563,9 +2019,8 @@ function interval(iv) {
 (function () {
   const t = D.tier_table;
   const p = panel('Tier removal and threshold sweep',
-    'Each index in turn: what it removes alone, what it adds, and what is left. The ' +
-    'slider is the tier\\'s own threshold sweep, because the threshold moves a tier by ' +
-    'more than a database\\'s size does.');
+    'Per index: removal alone, marginal removal, and residue. The slider sweeps the ' +
+    'threshold of that tier, which moves a tier further than database size does.');
   if (!t) { p.append(el('div', 'absent', 'tier_table.json absent')); app.append(p); return; }
   const swept = (t.curve || []).filter(c => c.threshold_sweep);
   const ctl = el('div', 'controls');
@@ -1719,9 +2174,9 @@ function interval(iv) {
 (function () {
   const L = D.layers;
   const p = panel('Residue layers, ordered, with controls',
-    'A layer is a sort order with its evidence attached, not a score. Each is laid ' +
-    'beside the same rule applied to reads the cascade did identify, and where that ' +
-    'control was never computed the page says so instead of showing a separation.');
+    'A layer is a sort order with its evidence attached. Each sits beside the same ' +
+    'rule applied to identified reads; where that control was never computed the page ' +
+    'says so.');
   if (!L) { p.append(el('div', 'absent', 'layers.json absent')); app.append(p); return; }
   const sc = el('div', 'scroll');
   const tb = el('table');
@@ -1836,9 +2291,9 @@ function interval(iv) {
 (function () {
   const S = D.strains;
   const p = panel('Candidate divergent strains, grouped by subject',
-    'Grouped by the relative the reads are nearest to, because a new strain is a subject ' +
-    'several residue reads point at from a distance, not a read with a low score. ' +
-    'Subjects are ordered by how many reads point at them and never by identity: ' +
+    'Grouped by nearest relative: a candidate strain is a subject several residue ' +
+    'reads point at from a distance. Subjects are ordered by read count and never by ' +
+    'identity: ' +
     'identity is a distance from a database, and ordering by it would order by database ' +
     'proximity.');
   if (!S) { p.append(el('div', 'absent',
@@ -2012,8 +2467,8 @@ function interval(iv) {
 (function () {
   const C = D.calibration_ladder;
   const p = panel('Holdout spike, divergence ladder',
-    'A holdout genome spiked at known divergence and pushed through the same cascade. It ' +
-    'is the only positive control the tool has, and the rungs are ordinal.');
+    'A holdout genome spiked at known divergence through the same cascade. The only ' +
+    'positive control here; the rungs are ordinal.');
   if (!C) {
     p.append(el('div', 'absent',
       'no calibration ladder in this run: it was not requested, so no ' +
@@ -2098,6 +2553,275 @@ function interval(iv) {
   app.append(p);
 })();
 
+// ---------- the distance spectrum
+/* ONE AXIS, NO BUCKET EDGE ON IT. Identity against a reference orders contigs by how
+   close the database happens to sit, so a line drawn across this axis is a statement
+   about the database and not about novelty. The only categorical call the panel makes is
+   whether the measurement can be read at all, and those rows leave the axis entirely
+   rather than being placed at a number nobody should read. */
+(function () {
+  const S = D.spectrum;
+  const p = panel('The distance spectrum, one contig per row',
+    'Every identified contig scored gene by gene, laid out by how far its conserved gene ' +
+    'sits from the closest protein two reference sets hold. Far on the left, near on the ' +
+    'right, and no boundary anywhere between them. ' + cite('spectrum'));
+  if (!S || !S.on_axis || !S.on_axis.length) {
+    const why = (((D.page || {}).inputs || {}).spectrum || {}).not_run;
+    p.append(el('div', 'absent', 'not run: ' + (why || 'no divergent-stage result in ' +
+      'this build')));
+    app.append(p); return;
+  }
+  const RAMP = ['var(--cv1)', 'var(--cv2)', 'var(--cv3)', 'var(--cv4)', 'var(--cv5)'];
+  function covColour(c) {
+    if (c == null) return 'var(--null)';
+    return RAMP[Math.min(4, Math.max(0, Math.floor(c * 5 - 0.0001)))];
+  }
+  const BIG = {
+    'collapsed to a strain-level identification': 'var(--v3)',
+    'closer, still not an identification': 'var(--v1)',
+    'still distant': 'var(--v2)',
+    'no significant hit': 'var(--null)'
+  };
+
+  const ctl = el('div', 'controls');
+  const armSel = el('select');
+  ['both arms', 'divergent only', 'near-reference only'].forEach(v => {
+    const o = document.createElement('option'); o.textContent = v; armSel.append(o); });
+  const bands = el('input'); bands.type = 'checkbox'; bands.id = 'spec-bands';
+  const bl = el('label'); bl.htmlFor = 'spec-bands';
+  bl.textContent = 'draw the old three buckets';
+  const asTable = el('input'); asTable.type = 'checkbox'; asTable.id = 'spec-table';
+  const tl = el('label'); tl.htmlFor = 'spec-table'; tl.textContent = 'as a table';
+  ctl.append(el('span', 'dim', 'show'), armSel, bands, bl, asTable, tl);
+  p.append(ctl);
+
+  // The chart keeps a minimum width and scrolls inside its own box on a narrow screen,
+  // rather than shrinking its labels to four pixels. The page itself still never
+  // scrolls sideways.
+  const host = el('div', 'scroll'); p.append(host);
+  const foot = el('div', 'note'); p.append(foot);
+
+  function rowsNow() {
+    const want = armSel.value;
+    return S.on_axis.filter(r => want === 'both arms' ||
+      (want === 'divergent only' ? r.arm === 'divergent'
+                                 : r.arm !== 'divergent'));
+  }
+
+  function drawTable(rows) {
+    const sc = el('div', 'scroll');
+    const tb = el('table');
+    tb.innerHTML = '<thead><tr><th>contig</th><th>arm</th><th>ranked on</th>' +
+      '<th>identity</th><th>gene spread</th><th>gene covered</th><th>aligned</th>' +
+      '<th>depth</th><th>closest protein</th></tr></thead>';
+    const body = el('tbody');
+    rows.slice().sort((a, b) => a.x - b.x).slice(0, 400).forEach(r => {
+      const tr = el('tr');
+      tr.innerHTML = '<td class="mono">' + esc(short(r.name)) + '</td><td class="dim">' +
+        (r.arm === 'divergent' ? 'divergent' : 'near-reference') + '</td><td class="dim">' +
+        esc(r.src) + '</td><td class="mono">' + num(r.x, 1) + '%</td><td class="mono">' +
+        (r.hi == null ? '<span class="dim">one gene</span>'
+                      : num(r.hi - r.lo, 1) + ' pts over ' + r.genes) +
+        '</td><td class="mono">' + num(r.cov * 100, 0) + '%</td><td class="mono">' +
+        r.aln + ' aa</td><td class="mono">' + (r.depth == null ? '-' : num(r.depth, 0)) +
+        '</td><td>' + esc(r.subject) + '</td>';
+      body.append(tr);
+    });
+    tb.append(body); sc.append(tb);
+    return sc;
+  }
+
+  function short(n) {
+    const m = String(n).match(/NODE_(\\d+)_length_(\\d+)/);
+    return m ? 'NODE ' + m[1] + ' / ' + m[2] + ' nt' : String(n).slice(0, 28);
+  }
+
+  function draw() {
+    host.innerHTML = '';
+    const rows = rowsNow();
+    if (asTable.checked) { host.append(drawTable(rows)); setFoot(rows); return; }
+    const W = 1000, PAD_L = 54, PAD_R = 18, PAD_T = 48;
+    const H_MAIN = 300, H_LANE = 92, GAP = 30;
+    const H = PAD_T + H_MAIN + GAP + H_LANE + 64;  // room for two legend rows
+    const x = v => PAD_L + (Math.min(100, Math.max(20, v)) - 20) / 80 * (W - PAD_L - PAD_R);
+    const dmax = 600;
+    const y = d => {
+      const v = Math.log10(Math.max(1, Math.min(dmax, d == null ? 1 : d)));
+      return PAD_T + H_MAIN - v / Math.log10(dmax) * (H_MAIN - 14);
+    };
+    let s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" ' +
+      'style="min-width:720px" role="img" ' +
+      'aria-label="contigs by the identity of their conserved gene against mapped depth">';
+
+    if (bands.checked) {
+      [[20, 40, 'no name survives'], [40, 90, 'intermediate'], [90, 100, 'strain']]
+        .forEach((b, i) => {
+          s += '<rect x="' + x(b[0]) + '" y="' + PAD_T + '" width="' +
+            (x(b[1]) - x(b[0])) + '" height="' + H_MAIN + '" fill="var(--v-faint)" ' +
+            'opacity="' + (i === 1 ? 0.9 : 0.5) + '"/>';
+          s += '<text x="' + (x(b[0]) + 6) + '" y="' + (PAD_T + 13) +
+            '" class="ax">' + b[2] + '</text>';
+        });
+    }
+
+    for (let v = 20; v <= 100; v += 10) {
+      s += '<line x1="' + x(v) + '" y1="' + PAD_T + '" x2="' + x(v) + '" y2="' +
+        (PAD_T + H_MAIN) + '" stroke="var(--edge)" stroke-width="1"/>';
+      s += '<text x="' + x(v) + '" y="' + (PAD_T + H_MAIN + 16) +
+        '" text-anchor="middle" class="ax">' + v + '%</text>';
+    }
+    [1, 10, 100].forEach(d => {
+      s += '<line x1="' + PAD_L + '" y1="' + y(d) + '" x2="' + (W - PAD_R) + '" y2="' +
+        y(d) + '" stroke="var(--edge)" stroke-width="1" stroke-dasharray="2 4"/>';
+      s += '<text x="' + (PAD_L - 8) + '" y="' + (y(d) + 4) +
+        '" text-anchor="end" class="ax">' + d + 'x</text>';
+    });
+    s += '<text x="' + (PAD_L - 8) + '" y="' + (PAD_T - 10) +
+      '" text-anchor="end" class="ax">depth</text>';
+
+    rows.forEach(r => {
+      const yy = y(r.depth);
+      if (r.hi != null && r.hi - r.lo > 0.05) {
+        s += '<line x1="' + x(r.lo) + '" y1="' + yy + '" x2="' + x(r.hi) + '" y2="' +
+          yy + '" stroke="' + covColour(r.cov) + '" stroke-width="2" ' +
+          'stroke-linecap="round" opacity="0.55"/>';
+      }
+      const ring = r.big && BIG[r.big.state];
+      s += '<circle cx="' + x(r.x) + '" cy="' + yy + '" r="' + (ring ? 5 : 4) +
+        '" fill="' + covColour(r.cov) + '" stroke="' +
+        (ring ? ring : 'var(--panel)') + '" stroke-width="' + (ring ? 2 : 1) + '">' +
+        '<title>' + esc(short(r.name)) + ' - ' +
+        (r.arm === 'divergent' ? 'divergent arm' : 'near-reference arm') + '\\n' +
+        num(r.x, 1) + '% identity, ranked on the ' + r.src + ', E=' + r.evalue + '\\n' +
+        (r.hi == null ? 'one scorable gene'
+          : r.genes + ' scorable genes spanning ' + num(r.lo, 1) + ' to ' +
+            num(r.hi, 1) + '%, a spread of ' + num(r.hi - r.lo, 1) + ' points') + '\\n' +
+        num(r.cov * 100, 0) + '% of that gene aligned over ' + r.aln + ' aa\\n' +
+        'mapped depth ' + (r.depth == null ? 'not measured' : num(r.depth, 0) + 'x') +
+        '\\n' + esc(r.subject) +
+        (r.big ? '\\nagainst core_nt, a 319 GB nucleotide index: ' + r.big.state +
+          (r.big.pident ? ' (' + num(r.big.pident, 1) + '% over ' +
+            num(r.big.frac * 100, 0) + '% of the contig)' : '') : '') +
+        '</title></circle>';
+    });
+
+    const hv = S.holdout;
+    if (hv && hv.by_role) {
+      const ids = Object.keys(hv.by_role).map(k => hv.by_role[k]);
+      const lo = Math.min.apply(null, ids), hi = Math.max.apply(null, ids);
+      const yy = PAD_T - 20;
+      s += '<line x1="' + x(lo) + '" y1="' + yy + '" x2="' + x(hi) + '" y2="' + yy +
+        '" stroke="var(--warn)" stroke-width="2" stroke-linecap="round"/>';
+      Object.keys(hv.by_role).forEach(k => {
+        s += '<circle cx="' + x(hv.by_role[k]) + '" cy="' + yy + '" r="4.5" ' +
+          'fill="var(--panel)" stroke="var(--warn)" stroke-width="2"><title>' +
+          'the withheld genome, ' + esc(k) + ' at ' + num(hv.by_role[k], 1) +
+          '% - true divergence ' + num(hv.true_nucleotide_divergence_percent, 2) +
+          '% at nucleotide level</title></circle>';
+      });
+      s += '<text x="' + (x(lo) - 10) + '" y="' + (yy + 4) +
+        '" text-anchor="end" class="ax">the one genome whose true distance is known, ' +
+        num(hv.spread, 1) + ' points across three genes</text>';
+    }
+
+    const LY = PAD_T + H_MAIN + GAP + 34;
+    s += '<rect x="' + PAD_L + '" y="' + (LY - 26) + '" width="' + (W - PAD_L - PAD_R) +
+      '" height="62" fill="var(--v-faint)" rx="3"/>';
+    s += '<text x="' + (PAD_L + 8) + '" y="' + (LY - 10) + '" class="ax">' +
+      'off the axis: ' + S.cannot_read.length + ' contigs whose identity cannot be read' +
+      '</text>';
+    const perRow = Math.ceil(S.cannot_read.length / 3);
+    const lw = (W - PAD_L - PAD_R - 16) / Math.max(1, perRow);
+    S.cannot_read.forEach((r, i) => {
+      s += '<circle cx="' + (PAD_L + 8 + (i % perRow) * lw + lw / 2) + '" cy="' +
+        (LY + 2 + Math.floor(i / perRow) * 9) +
+        '" r="2.6" fill="var(--null)" opacity="0.85"><title>' +
+        esc(short(r.name)) + ' - ' + esc(r.why) +
+        '\\nreported identity ' + num(r.x, 1) + '%, which is why it is not drawn at it' +
+        '</title></circle>';
+    });
+    s += '<text x="' + ((PAD_L + W - PAD_R) / 2) + '" y="' + (PAD_T + H_MAIN + 34) +
+      '" text-anchor="middle" class="ax">identity of the conserved gene, against the ' +
+      'closest protein in RefSeq viral plus Swiss-Prot</text>';
+    const LGY = H - 28;
+    let lx = PAD_L;
+    s += '<text x="' + lx + '" y="' + (LGY - 1) + '" class="ax">gene covered</text>';
+    lx += 78;
+    RAMP.forEach((c, i) => {
+      s += '<rect x="' + (lx + i * 15) + '" y="' + (LGY - 11) + '" width="13" ' +
+        'height="10" rx="2" fill="' + c + '"/>';
+    });
+    s += '<text x="' + (lx - 4) + '" y="' + (LGY - 1) +
+      '" text-anchor="end" class="ax"></text>';
+    s += '<text x="' + (lx + 78) + '" y="' + (LGY - 1) + '" class="ax">' +
+      '20% to 100%</text>';
+    lx += 150;
+    s += '<line x1="' + lx + '" y1="' + (LGY - 6) + '" x2="' + (lx + 26) + '" y2="' +
+      (LGY - 6) + '" stroke="var(--cv4)" stroke-width="2" stroke-linecap="round"/>';
+    s += '<text x="' + (lx + 32) + '" y="' + (LGY - 1) + '" class="ax">' +
+      'the spread between the genes of one contig</text>';
+    lx = PAD_L;
+    const LGY2 = H - 8;
+    [['var(--v3)', 'core_nt identifies it'], ['var(--v1)', 'core_nt gets closer'],
+     ['var(--v2)', 'core_nt leaves it distant'],
+     ['var(--warn)', 'the withheld genome']].forEach(g => {
+      s += '<circle cx="' + (lx + 6) + '" cy="' + (LGY2 - 6) + '" r="4.5" ' +
+        'fill="var(--panel)" stroke="' + g[0] + '" stroke-width="2"/>';
+      s += '<text x="' + (lx + 15) + '" y="' + (LGY2 - 1) + '" class="ax">' + g[1] +
+        '</text>';
+      lx += 14 + g[1].length * 5.6;
+    });
+    s += '</svg>';
+    host.innerHTML = s;
+    setFoot(rows);
+  }
+
+  function setFoot(rows) {
+    const c = S.census || {};
+    const thin = S.cannot_read.filter(r => /covered/.test(r.why)).length;
+    const shortAln = S.cannot_read.length - thin;
+    foot.innerHTML =
+      '<b>How to read it.</b> Position is the identity of the conserved gene - the ' +
+      'polymerase on ' + S.on_axis.filter(r => r.src === 'polymerase').length +
+      ' of ' + S.on_axis.length + ' contigs, the whole-contig hit on the rest, stated ' +
+      'per row - because a contig that carries one identity carries whichever gene won ' +
+      'on bitscore, and the genes of a divergent contig disagree by a median 12.8 ' +
+      'points. The ' +
+      'bar through each dot is that disagreement. Colour is how much of the scored gene ' +
+      'the alignment spans, pale to deep, because identity flatters towards familiar by ' +
+      '+17.2 points when coverage is under half against +7.1 above 90%. Height is ' +
+      'mapped depth. ' +
+      '<b>No line is drawn across the axis</b>, because identity against a reference ' +
+      'orders contigs by database proximity and any threshold on it would be a ' +
+      'statement about the database. ' +
+      '<b>The lane underneath is not a middle bucket</b>: it holds the ' +
+      S.cannot_read.length + ' contigs where the measurement failed - ' + thin +
+      ' with under ' + Math.round(S.floors.min_coverage * 100) +
+      '% of the scored gene aligned and ' + shortAln + ' aligned over under ' +
+      S.floors.min_aln_aa + ' aa - and it is a census, not a verdict. ' +
+      '<b>A ring</b> marks the ' + S.on_axis.filter(r => r.big).length + ' contigs that ' +
+      'also went to core_nt, 319 GB: green collapsed to a strain-level identification ' +
+      'there, blue got closer without reaching one, orange stayed distant. The ring ' +
+      'is a label and not a move along this axis, ' +
+      'because core_nt is a nucleotide index and this axis is protein identity; a ' +
+      'displacement arrow waits on the protein pass against nr, which is the same ' +
+      'instrument at a larger size. ' +
+      (S.structure_axis ? '<b>Structure.</b> ' + esc(S.structure_axis.state) + ': ' +
+        esc(S.structure_axis.what_would_fill_it) + '. ' : '') +
+      '<b>Scope.</b> ' + (c.searched || '?') + ' identified contigs searched, ' +
+      (c.with_a_significant_hit || '?') + ' with a significant protein hit and ' +
+      (c.shuffled_with_a_significant_hit === 0 ? 'none at all from ' + c.searched +
+        ' dinucleotide shuffles of the same contigs'
+        : c.shuffled_with_a_significant_hit + ' from the shuffled null') + '. This panel ' +
+      'draws the ' + c.drawn + ' scored gene by gene; ' + rows.length + ' shown at the ' +
+      'current filter.';
+  }
+
+  armSel.onchange = draw; bands.onchange = draw; asTable.onchange = draw;
+  draw();
+  app.append(p);
+})();
+
 // ---------- the residue table
 (function () {
   const T = D.table;
@@ -2159,7 +2883,7 @@ function interval(iv) {
 (function () {
   const B = D.blind_spots;
   const p = panel('Blind spots',
-    'Each entry names the measurement that established it.');
+    'Each entry names the measurement that established it.' + cite('nulls'));
   if (!B) { p.append(el('div', 'absent', 'blind_spots.json absent from the run directory'));
     app.append(p); return; }
   const g = el('div', 'grid2');
@@ -2186,6 +2910,14 @@ function interval(iv) {
   d.append(el('summary', null, 'every stage, with the code that produced it'));
   d.append(el('pre', 'mono note scroll', esc(JSON.stringify(r.stages || [], null, 1))));
   p.append(d);
+  // What this page read from outside the run directory, as its descriptor declared it.
+  // A "not run" here is the reason a panel says so, stated once where it can be checked.
+  const pin = (D.page || {}).inputs || {};
+  const d3 = el('details');
+  d3.append(el('summary', null, 'files outside the run directory, as this page declares them'));
+  d3.append(el('pre', 'mono note scroll', esc(Object.keys(pin).map(k =>
+    k + ': ' + (pin[k].path || 'not run - ' + pin[k].not_run)).join('\\n'))));
+  p.append(d3);
   app.append(p);
 })();
 
@@ -2282,8 +3014,7 @@ function interval(iv) {
 (function () {
   const P = D.profile;
   const p = panel('Watchlist screen',
-    'Forty-four watchlist taxa screened against the whole library. Levels are read ' +
-    'pairs, not cases.');
+    '44 watchlist taxa against the whole library. Levels are read pairs, not cases.');
   if (!P) {
     p.append(el('div', 'absent', 'public_health_profile_s*.json absent: run ' +
       'experiments/public_health_profile.py over this library'));
@@ -2313,11 +3044,12 @@ function interval(iv) {
   hero.innerHTML =
     '<div class="vmain">' + (top
       ? 'Highest watchlist detection: <b>' + esc(top.name) + '</b>, at <b>' +
-        oneIn(top.fraction) + ' read pairs</b>.'
-      : 'No watchlist taxon detected.') + '</div>' +
+        oneIn(top.fraction) + ' read pairs</b>.' + cite('watchlist')
+      : 'No watchlist taxon detected.' + cite('watchlist')) + '</div>' +
     '<div class="vsub">' + hit.length + ' of ' + rows.length + ' detected at ' +
     'confidence ' + CONF + '. No row reaches 1 pair in 100,000. Untargeted RNA ' +
-    'sequencing has low sensitivity for human pathogens at these concentrations.</div>';
+    'sequencing has low sensitivity for human pathogens at these ' +
+    'concentrations.' + cite('library') + '</div>';
   p.append(hero);
 
   const rank = el('div', 'ranked');
@@ -2356,12 +3088,13 @@ function interval(iv) {
   });
   more.append(mgrid);
   more.append(el('p', 'note',
-    'Bounds are rule-of-three upper limits at this sequencing depth, not statements ' +
-    'about the catchment. Absence requires a targeted assay.'));
+    'Bounds are rule-of-three upper limits at this sequencing depth.' +
+    cite('watchlist') + ' Absence requires a targeted assay.'));
   p.append(more);
 
   const cal = el('div', 'callout');
-  cal.innerHTML = '<b>Shuffled control.</b> The same panel over composition-matched ' +
+  cal.innerHTML = '<b>Shuffled control.</b>' + cite('nulls') +
+    ' The same panel over composition-matched ' +
     'shuffled reads detects <b>' + ((nul['0.0'] || {}).panel_rows_detected) + ' of ' +
     rows.length + ' rows at confidence 0</b> and ' +
     ((nul[CONF] || {}).panel_rows_detected) + ' at confidence ' + CONF + '. ' +
@@ -2375,8 +3108,9 @@ function interval(iv) {
 (function () {
   const P = D.profile;
   const p = panel('What this water is',
-    'Kraken2 PlusPF-08 over all read pairs. First circle: the fraction carrying any ' +
-    'name. Second: the composition of that fraction.');
+    'Kraken2 PlusPF-08 over all read pairs.' + cite('composition') +
+    ' First circle: the fraction carrying any name. Second: the composition of that ' +
+    'fraction.');
   if (!P) { p.append(el('div', 'absent', 'public_health_profile_s*.json absent'));
     app.append(p); return; }
 
@@ -2516,15 +3250,16 @@ function interval(iv) {
   sel.onchange = draw; draw();
 
   const note = el('div', 'callout');
-  note.innerHTML = '<b>Caveats.</b> This is RNA abundance, not cell counts: one ' +
+  note.innerHTML = '<b>Caveats.</b>' + cite('composition') +
+    ' This is RNA abundance rather than cell counts: one ' +
     'bacterium with a thousand ribosomes contributes a thousand times its cell count. ' +
-    'The named fraction ranges from ' +
+    'The named fraction runs from ' +
     pct(1 - (((P.at_confidence['0.0'] || {}).by_superkingdom || [])
-      .filter(g => g.group === 'unclassified')[0] || {}).fraction) + ' and ' +
+      .filter(g => g.group === 'unclassified')[0] || {}).fraction) +
+    ' at the loosest setting to ' +
     pct(1 - (((P.at_confidence['0.2'] || {}).by_superkingdom || [])
       .filter(g => g.group === 'unclassified')[0] || {}).fraction) +
-    ' across the confidence settings above. Unnamed sequence is not evidence of ' +
-    'novelty; see below.';
+    ' at the strictest. Unnamed sequence is not evidence of novelty; see below.';
   p.append(note);
   app.append(p);
 })();
@@ -2537,9 +3272,9 @@ function interval(iv) {
 // genes themselves.
 (function () {
   const S = D.strain_divergence, W = D.contig_workup;
-  const p = panel('Assembled viruses and their divergence',
-    'Protein identity of each assembled virus to its closest published relative, ' +
-    'gene by gene, most divergent first.');
+  const p = panel('How far the assembled viruses sit from anything published',
+    'One line. Left is far from everything known, right is a match to a published ' +
+    'genome. Every assembled virus has a place on it.' + cite('contigid'));
   if (!S) {
     p.append(el('div', 'absent', 'known_strain_divergence_s*.json absent: run ' +
       'experiments/known_strain_divergence.py'));
@@ -2548,153 +3283,299 @@ function interval(iv) {
   const taxa = (S.taxa || []).filter(t => t.median_identity_percent != null)
     .sort((a, b) => a.median_identity_percent - b.median_identity_percent);
   const belowNinety = taxa.filter(t => t.median_identity_percent < 90);
-
   const rows = W ? (W.rows || []).filter(r => r.arm === 'divergent')
     .slice().sort((a, b) => a.rank_pident - b.rank_pident) : [];
   const ctrl = W ? (W.summary || {}).control_near_reference : null;
   const dsum = W ? (W.summary || {}).divergent : null;
-  // Deep and near-full-length at once. 3 to 4.5 kb is a complete genome for this group,
-  // so a contig that is long, evenly covered and far from the database is the row with
-  // enough material behind it to be worth the next step.
   const deep = rows.filter(r => (r.read_support || {}).mapped_mean_depth >= 100
                                 && r.contig_nt >= 3000);
 
   const hero = el('div', 'verdict');
   hero.innerHTML = '<div class="vmain"><b>' + belowNinety.length + ' of ' + taxa.length +
     '</b> assembled viruses sit <b>below 90% identity</b> to their closest published ' +
-    'protein' + (deep.length ? ', and <b>' + deep.length + '</b> of those are complete ' +
-      'genomes at over 100x read depth' : '') + '.</div>' +
-    '<div class="vsub">DIAMOND blastx, alignments of at least 60 aa at E&lt;1e-5. ' +
-    'Below about 90% identity these are not strains of the taxon they are named after: ' +
-    'the subject is the nearest neighbour in a sparse database. Divergence is measured ' +
-    'against that database, not within the sample.</div>';
+    'protein' + cite('contigid') +
+    '.</div>' + (deep.length ? '<div class="vmain">Of the ' + rows.length +
+      ' worked up gene by gene, <b>' + deep.length + '</b> are complete genomes carried ' +
+      'at over 100x read depth' + cite('depth') + '.</div>' : '') +
+    '<div class="vsub">Identity here means one gene against the single closest protein ' +
+    'in the reference sets, at E&lt;1e-5 over at least 60 aa. Below about 90% that ' +
+    'protein is a nearest neighbour rather than an identification, and the name it ' +
+    'lends is borrowed.</div>';
   p.append(hero);
 
+  /* THE LINE. One quantity, one chart, no legend: everything that would need one is
+     written on the drawing itself. The three bar blocks this replaced used the same
+     orange bar for read depth, then distance, then identity, on one screen. */
+  if (rows.length) {
+    const W2 = 1000, L = 20, R = 18, TOP = 54, BOT = 46, H = TOP + 96 + BOT;
+    const x = v => L + 36 + (Math.min(100, Math.max(20, v)) - 20) / 80 *
+      (W2 - L - R - 36);
+    const BASE = TOP + 58;
+    let s = '<svg viewBox="0 0 ' + W2 + ' ' + H + '" width="100%" ' +
+      'style="min-width:660px" role="img" aria-label="assembled viruses by identity ' +
+      'to the closest published protein">';
+    // the rug: one tick per contig, stacked where they pile up
+    const bins = {};
+    rows.forEach(r => {
+      const b = Math.round(r.rank_pident * 2) / 2;
+      bins[b] = (bins[b] || 0) + 1;
+    });
+    Object.keys(bins).forEach(k => {
+      const n = bins[k], h = Math.min(46, 6 + n * 4);
+      s += '<rect x="' + (x(+k) - 2.5) + '" y="' + (BASE - h) + '" width="5" height="' +
+        h + '" rx="1.5" fill="var(--identified)" opacity="0.8"/>';
+    });
+    s += '<line x1="' + x(20) + '" y1="' + BASE + '" x2="' + x(100) + '" y2="' + BASE +
+      '" stroke="var(--fg)" stroke-width="1.5"/>';
+    for (let v = 20; v <= 100; v += 10) {
+      s += '<line x1="' + x(v) + '" y1="' + BASE + '" x2="' + x(v) + '" y2="' +
+        (BASE + 5) + '" stroke="var(--dim)" stroke-width="1"/>';
+      s += '<text x="' + x(v) + '" y="' + (BASE + 19) +
+        '" text-anchor="middle" class="ax">' + v + '%</text>';
+    }
+    s += '<text x="' + x(20) + '" y="' + (BASE + 36) + '" class="ax">' +
+      'nothing published is close enough to name it</text>';
+    s += '<text x="' + x(100) + '" y="' + (BASE + 36) +
+      '" text-anchor="end" class="ax">the same virus, already sequenced</text>';
+    // the handful worth naming
+    deep.slice().sort((a, b) => a.rank_pident - b.rank_pident).forEach((r, i) => {
+      const xx = x(r.rank_pident), yy = BASE - 54 - (i % 2) * 16;
+      s += '<line x1="' + xx + '" y1="' + yy + '" x2="' + xx + '" y2="' + (BASE - 4) +
+        '" stroke="var(--residue)" stroke-width="1" stroke-dasharray="2 3"/>';
+      s += '<circle cx="' + xx + '" cy="' + yy + '" r="4" fill="var(--residue)"><title>' +
+        esc(r.taxon) + '</title></circle>';
+    });
+    if (deep.length) {
+      s += '<text x="' + (x(Math.min.apply(null, deep.map(r => r.rank_pident))) - 10) +
+        '" y="' + (BASE - 50) + '" text-anchor="end" class="ax">' + deep.length +
+        ' finished genomes, deep enough to work on</text>';
+    }
+    s += '</svg>';
+    const host = el('div', 'scroll'); host.innerHTML = s; p.append(host);
+    p.append(el('p', 'note', 'One mark per contig, ' + rows.length + ' of them, stacked ' +
+      'where several land on the same identity. Position is the gene the row was ranked on, the polymerase ' +
+      'wherever one is called.' + cite('genespread')));
+  }
+
+  /* THE FEW THAT MATTER, DRAWN AS WHAT THEY ARE. A bar chart of identities beside a Latin
+     name tells a reader neither what the thing is nor what the number is a property of.
+     The molecule itself is the picture: genes at their real coordinates, coloured by the
+     job they do, with the identity written on the gene it belongs to. */
+  const ROLE = GENE_ROLE, roleOf = geneRoleOf;
+
   if (deep.length) {
-    const d = el('div', 'ranked');
-    d.append(el('div', 'pghead',
-      'complete genomes, deep, and far from the database. bar is read depth'));
-    deep.slice().sort((a, b) => (b.read_support.mapped_mean_depth
-                                 - a.read_support.mapped_mean_depth)).forEach((r, i) => {
-      const row = el('div', 'rrow');
-      row.innerHTML =
-        '<div class="rno mono wide">' + num(r.rank_pident, 1) + '%</div>' +
-        '<div class="rname"><b>' + esc(r.taxon) + '</b>' +
-        (r.read_support.evenness_within_2x_of_median < 0.6
-          ? '<span class="chip">uneven coverage</span>' : '') + '</div>' +
-        '<div class="rbar"><i style="width:' +
-          Math.max(2, 100 * r.read_support.mapped_mean_depth / 500).toFixed(1) +
-          '%"></i></div>' +
-        '<div class="rval mono">' + Math.round(r.read_support.mapped_mean_depth) +
-          'x, ' + (r.contig_nt / 1000).toFixed(1) + ' kb</div>';
-      row.title = r.contig;
-      d.append(row);
+    const d = el('div', 'bites');
+    d.append(el('div', 'pghead', 'the finished genomes, drawn to scale'));
+    // What these are is read from the architecture file, which applied the committed
+    // vocabulary's rule and recorded the evidence. The renderer counts rows.
+    const calls = deep.map(r => archOf(r.contig)).filter(Boolean);
+    const oneArch = calls.length === deep.length && calls.length > 0 &&
+      calls.every(c => c.architecture && c.architecture === calls[0].architecture);
+    const AW = oneArch ? archWords(calls[0]) : null;
+    if (AW) {
+      const full = calls.filter(c => c.has_every_expected_role).length;
+      const intro = el('p', 'gintro');
+      intro.innerHTML = 'All ' + deep.length + ' are called <b>' +
+        esc(deep.length === 1 ? AW.label : (AW.label_plural || AW.label)) +
+        '</b>: ' + esc(AW.plain) + ', and ' + esc(AW.does_not) + '. ' +
+        (full ? full + ' of them carry ' + esc(AW.expected_roles_plain) + '. ' : '') +
+        'Each is drawn below at its real gene positions; the arrow is the direction the ' +
+        'gene is read and the number on it is identity to the closest published ' +
+        'protein.' + cite('vocab');
+      d.append(intro);
+    }
+    d.append(geneLegend());
+
+    deep.slice().sort((a, b) => (b.read_support || {}).mapped_mean_depth -
+                                (a.read_support || {}).mapped_mean_depth).forEach(r => {
+      const rs = r.read_support || {}, os = (r.orfs_drawn || []).slice()
+        .sort((a, b) => a.s - b.s);
+      const card = el('div', 'gmap');
+      const kb = (r.contig_nt / 1000).toFixed(1);
+      const hd = el('div', 'gmaphead');
+      hd.innerHTML = '<b>' + esc(r.taxon) + '</b> <span class="dim">&mdash; the name of ' +
+        'its nearest published relative, not an identification</span>';
+      card.append(hd);
+
+      card.append(geneMap(r.contig_nt, os.map(o => Object.assign({}, o,
+        {pident: o.sig ? o.pident : null})), kb + ' kb'));
+
+      // what it is, in words a reader can check against the picture above. Every
+      // claim here is a field of the architecture row or the vocabulary it applied.
+      const A = archOf(r.contig), AX = archWords(A);
+      const say = el('div', 'gsay');
+      say.innerHTML =
+        (AX && !AW ? '<b>' + esc(AX.label) + '.</b> ' : '') +
+        (A && !A.architecture
+          ? '<span class="dim">No architecture called: ' + esc(A.not_called_because) +
+            '</span> ' : '') +
+        '<b>' + kb + ' kb</b> at <b>' + Math.round(rs.mapped_mean_depth) +
+        'x</b>, covered ' + (rs.breadth_covered > 0.98 ? 'end to end'
+          : pct(rs.breadth_covered) + ' of its length') +
+        (rs.evenness_within_2x_of_median < 0.6
+          ? ' but unevenly, so part of it may be a different molecule' : '') + '. ' +
+        (A && A.most_diverged_role && A.identity_spread_points != null
+          ? 'Its <b>' + esc(A.most_diverged_role) + '</b> is the gene furthest from ' +
+            'anything published and its <b>' + esc(A.least_diverged_role) +
+            '</b> the closest, ' + num(A.identity_spread_points, 1) + ' points apart.'
+          : (far ? 'Furthest from anything published: the <b>' +
+             esc(far.role || 'unnamed gene') + '</b> at ' + num(far.pident, 1) + '%.'
+             : '')) + ' ' +
+        (A && A.genes_called > A.genes_with_a_role
+          ? (A.genes_called - A.genes_with_a_role) + ' of its ' + A.genes_called +
+            ' genes carry no role. ' : '') +
+        (A && A.nearest_subject_provenance === 'environmental_record'
+          ? '<span class="dim">Its nearest published relative is ' +
+            esc(((VOC.subject_provenance || {}).environmental_record || {}).plain ||
+                'an environmental record') + '.</span>' : '');
+      card.append(say);
+      d.append(card);
     });
     p.append(d);
-    p.append(el('p', 'note',
-      'Depth is every read in the library mapped back, not the assembler\\'s own ' +
-      'coverage header, which understates read support about fourfold on this set. ' +
-      'Breadth is above 99% on all of them, so these are genomes rather than fragments.'));
   }
 
-  if (!rows.length) {
-    // No workup in this run directory: fall back to the whole-contig ranking and say so.
-    const rank = el('div', 'ranked');
-    const spread = Math.max(5, 100 - (taxa[0] || {}).median_identity_percent);
-    const draw = t => {
-      const r = el('div', 'rrow');
-      const id = t.median_identity_percent;
-      const k = Math.max(0, Math.min(1, (100 - id) / spread));
-      r.innerHTML =
-        '<div class="rno mono wide">' + num(id, 1) + '%</div>' +
-        '<div class="rname"><b>' + esc(t.name) + '</b>' +
-        (t.on_the_panel ? '<span class="chip strong">on the watchlist</span>' : '') +
-        '</div>' +
-        '<div class="rbar"><i style="width:' + Math.max(2, 100 * k).toFixed(1) +
-        '%;background:var(--v2);opacity:' + (0.35 + 0.65 * k).toFixed(2) + '"></i></div>' +
-        '<div class="rval dim">over ' + t.median_aligned_aa + ' aa, ' + t.contigs +
-        ' contig' + (t.contigs === 1 ? '' : 's') + '</div>';
-      r.title = t.reading;
-      return r;
-    };
-    taxa.slice(0, 10).forEach(t => rank.append(draw(t)));
-    p.append(rank);
-    p.append(el('p', 'note',
-      'Ranked on one best hit per contig, which is whichever gene won on bitscore. Run ' +
-      'experiments/divergent_contig_workup.py for the gene-level ranking.'));
-  } else {
-    const rank = el('div', 'ranked');
-    rank.append(el('div', 'pghead',
-      'every divergent contig, by its polymerase. bar is distance from the database'));
-    const spread = Math.max(5, 100 - rows[0].rank_pident);
-    const draw = r => {
-      const row = el('div', 'rrow');
-      const k = Math.max(0, Math.min(1, (100 - r.rank_pident) / spread));
-      const genes = (r.genes || []).filter(g => g.role !== 'other');
-      row.innerHTML =
-        '<div class="rno mono wide">' + num(r.rank_pident, 1) + '%</div>' +
-        '<div class="rname"><b>' + esc(r.taxon) + '</b>' +
-        (r.ranked_on === 'polymerase' ? '' :
-          '<span class="chip">no polymerase; whole contig</span>') +
-        (r.orf_identity_spread_points >= 20
-          ? '<span class="chip strong">genes differ by ' +
-            num(r.orf_identity_spread_points, 0) + ' points</span>' : '') +
-        '</div>' +
-        '<div class="rbar"><i style="width:' + Math.max(2, 100 * k).toFixed(1) +
-        '%;opacity:' + (0.35 + 0.65 * k).toFixed(2) + '"></i></div>' +
-        '<div class="rval dim">' + (r.contig_nt / 1000).toFixed(1) + ' kb, ' +
-        Math.round((r.read_support || {}).mapped_mean_depth || 0) + 'x</div>';
-      row.title = genes.map(g => g.role + ' ' + num(g.pident, 1) + '% over ' +
-                                 g.aln_aa + ' aa').join('; ') || r.contig;
-      return row;
-    };
-    rows.slice(0, 10).forEach(r => rank.append(draw(r)));
-    p.append(rank);
-    if (rows.length > 10) {
-      const d = el('details', 'more');
-      const s2 = document.createElement('summary');
-      s2.textContent = 'the other ' + (rows.length - 10);
-      d.append(s2);
-      const r2 = el('div', 'ranked');
-      rows.slice(10).forEach(r => r2.append(draw(r)));
-      d.append(r2);
-      p.append(d);
-    }
-  }
+  /* "CAN WE RANK BY SCARINESS." No, and the reason is measured rather than cautious: a
+     rank over sequence is a rank over database proximity, and the host attached to a
+     matched record is a property of that record. What can be shown is what the water's
+     unplaceable reads point at, in reads rather than in database entries, with the
+     confidence that the host label transfers at all. */
+  const R = D.ranking;
+  if (R && R.host_mix_reads && R.reads_total) {
+    const GL = ((R.host_table || {}).groups) || {};
+    const ORD = ['bacteriophage', 'unknown_host', 'plant', 'vertebrate_non_human',
+                 'human_associated', 'invertebrate', 'fungal_or_protist'];
+    const hc = R.host_confidence_summary || {};
+    const seen = Object.keys(R.host_mix_reads).sort(
+      (a, b) => R.host_mix_reads[b] - R.host_mix_reads[a]);
+    const tot = R.reads_total;
+    const hum = R.host_mix_reads.human_associated || 0;
+    const COL = {bacteriophage: 'var(--v1)', unknown_host: 'var(--null)',
+                 plant: 'var(--v3)', vertebrate_non_human: 'var(--tier2)',
+                 human_associated: 'var(--v2)', invertebrate: 'var(--cv3)',
+                 fungal_or_protist: 'var(--cv2)'};
 
-  // The calibration, on the face of the panel: what each gene reads on the divergent arm
-  // against what it reads on contigs that match their reference.
-  if (dsum && ctrl && dsum.by_gene_role && ctrl.by_gene_role) {
-    const box = el('div', 'cmp');
-    box.append(el('div', 'pghead', 'by gene, against near-reference contigs'));
-    const order = ['polymerase', 'maturation', 'coat', 'lysis', 'other'];
-    order.filter(g => dsum.by_gene_role[g]).forEach(g => {
-      const a = dsum.by_gene_role[g], b = ctrl.by_gene_role[g] || {};
-      const r = el('div', 'crow');
-      r.innerHTML = '<div class="clab">' + esc(g) + '</div>' +
-        '<div class="cbar"><span style="width:' + a.median_pident.toFixed(1) +
-        '%;background:var(--v2)"></span></div>' +
-        '<div class="cnum mono">' + num(a.median_pident, 1) + '%</div>' +
-        '<div class="csub dim">' + a.orfs + ' genes on divergent contigs, against ' +
-        (b.median_pident != null ? num(b.median_pident, 1) + '% over ' + b.orfs +
-          ' on contigs that match their reference' : 'no control genes of this role') +
-        '</div>';
-      box.append(r);
+    const blk = el('div', 'bites');
+    blk.append(el('div', 'pghead', 'could any of it infect a person'));
+    const lead = el('div', 'callout');
+    lead.innerHTML =
+      'Of the <b>' + tot.toLocaleString() + '</b> leftover reads that point at a named ' +
+      'relative at all, <b>' + pct((R.host_mix_reads.bacteriophage || 0) / tot) +
+      '</b> point at viruses of bacteria and <b>' + pct(hum / tot) + '</b> at anything ' +
+      'human-associated' + cite('concern') + '. Those ' + hum + ' reads are the enteric ' +
+      'viruses sewage is expected to carry, matched over about 34 amino acids. ' +
+      '<b>Host confidence never exceeds ' + num(hc.max, 2) + '</b> anywhere in the ' +
+      Number(hc.subjects || 0).toLocaleString() + ' records, so no relative here is ' +
+      'close enough for its host to transfer: these are labels on the database, not ' +
+      'claims about the water.';
+    blk.append(lead);
+
+    // one bar, in reads, direct-labelled. A share of records would be a share of the
+    // database; a share of reads is a share of the sample.
+    const BW = 1000, BH = 100, BY = 28, BAR = 26;
+    let bs = '<svg viewBox="0 0 ' + BW + ' ' + BH + '" width="100%" ' +
+      'style="min-width:560px" role="img" aria-label="what the named leftovers point ' +
+      'at, by read">';
+    let cx = 0, lab = [];
+    seen.forEach(k => {
+      const w = (R.host_mix_reads[k] / tot) * BW;
+      if (w <= 0) return;
+      bs += '<rect x="' + cx + '" y="' + BY + '" width="' + Math.max(0.6, w - 2) +
+        '" height="' + BAR + '" rx="2" fill="' + (COL[k] || 'var(--null)') +
+        '"><title>' + esc((GL[k] || {}).label || k) + ': ' +
+        R.host_mix_reads[k].toLocaleString() + ' reads, ' +
+        (R.host_mix[k] || 0).toLocaleString() + ' records</title></rect>';
+      lab.push([cx + w / 2, k, w]);
+      cx += w;
     });
-    p.append(box);
-    p.append(el('div', 'callout',
-      'A contig\\'s own genes disagree by a median of ' +
-      num(dsum.median_orf_identity_spread_points, 1) + ' points on the divergent arm ' +
-      'and ' + num(ctrl.median_orf_identity_spread_points, 2) + ' on the control. One ' +
-      'identity per contig therefore reports whichever gene won on bitscore. The ' +
-      'chimaera flag fires on ' + pct(dsum.fraction_flagged_subject_disagreement) +
-      ' of divergent contigs and ' + pct(ctrl.fraction_flagged_subject_disagreement) +
-      ' of controls, so it describes how the assembler joins genes rather than ' +
-      'divergence, and nothing is dropped on it.'));
+    // only the shares with room get an inline label; the rest are called out beneath
+    lab.forEach(l => {
+      if (l[2] < 110) return;
+      bs += '<text x="' + l[0] + '" y="' + (BY + BAR + 16) +
+        '" text-anchor="middle" class="ax">' + esc((GL[l[1]] || {}).label || l[1]) +
+        ' ' + pct(R.host_mix_reads[l[1]] / tot) + '</text>';
+    });
+    const hx = lab.filter(l => l[1] === 'human_associated')[0];
+    if (hx) {
+      bs += '<line x1="' + hx[0] + '" y1="' + (BY - 2) + '" x2="' + hx[0] + '" y2="' +
+        (BY - 14) + '" stroke="var(--v2)" stroke-width="1.5"/>';
+      bs += '<text x="' + Math.min(BW - 4, hx[0] + 6) + '" y="' + (BY - 18) +
+        '" text-anchor="end" class="ax">human-associated, ' + pct(hum / tot) +
+        ' of named reads</text>';
+    }
+    bs += '</svg>';
+    const bh = el('div', 'scroll'); bh.innerHTML = bs; blk.append(bh);
+
+    const ha = (R.subjects || []).filter(x => x.host_group === 'human_associated')
+      .sort((a, b) => (b.residue_reads || 0) - (a.residue_reads || 0)).slice(0, 6);
+    if (ha.length) {
+      blk.append(el('p', 'note', 'The human-associated records, largest first: ' +
+        ha.map(x => esc(x.organism || x.subject) + ' (' + x.residue_reads + ' reads, ' +
+          num(x.median_identity_percent, 1) + '% over ' + x.median_aligned_aa + ' aa)')
+          .join('; ') + '. At that alignment length a phage protein and a bacterial one ' +
+        'cannot be told apart either, so read these as the direction of a match rather ' +
+        'than as a finding.'));
+    }
+
+    const no = el('div', 'callout');
+    no.innerHTML = '<b>There is no scariness number here, and that is a result rather ' +
+      'than a gap.</b> Ordering by distance from the database orders by the database' +
+      cite('nulls') + ', and the host attached to a match is a property of the matched ' +
+      'record. What can be ranked is how much of something is present, which is a ' +
+      'property of the water, and the table below is ordered that way. What would earn ' +
+      'the word is recurrence: the same sequence appearing at one plant, then climbing ' +
+      'across dates. That is measured at read level across 512 libraries' +
+      cite('crossplant') + ' and has not yet been run over these contigs.';
+    blk.append(no);
+    p.append(blk);
   }
 
-  // The blind-spot list is five sentences from the result file. It stays complete and
-  // goes behind a disclosure rather than onto the face of the panel.
+  /* EVERYTHING ELSE, as one table behind a disclosure. */
+  if (rows.length) {
+    const det = el('details', 'more');
+    const sm = document.createElement('summary');
+    sm.textContent = 'all ' + rows.length + ' divergent contigs, most abundant first';
+    det.append(sm);
+    const sc = el('div', 'scroll');
+    const tb = el('table');
+    tb.innerHTML = '<thead><tr><th>nearest named relative</th><th>identity</th>' +
+      '<th>ranked on</th><th>genes disagree by</th><th>length</th><th>depth</th>' +
+      '</tr></thead>';
+    const body = el('tbody');
+    rows.slice().sort((a, b) => ((b.read_support || {}).mapped_mean_depth || 0) -
+                                ((a.read_support || {}).mapped_mean_depth || 0))
+      .forEach(r => {
+      const tr = el('tr');
+      tr.innerHTML = '<td>' + esc(r.taxon) + '</td><td class="mono">' +
+        num(r.rank_pident, 1) + '%</td><td class="dim">' + esc(r.ranked_on) +
+        '</td><td class="mono">' + (r.orf_identity_spread_points == null
+          ? '<span class="dim">one gene</span>'
+          : num(r.orf_identity_spread_points, 1) + ' pts') +
+        '</td><td class="mono">' + (r.contig_nt / 1000).toFixed(1) + ' kb</td>' +
+        '<td class="mono">' + Math.round((r.read_support || {}).mapped_mean_depth || 0) +
+        'x</td>';
+      tr.title = r.contig;
+      body.append(tr);
+    });
+    tb.append(body); sc.append(tb); det.append(sc); p.append(det);
+  }
+
+  /* The gene-level calibration, as one sentence instead of a fourth bar chart. */
+  if (dsum && ctrl && dsum.by_gene_role && ctrl.by_gene_role) {
+    const g = dsum.by_gene_role, c = ctrl.by_gene_role;
+    const cal2 = el('div', 'callout');
+    const say = k => g[k] ? k + ' ' + num(g[k].median_pident, 1) + '% against ' +
+      (c[k] ? num(c[k].median_pident, 1) + '%' : 'no control') : null;
+    cal2.innerHTML =
+      'Which gene you measure decides the answer. On these contigs the genes of one ' +
+      'contig disagree by a median of <b>' +
+      num(dsum.median_orf_identity_spread_points, 1) + ' points</b>, against <b>' +
+      num(ctrl.median_orf_identity_spread_points, 2) + '</b> on contigs that match ' +
+      'their reference, so a single identity per contig reports whichever gene won on ' +
+      'bitscore.' + cite('genespread') + ' By role, divergent against near-reference: ' +
+      ['polymerase', 'maturation', 'coat'].map(say).filter(Boolean).join(', ') + '.';
+    p.append(cal2);
+  }
+
   const bs = el('details', 'more');
   const bsum = document.createElement('summary');
   bsum.textContent = 'limitations of this measurement';
@@ -2703,7 +3584,7 @@ function interval(iv) {
   bl.className = 'note';
   ((S.blind_spots || []).concat((W && W.blind_spots) || [])).forEach(x => {
     const li = document.createElement('li');
-    li.textContent = String(x).replace(/\.$/, '') + '.';
+    li.textContent = String(x).replace(/\\.$/, '') + '.';
     bl.append(li);
   });
   bs.append(bl);
@@ -2718,16 +3599,17 @@ function interval(iv) {
   const tier = k => (cur.filter(c => c.tier === k)[0] || {});
   if (!K || !b) return;
   const p = panel('The unnamed remainder',
-    'The fraction no reference names.');
+    'The fraction no reference names.' + cite('cascade'));
   const own = tier('selfasm_sample_contigs_identified_norrna').marginal_removed;
   const rr = tier('rrna').tier_alone_removed;
 
   const hero = el('div', 'verdict');
   hero.innerHTML = '<div class="vmain"><b>' +
     pct(1 - (K.named / (K.searched || 1))) + '</b> of residual reads have no ' +
-    'significant protein match in any index available here.</div>' +
-    '<div class="vsub">' + pct(own) + ' of the library matches contigs assembled from ' +
-    'this sample that carry no name; ' + pct(rr) + ' is ribosomal RNA.</div>';
+    'significant protein match in any index available here.' + cite('residue') +
+    '</div><div class="vsub">' + pct(own) + ' of the library matches contigs assembled ' +
+    'from this sample that carry no name; ' + pct(rr) + ' is ribosomal RNA.' +
+    cite('cascade') + '</div>';
   p.append(hero);
 
   // One picture of the whole library, split by WHAT WE CAN SAY about each part rather
@@ -2773,10 +3655,10 @@ function interval(iv) {
 
   const note = el('div', 'callout');
   note.innerHTML = '<b>Unnamed is not novel.</b> A search establishes that sequence ' +
-    'is already known; it cannot establish novelty, because any search-derived score ' +
-    'tracks distance to the database. Measured in the detail below: artefact ' +
-    'signatures account for under 1% of this pile, it contains no abundant unknown ' +
-    'genome, and its median depth is 1.';
+    'is already known. It cannot establish novelty, because any search-derived score ' +
+    'tracks distance to the database. Artefact signatures account for under 1% of this ' +
+    'pile, it contains no abundant unknown genome, and its median depth is 1.' +
+    cite('residue');
   p.append(note);
   app.append(p);
 })();
@@ -2790,8 +3672,10 @@ function interval(iv) {
   const P = D.profile, curve = (D.tier_table || {}).curve || [];
   const brk = (D.tier_table || {}).breakdown;
   if (!P || !curve.length || !brk) return;
-  const p = panel('Named against recognised: cascade reconciliation',
-    'Reconciling 7% named against 77% identifiable.');
+  // The subtitle quotes the two figures this panel reconciles, so they are computed
+  // before it is written rather than typed into it. They were "7%" and "77%", which is
+  // Berlin's answer printed on whatever library the page was built from.
+  let named = 0, unnamed = 0; const unnamedRows = [];
   // Which tiers can name is a property of the tier, declared here where it can be read.
   // A Kraken2 or DIAMOND hit carries a taxon or an accession; an artefact filter, a
   // SILVA match and a match to a contig from this very sample tell you the sequence has
@@ -2802,7 +3686,6 @@ function interval(iv) {
                rrna: 'ribosomal RNA',
                selfasm_sample_contigs_rrna: 'own-sample ribosomal contigs',
                selfasm_sample_contigs_identified_norrna: 'own-sample unnamed contigs'};
-  let named = 0, unnamed = 0; const unnamedRows = [];
   curve.forEach(c => {
     const m = c.marginal_removed || 0;
     if (CAN_NAME[c.tier]) { named += m; }
@@ -2810,6 +3693,9 @@ function interval(iv) {
   });
   const k2here = 1 - (((P.at_confidence['0.1'] || {}).by_superkingdom || [])
     .filter(g => g.group === 'unclassified')[0] || {}).fraction;
+  const p = panel('Named against recognised: cascade reconciliation',
+    'Reconciling ' + pct(named) + ' named against ' + pct(brk.identified.point) +
+    ' identifiable.');
   const box = el('div', 'cmp');
   const rowbar = (lab, v, col, sub) => {
     const r = el('div', 'crow');
@@ -2836,6 +3722,136 @@ function interval(iv) {
     ((D.parameters || {}).pairs || 0).toLocaleString() + '-pair block.'));
   app.append(p);
 })();
+// ---------- methods
+// Built after every panel, so a citation can only point at an entry that exists. The
+// entries are static text: what varies between runs is in the result files and on the
+// panels above, and a method that changed with the run would not be a method.
+(function () {
+  const p = panel('Methods',
+    'One entry per headline figure, cited from it by number. Each states the input, ' +
+    'the procedure, the threshold, the denominator, the control arm and the direction ' +
+    'of the bias the control leaves behind.');
+  METHODS.forEach((m, i) => {
+    const d = el('div', 'meth');
+    d.id = 'm-' + m.id;
+    d.innerHTML = '<div class="mno">' + (i + 1) + '</div><div><h3>' + esc(m.t) +
+      '</h3><dl class="mgrid">' +
+      m.rows.map(r => '<dt>' + esc(r[0]) + '</dt><dd>' + r[1] + '</dd>').join('') +
+      '</dl></div>';
+    p.append(d);
+  });
+  app.append(p);
+})();
+
+
+// ---------- the genome we hid from the tool
+// Only this library has one. Every other panel on this page reports a number whose
+// truth nobody knows; this one reports a number whose truth was fixed before the run,
+// by a deposit date rather than by anyone here.
+(function () {
+  const H = D.holdout_gene_map;
+  if (!H || !H.contigs || !H.contigs.length) return;
+  const T = H.truth || {};
+  const w = H.contigs.filter(c => c.arm === 'withheld')[0];
+  const ctl = H.contigs.filter(c => c.arm !== 'withheld')[0];
+  const p = panel('The genome we hid from the tool',
+    'One genome in this water was deposited after the cutoff every index here was ' +
+    'rolled back to, so the tool could not have seen it. Its real distance is known, ' +
+    'and nobody here chose it.' + cite('holdout'));
+
+  const pol = w && w.orfs.filter(o => o.role === 'polymerase')[0];
+  const ids = w ? w.orfs.filter(o => o.pident != null).map(o => o.pident) : [];
+  const hero = el('div', 'verdict');
+  hero.innerHTML = '<div class="vmain"><b>' + esc(T.organism || 'the withheld genome') +
+    '</b> sits <b>' + num(T.nucleotide_divergence_percent, 1) + '% diverged</b> in ' +
+    'nucleotide from its nearest public relative and was carried in this water at <b>' +
+    Math.round(T.mean_depth) + ' reads deep</b>.</div>' +
+    (w ? '<div class="vmain">The assembler recovered it as one <b>' +
+      (w.nt / 1000).toFixed(2) + ' kb</b> contig, <b>' +
+      pct(w.nt / (T.genome_nt || w.nt)) + '</b> of the deposited genome' +
+      (w.reached_the_unidentified_pile === false
+        ? ', and the cascade then <b>identified it and subtracted it</b>: it is absent ' +
+          'from the pile this report draws' : '') + '.</div>' : '') +
+    '<div class="vsub">Deposited ' + esc(T.deposited || '') + ', from water collected ' +
+    esc(T.collected || '') + '. ' +
+    esc((H.truth_note || '').replace(/^./, c => c.toUpperCase())) + '.</div>';
+  p.append(hero);
+
+  p.append(geneLegend(['polymerase', 'capsid', 'maturation', 'other']));
+  [[w, 'the genome that was hidden'],
+   [ctl, 'a genome from the same water that was already published, for comparison']]
+    .forEach(pair => {
+      if (!pair[0]) return;
+      const c = pair[0], hd = el('div', 'gmaphead');
+      hd.innerHTML = '<b>' + esc(pair[1]) + '</b> <span class="dim">&mdash; ' +
+        (c.nt / 1000).toFixed(2) + ' kb, ' + c.orfs_called + ' genes called, ' +
+        c.orfs_scored + ' with a significant match</span>';
+      const card = el('div', 'gmap');
+      card.append(hd);
+      card.append(geneMap(c.nt, c.orfs, (c.nt / 1000).toFixed(2) + ' kb'));
+      d2(card, c);
+      p.append(card);
+    });
+
+  function d2(card, c) {
+    const v = c.orfs.filter(o => o.pident != null).map(o => o.pident);
+    if (!v.length) return;
+    const lo = Math.min.apply(null, v), hi = Math.max.apply(null, v);
+    const s = el('div', 'gsay');
+    const A = archOf(c.contig), AX = archWords(A);
+    s.innerHTML = (AX ? '<b>' + esc(AX.label) + '.</b> ' : (A ?
+      '<span class="dim">No architecture called from its genes.</span> ' : '')) +
+      'Its genes read <b>' + v.slice().sort((a, b) => b - a)
+      .map(x => num(x, 1) + '%').join('</b>, <b>') + '</b> against the closest protein ' +
+      'the rolled-back indexes hold, a spread of <b>' + num(hi - lo, 1) + ' points ' +
+      'inside one genome</b>.' +
+      (A && A.most_diverged_role ? ' Furthest out is its <b>' +
+        esc(A.most_diverged_role) + '</b> and closest in its <b>' +
+        esc(A.least_diverged_role) + '</b>' + cite('genespread') + '.' : '');
+    card.append(s);
+  }
+
+  if (w && ids.length) {
+    const lo = Math.min.apply(null, ids), hi = Math.max.apply(null, ids);
+    const note = el('div', 'callout');
+    // Every figure in this sentence is read from the gene map. The two it used to
+    // carry - "thirty identity points apart" and an "about 66%" fallback for a genome
+    // with no polymerase called - were typed, and the second would have printed a
+    // Berlin-shaped number on a contig it had never measured.
+    const cv = ctl ? ctl.orfs.filter(o => o.pident != null).map(o => o.pident) : [];
+    const span = v => num(Math.min.apply(null, v), 1) + ' to ' +
+      num(Math.max.apply(null, v), 1) + '%';
+    note.innerHTML = '<b>This is the measurement that matters most on the page, and it ' +
+      'is a failure.</b> Two contigs from one library get the same single word: ' +
+      '<i>identified</i>, and both are subtracted as known background' +
+      (cv.length ? ', though this one&rsquo;s genes read ' + span(ids) +
+        ' and the published one&rsquo;s read ' + span(cv) : '') + '. ' +
+      (pol ? 'A whole-contig identity of ' + num(pol.pident, 1) + '% is also not a ' +
+        'property of the contig: ' : 'A single whole-contig identity is not a property ' +
+        'of the contig either: ') + 'this genome spans ' + num(hi - lo, 1) +
+      ' points between its own genes, so that figure is whichever gene won on bitscore. ' +
+      'Ranking by identity does not rescue it either, because it sits high in the ' +
+      'removed pile rather than low' + cite('nulls') + '.';
+    p.append(note);
+  }
+
+  const bs = el('details', 'more');
+  const sm = document.createElement('summary');
+  sm.textContent = 'limitations of this measurement';
+  bs.append(sm);
+  const ul = document.createElement('ul');
+  ul.className = 'note';
+  (H.blind_spots || []).concat([H.identities_are_not_measured_here]).forEach(x => {
+    if (!x) return;
+    const li = document.createElement('li');
+    li.textContent = String(x).replace(/\\.$/, '') + '.';
+    ul.append(li);
+  });
+  bs.append(ul);
+  p.append(bs);
+  app.append(p);
+})();
+
 // ---------- summary and detail
 // Runs last, after every panel has rendered. It reorganises rather than regenerates: the
 // detail panels keep the markup they were built with and are only moved inside a
@@ -2845,14 +3861,20 @@ function interval(iv) {
   // them. Everything else on this page is how those answers were arrived at, and goes
   // below the fold: it was all on the front page before, and the front page was a
   // method report wearing a sample report's clothes.
-  const SUMMARY = ['Watchlist screen', 'What this water is',
-                   'Assembled viruses and their divergence',
-                   'The unnamed remainder'];
+  const SUMMARY = ['The genome we hid from the tool',
+                   'Watchlist screen', 'What this water is',
+                   'How far the assembled viruses sit from anything published',
+                   'The unnamed remainder', 'Methods'];
   const panels = Array.prototype.filter.call(app.children,
     n => n.tagName === 'SECTION' && n.classList.contains('panel'));
   const detail = panels.filter(n => {
     const h = n.querySelector('h2');
-    return h && SUMMARY.indexOf(h.textContent) < 0;
+    if (!h) return false;
+    // A summary panel whose whole body is "this stage was not run" is a hole at the
+    // top of the page. It stays on the page, as the census it is, but below the fold.
+    const empty = n.querySelectorAll('.absent').length > 0 &&
+      n.querySelectorAll('svg, table, .verdict').length === 0;
+    return SUMMARY.indexOf(h.textContent) < 0 || empty;
   });
   if (!detail.length) return;
   const firstSentence = t => {
@@ -2862,12 +3884,18 @@ function interval(iv) {
     if (out.length > 130) out = out.slice(0, 130).replace(/\\s+\\S*$/, '') + '...';
     return out;
   };
+  // The summary panels answer a reader's questions in a fixed order, and a panel that
+  // happens to be built last should not therefore be read last. Reorder to SUMMARY.
+  const keep = panels.filter(n => detail.indexOf(n) < 0);
+  keep.slice().sort((a, b) => SUMMARY.indexOf(a.querySelector('h2').textContent) -
+                              SUMMARY.indexOf(b.querySelector('h2').textContent))
+    .forEach(n => app.append(n));
+
   const wrap = el('section', 'panel');
   wrap.append(el('h2', null, 'Detail'));
   wrap.append(el('p', 'note',
-    'Every measurement the summary above is read from, one section each, closed by ' +
-    'default. Nothing here is a different number from the summary: the summary is ' +
-    'drawn from these same files.'));
+    'Every measurement the summary is read from, one section each, closed by default. ' +
+    'The summary is drawn from these same files.'));
   detail.forEach(n => {
     const d = el('details', 'ditem');
     const h = n.querySelector('h2');
@@ -2926,9 +3954,70 @@ function interval(iv) {
 """
 
 
+#: Run in headless Chromium against the page this build is about to write. The bundle is
+#: per-sample, so which panels render, and which citations they print, is only known once
+#: the page runs - a static check over the source can say every cite() names an entry, and
+#: cannot say a panel threw and silently took every later panel with it, which is how the
+#: holdout page once rendered four panels out of twenty.
+RENDER_CHECK = r"""
+const {chromium} = require('playwright');
+(async () => {
+  const b = await chromium.launch();
+  const p = await b.newPage();
+  const errors = [];
+  p.on('pageerror', e => errors.push(String(e)));
+  await p.goto('file://' + process.argv[2]);
+  await p.waitForTimeout(500);
+  const r = await p.evaluate(() => {
+    const app = document.getElementById('app');
+    const h = n => ((n.querySelector('h2') || {}).textContent || '');
+    const top = [...app.children].filter(n => n.tagName === 'SECTION').map(h)
+      .filter(t => t !== 'Detail');
+    const detail = [...document.querySelectorAll('.ditem > summary b')].map(x => x.textContent);
+    const cited = [...new Set([...document.querySelectorAll('a.cite')]
+      .map(a => a.getAttribute('href').slice(3)))];
+    const dangling = cited.filter(id => !document.getElementById('m-' + id));
+    return {top, detail, cited, dangling};
+  });
+  console.log(JSON.stringify({errors, ...r}));
+  await b.close();
+})().catch(e => { console.log(JSON.stringify({fatal: String(e)})); });
+"""
+
+
+def render_check(page_path: Path) -> dict | None:
+    """Run the written page; None where no browser is available, and the build says so."""
+    tmp = page_path.parent / ".render_check.js"
+    try:
+        tmp.write_text(RENDER_CHECK)
+        r = subprocess.run(["node", str(tmp), str(page_path.resolve())],
+                           capture_output=True, text=True, timeout=120)
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return None
+    finally:
+        tmp.unlink(missing_ok=True)
+    try:
+        out = json.loads(r.stdout.strip().splitlines()[-1])
+    except (IndexError, json.JSONDecodeError):
+        return None
+    if "fatal" in out:
+        if "Cannot find module" in out["fatal"]:
+            return None
+        raise SystemExit(f"the render check could not run the page: {out['fatal']}")
+    return out
+
+
 def main() -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("rundir", type=Path)
+    ap = argparse.ArgumentParser(
+        description="Build the run viewer for one sample from its page descriptor. Every "
+                    "sample goes through this same command; what differs is the "
+                    "descriptor, never a flag.")
+    ap.add_argument("page", type=Path,
+                    help="a page descriptor, results/web/pages/<sample>.json")
+    ap.add_argument("--rundir", type=Path, default=None,
+                    help="where the run directory is, if not at the descriptor's rundir "
+                         "(a location, not a choice of content: the run must be the "
+                         "descriptor's sample)")
     ap.add_argument("--out", type=Path, default=None,
                     help="the HTML file to write; default <rundir>/web/index.html")
     ap.add_argument("--scatter-per-pile", type=int, default=2500,
@@ -2940,14 +4029,32 @@ def main() -> None:
     args = ap.parse_args()
 
     t0 = time.perf_counter()
-    b = bundle(args.rundir, args.scatter_per_pile, args.table_rows, args.seed)
-    out = args.out or (args.rundir / "web" / "index.html")
+    page_desc = load_page(args.page, args.rundir)
+    rundir = page_desc["_rundir"]
+    b = bundle(rundir, args.scatter_per_pile, args.table_rows, args.seed, page_desc)
+    b["built"]["page_descriptor"] = str(args.page)
+    out = args.out or (rundir / "web" / "index.html")
     out.parent.mkdir(parents=True, exist_ok=True)
     payload = json.dumps(b, separators=(",", ":"))
     if "</script" in payload:
         raise SystemExit("the bundle contains a closing script tag and would break the "
                          "page; a value in the run directory needs escaping")
-    page = PAGE.replace("__BUNDLE__", payload)
+    # A citation that points at no method entry is worse than no citation: it reads as
+    # a reference and goes nowhere. Two checks, because the entries are now data. This
+    # one is static: every cite() in the source names an entry in the methods file. The
+    # render check below is the one that knows which citations this sample's page prints.
+    cited = set(re.findall(r"cite\('([a-z_]+)'\)", PAGE))
+    defined = {m["id"] for m in b["methods"]}
+    missing = sorted(cited - defined)
+    if missing:
+        raise SystemExit(f"citations with no method entry: {', '.join(missing)}")
+    unused = sorted(defined - cited)
+
+    # Two run directories make two pages, and an artifact gallery lists both by their
+    # <title>. One title for both is two rows nobody can tell apart.
+    page = PAGE.replace("<title>Hapax run viewer</title>",
+                        f"<title>{page_desc['title']}</title>")
+    page = page.replace("__BUNDLE__", payload)
     # A page whose script does not parse renders as a blank panel-less document and says
     # nothing about why, which is exactly how one stray apostrophe cost a build here. Node
     # is present in this container; where it is not, the check is skipped rather than
@@ -2967,10 +4074,34 @@ def main() -> None:
         tmp.unlink(missing_ok=True)
     out.write_text(page)
     size = out.stat().st_size
-    print(f"{out}  {size / 1e6:.2f} MB  {checked}  "
+
+    rc = render_check(out)
+    if rc is None:
+        rendered = "render not checked: node or playwright is not available"
+    else:
+        bad = []
+        if rc["errors"]:
+            bad.append("the page threw while rendering, so every panel after the throw "
+                       "is missing: " + "; ".join(rc["errors"]))
+        if rc["dangling"]:
+            bad.append("rendered citations with no Methods entry on this page: " +
+                       ", ".join(rc["dangling"]))
+        if bad:
+            out.unlink()
+            raise SystemExit("render check failed, page not written:\n  - " +
+                             "\n  - ".join(bad))
+        rendered = (f"render check passed: {len(rc['top'])} summary panels, "
+                    f"{len(rc['detail'])} in detail, {len(rc['cited'])} methods cited")
+    print(f"{out}  {size / 1e6:.2f} MB  {checked}; {rendered}  "
           f"residue rows {b['table']['n_total']}, drawn {b['table']['n_drawn']}; "
           f"scatter {b['scatter'].get('residue', {}).get('n_drawn', 0)}+"
-          f"{b['scatter'].get('known', {}).get('n_drawn', 0)}")
+          f"{b['scatter'].get('known', {}).get('n_drawn', 0)}; "
+          f"{len(cited)} of {len(defined)} methods citable"
+          + (f", never cited: {', '.join(unused)}" if unused else ""))
+    if rc is not None:
+        print("summary: " + " | ".join(rc["top"]))
+        print("not run: " + (", ".join(k for k, v in page_desc["_inputs"].items()
+                                       if v is None) or "nothing"))
     if size > 16_000_000:
         raise SystemExit(f"{size} bytes is over the 16 MB page limit; lower "
                          f"--scatter-per-pile or --table-rows")

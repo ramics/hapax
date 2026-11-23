@@ -1,0 +1,175 @@
+{
+ "unit": "an ORF of a holdout contig, with the coordinates the drawing needs",
+ "question": "where on each contig its genes sit, so the page can draw the molecule instead of a bar chart of its identities",
+ "identities_are_not_measured_here": "every identity, subject, role and E-value is read from conserved_positions_s1.json and joined by ORF index; this script calls ORFs and nothing else, and raises if the two disagree about an ORF's length",
+ "truth": {
+  "accession": "OQ722337.1",
+  "organism": "StochSRVP_11 levi-like virus",
+  "genome_nt": 4147,
+  "nucleotide_divergence_percent": 30.28,
+  "deposited": "2023/07/31",
+  "collected": "10-May-2022",
+  "mapped_reads": 32575,
+  "mean_depth": 452.421
+ },
+ "truth_note": "the withheld genome was deposited after the index cutoff this cascade was rolled back to, so its distance is a fact nobody in this project chose",
+ "operating_point": {
+  "orf_caller": "pyrodigal 3.7.1 meta",
+  "min_orf_aa": 50,
+  "identities_from": "results/conserved_positions/conserved_positions_s1.json"
+ },
+ "contigs": [
+  {
+   "contig": "leak_already_referenced",
+   "nt": 6383,
+   "orfs": [
+    {
+     "orf": "leak_already_referenced__orf1",
+     "s": 219,
+     "e": 698,
+     "d": -1,
+     "aa": 159,
+     "role": "capsid",
+     "pident": 100.0,
+     "aln_aa": 159,
+     "evalue": 8.91e-109,
+     "title": "YP_009182171.1 17.5 kDa coat protein [Tomato brown rugose fruit virus]",
+     "pfam": [
+      "TMV_coat"
+     ],
+     "scored": true
+    },
+    {
+     "orf": "leak_already_referenced__orf2",
+     "s": 701,
+     "e": 1501,
+     "d": -1,
+     "aa": 266,
+     "role": "movement",
+     "pident": 99.6,
+     "aln_aa": 266,
+     "evalue": 8.24e-185,
+     "title": "YP_009182170.1 30 kDa movement protein [Tomato brown rugose fruit virus]",
+     "pfam": [
+      "MP"
+     ],
+     "scored": true
+    },
+    {
+     "orf": "leak_already_referenced__orf3",
+     "s": 1488,
+     "e": 2966,
+     "d": -1,
+     "aa": 492,
+     "role": "polymerase",
+     "pident": 99.8,
+     "aln_aa": 492,
+     "evalue": 0.0,
+     "title": "YP_009182168.1 183 kDa replicase [Tomato brown rugose fruit virus]",
+     "pfam": [
+      "RdRP_2"
+     ],
+     "scored": true
+    },
+    {
+     "orf": "leak_already_referenced__orf4",
+     "s": 2985,
+     "e": 6383,
+     "d": -1,
+     "aa": 1132,
+     "role": "helicase/methyltransferase",
+     "pident": 99.7,
+     "aln_aa": 1116,
+     "evalue": 0.0,
+     "title": "YP_009182168.1 183 kDa replicase [Tomato brown rugose fruit virus]",
+     "pfam": [
+      "Chropara_Vmeth",
+      "ToMV_Hel_N",
+      "Viral_helicase1",
+      "Vmethyltransf"
+     ],
+     "scored": true
+    }
+   ],
+   "assembly_node": "SRR23421544_NODE_4102_length_6383_cov_1188.0000_megahit_k141_9830",
+   "reached_the_unidentified_pile": false,
+   "orfs_called": 4,
+   "orfs_scored": 4,
+   "orfs_with_no_significant_hit": 0,
+   "arm": "already_referenced"
+  },
+  {
+   "contig": "candidate_withheld",
+   "nt": 3990,
+   "orfs": [
+    {
+     "orf": "candidate_withheld__orf1",
+     "s": 3,
+     "e": 1850,
+     "d": -1,
+     "aa": 615,
+     "role": "polymerase",
+     "pident": 66.5,
+     "aln_aa": 620,
+     "evalue": 1.09e-292,
+     "title": "YP_010771404.1 RNA-directed RNA polymerase [ssRNA phage SRR5466725_16]",
+     "pfam": [
+      "RNA_replicase_B"
+     ],
+     "scored": true
+    },
+    {
+     "orf": "candidate_withheld__orf3",
+     "s": 2039,
+     "e": 2446,
+     "d": -1,
+     "aa": 135,
+     "role": "capsid",
+     "pident": 77.8,
+     "aln_aa": 135,
+     "evalue": 9.25e-70,
+     "title": "YP_010771402.1 coat protein [ssRNA phage SRR5466725_16]",
+     "pfam": [
+      "Levi_coat"
+     ],
+     "scored": true
+    },
+    {
+     "orf": "candidate_withheld__orf4",
+     "s": 2475,
+     "e": 3938,
+     "d": -1,
+     "aa": 487,
+     "role": "maturation",
+     "pident": 53.5,
+     "aln_aa": 493,
+     "evalue": 3.11e-170,
+     "title": "YP_010771401.1 maturation protein [ssRNA phage SRR5466725_16]",
+     "pfam": [
+      "Phage_mat-A"
+     ],
+     "scored": true
+    }
+   ],
+   "assembly_node": "SRR23421544_NODE_18516_length_3990_cov_28.0000_megahit_k141_13361",
+   "reached_the_unidentified_pile": false,
+   "orfs_called": 3,
+   "orfs_scored": 3,
+   "orfs_with_no_significant_hit": 0,
+   "arm": "withheld"
+  }
+ ],
+ "blind_spots": [
+  "a called ORF is a prediction, in meta mode, on a contig that is itself an assembly; a gene drawn here is where the caller put it",
+  "an ORF with no significant alignment is drawn unlabelled rather than as absent, because no search here can distinguish a novel gene from a wrong call",
+  "the withheld contig covers 96% of the deposited genome, so a gene near either end may be truncated by the assembly rather than by biology",
+  "reached_the_unidentified_pile is a membership test against one run directory's contigs.jsonl, which holds the unidentified pile. False means the cascade identified and subtracted the contig; it does not say at what score, which results/holdout_cascade/REPORT.md records"
+ ],
+ "seed": 1,
+ "timings_seconds": {
+  "total": 0.023
+ },
+ "git_sha": "a50b3c5b510b9d2d3cbf43d20e7130cf989e843d-dirty",
+ "tree_dirty": true,
+ "script_sha256": "4fc1d0537e8cc0f5"
+}

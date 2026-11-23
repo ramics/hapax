@@ -19,7 +19,7 @@ import gzip
 from pathlib import Path
 
 
-def read_pairs(f1: Path, f2: Path, limit: int, trim_r2: int = 14, skip: int = 0):
+def read_pairs(f1: Path, f2: Path, limit: int, trim_r2: int, skip: int = 0):
     """Yield (name, seq1, seq2, qual1, qual2) with mate 2's non-template prefix removed."""
     with gzip.open(f1, "rt") as h1, gzip.open(f2, "rt") as h2:
         name = None

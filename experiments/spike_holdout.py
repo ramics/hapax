@@ -51,6 +51,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import library_facts
+
 from berlin_io import read_pairs, revcomp
 from subtract_known import (_mm_index, artefact_fields, dir_bytes, git_sha, kraken2,
                             map_filter, provenance, shannon_entropy, spread)
@@ -123,13 +125,15 @@ def simulate_pairs(genome: str, n: int, rng: random.Random, read_len: int,
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=1)
+    ap.add_argument("--block", type=int, default=None,
+                    help="pairs skipped per seed. From the library unless given")
     ap.add_argument("--genome", type=Path, nargs="+", required=True,
                     help="fasta of the held-out genome(s) to spike")
     ap.add_argument("--divergence", type=float, nargs="+",
                     default=[0.0, 0.05, 0.10, 0.20, 0.30])
     ap.add_argument("--spike-pairs", type=int, default=2000,
                     help="pairs simulated per divergence rung: enough to resolve a "
-                         "survival fraction to ~1%, unlike the real 1-in-a-million rate")
+                         "survival fraction to ~1%%, unlike the real 1-in-a-million rate")
     ap.add_argument("--read-len", type=int, default=107)
     ap.add_argument("--err1", type=float, default=0.00089)
     ap.add_argument("--err2", type=float, default=0.00117)
@@ -144,7 +148,8 @@ def main() -> None:
     ap.add_argument("--real-rate", type=float, default=1e-6,
                     help="the abundance the headline is about; sets how many spike pairs "
                          "go into the abundance sketch")
-    ap.add_argument("--trim-r2", type=int, default=14,
+    library_facts.add_argument(ap)
+    ap.add_argument("--trim-r2", type=int, default=None,
                     help="mate-2 bases trimmed when reading the real library. Was hardcoded "
                          "to 14 (SRR23973193's kit); hapax passes the run's own value")
     ap.add_argument("--r1", type=Path, default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
@@ -173,6 +178,12 @@ def main() -> None:
                     help="check every input, index and tool, then exit: 0 if the run "
                          "could start, 2 if not")
     args = ap.parse_args()
+    # A trim length is a fact about a sequencing run, not a default. It is resolved
+    # from experiments/libraries.json so a library this repo has no entry for is
+    # refused by name rather than silently given Berlin's 14 nt, which on a library
+    # with no non-template prefix deletes real bases from every mate, in the
+    # direction of less recognition.
+    library_facts.resolve_args(args, ["trim_r2", "block"])
 
     # The ladder is the run's only positive control, so an index that silently drops out
     # of it makes the spike survive tier 1 more often and reads as lower sensitivity of
@@ -224,7 +235,7 @@ def main() -> None:
     # ---- background reads, for the distributions every spike score is read against
     bg = ([] if args.abundance_only else
           list(read_pairs(args.r1, args.r2, args.background_pairs, args.trim_r2,
-                          (args.seed - 1) * 1_500_000)))
+                          (args.seed - 1) * args.block)))
 
     # ---- indexes, built once
     idx = {}

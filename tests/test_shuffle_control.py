@@ -50,9 +50,6 @@ GRANDFATHERED = {
     ("holdout_run.py", "dinuc_shuffle"): ("dinuc", "tree condition, returns None on "
                                           "failure and its caller counts; publishes "
                                           "results/holdout_run/"),
-    ("divergent_known.py", "dinuc_shuffle"): ("dinuc", "DEFECTIVE: no tree condition, "
-                                              "returns input; fixed on the holdout "
-                                              "thread's branch by importing this module"),
     ("residue_structure.py", "dinuc_shuffle"): ("dinuc", "tree condition, 50 retries "
                                                 "then returns input; 2 of 7,390 reads"),
     ("residue_contig_annotation.py", "dinuc_shuffle"): ("dinuc", "tree condition, 100 "
@@ -73,6 +70,16 @@ GRANDFATHERED = {
     ("holdout_run.py", "shuffle_arm"): ("wrapper", "counts failed and returned_input"),
     # The harness that measures the copies above holds its own references to them.
     ("shuffle_fallback_audit.py", "*"): ("audit", ""),
+}
+
+# Functions whose name matches the tripwire but whose body is an import rather than a walk.
+# They are not copies and are not measured by the behavioural tests, so they are kept out of
+# GRANDFATHERED, whose entries record a copy's measured behaviour. The tripwire is
+# name-based on purpose, and a loader is the one false positive that shape produces.
+IMPORTERS = {
+    ("reach_queries.py", "load_shuffle"): ("loads holdout_run.dinuc_shuffle by file path, "
+                                           "because experiments/ is not a package; "
+                                           "publishes results/reach/"),
 }
 
 CANONICAL = "shuffle_control.py"
@@ -233,6 +240,41 @@ def _measure(fn, seqs, seed=1):
     return returned_input, none
 
 
+def test_dinuc_copies_do_not_draw_identically():
+    """Unlike the mono copies, a correct dinucleotide walk is NOT interchangeable with the
+    canonical one, and this pins that so nobody switches one as a tidy-up.
+
+    `holdout_run.dinuc_shuffle` carries the tree condition and is correct: over 400 random
+    sequences it preserves length, dinucleotide composition and both endpoints on every one,
+    and never fails. So does `sc.dinuc_shuffle`. They nevertheless agree on **0 of 400**,
+    because they consume the generator differently - Altschul-Erikson admits many valid
+    walks and the two pick different ones.
+
+    The consequence is the one that matters for the record: switching `reach_queries.py` or
+    `holdout_run.py` to the canonical module would redraw every shuffled sequence and so
+    move the null in `results/reach/` and `results/holdout_run/`. Both nulls read 0.00%, so
+    the conclusion is robust to the redraw, but the drawn sequences and any count are not.
+    **That is a re-run, not a switch** - the opposite of the mono case above, where
+    `test_mono_copies_draw_identically` proves the switch changes nothing but the hash.
+    """
+    fn = _extract("holdout_run.py", "dinuc_shuffle")
+    if fn is None:
+        pytest.skip("holdout_run.py:dinuc_shuffle is gone; drop this with its list entry")
+    seqs = CORPUS["real"][:400]
+    agree = valid = 0
+    for seq in seqs:
+        a = sc.dinuc_shuffle(seq, random.Random(7))
+        b = fn(seq, random.Random(7))
+        assert b is not None, "holdout_run's walk failed on real sequence; see the list"
+        sc.check_shuffle(seq, a, "dinuc")
+        sc.check_shuffle(seq, b, "dinuc")      # both correct, which is the whole point
+        valid += 1
+        agree += (a == b)
+    assert valid == len(seqs)
+    assert agree == 0, (f"{agree} of {valid} draws now agree; if a walk was changed to make "
+                        "them agree, the committed nulls that used the old one need re-running")
+
+
 @pytest.mark.parametrize("fname", ["holdout_run.py", "residue_contig_annotation.py",
                                    "residue_structure.py"])
 def test_tree_condition_copies_are_clean_on_real_sequence(fname):
@@ -287,7 +329,7 @@ def test_no_new_shuffle_copies():
     cheap, and a function that shuffles sequence and is not called *shuffle* is a review
     problem this cannot solve.
     """
-    allowed = set(GRANDFATHERED)
+    allowed = set(GRANDFATHERED) | set(IMPORTERS)
     found = []
     for path in sorted(EXP.glob("*.py")):
         if path.name == CANONICAL or (path.name, "*") in allowed:

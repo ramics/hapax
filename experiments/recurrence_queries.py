@@ -62,6 +62,10 @@ import time
 from collections import Counter
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir
+
+import library_facts
+
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -128,7 +132,8 @@ def main() -> None:
                          "rather than a reshuffle")
     ap.add_argument("--r1", type=Path, default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
     ap.add_argument("--r2", type=Path, default=ROOT / "data/berlin/SRR23973193_2.fastq.gz")
-    ap.add_argument("--trim-r2", type=int, default=14)
+    library_facts.add_argument(ap)
+    ap.add_argument("--trim-r2", type=int, default=None)
     ap.add_argument("--classes", type=Path,
                     default=ROOT / "data/work/library_label_classes.npz")
     ap.add_argument("--block-pairs", type=int, default=100_000)
@@ -142,6 +147,12 @@ def main() -> None:
     ap.add_argument("--work", type=Path, default=Path("/tmp/claude-0/wk/recurrence"))
     ap.add_argument("--out", type=Path, default=ROOT / "results/recurrence")
     args = ap.parse_args()
+    # A trim length is a fact about a sequencing run, not a default. It is resolved
+    # from experiments/libraries.json so a library this repo has no entry for is
+    # refused by name rather than silently given Berlin's 14 nt, which on a library
+    # with no non-template prefix deletes real bases from every mate, in the
+    # direction of less recognition.
+    library_facts.resolve_args(args, ["trim_r2"])
 
     for path in (args.r1, args.r2, args.classes, args.tool):
         if not path.exists():
