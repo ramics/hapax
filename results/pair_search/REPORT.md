@@ -135,7 +135,8 @@ pairing adds to a search, and it is the number to hold against the cost: a joint
 mate identity carried through the whole search path, and requiring non-overlap discards
 35-42% of the library's pairs to the merge criterion.
 
-**Recommendation for SPEC: keep the pair out of the search and keep the merge.** The pair
+**Recommendation for SPEC, and now in it** (§4.3 and §5.1 item 2, this branch): keep the
+pair out of the search and keep the merge. The pair
 earns its place where this repo already puts it - as evidence after scoring, and as a longer
 single query where the mates overlap.
 
@@ -202,8 +203,17 @@ Two published claims move:
 2. **"Nucleotide beats protein at read level at every distance" does not hold at this rung.**
    On indexes that are both viral, protein is ahead at 30.3% divergence (29.63 against 18.91)
    and nucleotide is ahead at 0.08% (99.75 against 88.28). The honest statement is a
-   **crossover**, not an ordering: nucleotide wins near, protein wins far, and SPEC §4.3
-   should carry the crossover rather than either half.
+   **crossover**, not an ordering: nucleotide wins near, protein wins far. SPEC §5.1 item 2
+   now carries the crossover instead of the ordering, and §7 carries the depth note below.
+
+3. **A depth figure on this genome is not even coverage.** The recorded 452x is aligned-base
+   depth over a read set 95.4% of which starts at one position; end-to-end depth over the
+   body of the genome is about 67x. The contig-level facts other directories quote from this
+   library - the 3,990 nt contig covering 96% of the genome, and its protein identification -
+   do not depend on the faulty nucleotide index, which `results/holdout_cascade/` never
+   consulted (it uses Kraken2, SILVA and a protein tier), but any claim that reads a depth
+   number as uniform support does depend on the profile in
+   [`holdout/positional_profile.tsv`](holdout/positional_profile.tsv).
 
 **What is NOT re-derived here, and should be.** The same arm carries that directory's
 per-read identity bias (+12.8 to +13.6 points at nucleotide level), its coverage-binned table

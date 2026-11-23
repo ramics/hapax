@@ -361,6 +361,19 @@ or new money: the information is already in about a third of the pairs of the li
 have. Merging runs before the cascade, and every read-level number is reported for the
 merged read where one exists and per mate where it does not.
 
+**Merging is the only thing the pair buys the search, and that is measured rather than
+assumed.** Handing a search both mates of a *non-overlapping* pair as one scored unit is
+dead (`results/pair_search/`): on real Berlin pairs, five blocks, three index levels, the
+better single mate beats concatenation, spaced concatenation, a per-subject Fisher
+combination and a both-mates-agree rule in every cell, rescuing 0–8 pairs per 1,000 of what
+it misses while losing 10–261 per 1,000 of what it catches. Unseparated concatenation is
+worse than useless — 41,820 alignments cross the join and 2,979 of them win their query,
+against 7 crossing when a 10 nt spacer is inserted, so nothing real spans the join and the
+search is inventing hits that are in neither mate. Taken as an addition rather than a
+replacement a joint statistic costs nothing in the null and buys at most 8 pairs per 1,000,
+and nothing at all on the known-distance blind. **So the pair stays where this spec already
+puts it: merged where the mates overlap, and evidence after scoring where they do not.**
+
 Two limits travel with it. The merged reads measured here carry no error-correction credit
 for their overlap — we have a measured error rate but no quality model, and awarding
 merging an accuracy benefit we cannot falsify would be worse than leaving it out — so the
@@ -450,9 +463,19 @@ Imo's enumeration of where novel material can be, 2026-11-22:
 
 1. **Distant-relative contigs** — identified, at real distance. **This section's table**, and
    the largest and best-characterised of the four.
-2. **Single reads with strong hits** — rare. Nucleotide beats protein at read level at every
-   distance, because 145 nt is only ~48 residues, so the protein tier's contig-level advantage
-   must not be carried down here (`results/holdout_run/`).
+2. **Single reads with strong hits** — rare, and the two levels **cross over** rather than
+   one beating the other. Measured on the one genome with a true distance, on reads that
+   align over ≥80% of their length, both indexes the viral release
+   (`results/pair_search/` §6): at 0.08% divergence nucleotide leads, 99.75% against 88.28%;
+   at 30.3% divergence protein leads, 29.63% against 18.91%. So nucleotide wins near and
+   protein wins far, and neither half may be carried down to reads as a general ordering.
+   **This replaces the earlier "nucleotide beats protein at read level at every distance"
+   from `results/holdout_run/`, whose nucleotide index was not the viral release it was
+   described as** (bacterial chromosomes were 67–69% of that arm's best subjects) **and
+   whose candidate arm was 94% reads sharing a short stretch with the genome rather than
+   reads of it** (median alignment 48 of 150 nt; 95.4% of them starting at one position).
+   The corrected read-level wall at 30% divergence is about one read in five at nucleotide
+   level, not the one in sixteen that arm reported.
 3. **Unidentified contigs — explicitly NOT a subtrahend.** Tier 2, §3. The output records
    `"subtracted": false` against this set rather than relying on the reader knowing the rule;
    subtracted it would remove a further 21.1–21.4% of a library.
@@ -518,6 +541,14 @@ recognition limit is a property of the indexes, not of the decision rule, so add
 cannot shift it. And at one in a million there is nothing to aggregate — the molecules are
 not there. What §4.2 buys is a deliverable that is honest at depth, which is where the
 1–5% divergence band this project cares about actually sits. It does not buy abundance.
+
+**A depth figure on a divergent genome is not even coverage, and ours was not.** The
+holdout genome's recorded 452x is aligned-base depth over reads selected by mapping, and
+95.4% of those reads start at one position - a conserved 5' element - with a median
+alignment of 48 of 150 nt (`results/pair_search/` §6,
+`results/pair_search/holdout/positional_profile.tsv`). End-to-end depth over the body of
+that genome is about 67x. Any claim that reads a depth number as uniform support, here or
+in the panel's `depth.tsv`, has to check the start-position profile first.
 
 **No read-level rule gets near one false positive per million.** Peptide absence gives
 160,774 false flags per million at the strictest expressible threshold (PR #11/#13).
