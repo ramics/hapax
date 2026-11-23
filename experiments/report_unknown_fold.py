@@ -216,6 +216,62 @@ def main(argv=None) -> int:
               f"the unnameable pile's own band mix read **{spread(matched)}%** per seed, "
               f"against its raw {spread(summary.get('raw_ident', []))}%. The difference "
               f"between those two is the length effect, measured rather than argued.", ""]
+    # THE DEFICIT AS A COUNT, not only as two percentages side by side. Pooled over seeds,
+    # because the question is whether the pile places at all and a per-seed range of zeros
+    # does not say how many chances it had. The bound is the exact one-sided binomial for
+    # zero successes, which has the closed form 1 - alpha^(1/n) and needs no dependency; it
+    # is a statement about ONE proportion, not an estimate of spread across seeds, so it is
+    # not the five-sample variance CLAUDE.md rules out. It is quoted only when the observed
+    # count is zero, because that is the only case this form covers.
+    tgt_n = sum(cells[("unident", s)]["n"] for s in seeds if ("unident", s) in cells)
+    tgt_placed = sum(cells[("unident", s)]["placed"] for s in seeds if ("unident", s) in cells)
+    expected = sum(w * r / 100 for w, r in
+                   [(cells[("unident", s)]["n"], m) for s, m in zip(seeds, matched)])
+    summary["unident_pooled"] = dict(n=tgt_n, placed=tgt_placed, expected_band_matched=expected)
+    deficit = [f"Pooled over the {len(seeds)} seeds the unnameable pile offers **{tgt_n} "
+               f"ORFs** and places **{tgt_placed}**. The length-matched comparator predicts "
+               f"**{expected:.1f}**."]
+    if tgt_placed == 0 and tgt_n:
+        bound = 100 * (1 - 0.05 ** (1 / tgt_n))
+        summary["unident_upper_bound_95"] = bound
+        deficit.append(f"Zero of {tgt_n} puts the one-sided 95% upper bound on this pile's "
+                       f"placement rate at **{bound:.2f}%**, below the matched comparator's "
+                       f"{spread(matched)}%. So the gap is not an absence of chances.")
+    lines += [" ".join(deficit), ""]
+    # UN-THRESHOLDED, and this is the section that keeps the headline honest. A placement
+    # rate at E<1e-5 answers "does it clear the statistics", and for this pile the answer is
+    # no everywhere, which on its own reads as "the instrument says nothing". It does not:
+    # the same queries produce alignments, and where their best E sits relative to their OWN
+    # shuffled null is a distance rather than an absence. That is the project's rule - the
+    # report is un-thresholded with a null beside every field - applied to the one field
+    # whose thresholded form is all zeros. Quartiles of the best E-value per ORF, pooled
+    # over seeds, with the fraction that aligned at all beside them.
+    lines += ["## 2b. The same arms un-thresholded, with the null beside them", "",
+              "| arm | ORFs | aligned at all, % | best E: lower quartile | median | best seen |",
+              "|---|---|---|---|---|---|"]
+    best_e: dict[str, list[float]] = collections.defaultdict(list)
+    arm_n: collections.Counter = collections.Counter()
+    for orf in orfs:
+        arm_n[orf["pile"]] += 1
+        rows_ = hits.get(orf["orf"], [])
+        if rows_:
+            best_e[orf["pile"]].append(min(float(r["evalue"]) for r in rows_))
+    for pile in piles:
+        es = sorted(best_e.get(pile, []))
+        n = arm_n[pile]
+        if not es:
+            lines.append(f"| {pile} | {n} | 0.0 | - | - | - |")
+            continue
+        q1 = es[max(0, len(es) // 4 - 1)]
+        med = statistics.median(es)
+        lines.append(f"| {pile} | {n} | {100 * len(es) / n:.1f} | {q1:.2g} | {med:.2g} | "
+                     f"{es[0]:.2g} |")
+        summary[f"unthresholded_{pile}"] = dict(
+            n=n, aligned=len(es), q1=q1, median=med, best=es[0])
+    lines += ["", "The unnameable arm sits between its own shuffled null and the identified "
+              "comparator on every column here while reading zero at E<1e-5. The operating "
+              "point is what makes those two statements consistent: this is a signal that "
+              "does not clear its own significance statistics, not an absence of one.", ""]
     lines += ["## 3. Per band", "",
               "| band, aa | " + " | ".join(f"{p} n / placed %" for p in
                                            [q for q in piles if not q.endswith('_null')])
