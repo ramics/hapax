@@ -562,6 +562,77 @@ def write_forms(out: Path, arm: str, seed: int, band: str, pairs) -> None:
             w.write(f"{nm}\t{len(r1)}\t{len(r2)}\t{len(r1)}\t{len(r1)}\t{len(SPACER)}\n")
 
 
+def stage_positional(out: Path, blastbin: Path, dbdir: Path, genomes: dict, acc: str,
+                     read_len: int, step: int = 10) -> dict:
+    """Where on the genome a read is recognisable, against where the library's reads are.
+
+    This exists because of a 20-fold discrepancy this experiment ran into and had to
+    explain: pairs simulated by uniform sampling off the deposited genome identify at
+    65-68% per pair at nucleotide level, while REAL reads of the same genome identify at
+    2.4-3.5%. Two candidate causes - the genome's recognisable sequence being concentrated,
+    and the library's coverage not being uniform over it - are separable, and this stage
+    separates them: tile the genome into read-length windows and search every window, so
+    recognisability is a function of position, then weigh those positions by the real
+    reads' own mapped starts.
+
+    The weighted figure is what a real library would give under this positional
+    distribution, and the gap between it and the flat average is the simulation's error.
+    """
+    g = genomes[acc]
+    q = out / "positional_windows.fa"
+    with open(q, "w") as w:
+        for i in range(0, max(len(g) - read_len, 1), step):
+            w.write(f">pos{i}\n{g[i:i + read_len]}\n")
+    rows = {}
+    for level, (prog, db) in (("nt", ("blastn", "db_holdout_nt")),
+                              ("prot_dmnd", ("diamond_blastx", "db_holdout_prot_dmnd"))):
+        o = out / f"positional_{level}.tsv"
+        if not o.exists():
+            if prog == "blastn":
+                cmd = [str(blastbin / "blastn"), "-task", "blastn", "-query", str(q),
+                       "-db", str(dbdir / db), "-evalue", "10", "-max_target_seqs", "50",
+                       "-num_threads", "4", "-out", str(o)]
+                cmd += outfmt_args(DEFAULT_COLUMNS, diamond=False)
+            else:
+                cmd = [str(blastbin / "diamond"), "blastx", "-q", str(q), "-d",
+                       str(dbdir / db), "-e", "10", "--max-target-seqs", "50", "-p", "4",
+                       "-o", str(o), "--very-sensitive", "--quiet"]
+                cmd += outfmt_args(DEFAULT_COLUMNS, diamond=True)
+            subprocess.run(cmd, check=True, capture_output=True)
+        best = {}
+        for r in read_hits(o, program=prog):
+            pos = int(r["qseqid"][3:])
+            if pos not in best or r["evalue"] < best[pos]:
+                best[pos] = r["evalue"]
+        rows[level] = best
+    pools = json.loads((out / "library_pools.json").read_text())["pools"].get(acc, [])
+    starts = [p[2] for p in pools]
+    nwin = len(range(0, max(len(g) - read_len, 1), step))
+    res = {"accession": acc, "genome_len": len(g), "windows": nwin, "step": step,
+           "read_len": read_len, "real_reads": len(starts), "levels": {}}
+    with open(out / "positional_profile.tsv", "w") as w:
+        w.write("position\tnt_evalue\tprot_evalue\treal_reads_starting_here\n")
+        cov = Counter((s // step) * step for s in starts)
+        for i in range(0, max(len(g) - read_len, 1), step):
+            w.write(f"{i}\t{rows['nt'].get(i, '')}\t{rows['prot_dmnd'].get(i, '')}"
+                    f"\t{cov.get(i, 0)}\n")
+    for level, best in rows.items():
+        sig = {i for i, e in best.items() if e < 1e-5}
+        flat = len(sig) / nwin if nwin else 0.0
+        weighted = (sum(1 for s in starts if ((s // step) * step) in sig) / len(starts)
+                    if starts else 0.0)
+        res["levels"][level] = {
+            "windows_significant_pct": round(100 * flat, 3),
+            "coverage_weighted_pct": round(100 * weighted, 3),
+            "note": ("flat is what uniform sampling sees; weighted is the same windows "
+                     "weighted by where the library's reads actually start")}
+    (out / "positional.json").write_text(json.dumps(res, indent=1))
+    log(f"  positional {acc}: " + "; ".join(
+        f"{k} flat {v['windows_significant_pct']}% weighted {v['coverage_weighted_pct']}%"
+        for k, v in res["levels"].items()))
+    return res
+
+
 def stage_search(out: Path, blastbin: Path, dbdir: Path, seeds, band: str, arms,
                  threads: int, evalue: str, levels: dict,
                  sensitivity: str = "very-sensitive") -> dict:
@@ -715,6 +786,13 @@ def pair_modes(mate_rows, cat_rows, catn_rows, geom) -> dict:
         out["agree"] = (max(b1[0], b2[0]), b1[1])
     else:
         out["agree"] = (float("inf"), "")
+    # 6. best_or_fisher: the only form in which a joint statistic is safe to deploy.
+    # `fisher` on its own DILUTES a strong single mate with a useless partner (a mate at
+    # E = 1e-9 beside one at E = 5 comes out at 1.5e-4), so as a replacement it loses more
+    # than it gains. Taken as the better of the two it can only add, and the question
+    # becomes what it costs in the null rather than what it costs in sensitivity.
+    out["best_or_fisher"] = (min(out["best_mate"], out["fisher"], key=lambda t: t[0]))
+
     out["_census"] = dict(junction=dict(junction), subjects_tried=ntried,
                           subjects_both_mates=len(both),
                           mate1_hits=sum(1 for r in mate_rows if r["qseqid"].endswith("/1")),
@@ -722,7 +800,7 @@ def pair_modes(mate_rows, cat_rows, catn_rows, geom) -> dict:
     return out
 
 
-MODES = ("best_mate", "concat", "concat_n", "fisher", "agree")
+MODES = ("best_mate", "concat", "concat_n", "fisher", "agree", "best_or_fisher")
 
 
 def stage_report(out: Path, seeds, band: str, arms, fixed: float, levels: dict) -> dict:
@@ -902,6 +980,11 @@ def main() -> int:
                                                   a.search_evalue, levels,
                                                   a.diamond_sensitivity)
         timings["search"] = round(time.perf_counter() - t, 1)
+    if "positional" in stages:
+        t = time.perf_counter()
+        stage_positional(a.out, a.blastbin, a.dbdir, load_genomes(a.candfa),
+                         ARMS["candidate"]["acc"], a.read_len)
+        timings["positional"] = round(time.perf_counter() - t, 1)
     if "report" in stages:
         t = time.perf_counter()
         s = stage_report(a.out, a.seeds, a.band, arms, a.fixed, levels)
