@@ -135,6 +135,25 @@ def _summary_titles() -> list[str]:
                                                 body[:body.index("];")])]
 
 
+def test_the_section_list_is_one_literal_with_no_per_sample_branch():
+    """The list is in the page code once, and nothing in the render path keys on a sample.
+
+    A second list, or a filter on the accession, would be two report formats wearing one
+    generator - which is what the page did before SPEC 13.4, and what Imo asked to be
+    able to check. The accession reaches the page only as data to print and as the key
+    the Methods rows are looked up under, so no run identifier may appear in the code.
+    """
+    src = (ROOT / "experiments/make_web.py").read_text()
+    assert src.count("const SUMMARY = [") == 1
+    page = make_web.PAGE
+    assert "SRR" not in page, "a run accession is written into the page code"
+    # Comments may name a library to record a bug that printed its numbers elsewhere;
+    # code may not, so the check is on the code with the comments stripped.
+    code = "\n".join(ln for ln in page.split("\n")
+                     if not ln.lstrip().startswith(("//", "*", "/*")))
+    assert "Berlin" not in code and "berlin" not in code
+
+
 def test_one_report_format_the_same_sections_in_the_same_order(tmp_path):
     """SPEC 13.4: a page never grows or drops a section because of what a sample has.
 
@@ -149,6 +168,11 @@ def test_one_report_format_the_same_sections_in_the_same_order(tmp_path):
                         str(HOLDOUT), "--out", str(tmp_path / "p.html")],
                        capture_output=True, text=True, cwd=ROOT)
     assert r.returncode == 0, r.stdout + r.stderr
+    if "render not checked" in r.stdout:
+        # The sections are assembled in the page at render time, so which ones were drawn
+        # is only observable with a browser. Without one this is not asserted rather than
+        # asserted weakly, and the line below still holds the generator to one list.
+        pytest.skip("no playwright here, so the drawn sections cannot be read back")
     line = [ln for ln in r.stdout.splitlines() if ln.startswith("summary:")]
     assert line, r.stdout
     drawn = [t.strip() for t in line[0][len("summary:"):].split("|")]
@@ -200,3 +224,20 @@ def test_a_descriptor_for_a_library_nobody_has_described_refuses(tmp_path):
     d["sample"]["accession"] = "SRR99999999"
     with pytest.raises(SystemExit, match="not in experiments/libraries.json"):
         make_web.load_page(_write(tmp_path, d), None)
+
+
+def test_a_committed_fact_with_no_clause_refuses_rather_than_vanishing(tmp_path,
+                                                                       monkeypatch):
+    """Caught by the thread building the first untouched sample's page.
+
+    `country` sat in four sample blocks with its basis and had no clause, so the sentence
+    dropped it silently - and the library that the genericness test turns on is the one
+    outside Europe. A fact somebody wrote down that the renderer ignores is the same
+    asymmetry page_descriptor.py was written to close, so it raises now.
+    """
+    import page_descriptor
+    assert "Germany" in page_descriptor.lede("SRR23973193")
+    monkeypatch.setattr(page_descriptor, "CLAUSES",
+                        tuple(c for c in page_descriptor.CLAUSES if c[0] != "country"))
+    with pytest.raises(Exception, match="no clause for"):
+        page_descriptor.lede("SRR23973193")

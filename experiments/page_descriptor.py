@@ -41,9 +41,14 @@ import library_facts  # noqa: E402
 CLAUSES = (
     ("matrix", "{}", " "),
     ("place", "from {}", " "),
+    ("country", "{}", ", "),
     ("collected", "collected on {}", ", "),
     ("molecule", "sequenced as {}", ", "),
 )
+
+#: Keys of a `sample` block that are not clauses. `basis` is how the facts were
+#: established and is read by a person, not spoken by the sentence.
+NOT_SPOKEN = ("basis",)
 
 
 def sample_facts(accession: str) -> dict:
@@ -51,7 +56,28 @@ def sample_facts(accession: str) -> dict:
     return library_facts.library(accession).get("sample") or {}
 
 
+def check(accession: str) -> None:
+    """Refuse a committed fact the grammar has no clause for.
+
+    The sibling thread caught this on the library that the whole genericness test turns
+    on: `country` was a committed fact with a basis in four sample blocks and there was no
+    clause for it, so the sentence dropped it silently - losing "South Korea" on the one
+    library that is not in Europe. A fact somebody wrote down, with its basis, that the
+    renderer ignores is exactly the asymmetry this module exists to close, one layer in.
+    So an unknown key raises rather than going quietly nowhere: either it gets a clause or
+    it does not belong in the block.
+    """
+    spoken = {k for k, _, _ in CLAUSES} | set(NOT_SPOKEN)
+    extra = sorted(set(sample_facts(accession)) - spoken)
+    if extra:
+        raise library_facts.UnknownLibrary(
+            f"{accession}: sample block carries {', '.join(extra)}, which "
+            f"page_descriptor.CLAUSES has no clause for, so the sentence would drop it "
+            f"without saying so. Add a clause or remove the fact.")
+
+
 def lede(accession: str) -> str:
+    check(accession)
     s = sample_facts(accession)
     parts = [(t.format(s[k]), j) for k, t, j in CLAUSES if s.get(k)]
     if not parts:
