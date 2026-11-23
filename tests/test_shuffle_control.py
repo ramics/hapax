@@ -240,6 +240,41 @@ def _measure(fn, seqs, seed=1):
     return returned_input, none
 
 
+def test_dinuc_copies_do_not_draw_identically():
+    """Unlike the mono copies, a correct dinucleotide walk is NOT interchangeable with the
+    canonical one, and this pins that so nobody switches one as a tidy-up.
+
+    `holdout_run.dinuc_shuffle` carries the tree condition and is correct: over 400 random
+    sequences it preserves length, dinucleotide composition and both endpoints on every one,
+    and never fails. So does `sc.dinuc_shuffle`. They nevertheless agree on **0 of 400**,
+    because they consume the generator differently - Altschul-Erikson admits many valid
+    walks and the two pick different ones.
+
+    The consequence is the one that matters for the record: switching `reach_queries.py` or
+    `holdout_run.py` to the canonical module would redraw every shuffled sequence and so
+    move the null in `results/reach/` and `results/holdout_run/`. Both nulls read 0.00%, so
+    the conclusion is robust to the redraw, but the drawn sequences and any count are not.
+    **That is a re-run, not a switch** - the opposite of the mono case above, where
+    `test_mono_copies_draw_identically` proves the switch changes nothing but the hash.
+    """
+    fn = _extract("holdout_run.py", "dinuc_shuffle")
+    if fn is None:
+        pytest.skip("holdout_run.py:dinuc_shuffle is gone; drop this with its list entry")
+    seqs = CORPUS["real"][:400]
+    agree = valid = 0
+    for seq in seqs:
+        a = sc.dinuc_shuffle(seq, random.Random(7))
+        b = fn(seq, random.Random(7))
+        assert b is not None, "holdout_run's walk failed on real sequence; see the list"
+        sc.check_shuffle(seq, a, "dinuc")
+        sc.check_shuffle(seq, b, "dinuc")      # both correct, which is the whole point
+        valid += 1
+        agree += (a == b)
+    assert valid == len(seqs)
+    assert agree == 0, (f"{agree} of {valid} draws now agree; if a walk was changed to make "
+                        "them agree, the committed nulls that used the old one need re-running")
+
+
 @pytest.mark.parametrize("fname", ["holdout_run.py", "residue_contig_annotation.py",
                                    "residue_structure.py"])
 def test_tree_condition_copies_are_clean_on_real_sequence(fname):

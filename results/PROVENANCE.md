@@ -18,6 +18,7 @@ here is a quiet deletion.
 | 3 | 47 scripts import shared code whose hash their manifests never recorded | fixed forward in `provenance.py`, not retrofitted | no |
 | 4 | `divergent_known` and `divergent_contig_workup` mapped back at a mate-2 trim of 16 where the measured prefix is 14 | pinned with the discrepancy stated; **decision below** | no load-bearing number; see 4 |
 | 5 | Three scripts default their read paths to `data/ww_berlin/`, which neither `libraries.json` nor `data/MANIFEST.md` documents | **found 2026-11-23, open, not fixed here** | no — it fails loudly |
+| 6 | A *correct* dinucleotide shuffle is not interchangeable with the canonical one, so "switch it to the shared module" is a re-run | measured and pinned by a test | no — but it would if switched blind |
 
 ## 1. SILVA is named in manifests that did not read it
 
@@ -142,3 +143,30 @@ change to `library_facts.resolve_args`, where `r1` and `r2` are currently valida
 than facts, and it is the same module a sibling thread is folding its own stage registry
 into. **Recommended: resolve read paths from the library, in the same change that folds in
 that registry, rather than editing three defaults now.**
+
+## 6. Not a debt, but the trap next to one: a correct copy is still not interchangeable
+
+Worth a section because a tidy-up is exactly when this gets broken, and because it was nearly
+broken during this one.
+
+`holdout_run.dinuc_shuffle` is **correct**. Over 400 real sequences from this repo's corpus it
+preserves length, dinucleotide composition and both endpoints on every one, and never fails.
+So does `shuffle_control.dinuc_shuffle`. They agree on **0 of 400**, because Altschul-Erikson
+admits many valid walks and the two consume the generator differently.
+
+So the instinct that follows from `CLAUDE.md`'s rule — a shuffle lives in one module and is
+imported, never re-typed — has a measured exception for the *existing* dinucleotide copies:
+switching `reach_queries.py` or `holdout_run.py` to the canonical module **redraws every
+shuffled sequence** and so moves the null in `results/reach/` and `results/holdout_run/`.
+Both of those nulls read 0.00%, so the **conclusion** survives a redraw and any **count**
+does not. That makes it a re-run, not a switch.
+
+This is the opposite of the mononucleotide case, where
+`test_mono_copies_draw_identically` proves the switch changes nothing but the hash — which is
+why `experiments/SHARED.md` could say a switch is free there and cannot say it here.
+
+**Correctness is what to check on a copy; interchangeability is a separate question, and here
+the answer is no.** Pinned by
+`tests/test_shuffle_control.py::test_dinuc_copies_do_not_draw_identically`, which fails if a
+walk is ever changed in a way that makes them agree — at which point the committed nulls that
+used the old one need re-running.

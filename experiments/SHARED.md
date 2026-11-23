@@ -21,6 +21,19 @@ its script is next touched for its own reason. Where the test proves the shared 
 draws identically (the mononucleotide shuffles), the switch changes no output, only the
 hash. New code imports; a tripwire test fails on a new copy.
 
+**For the dinucleotide walks the switch is a re-run, not a no-op, and that is measured.**
+`holdout_run.dinuc_shuffle` is correct — over 400 real sequences it preserves length,
+dinucleotide composition and both endpoints on every one and never fails — and so is
+`shuffle_control.dinuc_shuffle`. They agree on **0 of 400**, because Altschul-Erikson admits
+many valid walks and the two consume the generator differently. So switching
+`reach_queries.py` or `holdout_run.py` to the canonical module redraws every shuffled
+sequence and moves the null in `results/reach/` and `results/holdout_run/`. Both of those
+nulls read 0.00%, so the *conclusion* survives a redraw and any *count* does not.
+`tests/test_shuffle_control.py::test_dinuc_copies_do_not_draw_identically` pins this, so
+that a well-meant tidy-up cannot quietly become a measurement change. **Correctness is the
+thing to check on a copy; interchangeability is a separate question and the answer here is
+no.**
+
 ## Shared modules
 
 | module | what | invariant test |
