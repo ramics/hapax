@@ -11,15 +11,15 @@ The signal the whole thing serves is **"new AND like X"**: a distance without a 
 
 ## The rule the design is built around
 
-**Searching only ever removes background. It is never used to score novelty.** An index can answer *is this already known*; it cannot answer *is this new*, because score ordering tracks database proximity. Measured here repeatedly, and any design that scores novelty with a search has reintroduced the failure this project exists to avoid.
+**Searching only ever removes background. It is never used to score novelty.** An index can answer *is this already known*; it cannot answer *is this new*, because score ordering tracks database proximity. Measured, repeatedly. Any design that scores novelty with a search has reintroduced the failure this project is built around.
 
-Two consequences run through every number in the repo. **Every number ships with its operating point**, because thresholds dominate database size by an order of magnitude: one Kraken2 database removes 42.8%, 21.7% or 3.5% of the same library depending only on its confidence setting. **Every field ships with its calibration**, a shuffled null beside a known-positive comparison, and a field reading the same on both is reported with that fact attached.
+Two things follow, and they govern every number here. **Every number ships with its operating point**: thresholds dominate database size by an order of magnitude, and one Kraken2 database removes 42.8%, 21.7% or 3.5% of the same library depending only on its confidence setting. **Every field ships with its calibration**, a shuffled null beside a known-positive comparison; a field that reads the same on both is reported with that fact attached.
 
-The lever turns out to be which index you consult rather than how fast: 1.4 MB of a sample's own contigs removed more of the library than 272 MB of SILVA, and 15 MB of them removed 30 points where 16 GB of Kraken2 removed 0.4.
+Which index you consult beats how fast you consult it, by orders of magnitude: 1.4 MB of a sample's own contigs removed more of the library than 272 MB of SILVA, and 15 MB of them removed 30 points where 16 GB of Kraken2 removed 0.4.
 
 ## How far it reaches
 
-Recognition of a known virus holds to roughly 10% divergence and fades by 20%. Detection needs abundance above about one in a million. A verdict is made at contig and subject level: a read is the smallest unit the report works at and the weakest, since the rate falls as the search space grows, so at library scale a read recovers its own mate at chance ([`results/mate_friends/`](results/mate_friends/REPORT.md)). These bounds are properties of the method, measured across libraries (`SPEC.md` §7, §9).
+Recognition of a known virus holds to roughly 10% divergence and fades by 20%. Detection needs abundance above about one in a million. A verdict is made at contig and subject level. A read is the smallest unit the report works at and the weakest: the rate falls as the search space grows, so at library scale a read recovers its own mate at chance ([`results/mate_friends/`](results/mate_friends/REPORT.md)). These bounds are properties of the method, measured across libraries (`SPEC.md` §7, §9).
 
 ## What a run writes
 
@@ -54,4 +54,4 @@ Two earlier directions are archived here with their results, because what they r
 - **The codon-aware assembler**, under [`experiments/codon_assembler/`](experiments/codon_assembler/) with its own spec and results. The result is negative: scoring overlaps in codon space gave a small gain over nucleotide scoring, and only at high simulated diversity. On real multi-host swarms it lost to metaSPAdes and MEGAHIT by merging sister swarms.
 - **Strain separation during assembly**, which produced the benchmark in [`results/pair_ladder/`](results/pair_ladder/REPORT.md). Below about 3.8% divergence every assembler fuses lineages at any depth. The reads carry enough information to separate them, which places the limitation in path selection. That result is live and the spec cites it.
 
-[`SPEC.md`](SPEC.md) is the spec and the bounds on every claim in it — §10 what is measured, §11 what is dead, §12 what is open and the experiment that would settle it. [`results/README.md`](results/README.md) indexes the experiments, failures included. [`CLAUDE.md`](CLAUDE.md) is how to work in the repo.
+[`SPEC.md`](SPEC.md) is the spec and the bounds on every claim in it, with §10 what is measured, §11 what is dead, and §12 what is open plus the experiment that would settle it. [`results/README.md`](results/README.md) indexes the experiments, failures included. [`CLAUDE.md`](CLAUDE.md) is how to work in the repo.
