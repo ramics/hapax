@@ -171,7 +171,13 @@ print("kraken2 unpacked")
 PY
 K2BIN="/opt/hapax/k2pkg/root/share/kraken2-@@KRAKEN2_VERSION@@/libexec/classify"
 test -x "$K2BIN" || die "Kraken2's classify is not at $K2BIN"
-"$K2BIN" 2>&1 | head -2 | grep -q "Usage" || die "Kraken2's classify will not run on this AMI"
+# To a file and then grep it, NOT `classify | head | grep`: under `set -o pipefail` head
+# closes the pipe, classify takes a SIGPIPE, and the pipeline fails even though the match
+# succeeded. That cost one launch, and it is the second time on this instance that a check
+# rather than the thing being checked was the failure.
+"$K2BIN" > /opt/hapax/log-k2check.txt 2>&1 || true
+grep -qi "usage" /opt/hapax/log-k2check.txt \
+  || die "Kraken2's classify prints no usage on this AMI; see log-k2check.txt"
 
 for spec in "megahit @@MEGAHIT_URL@@" "minimap2 @@MINIMAP2_URL@@"; do
   name="${spec%% *}"; url="${spec#* }"
