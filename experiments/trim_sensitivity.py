@@ -51,6 +51,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import library_facts
+
 from berlin_io import read_pairs
 from subtract_known import kraken2, provenance, write_fastq
 
@@ -68,8 +70,9 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--library", default="rna_2022", choices=sorted(LIBRARIES))
     ap.add_argument("--pairs", type=int, default=100_000)
-    ap.add_argument("--block", type=int, default=1_500_000,
-                    help="pairs skipped per seed, matching dna_rna_pair.py")
+    ap.add_argument("--block", type=int, default=None,
+                    help="pairs skipped per seed, matching dna_rna_pair.py. From "
+                         "experiments/libraries.json for the chosen library unless given")
     ap.add_argument("--trims", type=int, nargs="+", default=[0, 10, 12, 14, 16, 18, 20, 24])
     ap.add_argument("--k2-db", type=Path, default=ROOT / "data/k2_pluspf16")
     ap.add_argument("--k2-confidence", type=float, default=0.1,
@@ -82,6 +85,12 @@ def main() -> None:
     ap.add_argument("--work", type=Path, default=Path("/tmp/claude-0/wk/trimsens"))
     ap.add_argument("--out", type=Path, default=ROOT / "results/nontemplate_prefix")
     args = ap.parse_args()
+    # The stride is a property of the library: sized to 8.73 M pairs, it leaves the
+    # last seeds of a smaller library reading nothing, and the directory still looks
+    # like a five-seed result. Read from experiments/libraries.json, which raises
+    # for a library it does not know.
+    args.block = library_facts.resolve(LIBRARIES[args.library][1], "block",
+                                       args.block)
 
     d, run = LIBRARIES[args.library]
     r1, r2 = ROOT / d / f"{run}_1.fastq.gz", ROOT / d / f"{run}_2.fastq.gz"

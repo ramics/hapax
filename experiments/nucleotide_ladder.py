@@ -42,6 +42,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import library_facts
+
 from berlin_io import read_pairs
 from subtract_known import (_mm_index, dir_bytes, git_sha, kraken2, map_filter, spread,
                             write_fastq)
@@ -70,6 +72,11 @@ def main() -> None:
     ap.add_argument("--fractions", type=float, nargs="+",
                     default=[0.003, 0.01, 0.03, 0.1, 0.3, 0.5, 1.0])
     ap.add_argument("--confidence", type=float, nargs="+", default=[0.0, 0.1])
+    library_facts.add_argument(ap)
+    ap.add_argument("--trim-r2", type=int, default=None,
+                    help="mate 2's non-template 5' prefix. From the library unless given")
+    ap.add_argument("--block", type=int, default=None,
+                    help="pairs skipped per seed, so the seeds read distinct regions of\n                         " "the flow cell. From the library unless given")
     ap.add_argument("--r1", type=Path, default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
     ap.add_argument("--r2", type=Path, default=ROOT / "data/berlin/SRR23973193_2.fastq.gz")
     ap.add_argument("--db", type=Path, default=ROOT / "data/k2_pluspf16")
@@ -81,13 +88,19 @@ def main() -> None:
     ap.add_argument("--work", type=Path, default=Path("/tmp/claude-0/wk/nucladder"))
     ap.add_argument("--out", type=Path, default=ROOT / "results/nucleotide_ladder")
     args = ap.parse_args()
+    # A trim length and a block stride are facts about a sequencing run, and both
+    # were literals inside the read_pairs call below, where no help text and no
+    # manifest ever showed them. They now come from experiments/libraries.json by
+    # accession, which refuses a library it does not know rather than applying
+    # Berlin's 14 nt and 1.5 M stride to another library's reads.
+    library_facts.resolve_args(args, ["trim_r2", "block"])
 
     args.work.mkdir(parents=True, exist_ok=True)
     args.out.mkdir(parents=True, exist_ok=True)
     t0 = time.perf_counter()
 
-    rows = list(read_pairs(args.r1, args.r2, args.pairs, 14,
-                           (args.seed - 1) * 1_500_000))
+    rows = list(read_pairs(args.r1, args.r2, args.pairs, args.trim_r2,
+                           (args.seed - 1) * args.block))
     seqs = {r[0]: (r[1], r[2]) for r in rows}
     n = len(rows)
 

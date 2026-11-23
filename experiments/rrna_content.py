@@ -56,6 +56,10 @@ import subprocess
 import time
 from pathlib import Path
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir
+import library_facts
+
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -209,8 +213,14 @@ def main() -> None:
                          "pairs [400000*(seed-1), +20000)")
     ap.add_argument("--pairs", type=int, default=20000)
     ap.add_argument("--block", type=int, default=400000)
-    ap.add_argument("--trim-mate2", type=int, default=14,
-                    help="the non-template prefix found in PR #4; matches the other branch")
+    library_facts.add_argument(ap)
+    ap.add_argument("--trim-mate2", type=int, default=None,
+                    help="the non-template prefix found in PR #4. A property of "
+                         "the library, so it comes from "
+                         "experiments/libraries.json unless given. This script "
+                         "also carries its own read_pairs, which indexes by pair "
+                         "offset rather than streaming; the reader is its own, "
+                         "the trim is not")
     ap.add_argument("--subsample-log2", type=int, default=3,
                     help="keep 1 in 2^this of SILVA's K-mers. 3 leaves ~9 expected hits in a "
                          "107 nt rRNA read, enough for a >=3 rule with room to spare")
@@ -222,6 +232,11 @@ def main() -> None:
                     default=ROOT / "data" / "silva" / "index_k31.npy")
     ap.add_argument("--out", type=Path, default=ROOT / "results" / "rrna_content")
     args = ap.parse_args()
+
+    # Same rule as everywhere else: the trim is a fact about the library and a
+    # library this repo has no entry for is refused rather than given Berlin's.
+    library_facts.resolve_args(args, {"trim_mate2": "trim_r2"},
+                               path_attrs=("reads",))
 
     t0 = time.perf_counter()
     args.out.mkdir(parents=True, exist_ok=True)

@@ -85,6 +85,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir
 
 from berlin_io import read_pairs, revcomp
+from library_facts import fact, resolve
 from loud import (Consulted, Preflight, cache_is_current, mark_cache, require_output,
                   run_tool)
 
@@ -307,11 +308,21 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--pairs", type=int, default=200_000)
-    ap.add_argument("--block", type=int, default=1_500_000,
-                    help="pairs skipped per seed: distinct regions of the flow cell")
-    ap.add_argument("--r1", type=Path, default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
-    ap.add_argument("--r2", type=Path, default=ROOT / "data/berlin/SRR23973193_2.fastq.gz")
-    ap.add_argument("--trim-r2", type=int, default=14)
+    # Three values that are properties of a sequencing run and were written here as
+    # Berlin's. --block sized to 8.73 M pairs runs off the end of a smaller library, and
+    # --trim-r2 14 deletes 14 real bases from every mate of a library with no
+    # non-template prefix, silently, in the direction of less recognition. They now come
+    # from experiments/libraries.json by accession, and there is no default: an unknown
+    # library raises rather than inheriting Berlin's biology.
+    ap.add_argument("--library", default="SRR23973193",
+                    help="accession in experiments/libraries.json, supplying --block, "
+                         "--trim-r2 and the read paths unless those are given")
+    ap.add_argument("--block", type=int, default=None,
+                    help="pairs skipped per seed: distinct regions of the flow cell. "
+                         "From the library unless given")
+    ap.add_argument("--r1", type=Path, default=None)
+    ap.add_argument("--r2", type=Path, default=None)
+    ap.add_argument("--trim-r2", type=int, default=None)
     ap.add_argument("--k2-dbs", type=Path, nargs="+",
                     default=[ROOT / "data/k2_viral", ROOT / "data/k2_standard08",
                              ROOT / "data/k2_pluspf08", ROOT / "data/k2_pluspf16"])
@@ -365,6 +376,18 @@ def main() -> None:
                     help="check every input, index and tool, then exit: 0 if the run "
                          "could start, 2 if not. hapax.py calls this before any stage runs")
     args = ap.parse_args()
+
+    # Resolve the per-library facts before the preflight, so an unknown library is
+    # refused by name rather than reported as four missing paths.
+    args.block = resolve(args.library, "block", args.block)
+    args.trim_r2 = resolve(args.library, "trim_r2", args.trim_r2)
+    if args.r1 is None or args.r2 is None:
+        if args.r1 is not None or args.r2 is not None:
+            raise SystemExit("--r1 and --r2 are given together or not at all: one of "
+                             "each from two libraries is a pairing that does not exist")
+        args.r1 = ROOT / fact(args.library, "r1")
+        args.r2 = ROOT / fact(args.library, "r2")
+
 
     # Every index named on the command line is one the result depends on, so an absent,
     # empty or half-built one is a refusal, not a tier quietly dropped from the curve. The

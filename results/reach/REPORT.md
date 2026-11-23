@@ -73,13 +73,13 @@ A dinucleotide shuffle preserves stop-codon density, so the shuffled records yie
 short ORFs — 21, 29, 30, 31 and 37 across the five seeds, against the real pile's 54. The
 null therefore calibrates **existence** of a significant alignment and nothing conditional
 on one. That is the same wall `results/divergent_known/` §2 reached from the other side —
-that report is not on `main` yet, it sits on branches `claude/project-thread-ar17wr` and
-`claude/project-thread-eswrkj` with no open pull request, and `experiments/reach_arms.py`,
-`reach_queries.py` and `report_reach.py` cite it for the operating point and the 50-residue
-minimum ORF for the same reason. The citations are left pointing at it rather than silently
-re-attributed, because the work is real and the reader should be able to tell that it is
-simply unmerged. `results/divergent_contigs/`, which *is* on `main`, is the related report
-with the gene-level spread.
+0 of 11,361 dinucleotide shuffles against 89.53% of real contigs — and
+`experiments/reach_arms.py`, `reach_queries.py` and `report_reach.py` cite that report for
+the operating point and the 50-residue minimum ORF. Those citations resolved when the
+report landed on `main`; this paragraph previously recorded that they did not, and the
+record of that state is the commit history rather than this line.
+`results/divergent_contigs/` is the related report with the gene-level spread on the
+89-taxon panel, and `results/conserved_positions/` has the paired role ordering.
 
 ## The answer to the first two arms: nothing beats the production search
 
