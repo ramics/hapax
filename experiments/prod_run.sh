@@ -1,0 +1,194 @@
+#!/bin/bash
+# Production end to end over one staged library: assemble, identify, then `hapax run`.
+#
+# WHAT THIS IS FOR. SPEC 13.1 says the command line is the contract and `hapax run` is the
+# whole tool, and that is true of the part that measures. It is not the whole of a sample:
+# `hapax run` deliberately takes an assembly as an INPUT and refuses to pretend it
+# assembled one itself, so two steps sit either side of it - assembling the library, and
+# splitting that assembly into what can be identified and what cannot. `holdout_cascade_run.sh`
+# is the same ordering written for one library, with that library's facts in it. This file
+# is that ordering with every sample-specific value taken from the environment and nothing
+# defaulted, so a library the repo has never seen runs without a flag being edited.
+#
+# EVERY VALUE THAT IS A PROPERTY OF THE LIBRARY IS REQUIRED, not defaulted. ACC, TRIM_R2
+# and BLOCK are facts about a sequencing run (SPEC 4.1): the Berlin defaults silently cut
+# 14 real bases off another kit's mate 2 and leave two of five seeds of a smaller library
+# reading nothing, and in both cases the output directory still looks right. There is no
+# fallback here for the same reason `library_facts.py` raises.
+#
+# THE ONE THING THIS SCRIPT CHECKS ITSELF is the block arithmetic, against the library's
+# counted reads rather than a remembered count, because that failure is invisible: each
+# seed fails loudly on its own and the directory still looks like a five-seed run.
+set -xeuo pipefail
+
+ACC="${ACC:?set ACC to the run accession, e.g. SRR23702504}"
+S="${S:?set S to the staging directory}"
+OUT="${OUT:?set OUT to the output directory}"
+R1="${R1:?set R1 to mate 1 of the library}"
+R2="${R2:?set R2 to mate 2 of the library}"
+# No default: it is measured per library (experiments/nontemplate_prefix_map.py) and an
+# inherited value is the bug this project has already paid for twice.
+TRIM_R2="${TRIM_R2:?set TRIM_R2 to the measured non-template prefix of mate 2}"
+# No default: 1,500,000 is Berlin's stride for 8,731,224 pairs.
+BLOCK="${BLOCK:?set BLOCK to the per-seed stride for THIS library}"
+PAIRS="${PAIRS:-200000}"
+SEEDS="${SEEDS:-1 2 3 4 5}"
+THREADS="${THREADS:-8}"
+MEMORY="${MEMORY:-0.85}"
+# `hapax run` defaults to 20,000 residue pairs through the per-read report. The `fold`
+# field alone costs 290 ms/read (ViennaRNA, 20 dinucleotide shuffles per read for its own
+# null), so 20,000 is ~97 min per seed and ~8 h over five. 2,000 is what
+# results/holdout_cascade/ and results/holdout_run/ used, recorded rather than quietly
+# lowered: it is the per-read arm's sample size, and the residue table's intervals widen
+# with it.
+REPORT_PAIRS="${REPORT_PAIRS:-2000}"
+STAGES="${STAGES:-cascade contigs reads linkage census intervals layers strains shortlist panel crossplant}"
+MEGAHIT="${MEGAHIT:?set MEGAHIT to the megahit binary}"
+MINIMAP2="${MINIMAP2:?set MINIMAP2 to the minimap2 binary}"
+DIAMOND="${DIAMOND:?set DIAMOND to the diamond binary}"
+K2BIN="${K2BIN:?set K2BIN to the Kraken2 classify binary}"
+# The index set. Space-separated lists, so the operating point is visible in the log.
+K2_DBS="${K2_DBS:?set K2_DBS to the Kraken2 databases}"
+K2_DB_CONTIGS="${K2_DB_CONTIGS:?set K2_DB_CONTIGS to the one database the contig split uses}"
+SILVA="${SILVA:?set SILVA to the SILVA SSU and LSU fasta files}"
+DMND="${DMND:?set DMND to the DIAMOND protein databases}"
+# Per-read fields whose reference this run does not stage. They are dropped BY NAME, which
+# is recorded as "not searched", and never as 0.0 (results/fail_loudly_audit/). `chimaera`
+# is deliberately NOT in this list: it reads against this sample's own assembly, which this
+# run has, and CLAUDE.md requires a chimaera number beside every contiguity claim - beside
+# its own false-positive rate, which for split-mapping is 39-46% and makes it a description
+# of how the assembler joins genes rather than a filter.
+REPORT_WITHOUT="${REPORT_WITHOUT:-cross_sample rfam crispr pfam}"
+
+mkdir -p "$OUT" "$S/wk"
+cd "$(dirname "$0")/.."            # the repo root, whatever the caller's cwd
+
+# ---- 0. the blocks must fit the library, checked before anything runs -----------------
+LAST_SEED=$(for s in $SEEDS; do echo "$s"; done | sort -n | tail -1)
+if [ ! -s "$S/read_count.txt" ]; then
+  python3 -I - "$R1" <<'PY' > "$S/read_count.txt"
+import gzip, sys
+op = gzip.open if sys.argv[1].endswith(".gz") else open
+n = 0
+with op(sys.argv[1], "rt") as fh:
+    for n, _ in enumerate(fh, 1):
+        pass
+print(n // 4)
+PY
+fi
+READS=$(cat "$S/read_count.txt")
+NEED=$(( (LAST_SEED - 1) * BLOCK + PAIRS ))
+echo "library $READS pairs; $LAST_SEED seeds x $PAIRS pairs at stride $BLOCK needs $NEED"
+if [ "$NEED" -gt "$READS" ]; then
+  echo "REFUSING: seed $LAST_SEED would start at $(( (LAST_SEED - 1) * BLOCK )) in a" \
+       "library of $READS pairs. Lower BLOCK to at most" \
+       "$(( (READS - PAIRS) / (LAST_SEED - 1) )) or lower PAIRS." >&2
+  exit 2
+fi
+
+# ---- 1. mate 2's non-template prefix comes off before the assembler sees it -----------
+# Read-level stages trim as they stream; MEGAHIT reads files, so it needs a trimmed copy.
+if [ ! -s "$S/asm_in/${ACC}_2.fq" ]; then
+  python3 -I experiments/trim_mate2.py --r1 "$R1" --r2 "$R2" \
+    --library "$ACC" --trim-r2 "$TRIM_R2" \
+    --out-dir "$S/asm_in" --prefix "$ACC" \
+    --manifest "$OUT/trim_manifest.json"
+fi
+
+# ---- 2. assemble the whole library, at the committed baseline setting -----------------
+# Through path_settings.py rather than a bare megahit line, because that script is the one
+# place in this repo that records the full argv, the MEGAHIT version and the timing of an
+# assembly, and `results/path_settings/` measured the whole ladder of alternatives against
+# this arm. `--arms baseline` is MEGAHIT's defaults plus `--min-contig-len 200`.
+if [ ! -s "$S/wk/asm_baseline/final.contigs.fa" ]; then
+  python3 -I experiments/path_settings.py --seed 1 \
+    --stages assemble --arms baseline \
+    --reads "$S/asm_in/${ACC}_1.fq" --r2 "$S/asm_in/${ACC}_2.fq" \
+    --megahit "$MEGAHIT" --minimap2 "$MINIMAP2" \
+    --threads "$THREADS" --memory "$MEMORY" \
+    --no-truth-panel \
+    --work "$S/wk" --out "$OUT/assembly"
+fi
+ASM="$S/wk/asm_baseline/final.contigs.fa"
+test -s "$ASM" || { echo "the assembly is missing at $ASM" >&2; exit 2; }
+# The trimmed copies are an intermediate of the assembly and nothing downstream reads them.
+rm -f "$S/asm_in/${ACC}_1.fq" "$S/asm_in/${ACC}_2.fq"
+
+# ---- 2a. MEGAHIT header -> the SPAdes-like form the committed scripts parse -----------
+CONTIGS="$S/wk/asm_baseline/contigs_renamed.fa"
+if [ ! -s "$CONTIGS" ]; then
+  python3 -I experiments/megahit_rename.py --contigs "$ASM" --out "$CONTIGS" --tag "$ACC" \
+    --manifest "$OUT/rename_manifest.json"
+fi
+
+# ---- 2b. the SILVA index classify_contigs.py reads -----------------------------------
+# Built from subtract_known.py's own two functions rather than from a copy of them: a
+# second SILVA cleaner or a different minimap2 preset would be a second instrument reading
+# the same quantity. The cascade builds the same index in its own work directory.
+if [ ! -s "$S/wk/silva.mmi" ]; then
+  python3 -I - "$S" "$THREADS" $SILVA <<'PY'
+import sys
+from pathlib import Path
+sys.path.insert(0, "experiments")
+import subtract_known as sk
+S, threads, silva = Path(sys.argv[1]), int(sys.argv[2]), [Path(p) for p in sys.argv[3:]]
+fa = S / "wk/silva_dna.fa"
+if not fa.exists():
+    sk._silva_to_dna(silva, fa)
+sk._mm_index(fa, S / "wk/silva.mmi", threads)
+print("silva.mmi built from subtract_known._silva_to_dna + _mm_index")
+PY
+fi
+
+# ---- 3. identified vs unidentifiable, by IDENTIFICATION and never by assembly ---------
+# The sample's own identified contigs are the most efficient subtrahend this project has
+# measured (+30.3 points) and also the trap: a divergent genome's own contig that counts as
+# "identified" is subtracted as background in tier 1 and never reaches the part of the
+# report anyone reads (results/holdout_cascade/). classify_contigs.py makes the split, and
+# `removal_evidence.tsv` is what keeps the removal from being silent about how far away the
+# thing it removed was (SPEC 4.5).
+if [ ! -s "$OUT/contig_identification.json" ]; then
+  python3 -I experiments/classify_contigs.py --seed 1 \
+    --contigs "$CONTIGS" \
+    --k2-db "$K2_DB_CONTIGS" --classify-bin "$K2BIN" \
+    --dmnd $DMND --diamond-bin "$DIAMOND" \
+    --silva-mmi "$S/wk/silva.mmi" \
+    --threads "$THREADS" --work "$S/wk/contigs" --out "$OUT"
+fi
+ID_RRNA="$S/wk/asm_baseline/contigs_renamed_rrna.fa"
+ID_NORRNA="$S/wk/asm_baseline/contigs_renamed_identified_norrna.fa"
+UNID="$S/wk/asm_baseline/contigs_renamed_unidentified.fa"
+EVIDENCE="$OUT/removal_evidence.tsv"
+for p in "$ID_RRNA" "$ID_NORRNA" "$UNID"; do
+  test -f "$p" || { echo "classify_contigs.py wrote no $p" >&2; exit 2; }
+done
+
+# ---- 4. the cascade and the report, one run directory per seed ------------------------
+# Five seeds are five disjoint blocks of ONE read pool, so the spread between them is
+# subsampling noise: not library variation and not biological variation, and narrower than
+# either by an unknown factor.
+for sd in $SEEDS; do
+  if [ -s "$OUT/run_s$sd/manifest.json" ]; then echo "seed $sd already done"; continue; fi
+  python3 hapax.py run "$R1" "$R2" \
+    --seed "$sd" --out "$OUT/run_s$sd" --work "$S/wk/hapax_shared" \
+    --library "$ACC" --trim-r2 "$TRIM_R2" --pairs "$PAIRS" --block "$BLOCK" \
+    --threads "$THREADS" --report-pairs "$REPORT_PAIRS" \
+    --report-without $REPORT_WITHOUT \
+    --k2-dbs $K2_DBS \
+    --silva $SILVA \
+    --dmnd $DMND \
+    --diamond-bin "$DIAMOND" --classify-bin "$K2BIN" --minimap2 "$MINIMAP2" \
+    --contigs "$ID_RRNA" "$ID_NORRNA" \
+    --unidentified-contigs "$UNID" \
+    --identified-contigs "$ID_NORRNA" \
+    --rrna-contigs "$ID_RRNA" \
+    --assembly "$CONTIGS" \
+    --removal-evidence "$EVIDENCE" \
+    --stages $STAGES \
+    || echo "seed $sd exited non-zero; its manifest records which stage"
+  # Uploaded as soon as it exists: a run that is cut short by its own timer should leave
+  # every finished seed behind it, not nothing.
+  if [ -n "${AFTER_SEED:-}" ]; then eval "$AFTER_SEED"; fi
+done
+
+echo "done: $OUT"

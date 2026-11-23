@@ -1,0 +1,16 @@
+{
+ "_what": "Everything the run viewer says about this sample that is not read from the run directory. experiments/make_web.py takes this file and nothing else that differs by sample.",
+ "title": "Yeongdok run viewer",
+ "sample": {
+  "accession": "SRR23702504",
+  "lede": "Treated effluent from the Yeongdok plant, South Korea, collected on 2020-09-11, sequenced as RNA at 2 x 151 nt. The first library this repo ran production over without having measured anything on it first; the date and the plant are on the page because drift is the biggest caveat on every figure here (same plant, both RNA, eight months apart moved the identifiable fraction 22.7% to 40.7% on the Berlin pair)."
+ },
+ "rundir": "results/prod_SRR23702504/run_s1",
+ "inputs": {
+  "spectrum": {"not_run": "the gene-level divergent stage (experiments/divergent_known.py) has not been run on this library: its workup is hours of BLAST over the removed pile and the production pass was sized to the cascade"},
+  "spectrum_big_index": {"not_run": "follows the spectrum"},
+  "spectrum_reference_point": {"not_run": "follows the spectrum"},
+  "spectrum_reference_truth": {"not_run": "follows the spectrum"},
+  "truth_gene_map": {"not_run": "no genome in this library has a distance fixed before the run, and no depositor genome set exists for this water (experiments/stage_references.json). This sample ships with no positive control of any kind, which is a statement about the run and not about the water"}
+ }
+}

@@ -7,11 +7,16 @@
     "A library whose entry sets a panel to null is a MEASURED absence with a reason, and the stage records status skipped with that reason. null is not the same fact as missing.",
     "Paths are repo-relative. A path that does not exist is a refusal at preflight, not a stage that quietly reports zero."
   ],
-
   "removal_shortlist_band": {
     "_what": "The coverage x identity cell the explained-fraction shortlist ships at, over the pile tier 1 removed.",
-    "coverage": [0.25, 0.5],
-    "identity_percent": [60, 70],
+    "coverage": [
+      0.25,
+      0.5
+    ],
+    "identity_percent": [
+      60,
+      70
+    ],
     "significance_evalue": 1e-05,
     "near_reference_identity_percent": 97.0,
     "measured_on": "SRR23421544",
@@ -26,7 +31,6 @@
       "why_it_is_a_citation_and_not_this_run_s_null": "This stage reads search output the cascade already wrote; it runs no search of its own, so it cannot produce a null. Pass --shuffled-evidence to supply one, or --without-null to record its absence by name."
     }
   },
-
   "libraries": {
     "SRR23973193": {
       "label": "Berlin wastewater RNA, the discriminating dataset",
@@ -62,9 +66,18 @@
       "truth_panel": "depositor_25",
       "crossplant_panel": null,
       "crossplant_panel_absent_because": "As SRR23421544."
+    },
+    "SRR23702504": {
+      "label": "Yeongdok plant effluent, South Korea, collected 2020-09-11, RNA. The first library this repo runs production over without having measured anything on it first.",
+      "project": "PRJNA941081",
+      "plant": "Yeongdok",
+      "truth_panel": null,
+      "truth_panel_absent_because": "No depositor-assembled genome set exists for this water. results/holdout_candidates/depth.tsv covers SRR23421542/43/44 only, and scoring this library against those Russian genomes would report another water's ground truth as this one's. So recovery against truth is ABSENT for this sample, not zero, and the residue fraction it ships beside therefore travels without the recovery figure SPEC 4.3 requires of a path-settings comparison - which is a stated limit of running a new sample, not a result about it.",
+      "positive_control_absent_because": "Berlin's substitute for a panel is the spiked divergence ladder (--calibrate), and that stage needs a cross-sample reference assembly from the same works, which this run did not stage. This library therefore ran with no positive control of any kind: nothing in it has a distance fixed before the run.",
+      "crossplant_panel": "cp3",
+      "crossplant_panel_basis": "The library is NOT a member of cp3 - results/crossplant/panel.tsv holds 536 rows and this accession is not one of them - so its query reads are not searched against its own library, which is the refusal crossplant_stage.py enforces and the one that would invent recurrence (54% false growth against a 6% swap control). The plant IS in the panel with 12 libraries, three of them influent from this same date (2020-09-11, YIF807/808/809), so the paired within-plant stratum the measurement needs exists and is same-plant-same-date-other-water: it separates water type from drift, which no other pairing in the panel does."
     }
   },
-
   "truth_panels": {
     "depositor_25": {
       "_what": "The depositors' own virus genomes from the same waters, deposited 2023-07-31, with each one's depth in a given run measured by mapping the reads back. The present/absent split is per run and comes out of the same table, so the false-join control is drawn from the same pool as the recovery panel and costs nothing.",
@@ -73,8 +86,14 @@
       "divergence_table": "results/holdout_candidates/shortlist.tsv",
       "present_in_SRR23421544": 25,
       "absent_in_SRR23421544": 53,
-      "depth_range_SRR23421544": [0.445, 700.665],
-      "divergence_range_percent": [0.07, 30.38],
+      "depth_range_SRR23421544": [
+        0.445,
+        700.665
+      ],
+      "divergence_range_percent": [
+        0.07,
+        30.38
+      ],
       "operating_point": {
         "min_identity": 0.95,
         "min_aln": 200,
@@ -90,7 +109,6 @@
       "reproduces": "Against the two attributed contigs of results/holdout_cascade/ the scorer returns 3,990 nt covering 96.21% of OQ722337.1 at purity 1.0, and 6,383 nt covering 99.41% of OQ722330.1 - the published figures, from different code."
     }
   },
-
   "crossplant_panels": {
     "cp3": {
       "_what": "530 other wastewater RNA libraries over five projects, 32 plants and four continents, each cut to exactly the same depth so a difference between plants is not a difference in library size.",
@@ -98,7 +116,10 @@
       "subject_depth_pairs": 2000000,
       "query_length_nt": 90,
       "contig_window_nt": 90,
-      "operating_points": ["any", "most"],
+      "operating_points": [
+        "any",
+        "most"
+      ],
       "both_points_travel": "They disagree by a factor of four about the thing the measurement is for - at depth 1 the identified-versus-residue gap is 8.5 points at `most` and 42.0 at `any` - so neither ships alone.",
       "witness_instrument": "exact canonical 31-mer presence, the same instrument as results/recurrence/",
       "subject_trim_r2_by_project": {

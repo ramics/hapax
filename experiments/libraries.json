@@ -47,6 +47,22 @@
       "trim_r2_unverified": true,
       "block": 1500000,
       "block_basis": "inherited from results/dna_rna_pair/, which used one 1.5 M stride for all three of its libraries because the seeds have to select the same block of each. It is not measured against this library's own read count, which is the weaker claim of the two block entries in this file."
+    },
+    "SRR23702504": {
+      "label": "Yeongdok plant effluent, South Korea, collected 2020-09-11, RNA: the first library run through production that nothing in this repo had touched",
+      "bioproject": "PRJNA941081",
+      "layout": "paired",
+      "pairs": 32125614,
+      "pairs_basis": "ENA filereport read_count for SRR23702504, 9,701,935,428 bases over 2 x 151 nt. It is the count before the run, used to size the block; experiments/prod_run.sh asserts the block arithmetic against the pairs it actually counts in the file rather than against this number.",
+      "read_length": [151, 151],
+      "read_length_basis": "base_count / read_count from ENA. 44 nt longer per mate than SRR23973193's 107/93 after trimming, which matters because read length is the one recognition wall this project has measured moving (SPEC 4.2): a figure from this library is not comparable to Berlin's at matched length.",
+      "trim_r2": null,
+      "trim_r2_basis": "NOT YET MEASURED on this library, and deliberately null rather than 14: this is a different kit on a different continent and Berlin's prefix is Berlin's. experiments/prod_run.sh measures it with experiments/nontemplate_prefix_map.py over five seeds and names it with experiments/trim_from_prefix.py, which refuses rather than choosing when the mode is not the same in every seed. The measured value and the run that produced it replace this entry; until then every script that asks for it raises, which is the intended behaviour and not a gap.",
+      "block": 6000000,
+      "block_basis": "pairs skipped per seed so that five seeds read five distinct contiguous regions of the flow cell, sized to THIS library: 5 x 200,000 pairs at stride 6 M puts the blocks at 0, 6 M, 12 M, 18 M and 24 M, the last ending at 24,200,000 of 32,125,614. The ceiling is 7,981,403; 6 M leaves margin for a file that counts short. Berlin's 1.5 M would crowd all five seeds into the first 6.2 M pairs of a 32 M-pair library, which is not wrong so much as unrepresentative.",
+      "r1": "data/yeongdok/SRR23702504_1.fastq.gz",
+      "r2": "data/yeongdok/SRR23702504_2.fastq.gz",
+      "paths_basis": "staged from SRA on the instance that runs the pass; data/ is gitignored, as for every library here."
     }
   },
   "status": "hand-written from measurements recorded elsewhere in results/. Each value names what established it. Nothing here is derived at run time."
