@@ -147,13 +147,33 @@ Five seeds under one commit, `7ea6a47`, with `script_sha256` `3b22a60dcc0ce0ea` 
 the commit is the one its launcher built the payload from; the content hashes pin the code
 regardless.
 
-An independent re-run of the same five seeds is **in flight in-container**, on different
-hardware against a **separately built copy** of the subject library: 368,085 chains against
-this run's 368,095, because two downloads of the databank days apart differ by ten chains.
-Its gene census already matches this run digit for digit — 4,768 genes, 548,959 residues,
-1,636/535/1,889/708 across the four arms — and its `script_sha256` and `code_sha256` are
-identical, so the two ran the same code over the same material. It will be added here as
-`container_5seed/` when it finishes.
+**The same five seeds were re-run independently and landed on the same numbers.**
+[`container_5seed/`](container_5seed/) is a second run in-container, on different hardware
+against a **separately built copy** of the subject library. Almost everything about the two
+runs differs:
+
+| | `ec2_5seed/` | `container_5seed/` |
+|---|---|---|
+| host | `r6i.2xlarge` | container, 4 cores |
+| encoding shards | 8 | 4 |
+| wall clock | 9,403 s | 12,218 s |
+| subject library | 368,095 chains | 368,085 chains |
+| `git_sha` | `7ea6a47`, from the launcher | `f4383a7`, from the repo |
+| hit rows searched | 176,812 | 176,811 |
+
+The library differs because the databank was downloaded twice days apart and gained ten
+chains between them; the one extra hit row is those ten chains. **Every reported number is
+identical to the digit** — `TABLES.md` differs from `ec2_5seed/TABLES.md` in one line, the
+run directory in its own header, and in nothing else. `blocks.json` is byte-identical, so
+the two measured the same contigs, and `script_sha256` `3b22a60dcc0ce0ea` and `code_sha256`
+`03ff44fb23072f7d` match, so they ran the same code. The two `git_sha` values differ because
+the EC2 launcher built its payload from a later commit that did not touch this experiment —
+which is exactly the case the content hashes exist for, and the reason they are the field to
+read rather than the SHA.
+
+This is a reproduction in the sense CLAUDE.md asks for and most of this repo cannot claim:
+re-run from clean, on other hardware, against an independently fetched library, same answer.
+It came free, by running the hedge against the paid run rather than by scheduling anything.
 
 Note that block membership depends on the `--seeds` *list* rather than on the seed value,
 because the slice index is the position in that list. A run of a subset of seeds is

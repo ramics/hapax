@@ -1,0 +1,186 @@
+{
+ "git_sha": "f4383a79a64b5b5221d4b245947b4d967888f731",
+ "tree_dirty": false,
+ "git_sha_source": "repo",
+ "script_sha256": "3b22a60dcc0ce0ea",
+ "modules_sha256": {
+  "experiments/provenance.py": "e01fdca08de0894f",
+  "experiments/shuffle_control.py": "1185d0c48296a803"
+ },
+ "code_sha256": "03ff44fb23072f7d",
+ "parameters": {
+  "seeds": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "contigs_per_seed": 400,
+  "threads": 4,
+  "sensitivity": 9.5,
+  "shards": 4,
+  "min_orf_aa": 50,
+  "bands": [
+   [
+    50,
+    80
+   ],
+   [
+    80,
+    100
+   ],
+   [
+    100,
+    150
+   ],
+   [
+    150,
+    200
+   ],
+   [
+    200,
+    1000000000
+   ]
+  ],
+  "evalue_searched": 10.0,
+  "evalue_floor": 1e-05
+ },
+ "started_utc": "2026-11-23T08:58:21Z",
+ "subject_db": {
+  "chains": 368085,
+  "reused": true
+ },
+ "queries": {
+  "orfs": 4768,
+  "residues": 548959,
+  "by_pile": {
+   "unident": 1636,
+   "unident_null": 535,
+   "ident": 1889,
+   "ident_null": 708
+  },
+  "contigs_per_seed": 400,
+  "seeds": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "shuffle_census": {
+   "unident_s1": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   },
+   "unident_s2": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   },
+   "unident_s3": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   },
+   "unident_s4": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   },
+   "unident_s5": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   },
+   "ident_s1": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   },
+   "ident_s2": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   },
+   "ident_s3": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   },
+   "ident_s4": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   },
+   "ident_s5": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   }
+  },
+  "shuffle_failed": {
+   "unident_s1": 0,
+   "unident_s2": 0,
+   "unident_s3": 0,
+   "unident_s4": 0,
+   "unident_s5": 0,
+   "ident_s1": 0,
+   "ident_s2": 0,
+   "ident_s3": 0,
+   "ident_s4": 0,
+   "ident_s5": 0
+  },
+  "median_aa": {
+   "unident": 78.0,
+   "unident_null": 71,
+   "ident": 104,
+   "ident_null": 76.0
+  }
+ },
+ "query_db": {
+  "seconds": 12095.0,
+  "residues": 548959,
+  "shards": 4,
+  "threads_per_shard": 1,
+  "residues_per_second": 45.4
+ },
+ "search": {
+  "mode": "prefiltered -s 9.5",
+  "exhaustive": false,
+  "evalue_searched": 10.0,
+  "max_seqs": 300,
+  "per_shard": [
+   {
+    "shard": 0,
+    "queries": 1192,
+    "rows": 40357
+   },
+   {
+    "shard": 1,
+    "queries": 1192,
+    "rows": 42304
+   },
+   {
+    "shard": 2,
+    "queries": 1192,
+    "rows": 47090
+   },
+   {
+    "shard": 3,
+    "queries": 1192,
+    "rows": 47060
+   }
+  ],
+  "rate_is_a_floor": true,
+  "seconds": 83.0
+ },
+ "rows": 176811,
+ "annotated_entries": 1322,
+ "tmscore_available": false,
+ "tmscore_reason": "ProstT5 writes 3Di from sequence, so the query side has no C-alpha; TM-score and LDDT need coordinates on both sides",
+ "host": "vm",
+ "cpu_count": 4,
+ "seconds": 12217.7
+}

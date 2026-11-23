@@ -96,7 +96,6 @@ EVALUE_FLOOR = 1e-5
 
 RCSB_CLUSTERS = "https://cdn.rcsb.org/resources/sequence/clusters/clusters-by-entity-30.txt"
 RCSB_FILE = "https://files.rcsb.org/download/{}.cif.gz"
-RCSB_GRAPHQL = "https://data.rcsb.org/graphql"
 FETCH_PARALLEL = 8
 
 
@@ -459,59 +458,6 @@ def search(foldseek: Path, qdbs: list[Path], sdb: Path, out: Path, threads: int,
                      rate_is_a_floor=True, seconds=round(time.time() - started, 1))
 
 
-def annotate_subjects(targets: list[str], out: Path) -> dict:
-    """What the placed thing is LIKE: the subject entry's own description and source.
-
-    This is the half Imo asked for. A placement rate answers "is it new"; it takes the
-    entry's own words to answer "and like what". Fetched in batches from RCSB's data API for
-    the entries that were actually hit, so the cost is bounded by the result and not by the
-    library.
-
-    TWO AXES, NEVER ONE. `description` is what the record IS - a polymerase, a capsid - and
-    `source_organism` is where that record came from, which is not what the query infects
-    and not what is in the water. They are carried as separate fields for that reason.
-    """
-    entries = sorted({t.split("_")[0].split(".")[0].upper() for t in targets})
-    rows: dict[str, dict] = {}
-    for i in range(0, len(entries), 100):
-        batch = entries[i:i + 100]
-        ids = ", ".join(f'"{e}"' for e in batch)
-        query = (f'{{entries(entry_ids:[{ids}]){{rcsb_id '
-                 f'struct{{title}} '
-                 f'polymer_entities{{rcsb_polymer_entity{{pdbx_description}} '
-                 f'rcsb_entity_source_organism{{ncbi_scientific_name '
-                 f'ncbi_parent_scientific_name}}}}}}}}')
-        payload = out / f"gql_{i}.json"
-        payload.write_text(json.dumps({"query": query}))
-        done = subprocess.run(
-            ["curl", "-sS", "--max-time", "180", "-X", "POST", RCSB_GRAPHQL,
-             "-H", "Content-Type: application/json", "--data", f"@{payload}"],
-            capture_output=True, text=True)
-        if done.returncode != 0 or not done.stdout.strip():
-            raise RuntimeError(
-                f"the RCSB data API returned nothing for entries {i}+. Unannotated "
-                f"placements would read as placements onto nothing, which is a different "
-                f"claim. curl said: {done.stderr[-400:]}")
-        body = json.loads(done.stdout)
-        for entry in (body.get("data", {}).get("entries") or []):
-            if not entry:
-                continue
-            descs, orgs = [], []
-            for pe in (entry.get("polymer_entities") or []):
-                d = ((pe.get("rcsb_polymer_entity") or {}).get("pdbx_description"))
-                if d:
-                    descs.append(d)
-                for so in (pe.get("rcsb_entity_source_organism") or []):
-                    n = so.get("ncbi_scientific_name")
-                    if n:
-                        orgs.append(n)
-            rows[entry["rcsb_id"].upper()] = dict(
-                title=(entry.get("struct") or {}).get("title"),
-                descriptions=descs[:6], source_organisms=sorted(set(orgs))[:6])
-        payload.unlink(missing_ok=True)
-    return rows
-
-
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--seeds", default="1,2,3,4,5")
@@ -583,11 +529,16 @@ def main(argv: list[str] | None = None) -> int:
         for h in hits:
             fh.write("\t".join(h) + "\n")
 
-    significant = [r for r in rows if float(r["evalue"]) <= EVALUE_FLOOR]
-    annotations = annotate_subjects([r["target"] for r in significant], args.work) \
-        if significant else {}
-    (args.out / "subject_annotations.json").write_text(json.dumps(annotations, indent=1))
-    manifest["annotated_entries"] = len(annotations)
+    # WHAT the placed thing is like is resolved in the readout, not here. It used to be
+    # resolved here, through the PDB ENTRY, taking whichever polymer entity the data API
+    # returned first - and a foldseek target is a CHAIN, while a solved entry is usually
+    # several different molecules, so the names were chosen by array order. It reported a
+    # reverse transcriptase as "28S DNA top strand". `experiments/rcsb_chains.py` resolves
+    # per chain and raises where it cannot; `report_unknown_fold.py` calls it over the hits
+    # it reads, so the lookup is bounded by the result and one code path answers for every
+    # run, including runs already committed. A second copy here would be a second answer.
+    manifest["significant_rows"] = sum(1 for r in rows if float(r["evalue"]) <= EVALUE_FLOOR)
+    manifest["subject_names_resolved_by"] = "experiments/report_unknown_fold.py"
     manifest["tmscore_available"] = False
     manifest["tmscore_reason"] = (
         "ProstT5 writes 3Di from sequence, so the query side has no C-alpha; TM-score and "
