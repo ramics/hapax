@@ -174,8 +174,13 @@ def test_the_built_page_renders_every_control_it_resolved(tmp_path):
     for c in b["controls"]["controls"]:
         assert f"data-ctl=\"{c['id']}\"" in t or f"'{c['id']}'" in t, c["id"]
     # The render check is the one that knows whether they reached the DOM, so its own
-    # count is asserted here rather than re-derived.
-    assert "controls over" in r.stdout
+    # count is asserted here rather than re-derived - where it ran. Without a browser the
+    # build says so and does not fake it, and this test asserts that rather than the
+    # count, because a test that passed on a skipped check would be a test of nothing.
+    if "render not checked" in r.stdout:
+        assert "node or playwright is not available" in r.stdout
+    else:
+        assert "controls over" in r.stdout
 
 
 def test_the_shipped_default_of_every_control_is_the_runs_operating_point():
