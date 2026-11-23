@@ -545,6 +545,37 @@
      "A null states what a field reads on meaningless input. It does not state what a field reads on real input for the wrong reason, which only a positive control can remove. Where none exists the direction of the bias is given alone. Operating point decides a null: the weak-hit band reads 92.3% on shuffled reads with no E-value floor and 0.00% with one."
     ]
    ]
+  },
+  {
+   "id": "controls",
+   "title": "Sensitivity controls on this page",
+   "about": "tool",
+   "rows": [
+    [
+     "Input",
+     "the run's own per-read and per-contig rows, which carry identity, alignment length, E-value, bitscore, coverage, depth and occupancy un-thresholded; every control re-filters those numbers and none of them recomputes a measurement"
+    ],
+    [
+     "Procedure",
+     "each control's range and measured points are derived from the run directory by experiments/web_controls.py, which refuses the build where a declaration and the data disagree; a control whose inputs this run does not hold is rendered as a stated constraint rather than hidden"
+    ],
+    [
+     "Threshold",
+     "the shipped default of every control is the operating point the run used, marked on the control; a moved control is shown as moved, the setting travels under every figure it changes, and the state is in the URL so a reading is citable"
+    ],
+    [
+     "Denominator",
+     "unchanged by any control: percentages of a library are of read pairs, and a control changes which rows are shown, never the denominator they are shown against"
+    ],
+    [
+     "Control arm",
+     "every control moves its control arm with it, filtered by the same predicate in the same pass, so a threshold is never quoted on the residue alone"
+    ],
+    [
+     "Bias direction",
+     "towards the familiar. A looser floor admits chance alignments, which are drawn from whatever a database holds most of; so a reader who loosens a floor sees the database more and the sample less, and the panel states which arms were measured at that setting and which were not"
+    ]
+   ]
   }
  ]
 }

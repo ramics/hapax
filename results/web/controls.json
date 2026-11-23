@@ -1,0 +1,270 @@
+{
+ "_what": "Every sensitivity control the reader can move at output time, and every one that cannot move, as data. SPEC.md 13.3. experiments/web_controls.py resolves each entry against a run directory's own files: it derives the range or the measured points from those files rather than from anything written here, attaches which arms travel with the control, and refuses the build where a declaration and the data disagree. A control whose inputs are absent from a run is rendered as a stated constraint, never hidden.",
+ "_why_the_ranges_are_not_here": "A range typed into this file is a range without provenance, and a slider that runs past where the measurement exists is how a clean-looking number gets taken at a setting nobody measured. So every bound and every measured point is read from the run; this file says which quantity, where it comes from, and what travels with it.",
+
+ "controls": [
+  {
+   "id": "evalue_floor",
+   "label": "Significance floor",
+   "kind": "discrete",
+   "unit": "E-value",
+   "points_from": "decades spanned by the per-read hits in reads.jsonl",
+   "shipped_from": "bundle.significant_evalue",
+   "requires": ["reads.jsonl"],
+   "placement": "headline",
+   "panels": ["significance", "residue_table"],
+   "arms": {
+    "control": "the identified reads of the same run, set=known in reads.jsonl, filtered by the same predicate in the same pass",
+    "null": "absent at every setting: this run has no shuffled-search arm at read level. The composition fields carry a shuffled null (entropy3_shuffled and the rest); the search does not, so the panel says so rather than drawing two arms as though they were three"
+   },
+   "why_discrete": "an E-value floor is quoted and cited in decades, and the one number this page must never render is an identity with no floor at all; the decades are the ones the run's own hits span",
+   "note": "The withdrawn 92.3% was taken with no E-value floor whatever. This control exists so the floor is visible, moveable and always stated."
+  },
+  {
+   "id": "min_bitscore",
+   "label": "Minimum bitscore",
+   "kind": "continuous",
+   "unit": "bits",
+   "bounds_from": "the smallest and largest per-read best bitscore in reads.jsonl",
+   "shipped_from": "the cascade's own protein operating point, tier_table.operating_point.diamond_bitscore",
+   "requires": ["reads.jsonl", "tier_table.json"],
+   "placement": "detail",
+   "panels": ["significance", "residue_table"],
+   "arms": {
+    "control": "the identified reads of the same run, same predicate, same pass",
+    "null": "absent at every setting, as for the E-value floor"
+   },
+   "note": "Bitscore and E-value are not interchangeable: a merged read gains less bitscore than its length predicts, which is what makes the E-value a test rather than a longer ruler."
+  },
+  {
+   "id": "search_unit",
+   "label": "Counting unit",
+   "kind": "discrete",
+   "unit": "unit",
+   "points": [
+    {"value": "pair", "label": "per pair, either mate counts"},
+    {"value": "mate", "label": "per mate"}
+   ],
+   "shipped": "pair",
+   "requires": ["reads.jsonl"],
+   "placement": "detail",
+   "panels": ["significance"],
+   "arms": {
+    "control": "the identified reads, counted the same way",
+    "null": "absent at every setting, as for the E-value floor"
+   },
+   "why_discrete": "there are two units and no quantity between them",
+   "note": "The two mates are not interchangeable: mate 2 carries a non-template prefix and is 14 nt shorter, so a pooled per-mate number averages two biases pointing opposite ways. The per-pair unit is the one every percentage of this library is quoted in."
+  },
+  {
+   "id": "spec_rank",
+   "label": "Rank each contig on",
+   "kind": "discrete",
+   "unit": "gene",
+   "points": [
+    {"value": "conserved", "label": "the conserved gene"},
+    {"value": "whole", "label": "the whole-contig best hit"}
+   ],
+   "shipped": "conserved",
+   "requires": [],
+   "requires_bundle": ["spectrum"],
+   "placement": "headline",
+   "panels": ["spectrum"],
+   "arms": {
+    "control": "the near-reference arm of the same figure, drawn by the same code in the same pass",
+    "null": "measured at the shipped floors only: the shuffled contigs were searched once, at the operating point the run used"
+   },
+   "why_discrete": "whichever gene the ranking reads, it is one gene or the contig's best hit, and nothing lies between them",
+   "note": "The spread between a contig's genes is drawn at either setting, because the whole-contig identity is whichever gene won on bitscore and the genes of a divergent contig disagree by a median of over twelve points."
+  },
+  {
+   "id": "spec_min_coverage",
+   "label": "Minimum of the scored gene aligned",
+   "kind": "continuous",
+   "unit": "fraction",
+   "bounds_from": "the coverages present on the spectrum's own rows",
+   "shipped_from": "bundle.spectrum.floors.min_coverage",
+   "requires": [],
+   "requires_bundle": ["spectrum"],
+   "placement": "headline",
+   "panels": ["spectrum"],
+   "arms": {
+    "control": "the near-reference arm, same predicate, same pass",
+    "null": "measured at the shipped floors only"
+   },
+   "note": "Identity flatters towards the familiar by +17.2 points under half coverage against +7.1 above 90%, so this floor is the one that decides whether a number can be read at all. Moving it moves rows between the axis and the lane underneath, and every row that moves says so."
+  },
+  {
+   "id": "spec_min_aln_aa",
+   "label": "Minimum alignment length",
+   "kind": "continuous",
+   "unit": "aa",
+   "bounds_from": "the alignment lengths present on the spectrum's own rows",
+   "shipped_from": "bundle.spectrum.floors.min_aln_aa",
+   "requires": [],
+   "requires_bundle": ["spectrum"],
+   "placement": "detail",
+   "panels": ["spectrum"],
+   "arms": {
+    "control": "the near-reference arm, same predicate, same pass",
+    "null": "measured at the shipped floors only"
+   },
+   "note": "Percent identity over a short alignment is a ratio of small integers, so at 34 aa nothing can fall between 47.1% and 52.9%. This floor is why the axis is not a comb."
+  },
+  {
+   "id": "min_contig_nt",
+   "label": "Minimum contig length",
+   "kind": "continuous",
+   "unit": "nt",
+   "bounds_from": "the contig lengths present on the spectrum's own rows",
+   "shipped": 500,
+   "shipped_basis": "SPEC 13.3: the characterisable set ships at 500 nt",
+   "requires": [],
+   "requires_bundle": ["spectrum"],
+   "placement": "detail",
+   "panels": ["spectrum"],
+   "arms": {
+    "control": "the near-reference arm, same predicate, same pass",
+    "null": "measured at the shipped floors only"
+   },
+   "note": "Length is most of what decides whether anything can be identified at all: on contigs protein identifies 26% against 6% at nucleotide level, and the reverse holds at read level."
+  },
+  {
+   "id": "min_depth",
+   "label": "Minimum mapped depth",
+   "kind": "continuous",
+   "unit": "x",
+   "bounds_from": "the mapped depths present on the spectrum's own rows",
+   "shipped": 2,
+   "shipped_basis": "SPEC 13.3: the characterisable set ships at 2x",
+   "requires": [],
+   "requires_bundle": ["spectrum"],
+   "placement": "detail",
+   "panels": ["spectrum"],
+   "arms": {
+    "control": "the near-reference arm, same predicate, same pass",
+    "null": "measured at the shipped floors only"
+   },
+   "note": "Assembler coverage headers understate mapped depth about fourfold, so this is read from reads mapped back, not from the contig name."
+  },
+  {
+   "id": "read_depth_stratum",
+   "label": "Library depth stratum",
+   "kind": "discrete",
+   "unit": "31-mer occurrences",
+   "points": [
+    {"value": "all", "label": "every depth"},
+    {"value": "1", "label": "depth 1"},
+    {"value": "2-9", "label": "2 to 9"},
+    {"value": "10-99", "label": "10 to 99"},
+    {"value": "100+", "label": "100 and over"}
+   ],
+   "shipped": "all",
+   "requires": ["reads.jsonl"],
+   "placement": "detail",
+   "panels": ["residue_table"],
+   "arms": {
+    "control": "the identified reads at the same stratum, which is the comparison that matters: at matched depth the known-against-unknown difference is 8.5 points and depth decides the rest",
+    "null": "absent at every setting, as for the E-value floor"
+   },
+   "why_discrete": "depth decides almost everything here and the strata are the ones the cross-plant arm reported; a continuous cut would invite a reading between two strata that was never taken"
+  },
+  {
+   "id": "min_occupancy",
+   "label": "Minimum other samples carrying it",
+   "kind": "continuous",
+   "unit": "samples",
+   "bounds_from": "the cross-sample occupancy counts present on the run's read rows",
+   "shipped": 0,
+   "shipped_basis": "un-thresholded: every row is shown whatever its occupancy",
+   "requires": ["reads.jsonl"],
+   "placement": "detail",
+   "panels": ["residue_table"],
+   "arms": {
+    "control": "the identified reads at the same cut",
+    "null": "absent at every setting, as for the E-value floor"
+   }
+  },
+  {
+   "id": "sweep_tier",
+   "label": "Tier",
+   "kind": "discrete",
+   "unit": "tier",
+   "points_from": "the tiers in tier_table.json that carry a threshold sweep",
+   "shipped_from": "the first swept tier in the run's own order",
+   "requires": ["tier_table.json"],
+   "placement": "detail",
+   "panels": ["cascade_sweep"],
+   "arms": {
+    "control": "the same tier's removal of already-identified material is the cascade's own cumulative column, drawn in the table beside it",
+    "null": "not applicable: this is a removal fraction of one library at a stated threshold, not a score with a null"
+   },
+   "why_discrete": "there are as many tiers as the run consulted indexes"
+  },
+  {
+   "id": "sweep_point",
+   "label": "Threshold",
+   "kind": "discrete",
+   "unit": "threshold",
+   "points_from": "the measured points of the selected tier's own sweep, in tier_table.json",
+   "shipped_from": "the tier's operating point, tier_table.operating_point",
+   "requires": ["tier_table.json"],
+   "placement": "detail",
+   "panels": ["cascade_sweep"],
+   "arms": {
+    "control": "the cumulative and residue columns of the same table, from the same counts",
+    "null": "not applicable, as above"
+   },
+   "why_discrete": "Kraken2 confidence was run at 0, 0.05, 0.1 and 0.2 and nowhere between, and a factor of twelve in removal lives inside that gap. A smooth slider would invent the middle.",
+   "note": "This is the control that makes the case for the rule: one database removes 42.8%, 21.7% or 3.5% of the same library on this setting alone."
+  },
+  {
+   "id": "union_tiers",
+   "label": "Tiers in the union",
+   "kind": "discrete",
+   "unit": "tier set",
+   "points_from": "the subtracted tiers of tier_table.json",
+   "shipped_from": "every subtracted tier, which is the shipped union",
+   "requires": ["cascade_membership.jsonl"],
+   "placement": "detail",
+   "panels": ["cascade_sweep"],
+   "arms": {
+    "control": "the same union over the identified arm",
+    "null": "not applicable, as above"
+   },
+   "why_discrete": "a tier is in the union or it is not",
+   "absent_means": "Marginal contribution depends on the order tiers are applied in, so a union the reader assembles has to be recounted over the reads rather than summed from the shipped marginals. That needs one row per pair saying which tiers removed it, which no run emits yet: tiers.json carries per-tier fractions only. Until a run writes cascade_membership.jsonl this control states what it would take rather than summing numbers that cannot be summed."
+  }
+ ],
+
+ "fixed": [
+  {
+   "control": "Database size or choice beyond what was run",
+   "why": "A measurement at a size nobody ran cannot be synthesised. The cost curve shows the measured points and marks the far end absent rather than extrapolating through it."
+  },
+  {
+   "control": "The mate-2 trim",
+   "why": "It changes the reads, so it changes every number downstream. It ships as two measured runs, 14 and 16, 1.7 points apart, with the curve between them, not as a slider."
+  },
+  {
+   "control": "Assembly path settings",
+   "why": "They move the residue by 8.79 points and need re-assembly and re-identification. They ship as arms with their flags."
+  },
+  {
+   "control": "Search sensitivity and seeding",
+   "why": "DIAMOND at three sensitivities, BLASTP, and full Smith-Waterman over every subject with no seeding return the same nearest relative to the decimal. There is nothing to tune: the constraint is the significance statistics."
+  },
+  {
+   "control": "The interval and the design effect",
+   "why": "Not a control. The Wilson interval is widened by the measured overdispersion of the blocks the cascade reads, and it cannot be switched off."
+  },
+  {
+   "control": "The two cross-plant operating points",
+   "why": "They disagree by a factor of four and neither travels alone, so both are shown rather than one being selectable."
+  },
+  {
+   "control": "Anything that would produce a novelty call",
+   "why": "There is no threshold to expose, because there is no score. An index can say whether something is already known; it cannot say whether it is new."
+  }
+ ]
+}
