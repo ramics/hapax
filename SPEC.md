@@ -11,8 +11,8 @@ states what it reports and what it refuses to claim:
 
 | class | what it is | §|
 |---|---|---|
-| **A — divergent but related contigs** | assembled, identified, at real distance from anything published | §5 |
-| **B — novel strains of known viruses** | the near end of the same continuum; a first-class case, not an edge case | §6 |
+| **A — novel strains of known viruses** | the near end of the continuum; a first-class case, not an edge case | §5 |
+| **B — divergent but related contigs** | assembled, identified, at real distance from anything published | §6 |
 | **C — the unplaceable residue** | reads and contigs nothing names, at median depth 1 | §7 |
 
 A and B are one table with a column, not two products, because *"the line between 'new
@@ -95,7 +95,7 @@ So reads are used for three things only: subtraction, depth, and the measured bo
 
 ### 2.2 Novelty shows up as different genes at different distances
 
-This is the discriminating shape the project found, and it is what class A ranks on.
+This is the discriminating shape the project found, and it is what class B ranks on.
 
 - **Whole-contig identity is not a property of the contig.** A whole-contig best hit reports
   whichever gene won on bitscore. The median spread between a divergent contig's own genes
@@ -132,7 +132,7 @@ This is the discriminating shape the project found, and it is what class A ranks
 Imo's call of 2026-11-22 supersedes every earlier framing: there is no separate strain
 product. There is one continuum over everything that got a significant hit, ranked by
 distance with coverage beside it, and **the tier a contig ended up in is a column on that
-table**. §6 holds the constraints that are specific to the near end — chiefly that below
+table**. §5 holds the constraints that are specific to the near end — chiefly that below
 ~3.8% divergence every assembler fuses lineages, so the system reports a fused lineage as
 fused.
 
@@ -343,12 +343,41 @@ thing it removed was.
 
 ---
 
-## 5. Output class A — divergent but related contigs
+## 5. Output class A — novel strains of known viruses
+
+Same table, same ranking, near end of the continuum, tier as a column. What is specific to
+this end is a set of measured limits, and all of them are refusals.
+
+- **Below about 3.8% divergence every assembler fuses lineages at any depth**; MEGAHIT
+  separates from roughly 5% up (2,205 assemblies, 21 real genome pairs, 5 seeds, 0 false
+  mosaics in 630 controls). **So below ~4% the system reports a fused lineage as fused**, and
+  a reading at the near end ships with the divergence at which it was made
+  (`results/pair_ladder/`).
+- **The reads carry enough information; path selection is what is missing.** PenguiN's raw
+  output holds clean multi-kb pieces of both lineages at 2% divergence, buried among ~1,000
+  mostly mosaic contigs. That is a statement about tooling, not about the library.
+- **Coverage pooling across lineages is dead**: it fabricates mosaics.
+- **Pair scores cannot separate two hosts' swarms** — two HBV hosts share 709 exact 150-mers.
+  Only population structure can.
+- **A strain is 90–99% identity**, and the per-read identity bias of §2.1 lands squarely
+  here: reads report ~83% where the truth is 69.72%, always towards *familiar*. Strain
+  readings therefore come from contigs with coverage beside them, never from per-read
+  identity.
+- **Both identity columns ship** (§6.1), because a nucleotide band does not transfer to
+  protein: 10.4–11.7% nucleotide divergence at 97.1–97.7% protein identity is the measured
+  counter-example, and above 5% divergence the protein tier does essentially all the work.
+- The lineage labeller's strand bug **voids every mosaic count published before its fix**
+  (`results/labeller_audit/`): 0% false mosaics on forward-strand contigs, 65.8% on reverse.
+  Any new mosaic number states that it was produced after the fix.
+
+---
+
+## 6. Output class B — divergent but related contigs
 
 The largest and best-characterised of the three, and the one the goal of §0 actually runs
 through.
 
-### 5.1 What the system reports
+### 6.1 What the system reports
 
 Per contig, as a row on one continuum with no threshold on it:
 
@@ -399,7 +428,7 @@ named relative's name** — a bigger claim than a strain, not a smaller one.
 **Every row ships with its control arm, drawn and scored by the same code in the same pass**:
 near-reference material from the same library.
 
-### 5.2 What this class refuses to claim
+### 6.2 What this class refuses to claim
 
 - **No host and no threat.** Host confidence over 41,829 subjects maxes at 0.40; a host
   colour labels a database record. And **what a record IS and what it INFECTS are two axes**
@@ -418,35 +447,6 @@ near-reference material from the same library.
   material worth real effort. But **importance will not come out of sequence.** Sequence
   gives distance and gene-level shape; occurrence across dates and plants gives the reason to
   care, and that axis is §12.6.
-
----
-
-## 6. Output class B — novel strains of known viruses
-
-Same table, same ranking, near end of the continuum, tier as a column. What is specific to
-this end is a set of measured limits, and all of them are refusals.
-
-- **Below about 3.8% divergence every assembler fuses lineages at any depth**; MEGAHIT
-  separates from roughly 5% up (2,205 assemblies, 21 real genome pairs, 5 seeds, 0 false
-  mosaics in 630 controls). **So below ~4% the system reports a fused lineage as fused**, and
-  a reading at the near end ships with the divergence at which it was made
-  (`results/pair_ladder/`).
-- **The reads carry enough information; path selection is what is missing.** PenguiN's raw
-  output holds clean multi-kb pieces of both lineages at 2% divergence, buried among ~1,000
-  mostly mosaic contigs. That is a statement about tooling, not about the library.
-- **Coverage pooling across lineages is dead**: it fabricates mosaics.
-- **Pair scores cannot separate two hosts' swarms** — two HBV hosts share 709 exact 150-mers.
-  Only population structure can.
-- **A strain is 90–99% identity**, and the per-read identity bias of §2.1 lands squarely
-  here: reads report ~83% where the truth is 69.72%, always towards *familiar*. Strain
-  readings therefore come from contigs with coverage beside them, never from per-read
-  identity.
-- **Both identity columns ship** (§5.1), because a nucleotide band does not transfer to
-  protein: 10.4–11.7% nucleotide divergence at 97.1–97.7% protein identity is the measured
-  counter-example, and above 5% divergence the protein tier does essentially all the work.
-- The lineage labeller's strand bug **voids every mosaic count published before its fix**
-  (`results/labeller_audit/`): 0% false mosaics on forward-strand contigs, 65.8% on reverse.
-  Any new mosaic number states that it was produced after the fix.
 
 ---
 
@@ -800,7 +800,7 @@ at the same operating point:
 
 **Metric**: recognition at a fixed false-pair rate per million, per divergence rung, **and
 whether the nearest relative changes** — not merely whether a hit appears. An arm that finds
-more hits without improving the identity or the named subject has bought nothing (§5.1).
+more hits without improving the identity or the named subject has bought nothing (§6.1).
 
 **The rule it must respect**: paired mode may improve **identification and distance**. It may
 never become a novelty score. No pair rule reaches one false positive per million
@@ -896,7 +896,7 @@ a run comes to report ground truth as checked when none exists for that water.
 `RUNDIR` holds the manifest, the tier table, the per-read rows as JSONL, the per-contig rows,
 **`removal_evidence.tsv`** — one row per route per removed contig, carrying the identity,
 alignment length, E-value, bitscore and query coverage that justified the removal (§4.5,
-§5.1) — the calibration block, the assembly version and `blind_spots.json`. Everything
+§6.1) — the calibration block, the assembly version and `blind_spots.json`. Everything
 downstream, including the web view, reads those committed files and nothing else.
 
 `removal_evidence.tsv` is emitted in input order with no score and no ranking on it, and
@@ -909,7 +909,7 @@ the run directory comes from the `experiments/` script that already measures it,
 script's own seed and manifest, because a parallel implementation would be a second
 instrument and this project does not compare two. Stages: `cascade`, `contigs`, `reads`,
 `linkage`, `census`, `calibration`, `intervals`, `layers`, `strains`, `divergent`,
-`shortlist`, `panel`, `crossplant` — where `divergent` reads the continuum of §5 over the
+`shortlist`, `panel`, `crossplant` — where `divergent` reads the continuum of §6 over the
 removed pile.
 
 **The last three are measurements that used to exist only as reports over one directory**,
@@ -922,7 +922,7 @@ cell from the committed rows, and `tests/test_truth_panel.py` and
   explains, and emits `removal_shortlist.json` and `removal_shortlist.tsv`: the whole joint
   coverage × identity table, the shipped band's cell with a count on it, and the
   near-reference control arm's count in the same cell, drawn by the same code in the same
-  pass (§5.1). The band is the one `results/holdout_cascade/` measured, and the output
+  pass (§6.1). The band is the one `results/holdout_cascade/` measured, and the output
   carries the sentence that qualifies it — it was drawn where the one known positive sits, on
   a positive set of size one — rather than quoting a tuned cut as a property of the method.
   The null is supplied or dropped **by name**; absent and unstated is a refusal.
@@ -930,7 +930,7 @@ cell from the committed rows, and `tests/test_truth_panel.py` and
   water, with the 53 zero-read genomes of the same committed panel as the false-join control,
   and carries what that panel cannot test into its own output: not sub-3.8% fusion, because
   the panel is not a lineage mixture, and nothing at the median depth 1 where most of the
-  residue sits (§6, §7). Recovery and residue size ship as a pair (§4.3).
+  residue sits (§5, §7). Recovery and residue size ship as a pair (§4.3).
 - **`crossplant`** subtracts a panel of other plants' libraries with that panel's rules as
   checks rather than as prose: a query library inside its own panel is a refusal, the contig
   arm uses the read arm's own 90 nt window or refuses, and a report missing the paired
@@ -957,7 +957,7 @@ Panels: the breakdown as one stacked bar with intervals and operating points; th
 table with the threshold sweep live on a slider, so the reader sees the factor of twelve
 inside one database; the cost curve with measured points only and the unflattened far end
 shown as **absent** rather than extrapolated; the divergence ladder labelled ordinal; **the
-class A continuum, ranked by polymerase identity with the per-gene spread drawn and the
+class B continuum, ranked by polymerase identity with the per-gene spread drawn and the
 coverage-explained shortlist shown as a cell with a count**; the residue table with every
 field's null and known-positive beside it; the joint space as a density with its two
 reference clouds; blind spots as a fixed panel, not a footnote.
@@ -969,7 +969,7 @@ no interval is drawn as a bare tick; `cannot discriminate here` renders as a val
 
 Imo's reading preferences are part of the contract: summary first then detail, pictures over
 words, rank and hide the tail, names not accessions, and **phage, virus and bacteria shown
-separately on the two axes of §5.2**. Every figure ships its control row, drawn by the same
+separately on the two axes of §6.2**. Every figure ships its control row, drawn by the same
 code.
 
 ### 13.3 Every sensitivity control the reader can honestly move, moves
@@ -1010,7 +1010,7 @@ manufacturing the numbers this project has had to withdraw.
 
 **Adjustable, because the numbers already exist at every setting:** the significance floor
 (E-value or bitscore) on any search panel; identity and coverage bands, including the two
-axes that define class A's shortlist cell, with its count and its control count recomputing
+axes that define class B's shortlist cell, with its count and its control count recomputing
 together; the minimum contig length and depth for the characterisable set (shipped at 500 nt
 and 2×); ranking by the conserved gene against whole-contig best hit, with the spread always
 drawn; which cascade tiers are in the union, with the **marginals recomputed rather than
@@ -1064,7 +1064,7 @@ those scripts run. Until then, read citations through this table.
 |---|---|
 | §1, §1.1 (architecture; why a measurement, not a call) | §2, §3 |
 | §2 (tier 1, the cascade table) | §4.4 |
-| §2.1(i) (divergence of anything not a close homolog) | §4.5, §5.1 |
+| §2.1(i) (divergence of anything not a close homolog) | §4.5, §6.1 |
 | §2.1(ii) (part aligns, rest does not) | §11.7 — withdrawn at read level, lives after assembly |
 | §2.1(iii) (evidence that no-match sits below ~80%) | §12.3 |
 | §3 (tier 2, assembled but unidentifiable) | §7 |

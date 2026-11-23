@@ -24,7 +24,7 @@ AND THE DIRECTION IS PINNED ON KNOWN MATERIAL FROM THE SAME WATER, which is the 
 makes the cell readable rather than arbitrary: of the leak arm's 34 contigs - sequence from
 this same library whose relatives are in the index - **not one** sits below 80% identity at
 either level, and none enters the candidate's cell. So this stage always draws its control
-arm in the same pass by the same code (SPEC 5.1): near-reference removals from this run's
+arm in the same pass by the same code (SPEC 6.1): near-reference removals from this run's
 own pile. A band with no control arm beside it is reported as uncontrolled, by name.
 
 WHAT IT REFUSES TO BE. Not a flag and not a score. Inside its own cell the candidate ranks
@@ -195,7 +195,7 @@ def main() -> int:
     ap.add_argument("--near-reference-identity", type=float, default=None,
                     help="identity at or above which a removal counts as near-reference "
                          "material from this water: the control arm. Shipped at 97%%, the "
-                         "top band of SPEC 5.1")
+                         "top band of SPEC 6.1")
     ap.add_argument("--references", type=Path, default=None,
                     help="stage_references.json, for tests")
     ap.add_argument("--out", type=Path, required=True, help="output directory")

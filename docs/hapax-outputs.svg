@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 538" width="1120" height="538" role="img" aria-labelledby="outtitle outdesc">
   <title id="outtitle">What a hapax run writes, by unit</title>
-  <desc id="outdesc">A table of what a run writes, one row per unit: library, one breakdown per run: identified, assembled but unnameable, unplaced, carrying each fraction with its interval and the operating point that produced it (SPEC 4.4, 7.1); contig, one row per contig, whether or not an index named it, carrying distance to the closest published relative, identity and coverage per gene, nucleotide and protein, with depth and evenness (SPEC 5.1); subject, one row per published relative the residue points at, carrying how many reads point at it and from how far, which is where a novel strain of a known virus appears (SPEC 6); read pair, one row per surviving pair, un-thresholded, carrying distance with coverage and E-value, kind of sequence, recurrence in the library, and what it sits next to on the molecule (SPEC 7.1); divergence ladder, one rung per divergence, where a library carries a genome of known distance, carrying what the cascade recovered at each rung, on an ordinal scale (SPEC 8). Every field is reported beside its shuffled null and a known-positive comparison, and a verdict is made at contig and subject level.</desc>
+  <desc id="outdesc">A table of what a run writes, one row per unit: library, one breakdown per run: identified, assembled but unnameable, unplaced, carrying each fraction with its interval and the operating point that produced it (SPEC 4.4, 7.1); contig, one row per contig, whether or not an index named it, carrying distance to the closest published relative, identity and coverage per gene, nucleotide and protein, with depth and evenness (SPEC 6.1); subject, one row per published relative the residue points at, carrying how many reads point at it and from how far, which is where a novel strain of a known virus appears (SPEC 5); read pair, one row per surviving pair, un-thresholded, carrying distance with coverage and E-value, kind of sequence, recurrence in the library, and what it sits next to on the molecule (SPEC 7.1); divergence ladder, one rung per divergence, where a library carries a genome of known distance, carrying what the cascade recovered at each rung, on an ordinal scale (SPEC 8). Every field is reported beside its shuffled null and a known-positive comparison, and a verdict is made at contig and subject level.</desc>
 
   <defs>
     <style>
@@ -36,7 +36,7 @@
 
     <rect x="40" y="206" width="4" height="46" fill="#2f6fd0"/>
     <text class="un" x="60" y="222">contig</text>
-    <text class="ax" x="60" y="242">SPEC &#167;5.1</text>
+    <text class="ax" x="60" y="242">SPEC &#167;6.1</text>
     <text class="io" x="300" y="222">one row per contig, whether or not an index named it</text>
     <text class="wr" x="660" y="222">distance to the closest published relative, identity and coverage</text>
     <text class="wr" x="660" y="240">per gene, nucleotide and protein, with depth and evenness</text>
@@ -44,7 +44,7 @@
 
     <rect x="40" y="278" width="4" height="46" fill="#2f6fd0"/>
     <text class="un" x="60" y="294">subject</text>
-    <text class="ax" x="60" y="314">SPEC &#167;6</text>
+    <text class="ax" x="60" y="314">SPEC &#167;5</text>
     <text class="io" x="300" y="294">one row per published relative the residue points at</text>
     <text class="wr" x="660" y="294">how many reads point at it and from how far, which is where a</text>
     <text class="wr" x="660" y="312">novel strain of a known virus appears</text>

@@ -41,6 +41,23 @@ def test_every_stage_states_input_output_and_what_it_writes():
         assert stage["spec"]
 
 
+def test_classes_run_from_the_near_end_outwards():
+    """Increasing distance from published sequence, the same direction panel c's scale
+    runs in (Imo, 2026-11-23). The near end is first and carries the fusion limit."""
+    assert [c["name"] for c in fig.CLASSES][0] == "novel strains of known viruses"
+    assert [c["name"] for c in fig.CLASSES][-1] == "the unplaceable residue"
+    svg = fig.render()
+    assert '<text class="ax" x="0" y="16">matched</text>' in svg
+
+
+def test_the_gene_level_ranking_is_on_the_divergent_class():
+    """What class B ranks on is the project's own novelty result (SPEC 2.2), so the figure
+    states it rather than leaving the class as a distance alone."""
+    b = next(c for c in fig.CLASSES if c["key"] == "B")
+    assert "conserved gene" in b["reports"]
+    assert b["note"] and "different distances" in b["note"]
+
+
 def test_every_output_class_carries_its_qualifier():
     """What keeps a class honest travels with it. The qualifiers are written forwards, as
     what the row states, so the test asserts they are present rather than looking for a

@@ -282,7 +282,7 @@ def main() -> None:
 
     # ---- the removal's own justification, one row per identified contig ------------------
     #
-    # WHY THIS FILE EXISTS AND WHY IT IS A FILE. SPEC 5: there is one distance continuum and
+    # WHY THIS FILE EXISTS AND WHY IT IS A FILE. SPEC 6: there is one distance continuum and
     # the tier is a column on it, not a separate table. A contig removed here at family-level
     # distance is still reportable material, so the distance that justified the removal has to
     # leave this script. It did not before: the summary JSON held fractions and the splits held
