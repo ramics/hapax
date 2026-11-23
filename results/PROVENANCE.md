@@ -17,6 +17,7 @@ here is a quiet deletion.
 | 2 | `subtract_known/`'s five seeds sit under two commits, three of the five `-dirty` | **closed by a clean re-run**: `subtract_recut/` | no — the headline is the clean directory's |
 | 3 | 47 scripts import shared code whose hash their manifests never recorded | fixed forward in `provenance.py`, not retrofitted | no |
 | 4 | `divergent_known` and `divergent_contig_workup` mapped back at a mate-2 trim of 16 where the measured prefix is 14 | pinned with the discrepancy stated; **decision below** | no load-bearing number; see 4 |
+| 5 | Three scripts default their read paths to `data/ww_berlin/`, which neither `libraries.json` nor `data/MANIFEST.md` documents | **found 2026-11-23, open, not fixed here** | no — it fails loudly |
 
 ## 1. SILVA is named in manifests that did not read it
 
@@ -115,3 +116,29 @@ overturned on evidence rather than re-argued:
 What *does* change here is one line of prose: `divergent_contigs/REPORT.md` said mate 2 was
 trimmed 16 nt "as everywhere in this repo", which was true of neither the repo nor the measured
 prefix. Corrected in place, with the discrepancy named.
+
+## 5. Three scripts default to a data path the manifest does not document
+
+`absence_curve.py`, `absence_residual.py` and `rrna_match_source.py` default `--r1`/`--r2`
+to `data/ww_berlin/SRR23973193_{1,2}.fastq.gz`. Every other script, `libraries.json`'s `r1`
+and `r2`, and every Berlin entry in `data/MANIFEST.md` say `data/berlin/`. Both spellings
+appear in committed manifests — 62 occurrences of `data/berlin/` against 18 of
+`data/ww_berlin/` — so the directory was renamed at some point and three defaults were left
+behind.
+
+**It cannot corrupt a number.** A wrong path is a missing file, so the run fails rather than
+reading the wrong library; this is the loud kind of defect, which is why it has survived. The
+three scripts do resolve `trim_r2` through `library_facts`, and because the stale path still
+carries the right accession it satisfies `paths_name_library`, so the refusal that catches a
+*different* library's reads correctly does not fire here.
+
+**Not fixed in this pass, for two reasons, and it is a decision to take rather than a thing
+to leave.** First, `data/` is gitignored and this container has none of it, so which spelling
+exists on disk cannot be verified from here — and the fix is worth nothing if it points at
+the wrong one. Second, the fix that matches this repo's own rule is not to correct three
+literals but to make a read path resolvable from `libraries.json` like the trim and the
+stride, since a read path is as much a property of a sequencing run as either. That is a
+change to `library_facts.resolve_args`, where `r1` and `r2` are currently validators rather
+than facts, and it is the same module a sibling thread is folding its own stage registry
+into. **Recommended: resolve read paths from the library, in the same change that folds in
+that registry, rather than editing three defaults now.**
