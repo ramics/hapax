@@ -39,6 +39,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "experiments"))
 
 from provenance import provenance  # noqa: E402
+from rcsb_chains import annotate_subjects  # noqa: E402
 
 BAND_ORDER = ["50-80", "80-100", "100-150", "150-200", "200+"]
 
@@ -57,8 +58,16 @@ def spread(values: list[float]) -> str:
 
 
 def load(out: Path):
+    """The ORFs, the hits and the run manifest. NOT the run's own subject annotations.
+
+    The run writes a `subject_annotations.json` keyed by PDB ENTRY, and an entry is usually
+    several molecules, so the chain that aligned cannot be recovered from it - see
+    `rcsb_chains`. The names are therefore resolved here instead, from the target names in
+    the hits this report actually reads. It costs a handful of API calls and seconds,
+    because the cost is bounded by the result rather than by the library, and it means one
+    code path answers "like what" for every run whatever produced it.
+    """
     orfs = json.loads((out / "orfs.json").read_text())
-    annotations = json.loads((out / "subject_annotations.json").read_text())
     manifest = json.loads((out / "manifest.json").read_text())
     hits: dict[str, list[dict]] = collections.defaultdict(list)
     with gzip.open(out / "hits.tsv.gz", "rt") as fh:
@@ -66,7 +75,7 @@ def load(out: Path):
         for line in fh:
             row = dict(zip(header, line.rstrip("\n").split("\t")))
             hits[row["query"]].append(row)
-    return orfs, hits, annotations, manifest
+    return orfs, hits, manifest
 
 
 def best_hit(rows: list[dict], floor: float) -> dict | None:
@@ -145,15 +154,14 @@ def subject_table(orfs, hits, annotations, floor: float, pile: str, top: int):
         best = best_hit(hits.get(orf["orf"], []), floor)
         if not best:
             continue
-        entry = best["target"].split("_")[0].split(".")[0].upper()
-        ann = annotations.get(entry, {})
-        desc = (ann.get("descriptions") or ["(no description in the record)"])[0]
+        ann = annotations["by_target"][best["target"]]
+        desc = ann.get("description") or "(no description in the record)"
         counts[desc] += 1
         prev = examples.get(desc)
         if prev is None or float(best["bits"]) > float(prev["bits"]):
             examples[desc] = dict(bits=best["bits"], evalue=best["evalue"],
                                   fident=best["fident"], alnlen=best["alnlen"],
-                                  qlen=best["qlen"], entry=entry, orf=orf["orf"],
+                                  qlen=best["qlen"], entry=best["target"], orf=orf["orf"],
                                   organisms="; ".join((ann.get("source_organisms") or [])[:2]))
     rows = []
     for desc, n in counts.most_common(top):
@@ -172,7 +180,11 @@ def main(argv=None) -> int:
     ap.add_argument("--top", type=int, default=15)
     args = ap.parse_args(argv)
 
-    orfs, hits, annotations, manifest = load(args.out)
+    orfs, hits, manifest = load(args.out)
+    # Only the chains that carry a SIGNIFICANT hit, so the lookup is bounded by the result.
+    wanted = sorted({h["target"] for rows in hits.values() for h in rows
+                     if float(h["evalue"]) <= args.floor})
+    annotations = annotate_subjects(wanted, args.out)
     cells = rates(orfs, hits, args.floor)
     piles = sorted({orf["pile"] for orf in orfs})
     seeds = sorted({orf["arm"].rsplit("_s", 1)[1] for orf in orfs}, key=int)
@@ -220,7 +232,14 @@ def main(argv=None) -> int:
             cell_text.append(f"{n} / {100*placed/n:.1f}%" if n else "-")
             band_rows.setdefault(band, {})[pile] = dict(n=n, placed=placed)
         lines.append(f"| {band} | " + " | ".join(cell_text) + " |")
-    lines += ["", "## 4. What the unnameable pile was placed onto", ""]
+    census = annotations["polymer_type_census"]
+    summary["subject_polymer_type_census"] = census
+    lines += ["", "## 4. What the unnameable pile was placed onto", "",
+              f"{annotations['chains']} distinct subject chains carry a significant hit, "
+              f"resolved per chain rather than per entry. Polymer type census: "
+              f"`{census}` - this is a check on the name lookup and not a result, because "
+              f"a Foldseek structure library holds protein chains only, so anything but "
+              f"100% protein here means a chain was resolved to the wrong molecule.", ""]
     for pile in ["unident", "ident"]:
         rows, total, distinct = subject_table(orfs, hits, annotations, args.floor, pile,
                                               args.top)
