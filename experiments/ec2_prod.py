@@ -43,6 +43,17 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import ec2_common as ec2lib
 from ec2_bigindex import AUTO_APPROVED_USD, projected_cost, render
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+# THE STAGE LIST HAS ONE HOME. It was typed in three places - hapax.py's `--stages`
+# default, prod_run.sh's `STAGES`, and here - and this launcher's copy is the one that
+# actually ran, so the first production pass ran `panel` after that stage had been taken
+# out of production everywhere else. Nothing broke, because the stage refuses on a library
+# with no truth panel and said so; but a validation stage ran in a production pass because
+# a list was typed a third time, which is the same family as a default where a refusal
+# belongs. Imported now, so there is one list and the launcher cannot disagree with the
+# tool it launches.
+from hapax import PRODUCTION_STAGES  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = Path(__file__).resolve().parent / "prod_userdata.sh"
 BOOTSTRAP = Path(__file__).resolve().parent / "bigindex_bootstrap.sh"
@@ -231,12 +242,11 @@ def main(argv: list[str] | None = None) -> int:
                          "only with a basis written into experiments/libraries.json - on a "
                          "library with little ribosomal content the SILVA instrument "
                          "cannot anchor enough reads to measure anything")
-    ap.add_argument("--stages", default="cascade contigs reads linkage census intervals "
-                                        "layers strains shortlist panel crossplant",
-                    help="hapax stages. `calibration` is left out because the spiked "
-                         "ladder needs a cross-sample reference assembly this run does "
-                         "not stage, and `divergent` because its gene-level workup is "
-                         "hours of BLAST over the removed pile")
+    ap.add_argument("--stages", default=" ".join(PRODUCTION_STAGES),
+                    help="hapax stages, defaulting to hapax.py's own production list - "
+                         "`panel` and `calibration` are validation stages and are not in "
+                         "it (SPEC 13.4), and `divergent` is left out because its "
+                         "gene-level workup is hours of BLAST over the removed pile")
     ap.add_argument("--megahit-memory", type=float, default=0.85,
                     help="MEGAHIT --memory as a fraction of RAM")
     ap.add_argument("--threads", type=int, default=8)

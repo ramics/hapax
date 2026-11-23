@@ -308,6 +308,37 @@ def test_the_depositor_panel_and_the_spiked_ladder_are_not_production_stages():
     assert "calibration" not in stages_line
 
 
+def test_the_stage_list_is_typed_once(tmp_path):
+    """One list, in hapax.py. The first production pass ran `panel` because of a copy.
+
+    `--stages` was typed in three places: hapax.py's default, prod_run.sh's `STAGES`, and
+    the launcher's `--stages`. Two were changed when the validation stages came out of
+    production and the third - the launcher's, the one that builds the command that
+    actually runs - was not, so launch 5 ran `panel` in a production pass. It refused,
+    correctly, and said why; the defect is that the disagreement was possible at all.
+    """
+    launcher = (ROOT / "experiments/ec2_prod.py").read_text()
+    assert "PRODUCTION_STAGES" in launcher, "the launcher must import the list, not type it"
+    for stage in ("contigs", "linkage", "shortlist"):
+        assert f'"{stage}' not in launcher.replace("PRODUCTION_STAGES", ""), (
+            f"{stage} is named literally in the launcher: a second stage list")
+    # the shell passes --stages only when a caller overrode it
+    run_sh = (ROOT / "experiments/prod_run.sh").read_text()
+    assert "${STAGES:+--stages $STAGES}" in run_sh
+    # and what the launcher would actually pass IS that list, read from the launcher
+    # itself rather than from a copy of the expectation
+    import importlib.util
+    loaded = []
+    for name, path in (("hapax_mod2", ROOT / "hapax.py"),
+                       ("ec2_prod_mod", ROOT / "experiments/ec2_prod.py")):
+        s = importlib.util.spec_from_file_location(name, path)
+        m = importlib.util.module_from_spec(s)
+        s.loader.exec_module(m)
+        loaded.append(m.PRODUCTION_STAGES)
+    assert loaded[0] == loaded[1], "the launcher's list is not hapax.py's"
+    assert "panel" not in loaded[1] and "calibration" not in loaded[1]
+
+
 def test_a_library_with_no_entry_is_not_a_refusal_for_a_launcher():
     """resolve() must refuse for a stage and must not for a launcher reporting what will run."""
     with pytest.raises(stage_refs.UnknownLibrary):

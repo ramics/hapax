@@ -61,7 +61,9 @@ REPORT_PAIRS="${REPORT_PAIRS:-2000}"
 # genomes from that water, and a spiked divergence ladder. Production water has no
 # depositor, so a production run has nothing to score against and must not pretend the
 # question applies (SPEC 13.4). They stay runnable by name on a fixture library.
-STAGES="${STAGES:-cascade contigs reads linkage census intervals layers strains shortlist crossplant}"
+# Empty means "whatever hapax.py's own production default is", which is where the list
+# lives; `--stages` is then not passed at all rather than passed a copy of it.
+STAGES="${STAGES:-}"
 MEGAHIT="${MEGAHIT:?set MEGAHIT to the megahit binary}"
 MINIMAP2="${MINIMAP2:?set MINIMAP2 to the minimap2 binary}"
 DIAMOND="${DIAMOND:?set DIAMOND to the diamond binary}"
@@ -241,7 +243,7 @@ for sd in $SEEDS; do
     --rrna-contigs "$ID_RRNA" \
     --assembly "$CONTIGS" \
     --removal-evidence "$EVIDENCE" \
-    --stages $STAGES \
+    ${STAGES:+--stages $STAGES} \
     || echo "seed $sd exited non-zero; its manifest records which stage"
   # Uploaded as soon as it exists: a run that is cut short by its own timer should leave
   # every finished seed behind it, not nothing.
