@@ -241,3 +241,35 @@ def test_the_library_reaches_a_stage_that_was_not_passed_one(tmp_path):
     for script, argv in seen.items():
         assert "--library" in argv, f"{script} ran without --library"
         assert argv[argv.index("--library") + 1] == "SRR23702504"
+
+
+def test_the_driver_has_no_private_git_helper_that_can_return_nothing():
+    """A manifest must not be able to record an empty commit or an unchecked clean tree.
+
+    The driver carried its own four-line `git()` that returned "" on any exception. On an
+    instance, which has a payload tarball and no git, that wrote `git_sha: ""` into every
+    seed manifest of `results/prod_SRR23702504/` and, worse, `tree_dirty: false`, because
+    `bool("")` is False - a positive claim about a tree nobody looked at. `provenance.py`
+    exists for that machine and raises rather than guessing. This is the shuffle tripwire
+    applied to provenance: a new private copy fails here.
+    """
+    src = (ROOT / "hapax.py").read_text()
+    assert "def git(" not in src, "hapax.py has grown a private git helper again"
+    assert "from provenance import git_sha, tree_dirty" in src
+    import provenance
+    assert hapax.git_sha is provenance.git_sha
+    assert hapax.tree_dirty is provenance.tree_dirty
+
+
+def test_provenance_refuses_rather_than_reporting_a_clean_tree_it_cannot_see(monkeypatch):
+    """With no git and no commit passed in, both calls raise instead of answering."""
+    import provenance
+    monkeypatch.setattr(provenance, "_git", lambda *a: None)
+    monkeypatch.delenv(provenance.SHA_ENV, raising=False)
+    for fn in (provenance.git_sha, provenance.tree_dirty):
+        with pytest.raises(provenance.ProvenanceError):
+            fn()
+    # and with the launcher's commit present, the tree is clean on that commit's authority
+    monkeypatch.setenv(provenance.SHA_ENV, "deadbee")
+    assert provenance.git_sha() == "deadbee"
+    assert provenance.tree_dirty() is False

@@ -74,12 +74,17 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
-def git(*args: str) -> str:
-    try:
-        return subprocess.run(["git", *args], cwd=ROOT, capture_output=True,
-                              text=True, check=True).stdout.strip()
-    except Exception:
-        return ""
+#: WHY THIS DRIVER DOES NOT HAVE ITS OWN git() ANY MORE. It had one, four lines, that
+#: swallowed every exception and returned "". On an instance there is a payload tarball and
+#: no git, so it returned "" for both calls below, and every seed manifest of the first
+#: production pass over a new library records `git_sha: ""` with `tree_dirty: false` -
+#: because `bool("")` is False, so the manifest asserted a clean tree that was never
+#: checked. `provenance.py` was fixed for exactly this machine (it takes the commit from
+#: HAPAX_GIT_SHA, which the launcher sets, only when git cannot answer) and the driver never
+#: imported it. Same family as the shuffle and the trim: the second writer did not know
+#: which condition the first was fixing, so the shared module is imported and never retyped,
+#: and it raises where the copy fell back.
+from provenance import git_sha, tree_dirty  # noqa: E402  (after the sys.path insert above)
 
 
 def wilson(k: int, n: int, z: float = 1.96) -> dict | None:
@@ -1289,8 +1294,7 @@ class Run:
         manifest = {
             "tool": "hapax run", "spec": "SPEC.md 8.1",
             "script": "hapax.py", "script_sha256": sha256(ROOT / "hapax.py"),
-            "git_sha": git("rev-parse", "HEAD"),
-            "tree_dirty": bool(git("status", "--porcelain")),
+            "git_sha": git_sha(), "tree_dirty": tree_dirty(),
             "seed": a.seed,
             "inputs": {"r1": str(a.r1), "r2": str(a.r2),
                        "r1_bytes": a.r1.stat().st_size if a.r1.exists() else None,
@@ -1653,7 +1657,7 @@ def main() -> int:
             print(f"  - {p}", file=sys.stderr)
         (run.dir / "manifest.json").write_text(json.dumps({
             "tool": "hapax run", "script_sha256": sha256(ROOT / "hapax.py"),
-            "git_sha": git("rev-parse", "HEAD"), "seed": args.seed,
+            "git_sha": git_sha(), "tree_dirty": tree_dirty(), "seed": args.seed,
             "status": "refused to start", "complete": False,
             "problems": run.problems,
             "parameters": {k: (str(v) if isinstance(v, Path) else
