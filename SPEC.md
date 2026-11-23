@@ -652,7 +652,7 @@ Load-bearing numbers and where each comes from. Nothing else in this document is
 
 | claim | where |
 |---|---|
-| Identification removes 77.10% (77.02–77.28, 5 seeds); residue 22.90% | `results/subtract_known/`, `results/subtract_recut/` |
+| Identification removes 77.10% (77.02–77.28, 5 seeds); residue 22.90% | `results/subtract_recut/` for the number — five seeds under one clean commit; `results/subtract_known/` for the report and the earlier mixed-commit run (`results/PROVENANCE.md` §2) |
 | The subtrahend is identification, not assembly — 85.9% against 77.0% | `results/holdout_cascade/` |
 | The sample's own assembly is the most efficient index (+30.33 marginal) and removes 0.0% of a genuinely novel virus | `results/subtract_known/`, `results/spike_holdout/` |
 | Residue size spans 8.79 points on assembler path flags; recovery does not move | `results/path_settings/` |

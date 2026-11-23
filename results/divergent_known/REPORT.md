@@ -17,7 +17,9 @@ at which a 60 aa alignment can be most of the contig. DIAMOND blastx `--sensitiv
 RefSeq viral proteins and Swiss-Prot. A hit counts at **E < 1e-5 and at least 60 aa
 aligned**. 10,172 contigs clear it. Gene level on the 600 longest divergent contigs and all
 301 near-reference ones: Prodigal in metagenome mode, minimum 50 aa, DIAMOND blastp, Pfam at
-the curators' gathering cutoffs. All 17,462,448 mates mapped back, mate 2 trimmed 16 nt.
+the curators' gathering cutoffs. All 17,462,448 mates mapped back, mate 2 trimmed 16 nt — 2 nt more than the measured
+prefix, which makes every depth figure here a floor and is reasoned about in
+[`../PROVENANCE.md`](../PROVENANCE.md) §4.
 
 ## 1. The word "identified" spans eighty points of identity
 

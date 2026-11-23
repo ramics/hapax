@@ -49,7 +49,12 @@ carries the spread so one figure can never stand in for a contig again.
 
 ## 3. The assembler's coverage header understates read support about fourfold
 
-Mapping all 17,462,448 mates back (mate 2 trimmed 16 nt, as everywhere in this repo):
+Mapping all 17,462,448 mates back (mate 2 trimmed 16 nt, which is **2 nt more than the
+measured non-template prefix of 14** — pinned as `trim_r2_for_mapback` in
+`experiments/libraries.json` and reasoned about in [`../PROVENANCE.md`](../PROVENANCE.md) §4.
+The over-trim applies to every read in the arm equally, so every depth and breadth figure
+below is a floor and nothing here is reordered by it. This line previously read "as
+everywhere in this repo", which was true of neither the repo nor the prefix):
 *Rodtovirus pelovivens* reads 37.7x in the SPAdes header and **170.7x** mapped. Median
 mapped depth on the divergent arm is 18.4x, maximum 467x, and median breadth covered is
 99.3% with nothing below 90%.

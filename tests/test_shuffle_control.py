@@ -50,9 +50,6 @@ GRANDFATHERED = {
     ("holdout_run.py", "dinuc_shuffle"): ("dinuc", "tree condition, returns None on "
                                           "failure and its caller counts; publishes "
                                           "results/holdout_run/"),
-    ("divergent_known.py", "dinuc_shuffle"): ("dinuc", "DEFECTIVE: no tree condition, "
-                                              "returns input; fixed on the holdout "
-                                              "thread's branch by importing this module"),
     ("residue_structure.py", "dinuc_shuffle"): ("dinuc", "tree condition, 50 retries "
                                                 "then returns input; 2 of 7,390 reads"),
     ("residue_contig_annotation.py", "dinuc_shuffle"): ("dinuc", "tree condition, 100 "
@@ -73,6 +70,16 @@ GRANDFATHERED = {
     ("holdout_run.py", "shuffle_arm"): ("wrapper", "counts failed and returned_input"),
     # The harness that measures the copies above holds its own references to them.
     ("shuffle_fallback_audit.py", "*"): ("audit", ""),
+}
+
+# Functions whose name matches the tripwire but whose body is an import rather than a walk.
+# They are not copies and are not measured by the behavioural tests, so they are kept out of
+# GRANDFATHERED, whose entries record a copy's measured behaviour. The tripwire is
+# name-based on purpose, and a loader is the one false positive that shape produces.
+IMPORTERS = {
+    ("reach_queries.py", "load_shuffle"): ("loads holdout_run.dinuc_shuffle by file path, "
+                                           "because experiments/ is not a package; "
+                                           "publishes results/reach/"),
 }
 
 CANONICAL = "shuffle_control.py"
@@ -287,7 +294,7 @@ def test_no_new_shuffle_copies():
     cheap, and a function that shuffles sequence and is not called *shuffle* is a review
     problem this cannot solve.
     """
-    allowed = set(GRANDFATHERED)
+    allowed = set(GRANDFATHERED) | set(IMPORTERS)
     found = []
     for path in sorted(EXP.glob("*.py")):
         if path.name == CANONICAL or (path.name, "*") in allowed:

@@ -13,6 +13,13 @@ parameters, timings) beside its output; headline results run across at least fiv
 spread reported. Scripts live in [`../experiments/`](../experiments/) under the same name as
 their results directory.
 
+**Where the record is weak about itself, it says so**: [`PROVENANCE.md`](PROVENANCE.md) is
+the index of provenance debts — manifests naming an index that was not consulted, the mixed
+commits behind `subtract_known/` and the clean recut that supersedes them, the shared-code
+hash that is fixed forward rather than retrofitted, and the mate-2 over-trim in the two
+divergent stages with the decision not to re-run and why. Each entry says whether it moves
+a number; none of them does.
+
 ## The current direction — subtract the known, measure the residue
 
 | directory | what it measured | status |
@@ -102,3 +109,16 @@ The first direction, kept verbatim and still runnable under
 [`../experiments/codon_assembler/`](../experiments/codon_assembler/) — spec, crate, scripts
 and its own `results/` tree, laid out as the repo root once was. Ships as a negative result,
 per its own kill criteria.
+
+**The measurement that ended it is
+[`../experiments/codon_assembler/results/stress/`](../experiments/codon_assembler/results/stress/README.md)**,
+and it landed on `main` on 2026-11-23 having sat on a thread branch with no pull request
+since the day it ran. Imo's redirect of 2026-11-19: break the published viral haplotype
+assemblers before building another one. **Untargeted novelty is not the gap** — a relative
+10% or more from its neighbour comes back as a complete genome from MEGAHIT, 5 of 7 in both
+seeds, nothing collapsed. **The near relative is where everything fails** — RaTG13 at 4%
+from SARS-CoV-2 collapsed entirely in three tools, recovered by none, with a fabricated
+13.8 kb HIV-1 B-into-C recombinant on the other side of the ledger. Superseded as a
+measurement by [`pair_ladder/`](pair_ladder/REPORT.md), which replaced the one-pair-per-rung
+design; the ~3.8% fusion threshold `SPEC.md` cites is the successor's. Arm 2, the mixed
+community with bacterial background, has no successor — the live ladder is spike-only.

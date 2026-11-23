@@ -1,0 +1,110 @@
+{
+  "n_truth": 24,
+  "n_contigs": 7,
+  "total_contig_bp": 8139,
+  "n50": 1639,
+  "recovered": 1,
+  "recovered_frac": 0.0417,
+  "recovered_names": [
+    "EU166626.1"
+  ],
+  "best_identity_median": 1.0,
+  "cross_host_chimaeras": 0,
+  "within_host_switches": 6,
+  "contigs_with_frameshift": 0,
+  "frameshifts_total": 0,
+  "frameshifts_per_kb": 0.0,
+  "per_contig": [
+    {
+      "contig": "NODE_1_length_2544_cov_102.355813",
+      "length": 2544,
+      "best": "EU166626.1",
+      "identity": 1.0,
+      "orientation": "+",
+      "frameshifts": 0,
+      "indels": 0,
+      "fs_per_kb": 0.0,
+      "cross_host_chimaera": false,
+      "within_host_switch": true,
+      "window_haplotypes": 2
+    },
+    {
+      "contig": "NODE_2_length_1639_cov_37.641534",
+      "length": 1639,
+      "best": "EU166490.1",
+      "identity": 0.99878,
+      "orientation": "-",
+      "frameshifts": 0,
+      "indels": 0,
+      "fs_per_kb": 0.0,
+      "cross_host_chimaera": false,
+      "within_host_switch": true,
+      "window_haplotypes": 3
+    },
+    {
+      "contig": "NODE_3_length_1540_cov_100.309271",
+      "length": 1540,
+      "best": "EU166441.1",
+      "identity": 1.0,
+      "orientation": "-",
+      "frameshifts": 0,
+      "indels": 0,
+      "fs_per_kb": 0.0,
+      "cross_host_chimaera": false,
+      "within_host_switch": true,
+      "window_haplotypes": 3
+    },
+    {
+      "contig": "NODE_4_length_691_cov_52.225177",
+      "length": 691,
+      "best": "EU166468.1",
+      "identity": 0.99711,
+      "orientation": "+",
+      "frameshifts": 0,
+      "indels": 0,
+      "fs_per_kb": 0.0,
+      "cross_host_chimaera": false,
+      "within_host_switch": true,
+      "window_haplotypes": 2
+    },
+    {
+      "contig": "NODE_5_length_616_cov_44.147239",
+      "length": 616,
+      "best": "EU166513.1",
+      "identity": 1.0,
+      "orientation": "-",
+      "frameshifts": 0,
+      "indels": 0,
+      "fs_per_kb": 0.0,
+      "cross_host_chimaera": false,
+      "within_host_switch": false,
+      "window_haplotypes": 1
+    },
+    {
+      "contig": "NODE_6_length_558_cov_19.343387",
+      "length": 558,
+      "best": "EU166495.1",
+      "identity": 1.0,
+      "orientation": "-",
+      "frameshifts": 0,
+      "indels": 0,
+      "fs_per_kb": 0.0,
+      "cross_host_chimaera": false,
+      "within_host_switch": true,
+      "window_haplotypes": 2
+    },
+    {
+      "contig": "NODE_7_length_551_cov_109.497642",
+      "length": 551,
+      "best": "EU166450.1",
+      "identity": 1.0,
+      "orientation": "-",
+      "frameshifts": 0,
+      "indels": 0,
+      "fs_per_kb": 0.0,
+      "cross_host_chimaera": false,
+      "within_host_switch": true,
+      "window_haplotypes": 2
+    }
+  ]
+}
