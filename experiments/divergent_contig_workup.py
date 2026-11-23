@@ -61,6 +61,9 @@ import sys
 import time
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir
+import library_facts
+
 ROOT = Path(__file__).resolve().parents[1]
 
 # The identity bands, stated once and used everywhere, so that the word "strain" cannot
@@ -385,7 +388,14 @@ def main() -> None:
     ap.add_argument("--contigs", type=Path, default=ROOT / "data/geo/sample_contigs.fa")
     ap.add_argument("--r1", type=Path, default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
     ap.add_argument("--r2", type=Path, default=ROOT / "data/berlin/SRR23973193_2.fastq.gz")
-    ap.add_argument("--trim-r2", type=int, default=16)
+    library_facts.add_argument(ap)
+    ap.add_argument("--trim-r2", type=int, default=None,
+                    help="mate 2 bases trimmed when mapping reads back. This stage "
+                         "trimmed 16 where the measured prefix is 14, so the value "
+                         "comes from trim_r2_for_mapback in "
+                         "experiments/libraries.json, which pins what these results "
+                         "were produced with and states the discrepancy. Reconciling "
+                         "it to 14 means re-running this stage")
     ap.add_argument("--map-limit", type=int, default=0,
                     help="mates per file to stream, 0 for the whole library")
     ap.add_argument("--diverged-below", type=float, default=90.0)
@@ -404,6 +414,11 @@ def main() -> None:
     ap.add_argument("--work", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args()
+    # The map-back trim was a bare default of 16 here while the measured prefix is 14.
+    # It is resolved from experiments/libraries.json under its own key, so the value these
+    # results were produced with is pinned and the discrepancy is recorded rather than
+    # silently reconciled; changing it means re-running this stage.
+    library_facts.resolve_args(a, {"trim_r2": "trim_r2_for_mapback"})
 
     for p in (a.strains, a.contigs, a.dmnd, a.pfam):
         if not p.exists():

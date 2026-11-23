@@ -30,8 +30,15 @@ python3 hapax.py run SAMPLE_1.fastq.gz SAMPLE_2.fastq.gz --seed 1 --out RUNDIR \
     --contigs IDENTIFIED_RRNA.fa IDENTIFIED_OTHER.fa --unidentified-contigs UNIDENTIFIED.fa \
     --identified-contigs IDENTIFIED_OTHER.fa --rrna-contigs IDENTIFIED_RRNA.fa \
     --assembly ASSEMBLY.fa --cross-sample-ref OTHER_SAMPLES.fa --spacers SPACERS.fa
-python3 experiments/make_web.py RUNDIR          # writes RUNDIR/web/index.html
+python3 experiments/make_web.py results/web/pages/SAMPLE.json   # the run viewer
 ```
+
+The web view is built by one command for every sample. What a page says about its sample
+that is not in the run directory - its title, one sentence on what the water is, and every
+result file outside the run that a panel reads, each as a path or as `not_run` with a
+reason - is in that sample's descriptor under `results/web/pages/`. Methods entries live in
+`results/web/methods.json`, with any row measured on one library stored under its
+accession; on another sample's page that row reads "Not measured on this library".
 
 Everything that belongs to one sample - its trim, its own contigs, its assembly - has to
 be given: there are no defaults for those, because a default is some other sample's file

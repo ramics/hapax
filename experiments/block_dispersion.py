@@ -33,6 +33,8 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "experiments"))
+
+import library_facts
 from subtract_known import provenance  # noqa: E402
 
 CLASSES = {"none": 0, "rrna": 1, "identified": 2, "unident": 3, "other_ctg": 4}
@@ -43,9 +45,16 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=1, help="recorded; the pass is deterministic")
     ap.add_argument("--classes", type=Path, default=ROOT / "data/work/library_label_classes.npz")
     ap.add_argument("--window", type=int, default=100000, help="the cascade's block size")
-    ap.add_argument("--block-stride", type=int, default=1500000, help="the cascade's seed stride")
+    library_facts.add_argument(ap)
+    ap.add_argument("--block-stride", type=int, default=None,
+                    help="the cascade's seed stride. From the library unless given")
     ap.add_argument("--out", type=Path, default=ROOT / "results/residue_census")
     args = ap.parse_args()
+    # The stride is a property of the library: sized to 8.73 M pairs, it leaves the
+    # last seeds of a smaller library reading nothing, and the directory still looks
+    # like a five-seed result. Read from experiments/libraries.json, which raises
+    # for a library it does not know.
+    library_facts.resolve_args(args, {"block_stride": "block"})
     args.out.mkdir(parents=True, exist_ok=True)
 
     d = np.load(args.classes)

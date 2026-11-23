@@ -48,6 +48,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import library_facts
+
 from berlin_io import read_pairs, revcomp
 from subtract_known import _mm_index, provenance
 
@@ -86,6 +88,11 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[1, 2, 3, 4, 5])
     ap.add_argument("--pairs", type=int, default=20_000)
+    library_facts.add_argument(ap)
+    ap.add_argument("--trim-r2", type=int, default=None,
+                    help="mate 2's non-template 5' prefix. From the library unless given")
+    ap.add_argument("--block", type=int, default=None,
+                    help="pairs skipped per seed, so the seeds read distinct regions of\n                         " "the flow cell. From the library unless given")
     ap.add_argument("--r1", type=Path, default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
     ap.add_argument("--r2", type=Path, default=ROOT / "data/berlin/SRR23973193_2.fastq.gz")
     ap.add_argument("--contigs", type=Path, default=ROOT / "data/geo/sample_contigs.fa")
@@ -98,6 +105,12 @@ def main() -> None:
     ap.add_argument("--work", type=Path, default=Path("/tmp/claude-0/wk/qprof"))
     ap.add_argument("--out", type=Path, default=ROOT / "results/quality_profile")
     args = ap.parse_args()
+    # A trim length and a block stride are facts about a sequencing run, and both
+    # were literals inside the read_pairs call below, where no help text and no
+    # manifest ever showed them. They now come from experiments/libraries.json by
+    # accession, which refuses a library it does not know rather than applying
+    # Berlin's 14 nt and 1.5 M stride to another library's reads.
+    library_facts.resolve_args(args, ["trim_r2", "block"])
 
     args.work.mkdir(parents=True, exist_ok=True)
     args.out.mkdir(parents=True, exist_ok=True)
@@ -120,8 +133,8 @@ def main() -> None:
         only1 = only2 = both = neither = 0
         only1_t = only2_t = both_t = neither_t = 0
 
-        for name, s1, s2, q1, q2 in read_pairs(args.r1, args.r2, args.pairs, 14,
-                                               (seed - 1) * 1_500_000):
+        for name, s1, s2, q1, q2 in read_pairs(args.r1, args.r2, args.pairs, args.trim_r2,
+                                               (seed - 1) * args.block):
             pairs += 1
             for mate, q in ((1, q1), (2, q2)):
                 for i, ch in enumerate(q[:L]):

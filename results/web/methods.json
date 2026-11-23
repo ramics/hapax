@@ -1,0 +1,550 @@
+{
+ "_what": "Every Methods entry any page can carry. See experiments/make_web.py, resolve_methods().",
+ "entries": [
+  {
+   "id": "library",
+   "title": "Library and read handling",
+   "about": "tool",
+   "rows": [
+    [
+     "Input",
+     null
+    ],
+    [
+     "Procedure",
+     null
+    ],
+    [
+     "Threshold",
+     "None."
+    ],
+    [
+     "Denominator",
+     "Read pairs in the analysed block."
+    ],
+    [
+     "Control",
+     null
+    ],
+    [
+     "Bias",
+     null
+    ]
+   ],
+   "measured": {
+    "SRR23973193": {
+     "Input": "SRR23973193, Berlin influent, total RNA, 8,731,224 read pairs.",
+     "Procedure": "Mate 2 carries about 14 nt of non-template 5-prime sequence; 14 nt are trimmed, as this run's manifest records (trim_r2), leaving mates of 107 and 93 nt. Every percentage on this page is of read pairs.",
+     "Control": "Per-base error rate 0.00068, measured on self-overlapping pairs, so quality-derived error rates run 2.6x conservative.",
+     "Bias": "One plant, one date. In this plant the ribosomal fraction moves from 38.0% to 67.1% and the identifiable fraction from 22.7% to 40.7% over eight months. Every fraction here is specific to this run."
+    },
+    "SRR23421544": {
+     "Input": "SRR23421544, treated wastewater collected in Russia on 2022-05-10, total RNA, 4,290,429 reads (data/MANIFEST.md).",
+     "Procedure": "Single-end in practice although the record says paired: no mate-2 records are present, so no mate trim applies and each read is analysed alone. Every percentage on this page is of reads.",
+     "Control": "Not measured on this library.",
+     "Bias": "One library, one date. Every fraction here is specific to this run."
+    }
+   }
+  },
+  {
+   "id": "watchlist",
+   "title": "Watchlist screen",
+   "about": "tool",
+   "rows": [
+    [
+     "Input",
+     "44 taxa, each with a recorded reason for inclusion."
+    ],
+    [
+     "Procedure",
+     "Kraken2 against PlusPF-08. A pair counts for a taxon when it is assigned to that taxon or below it."
+    ],
+    [
+     "Threshold",
+     null
+    ],
+    [
+     "Denominator",
+     "All read pairs."
+    ],
+    [
+     "Control",
+     "The same panel over composition-matched shuffled reads, counted on the panel at both settings."
+    ],
+    [
+     "Bias",
+     "Misassignment to a close relative inflates a detection and is uncontrolled. Non-detections carry rule-of-three upper bounds at this depth, which are statements about sequencing depth and not about the catchment."
+    ]
+   ],
+   "measured": {
+    "SRR23973193": {
+     "Threshold": "Confidence 0.1 for the ranking; 0.2 for the per-row chip. Threshold dominates database size by an order of magnitude: one database removes 42.8%, 21.7% or 3.5% of this library on its setting alone."
+    }
+   }
+  },
+  {
+   "id": "composition",
+   "title": "Library composition",
+   "about": "tool",
+   "rows": [
+    [
+     "Input",
+     "All read pairs."
+    ],
+    [
+     "Procedure",
+     "Kraken2 PlusPF-08, assignments rolled up to superkingdom. The second ring renormalises over the named fraction."
+    ],
+    [
+     "Threshold",
+     "Confidence selectable on the panel; the named fraction spans the range quoted in the caveat."
+    ],
+    [
+     "Denominator",
+     "First ring all pairs, second ring the named pairs."
+    ],
+    [
+     "Control",
+     "None applicable: the figure is one classifier output."
+    ],
+    [
+     "Bias",
+     null
+    ]
+   ],
+   "measured": {
+    "SRR23973193": {
+     "Bias": "RNA abundance, not cell counts: one bacterium with a thousand ribosomes contributes a thousand times its cell count. The unnamed share is this index reach at this setting; other tiers recognise most of it."
+    }
+   }
+  },
+  {
+   "id": "cascade",
+   "title": "Cascade removal",
+   "about": "tool",
+   "rows": [
+    [
+     "Input",
+     "The read pairs. Each subtraction index runs independently over all of them, so per-tier removal is order-free."
+    ],
+    [
+     "Procedure",
+     "Union across tiers. The ribosomal tier precedes the protein tiers, because against a protein index ribosomal reads stop looking novel first. Marginal removal is the increment a tier adds to the union."
+    ],
+    [
+     "Threshold",
+     "Kraken2 confidence as above; DIAMOND bitscore 50 for the protein tier, swept across 30 to 100 in the output file."
+    ],
+    [
+     "Denominator",
+     "Read pairs."
+    ],
+    [
+     "Control",
+     null
+    ],
+    [
+     "Bias",
+     null
+    ]
+   ],
+   "measured": {
+    "SRR23973193": {
+     "Control": "Shuffled reads, which score zero at every tier.",
+     "Bias": "A tier can match sequence that nothing names, so identifiable exceeds named: 77.10% identifiable against 7.49% nameable. Five seeds are contiguous blocks of one flow cell with overdispersion about 1.5x, so the reported spread is observed and is not an estimate of dispersion."
+    }
+   }
+  },
+  {
+   "id": "contigid",
+   "title": "Contig identification and divergence",
+   "about": "tool",
+   "rows": [
+    [
+     "Input",
+     "Contigs assembled from this library."
+    ],
+    [
+     "Procedure",
+     "DIAMOND blastx against RefSeq viral proteins and Swiss-Prot. Every identity is reported with its aligned length and the fraction of the subject covered."
+    ],
+    [
+     "Threshold",
+     "E below 1e-5 and at least 60 aa aligned. Identity is quantised at shorter alignment lengths and is not plotted there."
+    ],
+    [
+     "Denominator",
+     "Contigs with a significant hit."
+    ],
+    [
+     "Control",
+     null
+    ],
+    [
+     "Bias",
+     null
+    ]
+   ],
+   "measured": {
+    "SRR23973193": {
+     "Control": "A dinucleotide-preserving shuffle of the same contigs through the same search. 89.5% of real contigs carry a significant alignment and 0 of 11,361 shuffles do; the whole shuffled library yields one 47 aa alignment at E=8.4e-4, which clears neither floor. Existence of the alignment is therefore the calibrated quantity, and no field conditional on a hit has a null to be compared against. This control asks whether a hit is real. It does not ask whether identity measures the distance between a real contig and its real relative, which the holdout answers: a genome 30.28% diverged was reported at 66.5% protein identity over 620 aa against a referenced comparator in the same library at 99.9%, ordered correctly by 30 points.",
+     "Bias": "Both reference sets are narrow, so each identity is an upper bound on identity and each divergence a lower bound on divergence. That bound is measured at nucleotide level against NCBI core_nt, 319 GB: of 149 divergent contigs, 25 collapse to 90% identity or above over at least half their length and 83 stay under 80% identity or under half covered, while all 135 near-reference controls return at a median 97.55% over 98.8% of their length. The protein equivalent against nr has not landed."
+    }
+   }
+  },
+  {
+   "id": "genespread",
+   "title": "Per-gene identity and ranking",
+   "about": "tool",
+   "rows": [
+    [
+     "Input",
+     "ORFs called by Prodigal in metagenome mode, minimum 50 aa."
+    ],
+    [
+     "Procedure",
+     "DIAMOND blastp per ORF, with the gene role read from the subject title. Rows rank on the polymerase where one is called; the panel states when a row ranks on the whole contig instead."
+    ],
+    [
+     "Threshold",
+     "E below 1e-5, at least 60 aa."
+    ],
+    [
+     "Denominator",
+     "For the spread, contigs with two or more scorable genes."
+    ],
+    [
+     "Control",
+     null
+    ],
+    [
+     "Bias",
+     null
+    ]
+   ],
+   "measured": {
+    "SRR23973193": {
+     "Control": "Contigs matching their reference at 95% or above, same procedure. Their genes agree to a median 2.35 points where the divergent arm disagrees by 17.4. Over the whole identified pile, 600 divergent against 302 near-reference contigs, the same comparison reads 12.8 against 2.45. Which gene carries the distance is read paired, role against role on contigs carrying both as separate ORFs: the maturation protein sits below the polymerase on 122 of 131 such contigs, a median 6.9 points, and below the capsid on 28 of 31. The near-reference arm is a coin toss there, which is what makes the divergent arm readable.",
+     "Bias": "The arms are not matched as drawn: divergent contigs carry a median of 3 scorable genes over 3,820 nt against 1 over 552 nt, and more genes give a spread more room, which biases the gap upward. At equal gene counts the gap holds: 5.6 against 1.3 points at two genes, 16.9 against 2.65 at three. One identity per contig is whichever gene won on bitscore, usually the more conserved gene. Protein identity also understates nucleotide divergence, since synonymous changes are invisible to it. Two confounds on the role ordering were measured and neither explains it: distinct reference proteins matched per ORF are 0.604 for the polymerase against 0.598 for the maturation protein, and inside matched alignment-length bands the gap is 7 to 8 points. The capsid is not placed in the ordering, because half its alignments run under 150 aa where identity is quantised. Two roles called on one ORF are one number compared with itself and are excluded."
+    }
+   }
+  },
+  {
+   "id": "depth",
+   "title": "Mapped depth and evenness",
+   "about": "tool",
+   "rows": [
+    [
+     "Input",
+     "Every read pair in the library, mate 2 trimmed as above."
+    ],
+    [
+     "Procedure",
+     "Reads mapped back onto the contigs with minimap2. Depth is the mean over contig positions; evenness is the fraction of positions within 2x of the median."
+    ],
+    [
+     "Threshold",
+     "Primary alignments only."
+    ],
+    [
+     "Denominator",
+     "Contig positions."
+    ],
+    [
+     "Control",
+     null
+    ],
+    [
+     "Bias",
+     "A region shared with another molecule collects that molecule reads, which raises depth without raising evidence. Evenness is the field that exposes it."
+    ]
+   ],
+   "measured": {
+    "SRR23973193": {
+     "Control": "The assembler coverage header on the same contigs, which understates mapped depth about fourfold on this set."
+    }
+   }
+  },
+  {
+   "id": "chimaera",
+   "title": "Chimaera check",
+   "about": "tool",
+   "rows": [
+    [
+     "Input",
+     "The same contigs and the same per-gene hits."
+    ],
+    [
+     "Procedure",
+     "Genes on one contig are tested for whether they point at the same subject organism."
+    ],
+    [
+     "Threshold",
+     "As the gene level above."
+    ],
+    [
+     "Denominator",
+     "Contigs with two or more scorable genes."
+    ],
+    [
+     "Control",
+     null
+    ],
+    [
+     "Bias",
+     null
+    ]
+   ],
+   "measured": {
+    "SRR23973193": {
+     "Control": "The near-reference arm. The flag fires on 46.31% of divergent contigs and 39.26% of controls.",
+     "Bias": "The flag tracks how the assembler joins genes, so it carries almost no information about divergence and nothing is dropped on it. Split-mapping, the read-level version, has a 26% false-positive rate on known background."
+    }
+   }
+  },
+  {
+   "id": "residue",
+   "title": "Residue census and recurrence",
+   "about": "tool",
+   "rows": [
+    [
+     "Input",
+     "Read pairs surviving every subtraction tier."
+    ],
+    [
+     "Procedure",
+     "Artefact signatures, mapped depth, and occupancy across the other dates from the same plant."
+    ],
+    [
+     "Threshold",
+     null
+    ],
+    [
+     "Denominator",
+     "Residue pairs seen once, against identified pairs at the same depth."
+    ],
+    [
+     "Control",
+     null
+    ],
+    [
+     "Bias",
+     null
+    ]
+   ],
+   "measured": {
+    "SRR23973193": {
+     "Threshold": "Significance as above. Occupancy is counted over 41 dates, which are 85 distinct waters across 215 runs.",
+     "Control": "Identified reads at matched depth: 21.5% of residue reads appear on none of the other dates against 0.9%, a factor of 24. Artefact signatures together account for under 1% of the pile.",
+     "Bias": "A query drawn from the library being searched is abundant there by construction, which made 54% of background reads look like they were growing against 6% under the swap control, so queries come from outside the library searched. The median depth of this pile is 1, which is the floor of what any read-level field can read."
+    }
+   }
+  },
+  {
+   "id": "spectrum",
+   "title": "The distance spectrum",
+   "about": "tool",
+   "rows": [
+    [
+     "Input",
+     "Every identified contig of at least 300 nt that is short enough for per-ORF scoring, from the divergent stage, both arms."
+    ],
+    [
+     "Procedure",
+     "ORFs called by Prodigal in metagenome mode, DIAMOND blastx and blastp against RefSeq viral proteins and Swiss-Prot, roles read from Pfam at gathering cutoffs. Position on the axis is the identity of the polymerase where one is called and the whole-contig hit otherwise, stated per row. The bar is the range across that contig own scorable genes. Colour is the fraction of the scored gene the alignment spans. Height is median mapped depth from minimap2."
+    ],
+    [
+     "Threshold",
+     "E below 1e-5 and at least 60 aa aligned for a hit to exist. A contig is drawn at an identity only if at least 50% of the scored gene is aligned over at least 100 aa; the rest go to a lane off the axis."
+    ],
+    [
+     "Denominator",
+     "Contigs with a significant protein hit and a scorable gene. The panel prints that count against the whole searched pile."
+    ],
+    [
+     "Control",
+     null
+    ],
+    [
+     "Bias",
+     null
+    ]
+   ],
+   "measured": {
+    "SRR23973193": {
+     "Control": "Two, drawn by the same code. The near-reference arm, contigs matching their reference at 95% or above, lands at the right-hand end by construction and is what makes the left-hand end readable. And a dinucleotide-preserving shuffle of the same contigs, which produces 0 significant alignments from 11,361, so the existence of every point on this axis is calibrated even though no identity on it is.",
+     "Bias": "Identity against a reference orders contigs by database proximity, so no threshold is drawn on the axis and the three-bucket overlay is off by default. Both reference sets are narrow, so each position is an upper bound on identity; against core_nt, 319 GB, 25 of 149 divergent contigs collapsed to a strain-level identification and 83 stayed distant, which is the measured size of that bound at nucleotide level. The ring recording that is a label, not a move along this axis, because comparing a nucleotide identity with a protein one compares two instruments. Identity also flatters towards familiar as coverage falls, by +17.2 points below half coverage against +7.1 above 90%, which is why coverage is on the colour ramp rather than in a column."
+    }
+   }
+  },
+  {
+   "id": "concern",
+   "title": "What the named leftovers point at",
+   "about": "tool",
+   "rows": [
+    [
+     "Input",
+     null
+    ],
+    [
+     "Procedure",
+     "DIAMOND --sensitive against RefSeq viral proteins plus Swiss-Prot, then the matched record is placed in a host group by an auditable keyword table rather than a classifier, so a reader can disagree with one line. Two separate axes are kept: what the record IS, and what it INFECTS. A cellular record is not given a host, because it is the organism."
+    ],
+    [
+     "Threshold",
+     "E < 1e-5. Host confidence ramps with identity from 40% to 90% and with aligned length from 20 to 60 aa, so a distant or short match is damped towards unknown rather than counted at face value."
+    ],
+    [
+     "Denominator",
+     "Reads, not records: a share of records is a share of the database. Both are shown on hover."
+    ],
+    [
+     "Control arm",
+     null
+    ],
+    [
+     "Bias direction",
+     null
+    ]
+   ],
+   "measured": {
+    "SRR23973193": {
+     "Input": "Every unplaced mate in the library, 2,744,042 of them, and the named relative each one points at where it has a significant one. 214,502 reads over 41,829 distinct records.",
+     "Control arm": "The same search over 400,000 reads the cascade had already named, and a dinucleotide-shuffled null that returns no significant hit at all.",
+     "Bias direction": "Towards the well-sequenced. A group is large here when its members are in the reference sets, not when it is abundant in the water, and phage records dominate both. The 22.7% whose host could not be placed is counted as unknown and never as safe. Nothing in this is a measure of harm."
+    }
+   }
+  },
+  {
+   "id": "crossplant",
+   "title": "Recurrence across plants",
+   "about": "tool",
+   "rows": [
+    [
+     "Input",
+     null
+    ],
+    [
+     "Procedure",
+     "K-mer witnessing of each query read against the union of the panel, paired within plant so that plants are compared with themselves."
+    ],
+    [
+     "Threshold",
+     "Exact 31-mer witness; depth of the query read recorded beside it, because depth decides the outcome far more than the pile a read came from."
+    ],
+    [
+     "Denominator",
+     "Read pairs of the held-out library."
+    ],
+    [
+     "Control arm",
+     null
+    ],
+    [
+     "Bias direction",
+     null
+    ]
+   ],
+   "measured": {
+    "SRR23973193": {
+     "Input": "512 panel libraries from 32 wastewater plants on three continents, against reads held out of the library searched.",
+     "Control arm": "Identified reads at matched depth, and a swap control against reads from the library itself, which grow 54% by construction.",
+     "Bias direction": "Blind to anything present once rather than to anything novel: at depth 1 residue survives 79.0% and identified reads 70.5%, a gap of 8.5 points. Contigs have not been put through it."
+    }
+   }
+  },
+  {
+   "id": "holdout",
+   "title": "The withheld genome",
+   "about": "SRR23421544",
+   "rows": [
+    [
+     "Input",
+     "SRR23421544, a wastewater library whose depositors later assembled and deposited 25 genomes from that same water. One of them, OQ722337.1, was deposited 2023-07-31, after the 2022-05-10 date every index in this run was rolled back to, so no index here could contain it."
+    ],
+    [
+     "Procedure",
+     "The cascade was run blind over the library. The contig carrying the withheld genome was then located by mapping, its genes called with the same caller and minimum length as the gene-level stage, and its identities read from that stage rather than recomputed."
+    ],
+    [
+     "Threshold",
+     "The cascade’s own: Kraken2 at confidence 0.1 and a DIAMOND bitscore of 50. The contig scores 812 against that 50."
+    ],
+    [
+     "Denominator",
+     "The deposited genome, 4,147 nt, for recovery; the run’s unidentified pile, 13,033 contigs, for whether it survived."
+    ],
+    [
+     "Control arm",
+     "A second contig from the same library carrying a genome that was already published, which reads 99.9% and is removed by the same rule. The withheld contig scores 66.5% against that control’s 99.9%, and the two get one word."
+    ],
+    [
+     "Bias direction",
+     "Towards finding the holdout easier than a real unknown would be. Its nearest relative exists and is recognisable from a long way off; a virus with no relative at all would reach tier 2 instead, which this fixture cannot test. Rolling the reference back a further 4.5 years moved nothing, so nothing leaked."
+    ]
+   ]
+  },
+  {
+   "id": "vocab",
+   "title": "The words, and where they come from",
+   "about": "tool",
+   "rows": [
+    [
+     "Input",
+     "experiments/virus_vocabulary.json, committed. One entry per gene role and one per architecture, each with the plain words it licenses and the basis for them."
+    ],
+    [
+     "Procedure",
+     "experiments/architecture_call.py applies the vocabulary’s rule to the scored contigs and writes the call with the evidence that fired. This page assembles sentences from those fields and has no vocabulary of its own."
+    ],
+    [
+     "Threshold",
+     "one gene carrying a named Pfam family or a named subject-title substring. The evidence is recorded per contig, so a reader can see how thin a call is."
+    ],
+    [
+     "Denominator",
+     "every scored contig. A contig with no matching evidence is recorded as not called, with the reason, and never as \"not a phage\"."
+    ],
+    [
+     "Control arm",
+     "none, and there cannot be one: this is not a measurement. The words are hand-written background knowledge. Committing them is what makes them reviewable and correctable in one place rather than invisible inside a figure."
+    ],
+    [
+     "Bias direction",
+     "towards the one architecture the vocabulary knows. It can recognise that architecture or decline; it cannot distinguish between architectures, and a subject title saying \"ssRNA phage\" is a claim made by whoever deposited the record."
+    ]
+   ]
+  },
+  {
+   "id": "nulls",
+   "title": "Shuffled nulls",
+   "about": "tool",
+   "rows": [
+    [
+     "Input",
+     "The same reads or contigs, shuffled with composition preserved."
+    ],
+    [
+     "Procedure",
+     "The identical search at the identical threshold, in the same pass as the test it calibrates. The shuffle is the Altschul and Erikson Eulerian walk, preserving length and dinucleotide composition exactly, from one shared module that raises on failure. A shuffle that cannot be computed is reported, never replaced by its input: an earlier version returned the input on a dead-ended walk for 324 of 11,361 contigs, and those 324 supplied every hit the null appeared to produce."
+    ],
+    [
+     "Threshold",
+     "As the test."
+    ],
+    [
+     "Denominator",
+     "As the test. A null of zero is reported as a census over the number shuffled, because an empty table and a search that never ran look the same."
+    ],
+    [
+     "Control",
+     "This row is the control."
+    ],
+    [
+     "Bias",
+     "A null states what a field reads on meaningless input. It does not state what a field reads on real input for the wrong reason, which only a positive control can remove. Where none exists the direction of the bias is given alone. Operating point decides a null: the weak-hit band reads 92.3% on shuffled reads with no E-value floor and 0.00% with one."
+    ]
+   ]
+  }
+ ]
+}

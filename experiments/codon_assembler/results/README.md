@@ -4,6 +4,36 @@ Everything here is reproducible from a committed script plus a seed. Each
 directory has a `manifest.json` with the git SHA, parameters and timings.
 These runs used commit `4e55e54`.
 
+## 0. The incumbent stress test — why this direction was left
+
+[`stress/`](stress/README.md) is Imo's redirect of 2026-11-19: before building more of
+hapax, try to break the published viral haplotype assemblers on the hardest realistic case.
+It is the measurement that ended this direction, and it landed on `main` only on 2026-11-23,
+having sat on `claude/project-thread-hsxnny` with no pull request since the day it ran.
+Nothing in it was changed on the way in except the paths to its scorers, which moved with
+the archive into [`../python/`](../python/).
+
+Two findings, and they point opposite ways:
+
+- **Untargeted novelty is not the gap.** A relative 10% or more from its known neighbour
+  comes back as its own complete genome: MEGAHIT recovered 5 of 7 relatives in both
+  community seeds with nothing collapsed and no cross-genome chimaera, a bat coronavirus
+  24% from SARS-CoV-2 among them. A 2015 de Bruijn metagenome assembler already does the
+  thing a new assembler would be built for.
+- **The near relative is where everything fails.** RaTG13 at 4% from SARS-CoV-2 and a
+  quarter of its depth: metaSPAdes, Haploflow and metaFlye collapsed it entirely in seed 2
+  while SARS-CoV-2 came back complete, and no tool recovered it in any run. Failures run the
+  other way too — a fabricated 13.8 kb HIV-1 B-into-C recombinant, and three different
+  false joins.
+
+**Superseded as a measurement, not as a reason.** `../../../../results/pair_ladder/` is the
+live version of the near-relative question: this ladder carried one genome pair per
+divergence rung, so divergence was collinear with pair identity, and the successor runs
+three real pairs per rung over seven rungs, 2,205 runs, five seeds. The ~3.8% fusion
+threshold that `SPEC.md` §6 quotes is the successor's number, not this directory's. What
+survives here unreplaced is arm 2, the mixed community with background: the successor is
+spike-only.
+
 ## What the simulation is (and is not)
 
 `python/swarm.py`. There are four entities per world: two **sister populations**

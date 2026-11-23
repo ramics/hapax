@@ -1,0 +1,43 @@
+{
+  "n_truth": 20,
+  "n_contigs": 2,
+  "total_contig_bp": 5075,
+  "n50": 2542,
+  "recovered": 0,
+  "recovered_frac": 0.0,
+  "recovered_names": [],
+  "best_identity_median": 0.98443,
+  "cross_host_chimaeras": 0,
+  "within_host_switches": 1,
+  "contigs_with_frameshift": 2,
+  "frameshifts_total": 21,
+  "frameshifts_per_kb": 4.1379,
+  "per_contig": [
+    {
+      "contig": "haplotype_0_length_2493_abundance_0.7087854392719636_number_of_reads_2025_depth_1811.6323064770932",
+      "length": 2533,
+      "best": "EU166791.1",
+      "identity": 0.98066,
+      "orientation": "+",
+      "frameshifts": 12,
+      "indels": 18,
+      "fs_per_kb": 4.737,
+      "cross_host_chimaera": false,
+      "within_host_switch": false,
+      "window_haplotypes": 1
+    },
+    {
+      "contig": "haplotype_1_length_2498_abundance_0.2912145607280364_number_of_reads_832_depth_755.0481832543444",
+      "length": 2542,
+      "best": "JX239306.1",
+      "identity": 0.9882,
+      "orientation": "+",
+      "frameshifts": 9,
+      "indels": 11,
+      "fs_per_kb": 3.541,
+      "cross_host_chimaera": false,
+      "within_host_switch": true,
+      "window_haplotypes": 3
+    }
+  ]
+}

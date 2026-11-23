@@ -192,3 +192,13 @@ date holdout a genuine blind.
 | nucleotide reference | RefSeq viral genomic release (`viral.*.genomic.gbff.gz`) | 2026-11-21 | 19,650 records. Taken as the **release file rather than the API**: an `efetch` paging of the equivalent protein set is ~100 minutes against 6 seconds here |
 | protein reference | RefSeq viral protein release (`viral.protein.faa`) | 2026-11-21 | 722,827 proteins, 229 MB. The whole release, not a taxon-scoped subset - scoping it by hand-written order taxids previously produced "no protein relative at all" for four candidates, which was an artefact of a database that did not contain their class |
 | date key | each RefSeq record's original GenBank accession, parsed from its COMMENT provenance line | 2026-11-21 | 19,622 of 19,650 resolved (99.9%). `createdate` is NOT the deposit date: 3,926 records carry a 2023 `createdate` while wrapping decades-older sequence |
+
+## Run directories the web view is built from
+
+`data/runs/berlin_SRR23973193_s1/` is the `hapax run` directory behind the Berlin run viewer
+(`results/web/pages/berlin_SRR23973193.json`). It is not committed (118 MB, of which
+`ranking.json` is 53 MB). Copied 2026-11-22 from the run's container to the project's shared
+folder at `web/berlin_rundir/`, complete except the `work/` intermediates, which the
+generator does not read. `architecture_s1.json` in it is generated, not a run output:
+`experiments/architecture_call.py --scored <dir>/divergent_contig_workup_s1.json`. The
+holdout run directory is committed at `results/holdout_cascade/run_s1/`.

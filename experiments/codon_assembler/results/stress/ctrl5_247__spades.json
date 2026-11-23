@@ -1,0 +1,97 @@
+{
+  "n_truth": 5,
+  "n_contigs": 6,
+  "total_contig_bp": 6364,
+  "n50": 843,
+  "recovered": 1,
+  "recovered_frac": 0.2,
+  "recovered_names": [
+    "JX239322.1"
+  ],
+  "best_identity_median": 1.0,
+  "cross_host_chimaeras": 0,
+  "within_host_switches": 0,
+  "contigs_with_frameshift": 0,
+  "frameshifts_total": 0,
+  "frameshifts_per_kb": 0.0,
+  "per_contig": [
+    {
+      "contig": "NODE_1_length_2597_cov_49.759919",
+      "length": 2597,
+      "best": "JX239322.1",
+      "identity": 1.0,
+      "orientation": "-",
+      "frameshifts": 0,
+      "indels": 0,
+      "fs_per_kb": 0.0,
+      "cross_host_chimaera": false,
+      "within_host_switch": false,
+      "window_haplotypes": 1
+    },
+    {
+      "contig": "NODE_2_length_843_cov_131.451117",
+      "length": 843,
+      "best": "EU166809.1",
+      "identity": 1.0,
+      "orientation": "+",
+      "frameshifts": 0,
+      "indels": 0,
+      "fs_per_kb": 0.0,
+      "cross_host_chimaera": false,
+      "within_host_switch": false,
+      "window_haplotypes": 1
+    },
+    {
+      "contig": "NODE_3_length_832_cov_52.279433",
+      "length": 832,
+      "best": "JX239308.1",
+      "identity": 1.0,
+      "orientation": "+",
+      "frameshifts": 0,
+      "indels": 0,
+      "fs_per_kb": 0.0,
+      "cross_host_chimaera": false,
+      "within_host_switch": false,
+      "window_haplotypes": 1
+    },
+    {
+      "contig": "NODE_4_length_797_cov_130.795522",
+      "length": 797,
+      "best": "EU166809.1",
+      "identity": 1.0,
+      "orientation": "-",
+      "frameshifts": 0,
+      "indels": 0,
+      "fs_per_kb": 0.0,
+      "cross_host_chimaera": false,
+      "within_host_switch": false,
+      "window_haplotypes": 1
+    },
+    {
+      "contig": "NODE_5_length_685_cov_218.396057",
+      "length": 685,
+      "best": "EU166809.1",
+      "identity": 1.0,
+      "orientation": "-",
+      "frameshifts": 0,
+      "indels": 0,
+      "fs_per_kb": 0.0,
+      "cross_host_chimaera": false,
+      "within_host_switch": false,
+      "window_haplotypes": 1
+    },
+    {
+      "contig": "NODE_6_length_610_cov_56.778468",
+      "length": 610,
+      "best": "JX239308.1",
+      "identity": 1.0,
+      "orientation": "-",
+      "frameshifts": 0,
+      "indels": 0,
+      "fs_per_kb": 0.0,
+      "cross_host_chimaera": false,
+      "within_host_switch": false,
+      "window_haplotypes": 1
+    }
+  ]
+}

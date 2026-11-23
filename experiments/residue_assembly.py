@@ -29,6 +29,10 @@ import sys
 import time
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir
+
+import library_facts
+
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,11 +46,18 @@ def main() -> None:
     ap.add_argument("--r1", type=Path, default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
     ap.add_argument("--r2", type=Path, default=ROOT / "data/berlin/SRR23973193_2.fastq.gz")
     ap.add_argument("--classes", type=Path, default=ROOT / "data/work/library_label_classes.npz")
-    ap.add_argument("--trim-r2", type=int, default=14)
+    library_facts.add_argument(ap)
+    ap.add_argument("--trim-r2", type=int, default=None)
     ap.add_argument("--megahit", default="/home/user/tools/MEGAHIT-1.2.9-Linux-x86_64-static/bin/megahit")
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--work", type=Path, default=ROOT / "data/work")
     args = ap.parse_args()
+    # A trim length is a fact about a sequencing run, not a default. It is resolved
+    # from experiments/libraries.json so a library this repo has no entry for is
+    # refused by name rather than silently given Berlin's 14 nt, which on a library
+    # with no non-template prefix deletes real bases from every mate, in the
+    # direction of less recognition.
+    library_facts.resolve_args(args, ["trim_r2"])
     t0 = time.perf_counter()
     d = np.load(args.classes)
     keep = set(d["spot"][(d["class1"] == 0) & (d["class2"] == 0)].tolist())

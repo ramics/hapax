@@ -43,6 +43,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import library_facts
+
 from berlin_io import read_pairs
 from cov_step_join import rank
 from subtract_known import _mm_index, provenance, map_filter
@@ -82,6 +84,11 @@ def main() -> None:
     ap.add_argument("--pairs", type=int, default=100_000)
     ap.add_argument("--axes", type=Path,
                     default=ROOT / "results/residue_structure/coverage_axes_allpairs_s1.tsv.gz")
+    library_facts.add_argument(ap)
+    ap.add_argument("--trim-r2", type=int, default=None,
+                    help="mate 2's non-template 5' prefix. From the library unless given")
+    ap.add_argument("--block", type=int, default=None,
+                    help="pairs skipped per seed, so the seeds read distinct regions of\n                         " "the flow cell. From the library unless given")
     ap.add_argument("--r1", type=Path, default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
     ap.add_argument("--r2", type=Path, default=ROOT / "data/berlin/SRR23973193_2.fastq.gz")
     ap.add_argument("--min-mlen", type=int, default=40)
@@ -91,6 +98,12 @@ def main() -> None:
     ap.add_argument("--work", type=Path, default=Path("/tmp/claude-0/wk/shapeladder"))
     ap.add_argument("--out", type=Path, default=ROOT / "results/shape_axis_ladder")
     args = ap.parse_args()
+    # A trim length and a block stride are facts about a sequencing run, and both
+    # were literals inside the read_pairs call below, where no help text and no
+    # manifest ever showed them. They now come from experiments/libraries.json by
+    # accession, which refuses a library it does not know rather than applying
+    # Berlin's 14 nt and 1.5 M stride to another library's reads.
+    library_facts.resolve_args(args, ["trim_r2", "block"])
 
     args.work.mkdir(parents=True, exist_ok=True)
     args.out.mkdir(parents=True, exist_ok=True)
@@ -103,7 +116,8 @@ def main() -> None:
             f = line.rstrip("\n").split("\t")
             axes[f[0]] = {k: float(v) for k, v in zip(header[1:], f[1:])}
 
-    rows = list(read_pairs(args.r1, args.r2, args.pairs, 14, (args.seed - 1) * 1_500_000))
+    rows = list(read_pairs(args.r1, args.r2, args.pairs, args.trim_r2,
+                           (args.seed - 1) * args.block))
     seqs = {r[0]: (r[1], r[2]) for r in rows if r[0] in axes}
     print(f"{len(seqs)} of {len(rows)} pairs carry coverage axes", flush=True)
 

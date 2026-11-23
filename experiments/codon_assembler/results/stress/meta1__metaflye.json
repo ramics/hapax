@@ -1,0 +1,1431 @@
+{
+  "n_truth": 33,
+  "n_contigs": 80,
+  "total_contig_bp": 1591791,
+  "unplaced_contigs": 1,
+  "genomes_recovered": 15,
+  "viral_genomes_recovered": 15,
+  "novel_recovered": 3,
+  "novel_collapsed": 0,
+  "chimaeras": 4,
+  "cross_host_chimaeras": 4,
+  "chimaeras_explained_by_shared_sequence": 1,
+  "shared_sequence_pairs": [
+    "ecoli/phage_lambda"
+  ],
+  "pairs": [
+    {
+      "novel": "phage_hk97",
+      "known": "phage_lambda",
+      "novel_recovered": true,
+      "novel_own_contigs": 1,
+      "novel_covered": 1.0,
+      "known_recovered": true,
+      "collapsed": false
+    },
+    {
+      "novel": "ratg13",
+      "known": "sars2",
+      "novel_recovered": false,
+      "novel_own_contigs": 1,
+      "novel_covered": 0.4957,
+      "known_recovered": true,
+      "collapsed": false
+    },
+    {
+      "novel": "batcov_bm4831",
+      "known": "sars2",
+      "novel_recovered": false,
+      "novel_own_contigs": 1,
+      "novel_covered": 0.8574,
+      "known_recovered": true,
+      "collapsed": false
+    },
+    {
+      "novel": "hbv_a",
+      "known": "hbv_d",
+      "novel_recovered": true,
+      "novel_own_contigs": 1,
+      "novel_covered": 1.0,
+      "known_recovered": true,
+      "collapsed": false
+    },
+    {
+      "novel": "hiv1_c",
+      "known": "hiv1_b",
+      "novel_recovered": false,
+      "novel_own_contigs": 1,
+      "novel_covered": 0.8989,
+      "known_recovered": true,
+      "collapsed": false
+    },
+    {
+      "novel": "hpv11",
+      "known": "hpv16",
+      "novel_recovered": true,
+      "novel_own_contigs": 1,
+      "novel_covered": 1.0,
+      "known_recovered": true,
+      "collapsed": false
+    },
+    {
+      "novel": "hhv7",
+      "known": "hhv5",
+      "novel_recovered": false,
+      "novel_own_contigs": 2,
+      "novel_covered": 0.2005,
+      "known_recovered": true,
+      "collapsed": false
+    }
+  ],
+  "per_genome": {
+    "ecoli": {
+      "role": "background",
+      "relative": null,
+      "length": 4641652,
+      "coverage_sim": 3.0,
+      "covered_frac": 0.0913,
+      "identity": 0.97896,
+      "own_contigs": 25,
+      "recovered": false
+    },
+    "saureus": {
+      "role": "background",
+      "relative": null,
+      "length": 2821361,
+      "coverage_sim": 3.0,
+      "covered_frac": 0.0749,
+      "identity": 0.9812,
+      "own_contigs": 17,
+      "recovered": false
+    },
+    "pvulgatus": {
+      "role": "background",
+      "relative": null,
+      "length": 5163189,
+      "coverage_sim": 2.0,
+      "covered_frac": 0.0358,
+      "identity": 0.97991,
+      "own_contigs": 13,
+      "recovered": false
+    },
+    "phage_lambda": {
+      "role": "known",
+      "relative": "phage_hk97",
+      "length": 48502,
+      "coverage_sim": 60.0,
+      "covered_frac": 1.0,
+      "identity": 0.99998,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "phage_hk97": {
+      "role": "novel",
+      "relative": "phage_lambda",
+      "length": 39732,
+      "coverage_sim": 20.0,
+      "covered_frac": 1.0,
+      "identity": 0.99852,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "phage_t4": {
+      "role": "known",
+      "relative": null,
+      "length": 168903,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.9988,
+      "identity": 0.99976,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "phix174": {
+      "role": "known",
+      "relative": null,
+      "length": 5386,
+      "coverage_sim": 150.0,
+      "covered_frac": 0.7984,
+      "identity": 1.0,
+      "own_contigs": 1,
+      "recovered": false
+    },
+    "crassphage": {
+      "role": "known",
+      "relative": null,
+      "length": 97065,
+      "coverage_sim": 40.0,
+      "covered_frac": 1.0,
+      "identity": 1.0,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "sars2": {
+      "role": "known",
+      "relative": "ratg13",
+      "length": 29903,
+      "coverage_sim": 100.0,
+      "covered_frac": 1.0,
+      "identity": 0.99997,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "ratg13": {
+      "role": "novel",
+      "relative": "sars2",
+      "length": 29855,
+      "coverage_sim": 25.0,
+      "covered_frac": 0.4957,
+      "identity": 0.99648,
+      "own_contigs": 1,
+      "recovered": false
+    },
+    "batcov_bm4831": {
+      "role": "novel",
+      "relative": "sars2",
+      "length": 29276,
+      "coverage_sim": 10.0,
+      "covered_frac": 0.8574,
+      "identity": 0.99082,
+      "own_contigs": 1,
+      "recovered": false
+    },
+    "hbv_d": {
+      "role": "known",
+      "relative": "hbv_a",
+      "length": 3182,
+      "coverage_sim": 120.0,
+      "covered_frac": 1.0,
+      "identity": 1.0,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "hbv_a": {
+      "role": "novel",
+      "relative": "hbv_d",
+      "length": 3221,
+      "coverage_sim": 30.0,
+      "covered_frac": 1.0,
+      "identity": 1.0,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "hiv1_b": {
+      "role": "known",
+      "relative": "hiv1_c",
+      "length": 9181,
+      "coverage_sim": 80.0,
+      "covered_frac": 1.0,
+      "identity": 1.0,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "hiv1_c": {
+      "role": "novel",
+      "relative": "hiv1_b",
+      "length": 9011,
+      "coverage_sim": 20.0,
+      "covered_frac": 0.8989,
+      "identity": 0.97958,
+      "own_contigs": 1,
+      "recovered": false
+    },
+    "hpv16": {
+      "role": "known",
+      "relative": "hpv11",
+      "length": 7906,
+      "coverage_sim": 70.0,
+      "covered_frac": 1.0,
+      "identity": 1.0,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "hpv11": {
+      "role": "novel",
+      "relative": "hpv16",
+      "length": 7931,
+      "coverage_sim": 15.0,
+      "covered_frac": 1.0,
+      "identity": 0.99786,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "hhv5": {
+      "role": "known",
+      "relative": "hhv7",
+      "length": 235646,
+      "coverage_sim": 15.0,
+      "covered_frac": 0.9866,
+      "identity": 0.99381,
+      "own_contigs": 4,
+      "recovered": true
+    },
+    "hhv7": {
+      "role": "novel",
+      "relative": "hhv5",
+      "length": 153080,
+      "coverage_sim": 5.0,
+      "covered_frac": 0.2005,
+      "identity": 0.98545,
+      "own_contigs": 2,
+      "recovered": false
+    },
+    "ttv1": {
+      "role": "known",
+      "relative": null,
+      "length": 3852,
+      "coverage_sim": 60.0,
+      "covered_frac": 1.0,
+      "identity": 0.99922,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "norovirus": {
+      "role": "known",
+      "relative": null,
+      "length": 7567,
+      "coverage_sim": 50.0,
+      "covered_frac": 1.0,
+      "identity": 1.0,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "rabies": {
+      "role": "known",
+      "relative": null,
+      "length": 11932,
+      "coverage_sim": 40.0,
+      "covered_frac": 1.0,
+      "identity": 0.99908,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "veev": {
+      "role": "known",
+      "relative": null,
+      "length": 11447,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.9347,
+      "identity": 0.99981,
+      "own_contigs": 1,
+      "recovered": true
+    },
+    "swarm_EU166806.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2595,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.0,
+      "identity": null,
+      "own_contigs": 0,
+      "recovered": false
+    },
+    "swarm_EU166810.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2594,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.0,
+      "identity": null,
+      "own_contigs": 0,
+      "recovered": false
+    },
+    "swarm_JX239315.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2577,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.0,
+      "identity": null,
+      "own_contigs": 0,
+      "recovered": false
+    },
+    "swarm_EU166780.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2595,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.0,
+      "identity": null,
+      "own_contigs": 0,
+      "recovered": false
+    },
+    "swarm_JX239323.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2586,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.0,
+      "identity": null,
+      "own_contigs": 0,
+      "recovered": false
+    },
+    "swarm_EU166812.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2595,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.0,
+      "identity": null,
+      "own_contigs": 0,
+      "recovered": false
+    },
+    "swarm_EU166788.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2583,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.0,
+      "identity": null,
+      "own_contigs": 0,
+      "recovered": false
+    },
+    "swarm_JX239310.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2574,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.0,
+      "identity": null,
+      "own_contigs": 0,
+      "recovered": false
+    },
+    "swarm_JX239317.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2592,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.0,
+      "identity": null,
+      "own_contigs": 0,
+      "recovered": false
+    },
+    "swarm_EU166797.1": {
+      "role": "swarm",
+      "relative": "env_swarm",
+      "length": 2591,
+      "coverage_sim": 30.0,
+      "covered_frac": 0.0,
+      "identity": null,
+      "own_contigs": 0,
+      "recovered": false
+    }
+  },
+  "chimaera_detail": [
+    {
+      "contig": "contig_1",
+      "length": 35956,
+      "genomes": [
+        "ecoli",
+        "hhv5"
+      ],
+      "cross_host": true,
+      "explained_by_shared_sequence": false
+    },
+    {
+      "contig": "contig_28",
+      "length": 80822,
+      "genomes": [
+        "ecoli",
+        "phage_lambda"
+      ],
+      "cross_host": true,
+      "explained_by_shared_sequence": true
+    },
+    {
+      "contig": "contig_51",
+      "length": 9094,
+      "genomes": [
+        "hiv1_c",
+        "swarm_EU166788.1",
+        "swarm_EU166806.1",
+        "swarm_EU166810.1",
+        "swarm_EU166812.1"
+      ],
+      "cross_host": true,
+      "explained_by_shared_sequence": false
+    },
+    {
+      "contig": "contig_60",
+      "length": 19724,
+      "genomes": [
+        "pvulgatus",
+        "saureus"
+      ],
+      "cross_host": true,
+      "explained_by_shared_sequence": false
+    },
+    {
+      "contig": "contig_68",
+      "length": 36141,
+      "genomes": [
+        "batcov_bm4831",
+        "ecoli"
+      ],
+      "cross_host": true,
+      "explained_by_shared_sequence": false
+    }
+  ],
+  "per_contig": [
+    {
+      "contig": "contig_1",
+      "length": 35956,
+      "assigned": "hhv5",
+      "identity": 0.99196,
+      "aligned_bp": 28350,
+      "windows": 71,
+      "window_genomes": [
+        "ecoli",
+        "hhv5"
+      ],
+      "chimaeric": true
+    },
+    {
+      "contig": "contig_10",
+      "length": 15243,
+      "assigned": "ecoli",
+      "identity": 0.97987,
+      "aligned_bp": 15252,
+      "windows": 30,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_11",
+      "length": 39758,
+      "assigned": "phage_hk97",
+      "identity": 0.99852,
+      "aligned_bp": 39765,
+      "windows": 79,
+      "window_genomes": [
+        "phage_hk97"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_12",
+      "length": 17255,
+      "assigned": "saureus",
+      "identity": 0.98533,
+      "aligned_bp": 9612,
+      "windows": 34,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_13",
+      "length": 16352,
+      "assigned": "pvulgatus",
+      "identity": 0.98929,
+      "aligned_bp": 16346,
+      "windows": 32,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_14",
+      "length": 11706,
+      "assigned": "ecoli",
+      "identity": 0.9659,
+      "aligned_bp": 11759,
+      "windows": 23,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_15",
+      "length": 12452,
+      "assigned": "hhv7",
+      "identity": 0.98579,
+      "aligned_bp": 12454,
+      "windows": 24,
+      "window_genomes": [
+        "hhv7"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_16",
+      "length": 14540,
+      "assigned": "ecoli",
+      "identity": 0.9722,
+      "aligned_bp": 14531,
+      "windows": 29,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_17",
+      "length": 19934,
+      "assigned": "pvulgatus",
+      "identity": 0.96901,
+      "aligned_bp": 20069,
+      "windows": 39,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_18",
+      "length": 15697,
+      "assigned": "ecoli",
+      "identity": 0.98266,
+      "aligned_bp": 15689,
+      "windows": 31,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_19",
+      "length": 3199,
+      "assigned": "hbv_d",
+      "identity": 1.0,
+      "aligned_bp": 3181,
+      "windows": 6,
+      "window_genomes": [
+        "hbv_d"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_2",
+      "length": 29900,
+      "assigned": "sars2",
+      "identity": 0.99997,
+      "aligned_bp": 29901,
+      "windows": 59,
+      "window_genomes": [
+        "sars2"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_20",
+      "length": 11029,
+      "assigned": "ecoli",
+      "identity": 0.97904,
+      "aligned_bp": 11023,
+      "windows": 22,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_21",
+      "length": 14742,
+      "assigned": "ratg13",
+      "identity": 0.99648,
+      "aligned_bp": 14754,
+      "windows": 29,
+      "window_genomes": [
+        "ratg13"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_22",
+      "length": 28496,
+      "assigned": "saureus",
+      "identity": 0.98208,
+      "aligned_bp": 14957,
+      "windows": 56,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_23",
+      "length": 138250,
+      "assigned": "hhv5",
+      "identity": 0.99457,
+      "aligned_bp": 138382,
+      "windows": 276,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_24",
+      "length": 6828,
+      "assigned": "saureus",
+      "identity": 0.98841,
+      "aligned_bp": 6816,
+      "windows": 13,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_25",
+      "length": 9127,
+      "assigned": "pvulgatus",
+      "identity": 0.98353,
+      "aligned_bp": 9109,
+      "windows": 18,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_26",
+      "length": 6996,
+      "assigned": "ecoli",
+      "identity": 0.9727,
+      "aligned_bp": 6960,
+      "windows": 13,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_27",
+      "length": 11035,
+      "assigned": "pvulgatus",
+      "identity": 0.98088,
+      "aligned_bp": 11033,
+      "windows": 22,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_28",
+      "length": 80822,
+      "assigned": "phage_lambda",
+      "identity": 0.99998,
+      "aligned_bp": 48502,
+      "windows": 161,
+      "window_genomes": [
+        "ecoli",
+        "phage_lambda"
+      ],
+      "chimaeric": true
+    },
+    {
+      "contig": "contig_29",
+      "length": 15565,
+      "assigned": "pvulgatus",
+      "identity": 0.9705,
+      "aligned_bp": 15659,
+      "windows": 31,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_3",
+      "length": 14957,
+      "assigned": "saureus",
+      "identity": 0.9841,
+      "aligned_bp": 14908,
+      "windows": 29,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_30",
+      "length": 9432,
+      "assigned": "saureus",
+      "identity": 0.98159,
+      "aligned_bp": 9452,
+      "windows": 18,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_31",
+      "length": 12027,
+      "assigned": "saureus",
+      "identity": 0.97994,
+      "aligned_bp": 12016,
+      "windows": 24,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_32",
+      "length": 11356,
+      "assigned": "ecoli",
+      "identity": 0.98385,
+      "aligned_bp": 11331,
+      "windows": 22,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_33",
+      "length": 10628,
+      "assigned": "veev",
+      "identity": 0.99981,
+      "aligned_bp": 10623,
+      "windows": 21,
+      "window_genomes": [
+        "veev"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_34",
+      "length": 16939,
+      "assigned": "ecoli",
+      "identity": 0.97858,
+      "aligned_bp": 16996,
+      "windows": 33,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_35",
+      "length": 22432,
+      "assigned": "pvulgatus",
+      "identity": 0.97898,
+      "aligned_bp": 22505,
+      "windows": 44,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_36",
+      "length": 17172,
+      "assigned": "ecoli",
+      "identity": 0.97872,
+      "aligned_bp": 17290,
+      "windows": 34,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_37",
+      "length": 16388,
+      "assigned": "ecoli",
+      "identity": 0.97394,
+      "aligned_bp": 16463,
+      "windows": 32,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_38",
+      "length": 7380,
+      "assigned": "saureus",
+      "identity": 0.98971,
+      "aligned_bp": 7389,
+      "windows": 14,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_39",
+      "length": 11271,
+      "assigned": "ecoli",
+      "identity": 0.98334,
+      "aligned_bp": 11286,
+      "windows": 22,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_4",
+      "length": 7566,
+      "assigned": "norovirus",
+      "identity": 1.0,
+      "aligned_bp": 7566,
+      "windows": 15,
+      "window_genomes": [
+        "norovirus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_40",
+      "length": 8099,
+      "assigned": "pvulgatus",
+      "identity": 0.98657,
+      "aligned_bp": 8117,
+      "windows": 16,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_41",
+      "length": 10132,
+      "assigned": "ecoli",
+      "identity": 0.98343,
+      "aligned_bp": 10138,
+      "windows": 20,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_42",
+      "length": 7602,
+      "assigned": "ecoli",
+      "identity": 0.97562,
+      "aligned_bp": 7629,
+      "windows": 15,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_43",
+      "length": 11021,
+      "assigned": "ecoli",
+      "identity": 0.98238,
+      "aligned_bp": 11013,
+      "windows": 22,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_44",
+      "length": 18914,
+      "assigned": "saureus",
+      "identity": 0.98215,
+      "aligned_bp": 18939,
+      "windows": 37,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_45",
+      "length": 18440,
+      "assigned": "ecoli",
+      "identity": 0.98168,
+      "aligned_bp": 18454,
+      "windows": 36,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_46",
+      "length": 3242,
+      "assigned": "hbv_a",
+      "identity": 1.0,
+      "aligned_bp": 3221,
+      "windows": 6,
+      "window_genomes": [
+        "hbv_a"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_47",
+      "length": 7568,
+      "assigned": "saureus",
+      "identity": 0.97534,
+      "aligned_bp": 7584,
+      "windows": 15,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_48",
+      "length": 9424,
+      "assigned": "pvulgatus",
+      "identity": 0.97456,
+      "aligned_bp": 9435,
+      "windows": 18,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_49",
+      "length": 4246,
+      "assigned": "phix174",
+      "identity": 1.0,
+      "aligned_bp": 4233,
+      "windows": 8,
+      "window_genomes": [
+        "phix174"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_5",
+      "length": 9590,
+      "assigned": "saureus",
+      "identity": 0.99365,
+      "aligned_bp": 9600,
+      "windows": 19,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_50",
+      "length": 14787,
+      "assigned": "pvulgatus",
+      "identity": 0.98066,
+      "aligned_bp": 14842,
+      "windows": 29,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_51",
+      "length": 9094,
+      "assigned": "hiv1_c",
+      "identity": 0.99205,
+      "aligned_bp": 6038,
+      "windows": 18,
+      "window_genomes": [
+        "hiv1_c",
+        "swarm_EU166788.1",
+        "swarm_EU166806.1",
+        "swarm_EU166810.1",
+        "swarm_EU166812.1"
+      ],
+      "chimaeric": true
+    },
+    {
+      "contig": "contig_52",
+      "length": 23460,
+      "assigned": "ecoli",
+      "identity": 0.98611,
+      "aligned_bp": 23544,
+      "windows": 46,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_54",
+      "length": 1557,
+      "assigned": null
+    },
+    {
+      "contig": "contig_55",
+      "length": 9207,
+      "assigned": "hiv1_b",
+      "identity": 1.0,
+      "aligned_bp": 9168,
+      "windows": 18,
+      "window_genomes": [
+        "hiv1_b"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_56",
+      "length": 3857,
+      "assigned": "ttv1",
+      "identity": 0.99922,
+      "aligned_bp": 3852,
+      "windows": 7,
+      "window_genomes": [
+        "ttv1"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_57",
+      "length": 18394,
+      "assigned": "hhv7",
+      "identity": 0.98522,
+      "aligned_bp": 18404,
+      "windows": 36,
+      "window_genomes": [
+        "hhv7"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_58",
+      "length": 11939,
+      "assigned": "rabies",
+      "identity": 0.99908,
+      "aligned_bp": 11935,
+      "windows": 23,
+      "window_genomes": [
+        "rabies"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_59",
+      "length": 7905,
+      "assigned": "hpv16",
+      "identity": 1.0,
+      "aligned_bp": 7905,
+      "windows": 15,
+      "window_genomes": [
+        "hpv16"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_6",
+      "length": 16965,
+      "assigned": "ecoli",
+      "identity": 0.97487,
+      "aligned_bp": 16990,
+      "windows": 33,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_60",
+      "length": 19724,
+      "assigned": "saureus",
+      "identity": 0.99395,
+      "aligned_bp": 8104,
+      "windows": 39,
+      "window_genomes": [
+        "pvulgatus",
+        "saureus"
+      ],
+      "chimaeric": true
+    },
+    {
+      "contig": "contig_61",
+      "length": 97072,
+      "assigned": "crassphage",
+      "identity": 1.0,
+      "aligned_bp": 97064,
+      "windows": 194,
+      "window_genomes": [
+        "crassphage"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_62",
+      "length": 5991,
+      "assigned": "saureus",
+      "identity": 0.98721,
+      "aligned_bp": 5943,
+      "windows": 11,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_63",
+      "length": 22261,
+      "assigned": "ecoli",
+      "identity": 0.98091,
+      "aligned_bp": 22268,
+      "windows": 44,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_64",
+      "length": 13754,
+      "assigned": "ecoli",
+      "identity": 0.99222,
+      "aligned_bp": 13755,
+      "windows": 27,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_65",
+      "length": 35110,
+      "assigned": "hhv5",
+      "identity": 0.98778,
+      "aligned_bp": 35182,
+      "windows": 70,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_66",
+      "length": 19366,
+      "assigned": "saureus",
+      "identity": 0.99127,
+      "aligned_bp": 19368,
+      "windows": 38,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_67",
+      "length": 168685,
+      "assigned": "phage_t4",
+      "identity": 0.99976,
+      "aligned_bp": 168667,
+      "windows": 337,
+      "window_genomes": [
+        "phage_t4"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_68",
+      "length": 36141,
+      "assigned": "batcov_bm4831",
+      "identity": 0.99082,
+      "aligned_bp": 25162,
+      "windows": 72,
+      "window_genomes": [
+        "batcov_bm4831",
+        "ecoli"
+      ],
+      "chimaeric": true
+    },
+    {
+      "contig": "contig_69",
+      "length": 11306,
+      "assigned": "pvulgatus",
+      "identity": 0.97717,
+      "aligned_bp": 11256,
+      "windows": 22,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_7",
+      "length": 9421,
+      "assigned": "saureus",
+      "identity": 0.96536,
+      "aligned_bp": 9382,
+      "windows": 18,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_70",
+      "length": 8670,
+      "assigned": "pvulgatus",
+      "identity": 0.98747,
+      "aligned_bp": 8702,
+      "windows": 17,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_71",
+      "length": 14715,
+      "assigned": "saureus",
+      "identity": 0.97349,
+      "aligned_bp": 14789,
+      "windows": 29,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_72",
+      "length": 19010,
+      "assigned": "ecoli",
+      "identity": 0.98217,
+      "aligned_bp": 19065,
+      "windows": 38,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_73",
+      "length": 10375,
+      "assigned": "saureus",
+      "identity": 0.98392,
+      "aligned_bp": 10384,
+      "windows": 20,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_74",
+      "length": 23671,
+      "assigned": "pvulgatus",
+      "identity": 0.98567,
+      "aligned_bp": 14725,
+      "windows": 47,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_75",
+      "length": 10527,
+      "assigned": "ecoli",
+      "identity": 0.98853,
+      "aligned_bp": 10546,
+      "windows": 21,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_76",
+      "length": 3302,
+      "assigned": "saureus",
+      "identity": 0.9854,
+      "aligned_bp": 3288,
+      "windows": 6,
+      "window_genomes": [
+        "saureus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_77",
+      "length": 9790,
+      "assigned": "ecoli",
+      "identity": 0.96593,
+      "aligned_bp": 9803,
+      "windows": 19,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_78",
+      "length": 7936,
+      "assigned": "hpv11",
+      "identity": 0.99786,
+      "aligned_bp": 7931,
+      "windows": 15,
+      "window_genomes": [
+        "hpv11"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_79",
+      "length": 30042,
+      "assigned": "ecoli",
+      "identity": 0.97795,
+      "aligned_bp": 30112,
+      "windows": 60,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_8",
+      "length": 13289,
+      "assigned": "pvulgatus",
+      "identity": 0.97583,
+      "aligned_bp": 13361,
+      "windows": 26,
+      "window_genomes": [
+        "pvulgatus"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_80",
+      "length": 33612,
+      "assigned": "hhv5",
+      "identity": 0.99857,
+      "aligned_bp": 33604,
+      "windows": 67,
+      "window_genomes": [
+        "hhv5"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_81",
+      "length": 17001,
+      "assigned": "ecoli",
+      "identity": 0.98259,
+      "aligned_bp": 16997,
+      "windows": 34,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    },
+    {
+      "contig": "contig_9",
+      "length": 13147,
+      "assigned": "ecoli",
+      "identity": 0.98676,
+      "aligned_bp": 13142,
+      "windows": 26,
+      "window_genomes": [
+        "ecoli"
+      ],
+      "chimaeric": false
+    }
+  ]
+}
