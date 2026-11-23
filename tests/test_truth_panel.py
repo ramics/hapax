@@ -76,7 +76,7 @@ def test_a_library_with_no_panel_is_skipped_with_its_reason(tmp_path):
 def test_an_unknown_library_refuses_to_start(tmp_path):
     code, out, log = run(tmp_path, "--library", "SRR99999999")
     assert code == 2, log
-    assert "will not guess" in log
+    assert "is not in experiments/libraries.json" in log
     assert out == {}
 
 

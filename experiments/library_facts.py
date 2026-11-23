@@ -114,19 +114,43 @@ def resolve_args(args, keys, path_attrs=("r1", "r2"), library_attr="library") ->
     how to override. A value that was not given is read from the library only if the read
     paths agree with the library named; otherwise this raises, because that is exactly the
     case where one library's biology is about to be applied to another library's reads.
+
+    A READ PATH IS A FACT TOO, and it was a validator here first. Where `r1`/`r2` appear
+    in `keys`, they are filled from the library like anything else, which is what lets a
+    script carry no read-path default at all. Three did, and all three pointed at
+    `data/ww_berlin/` where this file and `data/MANIFEST.md` say `data/berlin/` - the
+    directory was renamed and the defaults were left behind (`results/PROVENANCE.md` §5).
+    That defect cannot corrupt a number, because a wrong path is a missing file, but a
+    default that names one library's reads is the same shape as a default that names its
+    trim, and the fix that matches this repo's rule is to resolve it rather than to correct
+    three literals.
+
+    A library's own path is stored repo-relative and resolved against the repo root, not
+    the caller's working directory, so the same command works from a scratch directory.
+    AGREEMENT IS DECIDED BEFORE ANY PATH IS FILLED: a caller who gives `--r1` for one run
+    and lets `--r2` default must not be handed the named library's mate 2, which is the
+    cross-library case this check exists for, one mate at a time.
     """
     acc = getattr(args, library_attr, None)
-    paths = [getattr(args, a, None) for a in path_attrs]
-    agree = acc is not None and paths_name_library(acc, paths)
-    pairs = keys.items() if isinstance(keys, dict) else ((k, k) for k in keys)
+    given_paths = [getattr(args, a, None) for a in path_attrs]
+    agree = acc is not None and paths_name_library(acc, given_paths)
+    pairs = list(keys.items() if isinstance(keys, dict) else ((k, k) for k in keys))
+
+    def refuse(attr: str, key: str):
+        named = ", ".join(str(p) for p in given_paths if p is not None)
+        raise UnknownLibrary(
+            f"--{attr.replace('_', '-')} was not given, --{library_attr} is {acc}, "
+            f"and the read path does not carry that accession ({named}). Name the "
+            f"library these reads come from, or pass the value: {key} is a property "
+            f"of a sequencing run and this code has no right one to assume.")
+
     for attr, key in pairs:
         if getattr(args, attr, None) is not None:
             continue
         if not agree:
-            named = ", ".join(str(p) for p in paths if p is not None)
-            raise UnknownLibrary(
-                f"--{attr.replace('_', '-')} was not given, --{library_attr} is {acc}, "
-                f"and the read path does not carry that accession ({named}). Name the "
-                f"library these reads come from, or pass the value: {key} is a property "
-                f"of a sequencing run and this code has no right one to assume.")
-        setattr(args, attr, fact(acc, key))
+            refuse(attr, key)
+        value = fact(acc, key)
+        if attr in path_attrs:
+            p = Path(value)
+            value = p if p.is_absolute() else ROOT / p
+        setattr(args, attr, value)

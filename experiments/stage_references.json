@@ -1,17 +1,22 @@
 {
   "_what": "Per-library reference data for the three promoted stages: the truth panel a run is checked against, and the cross-plant panel a run is subtracted against. Read through experiments/stage_refs.py, which raises rather than defaults.",
   "_why_a_file": "A stage that resolves a sample-specific input from a built-in default runs happily against the wrong sample on any machine where that sample's file exists, and nothing in the output says so. Every value here was a literal inside a script or a shell template before it was a row in this file.",
-  "_folds_into": "experiments/libraries.json when that lands (trim_r2, block, read paths). These keys are the stage-reference half of the same idea and the loader in stage_refs.py is the fold-in point; two files are the interim, not the design.",
+  "_folds_into": "Done (2026-11-23): the per-library pointers now live in experiments/libraries.json beside the trim and the stride, and experiments/stage_refs.py resolves them through library_facts, so an unknown library raises in one place. What stays here is the panel definitions and the shortlist band, which are properties of a panel and of a measurement rather than of a sequencing run.",
   "_entry_rules": [
-    "A library with no entry is UnknownLibrary: the stage refuses to start. It never guesses a panel.",
-    "A library whose entry sets a panel to null is a MEASURED absence with a reason, and the stage records status skipped with that reason. null is not the same fact as missing.",
+    "A library with no entry in experiments/libraries.json is UnknownLibrary: the stage refuses to start. It never guesses a panel.",
+    "A library whose entry sets a panel to null is a MEASURED absence with a reason, and the stage records status skipped with that reason. null is not the same fact as missing, and stage_refs raises on a null with no *_absent_because beside it.",
     "Paths are repo-relative. A path that does not exist is a refusal at preflight, not a stage that quietly reports zero."
   ],
-
   "removal_shortlist_band": {
     "_what": "The coverage x identity cell the explained-fraction shortlist ships at, over the pile tier 1 removed.",
-    "coverage": [0.25, 0.5],
-    "identity_percent": [60, 70],
+    "coverage": [
+      0.25,
+      0.5
+    ],
+    "identity_percent": [
+      60,
+      70
+    ],
     "significance_evalue": 1e-05,
     "near_reference_identity_percent": 97.0,
     "measured_on": "SRR23421544",
@@ -26,45 +31,6 @@
       "why_it_is_a_citation_and_not_this_run_s_null": "This stage reads search output the cascade already wrote; it runs no search of its own, so it cannot produce a null. Pass --shuffled-evidence to supply one, or --without-null to record its absence by name."
     }
   },
-
-  "libraries": {
-    "SRR23973193": {
-      "label": "Berlin wastewater RNA, the discriminating dataset",
-      "project": "PRJNA948850",
-      "plant": "Berlin",
-      "truth_panel": null,
-      "truth_panel_absent_because": "No depositor-assembled genome set exists for this water: results/holdout_candidates/depth.tsv covers SRR23421542/43/44 only. This library's positive control is the spiked divergence ladder (--calibrate), not a truth panel, and a run of it reports the panel stage as skipped with this reason rather than scoring against another library's genomes.",
-      "crossplant_panel": "cp3"
-    },
-    "SRR23421544": {
-      "label": "treated wastewater RNA, Russia, collected 2022-05-10; the library the post-cutoff holdout comes from",
-      "project": null,
-      "project_unrecorded_because": "No committed file in this repo records this run's BioProject: results/holdout_candidates/depth.tsv carries the run and the genomes, not the study. It is left null rather than filled in from memory, because a project id is what the cross-plant rules key the subject trim off.",
-      "plant": null,
-      "truth_panel": "depositor_25",
-      "crossplant_panel": null,
-      "crossplant_panel_absent_because": "The committed cross-plant panel was built around the Berlin query sample and this library is not one of its plants, so a paired per-plant comparison has no within-plant stratum for it. Running it against cp3 would report a between-plant rate with no comparator, which is the pooled reading this measurement exists to refuse."
-    },
-    "SRR23421543": {
-      "label": "treated wastewater RNA, Russia, same deposit series",
-      "project": null,
-      "project_unrecorded_because": "No committed file in this repo records this run's BioProject: results/holdout_candidates/depth.tsv carries the run and the genomes, not the study. It is left null rather than filled in from memory, because a project id is what the cross-plant rules key the subject trim off.",
-      "plant": null,
-      "truth_panel": "depositor_25",
-      "crossplant_panel": null,
-      "crossplant_panel_absent_because": "As SRR23421544."
-    },
-    "SRR23421542": {
-      "label": "treated wastewater RNA, Russia, same deposit series",
-      "project": null,
-      "project_unrecorded_because": "No committed file in this repo records this run's BioProject: results/holdout_candidates/depth.tsv carries the run and the genomes, not the study. It is left null rather than filled in from memory, because a project id is what the cross-plant rules key the subject trim off.",
-      "plant": null,
-      "truth_panel": "depositor_25",
-      "crossplant_panel": null,
-      "crossplant_panel_absent_because": "As SRR23421544."
-    }
-  },
-
   "truth_panels": {
     "depositor_25": {
       "_what": "The depositors' own virus genomes from the same waters, deposited 2023-07-31, with each one's depth in a given run measured by mapping the reads back. The present/absent split is per run and comes out of the same table, so the false-join control is drawn from the same pool as the recovery panel and costs nothing.",
@@ -73,8 +39,14 @@
       "divergence_table": "results/holdout_candidates/shortlist.tsv",
       "present_in_SRR23421544": 25,
       "absent_in_SRR23421544": 53,
-      "depth_range_SRR23421544": [0.445, 700.665],
-      "divergence_range_percent": [0.07, 30.38],
+      "depth_range_SRR23421544": [
+        0.445,
+        700.665
+      ],
+      "divergence_range_percent": [
+        0.07,
+        30.38
+      ],
       "operating_point": {
         "min_identity": 0.95,
         "min_aln": 200,
@@ -90,7 +62,6 @@
       "reproduces": "Against the two attributed contigs of results/holdout_cascade/ the scorer returns 3,990 nt covering 96.21% of OQ722337.1 at purity 1.0, and 6,383 nt covering 99.41% of OQ722330.1 - the published figures, from different code."
     }
   },
-
   "crossplant_panels": {
     "cp3": {
       "_what": "530 other wastewater RNA libraries over five projects, 32 plants and four continents, each cut to exactly the same depth so a difference between plants is not a difference in library size.",
@@ -98,7 +69,10 @@
       "subject_depth_pairs": 2000000,
       "query_length_nt": 90,
       "contig_window_nt": 90,
-      "operating_points": ["any", "most"],
+      "operating_points": [
+        "any",
+        "most"
+      ],
       "both_points_travel": "They disagree by a factor of four about the thing the measurement is for - at depth 1 the identified-versus-residue gap is 8.5 points at `most` and 42.0 at `any` - so neither ships alone.",
       "witness_instrument": "exact canonical 31-mer presence, the same instrument as results/recurrence/",
       "subject_trim_r2_by_project": {
@@ -121,5 +95,6 @@
       ],
       "what_this_panel_cannot_say": "Absence here means no 31 exact bases shared with any panel library, which past roughly 10-15% divergence is not the same as having no relative there. One substitution destroys up to 31 of a 90 nt mate's 60 31-mers."
     }
-  }
+  },
+  "_where_the_per_library_pointers_live": "experiments/libraries.json, beside that library's trim and stride: truth_panel, crossplant_panel and the *_absent_because reason for a null. This file defines the panels themselves, which are not properties of a sequencing run. Read both through experiments/stage_refs.py, which resolves the pointer with library_facts and so raises for an unknown library in exactly one place."
 }

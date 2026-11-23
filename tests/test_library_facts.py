@@ -130,3 +130,78 @@ def test_zero_is_a_value_and_not_an_absence():
 def test_resolve_refuses_when_nothing_names_a_library():
     with pytest.raises(L.UnknownLibrary):
         L.resolve(None, "trim_r2", None)
+
+
+# ------------------------------------------------- a read path is a fact, not a validator
+#
+# It was a validator first, which is why three scripts still carried their own defaults,
+# all three naming `data/ww_berlin/` where this file and data/MANIFEST.md say
+# `data/berlin/` (results/PROVENANCE.md §5). A path that names one library's reads is the
+# same shape of defect as a default that names its trim.
+
+def test_a_read_path_resolves_from_the_library():
+    args = parser().parse_args(["--library", "SRR23973193"])
+    L.resolve_args(args, ["r1", "r2", "trim_r2"])
+    assert args.r1 == ROOT / "data/berlin/SRR23973193_1.fastq.gz"
+    assert args.r2 == ROOT / "data/berlin/SRR23973193_2.fastq.gz"
+    assert args.trim_r2 == 14
+
+
+def test_a_resolved_read_path_is_absolute_so_the_cwd_cannot_change_it():
+    """Staged copies live under scratch directories and EC2 mounts; a relative default
+    read from the wrong cwd is a missing file at best and another library's reads at
+    worst."""
+    args = parser().parse_args(["--library", "SRR23973193"])
+    L.resolve_args(args, ["r1"])
+    assert args.r1.is_absolute()
+
+
+def test_a_stated_read_path_still_wins():
+    args = parser().parse_args(["--library", "SRR23973193",
+                                "--r1", "scratch/SRR23973193_1.fastq.gz"])
+    L.resolve_args(args, ["r1", "r2"])
+    assert args.r1 == Path("scratch/SRR23973193_1.fastq.gz")
+    assert args.r2 == ROOT / "data/berlin/SRR23973193_2.fastq.gz"
+
+
+def test_one_mate_naming_another_run_refuses_the_other_mate():
+    """Agreement is decided before any path is filled. Giving mate 1 of one run and
+    letting mate 2 default must not hand over the named library's mate 2."""
+    args = parser().parse_args(["--library", "SRR23973193",
+                                "--r1", "data/holdout/SRR23421544_1.fastq.gz"])
+    with pytest.raises(L.UnknownLibrary) as e:
+        L.resolve_args(args, ["r1", "r2"])
+    assert "SRR23421544" in str(e.value)
+
+
+def test_a_library_with_no_read_path_refuses_rather_than_borrowing_one():
+    """The holdout library's entry has no r1: nothing in this repo has staged it under a
+    recorded path, and borrowing Berlin's is the failure this file exists to stop."""
+    args = parser().parse_args(["--library", "SRR23421544"])
+    with pytest.raises(L.UnknownLibrary) as e:
+        L.resolve_args(args, ["r1"])
+    assert "r1" in str(e.value)
+
+
+def test_the_three_scripts_carry_no_read_path_default_any_more():
+    """Name-based and deliberately crude: the defect was a literal, so the test reads for
+    literals.
+
+    SCOPED TO THE READ PATHS, and that scope is a finding rather than convenience. The
+    reads are documented under `data/berlin/` - 62 committed manifests against 18 for
+    `data/ww_berlin/` - but the ASSEMBLY subsets are documented the other way: every
+    committed manifest that names one says `data/ww_berlin/spades_sample*.fa`, 11 to 13
+    occurrences and none under `data/berlin/`. So the directory was not simply renamed,
+    and `absence_residual.py --ref` and `rrna_contigs.py --contigs` are NOT stale: they
+    name the spelling their own results were produced under. Correcting them to match the
+    reads would point them at a path nothing documents, which is the opposite of the fix.
+    They are still sample-specific defaults and belong in libraries.json as an `assembly`
+    fact; that needs somebody who can see `data/` on disk, since the one thing this
+    container cannot check is which spelling exists (results/PROVENANCE.md §5).
+    """
+    for name in ("absence_curve.py", "absence_residual.py", "rrna_match_source.py"):
+        text = (ROOT / "experiments" / name).read_text()
+        for line in text.splitlines():
+            if '"--r1"' in line or '"--r2"' in line:
+                assert "default=None" in line, f"{name}: {line.strip()}"
+                assert "ww_berlin" not in line, f"{name}: {line.strip()}"

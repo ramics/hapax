@@ -20,13 +20,17 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "experiments"))
 
+import library_facts  # noqa: E402
 import stage_refs  # noqa: E402
 
 
 def test_unknown_library_raises_and_names_the_known_ones():
+    """And it raises library_facts' exception, not a second one of this module's own."""
     with pytest.raises(stage_refs.UnknownLibrary) as e:
         stage_refs.resolve("SRR00000000", "truth_panel")
     assert "SRR23421544" in str(e.value)
+    assert stage_refs.UnknownLibrary is library_facts.UnknownLibrary, (
+        "one exception type for an unknown library, or a caller has to catch two")
 
 
 def test_a_resolved_panel_carries_its_files_and_its_record():
@@ -44,8 +48,15 @@ def test_a_null_panel_is_a_measured_absence_with_a_reason():
 
 
 def test_every_null_in_the_committed_file_has_a_reason():
+    """The pointers live in libraries.json now; the panel definitions stay here."""
     refs = stage_refs.load()
-    for name, entry in refs["libraries"].items():
+    assert "libraries" not in refs, (
+        "the per-library pointers moved into libraries.json; two homes for one fact is "
+        "how they drift apart")
+    libs = json.loads((ROOT / "experiments" / "libraries.json").read_text())["libraries"]
+    for name, entry in libs.items():
+        if "truth_panel" not in entry and "crossplant_panel" not in entry:
+            continue
         for kind in ("truth_panel", "crossplant_panel"):
             if entry.get(kind) is None:
                 assert entry.get(f"{kind}_absent_because"), (
@@ -57,13 +68,31 @@ def test_every_null_in_the_committed_file_has_a_reason():
                 assert entry[kind] in refs[table], f"{name} names an undefined {kind}"
 
 
-def test_a_null_without_a_reason_raises(tmp_path):
-    refs = json.loads((ROOT / "experiments" / "stage_references.json").read_text())
-    refs["libraries"]["SRR23973193"].pop("truth_panel_absent_because")
-    p = tmp_path / "refs.json"
-    p.write_text(json.dumps(refs))
+def test_a_null_without_a_reason_raises(tmp_path, monkeypatch):
+    libs = json.loads((ROOT / "experiments" / "libraries.json").read_text())
+    libs["libraries"]["SRR23973193"].pop("truth_panel_absent_because")
+    p = tmp_path / "libraries.json"
+    p.write_text(json.dumps(libs))
+    monkeypatch.setattr(library_facts, "FACTS", p)
     with pytest.raises(stage_refs.MissingReference):
-        stage_refs.resolve("SRR23973193", "truth_panel", stage_refs.load(p))
+        stage_refs.resolve("SRR23973193", "truth_panel")
+
+
+def test_a_library_that_says_nothing_about_a_panel_is_not_an_absence(tmp_path, monkeypatch):
+    """An incomplete entry and a measured absence are different facts.
+
+    Answering "absent" for a library nobody has considered would report an unmeasured gap
+    as a measured one, and the stage would then write a skip reason nobody wrote.
+    """
+    libs = json.loads((ROOT / "experiments" / "libraries.json").read_text())
+    entry = libs["libraries"]["SRR23973193"]
+    entry.pop("crossplant_panel", None)
+    p = tmp_path / "libraries.json"
+    p.write_text(json.dumps(libs))
+    monkeypatch.setattr(library_facts, "FACTS", p)
+    with pytest.raises(stage_refs.MissingReference) as e:
+        stage_refs.resolve("SRR23973193", "crossplant_panel")
+    assert "no crossplant_panel key" in str(e.value)
 
 
 def test_the_band_cannot_be_taken_without_its_qualification():
