@@ -35,6 +35,10 @@ import time
 from collections import defaultdict
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir
+
+import library_facts
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "experiments"))
 
@@ -49,12 +53,19 @@ def main() -> None:
                     default=ROOT / "results/recurrence/queries_s1-5.tsv")
     ap.add_argument("--r1", type=Path, default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
     ap.add_argument("--r2", type=Path, default=ROOT / "data/berlin/SRR23973193_2.fastq.gz")
-    ap.add_argument("--trim-r2", type=int, default=14)
+    library_facts.add_argument(ap)
+    ap.add_argument("--trim-r2", type=int, default=None)
     ap.add_argument("--tool", type=Path,
                     default=ROOT / "experiments/kmer_coverage/target/release/kmer_coverage")
     ap.add_argument("--work", type=Path, default=Path("/tmp/claude-0/wk/recurrence"))
     ap.add_argument("--out", type=Path, default=ROOT / "results/recurrence")
     args = ap.parse_args()
+    # A trim length is a fact about a sequencing run, not a default. It is resolved
+    # from experiments/libraries.json so a library this repo has no entry for is
+    # refused by name rather than silently given Berlin's 14 nt, which on a library
+    # with no non-template prefix deletes real bases from every mate, in the
+    # direction of less recognition.
+    library_facts.resolve_args(args, ["trim_r2"])
 
     args.work.mkdir(parents=True, exist_ok=True)
     tsv = args.work / "self_witness.tsv"

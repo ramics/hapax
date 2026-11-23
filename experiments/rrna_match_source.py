@@ -47,6 +47,8 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import library_facts
 from insert_profile import read_pairs                     # noqa: E402
 from peptide_absence import AA_CODE, hash_kmers, six_frames  # noqa: E402
 
@@ -75,7 +77,8 @@ def main() -> None:
     ap.add_argument("--block", type=int, default=400000)
     ap.add_argument("--r1", type=Path, default=Path("data/ww_berlin/SRR23973193_1.fastq.gz"))
     ap.add_argument("--r2", type=Path, default=Path("data/ww_berlin/SRR23973193_2.fastq.gz"))
-    ap.add_argument("--trim-r2", type=int, default=14)
+    library_facts.add_argument(ap)
+    ap.add_argument("--trim-r2", type=int, default=None)
     ap.add_argument("--rrna-tsv", type=Path, required=True,
                     help="the sibling thread's rrna_s{seed}.tsv: read_id, mate, rrna")
     ap.add_argument("--db", type=Path,
@@ -84,6 +87,12 @@ def main() -> None:
     ap.add_argument("--top", type=int, default=40)
     ap.add_argument("--out", type=Path, default=Path("results/rrna_match_source"))
     args = ap.parse_args()
+    # A trim length is a fact about a sequencing run, not a default. It is resolved
+    # from experiments/libraries.json so a library this repo has no entry for is
+    # refused by name rather than silently given Berlin's 14 nt, which on a library
+    # with no non-template prefix deletes real bases from every mate, in the
+    # direction of less recognition.
+    library_facts.resolve_args(args, ["trim_r2"])
 
     args.out.mkdir(parents=True, exist_ok=True)
     t0 = time.perf_counter()

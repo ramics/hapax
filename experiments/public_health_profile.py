@@ -69,6 +69,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import library_facts
+
 from subtract_known import provenance  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -308,7 +310,8 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--r1", type=Path, required=True)
     ap.add_argument("--r2", type=Path, required=True)
-    ap.add_argument("--trim-r2", type=int, default=14)
+    library_facts.add_argument(ap)
+    ap.add_argument("--trim-r2", type=int, default=None)
     ap.add_argument("--db", type=Path, default=ROOT / "data/k2_pluspf08")
     ap.add_argument("--classify-bin", type=Path,
                     default=Path("/home/user/tools/k2pkg/root/share/"
@@ -321,6 +324,12 @@ def main() -> None:
     ap.add_argument("--work", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
     args = ap.parse_args()
+    # A trim length is a fact about a sequencing run, not a default. It is resolved
+    # from experiments/libraries.json so a library this repo has no entry for is
+    # refused by name rather than silently given Berlin's 14 nt, which on a library
+    # with no non-template prefix deletes real bases from every mate, in the
+    # direction of less recognition.
+    library_facts.resolve_args(args, ["trim_r2"])
 
     args.work.mkdir(parents=True, exist_ok=True)
     args.out.mkdir(parents=True, exist_ok=True)

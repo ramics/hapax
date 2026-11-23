@@ -109,11 +109,23 @@ This is the discriminating shape the project found, and it is what class A ranks
   **24.3 points** inside one genome, maturation 53.5%, replicase 66.5%, coat 77.8% — the
   same role ordering, ground truth, in a genome withheld from every index.
 
-A wider version of this (the role ordering holding on 122 of 131 contigs, with both artefact
-objections tested) exists in `results/divergent_known/`, which **is not on `main`** — it
-sits on thread branches with no open pull request, the same state `results/reach/REPORT.md`
-records. This spec therefore rests on `divergent_contigs/` and the holdout, and §12.5 lists
-the merge as open work rather than citing unmerged numbers.
+- **The ordering is paired, and the pairing is what makes it readable.** On a pile an order
+  of magnitude larger, compared role against role on contigs carrying both rather than as
+  two medians over two sets, **maturation sits below polymerase on 122 of 131 contigs**,
+  median difference −6.9 points, and below capsid on 28 of 31; capsid against polymerase is
+  a coin toss. Counted by position instead, maturation is the most diverged role on 118 of
+  203 divergent contigs and the least diverged on 7, with polymerase running the other way
+  at 32 against 124 (`results/conserved_positions/`).
+- **Both artefact objections were tested and neither explains it.** Reference abundance:
+  distinct subject proteins matched per ORF is the same for the two roles, polymerase 0.604
+  against maturation 0.598. Alignment length: inside matched length bands the gap holds, 7
+  to 8 points at 150–300 aa and at 300–600 aa. Two roles carried by one polyprotein ORF are
+  excluded, because those pairs are identical by construction.
+- **The spread on the larger pile reads 12.8 points against a near-reference 2.45**, and it
+  survives matching on the number of scorable genes — 5.6 points at two genes, 16.9 at
+  three, 22.2 at four, against a control arm's 1.3, 2.65 and 3.4 (`results/divergent_known/`).
+  The unmatched comparison is biased towards the divergent arm, whose contigs are longer and
+  carry more genes, so the matched bands are the reading.
 
 ### 2.3 Novel strains of existing viruses are first class
 
@@ -647,6 +659,11 @@ Load-bearing numbers and where each comes from. Nothing else in this document is
 | The holdout assembles at 96% breadth and is removed as known at 66.5% / bitscore 812 | `results/holdout_cascade/` |
 | Identity ordering is actively wrong (93.46th percentile); coverage gives a 69-contig cell | `results/holdout_cascade/` |
 | Whole-contig identity is not a property of the contig — 17.4 points median gene spread, 24.3 on the holdout | `results/divergent_contigs/`, `results/holdout_cascade/` |
+| The role ordering is paired and holds on 122 of 131 contigs; neither reference abundance nor alignment length explains it | `results/conserved_positions/` |
+| "Identified" spans eighty points: 4.27% of 10,172 contigs at 90%+ identity, 90.2% below 70% | `results/divergent_known/` |
+| The gene spread is 12.8 against 2.45 and survives matching on gene count | `results/divergent_known/` |
+| Existence of a protein alignment is the calibrated readout: 0 of 11,361 dinucleotide shuffles, 89.53% of real contigs | `results/divergent_known/` |
+| The coverage-explained gap has no shuffled null; its rate on identified background is median 0.38, p99 46.2 | `results/divergent_known/` |
 | Nucleotide beats protein at read level at every distance; the reverse holds on contigs | `results/holdout_run/`, `results/subtract_known/` |
 | Per-read identity flatters by 12.8–13.6 points; coverage is the control; contig-level identity is unbiased | `results/holdout_run/`, `results/holdout_cascade/` |
 | Merging the mates takes 20%-divergence recognition from 10.5% to 38.4%; the null stays at 0.0% | `results/profile_reach/`, `results/weak_hits/` |
@@ -798,12 +815,11 @@ highest-value piece of infrastructure in this spec.**
 how much *the discriminating dataset's* residue moves under path settings is unmeasured,
 and the 8.79-point swing is quoted as a property of that library.
 
-### 12.5 The gene-spread result needs merging, and one half of it is untestable
+### 12.5 One half of the gene-spread result is untestable
 
-`results/divergent_known/` — the role ordering across 131 contigs with both artefact
-objections tested — is on thread branches with no open pull request (§2.2). It should be
-merged and then cited. **The within-genome spread as a novelty signal appears unclaimed in
-the literature** (the closest precedent, Friedman et al. 2009, has maturation most divergent
+`results/divergent_known/` and `results/conserved_positions/` are on `main` and §2.2 cites
+them. What is open is not the merge but the claim: **the within-genome spread as a novelty
+signal appears unclaimed in the literature** (the closest precedent, Friedman et al. 2009, has maturation most divergent
 *between* lineages with replicase closest — our ordering; capsid-first is *within* a
 lineage), so it is the most interesting unclaimed thing here.
 

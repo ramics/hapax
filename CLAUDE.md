@@ -46,6 +46,20 @@ sequence carrying no information; a known-positive comparison against subtracted
 whether it carries anything about the residue. A field that reads the same on both is
 reported with that fact, not hidden.
 
+**A shuffled null comes from `experiments/shuffle_control.py`, imported, never
+reimplemented, and it raises rather than falling back.** Two scripts each carried their own
+naive dinucleotide shuffle, and both handled a dead-ended walk by retrying and then
+returning the input unchanged. That fired for 324 of 11,361 contigs, 2.85%, and all 304
+"shuffled" contigs that produced a significant protein hit were among them: zero genuinely
+shuffled contigs produced one. The bad null published an existence ratio, a claim that
+identity cannot separate real sequence from noise, and two kills of other people's fields,
+all withdrawn. It was the same bug twice in two days, already fixed once in PR #29, and the
+only arm that was right imported its shuffle instead of writing one. Two consequences
+beyond the module: **when two instruments disagree about a CONTROL, chase that before any
+result** - 0.00% against 2.68% on the same nominal null is what exposed this - and **record
+"no significant hits" as an explicit census**, because an empty table and a search that
+never ran look identical.
+
 **A null is not a bias statement, and a number needs both.** A null says what a field reads
 on meaningless input. A bias statement says what it reads on *real* input for the wrong
 reason — and only the second can be removed by a control. So every number ships with the
@@ -160,3 +174,37 @@ and download dates in `data/MANIFEST.md`.
 
 The discriminating dataset is Berlin wastewater SRR23973193. The New York cryptic-lineage
 runs are a correctness fixture only.
+
+## Sample facts are data, not defaults
+
+**A value that is a property of one library never has a default.** A trim length, a block
+size and a read path are facts about a sequencing run, and they were written into roughly
+twenty scripts as `default=14`, into five more as a bare `14` inside the call, and into two
+as a module-level `TRIM_R2`. On a library with no non-template prefix that deletes fourteen
+real bases from every mate, silently, in the direction of less recognition; a block sized
+to Berlin's 8.73 M pairs leaves seeds 4 and 5 of a 4.29 M-read library reading nothing, and
+the directory still looks like a five-seed result. They live in
+`experiments/libraries.json`, keyed by accession, each with how it was established, and are
+read through `experiments/library_facts.py`, which **raises for a library it does not know
+rather than falling back**. Same rule as the shuffle: the fallback is the bug.
+
+**Resolving the value is only half of it: `--library` has to be checked against the
+reads.** It defaults to the discriminating dataset so that every committed command
+reproduces unchanged, which means a caller who points `--r1` at another library's FASTQ and
+says nothing would still have got Berlin's trim — the same silence, one layer in.
+`resolve_args` therefore refuses when a read path names a *different* run, and a path
+naming no run at all (`data/berlin`, a work directory) cannot disagree. Stating the value
+on the command line always wins and is never checked, because stating it is the override.
+A second operating point of the same quantity gets its own key rather than a reconciliation:
+`trim_r2_for_mapback` is 16 because that is what `results/divergent_known/` was produced
+with, and the entry says so. `tests/test_library_facts.py` asserts the values rather than
+assuming them, the negatives included.
+
+**The same applies to words.** Every plain-English claim the web view makes about biology
+is in `experiments/virus_vocabulary.json` with its basis, applied by
+`experiments/architecture_call.py`, which records the evidence that fired and declines
+with a reason rather than ever recording "not a phage". The renderer assembles sentences
+and has no vocabulary of its own. This does not make the English stop being hand-written;
+it makes it reviewable, attributable, and wrong in exactly one place. The convention that
+a figure is generated from committed files was being applied to the numbers and not to
+the claims beside them, and the claims are usually larger.

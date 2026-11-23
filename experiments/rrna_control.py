@@ -137,7 +137,7 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--holdout-every", type=int, default=50,
                     help="every Nth SILVA sequence is held out of the index and used as a "
-                         "positive; 50 leaves the index at 98% of full size")
+                         "positive; 50 leaves the index at 98%% of full size")
     ap.add_argument("--reads", type=int, default=20000)
     ap.add_argument("--length", type=int, default=107, help="Berlin's modal read length")
     ap.add_argument("--error-rate", type=float, default=0.001,

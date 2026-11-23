@@ -78,6 +78,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import library_facts
+
 from berlin_io import revcomp
 from loud import Consulted, Preflight, require_output, run_tool
 from subtract_known import (artefact_fields, dir_bytes, provenance, shannon_entropy,
@@ -572,6 +574,7 @@ def main() -> None:
                          "one. See mates(). The fields that need two real mates - mate "
                          "disagreement, mate linkage, the merge of SPEC 4.3 - are not "
                          "recoverable and are reported as not measured, not worked around")
+    library_facts.add_argument(ap)
     ap.add_argument("--library-r1", type=Path,
                     default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
     ap.add_argument("--library-r2", type=Path,
@@ -581,11 +584,11 @@ def main() -> None:
                          "measured abundance is relative to this many pairs, so the unit "
                          "is recurrence within a sample of the library, not a genome "
                          "coverage depth")
-    ap.add_argument("--trim-r2", type=int, default=14,
+    ap.add_argument("--trim-r2", type=int, default=None,
                     help="mate-2 bases trimmed when reading the library for the abundance "
-                         "sketch. Was hardcoded to 14, which is SRR23973193's kit; the "
-                         "default keeps committed runs reproducible and hapax always "
-                         "passes the run's own value")
+                         "sketch. Was hardcoded to 14, then a default of 14, which is one "
+                         "library's kit; it now comes from experiments/libraries.json by "
+                         "accession, and hapax still passes the run's own value")
     ap.add_argument("--abundance-bits", type=int, default=28)
     ap.add_argument("--cross-sample-ref", type=Path,
                     default=ROOT / "data/geo/all_contigs_1kb.fa",
@@ -611,6 +614,13 @@ def main() -> None:
                     help="check every input, index and tool, then exit: 0 if the run "
                          "could start, 2 if not")
     args = ap.parse_args()
+
+    # The mate-2 trim is a property of the library being sketched, so it is read from
+    # experiments/libraries.json and refused when --library and the read paths name
+    # different runs. On a library with no non-template prefix a 14 nt trim deletes
+    # real bases from every mate, in the direction of less recognition.
+    library_facts.resolve_args(args, ["trim_r2"],
+                               path_attrs=("library_r1", "library_r2"))
 
     # A field whose reference is absent used to be skipped by `if path.exists()`, and its
     # absence then read downstream as a measured zero (`motif_rate` was 0.0 with no Pfam

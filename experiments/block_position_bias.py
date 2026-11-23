@@ -54,6 +54,8 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import library_facts
+
 from subtract_known import provenance
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -73,8 +75,9 @@ def main() -> None:
     ap.add_argument("--labels", type=Path, default=DEFAULT_LABELS)
     ap.add_argument("--pairs", type=int, default=100_000,
                     help="block size, matching the cascade's --pairs")
-    ap.add_argument("--block", type=int, default=1_500_000,
-                    help="the cascade's per-seed skip")
+    library_facts.add_argument(ap)
+    ap.add_argument("--block", type=int, default=None,
+                    help="the cascade's per-seed skip. From the library unless given")
     ap.add_argument("--seeds", type=int, default=5,
                     help="how many cascade seeds to locate")
     ap.add_argument("--draws", type=int, default=200,
@@ -82,6 +85,11 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--out", type=Path, default=ROOT / "results/block_position_bias")
     args = ap.parse_args()
+    # The stride is a property of the library: sized to 8.73 M pairs, it leaves the
+    # last seeds of a smaller library reading nothing, and the directory still looks
+    # like a five-seed result. Read from experiments/libraries.json, which raises
+    # for a library it does not know.
+    library_facts.resolve_args(args, ["block"])
 
     if not args.labels.exists():
         raise SystemExit(f"missing labels: {args.labels}")

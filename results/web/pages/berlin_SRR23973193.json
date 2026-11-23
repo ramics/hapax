@@ -1,0 +1,16 @@
+{
+ "_what": "Everything the run viewer says about this sample that is not read from the run directory. experiments/make_web.py takes this file and nothing else that differs by sample.",
+ "title": "Hapax run viewer",
+ "sample": {
+  "accession": "SRR23973193",
+  "lede": "Sewage from one treatment plant in Berlin, sequenced as RNA."
+ },
+ "rundir": "data/runs/berlin_SRR23973193_s1",
+ "inputs": {
+  "spectrum": {"path": "results/divergent_known/divergent_known_s1.json"},
+  "spectrum_big_index": {"path": "results/divergent_contigs/core_nt_block_001.jsonl"},
+  "spectrum_reference_point": {"path": "results/conserved_positions/conserved_positions_s1.json"},
+  "spectrum_reference_truth": {"path": "results/holdout_cascade/gene_map_s1.json"},
+  "truth_gene_map": {"not_run": "no genome in this library has a distance fixed before the run"}
+ }
+}
