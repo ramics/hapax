@@ -1,0 +1,264 @@
+{
+ "git_sha": "f4383a79a64b5b5221d4b245947b4d967888f731-dirty",
+ "tree_dirty": true,
+ "git_sha_source": "repo",
+ "script_sha256": "43eb3ee5bd5bc9e9",
+ "modules_sha256": {
+  "experiments/provenance.py": "e01fdca08de0894f",
+  "experiments/rcsb_chains.py": "16b755b5aa0d5180"
+ },
+ "code_sha256": "b8f53ed472c2560b",
+ "floor": 1e-05,
+ "run_manifest_script_sha256": "3b22a60dcc0ce0ea",
+ "run_git_sha": "7ea6a47fe8ccc95b86db52ab5f33fde7bcf078c9",
+ "summary": {
+  "null_ident_null": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "null_unident_null": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "raw_ident": [
+   9.87012987012987,
+   7.777777777777778,
+   11.825192802056556,
+   10.621761658031089,
+   14.092140921409214
+  ],
+  "raw_unident": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "ident_weighted_to_unident_bands": [
+   4.21068042198121,
+   3.552384029436876,
+   4.137368809973529,
+   3.1379366736547025,
+   6.513823282324226
+  ],
+  "unident_pooled": {
+   "n": 1636,
+   "placed": 0,
+   "expected_band_matched": 70.54640506932499
+  },
+  "unident_upper_bound_95": 0.1829456696831433,
+  "unthresholded_ident": {
+   "n": 1889,
+   "aligned": 1556,
+   "q1": 0.009701,
+   "median": 1.119,
+   "best": 6.404e-41
+  },
+  "unthresholded_ident_null": {
+   "n": 708,
+   "aligned": 319,
+   "q1": 2.526,
+   "median": 4.693,
+   "best": 0.04456
+  },
+  "unthresholded_unident": {
+   "n": 1636,
+   "aligned": 1041,
+   "q1": 1.02,
+   "median": 2.796,
+   "best": 1.016e-05
+  },
+  "unthresholded_unident_null": {
+   "n": 535,
+   "aligned": 180,
+   "q1": 2.744,
+   "median": 5.771,
+   "best": 0.1488
+  },
+  "subject_polymer_type_census": {
+   "Protein": 3419
+  },
+  "subjects_unident": {
+   "placements": 0,
+   "distinct": 0,
+   "top": []
+  },
+  "subjects_ident": {
+   "placements": 205,
+   "distinct": 108,
+   "top": [
+    {
+     "description": "Monomer 1 RT component of the Eco1DRT E.coli defense system.",
+     "placed": 15,
+     "best_entry": "30QM_A",
+     "best_bits": "528",
+     "best_evalue": "1.330E-10",
+     "best_fident": "0.149",
+     "best_alnlen": "467",
+     "best_qlen": "634",
+     "source_organisms": "Escherichia coli"
+    },
+    {
+     "description": "Reverse transcriptase-like protein",
+     "placed": 15,
+     "best_entry": "8GH6_A",
+     "best_bits": "546",
+     "best_evalue": "3.528E-09",
+     "best_fident": "0.126",
+     "best_alnlen": "721",
+     "best_qlen": "618",
+     "source_organisms": "Bombyx mori"
+    },
+    {
+     "description": "Potential RNA-dependent RNA polymerase",
+     "placed": 15,
+     "best_entry": "5I61_A",
+     "best_bits": "515",
+     "best_evalue": "3.187E-09",
+     "best_fident": "0.130",
+     "best_alnlen": "514",
+     "best_qlen": "635",
+     "source_organisms": "Human picobirnavirus strain Hy005102"
+    },
+    {
+     "description": "RNA Polymerase",
+     "placed": 9,
+     "best_entry": "1SH0_A",
+     "best_bits": "923",
+     "best_evalue": "7.762E-18",
+     "best_fident": "0.200",
+     "best_alnlen": "463",
+     "best_qlen": "788",
+     "source_organisms": "Norwalk virus"
+    },
+    {
+     "description": "Genome polyprotein",
+     "placed": 8,
+     "best_entry": "29QG",
+     "best_bits": "544",
+     "best_evalue": "2.657E-11",
+     "best_fident": "0.145",
+     "best_alnlen": "502",
+     "best_qlen": "554",
+     "source_organisms": "Parechovirus ahumpari"
+    },
+    {
+     "description": "Putative PB1",
+     "placed": 8,
+     "best_entry": "8PSN_B",
+     "best_bits": "477",
+     "best_evalue": "6.109E-09",
+     "best_fident": "0.127",
+     "best_alnlen": "541",
+     "best_qlen": "617",
+     "source_organisms": "Tilapia lake virus"
+    },
+    {
+     "description": "COAT PROTEIN",
+     "placed": 7,
+     "best_entry": "2VF9_C",
+     "best_bits": "400",
+     "best_evalue": "3.035E-09",
+     "best_fident": "0.503",
+     "best_alnlen": "133",
+     "best_qlen": "133",
+     "source_organisms": "Pseudomonas phage PRR1"
+    },
+    {
+     "description": "R2Tg retrotransposon ORF",
+     "placed": 4,
+     "best_entry": "9DOU_A",
+     "best_bits": "480",
+     "best_evalue": "7.001E-09",
+     "best_fident": "0.115",
+     "best_alnlen": "485",
+     "best_qlen": "608",
+     "source_organisms": "Taeniopygia guttata"
+    },
+    {
+     "description": "RNA-directed RNA polymerase 3D-POL",
+     "placed": 4,
+     "best_entry": "8C2P_A",
+     "best_bits": "787",
+     "best_evalue": "2.627E-16",
+     "best_fident": "0.197",
+     "best_alnlen": "456",
+     "best_qlen": "441",
+     "source_organisms": "Foot-and-mouth disease virus"
+    },
+    {
+     "description": "RNA-directed RNA polymerase catalytic subunit",
+     "placed": 3,
+     "best_entry": "7Z4O_EEE",
+     "best_bits": "539",
+     "best_evalue": "5.135E-09",
+     "best_fident": "0.109",
+     "best_alnlen": "632",
+     "best_qlen": "718",
+     "source_organisms": "Influenza A virus"
+    },
+    {
+     "description": "Reverse transcriptase/maturase family protein",
+     "placed": 3,
+     "best_entry": "9C0I_A",
+     "best_bits": "387",
+     "best_evalue": "4.967E-07",
+     "best_fident": "0.112",
+     "best_alnlen": "375",
+     "best_qlen": "659",
+     "source_organisms": "Klebsiella pneumoniae"
+    },
+    {
+     "description": "Structural protein",
+     "placed": 3,
+     "best_entry": "26FB_K",
+     "best_bits": "718",
+     "best_evalue": "4.768E-14",
+     "best_fident": "0.158",
+     "best_alnlen": "391",
+     "best_qlen": "301",
+     "source_organisms": "Pseudomonas phage KPP25"
+    },
+    {
+     "description": "RNA dependent RNA polymerase",
+     "placed": 3,
+     "best_entry": "9JKC_C",
+     "best_bits": "514",
+     "best_evalue": "6.364E-09",
+     "best_fident": "0.137",
+     "best_alnlen": "538",
+     "best_qlen": "567",
+     "source_organisms": "Aspergillus fumigatus tetramycovirus 1"
+    },
+    {
+     "description": "Retron",
+     "placed": 3,
+     "best_entry": "22ET_A",
+     "best_bits": "428",
+     "best_evalue": "3.985E-07",
+     "best_fident": "0.140",
+     "best_alnlen": "299",
+     "best_qlen": "583",
+     "source_organisms": "Escherichia coli"
+    },
+    {
+     "description": "Replicase large subunit",
+     "placed": 3,
+     "best_entry": "3VKW",
+     "best_bits": "1738",
+     "best_evalue": "6.404E-41",
+     "best_fident": "0.914",
+     "best_alnlen": "292",
+     "best_qlen": "299",
+     "source_organisms": "Tobacco mosaic virus strain tomato/L"
+    }
+   ]
+  }
+ }
+}

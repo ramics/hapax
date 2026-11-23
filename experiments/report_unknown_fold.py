@@ -185,6 +185,11 @@ def main(argv=None) -> int:
     wanted = sorted({h["target"] for rows in hits.values() for h in rows
                      if float(h["evalue"]) <= args.floor})
     annotations = annotate_subjects(wanted, args.out)
+    # Written out so the table is reproducible from committed files without re-querying
+    # RCSB, and so a later reader can see which chain each name came from. This REPLACES
+    # the run's own `subject_annotations.json`, which is keyed by entry and cannot say.
+    (args.out / "subject_annotations_bychain.json").write_text(
+        json.dumps(annotations, indent=1, sort_keys=True))
     cells = rates(orfs, hits, args.floor)
     piles = sorted({orf["pile"] for orf in orfs})
     seeds = sorted({orf["arm"].rsplit("_s", 1)[1] for orf in orfs}, key=int)
