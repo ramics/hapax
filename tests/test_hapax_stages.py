@@ -97,7 +97,8 @@ def test_an_unknown_library_refuses_the_whole_run(tmp_path):
                                     "--stages", "panel", "crossplant")
     assert code == 2, log
     assert manifest["status"] == "refused to start"
-    assert any("will not guess" in p for p in manifest["problems"])
+    assert any("is not in experiments/libraries.json" in p
+               for p in manifest["problems"])
 
 
 def test_a_library_with_no_truth_panel_is_skipped_not_ok(tmp_path):

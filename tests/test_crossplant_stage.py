@@ -58,22 +58,20 @@ def test_a_report_without_the_paired_strata_is_rejected():
 
 
 @pytest.mark.skipif(not PANEL.exists(), reason="the panel table is not in this tree")
-def test_a_query_library_inside_the_panel_refuses(tmp_path):
-    """Rule 1. Own-library reads are abundant by construction."""
-    refs = json.loads((ROOT / "experiments" / "stage_references.json").read_text())
+def test_a_query_library_inside_the_panel_refuses():
+    """Rule 1. Own-library reads are abundant by construction, so this is a refusal.
+
+    Asserted against the real panel's own first member rather than a fixture library: the
+    rule has to fire on the libraries that are actually in there.
+    """
     with open(PANEL) as fh:
-        member = next(csv.DictReader(fh, delimiter="\t"))["run"]
-    refs["libraries"][member] = {"label": "a panel member, for this test",
-                                 "truth_panel": None,
-                                 "truth_panel_absent_because": "test fixture",
-                                 "crossplant_panel": "cp3"}
-    p = tmp_path / "refs.json"
-    p.write_text(json.dumps(refs))
-    code, out, log = run(tmp_path, "--library", member, "--stages", "queries",
-                         "--contig-dir", str(tmp_path), "--references", str(p))
-    assert code == 2, log
-    assert "its own library" in log and "54%" in log
-    assert out == {}
+        members = {r["run"]: r for r in csv.DictReader(fh, delimiter="\t")}
+    member = next(iter(members))
+    why = crossplant_stage.own_library_refusal(member, members)
+    assert why and "its own library" in why and "54%" in why
+    # And the query sample of the committed pass is not a member, which is the other half
+    # of the same rule: it was held out by construction.
+    assert crossplant_stage.own_library_refusal("SRR23973193", members) is None
 
 
 @pytest.mark.skipif(not PANEL.exists(), reason="the panel table is not in this tree")
@@ -97,7 +95,7 @@ def test_an_unknown_library_refuses(tmp_path):
     code, _, log = run(tmp_path, "--library", "SRR12121212", "--stages", "queries",
                        "--contig-dir", str(tmp_path))
     assert code == 2, log
-    assert "will not guess" in log
+    assert "is not in experiments/libraries.json" in log
 
 
 @pytest.mark.skipif(not PANEL.exists(), reason="the panel table is not in this tree")

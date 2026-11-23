@@ -1,16 +1,21 @@
-# hapax
+<h1 align="center">hapax</h1>
+<p align="center">Finding the viruses in wastewater that no database can name.</p>
 
-Take a wastewater sample, return the full breakdown: what is known and by what, what
-assembled, what did not, what codes and what does not — each pile quantified, and each
-answer priced.
+<p align="center"><img src="docs/hapax-overview.svg" alt="Three-panel figure. Panel a: the seven stages of a run, with what each is given and what it writes — resolve, merge, assemble, identify, score the distance, report the residue, subtract other plants. Panel b: the three output classes, with what each reports and the qualifier that travels with it — divergent but related contigs, novel strains of known viruses, and the unplaceable residue. Panel c: the distance scale all three sit on, from far from published sequence to matched, and what every row carries — a distance, the closest relative with coverage and E-value, the operating point behind it, and its controls." width="100%"></p>
 
-**Start here: [`SPEC.md`](SPEC.md).** It is the production tool spec and the source of truth
-for intent. It is short by design and every number in it is measured on real data with a
-committed script and a seed behind it.
+hapax removes the sequence in a library that is already known, assembles what survives, and
+reports the rest as a distance. For every contig: how far it sits from its closest published
+relative, which relative that is, over how much of the contig, and at what significance.
+Identity is given per gene, nucleotide and protein, with the index it was measured against.
+Removal applies to read pairs, so every contig is measured, named or not.
 
-Then: [`CLAUDE.md`](CLAUDE.md) for how to work in the repo, and
-**[`results/README.md`](results/README.md) for the experiment archive** — one line per
-experiment saying what it measured, what it killed, and where its report is.
+The output is three classes on one scale. **A**, contigs at real distance from anything
+published. **B**, novel strains of named viruses, at the near end of the same scale. **C**,
+sequence nothing places, with the depth it was seen at.
+
+[`SPEC.md`](SPEC.md) is the spec, including the bounds on every claim in it.
+[`results/README.md`](results/README.md) indexes the experiments behind it, failures included.
+[`CLAUDE.md`](CLAUDE.md) is how to work in the repo.
 
 ## Setting up
 
@@ -19,78 +24,65 @@ python3 -m pip install -r requirements.txt     # Python side, pinned where a num
 python3 -m pytest                              # the suite; needs no external tool
 ```
 
-The binaries a run drives (BLAST, DIAMOND, Kraken2, foldseek, ...) are listed with their
-pins in [`TOOLS.md`](TOOLS.md).
+The binaries a run drives (BLAST, DIAMOND, Kraken2, foldseek and the rest) are pinned in
+[`TOOLS.md`](TOOLS.md).
 
 ## Running it
 
 ```
-python3 hapax.py run SAMPLE_1.fastq.gz SAMPLE_2.fastq.gz --seed 1 --out RUNDIR \
-    --trim-r2 14 \
+python3 hapax.py run SAMPLE_1.fastq.gz SAMPLE_2.fastq.gz --seed N --out RUNDIR \
+    --library ACCESSION --trim-r2 K \
     --contigs IDENTIFIED_RRNA.fa IDENTIFIED_OTHER.fa --unidentified-contigs UNIDENTIFIED.fa \
     --identified-contigs IDENTIFIED_OTHER.fa --rrna-contigs IDENTIFIED_RRNA.fa \
     --assembly ASSEMBLY.fa --cross-sample-ref OTHER_SAMPLES.fa --spacers SPACERS.fa
 python3 experiments/make_web.py results/web/pages/SAMPLE.json   # the run viewer
 ```
 
-The web view is built by one command for every sample. What a page says about its sample
-that is not in the run directory - its title, one sentence on what the water is, and every
-result file outside the run that a panel reads, each as a path or as `not_run` with a
-reason - is in that sample's descriptor under `results/web/pages/`. Methods entries live in
-`results/web/methods.json`, with any row measured on one library stored under its
-accession; on another sample's page that row reads "Not measured on this library".
+One command builds the web view for any sample. What a page states about its sample that is
+not in the run directory sits in that sample's descriptor under `results/web/pages/`: the
+title, one sentence on the water, and every result file outside the run that a panel reads,
+as a path or as `not_run` with a reason. Methods entries live in `results/web/methods.json`.
+A row measured on one library is stored under that accession. On another sample's page it
+reads "Not measured on this library".
 
-Everything that belongs to one sample - its trim, its own contigs, its assembly - has to
-be given: there are no defaults for those, because a default is some other sample's file
-and the run would use it without complaint. A per-read field whose reference you do not
-have is left out by name (`--report-without cross_sample crispr ...`) and recorded as not
-searched. The run checks every input, index and tool before it starts and refuses, exit
-status 2, if anything is missing.
+Per-sample values are given on the command line: trim, own contigs, assembly. None of them
+have defaults. A default here is another sample's file, and the run would use it without
+complaint. A per-read field whose reference is unavailable is dropped by name
+(`--report-without cross_sample crispr ...`) and recorded as not searched. Every input, index
+and tool is checked before the run starts. A missing one stops it with exit status 2.
 
-`hapax.py` is an orchestrator: every number in `RUNDIR` comes from the `experiments/`
-script that already measures it, with that script's own seed and manifest. The web view is
-a thin reader over `RUNDIR` and contains no number that is not in a committed file. Add
-`--plan` to print the stages without running them.
+`hapax.py` only orchestrates. Every number in `RUNDIR` comes from the `experiments/` script
+that measures it, under that script's own seed and manifest. The web view reads `RUNDIR` and
+shows no number absent from a committed file. `--plan` prints the stages without running
+them.
 
-## How far signal-to-noise gets today, and where it stops
+## What a run writes
 
-**It gets to:** a three-way breakdown of the library with intervals and operating points
-(77.0% identified, 11.9% assembled-but-unidentified, 11.1% residual reads on this sample);
-per read, the distance to its closest relative with the alignment's coverage and E-value,
-what kind of sequence it is, whether it recurs in the library, and what it physically sits
-next to; per subject, how many residue reads point at one known relative from how far,
-which is where a new strain of a known virus appears; and a divergence ladder from a spiked
-holdout genome that says what the whole cascade would have missed at 10% and 20%.
+<p align="center"><img src="docs/hapax-outputs.svg" alt="Table of what a run writes, one row per unit. Library: one breakdown per run into identified, assembled but unnameable and unplaced, each fraction with its interval and operating point. Contig: one row per contig, whether or not an index named it, carrying distance to the closest published relative with identity and coverage per gene. Subject: one row per published relative the residue points at, with how many reads point at it and from how far. Read pair: one row per surviving pair, un-thresholded. Divergence ladder: one rung per divergence where a library carries a genome of known distance." width="100%"></p>
 
-**It stops at:** any per-read verdict, and grouping. A mate finds its own partner in its ten
-nearest neighbours 23 times above chance with no shared sequence, which says the geometry
-carries real molecule-level information — but the rate falls as the space grows, so at
-library scale a read cannot find even its own mate, let alone a stranger from the same
-genome ([`results/mate_friends/`](results/mate_friends/REPORT.md)). Nothing here approaches
-one false positive per million.
+## How far it reaches
 
-## What this is not
-
-It does not emit a novel-or-not call. The target is a multidimensional measurement of signal
-against noise, because every feature this project has tried as a novelty score has been
-measured to fail as a threshold on one axis (`SPEC.md` §1.1). The declared blind spots are
-part of the deliverable: no read-level rule approaches one false positive per million,
-recognition of a known virus falls away between 10% and 20% divergence, and detection below
-about one in a million is not available at all (`SPEC.md` §7).
+Recognition of a known virus holds to roughly 10% divergence and fades by 20%. Detection
+needs abundance above about one in a million. A read is the smallest unit the report works
+at and the weakest: nearest-neighbour geometry over reads carries molecule-level
+information, and the rate falls as the search space grows, so at library scale a read
+recovers its own mate at chance ([`results/mate_friends/`](results/mate_friends/REPORT.md)).
+A verdict is made at contig and subject level. These bounds are properties of the method,
+measured across libraries (`SPEC.md` §7, §9).
 
 ## History
 
-Two earlier directions are archived rather than deleted, because what they killed is the
-reason the current one is shaped as it is.
+Two earlier directions are archived here with their results. What they ruled out determined
+the shape of the current design.
 
-- **The codon-aware assembler**, the first attempt, is under
-  [`experiments/codon_assembler/`](experiments/codon_assembler/) with its own spec and all
-  its results, laid out as the repo root once was so its scripts still run from there. It
-  ships as a negative: scoring overlaps in codon space gave a small gain over nucleotide
-  scoring that showed only at high simulated diversity, and on real multi-host swarms it
-  lost to metaSPAdes and MEGAHIT by merging sister swarms.
-- **Strain separation during assembly** produced the measured benchmark in
-  [`results/pair_ladder/`](results/pair_ladder/REPORT.md): below about 3.8% divergence every
-  assembler fuses lineages at any depth, and the reads carry enough information to separate
-  them, so what is missing is path selection rather than signal. That result is live and is
-  cited by the spec.
+- **The codon-aware assembler** was the first attempt, under
+  [`experiments/codon_assembler/`](experiments/codon_assembler/) with its own spec and
+  results. It is laid out as the repo root once was, so its scripts still run from there.
+  The result is negative. Scoring overlaps in codon space gave a small gain over nucleotide
+  scoring, and only at high simulated diversity. On real multi-host swarms it lost to
+  metaSPAdes and MEGAHIT by merging sister swarms.
+- **Strain separation during assembly** produced the benchmark in
+  [`results/pair_ladder/`](results/pair_ladder/REPORT.md). Below about 3.8% divergence every
+  assembler fuses lineages at any depth. The reads carry enough information to separate
+  them, which places the limitation in path selection. That result is live and the spec
+  cites it.

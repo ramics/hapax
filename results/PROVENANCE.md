@@ -118,7 +118,7 @@ What *does* change here is one line of prose: `divergent_contigs/REPORT.md` said
 trimmed 16 nt "as everywhere in this repo", which was true of neither the repo nor the measured
 prefix. Corrected in place, with the discrepancy named.
 
-## 5. Three scripts default to a data path the manifest does not document
+## 5. Three scripts defaulted to a data path the manifest does not document — resolved, and the premise corrected
 
 `absence_curve.py`, `absence_residual.py` and `rrna_match_source.py` default `--r1`/`--r2`
 to `data/ww_berlin/SRR23973193_{1,2}.fastq.gz`. Every other script, `libraries.json`'s `r1`
@@ -133,16 +133,34 @@ three scripts do resolve `trim_r2` through `library_facts`, and because the stal
 carries the right accession it satisfies `paths_name_library`, so the refusal that catches a
 *different* library's reads correctly does not fire here.
 
-**Not fixed in this pass, for two reasons, and it is a decision to take rather than a thing
-to leave.** First, `data/` is gitignored and this container has none of it, so which spelling
-exists on disk cannot be verified from here — and the fix is worth nothing if it points at
-the wrong one. Second, the fix that matches this repo's own rule is not to correct three
-literals but to make a read path resolvable from `libraries.json` like the trim and the
-stride, since a read path is as much a property of a sequencing run as either. That is a
-change to `library_facts.resolve_args`, where `r1` and `r2` are currently validators rather
-than facts, and it is the same module a sibling thread is folding its own stage registry
-into. **Recommended: resolve read paths from the library, in the same change that folds in
-that registry, rather than editing three defaults now.**
+**Resolved as recommended, 2026-11-23.** A read path is a fact about a sequencing run, so
+`library_facts.resolve_args` now fills `r1`/`r2` from `libraries.json` where they appear in
+its `keys`, and the three scripts carry `default=None`. Nothing points at a path this file
+chose: Berlin's entry already recorded `data/berlin/SRR23973193_{1,2}.fastq.gz`, which is
+the spelling 62 committed manifests use. Two refusals come with it, both asserted in
+`tests/test_library_facts.py`: **agreement is decided before any path is filled**, so giving
+mate 1 of one run and letting mate 2 default refuses rather than handing over the named
+library's mate 2; and a library whose entry has no `r1` refuses rather than borrowing
+Berlin's, which is the holdout library's case. A resolved path is made absolute against the
+repo root, because the same command is run from scratch directories and EC2 mounts.
+
+**And the premise of this entry was half wrong, which is worth more than the fix.** The
+directory was not simply renamed. The READS are documented under `data/berlin/` (62 against
+18), but every committed manifest that names an ASSEMBLY subset says
+`data/ww_berlin/spades_sample*.fa` — 11 to 13 occurrences, and **none** under
+`data/berlin/`. So `absence_residual.py --ref` and `rrna_contigs.py --contigs` are not
+stale: they name the spelling their own results were produced under, and "correcting" them
+to match the reads would have pointed them at a path nothing documents. They are still
+sample-specific defaults and belong here as an `assembly` fact, which needs somebody who
+can see `data/` on disk — the one thing this container cannot check is which spelling
+exists. **Open, scoped, and smaller than it was.**
+
+**What moved as a consequence.** The `script_sha256` of `absence_curve.py`,
+`absence_residual.py`, `rrna_match_source.py` and `library_facts.py` changed, so
+`results/absence_curve/`, `results/absence_residual/` and `results/rrna_match_source/` now
+carry a hash that does not match the committed code. No number moved — a read path cannot
+corrupt one, because a wrong path is a missing file — and this is recorded rather than
+regenerated, the same decision as §3 and the same precedent as the trim-and-stride pass.
 
 ## 6. Not a debt, but the trap next to one: a correct copy is still not interchangeable
 

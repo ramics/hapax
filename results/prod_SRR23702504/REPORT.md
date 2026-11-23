@@ -215,6 +215,17 @@ cleanly and was missing most of the run. Five things, four of them in the genera
    five near-identical sentences. Both are cosmetic and both are the kind of thing that makes a
    generated page read as a dump rather than as a result.
 
+A sixth belongs here although it is mine rather than the generator's. This run's unidentifiable
+pile is 194,703 contigs, so `contigs.jsonl` is 79 MB a seed and 395 MB over five, in a repo whose
+whole `results/` tree is 583 MB. Committing it compressed is the right call; compressing
+`reads.jsonl` and `layers.jsonl` with it was not. **This was the first run directory in the repo to
+carry a `.jsonl.gz`**, the page builder that reads a run directory looks for the plain name, and it
+drew an empty residue table and two empty search arms for a 32 M pair library without saying
+anything. Both spellings are read now, and a directory carrying both refuses rather than choosing;
+here the two small files are committed plain, under the name every other run directory uses, and
+only the 79 MB one is compressed. A reader that cannot find a file nobody told it to expect reports
+a zero, which is this repo's oldest failure mode wearing a new hat.
+
 None of these was a wrong number. All five are a generated page that looked finished and was not,
 which is the failure mode the convention exists to prevent, so they belong here rather than in a
 commit message.
