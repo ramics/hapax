@@ -56,17 +56,17 @@ SCATTER_AXES = [
     ("gc", "GC fraction", lambda r: r.get("gc")),
     ("entropy3", "Triplet entropy", lambda r: r.get("entropy3")),
     ("log_abundance", "log2 library occurrences",
-     lambda r: _log2(((r.get("library_abundance") or {}).get("median_31mer_count")))),
+     lambda r: _log2((_sub(r, "library_abundance").get("median_31mer_count")))),
     ("longest_orf_aa", "Longest ORF (aa)",
-     lambda r: (r.get("frame") or {}).get("longest_orf_aa")),
+     lambda r: _sub(r, "frame").get("longest_orf_aa")),
     ("CpG_oe", "CpG observed/expected",
-     lambda r: (r.get("dinuc") or {}).get("CpG_oe")),
+     lambda r: _sub(r, "dinuc").get("CpG_oe")),
     ("UpA_oe", "UpA observed/expected",
-     lambda r: (r.get("dinuc") or {}).get("UpA_oe")),
+     lambda r: _sub(r, "dinuc").get("UpA_oe")),
     ("fold_z", "Folding energy z",
-     lambda r: (r.get("fold") or {}).get("z")),
+     lambda r: _sub(r, "fold").get("z")),
     ("kmer16_duplicate_frac", "Repetitive fraction",
-     lambda r: (r.get("repetitive") or {}).get("kmer16_duplicate_frac")),
+     lambda r: _sub(r, "repetitive").get("kmer16_duplicate_frac")),
     ("best_bitscore", "Best protein bitscore", lambda r: _best(r, "bitscore")),
     ("best_pident", "Protein identity %, significant hits only",
      lambda r: _best_significant(r, "pident")),
@@ -85,6 +85,19 @@ SCATTER_AXES = [
 #: banding is an artefact of integer arithmetic on short alignments and not a property of
 #: the sample, which is exactly why it is not drawn.
 SIGNIFICANT_EVALUE = 1e-5
+
+
+def _sub(row: dict, field: str) -> dict:
+    """A per-read sub-record, or an empty one where the run did not produce it.
+
+    A field dropped on purpose with `--report-without` records WHY it is absent rather
+    than a number, and a run that did not search is not a run that found nothing. Every
+    axis here used `(r.get(f) or {}).get(k)`, which reads a mapping and throws on a
+    reason, so one run with a field dropped by name would have taken the whole build
+    down. The reason belongs in the census the page already prints, not in a traceback.
+    """
+    v = row.get(field)
+    return v if isinstance(v, dict) else {}
 
 
 def _log2(x):
@@ -596,8 +609,8 @@ def search_table(piles: dict[str, list[dict]]) -> dict:
                 if b is not None and (per[m][1] is None or b > per[m][1]):
                     per[m][1] = b
             acc.append([per[1][0], per[1][1], per[2][0], per[2][1],
-                        (r.get("library_abundance") or {}).get("median_31mer_count"),
-                        (r.get("cross_sample") or {}).get("distinct_samples")])
+                        _sub(r, "library_abundance").get("median_31mer_count"),
+                        _sub(r, "cross_sample").get("distinct_samples")])
         out[pile] = acc
     return out
 
@@ -699,16 +712,22 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int,
                             # SPEC 13.3 rather than a second set of numbers: the depth
                             # stratum and the occupancy cut read these, and the control
                             # arm reads the same fields on the identified rows.
-                            "occupancy": (r.get("cross_sample") or {})
+                            "occupancy": _sub(r, "cross_sample")
                                          .get("distinct_samples"),
-                            "depth": (r.get("library_abundance") or {})
+                            "depth": _sub(r, "library_abundance")
                                      .get("median_31mer_count"),
                             "values": [f(r) for _k, _l, f in SCATTER_AXES],
                             "closest": {k: v for k, v in r.items()
                                         if k.startswith("closest_")
                                         and isinstance(v, dict)},
-                            "motif": (r.get("motif") or [None])[0],
-                            "chimaera": r.get("chimaera")}
+                            # Same rule as _sub: a field dropped by name carries its
+                            # reason, and the page reads a hit only where there is a
+                            # list of them. The reason is a census entry, not a row.
+                            "motif": (r["motif"][0] if isinstance(r.get("motif"), list)
+                                      and r["motif"] else None),
+                            "chimaera": (r.get("chimaera")
+                                         if isinstance(r.get("chimaera"), dict)
+                                         else None)}
                            for r in table],
                   "n_drawn": len(table), "n_total": len(res), "sample_seed": seed},
         "search": {"fields": SEARCH_FIELDS,

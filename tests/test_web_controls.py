@@ -190,3 +190,35 @@ def test_the_shipped_default_of_every_control_is_the_runs_operating_point():
     if not got["min_bitscore"].get("absent"):
         assert got["min_bitscore"]["shipped"] == op["diamond_bitscore"]
     assert got["evalue_floor"]["shipped"] == b["significant_evalue"]
+
+
+def test_a_run_with_fields_dropped_by_name_still_builds(tmp_path):
+    """A field dropped on purpose carries its reason, and the page reads around it.
+
+    `--report-without` is how a run says a field was not searched, which is a different
+    state from searched-and-found-nothing and has to stay different. Every per-read
+    reader in the generator used to assume a mapping, so one run with a field dropped by
+    name would have taken the whole build down - and the reason belongs in the census the
+    page prints, not in a traceback.
+    """
+    import shutil
+    run = tmp_path / "run"
+    shutil.copytree(RUN, run)
+    rows = []
+    for line in (RUN / "reads.jsonl").read_text().splitlines():
+        d = json.loads(line)
+        for f in ("cross_sample", "library_abundance", "motif", "chimaera"):
+            d[f] = f"not searched: --report-without {f}"
+        rows.append(json.dumps(d))
+    (run / "reads.jsonl").write_text("\n".join(rows) + "\n")
+    r = subprocess.run([sys.executable, "-I", str(ROOT / "experiments/make_web.py"),
+                        str(HOLDOUT_PAGE), "--rundir", str(run),
+                        "--out", str(tmp_path / "p.html")],
+                       capture_output=True, text=True, cwd=ROOT)
+    assert r.returncode == 0, r.stdout + r.stderr
+    # And the control over a field that was not searched states that, rather than
+    # offering a cut over numbers that do not exist.
+    page = make_web.load_page(HOLDOUT_PAGE, run)
+    got = {c["id"]: c for c in make_web.bundle(run, 20, 20, 1, page)["controls"]
+           ["controls"]}
+    assert got["min_occupancy"].get("absent")
