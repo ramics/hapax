@@ -1,131 +1,135 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 872" width="1200" height="872" role="img" aria-labelledby="t d">
-  <title id="t">hapax: subtract the known, assemble what survives, score the rest as a distance</title>
-  <desc id="d">One library enters. A cascade of cheapest-index-first references removes 77.10 percent of read pairs as already known; 22.90 percent survives. What survives splits into contigs nothing can name at median depth 6 and reads that never assembled at median depth 1. Everything, removed or not, is placed on one distance axis with its nearest-relative identity and a shuffled null beside it. The tool ships a cost-versus-completeness curve and the residue, and emits no novelty score, no threat score and no per-read verdict.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 918" width="1120" height="918" role="img" aria-labelledby="figtitle figdesc">
+  <title id="figtitle">hapax: the stages of one run, where a library ends up, and what one row says</title>
+  <desc id="figdesc">Panel a lists the seven stages of a run, each with its input, its output and one measured quantity: resolve, 14 nt non-template prefix on mate 2, modal in 5/5 seeds; merge, 35.1% of pairs merge; recognition at 20% divergence 10.5 → 38.4%; assemble, 20 of 25 depositor genomes at ≥90% breadth; 53 zero-read controls stay empty; identify, 77.10% of read pairs removed as already known (77.02–77.28, 5 seeds); score the distance, 0.00% shuffled null, carried beside every field rather than quoted once; report the residue, depth 1 median, for the pairs that never assembled — a boundary, not a pile of candidates; subtract other plants, 87.5% of a held-out library, still falling at 512 libraries. Panel b is a to-scale bar of 100% of read pairs: 77.10% identified, made up of ribosomal, 37.93 points, the sample's own contigs, 30.33, everything else, 8.84, and 22.90% residue, of which ≈8.4 assembled but unnameable, ≈11.1 never assembled. Panel c is the one distance axis every row sits on, running from far from anything published to matched, each row carrying what it is closest to.</desc>
 
   <defs>
-    <linearGradient id="axis" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#f472b6"/>
-      <stop offset="0.5" stop-color="#a78bfa"/>
-      <stop offset="1" stop-color="#38bdf8"/>
-    </linearGradient>
     <style>
-      .ttl { font: 700 40px ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill: #f1f5f9; }
-      .sub { font: 400 19px ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill: #94a3b8; }
-      .step { font: 700 13px ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill: #64748b; letter-spacing: 2.2px; }
-      .h { font: 700 21px ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill: #f1f5f9; }
-      .n { font: 700 26px ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill: #f1f5f9; }
-      .b { font: 400 14px ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill: #cbd5e1; }
-      .m { font: 400 13px ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill: #8495ad; }
-      .pill { font: 600 14px ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill: #cbd5e1; }
-      .card { fill: #141b2b; stroke: #26314a; }
+      text { font-family: "Helvetica Neue", Helvetica, Arial, ui-sans-serif, system-ui, sans-serif; fill: #14181d; }
+      .figh { font-size: 21px; font-weight: 700; }
+      .figs { font-size: 13px; fill: #5d6671; }
+      .pan  { font-size: 13px; font-weight: 700; }
+      .pant { font-size: 13px; font-weight: 700; fill: #14181d; }
+      .st   { font-size: 14.5px; font-weight: 700; letter-spacing: 0.2px; }
+      .io   { font-size: 12px; fill: #5d6671; }
+      .num  { font-size: 14.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
+      .unit { font-size: 11.5px; fill: #5d6671; }
+      .ax   { font-size: 11.5px; fill: #5d6671; }
+      .note { font-size: 11.5px; fill: #717a85; }
+      .seg  { font-size: 11.5px; }
+      .idx  { font-size: 11px; font-weight: 700; fill: #97a0aa; font-variant-numeric: tabular-nums; }
     </style>
+    <marker id="arr" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 1 L7 4 L0 7 z" fill="#4a525c"/>
+    </marker>
   </defs>
 
-  <rect width="1200" height="872" rx="18" fill="#0b1018"/>
+  <rect x="0.5" y="0.5" width="1119" height="917" fill="#ffffff" stroke="#dfe4ea"/>
 
-  <!-- masthead -->
-  <text class="ttl" x="56" y="74">hapax</text>
-  <text class="sub" x="200" y="73">wastewater in, a measurement out</text>
-  <text class="m" x="56" y="101">Every number here is measured on SRR23973193 across 5 seeds, from a committed script and a seed. No sample is assumed to be known.</text>
+  <text class="figh" x="40" y="48">hapax</text>
+  <text class="figs" x="40" y="72">What is already known, what assembled without a name, and how far the rest sits from anything published — each pile quantified, each answer priced.</text>
+  <line x1="40" y1="92" x2="1080" y2="92" stroke="#dfe4ea"/>
 
-  <!-- ===== 1. the library ===== -->
-  <text class="step" x="56" y="150">1 · ONE LIBRARY, MATES MERGED FIRST</text>
-  <rect x="56" y="164" width="1088" height="40" rx="8" fill="#101827" stroke="#26314a"/>
-  <circle cx="80" cy="184" r="5" fill="#38bdf8"/>
-  <text class="b" x="96" y="189">8,731,224 pairs · 35.1% of them merge into one read · recognition at 20% divergence rises 10.5% &#8594; 38.4% for free</text>
+  <text class="pan" x="40" y="122">a<tspan class="pant" dx="12">One run, stage by stage</tspan></text>
+  <text class="ax" x="1080" y="122" text-anchor="end">one input, one output, one measured quantity each</text>
+  <line x1="54" y1="140" x2="54" y2="568" stroke="#e7ebf0"/>
 
-  <!-- ===== 2. subtract the known ===== -->
-  <text class="step" x="56" y="252">2 &#183; SUBTRACT THE KNOWN</text>
-  <text class="m" x="1144" y="252" text-anchor="end">cheapest index first &#183; percentages are of read pairs</text>
   <g>
-    <!-- 10 px per 1% of read pairs -->
-    <rect x="56" y="268" width="3.1" height="54" fill="#1e293b"/>
-    <rect x="59.1" y="268" width="379.3" height="54" fill="#0ea5e9"/>
-    <rect x="438.4" y="268" width="52.1" height="54" fill="#22d3ee"/>
-    <rect x="490.5" y="268" width="6.9" height="54" fill="#2dd4bf"/>
-    <rect x="497.4" y="268" width="10.0" height="54" fill="#34d399"/>
-    <rect x="507.4" y="268" width="303.3" height="54" fill="#6366f1"/>
-    <rect x="810.7" y="268" width="14.3" height="54" fill="#a78bfa"/>
-    <rect x="825.0" y="268" width="2.0" height="54" fill="#c084fc"/>
-    <rect x="827.0" y="268" width="229.0" height="54" fill="#f59e0b"/>
-    <rect x="1056" y="268" width="88" height="54" fill="#111a2b" stroke="#26314a"/>
-    <text class="m" x="1100" y="300" text-anchor="middle">cost curve</text>
-    <text class="m" x="1100" y="314" text-anchor="middle">not flat yet</text>
-    <rect x="56" y="268" width="1000" height="54" fill="none" stroke="#26314a" rx="2"/>
+    <circle cx="54" cy="166" r="4.5" fill="#ffffff" stroke="#2f6fd0" stroke-width="2"/>
+    <text class="idx" x="40" y="170" text-anchor="end">1</text>
+    <text class="st" x="72" y="163">resolve</text>
+    <text class="io" x="72" y="181">library accession → trim, block size, which panels apply</text>
+    <text class="num" x="1080" y="163" text-anchor="end">14 nt</text>
+    <text class="unit" x="1080" y="181" text-anchor="end">non-template prefix on mate 2, modal in 5/5 seeds</text>
+    <line x1="72" y1="196" x2="1080" y2="196" stroke="#f0f3f6"/>
 
-    <!-- callouts -->
-    <path d="M248 322 L248 342" stroke="#0ea5e9" stroke-width="1.5"/>
-    <text class="b" x="248" y="358" text-anchor="middle" fill="#7dd3fc">SILVA rRNA, 0.27 GB &#8594; 37.93 pts</text>
-    <path d="M659 268 L659 250" stroke="#6366f1" stroke-width="1.5"/>
-    <text class="b" x="659" y="243" text-anchor="middle" fill="#a5b4fc">the sample's own contigs, 0.015 GB &#8594; 30.33 pts</text>
-    <text class="m" x="659" y="225" text-anchor="middle">efficiency, never sensitivity: 0.0% of a genuinely novel genome</text>
+    <circle cx="54" cy="228" r="4.5" fill="#ffffff" stroke="#2f6fd0" stroke-width="2"/>
+    <text class="idx" x="40" y="232" text-anchor="end">2</text>
+    <text class="st" x="72" y="225">merge</text>
+    <text class="io" x="72" y="243">read pairs → one read per overlapping molecule</text>
+    <text class="num" x="1080" y="225" text-anchor="end">35.1%</text>
+    <text class="unit" x="1080" y="243" text-anchor="end">of pairs merge; recognition at 20% divergence 10.5 → 38.4%</text>
+    <line x1="72" y1="258" x2="1080" y2="258" stroke="#f0f3f6"/>
 
-    <text class="n" x="56" y="412">77.10%</text>
-    <text class="b" x="160" y="411">removed as already known <tspan class="m">(77.02&#8211;77.28, 5 seeds) — a lower bound on "known"</tspan></text>
-    <text class="n" x="941" y="412" text-anchor="end" fill="#fbbf24">22.90%</text>
-    <text class="b" x="951" y="411">survives</text>
+    <circle cx="54" cy="290" r="4.5" fill="#ffffff" stroke="#2f6fd0" stroke-width="2"/>
+    <text class="idx" x="40" y="294" text-anchor="end">3</text>
+    <text class="st" x="72" y="287">assemble</text>
+    <text class="io" x="72" y="305">the whole library → contigs, with a recovery check in the same pass</text>
+    <text class="num" x="1080" y="287" text-anchor="end">20 of 25</text>
+    <text class="unit" x="1080" y="305" text-anchor="end">depositor genomes at ≥90% breadth; 53 zero-read controls stay empty</text>
+    <line x1="72" y1="320" x2="1080" y2="320" stroke="#f0f3f6"/>
+
+    <circle cx="54" cy="352" r="4.5" fill="#2f6fd0" stroke="#2f6fd0" stroke-width="2"/>
+    <text class="idx" x="40" y="356" text-anchor="end">4</text>
+    <text class="st" x="72" y="349">identify</text>
+    <text class="io" x="72" y="367">reads and contigs against indexes, cheapest first → tier table, removal evidence per contig</text>
+    <text class="num" x="1080" y="349" text-anchor="end">77.10%</text>
+    <text class="unit" x="1080" y="367" text-anchor="end">of read pairs removed as already known (77.02–77.28, 5 seeds)</text>
+    <line x1="72" y1="382" x2="1080" y2="382" stroke="#f0f3f6"/>
+
+    <circle cx="54" cy="414" r="4.5" fill="#2f6fd0" stroke="#2f6fd0" stroke-width="2"/>
+    <text class="idx" x="40" y="418" text-anchor="end">5</text>
+    <text class="st" x="72" y="411">score the distance</text>
+    <text class="io" x="72" y="429">every row, removed or not → distance, nearest-relative identity, query coverage, E-value</text>
+    <text class="num" x="1080" y="411" text-anchor="end">0.00%</text>
+    <text class="unit" x="1080" y="429" text-anchor="end">shuffled null, carried beside every field rather than quoted once</text>
+    <line x1="72" y1="444" x2="1080" y2="444" stroke="#f0f3f6"/>
+
+    <circle cx="54" cy="476" r="4.5" fill="#c77700" stroke="#c77700" stroke-width="2"/>
+    <text class="idx" x="40" y="480" text-anchor="end">6</text>
+    <text class="st" x="72" y="473">report the residue</text>
+    <text class="io" x="72" y="491">what nothing named → one un-thresholded row per pair, each field with its control</text>
+    <text class="num" x="1080" y="473" text-anchor="end">depth 1</text>
+    <text class="unit" x="1080" y="491" text-anchor="end">median, for the pairs that never assembled — a boundary, not a pile of candidates</text>
+    <line x1="72" y1="506" x2="1080" y2="506" stroke="#f0f3f6"/>
+
+    <circle cx="54" cy="538" r="4.5" fill="#ffffff" stroke="#2f6fd0" stroke-width="2"/>
+    <text class="idx" x="40" y="542" text-anchor="end">7</text>
+    <text class="st" x="72" y="535">subtract other plants</text>
+    <text class="io" x="72" y="553">512 libraries from elsewhere → witnessed or not, paired per plant</text>
+    <text class="num" x="1080" y="535" text-anchor="end">87.5%</text>
+    <text class="unit" x="1080" y="553" text-anchor="end">of a held-out library, still falling at 512 libraries</text>
+
+  </g>
+  <line x1="40" y1="580" x2="1080" y2="580" stroke="#e7ebf0"/>
+  <text class="note" x="40" y="598">A stage whose input is missing is skipped by name and the run is marked incomplete. Nothing falls back to a cheaper index, and no sample&#39;s parameters are guessed.</text>
+
+  <text class="pan" x="40" y="636">b<tspan class="pant" dx="12">Where one library ends up</tspan><tspan class="ax" dx="14" font-weight="400">100% of read pairs, to scale</tspan></text>
+
+  <g transform="translate(40,672)">
+    <rect x="0" y="0" width="801.8" height="24" fill="#2f6fd0"/>
+    <rect x="801.8" y="0" width="238.2" height="24" fill="#e2a33c"/>
+    <line x1="394.5" y1="0" x2="394.5" y2="24" stroke="#ffffff"/>
+    <line x1="709.9" y1="0" x2="709.9" y2="24" stroke="#ffffff"/>
+    <rect x="0" y="0" width="1040" height="24" fill="none" stroke="#c9d0d8"/>
+
+    <text class="ax" x="0" y="-8" font-weight="700" fill="#14181d">77.10% identified</text>
+    <text class="ax" x="1040" y="-8" text-anchor="end" font-weight="700" fill="#b07000">22.90% residue</text>
+
+    <text class="seg" x="4" y="42" fill="#2f6fd0">ribosomal, 37.93 points</text>
+    <text class="seg" x="398" y="42" fill="#2f6fd0">the sample's own contigs, 30.33</text>
+    <text class="seg" x="714" y="42" fill="#2f6fd0">everything else, 8.84</text>
+    <text class="seg" x="1040" y="62" text-anchor="end" fill="#b07000">≈8.4 assembled but unnameable, ≈11.1 never assembled</text>
+    <text class="note" x="0" y="86">0.015 GB of the sample's own contigs removes 30.33 points where 16 GB of Kraken2 removes 0.42, which is why the cascade is ordered by cost and not by size.</text>
   </g>
 
-  <!-- ===== 3. what survives ===== -->
-  <text class="step" x="56" y="462">3 · WHAT SURVIVES, SPLIT BY WHETHER IT ASSEMBLED</text>
-  <g>
-    <rect class="card" x="56" y="478" width="340" height="128" rx="12"/>
-    <rect x="56" y="478" width="340" height="4" rx="2" fill="#f59e0b"/>
-    <text class="h" x="80" y="514">assembled, unnameable</text>
-    <text class="b" x="80" y="542">&#8776;8.4 points · 46,157 contigs</text>
-    <text class="m" x="80" y="564">median depth 6; 3.87% clear 500 nt and 2&#215;</text>
-    <text class="m" x="80" y="584">17.6% share no 31-mer with four continents</text>
-
-    <rect class="card" x="420" y="478" width="340" height="128" rx="12"/>
-    <rect x="420" y="478" width="340" height="4" rx="2" fill="#fb7185"/>
-    <text class="h" x="444" y="514">never assembled</text>
-    <text class="b" x="444" y="542">&#8776;11.1 points · <tspan fill="#fda4af">median depth 1</tspan></text>
-    <text class="m" x="444" y="564">a measured boundary, not a discovery pile:</text>
-    <text class="m" x="444" y="584">read length and database reach land here too</text>
-
-    <rect class="card" x="784" y="478" width="360" height="128" rx="12"/>
-    <rect x="784" y="478" width="360" height="4" rx="2" fill="#34d399"/>
-    <text class="h" x="808" y="514">other plants as background</text>
-    <text class="b" x="808" y="542">512 libraries remove 87.5%, still falling</text>
-    <text class="m" x="808" y="564">at depth 1: residue 79.0% survives against</text>
-    <text class="m" x="808" y="584">70.5% identified — blind to anything seen once</text>
-  </g>
-
-  <!-- ===== 4. one distance axis ===== -->
-  <text class="step" x="56" y="656">4 · SCORE EVERYTHING, REMOVED OR NOT, ON ONE DISTANCE AXIS</text>
-  <g>
-    <rect x="56" y="672" width="1088" height="6" rx="3" fill="url(#axis)"/>
-    <g fill="#e2e8f3">
-      <rect x="150" y="662" width="2" height="26" opacity="0.75"/><rect x="186" y="662" width="2" height="26" opacity="0.75"/>
-      <rect x="201" y="662" width="2" height="26" opacity="0.75"/><rect x="263" y="662" width="2" height="26" opacity="0.75"/>
-      <rect x="318" y="662" width="2" height="26" opacity="0.75"/><rect x="331" y="662" width="2" height="26" opacity="0.75"/>
-      <rect x="402" y="662" width="2" height="26" opacity="0.75"/><rect x="455" y="662" width="2" height="26" opacity="0.75"/>
-      <rect x="470" y="662" width="2" height="26" opacity="0.75"/><rect x="498" y="662" width="2" height="26" opacity="0.75"/>
-      <rect x="560" y="662" width="2" height="26" opacity="0.75"/><rect x="604" y="662" width="2" height="26" opacity="0.75"/>
-      <rect x="648" y="662" width="2" height="26" opacity="0.75"/><rect x="700" y="662" width="2" height="26" opacity="0.75"/>
-      <rect x="742" y="662" width="2" height="26" opacity="0.75"/><rect x="790" y="662" width="2" height="26" opacity="0.75"/>
-      <rect x="836" y="662" width="2" height="26" opacity="0.75"/><rect x="905" y="662" width="2" height="26" opacity="0.75"/>
-      <rect x="960" y="662" width="2" height="26" opacity="0.75"/><rect x="1020" y="662" width="2" height="26" opacity="0.75"/>
+  <text class="pan" x="40" y="788">c<tspan class="pant" dx="12">What one row says</tspan></text>
+  <g transform="translate(40,828)">
+    <line x1="0" y1="0" x2="300" y2="0" stroke="#4a525c" marker-end="url(#arr)"/>
+    <g stroke="#4a525c">
+      <line x1="22" y1="-8" x2="22" y2="0"/><line x1="38" y1="-8" x2="38" y2="0"/>
+      <line x1="57" y1="-8" x2="57" y2="0"/><line x1="93" y1="-8" x2="93" y2="0"/>
+      <line x1="110" y1="-8" x2="110" y2="0"/><line x1="148" y1="-8" x2="148" y2="0"/>
+      <line x1="166" y1="-8" x2="166" y2="0"/><line x1="193" y1="-8" x2="193" y2="0"/>
+      <line x1="224" y1="-8" x2="224" y2="0"/><line x1="246" y1="-8" x2="246" y2="0"/>
     </g>
-    <text class="m" x="56" y="708">far from anything published</text>
-    <text class="m" x="1144" y="708" text-anchor="end">matched</text>
-    <text class="b" x="600" y="716" text-anchor="middle">one mark per contig, un-thresholded, each row carrying its nearest-relative identity, coverage and E-value</text>
-    <text class="m" x="600" y="736" text-anchor="middle">a shuffled null beside every field (0.00% on this axis) · &#8220;cannot discriminate here&#8221; is a legitimate row</text>
+    <text class="ax" x="0" y="16">far from anything published</text>
+    <text class="ax" x="300" y="16" text-anchor="end">matched</text>
+    <text class="note" x="360" y="-14">One mark per contig, un-thresholded, each carrying what it is closest to</text>
+    <text class="note" x="360" y="2">beside how far away that is — both halves, or the missing half is named.</text>
+    <text class="note" x="360" y="18">No novelty score, no threat score, no per-read verdict: a search can say</text>
+    <text class="note" x="360" y="34">whether something is already known, never that something is new.</text>
   </g>
 
-  <!-- ===== what it refuses to emit ===== -->
-  <g>
-    <text class="step" x="56" y="774">AND THESE IT WILL NOT EMIT</text>
-    <g>
-      <rect x="56" y="786" width="190" height="28" rx="14" fill="#1b1220" stroke="#5b2745"/>
-      <text class="pill" x="151" y="805" text-anchor="middle" fill="#fda4af">no novelty score</text>
-      <rect x="266" y="786" width="190" height="28" rx="14" fill="#1b1220" stroke="#5b2745"/>
-      <text class="pill" x="361" y="805" text-anchor="middle" fill="#fda4af">no threat score</text>
-      <rect x="476" y="786" width="214" height="28" rx="14" fill="#1b1220" stroke="#5b2745"/>
-      <text class="pill" x="583" y="805" text-anchor="middle" fill="#fda4af">no per-read verdict</text>
-      <rect x="710" y="786" width="218" height="28" rx="14" fill="#1b1220" stroke="#5b2745"/>
-      <text class="pill" x="819" y="805" text-anchor="middle" fill="#fda4af">no &#8220;matches nothing&#8221;</text>
-    </g>
-    <text class="m" x="56" y="845">A search can say whether something is already known; it cannot say that something is new. Declared blind spots ship as part of the output.</text>
-  </g>
+  <line x1="40" y1="880" x2="1080" y2="880" stroke="#eef1f4"/>
+  <text class="note" x="40" y="898">Berlin wastewater SRR23973193, 5 seeds; percentages are of read pairs. Every number here is read from a committed result directory under <tspan font-weight="700">results/</tspan>, with the script and seed that produced it.</text>
 </svg>
