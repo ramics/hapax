@@ -11,3 +11,15 @@ experiments/kmer_coverage/target/
 results/*/work/
 bin_local/
 *.log
+
+# paired-search per-query search output and query FASTAs: regenerable by the search
+# stage, hundreds of MB, and the per-pair statistics derived from them are committed as
+# pairs_<band>.tsv.gz instead
+results/pair_search/*/hits/
+results/pair_search/*/queries/
+results/pair_search/*/strict_*.fa
+results/pair_search/*/strict_*.tsv
+results/pair_search/*/positional_nt.tsv
+results/pair_search/*/positional_prot_dmnd.tsv
+results/pair_search/*/positional_windows.fa
+results/pair_search/*/library_pools.json

@@ -1,0 +1,308 @@
+{
+ "band": "near",
+ "insert_band": [
+  301,
+  430
+ ],
+ "insert_ladder": [
+  [
+   0.025,
+   303
+  ],
+  [
+   0.05,
+   305
+  ],
+  [
+   0.075,
+   307
+  ],
+  [
+   0.1,
+   309
+  ],
+  [
+   0.125,
+   311
+  ],
+  [
+   0.15,
+   313
+  ],
+  [
+   0.175,
+   315
+  ],
+  [
+   0.2,
+   316
+  ],
+  [
+   0.225,
+   318
+  ],
+  [
+   0.25,
+   320
+  ],
+  [
+   0.275,
+   322
+  ],
+  [
+   0.3,
+   324
+  ],
+  [
+   0.325,
+   326
+  ],
+  [
+   0.35,
+   328
+  ],
+  [
+   0.375,
+   330
+  ],
+  [
+   0.4,
+   331
+  ],
+  [
+   0.425,
+   333
+  ],
+  [
+   0.45,
+   335
+  ],
+  [
+   0.475,
+   337
+  ],
+  [
+   0.5,
+   339
+  ],
+  [
+   0.525,
+   341
+  ],
+  [
+   0.55,
+   343
+  ],
+  [
+   0.575,
+   345
+  ],
+  [
+   0.6,
+   346
+  ],
+  [
+   0.625,
+   348
+  ],
+  [
+   0.65,
+   350
+  ],
+  [
+   0.675,
+   352
+  ],
+  [
+   0.7,
+   354
+  ],
+  [
+   0.725,
+   356
+  ],
+  [
+   0.75,
+   358
+  ],
+  [
+   0.775,
+   360
+  ],
+  [
+   0.8,
+   361
+  ],
+  [
+   0.825,
+   363
+  ],
+  [
+   0.85,
+   372
+  ],
+  [
+   0.875,
+   382
+  ],
+  [
+   0.9,
+   391
+  ],
+  [
+   0.925,
+   401
+  ],
+  [
+   0.95,
+   411
+  ],
+  [
+   0.975,
+   421
+  ],
+  [
+   1.0,
+   430
+  ]
+ ],
+ "insert_ladder_note": {
+  "mode": "conditioned",
+  "band_mass_of_library": 0.128
+ },
+ "read_len": 145,
+ "pairs_per_arm": 1000,
+ "arms": {
+  "berlin_identified": {
+   "s1": {
+    "block_start": 0,
+    "scanned": 4493,
+    "in_pile": 1382,
+    "overlapping": 381,
+    "too_short": 1,
+    "pairs": 1000,
+    "nonoverlap_share_of_pile": 0.7236
+   },
+   "s2": {
+    "block_start": 1500000,
+    "scanned": 4595,
+    "in_pile": 1400,
+    "overlapping": 399,
+    "too_short": 1,
+    "pairs": 1000,
+    "nonoverlap_share_of_pile": 0.7143
+   },
+   "s3": {
+    "block_start": 3000000,
+    "scanned": 4877,
+    "in_pile": 1410,
+    "overlapping": 410,
+    "too_short": 0,
+    "pairs": 1000,
+    "nonoverlap_share_of_pile": 0.7092
+   },
+   "s4": {
+    "block_start": 4500000,
+    "scanned": 4734,
+    "in_pile": 1420,
+    "overlapping": 420,
+    "too_short": 0,
+    "pairs": 1000,
+    "nonoverlap_share_of_pile": 0.7042
+   },
+   "s5": {
+    "block_start": 6000000,
+    "scanned": 4738,
+    "in_pile": 1439,
+    "overlapping": 439,
+    "too_short": 0,
+    "pairs": 1000,
+    "nonoverlap_share_of_pile": 0.6949
+   }
+  },
+  "berlin_residue": {
+   "s1": {
+    "block_start": 0,
+    "scanned": 9385,
+    "in_pile": 1520,
+    "overlapping": 492,
+    "too_short": 28,
+    "pairs": 1000,
+    "nonoverlap_share_of_pile": 0.6579
+   },
+   "s2": {
+    "block_start": 1500000,
+    "scanned": 10171,
+    "in_pile": 1560,
+    "overlapping": 530,
+    "too_short": 30,
+    "pairs": 1000,
+    "nonoverlap_share_of_pile": 0.641
+   },
+   "s3": {
+    "block_start": 3000000,
+    "scanned": 9877,
+    "in_pile": 1594,
+    "overlapping": 557,
+    "too_short": 37,
+    "pairs": 1000,
+    "nonoverlap_share_of_pile": 0.6274
+   },
+   "s4": {
+    "block_start": 4500000,
+    "scanned": 9528,
+    "in_pile": 1563,
+    "overlapping": 540,
+    "too_short": 23,
+    "pairs": 1000,
+    "nonoverlap_share_of_pile": 0.6398
+   },
+   "s5": {
+    "block_start": 6000000,
+    "scanned": 9663,
+    "in_pile": 1535,
+    "overlapping": 504,
+    "too_short": 31,
+    "pairs": 1000,
+    "nonoverlap_share_of_pile": 0.6515
+   }
+  },
+  "shuffled": {
+   "s1": {
+    "kind": "dinuc",
+    "offered": 4000,
+    "shuffled": 4000,
+    "dropped_identical": 0,
+    "pairs_with_both_mates": 2000
+   },
+   "s2": {
+    "kind": "dinuc",
+    "offered": 4000,
+    "shuffled": 4000,
+    "dropped_identical": 0,
+    "pairs_with_both_mates": 2000
+   },
+   "s3": {
+    "kind": "dinuc",
+    "offered": 4000,
+    "shuffled": 4000,
+    "dropped_identical": 0,
+    "pairs_with_both_mates": 2000
+   },
+   "s4": {
+    "kind": "dinuc",
+    "offered": 4000,
+    "shuffled": 4000,
+    "dropped_identical": 0,
+    "pairs_with_both_mates": 2000
+   },
+   "s5": {
+    "kind": "dinuc",
+    "offered": 4000,
+    "shuffled": 4000,
+    "dropped_identical": 0,
+    "pairs_with_both_mates": 2000
+   }
+  }
+ }
+}

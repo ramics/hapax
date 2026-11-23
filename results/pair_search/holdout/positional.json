@@ -1,0 +1,20 @@
+{
+ "accession": "OQ722337.1",
+ "genome_len": 4147,
+ "windows": 401,
+ "step": 10,
+ "read_len": 145,
+ "real_reads": 32575,
+ "levels": {
+  "nt": {
+   "windows_significant_pct": 49.626,
+   "coverage_weighted_pct": 98.523,
+   "note": "flat is what uniform sampling sees; weighted is the same windows weighted by where the library's reads actually start"
+  },
+  "prot_dmnd": {
+   "windows_significant_pct": 75.062,
+   "coverage_weighted_pct": 1.771,
+   "note": "flat is what uniform sampling sees; weighted is the same windows weighted by where the library's reads actually start"
+  }
+ }
+}

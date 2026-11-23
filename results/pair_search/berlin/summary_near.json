@@ -1,0 +1,348 @@
+{
+ "band": "near",
+ "fixed_threshold": 1e-05,
+ "levels": {
+  "nt": {
+   "matched_null_threshold": {
+    "best_mate": "9.41e-06",
+    "concat": "7.12e-06",
+    "concat_n": "2.63e-05",
+    "fisher": "0.0197",
+    "agree": "0.26",
+    "best_or_fisher": "9.41e-06"
+   },
+   "null_pairs": 10000,
+   "junction_census": {
+    "concat:mate2": 142731,
+    "concat:mate1": 166980,
+    "concat:best_mate2": 7505,
+    "concat_n:mate2": 148117,
+    "concat_n:mate1": 171942,
+    "concat_n:best_mate2": 8721,
+    "concat:crosses": 41820,
+    "concat:best_crosses": 2979,
+    "concat:best_mate1": 9415,
+    "concat_n:best_mate1": 11111,
+    "concat_n:crosses": 7,
+    "concat_n:best_crosses": 1
+   },
+   "arms": {
+    "berlin_identified": {
+     "pairs": 5000,
+     "modes": {
+      "best_mate": {
+       "pct_at_fixed": 28.5,
+       "pct_at_matched_null": 28.04
+      },
+      "concat": {
+       "pct_at_fixed": 28.16,
+       "pct_at_matched_null": 27.36
+      },
+      "concat_n": {
+       "pct_at_fixed": 28.04,
+       "pct_at_matched_null": 28.06
+      },
+      "fisher": {
+       "pct_at_fixed": 21.62,
+       "pct_at_matched_null": 22.32
+      },
+      "agree": {
+       "pct_at_fixed": 19.62,
+       "pct_at_matched_null": 21.08
+      },
+      "best_or_fisher": {
+       "pct_at_fixed": 28.56,
+       "pct_at_matched_null": 28.1
+      }
+     }
+    },
+    "berlin_residue": {
+     "pairs": 5000,
+     "modes": {
+      "best_mate": {
+       "pct_at_fixed": 8.2,
+       "pct_at_matched_null": 7.84
+      },
+      "concat": {
+       "pct_at_fixed": 7.92,
+       "pct_at_matched_null": 7.56
+      },
+      "concat_n": {
+       "pct_at_fixed": 7.8,
+       "pct_at_matched_null": 7.84
+      },
+      "fisher": {
+       "pct_at_fixed": 3.66,
+       "pct_at_matched_null": 4.46
+      },
+      "agree": {
+       "pct_at_fixed": 2.06,
+       "pct_at_matched_null": 5.66
+      },
+      "best_or_fisher": {
+       "pct_at_fixed": 8.28,
+       "pct_at_matched_null": 7.9
+      }
+     }
+    },
+    "shuffled": {
+     "pairs": 10000,
+     "modes": {
+      "best_mate": {
+       "pct_at_fixed": 0.02,
+       "pct_at_matched_null": 0.0
+      },
+      "concat": {
+       "pct_at_fixed": 0.01,
+       "pct_at_matched_null": 0.0
+      },
+      "concat_n": {
+       "pct_at_fixed": 0.0,
+       "pct_at_matched_null": 0.0
+      },
+      "fisher": {
+       "pct_at_fixed": 0.0,
+       "pct_at_matched_null": 0.0
+      },
+      "agree": {
+       "pct_at_fixed": 0.0,
+       "pct_at_matched_null": 0.0
+      },
+      "best_or_fisher": {
+       "pct_at_fixed": 0.02,
+       "pct_at_matched_null": 0.0
+      }
+     }
+    }
+   }
+  },
+  "prot_dmnd": {
+   "matched_null_threshold": {
+    "best_mate": "0.00203",
+    "concat": "0.00079",
+    "concat_n": "0.00494",
+    "fisher": null,
+    "agree": null,
+    "best_or_fisher": "0.00203"
+   },
+   "null_pairs": 10000,
+   "junction_census": {
+    "concat:crosses": 125774,
+    "concat:best_crosses": 11812,
+    "concat:mate1": 67079,
+    "concat_n:crosses": 36008,
+    "concat_n:mate1": 84304,
+    "concat_n:best_crosses": 4282,
+    "concat_n:best_mate1": 6420,
+    "concat:mate2": 41847,
+    "concat_n:mate2": 53344,
+    "concat:best_mate1": 3836,
+    "concat:best_mate2": 2132,
+    "concat_n:best_mate2": 3361
+   },
+   "arms": {
+    "berlin_identified": {
+     "pairs": 5000,
+     "modes": {
+      "best_mate": {
+       "pct_at_fixed": 41.48,
+       "pct_at_matched_null": 53.08
+      },
+      "concat": {
+       "pct_at_fixed": 39.78,
+       "pct_at_matched_null": 49.14
+      },
+      "concat_n": {
+       "pct_at_fixed": 39.1,
+       "pct_at_matched_null": 52.24
+      },
+      "fisher": {
+       "pct_at_fixed": 29.02,
+       "pct_at_matched_null": null
+      },
+      "agree": {
+       "pct_at_fixed": 16.84,
+       "pct_at_matched_null": null
+      },
+      "best_or_fisher": {
+       "pct_at_fixed": 41.86,
+       "pct_at_matched_null": 53.1
+      }
+     }
+    },
+    "berlin_residue": {
+     "pairs": 5000,
+     "modes": {
+      "best_mate": {
+       "pct_at_fixed": 16.14,
+       "pct_at_matched_null": 23.52
+      },
+      "concat": {
+       "pct_at_fixed": 15.12,
+       "pct_at_matched_null": 21.0
+      },
+      "concat_n": {
+       "pct_at_fixed": 14.42,
+       "pct_at_matched_null": 22.94
+      },
+      "fisher": {
+       "pct_at_fixed": 9.32,
+       "pct_at_matched_null": null
+      },
+      "agree": {
+       "pct_at_fixed": 2.94,
+       "pct_at_matched_null": null
+      },
+      "best_or_fisher": {
+       "pct_at_fixed": 16.46,
+       "pct_at_matched_null": 23.54
+      }
+     }
+    },
+    "shuffled": {
+     "pairs": 10000,
+     "modes": {
+      "best_mate": {
+       "pct_at_fixed": 0.0,
+       "pct_at_matched_null": 0.0
+      },
+      "concat": {
+       "pct_at_fixed": 0.0,
+       "pct_at_matched_null": 0.0
+      },
+      "concat_n": {
+       "pct_at_fixed": 0.0,
+       "pct_at_matched_null": 0.0
+      },
+      "fisher": {
+       "pct_at_fixed": 0.0,
+       "pct_at_matched_null": null
+      },
+      "agree": {
+       "pct_at_fixed": 0.0,
+       "pct_at_matched_null": null
+      },
+      "best_or_fisher": {
+       "pct_at_fixed": 0.0,
+       "pct_at_matched_null": 0.0
+      }
+     }
+    }
+   }
+  },
+  "sprot_dmnd": {
+   "matched_null_threshold": {
+    "best_mate": "0.00234",
+    "concat": "0.000542",
+    "concat_n": "0.00297",
+    "fisher": null,
+    "agree": null,
+    "best_or_fisher": "0.00234"
+   },
+   "null_pairs": 10000,
+   "junction_census": {
+    "concat:crosses": 104235,
+    "concat:best_crosses": 13172,
+    "concat:mate1": 31781,
+    "concat:best_mate1": 3206,
+    "concat_n:crosses": 19234,
+    "concat_n:mate1": 31069,
+    "concat_n:best_crosses": 4628,
+    "concat_n:best_mate1": 5360,
+    "concat:mate2": 18136,
+    "concat_n:mate2": 17554,
+    "concat_n:best_mate2": 2657,
+    "concat:best_mate2": 1586
+   },
+   "arms": {
+    "berlin_identified": {
+     "pairs": 5000,
+     "modes": {
+      "best_mate": {
+       "pct_at_fixed": 18.18,
+       "pct_at_matched_null": 22.08
+      },
+      "concat": {
+       "pct_at_fixed": 17.94,
+       "pct_at_matched_null": 20.44
+      },
+      "concat_n": {
+       "pct_at_fixed": 17.42,
+       "pct_at_matched_null": 21.42
+      },
+      "fisher": {
+       "pct_at_fixed": 15.34,
+       "pct_at_matched_null": null
+      },
+      "agree": {
+       "pct_at_fixed": 13.2,
+       "pct_at_matched_null": null
+      },
+      "best_or_fisher": {
+       "pct_at_fixed": 18.36,
+       "pct_at_matched_null": 22.08
+      }
+     }
+    },
+    "berlin_residue": {
+     "pairs": 5000,
+     "modes": {
+      "best_mate": {
+       "pct_at_fixed": 4.34,
+       "pct_at_matched_null": 7.78
+      },
+      "concat": {
+       "pct_at_fixed": 4.18,
+       "pct_at_matched_null": 6.42
+      },
+      "concat_n": {
+       "pct_at_fixed": 3.72,
+       "pct_at_matched_null": 7.3
+      },
+      "fisher": {
+       "pct_at_fixed": 2.86,
+       "pct_at_matched_null": null
+      },
+      "agree": {
+       "pct_at_fixed": 0.84,
+       "pct_at_matched_null": null
+      },
+      "best_or_fisher": {
+       "pct_at_fixed": 4.56,
+       "pct_at_matched_null": 7.8
+      }
+     }
+    },
+    "shuffled": {
+     "pairs": 10000,
+     "modes": {
+      "best_mate": {
+       "pct_at_fixed": 0.0,
+       "pct_at_matched_null": 0.0
+      },
+      "concat": {
+       "pct_at_fixed": 0.0,
+       "pct_at_matched_null": 0.0
+      },
+      "concat_n": {
+       "pct_at_fixed": 0.0,
+       "pct_at_matched_null": 0.0
+      },
+      "fisher": {
+       "pct_at_fixed": 0.0,
+       "pct_at_matched_null": null
+      },
+      "agree": {
+       "pct_at_fixed": 0.0,
+       "pct_at_matched_null": null
+      },
+      "best_or_fisher": {
+       "pct_at_fixed": 0.0,
+       "pct_at_matched_null": 0.0
+      }
+     }
+    }
+   }
+  }
+ }
+}

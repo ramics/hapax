@@ -1,0 +1,77 @@
+{
+ "min_alignment_fraction": 0.8,
+ "arms": {
+  "candidate": {
+   "accession": "OQ722337.1",
+   "nt_divergence": 30.28,
+   "pool": 32575,
+   "strict": 1856,
+   "strict_share": 0.057,
+   "median_alignment_span_of_pool": 48,
+   "shuffle_census": {
+    "kind": "dinuc",
+    "offered": 1856,
+    "shuffled": 1856,
+    "dropped_identical": 0
+   },
+   "levels": {
+    "real_nt": {
+     "queries": 1856,
+     "identified": 351,
+     "identified_pct": 18.912
+    },
+    "real_prot_dmnd": {
+     "queries": 1856,
+     "identified": 550,
+     "identified_pct": 29.634
+    },
+    "shuffled_nt": {
+     "queries": 1856,
+     "identified": 0,
+     "identified_pct": 0.0
+    },
+    "shuffled_prot_dmnd": {
+     "queries": 1856,
+     "identified": 0,
+     "identified_pct": 0.0
+    }
+   }
+  },
+  "leak": {
+   "accession": "OQ722330.1",
+   "nt_divergence": 0.08,
+   "pool": 45265,
+   "strict": 24290,
+   "strict_share": 0.5366,
+   "median_alignment_span_of_pool": 134,
+   "shuffle_census": {
+    "kind": "dinuc",
+    "offered": 24290,
+    "shuffled": 24290,
+    "dropped_identical": 0
+   },
+   "levels": {
+    "real_nt": {
+     "queries": 24290,
+     "identified": 24230,
+     "identified_pct": 99.753
+    },
+    "real_prot_dmnd": {
+     "queries": 24290,
+     "identified": 21442,
+     "identified_pct": 88.275
+    },
+    "shuffled_nt": {
+     "queries": 24290,
+     "identified": 3,
+     "identified_pct": 0.012
+    },
+    "shuffled_prot_dmnd": {
+     "queries": 24290,
+     "identified": 0,
+     "identified_pct": 0.0
+    }
+   }
+  }
+ }
+}

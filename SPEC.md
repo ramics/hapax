@@ -40,12 +40,14 @@ to all of them, including everything killed, is [`results/README.md`](results/RE
 One row, and it is a sentence with two halves:
 
 > **This contig is 66.5% identical at protein level over 620 aa to *X*, covering 46% of
-> itself, at 452× even mapped depth, assembled from this water on this date — and its three
+> itself, at 67× end-to-end mapped depth, assembled from this water on this date — and its three
 > genes span 24.3 identity points with the polymerase at 66.5% and the maturation protein at
 > 53.5%.**
 
 That is the withheld genome of `results/holdout_cascade/`, a real virus deposited after the
-library that contains it, and it is the system's positive control. The distance half says
+library that contains it, and it is the system's positive control. The depth in it is the
+end-to-end figure, not the 452× this row used to quote: that was aligned bases over genome
+length on reads selected by mapping, and 95.4% of them were a partial-match halo (§4.3). The distance half says
 *how new*; the identity half says *like what*.
 
 **Both halves are required, and that is Imo's correction of 2026-11-23: "what it IS is as
@@ -76,19 +78,29 @@ verdict.
   controlled (`results/residue_fields/`). The joint space beats the best single axis by
   **0.013 AUC** and shows no cluster count beating 1 in 5/5 seeds
   (`results/residue_structure/`).
-- **At real distance a read recognises its own relative about one time in sixteen.** On the
-  holdout at 30.3% nucleotide divergence, 5.25–7.00% of 145 nt reads clear E < 1e-5 at
-  nucleotide level and 2.45–2.80% at protein, against 56.65–59.30% for referenced sequence,
-  with a clean 0.00% shuffled null (`results/holdout_run/`).
+- **At real distance a read recognises its own relative about one time in five.** On the
+  holdout at 30.3% nucleotide divergence, **18.91% of reads clear E < 1e-5 at nucleotide
+  level and 29.63% at protein**, against 99.75% / 88.28% for a 0.08%-divergent comparator
+  from the same mapping pass, with a clean 0.00% shuffled null (`results/pair_search/` §6).
+  That corrects `results/holdout_run/`'s 5.25–7.00% and 2.45–2.80%, which were low in one
+  direction and high in the other: its candidate arm was **94% a partial-match halo** (median
+  alignment span 48 of 150 nt; 95.4% of its reads starting at one conserved 5' element), and
+  its nucleotide index was not the viral release it is described as (67–69% of that arm's
+  identified reads had non-viral best subjects). A count gate did not catch either; the check
+  that does is re-searching the previous run's identified queries and comparing survivors.
 - **And a per-read identity readout is biased towards *familiar*.** The same reads report
   82.56–83.33% identity where the truth is 69.72% — flattering by 12.8–13.6 points at 61–64%
   coverage, falling to +7.1 above 90% coverage. Coverage is the control that removes most of
   it and never all. Contig-level identity is essentially unbiased by comparison: 66.5%
   measured against 66.45% genome truth.
 
-**Nucleotide beats protein at read level at every distance**, the reverse of the
-contig-level result, because a 145 nt blastx alignment is ~48 residues. The protein tier's
-contig-level advantage must not be carried down to reads.
+**Nucleotide against protein at read level is a crossover, not an ordering**: nucleotide
+ahead near (99.75% against 88.28% at 0.08% divergence) and protein ahead far (29.63% against
+18.91% at 30.3%), both measured on the same reads in one pass (`results/pair_search/` §6).
+The earlier reading — nucleotide ahead at every distance — came from the diluted arm above and
+is withdrawn. Neither tier's contig-level ordering may be assumed at read level in either
+direction; a read is ~48 residues of blastx and the two tiers swap places inside the range
+this project works in.
 
 So reads are used for three things only: subtraction, depth, and the measured boundary of
 §7. Characterisation happens on contigs.
@@ -254,6 +266,16 @@ Merging runs **before** the cascade. Every read-level number is reported for the
 where one exists and per mate where it does not — never pooled, because the mates are not
 interchangeable (§8).
 
+**Merging is the only thing the pair buys the search.** For the ~65% of pairs that do not
+overlap, the two mates are searched separately and the better one is kept; the pair is not
+the unit a search scores. Measured against that baseline on real non-overlapping Berlin
+pairs, every joint mode loses: concatenation, spaced concatenation, per-subject Fisher and
+both-mates-agree rescue **0–8 pairs per 1,000** of what the single mate misses and lose
+**10–261 per 1,000** of what it catches (`results/pair_search/`, §11.17). Concatenating two
+mates without a separator is actively harmful — 41,820 alignments cross the join and 2,979
+of them win their query, against 7 of ~320,000 with a 10 nt spacer — so nothing real spans
+the join and an unseparated concatenation manufactures chimaeric hits.
+
 ### 4.3 Assemble the whole library
 
 Default settings, and the flags travel with the residue number (§3b). Nothing beats the
@@ -277,6 +299,14 @@ and nothing is dropped on it. **Coverage evenness is the field that does separat
 assembler's coverage header understates mapped depth about **fourfold** (37.7× header against
 170.7× over 17,462,448 mates mapped back), so depth claims come from mapping reads back,
 never from the header.
+
+**And a depth figure on a divergent genome is not evenness.** Depth reported as aligned bases
+over genome length, on reads selected by mapping, counts a partial-match halo at full weight:
+the holdout's "452×" is that quantity, and 95.4% of the reads behind it start at one
+conserved position with a median alignment span of 48 of 150 nt, so its end-to-end depth over
+the body of the genome is about **67×** (`results/pair_search/` §6). Every depth claim
+therefore ships beside the alignment-span distribution that produced it, and an arm defined
+as "reads that map here" needs a span floor before it is read as reads of that organism.
 
 ### 4.4 Identify — the cascade
 
@@ -687,7 +717,9 @@ Load-bearing numbers and where each comes from. Nothing else in this document is
 | The gene spread is 12.8 against 2.45 and survives matching on gene count | `results/divergent_known/` |
 | Existence of a protein alignment is the calibrated readout: 0 of 11,361 dinucleotide shuffles, 89.53% of real contigs | `results/divergent_known/` |
 | The coverage-explained gap has no shuffled null; its rate on identified background is median 0.38, p99 46.2 | `results/divergent_known/` |
-| Nucleotide beats protein at read level at every distance; the reverse holds on contigs | `results/holdout_run/`, `results/subtract_known/` |
+| Nucleotide against protein at read level is a crossover — nucleotide ahead at 0.08% divergence (99.75 vs 88.28), protein ahead at 30.3% (29.63 vs 18.91); the reverse of the contig ordering is withdrawn | `results/pair_search/` §6, correcting `results/holdout_run/` |
+| The pair is not the unit a search scores: 0–8 rescued per 1,000 against 10–261 lost, in every mode and at every level | `results/pair_search/` |
+| A mapped-depth figure is not evenness — the holdout's 452× is ~67× end-to-end, 95.4% of its reads at one position | `results/pair_search/` §6 |
 | Per-read identity flatters by 12.8–13.6 points; coverage is the control; contig-level identity is unbiased | `results/holdout_run/`, `results/holdout_cascade/` |
 | Merging the mates takes 20%-divergence recognition from 10.5% to 38.4%; the null stays at 0.0% | `results/profile_reach/`, `results/weak_hits/` |
 | Nothing beats the production search — 11 arms, identical to the decimal; the constraint is the significance statistics | `results/reach/` |
@@ -751,64 +783,29 @@ section exists to prevent.
     **The constraint is the significance statistics.** Codon awareness saturates above ~30%
     protein divergence: right tool, wrong distance (11 of 22 divergent genes have no
     measurable synonymous divergence left).
+17. **The pair as the unit a search scores.** The better single mate beats concatenation,
+    spaced concatenation, per-subject Fisher and both-mates-agree in every cell and at every
+    index level: **0–8 pairs rescued per 1,000 against 10–261 lost**. Unseparated
+    concatenation manufactures hits — 41,820 alignments cross the join and 2,979 win their
+    query, against 7 of ~320,000 with a spacer — and `both agree` cannot add sensitivity by
+    construction, its statistic being the worse mate's E-value. As an *addition* rather than a
+    replacement the Fisher rule costs nothing in the null (0 of 10,000 shuffled pairs) and
+    buys at most 8 pairs per 1,000 on the residue at protein level, and exactly 0 on a
+    known-distance blind (`results/pair_search/`). §4.2's merge is a different thing and
+    stands.
 
 ---
 
 ## 12. What is open — with the experiment that would settle it
 
-### 12.1 Paired search mode — the one live candidate (untested)
+### 12.1 Paired search mode — answered, except one ablation
 
-Imo, 2026-11-23: *"even when mates aren't overlapping, many tools have a paired mode that
-lets them work together to find homology. have we tried that?"*
-
-**Honest answer: not as a search mode.** What exists today:
-
-- The Kraken2 tiers **do** run paired (`-P` in `experiments/subtract_known.py`), so a pair's
-  minimizers are already pooled in the k-mer tiers — **and that has never been ablated
-  against per-mate classification**, so we do not know what it is worth.
-- Every **homology** tier searches mate by mate. No tier anywhere combines two
-  non-overlapping mates into one significance statement.
-- §4.2's merge covers only the 35.1% of pairs that **overlap**. The other ~65% carry two
-  reads of one molecule and are searched as if they were two molecules.
-- Mate linkage has been measured at the **geometry** level — a read's own partner is in its
-  10 nearest neighbours 23× more often than chance with no shared 31-mer, null on chance —
-  but that **did not move the 1-in-100,000 kin wall** (`results/mate_friends/`). It bounds
-  what pairing can buy as a *locator*; it says nothing about what it buys as a *significance
-  statistic*.
-- Prior art makes the gap sharper, not softer: Viromancer/Lyra-Virus **has pairs and never
-  uses them** (`results/readlevel_features/`).
-
-**The experiment.** Arms, all in one pass on the holdout ladder and the Berlin spike, scored
-at the same operating point:
-
-1. best single mate (today's behaviour);
-2. merged read where the pair overlaps (§4.2, as the known-positive comparator);
-3. **joint significance over the two mates**: both mates against the same subject, requiring
-   insert-compatible coordinates and orientation, with the two E-values combined explicitly
-   (Fisher) rather than by taking the better one;
-4. Kraken2 `-P` against per-mate classification — the ablation of what we already ship.
-
-**Controls, and arm 3 is worthless without the first of them:**
-
-- **swapped partners** — mates paired with random partners from the same library. Any joint
-  statistic gains on *any* pair; if the swap control gains as much, the statistic is reading
-  query length and database size, not linkage. This is the control that killed the "most
-  distant relative recovered" statistic (§11.14) and it is the same shape here;
-- dinucleotide shuffles at matched lengths, through `shuffle_control.py` (raising, not
-  falling back — §8);
-- reads the cascade already identifies, as the known-positive arm.
-
-**Metric**: recognition at a fixed false-pair rate per million, per divergence rung, **and
-whether the nearest relative changes** — not merely whether a hit appears. An arm that finds
-more hits without improving the identity or the named subject has bought nothing (§5.1).
-
-**The rule it must respect**: paired mode may improve **identification and distance**. It may
-never become a novelty score. No pair rule reaches one false positive per million
-(`results/mate_width/`), and that kill stands.
-
-**Caveat on the instrument**: the strongest holdout libraries are single-end, so §4.2's
-mate merge is untestable there and this experiment needs the Berlin spike ladder plus a paired
-holdout library.
+Closed by `results/pair_search/`: the non-overlapping pair is not the unit a search scores
+(§11.17), and §4.2's merge stands. What that experiment did **not** touch is the paired mode
+the cascade already ships — Kraken2's `-P` in `experiments/subtract_known.py` pools a pair's
+minimizers, and that has never been ablated against per-mate classification, so what it is
+worth is unknown. A k-mer count rule is not a significance statistic, so §11.17 does not
+cover it.
 
 ### 12.2 Identity for the pile sequence cannot name
 
