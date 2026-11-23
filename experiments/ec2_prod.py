@@ -178,6 +178,14 @@ def main(argv: list[str] | None = None) -> int:
                          "optional: a mode that differs between seeds is not a length to "
                          "cut, and that is the condition trim_from_prefix.py refuses on")
     ap.add_argument("--prefix-pairs", type=int, default=100_000)
+    ap.add_argument("--trim-r2", type=int, default=None,
+                    help="state the mate-2 trim instead of measuring it. Stating a value "
+                         "always wins and is never checked, because stating it IS the "
+                         "override (SPEC 4.1); the measurement still runs and its JSON "
+                         "still ships, so the two can be read against each other. Use it "
+                         "only with a basis written into experiments/libraries.json - on a "
+                         "library with little ribosomal content the SILVA instrument "
+                         "cannot anchor enough reads to measure anything")
     ap.add_argument("--stages", default="cascade contigs reads linkage census intervals "
                                         "layers strains shortlist panel crossplant",
                     help="hapax stages. `calibration` is left out because the spiked "
@@ -232,7 +240,12 @@ def main(argv: list[str] | None = None) -> int:
             f"the counted reads, but there is no reason to pay for the arithmetic.")
     print(f"{args.library}: {facts.get('pairs', 'unknown'):,} pairs, block {block:,}, "
           f"{last} seeds x {args.pairs:,} needs {need:,}")
-    if facts.get("trim_r2") is None:
+    if args.trim_r2 is not None:
+        print(f"trim_r2 STATED as {args.trim_r2}; libraries.json records "
+              f"{facts.get('trim_r2')!r} with "
+              f"{'an unverified flag' if facts.get('trim_r2_unverified') else 'its basis'}. "
+              f"The measurement still runs and ships, and is not used.")
+    elif facts.get("trim_r2") is None:
         print("trim_r2 is unmeasured in libraries.json: the instance measures it over "
               f"{len(args.prefix_seeds.split())} seeds and refuses to run if no single "
               "mode holds, which is the intended path for a new library")
@@ -268,6 +281,7 @@ def main(argv: list[str] | None = None) -> int:
         PAIRS=args.pairs, SEEDS=args.seeds, BLOCK=block,
         REPORT_PAIRS=args.report_pairs, STAGES=args.stages,
         PREFIX_SEEDS=args.prefix_seeds, PREFIX_PAIRS=args.prefix_pairs,
+        TRIM_R2_STATED="" if args.trim_r2 is None else args.trim_r2,
         THREADS=args.threads, MEGAHIT_MEMORY=args.megahit_memory,
         SRA_VERSION=SRA_VERSION, VDB_GUID=VDB_GUID,
         DIAMOND_VERSION=DIAMOND_VERSION, KRAKEN2_VERSION=KRAKEN2_VERSION,
@@ -350,7 +364,10 @@ def main(argv: list[str] | None = None) -> int:
         "library": args.library, "pairs_per_seed": args.pairs, "seeds": args.seeds,
         "block": block, "report_pairs": args.report_pairs, "stages": args.stages,
         "prefix_seeds": args.prefix_seeds, "prefix_pairs": args.prefix_pairs,
-        "trim_r2": "measured on the instance; libraries.json has none for this library",
+        "trim_r2": (f"stated as {args.trim_r2} on the command line; the measurement runs "
+                    f"and ships beside it but is not used"
+                    if args.trim_r2 is not None else
+                    "measured on the instance, and the run refuses if no single mode holds"),
         "volume_gb": args.volume_size, "spot": not args.no_spot,
         "hard_stop_minutes": args.hard_stop_minutes, "projected_usd": round(cost, 2),
         "sra_toolkit": SRA_VERSION, "diamond": DIAMOND_VERSION,

@@ -54,15 +54,25 @@
       "layout": "paired",
       "pairs": 32125614,
       "pairs_basis": "ENA filereport read_count for SRR23702504, 9,701,935,428 bases over 2 x 151 nt. It is the count before the run, used to size the block; experiments/prod_run.sh asserts the block arithmetic against the pairs it actually counts in the file rather than against this number.",
-      "read_length": [151, 151],
+      "read_length": [
+        151,
+        151
+      ],
       "read_length_basis": "base_count / read_count from ENA. 44 nt longer per mate than SRR23973193's 107/93 after trimming, which matters because read length is the one recognition wall this project has measured moving (SPEC 4.2): a figure from this library is not comparable to Berlin's at matched length.",
-      "trim_r2": null,
-      "trim_r2_basis": "NOT YET MEASURED on this library, and deliberately null rather than 14: this is a different kit on a different continent and Berlin's prefix is Berlin's. experiments/prod_run.sh measures it with experiments/nontemplate_prefix_map.py over five seeds and names it with experiments/trim_from_prefix.py, which refuses rather than choosing when the mode is not the same in every seed. The measured value and the run that produced it replace this entry; until then every script that asks for it raises, which is the intended behaviour and not a gap.",
+      "trim_r2": 0,
+      "trim_r2_basis": "MEASURED AND THE MEASUREMENT CANNOT CARRY IT, which is why the value is 0 and why this entry is long. experiments/nontemplate_prefix_map.py over 5 x 100,000 pairs (results/prod_SRR23702504/nontemplate_prefix/) finds the mate-2 5' soft-clip mode at 0 in 5 of 5 seeds, holding 47.1-52.5% of anchored mates, with mate 1 also 0 at 73.3-78.5% - the shape of a library with no non-template prefix. But it rests on 127-144 anchored mates per seed, 0.13-0.14% of pairs, against roughly 32,000 and 32% on SRR23973193: this is treated effluent and SILVA has almost nothing in it to anchor to, so by the instrument's own rule (experiments/trim_from_prefix.py, floor 2,000 anchored) it REFUSED to name a trim, and the production run was given the value on the command line instead, which SPEC 4.1 allows because stating it is the override. 0 is chosen because it is the only value that cannot delete real template; the residual risk, if this kit does carry a prefix, is kit sequence left in the reads, which runs towards less recognition and - in the assembler - towards a tip rather than a join. Nothing beyond the mode supports it: the non-zero clip lengths are spread flat over 3-73 nt at 1-3% each, and the 3' end of the same mate clips a mean of 11.0-13.6 nt, so the 5'-minus-3' excess of +7.7 to +11.4 is two large numbers taken from 139 reads rather than a prefix.",
       "block": 6000000,
       "block_basis": "pairs skipped per seed so that five seeds read five distinct contiguous regions of the flow cell, sized to THIS library: 5 x 200,000 pairs at stride 6 M puts the blocks at 0, 6 M, 12 M, 18 M and 24 M, the last ending at 24,200,000 of 32,125,614. The ceiling is 7,981,403; 6 M leaves margin for a file that counts short. Berlin's 1.5 M would crowd all five seeds into the first 6.2 M pairs of a 32 M-pair library, which is not wrong so much as unrepresentative.",
       "r1": "data/yeongdok/SRR23702504_1.fastq.gz",
       "r2": "data/yeongdok/SRR23702504_2.fastq.gz",
-      "paths_basis": "staged from SRA on the instance that runs the pass; data/ is gitignored, as for every library here."
+      "paths_basis": "staged from SRA on the instance that runs the pass; data/ is gitignored, as for every library here.",
+      "trim_r2_unverified": true,
+      "trim_r2_unverified_note": "Same flag and same reason as SRR23973375, the DNA library: a value this repo applies while nothing has checked it. The instrument that would check it is ribosomal, and this library is not. Clipping the reads against the sample's OWN assembled contigs would not need SILVA at all and is the obvious next instrument; it is untested here and would need an untrimmed assembly to measure against, which is a chicken and egg this pass did not break.",
+      "rrna_anchored_fraction": [
+        0.0013,
+        0.0014
+      ],
+      "rrna_anchored_fraction_basis": "fraction of 100,000 pairs whose mate 2 anchors to SILVA at >= 60 matching bases and MAPQ >= 30, per seed, 5 seeds. It is a third rRNA instrument and it says this library is two to three orders of magnitude less ribosomal than the Berlin influent, which is the single biggest difference between the two samples and is expected of effluent."
     }
   },
   "status": "hand-written from measurements recorded elsewhere in results/. Each value names what established it. Nothing here is derived at run time."

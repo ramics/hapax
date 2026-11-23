@@ -183,15 +183,32 @@ def test_megahit_headers_become_parsable_and_a_foreign_header_is_refused(tmp_pat
 
 
 # ------------------------------------------------- the new library's committed entries
-def test_the_prod_library_has_its_facts_and_no_inherited_trim():
+def test_the_prod_library_has_its_facts_and_its_trim_is_flagged_unverified():
+    """0 is a stated value on a library the ribosomal instrument could not measure."""
     e = library_facts.library(PROD_LIBRARY)
     assert e["layout"] == "paired"
     assert e["pairs"] == 32_125_614
-    assert e["trim_r2"] is None and "NOT YET MEASURED" in e["trim_r2_basis"]
-    with pytest.raises(library_facts.UnknownLibrary):
-        library_facts.fact(PROD_LIBRARY, "trim_r2")
+    assert e["trim_r2"] == 0
+    assert e["trim_r2_unverified"] is True
+    assert "0.13-0.14% of pairs" in e["trim_r2_basis"]
     block = library_facts.fact(PROD_LIBRARY, "block")
     assert 4 * block + 200_000 <= e["pairs"]      # five seeds fit, which is the whole point
+
+
+def test_provenance_can_name_the_commit_on_a_machine_with_no_checkout(monkeypatch):
+    """An instance has a tarball and no git, and a manifest must still say which code ran."""
+    import provenance as pv
+    monkeypatch.setattr(pv, "_git", lambda *a: None)
+    monkeypatch.delenv(pv.SHA_ENV, raising=False)
+    with pytest.raises(pv.ProvenanceError):
+        pv.git_sha()
+    monkeypatch.setenv(pv.SHA_ENV, "abc123")
+    assert pv.git_sha() == "abc123"
+    assert pv.tree_dirty() is False
+    # A machine WITH a checkout ignores it, so it cannot dress a dirty tree as clean.
+    monkeypatch.undo()
+    monkeypatch.setenv(pv.SHA_ENV, "deadbeef")
+    assert pv.git_sha() != "deadbeef"
 
 
 def test_the_prefix_measurement_resolves_an_accession_through_the_committed_entry():

@@ -41,6 +41,11 @@ LOGS="$S3/logs/prod-@@ACC@@-$IID"
 OUTS3="$S3/results/prod/@@ACC@@/$IID"
 ACC="@@ACC@@"
 THREADS="@@THREADS@@"
+# Every script's manifest needs to say which code ran, and experiments/provenance.py now
+# raises rather than writing "unknown" - correctly, and there is no git and no checkout
+# here. The launcher refuses to ship a dirty tree, so this commit describes the code in the
+# payload exactly, and it is exported before anything runs so no stage can miss it.
+export HAPAX_GIT_SHA="@@COMMIT@@"
 
 die() {
   echo "=== shutting down: $1 ==="
@@ -283,14 +288,32 @@ for sd in @@PREFIX_SEEDS@@; do
     --work /opt/hapax/wk/ntprefix --out /opt/hapax/out/nontemplate_prefix \
     || die "the prefix measurement failed on seed $sd"
 done
-TRIM=$("$PY" -I experiments/trim_from_prefix.py --library "$ACC" \
+# The decision runs either way, so its JSON ships whatever happens; what changes is
+# whether its answer is USED. A stated trim always wins and is never checked, because
+# stating it is the override (SPEC 4.1) - and on this library it is the only route, because
+# the instrument needs ribosomal content and 0.14% of these pairs anchor to SILVA.
+set +e
+MEASURED=$("$PY" -I experiments/trim_from_prefix.py --library "$ACC" \
   --prefix-json /opt/hapax/out/nontemplate_prefix/nontemplate_prefix_s*.json \
-  --out /opt/hapax/out/nontemplate_prefix/trim_from_prefix.json) \
-  || die "no single mate-2 trim can be named for $ACC; see \
+  --out /opt/hapax/out/nontemplate_prefix/trim_from_prefix.json)
+MEASURED_RC=$?
+set -e
+TRIM="@@TRIM_R2_STATED@@"
+if [ -n "$TRIM" ]; then
+  echo "=== trim_r2 for $ACC STATED as $TRIM; the measurement is recorded beside it \
+(exit $MEASURED_RC, answer '${MEASURED:-none}') and was not used ==="
+  echo "stated $TRIM; measurement exit $MEASURED_RC answer ${MEASURED:-none}" \
+    > /opt/hapax/out/trim_r2.txt
+else
+  [ "$MEASURED_RC" = "0" ] || die "no single mate-2 trim can be named for $ACC; see \
 out/nontemplate_prefix/trim_from_prefix.json. The run stops here rather than inheriting \
-another library's prefix or picking a mode by eye"
-echo "=== measured trim_r2 for $ACC: $TRIM ==="
-echo "$TRIM" > /opt/hapax/out/trim_r2.txt
+another library's prefix or picking a mode by eye. State the trim on the launcher's \
+--trim-r2 with a basis in experiments/libraries.json if this library cannot be measured \
+this way"
+  TRIM="$MEASURED"
+  echo "=== measured trim_r2 for $ACC: $TRIM ==="
+  echo "measured $TRIM" > /opt/hapax/out/trim_r2.txt
+fi
 
 # ---------------------------------------------------------------- the index set
 mkdir -p /opt/hapax/db /opt/hapax/prot
