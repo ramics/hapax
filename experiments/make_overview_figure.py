@@ -80,13 +80,13 @@ STAGES = [
         "name": "report the residue",
         "io": "what nothing named → one row per pair, no threshold applied, each field beside its control",
         "number": "depth 1",
-        "unit": "median, for the pairs that never assembled; a limit of the method, not a shortlist",
+        "unit": "median depth for pairs that never assembled; set by read length and database reach",
         "source": "results/residue_census",
         "accent": "residue",
     },
     {
         "name": "subtract other plants",
-        "io": "512 libraries from other plants → seen there or not, paired plant by plant",
+        "io": "512 libraries from other plants → witnessed in the panel or not, paired by plant",
         "number": "87.5%",
         "unit": "of a held-out library removed, and still falling at 512 libraries",
         "source": "results/crossplant",
@@ -109,8 +109,8 @@ LIBRARY_SPLIT = {
     "residue": 22.90,
     "residue_note": "≈8.4 assembled but unnamed, ≈11.1 never assembled",
     "cost_note": (
-        "0.015 GB of the sample's own contigs removes 30.33 points. 16 GB of Kraken2 removes "
-        "0.42. The cascade is ordered by cost for that reason, not by database size."
+        "0.015 GB of the sample's own contigs removes 30.33 points of the library; 16 GB of "
+        "Kraken2 removes 0.42. Indexes are therefore consulted in order of cost."
     ),
 }
 
@@ -200,17 +200,17 @@ def render() -> str:
         'stroke="#dfe4ea"/>')
     add("")
     add('  <text class="figh" x="40" y="48">hapax</text>')
-    add('  <text class="figs" x="40" y="72">What a sample already contains, what assembled '
-        "without a name, and how far the rest sits from anything published. Each part "
-        "measured, each answer priced.</text>")
+    add('  <text class="figs" x="40" y="72">Which sequence in a sample is already known, '
+        "which assembled without a name, and how far the remainder sits from published "
+        "sequence, with the cost of every step.</text>")
     add('  <line x1="40" y1="92" x2="1080" y2="92" stroke="#dfe4ea"/>')
     add("")
 
     # ---- panel a -------------------------------------------------------------------
     add('  <text class="pan" x="40" y="122">a<tspan class="pant" dx="12">One run, stage by '
         "stage</tspan></text>")
-    add('  <text class="ax" x="1080" y="122" text-anchor="end">one input, one output, one '
-        "measured quantity each</text>")
+    add('  <text class="ax" x="1080" y="122" text-anchor="end">input, output and one '
+        "measured quantity per stage</text>")
     spine_end = ROW_TOP + ROW_STEP * (len(STAGES) - 1) + 30
     add(f'  <line x1="54" y1="140" x2="54" y2="{spine_end}" stroke="#e7ebf0"/>')
     add("")
@@ -244,9 +244,9 @@ def render() -> str:
         )
     px = BAR_W / 100.0
 
-    add('  <text class="pan" x="40" y="636">b<tspan class="pant" dx="12">Where one library '
-        'ends up</tspan><tspan class="ax" dx="14" font-weight="400">100% of read pairs, to '
-        "scale</tspan></text>")
+    add('  <text class="pan" x="40" y="636">b<tspan class="pant" dx="12">One library '
+        'by removal route</tspan><tspan class="ax" dx="14" font-weight="400">100% of read pairs, '
+        "to scale</tspan></text>")
     add("")
     add(f'  <g transform="translate({BAR_X},{BAR_Y})">')
     add(f'    <rect x="0" y="0" width="{identified * px:.1f}" height="24" fill="{KNOWN}"/>')
@@ -274,8 +274,8 @@ def render() -> str:
     add("")
 
     # ---- panel c -------------------------------------------------------------------
-    add('  <text class="pan" x="40" y="788">c<tspan class="pant" dx="12">What one row '
-        "says</tspan></text>")
+    add('  <text class="pan" x="40" y="788">c<tspan class="pant" dx="12">What a row '
+        "reports</tspan></text>")
     add('  <g transform="translate(40,828)">')
     add('    <line x1="0" y1="0" x2="300" y2="0" stroke="#4a525c" marker-end="url(#arr)"/>')
     add('    <g stroke="#4a525c">')
@@ -283,16 +283,16 @@ def render() -> str:
         add(f'      <line x1="{a}" y1="-8" x2="{a}" y2="0"/>'
             f'<line x1="{b}" y1="-8" x2="{b}" y2="0"/>')
     add("    </g>")
-    add('    <text class="ax" x="0" y="16">far from anything published</text>')
+    add('    <text class="ax" x="0" y="16">far from published sequence</text>')
     add('    <text class="ax" x="300" y="16" text-anchor="end">matched</text>')
-    add('    <text class="note" x="360" y="-14">One mark per contig, no threshold applied. '
-        "Each one carries how far it sits from</text>")
-    add('    <text class="note" x="360" y="2">its closest published relative and what that '
-        "relative is. Where one of the two is</text>")
-    add('    <text class="note" x="360" y="18">missing, the figure says which. No novelty '
-        "score, no threat score, no per-read</text>")
-    add('    <text class="note" x="360" y="34">call. A search can say what is already known. '
-        "It cannot say what is new.</text>")
+    add('    <text class="note" x="360" y="-14">One mark per contig, no threshold applied. A '
+        "row reports the distance to its closest</text>")
+    add('    <text class="note" x="360" y="2">published relative and the identity of that '
+        "relative; where one of the two is absent,</text>")
+    add('    <text class="note" x="360" y="18">the report states which. No novelty score, no '
+        "threat score, no per-read call. Search</text>")
+    add('    <text class="note" x="360" y="34">establishes prior knowledge of a sequence; '
+        "novelty does not follow from a missing hit.</text>")
     add("  </g>")
     add("")
     add('  <line x1="40" y1="880" x2="1080" y2="880" stroke="#eef1f4"/>')
