@@ -21,22 +21,6 @@
    "note": "The withdrawn 92.3% was taken with no E-value floor whatever. This control exists so the floor is visible, moveable and always stated."
   },
   {
-   "id": "min_bitscore",
-   "label": "Minimum bitscore",
-   "kind": "continuous",
-   "unit": "bits",
-   "bounds_from": "the smallest and largest per-read best bitscore in reads.jsonl",
-   "shipped_from": "the cascade's own protein operating point, tier_table.operating_point.diamond_bitscore",
-   "requires": ["reads.jsonl", "tier_table.json"],
-   "placement": "detail",
-   "panels": ["significance", "residue_table"],
-   "arms": {
-    "control": "the identified reads of the same run, same predicate, same pass",
-    "null": "absent at every setting, as for the E-value floor"
-   },
-   "note": "Bitscore and E-value are not interchangeable: a merged read gains less bitscore than its length predicts, which is what makes the E-value a test rather than a longer ruler."
-  },
-  {
    "id": "search_unit",
    "label": "Counting unit",
    "kind": "discrete",

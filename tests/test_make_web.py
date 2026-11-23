@@ -125,3 +125,31 @@ def test_a_page_that_throws_is_not_written(tmp_path, monkeypatch):
     with pytest.raises(SystemExit, match="threw while rendering"):
         make_web.main()
     assert not out.exists()
+
+
+def _summary_titles() -> list[str]:
+    """The one fixed section list, read out of the generator rather than retyped here."""
+    src = (ROOT / "experiments/make_web.py").read_text()
+    body = src[src.index("const SUMMARY = ["):]
+    return [m for m in __import__("re").findall(r"'([^']+)'",
+                                                body[:body.index("];")])]
+
+
+def test_one_report_format_the_same_sections_in_the_same_order(tmp_path):
+    """SPEC 13.4: a page never grows or drops a section because of what a sample has.
+
+    The failure this rules out is a reader learning where a figure lives on one library
+    and not finding it on the next - and, worse, a missing section and a measured
+    absence looking identical. The holdout run is the thin one in the repository: it has
+    no spectrum inputs at all, so if any section could vanish for want of data it would
+    vanish here. The build prints the sections it drew, in order, and this asserts that
+    line against the generator's single list.
+    """
+    r = subprocess.run([sys.executable, "-I", str(ROOT / "experiments/make_web.py"),
+                        str(HOLDOUT), "--out", str(tmp_path / "p.html")],
+                       capture_output=True, text=True, cwd=ROOT)
+    assert r.returncode == 0, r.stdout + r.stderr
+    line = [ln for ln in r.stdout.splitlines() if ln.startswith("summary:")]
+    assert line, r.stdout
+    drawn = [t.strip() for t in line[0][len("summary:"):].split("|")]
+    assert drawn == _summary_titles()

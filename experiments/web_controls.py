@@ -154,19 +154,6 @@ def _resolve_one(c: dict, rundir: Path, bundle: dict, search: dict,
             return out
         out["points"] = pts
         out["shipped"] = bundle["significant_evalue"]
-    elif cid == "min_bitscore":
-        bs = [r[1] for r in search["all"]] + [r[3] for r in search["all"]]
-        out["bounds"] = _bounds(bs, 1, op.get("diamond_bitscore"))
-        out["shipped"] = op.get("diamond_bitscore")
-        if out["bounds"] is None:
-            out.pop("bounds")
-            out["absent"] = ("no read row in this run carries a bitscore, so there is "
-                             "nothing for this floor to move over")
-            return out
-        if out["shipped"] is None:
-            problems.append("min_bitscore: tier_table.json is present but its operating "
-                            "point has no diamond_bitscore, so the page cannot say which "
-                            "setting this run shipped")
     elif cid in ("search_unit", "spec_rank", "read_depth_stratum"):
         out["points"] = c["points"]
         out["shipped"] = c["shipped"]

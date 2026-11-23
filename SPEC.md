@@ -1009,7 +1009,9 @@ manufacturing the numbers this project has had to withdraw.
    pile (§4.4).
 
 **Adjustable, because the numbers already exist at every setting:** the significance floor
-(E-value or bitscore) on any search panel; identity and coverage bands, including the two
+(an E-value, in decades: the bitscore slider was cut because a merged read gains less
+bitscore than its length predicts, so the E-value is the test and a second floor over the
+same hits was a second way to read one number) on any search panel; identity and coverage bands, including the two
 axes that define class A's shortlist cell, with its count and its control count recomputing
 together; the minimum contig length and depth for the characterisable set (shipped at 500 nt
 and 2×); ranking by the conserved gene against whole-contig best hit, with the spread always
@@ -1034,6 +1036,43 @@ the recurrence depth stratum and occupancy cut; and the residue table's filters,
 summary-then-detail shape as the panels: the controls that change a headline sit with that
 headline, and the rest live in a Detail list. A control the reader never moves should be
 invisible, and a control that cannot move honestly should be visible as a stated constraint.
+
+### 13.4 One format, every sample
+
+Imo, 2026-11-23: *"we're building a **generic** tool. **generic**. that runs on **any
+sample** and reports results in a **consistent format**. everything we've been doing before
+this is a **guide experiment**... even if that tool hides the holdout among 400 other
+perfectly assembled diverse genomes."*
+
+**The report is a fixed list of sections in a fixed order, identical on every library.** The
+generator holds one list. A section is never added because a sample has something extra and
+never dropped because a sample has nothing: where a library does not carry a measurement, the
+section stays where it is and says, in one line, that this run did not measure it — the same
+sentence in the same place for every such library. Two consequences this spec is explicit
+about, because the first cut of the page broke both:
+
+- **A page that reshapes itself per sample cannot be compared with another page.** A reader
+  who learns where a figure lives on one library must find it in the same place on the next.
+  The earlier rule that demoted an empty summary panel into Detail kept any one page tidy at
+  the cost of every page having a different shape, and it is gone.
+- **A missing section and a measured absence must not look the same.** An absence is a census
+  entry with the run's own reason in it (§13.1's refusal discipline, one layer out): a stage
+  that was not run says so, with what it would take, in the place its result would have
+  occupied.
+
+**A genome whose answer was known before the run is one row, never a panel.** The withheld
+genome of §6 is a *fixture*, and a fixture-shaped page is the guide experiment leaking into
+the tool. So the section is `Genomes with a distance fixed before the run`, it is present on
+every library, it lists however many such genomes there are — none, one, or four hundred — in
+one table at any count, and what the tool said about each (recovered length, mapped depth,
+and which pile the cascade put it in) is a per-row fact rather than a sentence written about
+one of them. On a library with none, the section says so.
+
+**Nothing on a page is written for one sample.** Every plain-English claim is assembled from
+committed data — `experiments/virus_vocabulary.json` for the biology, `libraries.json` for
+the sample facts, the run directory for everything measured — and the renderer supplies
+grammar only (§13.2). The test of this rule is operational: **a library nobody has touched
+produces its page with nobody writing a sentence for it.**
 
 ---
 

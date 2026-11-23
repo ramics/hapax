@@ -11,6 +11,8 @@
   "spectrum_big_index": {"not_run": "follows the spectrum"},
   "spectrum_reference_point": {"not_run": "follows the spectrum"},
   "spectrum_reference_truth": {"not_run": "follows the spectrum"},
+  "depth_profile": {"not_run": "results/pair_search/holdout/strict.json is on PR #47 and not yet on main; a path to a file that does not exist is a refusal, so this declares the absence until it merges"},
+  "depth_positions": {"not_run": "results/pair_search/holdout/positional_profile.tsv, same PR"},
   "truth_gene_map": {"path": "results/holdout_cascade/gene_map_s1.json"}
  }
 }

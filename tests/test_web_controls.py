@@ -186,9 +186,6 @@ def test_the_built_page_renders_every_control_it_resolved(tmp_path):
 def test_the_shipped_default_of_every_control_is_the_runs_operating_point():
     b = _bundle()
     got = {c["id"]: c for c in b["controls"]["controls"]}
-    op = (b["tier_table"] or {}).get("operating_point") or {}
-    if not got["min_bitscore"].get("absent"):
-        assert got["min_bitscore"]["shipped"] == op["diamond_bitscore"]
     assert got["evalue_floor"]["shipped"] == b["significant_evalue"]
 
 

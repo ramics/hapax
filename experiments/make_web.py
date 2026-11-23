@@ -431,6 +431,65 @@ def spectrum(inputs: dict) -> dict | None:
     }
 
 
+def depth_truth(inputs: dict, accession: str | None) -> dict | None:
+    """What a depth figure on one genome is actually made of, from the mapping itself.
+
+    WHY THIS EXISTS. A depth printed beside a genome reads as coverage of that genome, and
+    the one this page printed was not: 452x on the withheld genome is aligned-base depth
+    over every read whose primary alignment went there, and 95.4% of those reads start at
+    one position with a median span of 48 bases out of 145. That is a pile-up on one short
+    conserved element, not a genome carried at 452x, and the sentence overstated the depth
+    of the body of the genome by about sevenfold.
+
+    The fix is not a smaller number typed in its place. The page reads the two committed
+    files that measured it - how many reads align over at least 80% of their length, and
+    where the reads start - and prints the figure with that profile beside it, so a reader
+    sees what the multiple is over. Where a library has no such measurement the page says
+    that the depth it has is aligned-base depth from mapping, which is the honest state of
+    not having looked rather than a second number.
+
+    The control is in the same files and travels with it: an abundant, already-published
+    genome from the same water has 53.7% of its reads spanning 80% or more at a median 134
+    bases. A genuine organism gives end-to-end alignments, which is what makes the
+    candidate arm's 5.7% readable as the artefact it is.
+    """
+    if inputs.get("depth_profile") is None or inputs.get("depth_positions") is None:
+        return None
+    doc = load(inputs["depth_profile"])
+    arms = (doc or {}).get("arms") or {}
+    arm = next((a for a in arms.values() if a.get("accession") == accession), None)
+    if arm is None:
+        raise SystemExit(
+            f"{inputs['depth_profile']}: no arm in it is about {accession!r}, which is "
+            f"the genome this page prints a depth for. A profile from another genome "
+            f"would caveat the wrong number")
+    control = next((k for k, a in arms.items()
+                    if a.get("accession") != accession and a.get("strict_share")), None)
+    rows = []
+    for line in inputs["depth_positions"].read_text().splitlines()[1:]:
+        f = line.split("\t")
+        if len(f) >= 4 and f[3].strip():
+            rows.append((int(f[0]), int(float(f[3]))))
+    total = sum(n for _p, n in rows) or 1
+    top = max(rows, key=lambda r: r[1]) if rows else (None, 0)
+    return {
+        "accession": accession,
+        "pool": arm.get("pool"),
+        "end_to_end": arm.get("strict"),
+        "end_to_end_share": arm.get("strict_share"),
+        "median_span": arm.get("median_alignment_span_of_pool"),
+        "min_alignment_fraction": (doc or {}).get("min_alignment_fraction"),
+        "top_start": top[0], "top_start_reads": top[1],
+        "top_start_share": round(top[1] / total, 4),
+        "control": ({"name": control,
+                     "accession": arms[control].get("accession"),
+                     "divergence": arms[control].get("nt_divergence"),
+                     "share": arms[control].get("strict_share"),
+                     "median_span": arms[control].get("median_alignment_span_of_pool")}
+                    if control else None),
+    }
+
+
 #: Every file outside the run directory that a panel may read, and what it is. A page
 #: descriptor must state each one, either as a path or as `{"not_run": reason}`: a key it
 #: leaves out is a refusal, because "nobody said" and "it does not apply" must not render
@@ -447,6 +506,10 @@ PAGE_INPUTS = {
                                 "distance",
     "truth_gene_map": "this library's own ground truth, from "
                       "experiments/holdout_gene_map.py",
+    "depth_profile": "experiments/pair_search.py's strict.json for this library: how "
+                     "many of the reads a depth figure counts actually align end to end",
+    "depth_positions": "the positional_profile.tsv beside it, which says where those "
+                       "reads start",
 }
 
 #: The six fixed rows of a Methods entry, in order. Two spellings of the last two are in
@@ -693,6 +756,12 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int,
         # a sample that has none would be the worst failure this tool could have.
         "holdout_gene_map": (load(page["_inputs"]["truth_gene_map"])
                              if page["_inputs"]["truth_gene_map"] else None),
+        # What the depth beside that genome is made of. None where nobody measured it,
+        # and the panel then says so rather than printing a bare multiple.
+        "depth_truth": depth_truth(
+            page["_inputs"],
+            ((load(page["_inputs"]["truth_gene_map"]) or {}).get("truth") or {})
+            .get("accession") if page["_inputs"]["truth_gene_map"] else None),
         "page": {"title": page["title"], "sample": page["sample"],
                  "inputs": {k: ({"path": str(v.relative_to(ROOT))} if v is not None else
                                 {"not_run": page["inputs"][k]["not_run"]})
@@ -3321,7 +3390,7 @@ function interval(iv) {
      quietly changed pile when a slider moved is the failure this is written against.
      `cannot discriminate here` is a value, so those rows are never filtered away by
      default; the switch that hides them ships off. */
-  const TIDS = ['evalue_floor', 'min_bitscore', 'read_depth_stratum', 'min_occupancy'];
+  const TIDS = ['evalue_floor', 'read_depth_stratum', 'min_occupancy'];
   p.append(ctlRow(TIDS));
   const sc = el('div', 'scroll'); p.append(sc);
   const note = el('p', 'note'); 
@@ -3335,7 +3404,7 @@ function interval(iv) {
   }
   function draw() {
     const want = f.value;
-    const e = ctlGet('evalue_floor'), b = ctlGet('min_bitscore');
+    const e = ctlGet('evalue_floor');
     const minocc = ctlGet('min_occupancy');
     let relabelled = 0, undet = 0, held = 0;
     const tb = el('table');
@@ -3361,8 +3430,7 @@ function interval(iv) {
           ? esc(nm.organism || nm.name) +
             ' <span class="dim mono">' + esc(best.subject) + '</span>'
           : '<span class="mono">' + esc(best.subject) + '</span>';
-      const clears = best && best.evalue != null && best.evalue <= e &&
-        best.bitscore != null && best.bitscore >= b;
+      const clears = best && best.evalue != null && best.evalue <= e;
       if (clears) relabelled++;
       if (r.layer === 'undetermined' || !r.layer) undet++;
       tr.innerHTML = '<td class="mono">' + esc(r.name) + '</td><td class="dim">' +
@@ -4174,9 +4242,19 @@ function interval(iv) {
   const R = D.ranking, K = R && R.kind_summary, b = (D.tier_table || {}).breakdown;
   const cur = (D.tier_table || {}).curve || [];
   const tier = k => (cur.filter(c => c.tier === k)[0] || {});
-  if (!K || !b) return;
+  /* ONE FORMAT, EVERY SAMPLE: this section used to disappear on a library whose
+     ranking or cascade breakdown was missing, which made a page with no remainder
+     section and a page with an empty one look the same. It stays, and says which
+     file it needs. */
   const p = panel('The unnamed remainder',
     'The fraction no reference names.' + cite('cascade'));
+  if (!K || !b) {
+    p.append(el('div', 'absent', 'not measured in this run: ' +
+      (!K ? 'ranking.json carries no kind summary' : 'tier_table.json carries no ' +
+       'breakdown') + ', so the share of the library no reference names cannot be ' +
+      'quoted here'));
+    app.append(p); return;
+  }
   const own = tier('selfasm_sample_contigs_identified_norrna').marginal_removed;
   const rr = tier('rrna').tier_alone_removed;
 
@@ -4321,41 +4399,90 @@ function interval(iv) {
 })();
 
 
-// ---------- the genome we hid from the tool
-// Only this library has one. Every other panel on this page reports a number whose
-// truth nobody knows; this one reports a number whose truth was fixed before the run,
-// by a deposit date rather than by anyone here.
+// ---------- genomes whose true distance was fixed before the run
+/* ONE FORMAT, EVERY SAMPLE. This section is on every page, in the same place, whether
+   the sample has none of these genomes, one, or four hundred. It used to be a panel
+   that existed only on the library that happened to have one, with that genome as the
+   page's hero - which is the shape of a fixture, not of an instrument. A genome whose
+   distance was fixed before the run is a row here like any other, and the page says
+   plainly when there are no such rows rather than quietly losing the section. */
 (function () {
   const H = D.holdout_gene_map;
-  if (!H || !H.contigs || !H.contigs.length) return;
+  const p = panel('Genomes with a distance fixed before the run',
+    'Genomes in this sample whose true distance was settled before the tool ran, by a ' +
+    'deposit date rather than by anyone here, so what the tool says about them can be ' +
+    'marked right or wrong. Listed the same way at any count.' + cite('holdout'));
+  if (!H || !H.contigs || !H.contigs.length) {
+    const why = (((D.page || {}).inputs || {}).truth_gene_map || {}).not_run;
+    p.append(el('div', 'absent', 'None in this sample: ' +
+      (why || 'no ground truth is declared for this library') +
+      '. Every other section on this page reports distances whose truth nobody knows.'));
+    app.append(p); return;
+  }
   const T = H.truth || {};
   const w = H.contigs.filter(c => c.arm === 'withheld')[0];
   const ctl = H.contigs.filter(c => c.arm !== 'withheld')[0];
-  const p = panel('The genome we hid from the tool',
-    'One genome in this water was deposited after the cutoff every index here was ' +
-    'rolled back to, so the tool could not have seen it. Its real distance is known, ' +
-    'and nobody here chose it.' + cite('holdout'));
 
   const pol = w && w.orfs.filter(o => o.role === 'polymerase')[0];
   const ids = w ? w.orfs.filter(o => o.pident != null).map(o => o.pident) : [];
-  const hero = el('div', 'verdict');
-  hero.innerHTML = '<div class="vmain"><b>' + esc(T.organism || 'the withheld genome') +
-    '</b> sits <b>' + num(T.nucleotide_divergence_percent, 1) + '% diverged</b> in ' +
-    'nucleotide from its nearest public relative and was carried in this water at <b>' +
-    Math.round(T.mean_depth) + ' reads deep</b>.</div>' +
-    (w ? '<div class="vmain">The assembler recovered it as one <b>' +
-      (w.nt / 1000).toFixed(2) + ' kb</b> contig, <b>' +
-      pct(w.nt / (T.genome_nt || w.nt)) + '</b> of the deposited genome' +
-      (w.reached_the_unidentified_pile === false
-        ? ', and the cascade then <b>identified it and subtracted it</b>: it is absent ' +
-          'from the pile this report draws' : '') + '.</div>' : '') +
-    '<div class="vsub">Deposited ' + esc(T.deposited || '') + ', from water collected ' +
-    esc(T.collected || '') + '. ' +
-    esc((H.truth_note || '').replace(/^./, c => c.toUpperCase())) + '.</div>';
+  /* ONE ROW PER GENOME, AND THE SAME ROW WHATEVER THE COUNT. The depth column is the
+     one that has to be read carefully: a depth printed beside a genome reads as
+     coverage of it, and the figure these runs carry is aligned-base depth over every
+     read the mapper sent there. On this library 95.4% of those reads start at one
+     position with a median span of 48 bases of 145, so the multiple is a pile-up on one
+     short conserved element. Where the profile that measured that is declared, the
+     column carries it; where it is not, the column says which kind of depth it is
+     rather than printing a bare multiple. */
+  const DT = D.depth_truth;
+  const cnt = n => n == null ? '-' : Number(n).toLocaleString('en-GB');
+  const TRUTHS = Array.isArray(H.truths) ? H.truths : (H.truth ? [H.truth] : []);
+  const depthCell = t => {
+    const d = Math.round(t.mean_depth) + 'x';
+    if (!DT || DT.accession !== t.accession) {
+      return d + ' <span class="dim">aligned bases; end to end not measured</span>';
+    }
+    return d + ' <span class="dim">aligned bases, ' +
+      (100 * DT.end_to_end_share).toFixed(1) + '% of the reads end to end</span>';
+  };
+  const sc = el('div', 'scroll');
+  const tb = el('table');
+  tb.innerHTML = '<thead><tr><th>genome</th><th>true divergence</th><th>depth</th>' +
+    '<th>recovered</th><th>where the cascade put it</th></tr></thead>';
+  const tbody = el('tbody');
+  TRUTHS.forEach(t => {
+    const c = H.contigs.filter(x => x.arm === 'withheld')[0];
+    const tr = el('tr');
+    tr.innerHTML = '<td>' + esc(t.organism || t.accession || 'unnamed') +
+      ' <span class="dim mono">' + esc(t.accession || '') + '</span></td>' +
+      '<td class="mono">' + num(t.nucleotide_divergence_percent, 1) + '%</td>' +
+      '<td class="mono">' + depthCell(t) + '</td>' +
+      '<td class="mono">' + (c ? (c.nt / 1000).toFixed(2) + ' kb, ' +
+        pct(c.nt / (t.genome_nt || c.nt)) + ' of it' : 'not assembled') + '</td>' +
+      '<td>' + (c && c.reached_the_unidentified_pile === false
+        ? '<span class="relabel">identified and subtracted</span>'
+        : c ? 'left in the pile this report draws' : '-') + '</td>';
+    tbody.append(tr);
+  });
+  tb.append(tbody); sc.append(tb); p.append(sc);
+  const depthDetail = DT
+    ? 'Depth: ' + cnt(DT.pool) + ' reads were counted, ' + cnt(DT.end_to_end) +
+      ' of them spanning ' + Math.round(100 * DT.min_alignment_fraction) + '% or more ' +
+      'of their length, and ' + cnt(DT.top_start_reads) + ' starting at one position, ' +
+      'base ' + DT.top_start + ', at a median span of ' + DT.median_span + ' bases' +
+      (DT.control ? '. An already-published genome from the same water, ' +
+        num(DT.control.divergence, 2) + '% diverged, has ' +
+        (100 * DT.control.share).toFixed(1) + '% spanning that much at a median ' +
+        DT.control.median_span + ': a real organism aligns end to end' : '') + '. '
+    : 'Depth in that column is aligned-base depth over reads the mapper selected; ' +
+      'whether they align end to end was not measured on this library. ';
+  const hero = el('div', 'note');
+  hero.innerHTML = depthDetail + 'Deposited ' + esc(T.deposited || '') +
+    ', from water collected ' + esc(T.collected || '') + '. ' +
+    esc((H.truth_note || '').replace(/^./, c => c.toUpperCase())) + '.';
   p.append(hero);
 
   p.append(geneLegend(['polymerase', 'capsid', 'maturation', 'other']));
-  [[w, 'the genome that was hidden'],
+  [[w, 'the genome whose distance was fixed before the run'],
    [ctl, 'a genome from the same water that was already published, for comparison']]
     .forEach(pair => {
       if (!pair[0]) return;
@@ -4398,17 +4525,21 @@ function interval(iv) {
     const cv = ctl ? ctl.orfs.filter(o => o.pident != null).map(o => o.pident) : [];
     const span = v => num(Math.min.apply(null, v), 1) + ' to ' +
       num(Math.max.apply(null, v), 1) + '%';
-    note.innerHTML = '<b>This is the measurement that matters most on the page, and it ' +
-      'is a failure.</b> Two contigs from one library get the same single word: ' +
-      '<i>identified</i>, and both are subtracted as known background' +
-      (cv.length ? ', though this one&rsquo;s genes read ' + span(ids) +
-        ' and the published one&rsquo;s read ' + span(cv) : '') + '. ' +
-      (pol ? 'A whole-contig identity of ' + num(pol.pident, 1) + '% is also not a ' +
+    note.innerHTML = '<b>What the tool said about a genome whose answer was known.</b> ' +
+      (w.reached_the_unidentified_pile === false
+        ? 'It was identified and subtracted as known background, which is the tool ' +
+          'losing it: two contigs from one library get the same single word, ' +
+          '<i>identified</i>' +
+          (cv.length ? ', though this one&rsquo;s genes read ' + span(ids) +
+            ' and the published one&rsquo;s read ' + span(cv) : '') + '. '
+        : 'It survived into the pile this report draws' +
+          (cv.length ? ', with its genes reading ' + span(ids) + ' against ' +
+            span(cv) + ' for the published genome beside it' : '') + '. ') +
+      (pol ? 'A whole-contig identity of ' + num(pol.pident, 1) + '% is not a ' +
         'property of the contig: ' : 'A single whole-contig identity is not a property ' +
-        'of the contig either: ') + 'this genome spans ' + num(hi - lo, 1) +
-      ' points between its own genes, so that figure is whichever gene won on bitscore. ' +
-      'Ranking by identity does not rescue it either, because it sits high in the ' +
-      'removed pile rather than low' + cite('nulls') + '.';
+        'of the contig: ') + 'this genome spans ' + num(hi - lo, 1) +
+      ' points between its own genes, so that figure is whichever gene won on bitscore' +
+      cite('genespread') + '.';
     p.append(note);
   }
 
@@ -4451,7 +4582,7 @@ function interval(iv) {
       'there is nothing to re-filter'));
     app.append(p); return;
   }
-  const IDS = ['evalue_floor', 'min_bitscore', 'search_unit'];
+  const IDS = ['evalue_floor', 'search_unit'];
   p.append(ctlRow(IDS));
   const fig = el('div'); p.append(fig);
   const foot = el('div', 'note'); p.append(foot);
@@ -4465,11 +4596,11 @@ function interval(iv) {
 
   const ARMS = [['residue', 'the residue', 'var(--residual)'],
                 ['known', 'already identified', 'var(--identified)']];
-  function rate(rows, e, b, unit) {
+  function rate(rows, e, unit) {
     let hit = 0, n = 0;
     rows.forEach(r => {
-      const m1 = r[0] != null && r[0] <= e && r[1] != null && r[1] >= b;
-      const m2 = r[2] != null && r[2] <= e && r[3] != null && r[3] >= b;
+      const m1 = r[0] != null && r[0] <= e;
+      const m2 = r[2] != null && r[2] <= e;
       if (unit === 'mate') {
         // Per mate, and only mates that exist: mate 2 is 14 nt shorter after the
         // non-template prefix comes off, so pooling the two averages two biases that
@@ -4480,7 +4611,7 @@ function interval(iv) {
     return {hit: hit, n: n, frac: n ? hit / n : null};
   }
   function draw() {
-    const e = ctlGet('evalue_floor'), b = ctlGet('min_bitscore');
+    const e = ctlGet('evalue_floor');
     const unit = ctlGet('search_unit');
     fig.innerHTML = '';
     const W = 940, BARH = 30, H = 20 + ARMS.length * (BARH + 26);
@@ -4488,7 +4619,7 @@ function interval(iv) {
       'aria-label="fraction with a significant relative, both arms">';
     const out = {};
     ARMS.forEach((a, i) => {
-      const r = rate(SR.piles[a[0]] || [], e, b, unit);
+      const r = rate(SR.piles[a[0]] || [], e, unit);
       out[a[0]] = r;
       const y = 14 + i * (BARH + 26);
       svg += '<text x="0" y="' + (y - 2) + '" class="ax">' + a[1] + '</text>';
@@ -4564,20 +4695,23 @@ function interval(iv) {
   // them. Everything else on this page is how those answers were arrived at, and goes
   // below the fold: it was all on the front page before, and the front page was a
   // method report wearing a sample report's clothes.
-  const SUMMARY = ['The genome we hid from the tool',
-                   'Watchlist screen', 'What this water is',
+  /* ONE REPORT FORMAT, EVERY SAMPLE. These sections are the report: the same titles in
+     the same order on every library, whether or not the run measured what they hold. A
+     section with nothing in it says so in its own place and stays there, because a page
+     that grows and drops sections by sample is a page a reader cannot compare with
+     another one - and because a missing section and a measured absence must not look
+     the same. The rule this replaces moved an empty summary panel into Detail, which
+     kept any one page tidy at the cost of every page having a different shape. */
+  const SUMMARY = ['Watchlist screen', 'What this water is',
                    'How far the assembled viruses sit from anything published',
-                   'The unnamed remainder', 'Methods'];
+                   'The unnamed remainder',
+                   'Genomes with a distance fixed before the run', 'Methods'];
   const panels = Array.prototype.filter.call(app.children,
     n => n.tagName === 'SECTION' && n.classList.contains('panel'));
   const detail = panels.filter(n => {
     const h = n.querySelector('h2');
     if (!h) return false;
-    // A summary panel whose whole body is "this stage was not run" is a hole at the
-    // top of the page. It stays on the page, as the census it is, but below the fold.
-    const empty = n.querySelectorAll('.absent').length > 0 &&
-      n.querySelectorAll('svg, table, .verdict').length === 0;
-    return SUMMARY.indexOf(h.textContent) < 0 || empty;
+    return SUMMARY.indexOf(h.textContent) < 0;
   });
   if (!detail.length) return;
   const firstSentence = t => {

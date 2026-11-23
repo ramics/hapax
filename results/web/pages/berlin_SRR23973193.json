@@ -11,6 +11,8 @@
   "spectrum_big_index": {"path": "results/divergent_contigs/core_nt_block_001.jsonl"},
   "spectrum_reference_point": {"path": "results/conserved_positions/conserved_positions_s1.json"},
   "spectrum_reference_truth": {"path": "results/holdout_cascade/gene_map_s1.json"},
+  "depth_profile": {"not_run": "no genome in this library has a distance fixed before the run, so there is no depth figure to qualify"},
+  "depth_positions": {"not_run": "as above"},
   "truth_gene_map": {"not_run": "no genome in this library has a distance fixed before the run"}
  }
 }
