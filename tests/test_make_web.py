@@ -241,3 +241,28 @@ def test_a_committed_fact_with_no_clause_refuses_rather_than_vanishing(tmp_path,
                         tuple(c for c in page_descriptor.CLAUSES if c[0] != "country"))
     with pytest.raises(Exception, match="no clause for"):
         page_descriptor.lede("SRR23973193")
+
+
+def test_a_gzipped_rows_file_is_read_and_two_spellings_refuse(tmp_path):
+    """The first real production directory built a page with zero per-read rows.
+
+    It writes reads.jsonl.gz; every earlier run here writes reads.jsonl, and the reader
+    looked for the plain name only. So the residue table, the scatter and both search
+    arms drew empty and the page said nothing was there, for a run over 32 M pairs. A
+    directory carrying both spellings refuses, because nothing says which one the run
+    wrote.
+    """
+    import gzip
+    import shutil
+    run = tmp_path / "run"
+    shutil.copytree(RUN if "RUN" in globals() else
+                    ROOT / "results/holdout_cascade/run_s1", run)
+    plain = run / "reads.jsonl"
+    with open(plain, "rb") as src, gzip.open(run / "reads.jsonl.gz", "wb") as dst:
+        shutil.copyfileobj(src, dst)
+    page = make_web.load_page(HOLDOUT, run)
+    with pytest.raises(SystemExit, match="nothing says which"):
+        make_web.bundle(run, 20, 20, 1, page)
+    plain.unlink()
+    b = make_web.bundle(run, 20, 20, 1, page)
+    assert b["scatter"]["residue"]["n_total"] > 0
