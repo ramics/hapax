@@ -151,6 +151,10 @@ def cluster_representatives(work: Path) -> dict:
     drags its fellow chains in, which is wanted: a capsid's neighbours in the same
     crystal are legitimate subjects.
     """
+    # Created here, not only for `--work`: the cluster file is the FIRST thing this script
+    # writes, and `curl -o` into a directory that does not exist fails with its write-error
+    # code 23, which cost a launch.
+    work.mkdir(parents=True, exist_ok=True)
     path = work / "clusters-30.txt"
     if not path.exists() or path.stat().st_size < 10_000_000:
         sh(["curl", "-sS", "--max-time", "600", "-o", path, RCSB_CLUSTERS])
