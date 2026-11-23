@@ -1,0 +1,221 @@
+{
+ "git_sha": "7ea6a47fe8ccc95b86db52ab5f33fde7bcf078c9",
+ "tree_dirty": false,
+ "git_sha_source": "launcher",
+ "script_sha256": "3b22a60dcc0ce0ea",
+ "modules_sha256": {
+  "experiments/provenance.py": "e01fdca08de0894f",
+  "experiments/shuffle_control.py": "1185d0c48296a803"
+ },
+ "code_sha256": "03ff44fb23072f7d",
+ "parameters": {
+  "seeds": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "contigs_per_seed": 400,
+  "threads": 8,
+  "sensitivity": 9.5,
+  "shards": 8,
+  "min_orf_aa": 50,
+  "bands": [
+   [
+    50,
+    80
+   ],
+   [
+    80,
+    100
+   ],
+   [
+    100,
+    150
+   ],
+   [
+    150,
+    200
+   ],
+   [
+    200,
+    1000000000
+   ]
+  ],
+  "evalue_searched": 10.0,
+  "evalue_floor": 1e-05
+ },
+ "started_utc": "2026-11-23T06:36:44Z",
+ "library": {
+  "source": "https://cdn.rcsb.org/resources/sequence/clusters/clusters-by-entity-30.txt",
+  "clusters": 272663,
+  "representative_entries": 40066,
+  "identity_cutoff": 0.3,
+  "fetched_utc": "2026-11-23T06:36:45Z"
+ },
+ "structures": {
+  "wanted": 40066,
+  "present": 40066,
+  "missing": 0,
+  "missing_examples": [],
+  "magic_checked": 201,
+  "seconds": 575.4
+ },
+ "subject_db": {
+  "chains": 368095,
+  "seconds": 549.9
+ },
+ "queries": {
+  "orfs": 4768,
+  "residues": 548959,
+  "by_pile": {
+   "unident": 1636,
+   "unident_null": 535,
+   "ident": 1889,
+   "ident_null": 708
+  },
+  "contigs_per_seed": 400,
+  "seeds": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "shuffle_census": {
+   "unident_s1": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   },
+   "unident_s2": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   },
+   "unident_s3": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   },
+   "unident_s4": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   },
+   "unident_s5": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   },
+   "ident_s1": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   },
+   "ident_s2": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   },
+   "ident_s3": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   },
+   "ident_s4": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   },
+   "ident_s5": {
+    "offered": 400,
+    "shuffled": 400,
+    "dropped_identical": 0
+   }
+  },
+  "shuffle_failed": {
+   "unident_s1": 0,
+   "unident_s2": 0,
+   "unident_s3": 0,
+   "unident_s4": 0,
+   "unident_s5": 0,
+   "ident_s1": 0,
+   "ident_s2": 0,
+   "ident_s3": 0,
+   "ident_s4": 0,
+   "ident_s5": 0
+  },
+  "median_aa": {
+   "unident": 78.0,
+   "unident_null": 71,
+   "ident": 104,
+   "ident_null": 76.0
+  }
+ },
+ "query_db": {
+  "seconds": 8177.8,
+  "residues": 548959,
+  "shards": 8,
+  "threads_per_shard": 1,
+  "residues_per_second": 67.1
+ },
+ "search": {
+  "mode": "prefiltered -s 9.5",
+  "exhaustive": false,
+  "evalue_searched": 10.0,
+  "max_seqs": 300,
+  "per_shard": [
+   {
+    "shard": 0,
+    "queries": 596,
+    "rows": 19997
+   },
+   {
+    "shard": 1,
+    "queries": 596,
+    "rows": 21788
+   },
+   {
+    "shard": 2,
+    "queries": 596,
+    "rows": 24710
+   },
+   {
+    "shard": 3,
+    "queries": 596,
+    "rows": 23787
+   },
+   {
+    "shard": 4,
+    "queries": 596,
+    "rows": 20360
+   },
+   {
+    "shard": 5,
+    "queries": 596,
+    "rows": 20517
+   },
+   {
+    "shard": 6,
+    "queries": 596,
+    "rows": 22380
+   },
+   {
+    "shard": 7,
+    "queries": 596,
+    "rows": 23273
+   }
+  ],
+  "rate_is_a_floor": true,
+  "seconds": 66.1
+ },
+ "rows": 176812,
+ "annotated_entries": 1322,
+ "tmscore_available": false,
+ "tmscore_reason": "ProstT5 writes 3Di from sequence, so the query side has no C-alpha; TM-score and LDDT need coordinates on both sides",
+ "host": "ip-172-31-39-218.ec2.internal",
+ "cpu_count": 8,
+ "seconds": 9402.6
+}

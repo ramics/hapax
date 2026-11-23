@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import sys
 import textwrap
+import pytest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -69,3 +70,29 @@ def test_missing_script_raises():
     import pytest
     with pytest.raises(pv.ProvenanceError):
         pv.provenance(ROOT / "no_such_script.py")
+
+
+def test_launcher_supplied_commit_is_marked_as_such():
+    """An instance has no checkout, so the launcher's commit is the only true answer there.
+
+    The test that matters is not that the field is carried but that its SOURCE is: "the
+    launcher said so" and "the repo said so" are different strengths of claim, and a
+    manifest where either could be meant is worse than one with no field. The content
+    hashes must not move, because they pin the code whatever the commit says.
+    """
+    repo = pv.provenance(EXP / "provenance.py")
+    given = pv.provenance(EXP / "provenance.py", "0" * 40)
+    assert repo["git_sha_source"] == "repo"
+    assert given["git_sha_source"] == "launcher"
+    assert given["git_sha"] == "0" * 40
+    assert given["tree_dirty"] is False
+    assert given["code_sha256"] == repo["code_sha256"]
+    assert given["script_sha256"] == repo["script_sha256"]
+
+
+def test_a_dirty_or_empty_override_is_refused():
+    """`-dirty` names HEAD, not the code that ran, and this is the one place it could slip
+    in without a repo to contradict it."""
+    for bad in ("", "   ", "unknown", "abc123-dirty"):
+        with pytest.raises(pv.ProvenanceError):
+            pv.provenance(EXP / "provenance.py", bad)
