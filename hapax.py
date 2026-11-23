@@ -1604,9 +1604,21 @@ def main() -> int:
                                [str(x) for x in v] if isinstance(v, list) else v)
                            for k, v in vars(args).items()}}, indent=2))
         return 2
+    # A DESELECTED STAGE SAYS WHOSE CHOICE IT WAS, and says so against the default.
+    # `--stages` defaults to every stage, so a run missing one was asked to miss it by
+    # whoever typed the command - and the report that reads this manifest cannot tell
+    # that from a stage the library could not support unless the manifest says which.
+    # The holdout fixture's directory carries four stages recorded as "not selected",
+    # two of which (linkage, census) this library forbids anyway: both are mate-linkage
+    # instruments and it is single-end. One reason hid the other, so a deselected stage
+    # that could not have run names the library's constraint as well as the flag.
     for name in STAGE_ORDER:
         if name not in args.stages:
-            run.record(name, "skipped", reason="not selected with --stages")
+            why = ("deselected on the command line with --stages, which otherwise runs "
+                   f"every stage ({', '.join(STAGE_ORDER)})")
+            if args.single_end and name in ("linkage", "census"):
+                why += f". It could not have run on this library either: {Run.SINGLE_END_SKIP}"
+            run.record(name, "skipped", reason=why)
             continue
         getattr(run, name)()
     return run.finish()

@@ -152,3 +152,20 @@ def test_an_assembly_without_minimap2_refuses_before_anything_runs(tmp_path):
     assert code == 2, log
     assert manifest["status"] == "refused to start"
     assert any("minimap2" in p for p in manifest["problems"]), manifest["problems"]
+
+
+def test_a_deselected_stage_records_whose_choice_it_was():
+    """`--stages` defaults to every stage, so a missing stage was asked for.
+
+    The holdout fixture's run directory carries four stages recorded as "not selected
+    with --stages", and the page built from it then reports an incomplete run without
+    saying that the subset was typed by hand rather than forced by the library. Two of
+    those four (linkage, census) this library forbids anyway - both are mate-linkage
+    instruments and it is single-end - so one reason was hiding the other. A deselected
+    stage now names the default it departs from, and the library's own constraint where
+    there is one.
+    """
+    src = HAPAX.read_text()
+    assert 'reason="not selected with --stages"' not in src
+    assert "deselected on the command line" in src
+    assert "could not have run on this library either" in src
