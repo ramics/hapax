@@ -34,6 +34,12 @@ BLOCK="${BLOCK:?set BLOCK to the per-seed stride for THIS library}"
 PAIRS="${PAIRS:-200000}"
 SEEDS="${SEEDS:-1 2 3 4 5}"
 THREADS="${THREADS:-8}"
+# The interpreter, because `python3` is not it everywhere: Amazon Linux
+# 2023's python3 is 3.9 and every script here needs 3.11+, so an
+# unqualified `python3` on an instance runs the wrong interpreter and dies
+# inside a stage rather than at the top. Overridable, and `python3` locally,
+# where python3 IS the interpreter.
+PY="${PY:-python3}"
 MEMORY="${MEMORY:-0.85}"
 # `hapax run` defaults to 20,000 residue pairs through the per-read report. The `fold`
 # field alone costs 290 ms/read (ViennaRNA, 20 dinucleotide shuffles per read for its own
@@ -66,7 +72,7 @@ cd "$(dirname "$0")/.."            # the repo root, whatever the caller's cwd
 # ---- 0. the blocks must fit the library, checked before anything runs -----------------
 LAST_SEED=$(for s in $SEEDS; do echo "$s"; done | sort -n | tail -1)
 if [ ! -s "$S/read_count.txt" ]; then
-  python3 -I - "$R1" <<'PY' > "$S/read_count.txt"
+  "$PY" -I - "$R1" <<'PY' > "$S/read_count.txt"
 import gzip, sys
 op = gzip.open if sys.argv[1].endswith(".gz") else open
 n = 0
@@ -89,7 +95,7 @@ fi
 # ---- 1. mate 2's non-template prefix comes off before the assembler sees it -----------
 # Read-level stages trim as they stream; MEGAHIT reads files, so it needs a trimmed copy.
 if [ ! -s "$S/asm_in/${ACC}_2.fq" ]; then
-  python3 -I experiments/trim_mate2.py --r1 "$R1" --r2 "$R2" \
+  "$PY" -I experiments/trim_mate2.py --r1 "$R1" --r2 "$R2" \
     --library "$ACC" --trim-r2 "$TRIM_R2" \
     --out-dir "$S/asm_in" --prefix "$ACC" \
     --manifest "$OUT/trim_manifest.json"
@@ -101,7 +107,7 @@ fi
 # assembly, and `results/path_settings/` measured the whole ladder of alternatives against
 # this arm. `--arms baseline` is MEGAHIT's defaults plus `--min-contig-len 200`.
 if [ ! -s "$S/wk/asm_baseline/final.contigs.fa" ]; then
-  python3 -I experiments/path_settings.py --seed 1 \
+  "$PY" -I experiments/path_settings.py --seed 1 \
     --stages assemble --arms baseline \
     --reads "$S/asm_in/${ACC}_1.fq" --r2 "$S/asm_in/${ACC}_2.fq" \
     --megahit "$MEGAHIT" --minimap2 "$MINIMAP2" \
@@ -115,9 +121,16 @@ test -s "$ASM" || { echo "the assembly is missing at $ASM" >&2; exit 2; }
 rm -f "$S/asm_in/${ACC}_1.fq" "$S/asm_in/${ACC}_2.fq"
 
 # ---- 2a. MEGAHIT header -> the SPAdes-like form the committed scripts parse -----------
-CONTIGS="$S/wk/asm_baseline/contigs_renamed.fa"
+# NAMED sample_contigs.fa DELIBERATELY. crossplant_stage.py's `queries` arm
+# requires `sample_contigs_unidentified.fa` and `sample_contigs_identified.fa`
+# in --contig-dir BY NAME, because that is what the Berlin pass had: the
+# depositors' assembly was staged as data/geo/sample_contigs.fa. Naming the
+# relabelled assembly anything else makes a stage that would otherwise run
+# refuse for a reason that has nothing to do with this sample. Found by
+# running hapax's own preflight in the container before launching.
+CONTIGS="$S/wk/asm_baseline/sample_contigs.fa"
 if [ ! -s "$CONTIGS" ]; then
-  python3 -I experiments/megahit_rename.py --contigs "$ASM" --out "$CONTIGS" --tag "$ACC" \
+  "$PY" -I experiments/megahit_rename.py --contigs "$ASM" --out "$CONTIGS" --tag "$ACC" \
     --manifest "$OUT/rename_manifest.json"
 fi
 
@@ -126,7 +139,7 @@ fi
 # second SILVA cleaner or a different minimap2 preset would be a second instrument reading
 # the same quantity. The cascade builds the same index in its own work directory.
 if [ ! -s "$S/wk/silva.mmi" ]; then
-  python3 -I - "$S" "$THREADS" $SILVA <<'PY'
+  "$PY" -I - "$S" "$THREADS" $SILVA <<'PY'
 import sys
 from pathlib import Path
 sys.path.insert(0, "experiments")
@@ -148,16 +161,16 @@ fi
 # `removal_evidence.tsv` is what keeps the removal from being silent about how far away the
 # thing it removed was (SPEC 4.5).
 if [ ! -s "$OUT/contig_identification.json" ]; then
-  python3 -I experiments/classify_contigs.py --seed 1 \
+  "$PY" -I experiments/classify_contigs.py --seed 1 \
     --contigs "$CONTIGS" \
     --k2-db "$K2_DB_CONTIGS" --classify-bin "$K2BIN" \
     --dmnd $DMND --diamond-bin "$DIAMOND" \
     --silva-mmi "$S/wk/silva.mmi" \
     --threads "$THREADS" --work "$S/wk/contigs" --out "$OUT"
 fi
-ID_RRNA="$S/wk/asm_baseline/contigs_renamed_rrna.fa"
-ID_NORRNA="$S/wk/asm_baseline/contigs_renamed_identified_norrna.fa"
-UNID="$S/wk/asm_baseline/contigs_renamed_unidentified.fa"
+ID_RRNA="$S/wk/asm_baseline/sample_contigs_rrna.fa"
+ID_NORRNA="$S/wk/asm_baseline/sample_contigs_identified_norrna.fa"
+UNID="$S/wk/asm_baseline/sample_contigs_unidentified.fa"
 EVIDENCE="$OUT/removal_evidence.tsv"
 for p in "$ID_RRNA" "$ID_NORRNA" "$UNID"; do
   test -f "$p" || { echo "classify_contigs.py wrote no $p" >&2; exit 2; }
@@ -169,7 +182,7 @@ done
 # either by an unknown factor.
 for sd in $SEEDS; do
   if [ -s "$OUT/run_s$sd/manifest.json" ]; then echo "seed $sd already done"; continue; fi
-  python3 hapax.py run "$R1" "$R2" \
+  "$PY" hapax.py run "$R1" "$R2" \
     --seed "$sd" --out "$OUT/run_s$sd" --work "$S/wk/hapax_shared" \
     --library "$ACC" --trim-r2 "$TRIM_R2" --pairs "$PAIRS" --block "$BLOCK" \
     --threads "$THREADS" --report-pairs "$REPORT_PAIRS" \

@@ -70,8 +70,14 @@ die() {
 ) &
 
 # ---------------------------------------------------------------- system packages
-dnf install -y tar gzip bzip2 xz unzip zstd pigz gcc gcc-c++ make zlib-devel >/dev/null \
-  || die "dnf could not install the build tools"
+# cargo, because two cascade stages are this repo's own Rust: `linkage` and `census` call
+# experiments/kmer_coverage/target/release/{kmer_coverage,census}, and hapax preflights
+# every selected stage, so a missing binary refuses the WHOLE run at the top rather than
+# skipping those two. Built here from the payload rather than shipped as a binary, because
+# the container's glibc is newer than this AMI's and a binary built there dies on the
+# instance with a loader error that looks nothing like its cause.
+dnf install -y tar gzip bzip2 xz unzip zstd pigz gcc gcc-c++ make zlib-devel cargo \
+  >/dev/null || die "dnf could not install the build tools"
 
 PYBIN=""
 for cand in python3.12 python3.11; do
@@ -94,18 +100,42 @@ for f in hapax.py requirements.txt experiments/prod_run.sh experiments/trim_mate
   test -f "/opt/hapax/$f" || die "the payload has no $f"
 done
 chmod +x experiments/prod_run.sh
-# One install, as TOOLS.md says a fresh container needs. It is deliberately the committed
-# requirements file and not a hand-picked subset: a stage that dies for a missing import
-# three hours in costs more than the wheels do.
+# IN A VENV, and the first launch of this template is why: `python3.12 -m pip install -r
+# requirements.txt` returned 0 on this AMI and left `import mappy` failing under
+# `python3 -I`, which is how every script in this repo runs. The install went somewhere -I
+# does not look, and --quiet hid it. A venv makes the interpreter and its packages one
+# thing, and $PY is passed down to prod_run.sh so that no stage can reach the AMI's own
+# python3, which is 3.9 and cannot run this code at all.
+#
+# One install, as TOOLS.md says a fresh container needs: deliberately the committed
+# requirements file and not a hand-picked subset, because a stage that dies for a missing
+# import three hours in costs more than the wheels do.
+#
 # zstandard is not a repo dependency and is not in requirements.txt: it is needed only to
-# unpack the two conda packages above, on the instance, and declaring it in the repo's
+# unpack the two conda packages below, on the instance, and declaring it in the repo's
 # requirements would claim that something here imports it.
-"$PYBIN" -m pip install --quiet zstandard \
+"$PYBIN" -m venv /opt/hapax/venv || die "the venv could not be created"
+PY=/opt/hapax/venv/bin/python
+"$PY" -m pip install --upgrade pip setuptools wheel > /opt/hapax/log-pip.txt 2>&1 \
+  || die "pip itself could not be upgraded in the venv; see log-pip.txt"
+"$PY" -m pip install zstandard >> /opt/hapax/log-pip.txt 2>&1 \
   || die "zstandard did not install; the conda packages cannot be unpacked"
-"$PYBIN" -m pip install --quiet -r requirements.txt \
-  || die "pip install -r requirements.txt failed; the run would die at its first stage"
-"$PYBIN" -I -c "import mappy, numpy, pyrodigal, pyhmmer, RNA, sklearn" \
-  || die "the installed environment cannot import what the stages need"
+"$PY" -m pip install -r requirements.txt >> /opt/hapax/log-pip.txt 2>&1 \
+  || die "pip install -r requirements.txt failed; see log-pip.txt"
+# One module at a time, so the die message names the module rather than the list.
+for m in mappy numpy pyrodigal pyhmmer RNA sklearn; do
+  "$PY" -I -c "import $m" || die "the venv cannot import $m; see log-pip.txt"
+done
+"$PY" -m pip freeze > /opt/hapax/out/pip_freeze.txt 2>&1 || true
+echo "=== venv: $("$PY" -V) at $PY ==="
+
+# ---------------------------------------------------------------- this repo's own Rust
+( cd experiments/kmer_coverage && cargo build --release --offline 2>/dev/null \
+    || cargo build --release ) || die "kmer_coverage did not build on the instance"
+for b in kmer_coverage census; do
+  test -x "/opt/hapax/experiments/kmer_coverage/target/release/$b" \
+    || die "the crate built no $b; the linkage and census stages would refuse the run"
+done
 
 # ---------------------------------------------------------------- binaries, pinned
 # Each one is proved to RUN here, not merely to download: a conda-built binary that cannot
@@ -124,7 +154,7 @@ tar xzf diamond.tar.gz -C /opt/hapax/bin diamond || die "the DIAMOND tarball has
 # nine committed scripts already name.
 curl -fsSL --retry 5 -o k2.conda "@@KRAKEN2_URL@@" || die "Kraken2 did not download"
 mkdir -p /opt/hapax/k2pkg/root
-"$PYBIN" -I - /opt/hapax/k2.conda /opt/hapax/k2pkg/root <<'PY' || die "Kraken2 did not unpack"
+"$PY" -I - /opt/hapax/k2.conda /opt/hapax/k2pkg/root <<'PY' || die "Kraken2 did not unpack"
 import io, sys, tarfile, zipfile
 src, dst = sys.argv[1], sys.argv[2]
 with zipfile.ZipFile(src) as z:
@@ -148,7 +178,7 @@ for spec in "megahit @@MEGAHIT_URL@@" "minimap2 @@MINIMAP2_URL@@"; do
   curl -fsSL --retry 5 -o "$name.pkg" "$url" || die "$name did not download"
   mkdir -p "/opt/hapax/$name"
   case "$url" in
-    *.conda) "$PYBIN" -I - "/opt/hapax/$name.pkg" "/opt/hapax/$name" <<'PY' || die "unpack failed"
+    *.conda) "$PY" -I - "/opt/hapax/$name.pkg" "/opt/hapax/$name" <<'PY' || die "unpack failed"
 import io, sys, tarfile, zipfile, zstandard
 src, dst = sys.argv[1], sys.argv[2]
 with zipfile.ZipFile(src) as z:
@@ -223,7 +253,7 @@ point and this run would not be comparable to any of them"
 # functions: a second SILVA cleaner would be a second instrument.
 cd /opt/hapax
 if [ ! -s /opt/hapax/data/silva/silva_dna.fa ]; then
-  "$PYBIN" -I - "$SSU" "$LSU" <<'PY' || die "silva_dna.fa could not be built"
+  "$PY" -I - "$SSU" "$LSU" <<'PY' || die "silva_dna.fa could not be built"
 import sys
 from pathlib import Path
 sys.path.insert(0, "experiments")
@@ -241,13 +271,13 @@ fi
 mkdir -p /opt/hapax/out/nontemplate_prefix
 for sd in @@PREFIX_SEEDS@@; do
   [ -s "/opt/hapax/out/nontemplate_prefix/nontemplate_prefix_s$sd.json" ] && continue
-  "$PYBIN" -I experiments/nontemplate_prefix_map.py --seed "$sd" \
+  "$PY" -I experiments/nontemplate_prefix_map.py --seed "$sd" \
     --pairs @@PREFIX_PAIRS@@ --libraries "$ACC" \
     --silva /opt/hapax/data/silva/silva_dna.fa --threads "$THREADS" \
     --work /opt/hapax/wk/ntprefix --out /opt/hapax/out/nontemplate_prefix \
     || die "the prefix measurement failed on seed $sd"
 done
-TRIM=$("$PYBIN" -I experiments/trim_from_prefix.py --library "$ACC" \
+TRIM=$("$PY" -I experiments/trim_from_prefix.py --library "$ACC" \
   --prefix-json /opt/hapax/out/nontemplate_prefix/nontemplate_prefix_s*.json \
   --out /opt/hapax/out/nontemplate_prefix/trim_from_prefix.json) \
   || die "no single mate-2 trim can be named for $ACC; see \
@@ -298,7 +328,7 @@ S=/opt/hapax/stage
 mkdir -p "$S"
 ACC="$ACC" S="$S" OUT="/opt/hapax/out/prod_$ACC" \
   R1="$READS/${ACC}_1.fastq.gz" R2="$READS/${ACC}_2.fastq.gz" \
-  TRIM_R2="$TRIM" BLOCK="@@BLOCK@@" PAIRS="@@PAIRS@@" SEEDS="@@SEEDS@@" \
+  TRIM_R2="$TRIM" BLOCK="@@BLOCK@@" PAIRS="@@PAIRS@@" SEEDS="@@SEEDS@@" PY="$PY" \
   REPORT_PAIRS="@@REPORT_PAIRS@@" THREADS="$THREADS" MEMORY="@@MEGAHIT_MEMORY@@" \
   STAGES="@@STAGES@@" \
   MEGAHIT="$MEGAHIT" MINIMAP2="$MINIMAP2" DIAMOND=/opt/hapax/bin/diamond K2BIN="$K2BIN" \
@@ -311,7 +341,7 @@ ACC="$ACC" S="$S" OUT="/opt/hapax/out/prod_$ACC" \
 
 # The assembly itself, so a later pass over this sample never re-assembles: it is the
 # expensive half and nothing about it depends on the stages that follow.
-cp -f "$S/wk/asm_baseline/contigs_renamed.fa" /opt/hapax/out/ 2>/dev/null || true
-gzip -f /opt/hapax/out/contigs_renamed.fa 2>/dev/null || true
+cp -f "$S/wk/asm_baseline/sample_contigs.fa" /opt/hapax/out/ 2>/dev/null || true
+gzip -f /opt/hapax/out/sample_contigs.fa 2>/dev/null || true
 
 die "finished" 0
