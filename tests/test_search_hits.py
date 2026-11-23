@@ -85,12 +85,28 @@ def _write(tmp_path: Path, rows, name="hits.tsv") -> Path:
 
 # ------------------------------------------------------------------------- selection
 def test_best_selection_matches_holdout_cascade(tmp_path):
-    old = _extract("holdout_cascade.py", "parse_best")
+    # `holdout_cascade.parse_best` is no longer a copy: it is a wrapper over this module
+    # that renames the fields its own rows use, so it is imported rather than extracted
+    # out of the file, and it takes parsed rows rather than a path. The comparison is
+    # still worth making - it checks that the rename keeps the same rows, which is what a
+    # reader of that script's output depends on - so the test follows the function rather
+    # than skipping the moment the copy goes.
+    old = _extract("holdout_cascade.py", "parse_best",
+                   extra={"best_per_query": sh.best_per_query,
+                          "aligned_query_nt": sh.aligned_query_nt,
+                          "query_coverage": sh.query_coverage})
     if old is None:
         pytest.skip("holdout_cascade.parse_best is gone")
     p = _write(tmp_path, _synth())
-    new = sh.best_per_query(sh.read_hits(p, program="diamond_blastx"))
-    ref = old(p, aa=True) if "aa" in old.__code__.co_varnames else old(p)
+    rows = sh.read_hits(p, program="diamond_blastx")
+    new = sh.best_per_query(rows)
+    # `holdout_cascade.parse_best` has since become a wrapper over this module and takes
+    # the parsed rows rather than a path. The comparison is still worth making: it is now
+    # a check that the wrapper's rename into local field names keeps the same rows, which
+    # is the part a reader of that script's output depends on.
+    first = old.__code__.co_varnames[0]
+    ref = (old(rows) if first == "rows"
+           else old(p, aa=True) if "aa" in old.__code__.co_varnames else old(p))
     assert set(new) == set(ref)
     for q in new:
         assert (new[q]["sseqid"], new[q]["bitscore"], new[q]["evalue"], new[q]["qstart"]) == \
