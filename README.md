@@ -2,7 +2,7 @@
 <p align="center"><strong>Wastewater in, a measurement out.</strong><br>
 Subtract the known. Assemble what survives. Score the rest as a distance, with a shuffled null beside it.</p>
 
-<p align="center"><img src="docs/hapax-overview.svg" alt="How hapax works: one library enters with its mates merged; a cheapest-index-first cascade removes 77.10% of read pairs as already known and 22.90% survives; what survives splits into contigs nothing can name at median depth 6, reads that never assembled at median depth 1, and a cross-plant background panel; everything, removed or not, is placed on one distance axis carrying its nearest-relative identity and a shuffled null; and the tool emits no novelty score, no threat score, no per-read verdict and no claim that anything matches nothing." width="100%"></p>
+<p align="center"><img src="docs/hapax-overview.svg" alt="Three-panel figure. Panel a: the seven stages of one run, each with one input, one output and one measured quantity — resolve (14 nt non-template prefix, modal in 5 of 5 seeds), merge (35.1% of pairs), assemble (20 of 25 depositor genomes at 90% breadth), identify (77.10% of read pairs removed as already known), score the distance (shuffled null 0.00%), report the residue (median depth 1), subtract other plants (87.5%, still falling at 512 libraries). Panel b: a to-scale bar of 100% of read pairs, 77.10% identified and 22.90% residue. Panel c: the one distance axis, far from anything published to matched, with no novelty score, no threat score and no per-read verdict." width="100%"></p>
 
 It runs on any sample, reports in the same format every time, and assumes nothing about the
 water. The output is one three-way breakdown — what is known and by what, what assembled but
@@ -24,6 +24,13 @@ against 70.5% of already-identified reads: it is blind to anything seen once, no
 "matches nothing" — a search can say whether something is already known and cannot say that
 something is new, which is measured here repeatedly rather than assumed. The declared blind
 spots ship as part of the output (`SPEC.md` §7, §9).
+
+The figure above is generated, not drawn: every quantity on it lives once in
+[`experiments/make_overview_figure.py`](experiments/make_overview_figure.py) beside the
+`results/` directory it was read from, the one to-scale panel computes its geometry from
+those percentages, and `tests/test_overview_figure.py` fails if the committed SVG stops
+matching the table. What the script does not yet do, and says so in its docstring, is parse
+the result files: the values are transcribed from the committed reports.
 
 **Start here: [`SPEC.md`](SPEC.md).** It is the production tool spec and the source of truth
 for intent. It is short by design and every number in it is measured on real data with a
