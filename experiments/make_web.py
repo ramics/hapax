@@ -4646,8 +4646,9 @@ function interval(iv) {
         '. Every figure these touch says so, and nothing has been recomputed.'
       : '<b>Shipped defaults.</b> Every control sits beside the figure it moves, and ' +
         'each one re-filters numbers this run already measured. ' +
-        (absent ? absent + (absent === 1 ? ' control' : ' controls') +
-          ' cannot move on this run, and says why. ' : '') +
+        (absent ? absent + (absent === 1 ? ' control cannot move on this run, and says'
+                                          : ' controls cannot move on this run, and say') +
+          ' why. ' : '') +
         'Nothing here produces a novelty call, because there is no score to threshold.';
     if (CTLDROPPED.length) {
       line.append(el('div', 'dim', 'A setting in the link you opened is not one this ' +
