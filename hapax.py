@@ -589,6 +589,15 @@ class Run:
             return self.record("contigs", "failed", reason=f"{p} is absent or empty")
         rows = self.dir / "contigs.jsonl"
         n = 0
+        # ONE HASH, NOT ONE PER ROW. Every row carries the source file's digest, and the
+        # digest was taken inside the per-contig writer, so this re-read the whole file
+        # once per contig: on the first production library's 104 MB of unidentifiable
+        # contigs, 194,703 contigs x 104 MB is about 20 TB of SHA-256 for a stage whose
+        # own arithmetic is a length and a GC fraction. Measured: the stage had run 1h45
+        # and was roughly two thirds through, against seconds for the parse, and it is a
+        # PER-SEED cost, so five seeds would have spent most of a day on it. The file does
+        # not change while it is being read, so the digest is taken once here.
+        source_sha = sha256(p)[:16]
         with open(p) as fh, open(rows, "w") as out:
             name, buf = None, []
 
@@ -606,7 +615,7 @@ class Run:
                     "n_fraction": round(1 - acgt / len(seq), 4),
                     "class": "assembled_unidentifiable",
                     "operating_point": {
-                        "source": str(p), "source_sha256_16": sha256(p)[:16],
+                        "source": str(p), "source_sha256_16": source_sha,
                         "note": "class is the cascade's own label at its 40-base minimum "
                                 "match length; no classifier was run on the contig here"},
                 }) + "\n")
@@ -627,7 +636,7 @@ class Run:
                            outputs={"contigs.jsonl": {
                                "bytes": rows.stat().st_size, "rows": n,
                                "sha256_16": sha256(rows)[:16]}},
-                           assembly={"source": str(p), "sha256_16": sha256(p)[:16],
+                           assembly={"source": str(p), "sha256_16": source_sha,
                                      "assembled_at_run_time": False,
                                      "note": "supplied contig set; see assembly.json"})
 

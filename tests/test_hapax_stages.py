@@ -11,6 +11,7 @@ carrying the published cell.
 
 from __future__ import annotations
 
+import argparse
 import csv
 import json
 import subprocess
@@ -152,3 +153,41 @@ def test_an_assembly_without_minimap2_refuses_before_anything_runs(tmp_path):
     assert code == 2, log
     assert manifest["status"] == "refused to start"
     assert any("minimap2" in p for p in manifest["problems"]), manifest["problems"]
+
+
+def test_the_source_digest_is_read_once_not_once_per_contig(tmp_path, monkeypatch):
+    """The tier-2 stage hashes its input file once, whatever the contig count.
+
+    THE DEFECT THIS PINS, measured on the first production library. Every row of
+    `contigs.jsonl` carries the digest of the fasta it was read from, and the digest was
+    taken inside the per-contig writer. So the stage re-read its whole input once per
+    contig: 194,703 unidentifiable contigs against a 104 MB file is ~20 TB of SHA-256 for
+    a stage whose own arithmetic is a length and a GC fraction. It ran 1h45 and was about
+    two thirds done, and it is a PER-SEED cost, so five seeds would have spent most of a
+    day on it.
+
+    The output is byte-identical either way, which is why nothing caught it: only a clock
+    tells, and a correct-looking run directory is exactly the failure mode this repo keeps
+    being caught by. So the assertion is on the number of digests, not on the timing - a
+    count is deterministic and a timing is not.
+    """
+    fa = tmp_path / "unid.fa"
+    fa.write_text("".join(f">c{i}\nACGTACGTGG\n" for i in range(50)))
+    calls = []
+    real = hapax.sha256
+    monkeypatch.setattr(hapax, "sha256", lambda p: calls.append(str(p)) or real(p))
+
+    run = hapax.Run.__new__(hapax.Run)
+    run.args = argparse.Namespace(unidentified_contigs=[fa])
+    run.dir = tmp_path / "run"
+    run.dir.mkdir()
+    run.preflighting = False
+    run.stages = []
+    entry = hapax.Run.contigs(run)
+
+    assert entry["status"] == "ok" and entry["rows"] == 50
+    assert calls.count(str(fa)) == 1, (
+        f"the input fasta was hashed {calls.count(str(fa))} times for 50 contigs; it is "
+        f"one file read once, and this is how the stage came to cost hours")
+    rows = [json.loads(l) for l in (run.dir / "contigs.jsonl").read_text().splitlines()]
+    assert len({r["operating_point"]["source_sha256_16"] for r in rows}) == 1
