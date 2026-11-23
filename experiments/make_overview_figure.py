@@ -226,12 +226,9 @@ def render() -> str:
     add("  </g>")
     note_y = NOTE_Y
     add(f'  <line x1="40" y1="{note_y - 18}" x2="1080" y2="{note_y - 18}" stroke="#e7ebf0"/>')
-    add(f'  <text class="note" x="40" y="{note_y}">Removal applies to read pairs. Every contig '
-        "is measured, named or unnamed. A stage missing an input is recorded as skipped and "
-        "the run marked incomplete.</text>")
-    add(f'  <text class="note" x="40" y="{note_y + 17}">Every parameter comes from the '
-        "library&#39;s own entry with its basis, and every stage runs the index it names. How "
-        "much a tier removes is a property of the library, measured per run.</text>")
+    add(f'  <text class="note" x="40" y="{note_y}">Removal applies to read pairs, so every '
+        "contig is measured, named or unnamed. How much a tier removes is a property of the "
+        "library and is measured per run.</text>")
     add("")
 
     # ---- panel b: the output classes ------------------------------------------------
@@ -239,7 +236,7 @@ def render() -> str:
     add(f'  <text class="pan" x="40" y="{b_top}">b<tspan class="pant" dx="12">Three output '
         "classes, on one scale</tspan></text>")
     add(f'  <text class="ax" x="1080" y="{b_top}" text-anchor="end">what each reports, and '
-        "the qualifier that travels with it</text>")
+        "the qualifier it carries</text>")
     add("")
     add("  <g>")
     for i, cls in enumerate(CLASSES):
@@ -291,9 +288,9 @@ def render() -> str:
         x += width + 14
     add("")
     add(f'  <line x1="40" y1="{H - 38}" x2="1080" y2="{H - 38}" stroke="#eef1f4"/>')
-    add(f'  <text class="note" x="40" y="{H - 20}">This figure describes the report a run '
-        "writes on any library. The measurements behind each rule are in "
-        '<tspan font-weight="700">results/</tspan>, on the libraries named there.</text>')
+    add(f'  <text class="note" x="40" y="{H - 20}">Stage by stage in <tspan '
+        'font-weight="700">SPEC.md</tspan>, with the measurement behind each one in <tspan '
+        'font-weight="700">results/</tspan>.</text>')
     add("</svg>")
     return "\n".join(out) + "\n"
 
