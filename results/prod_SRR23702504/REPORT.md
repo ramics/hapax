@@ -101,6 +101,16 @@ The measure of genericness is how much had to change in code. Four things did:
 
 Nothing in `hapax.py` or in any scoring stage was touched.
 
+## What the tool could not show while it ran
+
+The assembly is the longest step in the pass and the only one with no visible progress.
+`path_settings.py` captures MEGAHIT's stdout, so from outside the instance the log shows the
+command and then nothing until a contig file exists. Over an hour-plus step that is the moment a
+progress line is worth most, and its absence is indistinguishable from a hang. It is the same
+family as the refusals above — an empty output and a step that never ran look identical — one
+layer out: the run says nothing rather than saying it is working. Noted here rather than fixed,
+because fixing it mid-run would have stamped a new script hash onto this run's output.
+
 ## What the generator could not build
 
 (to be filled once the run directory is committed)

@@ -10,15 +10,21 @@
 # is that ordering with every sample-specific value taken from the environment and nothing
 # defaulted, so a library the repo has never seen runs without a flag being edited.
 #
-# EVERY VALUE THAT IS A PROPERTY OF THE LIBRARY IS REQUIRED, not defaulted. ACC, TRIM_R2
-# and BLOCK are facts about a sequencing run (SPEC 4.1): the Berlin defaults silently cut
-# 14 real bases off another kit's mate 2 and leave two of five seeds of a smaller library
-# reading nothing, and in both cases the output directory still looks right. There is no
-# fallback here for the same reason `library_facts.py` raises.
+# NO VALUE THAT IS A PROPERTY OF THE LIBRARY IS DEFAULTED, and the ones that are properties
+# of the FILE are not asked for either: they are measured from it. The Berlin defaults
+# silently cut 14 real bases off another kit's mate 2 and left two of five seeds of a
+# smaller library reading nothing, and in both cases the output directory still looked
+# right, so there is no fallback here for the same reason `library_facts.py` raises. But a
+# refusal is not the goal: the pair count, the read lengths, the layout and the seed stride
+# all come off one pass over the reads (`measure_library.py`), so a library nobody has
+# touched needs no commit before it runs. What remains for a person is what reading the
+# file cannot answer, and on the first new library that was exactly one thing: TRIM_R2, the
+# non-template prefix, which needs the reads mapped onto something already known.
 #
 # THE ONE THING THIS SCRIPT CHECKS ITSELF is the block arithmetic, against the library's
 # counted reads rather than a remembered count, because that failure is invisible: each
-# seed fails loudly on its own and the directory still looks like a five-seed run.
+# seed fails loudly on its own and the directory still looks like a five-seed run. It is
+# checked even when the stride was measured, because a stated stride overrides it.
 set -xeuo pipefail
 
 ACC="${ACC:?set ACC to the run accession, e.g. SRR23702504}"
@@ -29,8 +35,10 @@ R2="${R2:?set R2 to mate 2 of the library}"
 # No default: it is measured per library (experiments/nontemplate_prefix_map.py) and an
 # inherited value is the bug this project has already paid for twice.
 TRIM_R2="${TRIM_R2:?set TRIM_R2 to the measured non-template prefix of mate 2}"
-# No default: 1,500,000 is Berlin's stride for 8,731,224 pairs.
-BLOCK="${BLOCK:?set BLOCK to the per-seed stride for THIS library}"
+# MEASURED, not required. The stride is arithmetic on the library's own pair count, so
+# asking a caller for it turned "a sample nobody has touched" into "a sample nobody has
+# touched plus a commit". Stating it still wins and is recorded as stated.
+BLOCK="${BLOCK:-}"
 PAIRS="${PAIRS:-200000}"
 SEEDS="${SEEDS:-1 2 3 4 5}"
 THREADS="${THREADS:-8}"
@@ -48,7 +56,12 @@ MEMORY="${MEMORY:-0.85}"
 # lowered: it is the per-read arm's sample size, and the residue table's intervals widen
 # with it.
 REPORT_PAIRS="${REPORT_PAIRS:-2000}"
-STAGES="${STAGES:-cascade contigs reads linkage census intervals layers strains shortlist panel crossplant}"
+# `panel` and `calibration` are VALIDATION stages and are deliberately absent: both score
+# the run against sequence whose distance was fixed before it - the depositors' own
+# genomes from that water, and a spiked divergence ladder. Production water has no
+# depositor, so a production run has nothing to score against and must not pretend the
+# question applies (SPEC 13.4). They stay runnable by name on a fixture library.
+STAGES="${STAGES:-cascade contigs reads linkage census intervals layers strains shortlist crossplant}"
 MEGAHIT="${MEGAHIT:?set MEGAHIT to the megahit binary}"
 MINIMAP2="${MINIMAP2:?set MINIMAP2 to the minimap2 binary}"
 DIAMOND="${DIAMOND:?set DIAMOND to the diamond binary}"
@@ -71,18 +84,27 @@ cd "$(dirname "$0")/.."            # the repo root, whatever the caller's cwd
 
 # ---- 0. the blocks must fit the library, checked before anything runs -----------------
 LAST_SEED=$(for s in $SEEDS; do echo "$s"; done | sort -n | tail -1)
-if [ ! -s "$S/read_count.txt" ]; then
-  "$PY" -I - "$R1" <<'PY' > "$S/read_count.txt"
-import gzip, sys
-op = gzip.open if sys.argv[1].endswith(".gz") else open
-n = 0
-with op(sys.argv[1], "rt") as fh:
-    for n, _ in enumerate(fh, 1):
-        pass
-print(n // 4)
-PY
+NSEEDS=$(for s in $SEEDS; do echo "$s"; done | wc -l)
+# One pass over both mates gives the pair count, the modal read length per mate, the
+# layout and a stride that fits the seeds disjointly, written beside the run with
+# provenance. The facts that are properties of the FILE are read off the file; the two
+# that are not - the non-template prefix and what the water was - are named as such by
+# the measurement itself and are the only things a person supplies.
+if [ ! -s "$OUT/measured_library.json" ]; then
+  "$PY" -I experiments/measure_library.py --r1 "$R1" --r2 "$R2" \
+    --pairs-per-seed "$PAIRS" --seeds "$NSEEDS" --accession "$ACC" \
+    --out "$OUT/measured_library.json" > /dev/null
 fi
-READS=$(cat "$S/read_count.txt")
+READS=$("$PY" -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["pairs"])' \
+  "$OUT/measured_library.json")
+if [ -z "$BLOCK" ]; then
+  BLOCK=$("$PY" -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["block"])' \
+    "$OUT/measured_library.json")
+  echo "=== block stride $BLOCK measured from $READS pairs in this library ==="
+else
+  echo "=== block stride $BLOCK stated; the measurement is recorded beside it ==="
+fi
+echo "=== read length $("$PY" -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["read_length"])' "$OUT/measured_library.json") measured ==="
 NEED=$(( (LAST_SEED - 1) * BLOCK + PAIRS ))
 echo "library $READS pairs; $LAST_SEED seeds x $PAIRS pairs at stride $BLOCK needs $NEED"
 if [ "$NEED" -gt "$READS" ]; then

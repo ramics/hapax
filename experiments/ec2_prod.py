@@ -218,33 +218,51 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--print-user-data", action="store_true")
     args = ap.parse_args(argv)
 
-    # The two committed registries decide whether this library can be run at all, and they
-    # are read HERE rather than on the instance so that a missing entry costs nothing.
+    # A LIBRARY WITH NO ENTRY IS THE CASE THIS IS FOR, so a missing one is not a refusal.
+    # The registries are still read here rather than on the instance, because where an
+    # entry DOES exist its arithmetic can be checked before paying for anything; where it
+    # does not, the instance measures the pair count, the read lengths, the layout and the
+    # stride off the reads themselves (`measure_library.py`) and records them beside the
+    # run. Only `crossplant_panel` is resolved: `truth_panel` is a validation reference and
+    # a production run does not ask for one (SPEC 13.4).
     import library_facts
     import stage_refs
-    facts = library_facts.library(args.library)          # raises UnknownLibrary
-    block = library_facts.fact(args.library, "block")    # raises if absent
-    for kind in ("truth_panel", "crossplant_panel"):
-        r = stage_refs.resolve(args.library, kind)
-        print(f"{kind}: {r['state']}"
-              + (f" ({r['panel']})" if r["state"] == "resolved" else ""))
-    if facts.get("layout") != "paired":
+    try:
+        facts = library_facts.library(args.library)
+    except library_facts.UnknownLibrary:
+        facts = {}
+        print(f"{args.library} has no entry in experiments/libraries.json. Nothing here "
+              f"needs one: the instance measures what the file can answer and the only "
+              f"value a person supplies is --trim-r2.")
+    block = facts.get("block")
+    r = stage_refs.resolve_optional(args.library, "crossplant_panel")
+    print("crossplant_panel: " + r["state"]
+          + (f" ({r['panel']})" if r["state"] == "resolved" else f" ({r.get('reason', '')})"))
+    if facts and facts.get("layout") not in (None, "paired"):
         raise SystemExit(f"{args.library} is {facts.get('layout')} in libraries.json; this "
                          f"template stages two mates and measures a mate-2 prefix")
     last = max(int(s) for s in args.seeds.split())
-    need = (last - 1) * block + args.pairs
-    if facts.get("pairs") and need > facts["pairs"]:
-        raise SystemExit(
-            f"refusing to launch: seed {last} would start at {(last - 1) * block:,} in a "
-            f"library of {facts['pairs']:,} pairs. The instance checks this again against "
-            f"the counted reads, but there is no reason to pay for the arithmetic.")
-    print(f"{args.library}: {facts.get('pairs', 'unknown'):,} pairs, block {block:,}, "
-          f"{last} seeds x {args.pairs:,} needs {need:,}")
+    if block is None:
+        print(f"{args.library}: block stride measured on the instance from the counted "
+              f"pairs; {last} seeds x {args.pairs:,} pairs")
+    else:
+        need = (last - 1) * block + args.pairs
+        if facts.get("pairs") and need > facts["pairs"]:
+            raise SystemExit(
+                f"refusing to launch: seed {last} would start at {(last - 1) * block:,} in "
+                f"a library of {facts['pairs']:,} pairs. The instance checks this again "
+                f"against the counted reads, but there is no reason to pay for it.")
+        print(f"{args.library}: {facts.get('pairs', 'unknown'):,} pairs, block {block:,}, "
+              f"{last} seeds x {args.pairs:,} needs {need:,}")
     if args.trim_r2 is not None:
         print(f"trim_r2 STATED as {args.trim_r2}; libraries.json records "
               f"{facts.get('trim_r2')!r} with "
               f"{'an unverified flag' if facts.get('trim_r2_unverified') else 'its basis'}. "
               f"The measurement still runs and ships, and is not used.")
+    elif facts.get("trim_r2") is None and not facts:
+        print("this library has no entry at all, so the instance measures the trim over "
+              f"{len(args.prefix_seeds.split())} seeds and refuses to run if no single "
+              "mode holds, which is the intended path for a new library")
     elif facts.get("trim_r2") is None:
         print("trim_r2 is unmeasured in libraries.json: the instance measures it over "
               f"{len(args.prefix_seeds.split())} seeds and refuses to run if no single "
@@ -278,7 +296,10 @@ def main(argv: list[str] | None = None) -> int:
         COMMIT=commit, BUCKET=bucket, PREFIX=prefix, REGION=ec2lib.REGION,
         HARD_STOP_MINUTES=args.hard_stop_minutes, HEARTBEAT_SECONDS=HEARTBEAT_SECONDS,
         CODE_KEY_NAME=Path(code_key).name, ACC=args.library,
-        PAIRS=args.pairs, SEEDS=args.seeds, BLOCK=block,
+        PAIRS=args.pairs, SEEDS=args.seeds,
+        # Empty, not "None": prod_run.sh reads an empty BLOCK as "measure it",
+        # and a string "None" would reach the arithmetic as a stated stride.
+        BLOCK=("" if block is None else block),
         REPORT_PAIRS=args.report_pairs, STAGES=args.stages,
         PREFIX_SEEDS=args.prefix_seeds, PREFIX_PAIRS=args.prefix_pairs,
         TRIM_R2_STATED="" if args.trim_r2 is None else args.trim_r2,

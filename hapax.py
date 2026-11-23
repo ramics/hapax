@@ -1433,6 +1433,25 @@ STAGE_ORDER = ["cascade", "contigs", "reads", "linkage", "census", "calibration"
                "intervals", "layers", "strains", "divergent", "shortlist", "panel",
                "crossplant"]
 
+#: Stages that score the run against sequence whose distance was fixed BEFORE it, and so
+#: are validation of the tool rather than output of it.
+#:
+#: Imo, 2026-11-23: *"why are we asking for depositor assembled genomes IN PROD THERE IS NO
+#: DEPOSITOR"*, and earlier the same day: *"why would we, with unknown wastewater, have a
+#: genome with a distance fixed before the run? by default we know nothing. we always know
+#: nothing."* `panel` scores recovery against the depositors' own assemblies from that
+#: water; `calibration` scores a spiked divergence ladder. Both are real and both are how
+#: this tool is known to work at all - and neither has an answer on water nobody has
+#: deposited from, which is every sample production is for. So they are not in the default
+#: set: a production run does not ask the question, rather than asking it and recording an
+#: absence. They stay selectable by name, which is how a fixture library runs them.
+#:
+#: This is the same conclusion the report reached from the other end (SPEC 13.4): no
+#: ground-truth section on any page, because a section that renders empty on real water
+#: tells its reader something is missing from their sample.
+VALIDATION_STAGES = ["calibration", "panel"]
+PRODUCTION_STAGES = [s for s in STAGE_ORDER if s not in VALIDATION_STAGES]
+
 
 def main() -> int:
     ap = argparse.ArgumentParser(prog="hapax", description=__doc__.split("\n")[0])
@@ -1569,7 +1588,11 @@ def main() -> int:
     r.add_argument("--calibrate", action="store_true",
                    help="run the per-sample divergence ladder. Without it the run carries "
                         "no positive control and says so")
-    r.add_argument("--stages", nargs="+", default=STAGE_ORDER, choices=STAGE_ORDER)
+    r.add_argument("--stages", nargs="+", default=PRODUCTION_STAGES, choices=STAGE_ORDER,
+                   help="default: every production stage. The validation stages "
+                        + ", ".join(VALIDATION_STAGES) + " are selectable by name and are "
+                        "not run by default, because they score the run against sequence "
+                        "whose distance was fixed before it and unknown water has none")
     r.add_argument("--work", type=Path, default=None)
     r.add_argument("--plan", action="store_true", help="print the stages and exit")
     args = ap.parse_args()

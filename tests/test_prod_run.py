@@ -238,3 +238,79 @@ def test_the_query_library_is_not_a_member_of_the_panel_it_subtracts_against():
     # and the plant IS in it, or there is no within-plant stratum and the paired
     # per-plant comparison the measurement requires cannot be drawn.
     assert stage_refs.resolve_library(PROD_LIBRARY)["plant"] in plants
+
+
+# ------------------------------------------------- the facts that come off the file
+def write_fastq(path, n, length):
+    with open(path, "w") as h:
+        for i in range(n):
+            h.write(f"@r{i}\n{'A' * length}\n+\n{'I' * length}\n")
+
+
+def test_the_file_answers_count_length_layout_and_stride(tmp_path):
+    """Three of the four facts a new library needed by hand are in the file itself."""
+    import measure_library as ml
+    r1, r2 = tmp_path / "SRRX_1.fq", tmp_path / "SRRX_2.fq"
+    write_fastq(r1, 1_000, 151)
+    write_fastq(r2, 1_000, 151)
+    m = ml.measure(r1, r2, pairs_per_seed=100, seeds=5)
+    assert m["pairs"] == 1_000
+    assert m["read_length"] == [151, 151]
+    assert m["layout"] == "paired"
+    assert 4 * m["block"] + 100 <= 1_000
+    # and what the file cannot answer is named rather than left out
+    assert "trim_r2" in m["not_measurable_from_the_file"]
+
+
+def test_unequal_mates_are_not_pairs(tmp_path):
+    import measure_library as ml
+    r1, r2 = tmp_path / "SRRX_1.fq", tmp_path / "SRRX_2.fq"
+    write_fastq(r1, 10, 100)
+    write_fastq(r2, 9, 100)
+    with pytest.raises(ValueError, match="not pairs"):
+        ml.measure(r1, r2, pairs_per_seed=2, seeds=5)
+
+
+def test_a_stride_below_the_block_would_overlap_the_seeds_and_is_refused():
+    """The arithmetic passes happily on overlapping blocks, so it is checked."""
+    import measure_library as ml
+    assert ml.stride_for(32_125_614, 200_000, 5) >= 200_000
+    assert ml.stride_for(4_290_429, 200_000, 5) >= 200_000
+    with pytest.raises(ValueError, match="DISJOINT"):
+        ml.stride_for(400, 100, 5)
+
+
+def test_a_single_end_library_is_recorded_as_single(tmp_path):
+    import measure_library as ml
+    r1 = tmp_path / "SRRX_1.fq"
+    write_fastq(r1, 500, 145)
+    m = ml.measure(r1, None, pairs_per_seed=50, seeds=5)
+    assert m["layout"] == "single" and m["read_length"] == [145]
+
+
+# ------------------------------------------------- validation is not production
+def test_the_depositor_panel_and_the_spiked_ladder_are_not_production_stages():
+    """Unknown water has no depositor, so a production run does not ask (SPEC 13.4)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("hapax_mod", ROOT / "hapax.py")
+    hp = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(hp)
+    assert set(hp.VALIDATION_STAGES) == {"panel", "calibration"}
+    assert "panel" not in hp.PRODUCTION_STAGES
+    assert "calibration" not in hp.PRODUCTION_STAGES
+    # every other stage is still there, in the same order
+    assert hp.PRODUCTION_STAGES == [s for s in hp.STAGE_ORDER
+                                    if s not in hp.VALIDATION_STAGES]
+    # and the production ordering a run actually uses does not select them
+    run_sh = (ROOT / "experiments/prod_run.sh").read_text()
+    stages_line = [l for l in run_sh.splitlines() if l.startswith("STAGES=")][0]
+    assert "panel" not in stages_line.replace("crossplant", "")
+    assert "calibration" not in stages_line
+
+
+def test_a_library_with_no_entry_is_not_a_refusal_for_a_launcher():
+    """resolve() must refuse for a stage and must not for a launcher reporting what will run."""
+    with pytest.raises(stage_refs.UnknownLibrary):
+        stage_refs.resolve("SRR00000000", "crossplant_panel")
+    r = stage_refs.resolve_optional("SRR00000000", "crossplant_panel")
+    assert r["state"] == "unregistered" and "SRR00000000" in r["reason"]
