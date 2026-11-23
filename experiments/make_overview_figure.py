@@ -40,7 +40,7 @@ STAGES = [
         "name": "resolve",
         "io": "library accession → trim, block size, which panels apply",
         "number": "14 nt",
-        "unit": "of non-template prefix on mate 2; the mode in 5 of 5 seeds",
+        "unit": "non-template prefix on mate 2. Mode in 5 of 5 seeds.",
         "source": "results/nontemplate_prefix",
         "accent": "open",
     },
@@ -48,47 +48,47 @@ STAGES = [
         "name": "merge",
         "io": "read pairs → one read per overlapping molecule",
         "number": "35.1%",
-        "unit": "of pairs merge, which lifts recognition at 20% divergence from 10.5% to 38.4%",
+        "unit": "of pairs merge. Recognition at 20% divergence, 10.5% to 38.4%.",
         "source": "results/profile_reach",
         "accent": "open",
     },
     {
         "name": "assemble",
-        "io": "the whole library → contigs, checked for recovery in the same pass",
+        "io": "whole library → contigs, plus a recovery check in the same pass",
         "number": "20 of 25",
-        "unit": "depositor genomes recovered at 90% breadth or better; 53 zero-read controls stay empty",
+        "unit": "depositor genomes at ≥90% breadth. 53 zero-read controls empty.",
         "source": "results/path_settings",
         "accent": "open",
     },
     {
         "name": "identify",
-        "io": "reads and contigs against indexes, cheapest first → tier table and the evidence for each removal",
+        "io": "reads and contigs against indexes, cheapest first → tier table, removal evidence",
         "number": "77.10%",
-        "unit": "of read pairs removed as already known; 77.02 to 77.28 over 5 seeds",
+        "unit": "of read pairs removed as known. Range 77.02–77.28, 5 seeds.",
         "source": "results/subtract_recut",
         "accent": "known",
     },
     {
         "name": "score the distance",
-        "io": "every row, removed or not → distance, closest relative, query coverage, E-value",
+        "io": "every row, removed or not → distance, closest relative, coverage, E-value",
         "number": "0.00%",
-        "unit": "on shuffled sequence, reported next to every field it belongs to",
+        "unit": "on shuffled sequence. Reported per field.",
         "source": "results/divergent_contigs",
         "accent": "known",
     },
     {
         "name": "report the residue",
-        "io": "what nothing named → one row per pair, no threshold applied, each field beside its control",
+        "io": "unnamed reads → one row per pair, no thresholds, controls alongside",
         "number": "depth 1",
-        "unit": "median depth for pairs that never assembled; set by read length and database reach",
+        "unit": "median depth of pairs with no contig. Set by read length and database reach.",
         "source": "results/residue_census",
         "accent": "residue",
     },
     {
         "name": "subtract other plants",
-        "io": "512 libraries from other plants → witnessed in the panel or not, paired by plant",
+        "io": "512 libraries from other plants → witnessed or not, paired by plant",
         "number": "87.5%",
-        "unit": "of a held-out library removed, and still falling at 512 libraries",
+        "unit": "of a held-out library removed. Still falling at 512.",
         "source": "results/crossplant",
         "accent": "open",
     },
@@ -109,8 +109,8 @@ LIBRARY_SPLIT = {
     "residue": 22.90,
     "residue_note": "≈8.4 assembled but unnamed, ≈11.1 never assembled",
     "cost_note": (
-        "0.015 GB of the sample's own contigs removes 30.33 points of the library; 16 GB of "
-        "Kraken2 removes 0.42. Indexes are therefore consulted in order of cost."
+        "0.015 GB of the sample's own contigs removes 30.33 points. 16 GB of Kraken2 removes "
+        "0.42. Indexes are consulted in order of cost."
     ),
 }
 
@@ -200,9 +200,8 @@ def render() -> str:
         'stroke="#dfe4ea"/>')
     add("")
     add('  <text class="figh" x="40" y="48">hapax</text>')
-    add('  <text class="figs" x="40" y="72">Which sequence in a sample is already known, '
-        "which assembled without a name, and how far the remainder sits from published "
-        "sequence, with the cost of every step.</text>")
+    add('  <text class="figs" x="40" y="72">Known sequence is identified and removed. The '
+        "remainder is measured against published sequence.</text>")
     add('  <line x1="40" y1="92" x2="1080" y2="92" stroke="#dfe4ea"/>')
     add("")
 
@@ -230,9 +229,9 @@ def render() -> str:
         add("")
     add("  </g>")
     add('  <line x1="40" y1="580" x2="1080" y2="580" stroke="#e7ebf0"/>')
-    add('  <text class="note" x="40" y="598">A stage missing an input is named as skipped '
-        "and the run is marked incomplete. Nothing falls back to a cheaper index, and no "
-        "sample&#39;s parameters are guessed.</text>")
+    add('  <text class="note" x="40" y="598">A stage missing an input is recorded as skipped '
+        "and the run marked incomplete. No fallback to a cheaper index. No parameter is "
+        "inferred from another sample.</text>")
     add("")
 
     # ---- panel b -------------------------------------------------------------------
@@ -285,21 +284,20 @@ def render() -> str:
     add("    </g>")
     add('    <text class="ax" x="0" y="16">far from published sequence</text>')
     add('    <text class="ax" x="300" y="16" text-anchor="end">matched</text>')
-    add('    <text class="note" x="360" y="-14">One mark per contig, no threshold applied. A '
-        "row reports the distance to its closest</text>")
+    add('    <text class="note" x="360" y="-14">One mark per contig, no thresholds. A row '
+        "gives the distance to its closest</text>")
     add('    <text class="note" x="360" y="2">published relative and the identity of that '
-        "relative; where one of the two is absent,</text>")
-    add('    <text class="note" x="360" y="18">the report states which. No novelty score, no '
-        "threat score, no per-read call. Search</text>")
-    add('    <text class="note" x="360" y="34">establishes prior knowledge of a sequence; '
-        "novelty does not follow from a missing hit.</text>")
+        "relative. Where one is absent, the</text>")
+    add('    <text class="note" x="360" y="18">report states which. No novelty score. No threat '
+        "score. No per-read call.</text>")
+    add('    <text class="note" x="360" y="34">Search establishes prior knowledge. It does not '
+        "establish novelty.</text>")
     add("  </g>")
     add("")
     add('  <line x1="40" y1="880" x2="1080" y2="880" stroke="#eef1f4"/>')
     add('  <text class="note" x="40" y="898">Berlin wastewater SRR23973193, 5 seeds. '
         "Percentages are of read pairs. Every number comes from a committed directory under "
-        '<tspan font-weight="700">results/</tspan>, with the script and seed that produced '
-        "it.</text>")
+        '<tspan font-weight="700">results/</tspan>.</text>')
     add("</svg>")
     return "\n".join(out) + "\n"
 
