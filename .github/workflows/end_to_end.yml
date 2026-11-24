@@ -1,0 +1,65 @@
+# Reads to report, on every pull request. PLAN.md step 2.
+#
+# WHY THIS IS A SEPARATE JOB FROM `tests`. The `tests` job installs no external tool and
+# no index, which is deliberate: the unit suite has to run green in a fresh container with
+# `pip install -r requirements.txt` alone (TOOLS.md). This job is the other half, and the
+# half nothing in this repo has ever had: it installs the tools the pipeline actually
+# drives and runs the whole command on a fixture, then asserts that every section of the
+# produced report was filled from a file the run wrote.
+#
+# IT IS RED ON PURPOSE UNTIL PLAN.md STEP 6. The driver today starts after assembly and
+# three report sections have no stage behind them, so this job fails, and its failure
+# message names the plan step that lands each phase. That visibility is the point: the
+# alternative is a plan in a document agreeing with itself while a user gets an empty
+# page. Do not mark it `continue-on-error` to make the checks look green; the thing it is
+# measuring is how much of the rebuild is left.
+name: end-to-end
+on:
+  push:
+  pull_request:
+jobs:
+  fixture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash -el {0}      # -l so the conda environment is on PATH in every step
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-file: environment.yml
+          environment-name: hapax
+          cache-environment: true
+      - name: the installed versions, recorded in the log
+        # Printed before anything runs, because a number produced by an unrecorded
+        # version is a number without provenance, and because an install that resolved to
+        # something other than the pins in TOOLS.md should be visible in the log of the
+        # run that used it rather than inferred afterwards.
+        run: |
+          python -V
+          megahit --version
+          diamond --version
+          kraken2 --version
+          minimap2 --version
+          node --version
+      - name: install the package
+        # `pip install .` is the whole install in PLAN.md 4. Until the package skeleton
+        # lands (step 3) there is no pyproject.toml, so this step is allowed to fail and
+        # the test below is what reports it: a missing entry point is a finding, not an
+        # infrastructure error.
+        continue-on-error: true
+        run: pip install .
+      - name: reads to report
+        env:
+          HAPAX_E2E: "1"
+        run: python -m pytest tests/test_end_to_end.py -v
+      - name: keep the run directory
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: end-to-end-run
+          path: |
+            /tmp/pytest-of-runner/**/run/**
+          if-no-files-found: ignore
+          retention-days: 7

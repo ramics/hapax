@@ -203,3 +203,18 @@ folder at `web/berlin_rundir/`, complete except the `work/` intermediates, which
 generator does not read. `architecture_s1.json` in it is generated, not a run output:
 `experiments/architecture_call.py --scored <dir>/divergent_contig_workup_s1.json`. The
 holdout run directory is committed at `results/holdout_cascade/run_s1/`.
+
+## The end-to-end fixture's references
+
+Not downloads into this directory: the three records below are fetched by
+`tests/fixtures/make_fixture.py` and their derived sequence is committed under
+`tests/fixtures/`, because a test that runs on every pull request cannot depend on
+`data/` existing. They are recorded here as well so that every accession this repo reads
+is in one place. `tests/fixtures/manifest.json` carries the download date of the build
+the committed files came from.
+
+| accession | what | why it is in the fixture |
+|---|---|---|
+| `NC_001417.2` | Enterobacteria phage MS2, 3,569 nt | the known arm, in the toy nucleotide index and classifier library |
+| `NC_003630.1` | pepper mild mottle virus, 6,357 nt | mutated to make the divergent arm; the real one is in the toy protein index only |
+| `NC_000913.3` | E. coli K-12 MG1655 | a 16 kb rrnB window is the bacterial and rRNA background |

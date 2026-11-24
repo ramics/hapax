@@ -1,0 +1,124 @@
+{
+ "what_this_is": "the end-to-end fixture: a ten-thousand-pair library carrying all three of the report's output classes, with toy indexes built from its own sequence. It is a test of whether every report section is filled, and it is NOT a benchmark: no number from it belongs in results/.",
+ "script": "tests/fixtures/make_fixture.py",
+ "script_sha256": "a6af18af0e9dfa2ec8efb75217c4ca69cbb190030ab54368a89c1b4b5e04cf45",
+ "seed": 1,
+ "built_on": "2026-11-24",
+ "accessions": {
+  "ms2": {
+   "accession": "NC_001417.2",
+   "role": "known virus, in the toy nucleotide index, must be subtracted as tier 1",
+   "why": "Enterobacteria phage MS2, 3,569 nt, four non-overlapping ORFs whose roles are maturation, coat, lysis and replicase. The repo's gene-level asymmetry work is stated in exactly those roles (SPEC 2.2), so a fixture carrying them exercises the per-gene ranking rather than only a whole-contig identity."
+  },
+  "pmmov": {
+   "accession": "NC_003630.1",
+   "role": "divergent-but-related virus: mutated here, the real one in the toy protein index only",
+   "why": "Pepper mild mottle virus, 6,357 nt. A plant virus that is one of the most abundant RNA viruses in human wastewater, so a wastewater fixture carrying it is not an arbitrary choice."
+  },
+  "ecoli": {
+   "accession": "NC_000913.3",
+   "role": "bacterial background, in the toy classifier library and the toy SILVA",
+   "why": "E. coli K-12 MG1655. A 16 kb slice spanning the rrnB operon, so the fixture has ribosomal sequence in it: rRNA is about a third of the discriminating library and the stage that anchors against SILVA has nothing to do without any."
+  }
+ },
+ "ecoli_slice_1based_inclusive": [
+  4164000,
+  4180000
+ ],
+ "coverage": {
+  "ms2": 300,
+  "pmmov_divergent": 150,
+  "ecoli": 60,
+  "unplaceable": 3
+ },
+ "read_length": 150,
+ "insert_mean_sd": [
+  350,
+  50
+ ],
+ "error_rate": {
+  "body": 0.00068,
+  "last_base": 0.0019,
+  "basis": "measured reference-free from self-overlapping pairs of SRR23973193 (results/berlin_quality/, CLAUDE.md)"
+ },
+ "divergent_arm": {
+  "nucleotide_substitution_rate_applied": 0.15,
+  "rejection_rule": "a substitution that would make a stop codon inside any annotated CDS, or touch a start codon, is rejected",
+  "measured_per_orf": [
+   {
+    "orf": "lcl|NC_003630.1_cds_NP_619740.1_1",
+    "aa": 1612,
+    "protein_identity": 0.6842,
+    "nucleotide_identity": 0.8504,
+    "internal_stops_in_real": [
+     1117
+    ],
+    "stops_introduced": []
+   },
+   {
+    "orf": "lcl|NC_003630.1_cds_NP_619741.1_2",
+    "aa": 1117,
+    "protein_identity": 0.6893,
+    "nucleotide_identity": 0.85,
+    "internal_stops_in_real": [],
+    "stops_introduced": []
+   },
+   {
+    "orf": "lcl|NC_003630.1_cds_NP_619742.1_3",
+    "aa": 257,
+    "protein_identity": 0.6887,
+    "nucleotide_identity": 0.8501,
+    "internal_stops_in_real": [],
+    "stops_introduced": []
+   },
+   {
+    "orf": "lcl|NC_003630.1_cds_NP_619743.1_4",
+    "aa": 157,
+    "protein_identity": 0.7134,
+    "nucleotide_identity": 0.8397,
+    "internal_stops_in_real": [],
+    "stops_introduced": []
+   }
+  ],
+  "basis": "measured on this build, not stated: the mapping from a nucleotide rate to a protein identity runs through the genetic code and the rejection rule."
+ },
+ "pairs": 9987,
+ "files": {
+  "db/nt_known.fa": {
+   "bytes": 19904,
+   "sha256_16": "345ffc3b0a6f9cc7"
+  },
+  "db/prot_known.faa": {
+   "bytes": 4651,
+   "sha256_16": "1a46f0ce0bf323fe"
+  },
+  "db/silva_toy.fa": {
+   "bytes": 16271,
+   "sha256_16": "25fb354ea7e0d4dd"
+  },
+  "genomes/background_ecoli.fa": {
+   "bytes": 16279,
+   "sha256_16": "fec5f92322028a1a"
+  },
+  "genomes/divergent_pmmov.fa": {
+   "bytes": 6514,
+   "sha256_16": "d870a2827eb974f7"
+  },
+  "genomes/known_ms2.fa": {
+   "bytes": 3644,
+   "sha256_16": "2bd1504b740ad8cd"
+  },
+  "genomes/unplaceable.fa": {
+   "bytes": 4112,
+   "sha256_16": "95b84568b217d250"
+  },
+  "reads/fixture_R1.fastq.gz": {
+   "bytes": 396447,
+   "sha256_16": "ea77e75f0eec44a8"
+  },
+  "reads/fixture_R2.fastq.gz": {
+   "bytes": 394428,
+   "sha256_16": "4707e98ab2cff015"
+  }
+ }
+}
