@@ -3781,9 +3781,20 @@ function interval(iv) {
       {lab: 'other living things', v: other, col: 'var(--v3)'},
       {lab: 'named only to a broad group', v: shallow, col: 'var(--v-mute)'},
     ].filter(s => s.v > 0);
-    inner.forEach(s => { s.pct = (100 * s.v / (named || 1)).toFixed(1) + '% of the named part'; });
+    // A SHARE THAT IS NOT ZERO IS NEVER PRINTED AS ZERO. The viral share of the named
+    // part rounded to `0%` in the middle of the ring on a library whose own virus table,
+    // directly below, lists eight named taxa and hundreds of reads. A reader takes the
+    // big number in the ring, and `0%` beside a list of viruses is the page arguing with
+    // itself. Anything present but below the printed precision is shown as a bound.
+    const small = (v, whole, dp) => {
+      const share = 100 * v / (whole || 1);
+      const floor = Math.pow(10, -dp);
+      return v > 0 && share < floor ? '<' + floor.toFixed(dp) + '%'
+                                    : share.toFixed(dp) + '%';
+    };
+    inner.forEach(s => { s.pct = small(s.v, named, 1) + ' of the named part'; });
     const d2 = donut(inner,
-      (100 * (by.Viruses || 0) / (named || 1)).toFixed(0) + '%', 'of that is viral',
+      small(by.Viruses || 0, named, 1), 'of that is viral',
       'and what that named part is');
     // The legend sits under its own donut, never off to the side, and every slice is
     // named in text: one of these three hues carries a contrast warning against the
@@ -4067,8 +4078,17 @@ function interval(iv) {
       'Of the <b>' + tot.toLocaleString() + '</b> leftover reads that point at a named ' +
       'relative at all, <b>' + pct((R.host_mix_reads.bacteriophage || 0) / tot) +
       '</b> point at viruses of bacteria and <b>' + pct(hum / tot) + '</b> at anything ' +
-      'human-associated' + cite('concern') + '. Those ' + hum + ' reads are the enteric ' +
-      'viruses sewage is expected to carry, matched over about 34 amino acids. ' +
+      'human-associated' + cite('concern') + '. ' +
+      // WHAT THOSE READS ARE IS NOT SOMETHING THIS PAGE KNOWS. The sentence read
+      // "Those N reads are the enteric viruses sewage is expected to carry, matched
+      // over about 34 amino acids": an identification the host group does not support,
+      // an expectation about sewage this run did not measure, and an alignment length
+      // measured on another library. At N = 0 it also read "Those 0 reads are the
+      // enteric viruses", which is the sentence arguing with its own number.
+      (hum === 0
+        ? 'No leftover read points at a record whose host is human-associated. '
+        : 'A host group is the host of the matched RECORD, so those ' + hum +
+          ' reads are reads whose nearest named relative carries that label. ') +
       '<b>Host confidence never exceeds ' + num(hc.max, 2) + '</b> anywhere in the ' +
       Number(hc.subjects || 0).toLocaleString() + ' records, so no relative here is ' +
       'close enough for its host to transfer: these are labels on the database, not ' +
