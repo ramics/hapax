@@ -28,25 +28,23 @@ rather than raised. The record is the difference between this and a fallback.
 from __future__ import annotations
 
 import json
-import subprocess
-import sys
 from pathlib import Path
 
+from . import scripts
 from .config import Config
 
 
-def _attempt(cmd: list[str], cwd: Path, stage: str, needs: list[str]) -> dict:
+def _attempt(repo: Path, name: str, args: list, stage: str, needs: list[str]) -> dict:
     """Run one enrichment, recording the outcome either way."""
     absent = [n for n in needs if not Path(n).exists()]
     if absent:
         return {"stage": stage, "status": "skipped",
                 "reason": f"these are not staged on this machine: {', '.join(absent)}"}
-    proc = subprocess.run([str(c) for c in cmd], cwd=cwd, capture_output=True, text=True)
+    proc, code = scripts.run(repo, name, args)
     if proc.returncode != 0:
         return {"stage": stage, "status": "failed",
-                "reason": (proc.stderr or proc.stdout)[-1500:],
-                "argv": [str(c) for c in cmd]}
-    return {"stage": stage, "status": "ok", "argv": [str(c) for c in cmd]}
+                "reason": (proc.stderr or proc.stdout)[-1500:], **code}
+    return {"stage": stage, "status": "ok", **code}
 
 
 def enrich(cfg: Config, out: Path, repo: Path, seed: int) -> list[dict]:
@@ -57,7 +55,6 @@ def enrich(cfg: Config, out: Path, repo: Path, seed: int) -> list[dict]:
     rather than skipped on inspection.
     """
     records: list[dict] = []
-    py = sys.executable
     strains = out / "strains.json"
     workup = out / f"divergent_contig_workup_s{seed}.json"
 
@@ -75,7 +72,7 @@ def enrich(cfg: Config, out: Path, repo: Path, seed: int) -> list[dict]:
                       "protein index; neither pfam nor sprot is named under [databases]"})
     else:
         records.append(_attempt(
-            [py, "-I", repo / "experiments/divergent_contig_workup.py", "--seed", seed,
+            repo, "divergent_contig_workup.py", ["--seed", seed,
              "--strains", strains, "--contigs", contigs or "",
              "--pfam", pfam, "--dmnd-sprot", sprot,
              "--dmnd", cfg.database("protein"), "--threads", cfg.threads,
@@ -83,13 +80,13 @@ def enrich(cfg: Config, out: Path, repo: Path, seed: int) -> list[dict]:
              # given rather than a name of its own inside it, and `--work` is required.
              "--work", out / "work" / "workup",
              "--out", out / f"divergent_contig_workup_s{seed}.json"],
-            repo, "workup", [str(strains), str(pfam), str(sprot)]))
+            "workup", [str(strains), str(pfam), str(sprot)]))
 
     if workup.exists():
         records.append(_attempt(
-            [py, "-I", repo / "experiments/architecture_call.py", "--seed", seed,
+            repo, "architecture_call.py", ["--seed", seed,
              "--scored", workup, "--out", out / f"architecture_s{seed}.json"],
-            repo, "architecture", [str(workup)]))
+            "architecture", [str(workup)]))
     else:
         records.append({"stage": "architecture", "status": "skipped",
                         "reason": "it reads the per-gene workup, which this run has not "
@@ -106,9 +103,9 @@ def enrich(cfg: Config, out: Path, repo: Path, seed: int) -> list[dict]:
                                   "and a run given only the index cannot have it"})
     else:
         records.append(_attempt(
-            [py, "-I", repo / "experiments/subject_names.py", out,
+            repo, "subject_names.py", [out,
              "--sources", sources, "--out", out / "subject_names.json"],
-            repo, "names", [str(sources)]))
+            "names", [str(sources)]))
 
     (out / "enrichments.json").write_text(json.dumps({
         "what_this_is": "the enrichment stages, which the sections that read them render "
