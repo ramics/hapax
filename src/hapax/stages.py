@@ -195,7 +195,10 @@ R.add(Stage(
         "control's 2.35. This is what lets the distance panel rank on the conserved gene "
         "instead.",
     script="divergent_contig_workup.py",
-    needs=("strains",),
+    # `taxa`, not `strains`: it selects contigs out of the per-contig identity table
+    # `known_strain_divergence.py` writes. The `strains` stage's own output answers to the
+    # same word and holds a read-level subject table, which this script cannot read.
+    needs=("taxa",),
     outputs=(Output("divergent_contig_workup_s{seed}.json", "workup", section=DISTANCE,
                     optional=True,
                     absence_means="the distance panel ranks on the whole-contig best hit "

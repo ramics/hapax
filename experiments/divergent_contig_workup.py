@@ -63,6 +63,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir
 import library_facts
+import provenance
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -435,6 +436,40 @@ def main() -> None:
     both = {**test, **ctrl}
     print(f"{len(test)} divergent contigs, {len(ctrl)} near-reference controls",
           file=sys.stderr)
+
+    if not both:
+        # NO QUERIES IS A CENSUS, NOT A SEARCH THAT FAILED. Every helper below assumes at
+        # least one sequence: DIAMOND exits 1 on a blank query file ("First line seems to
+        # be blank") and mappy cannot index an empty FASTA, so an empty selection used to
+        # arrive as a traceback beside the line `0 divergent contigs, 0 near-reference
+        # controls` - which reads as a statement about the water and was a statement
+        # about which file was passed in. The distinction the report needs is between
+        # searched-and-found-nothing and never-searched, so it is written down.
+        out = {
+            "unit": "one row per contig; this run has none",
+            "question": "what are the contigs that sit far from any published protein",
+            "state": "not_searched",
+            "not_searched_because":
+                f"no contig in {a.strains} falls in either arm at the stated operating "
+                f"point, so there was nothing to call ORFs on and no search was run",
+            "operating_point": {
+                "min_alignment_aa": MIN_ALN_AA,
+                "divergent_arm_is_below_percent": a.diverged_below,
+                "control_arm_is_at_or_above_percent": a.control_above,
+                "min_orf_aa": a.min_orf_aa,
+            },
+            "counts": {"divergent": 0, "control_near_reference": 0,
+                       "rows_considered": sum(len(tx.get("rows", [])) for tx in
+                                              json.loads(a.strains.read_text())
+                                              .get("taxa", []))},
+            "rows": [],
+            "seed": a.seed,
+        }
+        out.update(provenance.provenance(__file__))
+        a.out.parent.mkdir(parents=True, exist_ok=True)
+        a.out.write_text(json.dumps(out, indent=2) + "\n")
+        print(f"nothing to work up; wrote the census to {a.out}", file=sys.stderr)
+        return
 
     allseqs = read_fasta(a.contigs)
     seqs = {n: allseqs[n] for n in both if n in allseqs}

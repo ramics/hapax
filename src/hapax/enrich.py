@@ -55,7 +55,15 @@ def enrich(cfg: Config, out: Path, repo: Path, seed: int) -> list[dict]:
     rather than skipped on inspection.
     """
     records: list[dict] = []
-    strains = out / "strains.json"
+    # THE TAXA STAGE'S OUTPUT, not `strains.json`. Two files in one run directory answer
+    # to the word strains: the `strains` stage writes a read-level table of SUBJECTS, and
+    # `known_strain_divergence.py` writes the per-CONTIG table of identities this script's
+    # `--strains` documents and its `pick_contigs` reads under a `taxa` key. The read-level
+    # table has no such key, so selection returned nothing, the ORF file was empty, and
+    # DIAMOND exited 1 on a blank query 11 stages into a paid run - reported as `0
+    # divergent contigs, 0 near-reference controls`, which reads like a property of the
+    # water and was a property of the filename.
+    strains = out / f"known_strain_divergence_s{seed}.json"
     workup = out / f"divergent_contig_workup_s{seed}.json"
 
     pfam = cfg.databases.get("pfam")

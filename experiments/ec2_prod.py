@@ -167,7 +167,13 @@ PAYLOAD_MODULES = ("hapax.py", "requirements.txt", "SPEC.md", "blind_spots.json"
                    # `hapax run` correctly refused to write a page without its Methods
                    # section. `tests/test_payload.py` derives this from the renderer's
                    # own source rather than trusting the list.
-                   "results/web/methods.json")
+                   "results/web/methods.json",
+                   # Read the same way, one import away, and missed by the first version
+                   # of that test because it read `make_web.py` alone: the control
+                   # declaration every figure's control row is drawn from. Its absence
+                   # cost the sixth launch of this library its page after every stage of
+                   # seed 1 had run.
+                   "results/web/controls.json")
 
 
 def payload_files(root: Path, library: str | None = None) -> list[str]:
