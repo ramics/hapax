@@ -1,5 +1,6 @@
 # A fresh container, every push: the only way to know the suite runs green without someone
-# already knowing what to install. Needs no external tool or index (see TOOLS.md).
+# already knowing what to install. Needs no external tool or index (see TOOLS.md); the
+# end-to-end job (end_to_end.yml) is the half that does.
 name: tests
 on:
   push:
@@ -13,4 +14,8 @@ jobs:
         with:
           python-version: "3.13"
       - run: python -m pip install -r requirements.txt
+      # Installed, not just on the path: `hapax` is a package since PLAN.md step 3, and
+      # the suite imports it. Editable so the checkout is what runs, and so a test that
+      # reads a committed file beside the package still finds it.
+      - run: python -m pip install -e .
       - run: python -m pytest

@@ -19,10 +19,13 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "experiments"))
-sys.path.insert(0, str(ROOT))
 
 import loud  # noqa: E402
-import hapax  # noqa: E402
+
+# Loaded from its path, not by name: `hapax` is the package now (see tests/legacy.py).
+from legacy import driver  # noqa: E402
+
+hapax = driver()
 
 PY = sys.executable
 

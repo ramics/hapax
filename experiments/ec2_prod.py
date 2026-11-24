@@ -52,7 +52,21 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 # a list was typed a third time, which is the same family as a default where a refusal
 # belongs. Imported now, so there is one list and the launcher cannot disagree with the
 # tool it launches.
-from hapax import PRODUCTION_STAGES  # noqa: E402
+# Loaded from its path rather than by name, because `hapax` is the installed package now
+# and `hapax.py` is the driver beside it: which one `import hapax` reaches would depend on
+# sys.path order. The driver's content stays untouched, since its script_sha256 pins five
+# committed seed manifests.
+def _driver():
+    import importlib.util
+    path = Path(__file__).resolve().parent.parent / "hapax.py"
+    spec = importlib.util.spec_from_file_location("hapax_legacy_driver", path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+PRODUCTION_STAGES = _driver().PRODUCTION_STAGES
 
 #: Production stages this launcher's instance has no reference data for, each with the
 #: reason, subtracted from the list above rather than a second list typed beside it.
