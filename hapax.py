@@ -765,7 +765,11 @@ class Run:
                 "--trim-r2", str(a.trim_r2), "--db", str(db),
                 "--threads", str(a.threads),
                 "--work", str(out / "work"),
-                "--out", str(out / f"public_health_profile_s{a.seed}.json")]
+                # A DIRECTORY, which is what this script's --out is: it writes its own
+                # per-seed file inside. Handed the file path instead, it made a directory
+                # of that name and wrote the file inside it, so the stage both succeeded
+                # and produced nothing the run directory could find.
+                "--out", str(out)]
         if a.classify_bin:
             argv += ["--classify-bin", str(a.classify_bin)]
         return self.call("profile", "public_health_profile.py", argv,
@@ -801,7 +805,10 @@ class Run:
         argv = ["--seed", str(a.seed), "--contigs", str(src), "--db", str(db),
                 "--dmnd", str(a.dmnd[0]), "--threads", str(a.threads),
                 "--work", str(out / "work"),
-                "--out", str(out / f"known_strain_divergence_s{a.seed}.json")]
+                # A directory, as in the profile stage above: this script writes its own
+                # per-seed filename inside it. The two scripts that take a file path and
+                # the two that take a directory look identical from the flag.
+                "--out", str(out)]
         if a.classify_bin:
             argv += ["--classify-bin", str(a.classify_bin)]
         if a.diamond_bin:
