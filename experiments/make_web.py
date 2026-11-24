@@ -1628,19 +1628,33 @@ function interval(iv) {
   // day, and the accession is the only thing that lets them find it again or compare it
   // with another; "run viewer" told them which program wrote the page.
   const acc = ((inp.r1 || '').match(/([A-Z]{3}\\d{6,})/) || [])[1];
-  h.append(el('h1', null, acc ? esc(acc) + ', untreated wastewater'
+  // THE WATER IS NAMED BY ITS OWN FACTS, NEVER BY THIS FILE. The heading read
+  // `<accession>, untreated wastewater` and the line under it `Untargeted RNA sequencing
+  // of untreated wastewater`, both literals earned by the discriminating dataset. On
+  // the third production library the archive does not say influent or effluent - that
+  // library's own basis says so in as many words, and the ribosomal fraction differs by
+  // two orders of magnitude between the two - so the page's first sentence made a claim
+  // its own facts refused to make. `page.derived.facts` is the block, each fact with how it was
+  // established, and a fact that is absent is left out rather than guessed.
+  const facts = ((D.page || {}).derived || {}).facts || {};
+  const matrix = facts.matrix || null;
+  h.append(el('h1', null, acc ? esc(acc) + (matrix ? ', ' + esc(matrix) : '')
                               : 'Hapax run viewer'));
   h.append(el('p', 'lede',
-    'Untargeted RNA sequencing of untreated wastewater. Screening, composition, ' +
-    'divergence of assembled viruses, and the unnamed remainder. Every figure carries ' +
-    'its operating point and control. No figure scores novelty.'));
+    esc(((D.page || {}).sample || {}).lede || '') +
+    ' Screening, composition, divergence of assembled viruses, and the unnamed ' +
+    'remainder. Every figure carries its operating point and control. No figure ' +
+    'scores novelty.'));
   // Two scopes on one page, said once at the top. The classified profile and the
   // residue search read every pair; the cascade reads a block, because it cannot be run
   // over the library in this container. A reader who assumes one scope for all of it
   // will misread the panels against each other.
   const lib = (D.profile || {}).library_pairs;
   h.append(opChips({sample: acc, library: lib ? lib.toLocaleString() + ' read pairs' : null,
-    'library type': 'RNA, untargeted shotgun',
+    // The molecule is a fact about the library, and `untargeted shotgun` was a claim
+    // about its preparation that no fact here carries: PRJNA948850 alone holds 99
+    // hybrid-capture re-runs of the same RNA, so the word is not free.
+    'library type': facts.molecule || null,
     'cascade block': ((D.parameters || {}).pairs || 0).toLocaleString() + ' pairs',
     seed: r.seed, 'mate 2 trim': inp.trim_r2,
     'git sha': (r.git_sha || '').slice(0, 10),
@@ -3571,15 +3585,25 @@ function interval(iv) {
          : n >= 1e3 ? '1 in ' + Math.round(n / 1e3) + ',000'
          : '1 in ' + Math.round(n);
   };
+  // Rows at or above one pair in a hundred thousand, which the sentence below counts.
+  const above = hit.filter(r => r.fraction && r.fraction >= 1e-5);
   const hero = el('div', 'verdict');
   hero.innerHTML =
     '<div class="vmain">' + (top
       ? 'Highest watchlist detection: <b>' + esc(top.name) + '</b>, at <b>' +
         oneIn(top.fraction) + ' read pairs</b>.' + cite('watchlist')
       : 'No watchlist taxon detected.' + cite('watchlist')) + '</div>' +
+    // COUNTED, NOT ASSERTED. This read `No row reaches 1 pair in 100,000`, which was
+    // true of the library the sentence was written on and false on the page it was read
+    // from: the top row directly above it said 1 in 44,000. A claim about the rows is
+    // computed from the rows. `Untargeted` went the same way as the heading's
+    // `untreated`: the preparation of an unseen library is not a fact this code holds.
     '<div class="vsub">' + hit.length + ' of ' + rows.length + ' detected at ' +
-    'confidence ' + CONF + '. No row reaches 1 pair in 100,000. Untargeted RNA ' +
-    'sequencing has low sensitivity for human pathogens at these ' +
+    'confidence ' + CONF + '. ' + (above.length
+      ? above.length + (above.length === 1 ? ' row reaches' : ' rows reach') +
+        ' 1 pair in 100,000 or more.'
+      : 'No row reaches 1 pair in 100,000.') +
+    ' RNA sequencing of wastewater has low sensitivity for human pathogens at these ' +
     'concentrations.' + cite('library') + '</div>';
   p.append(hero);
 
