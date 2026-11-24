@@ -387,8 +387,13 @@ def main() -> None:
     ap.add_argument("--strains", type=Path, required=True,
                     help="known_strain_divergence_s*.json from the run directory")
     ap.add_argument("--contigs", type=Path, default=ROOT / "data/geo/sample_contigs.fa")
-    ap.add_argument("--r1", type=Path, default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
-    ap.add_argument("--r2", type=Path, default=ROOT / "data/berlin/SRR23973193_2.fastq.gz")
+    # NO READ-PATH DEFAULT. These were the discriminating dataset's FASTQs, and a caller
+    # who said nothing got them: the package ran this script over another library, called
+    # and searched its genes, and then mapped them back to Berlin's reads - or, on a
+    # machine without them, raised FileNotFoundError after the expensive half. A read path
+    # is a fact about a sequencing run, so it is resolved from the library like the trim.
+    ap.add_argument("--r1", type=Path, default=None)
+    ap.add_argument("--r2", type=Path, default=None)
     library_facts.add_argument(ap)
     ap.add_argument("--trim-r2", type=int, default=None,
                     help="mate 2 bases trimmed when mapping reads back. This stage "
@@ -419,7 +424,8 @@ def main() -> None:
     # It is resolved from experiments/libraries.json under its own key, so the value these
     # results were produced with is pinned and the discrepancy is recorded rather than
     # silently reconciled; changing it means re-running this stage.
-    library_facts.resolve_args(a, {"trim_r2": "trim_r2_for_mapback"})
+    library_facts.resolve_args(a, {"trim_r2": "trim_r2_for_mapback",
+                                   "r1": "r1", "r2": "r2"})
 
     for p in (a.strains, a.contigs, a.dmnd, a.pfam):
         if not p.exists():

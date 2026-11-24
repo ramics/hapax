@@ -112,3 +112,60 @@ def test_every_file_valued_flag_gets_the_file_its_script_declares():
             wrong.append(f"{caller} passes {script} {flag} {passed}, which is not one of "
                          f"{declared} as its own --help declares")
     assert not wrong, "\n".join(wrong)
+
+
+#: The four facts that belong to a sequencing run and never to this code: the two read
+#: paths, the mate-2 trim, and the accession the first three are checked against.
+LIBRARY_FACTS = ("--r1", "--r2", "--trim-r2", "--library")
+
+
+def _passed_flags() -> dict[str, set[str]]:
+    """Every flag the package passes to each experiments script, across all its call sites.
+
+    Read from the unparsed argument list rather than from its constant elements, because a
+    flag can be passed conditionally - a trim that was not stated is left out so the script
+    resolves it - and a starred conditional has no constant element to find.
+    """
+    passed: dict[str, set[str]] = {}
+    for caller in CALLERS:
+        for node in ast.walk(ast.parse(caller.read_text())):
+            if not isinstance(node, ast.Call):
+                continue
+            scripts = [a.value for a in node.args
+                       if isinstance(a, ast.Constant) and isinstance(a.value, str)
+                       and a.value.endswith(".py")]
+            lists = [a for a in node.args if isinstance(a, ast.List)]
+            if not scripts or not lists:
+                continue
+            text = " ".join(ast.unparse(a) for a in lists)
+            found = {f for f in LIBRARY_FACTS if f"'{f}'" in text or f'"{f}"' in text}
+            passed.setdefault(scripts[0], set()).update(found)
+    return passed
+
+
+def test_a_script_the_package_runs_is_told_every_library_fact_it_accepts():
+    """The driver guards its own stages against this; the package inherited no guard.
+
+    `hapax.py` carries two tables for exactly this - LIBRARY_AWARE, which appends
+    `--library` to every script that accepts one, and SAMPLE_SPECIFIC, which refuses to
+    run a stage whose sample-specific flag was left to a built-in default. Both are
+    asserted against the scripts' own source by `tests/test_hapax_stages.py`. Neither
+    reaches the enrichments, which the PACKAGE runs: so the per-gene workup called and
+    searched 76 genes of an unseen library and then opened
+    `data/berlin/SRR23973193_1.fastq.gz`, its own default, after the expensive half.
+
+    A flag the script does not accept is not required, and `--trim-r2` counts as passed
+    where the package passes it conditionally, because the alternative is for the script
+    to resolve it from the registry, which raises for a library it does not know.
+    """
+    missing = []
+    for script, passed in sorted(_passed_flags().items()):
+        source = (ROOT / "experiments" / script).read_text()
+        accepts = [f for f in LIBRARY_FACTS
+                   if f'"{f}"' in source
+                   or (f == "--library" and "library_facts.add_argument" in source)]
+        absent = [f for f in accepts if f not in passed]
+        if absent:
+            missing.append(f"{script} accepts {accepts} and the package passes none of "
+                           f"{absent}")
+    assert not missing, "\n".join(missing)

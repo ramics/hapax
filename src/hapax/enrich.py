@@ -89,6 +89,23 @@ def enrich(cfg: Config, out: Path, repo: Path, seed: int) -> list[dict]:
              # On an instance that is not there, and the workup failed with a
              # FileNotFoundError 11 stages into a paid run. Same rule as prepare.split.
              "--diamond-bin", tools.resolve(cfg, "diamond"),
+             # THE READS AND THE TRIM, because this script maps the selected contigs back
+             # to the library and its own defaults are the discriminating dataset's FASTQ
+             # paths. The driver guards its own stages against exactly this with two
+             # tables (LIBRARY_AWARE and SAMPLE_SPECIFIC) asserted against the scripts'
+             # source; the package runs this script and inherited neither, so seed 1 of
+             # an unseen library called 76 genes, searched them, and then opened
+             # `data/berlin/SRR23973193_1.fastq.gz`. `--library` goes with them so that
+             # library_facts.resolve_args can check the paths against the accession
+             # rather than filling a fact from whichever library its default names.
+             # A trim that was NOT stated is left out rather than passed as the word
+             # None: the script then resolves it from the library registry, which raises
+             # for a library it does not know. Stating it is the override, and the
+             # absence is the question, never a value.
+             "--library", cfg.label,
+             "--r1", cfg.inputs["r1"], "--r2", cfg.inputs["r2"],
+             *(["--trim-r2", cfg.fact("trim_r2")]
+               if cfg.fact("trim_r2") is not None else []),
              # A file, and a work directory beside it: this script writes the path it is
              # given rather than a name of its own inside it, and `--work` is required.
              "--work", out / "work" / "workup",
