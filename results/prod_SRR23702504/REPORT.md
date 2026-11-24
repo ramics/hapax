@@ -284,11 +284,27 @@ anyone had rendered was the one the by-hand runs had been done on.
 What is fixed here: **`ranking.json` is committed for all five seeds**, produced in-container from
 the committed run directories in seconds at no cost. The result is worth stating, because it is a
 second water agreeing with the first. All of the 58 to 83 ranked subjects per seed are
-`unknown_host`; host confidence maxes at **0.256** against Berlin's 0.40, nothing reaches 0.5, and
-the closest relative in the whole residue is 78.6% identity over 52 amino acids. **Nothing in this
-water's residue is close enough to a named record for that record's host to transfer.** The host
+`unknown_host`; host confidence maxes at **0.19 to 0.27** across the five seeds against Berlin's
+0.40, and **not one subject of the 369 reaches 0.5**. The closest relative per seed runs 70.4,
+78.6, 82.8, 90.9 and 100.0% identity, each over an alignment of **21 to 29 amino acids**.
+**Nothing in this water's residue is close enough to a named record for that record's host to
+transfer**, and the 100% row makes the point hardest rather than softest: 100% identity over 21
+amino acids is what a chance alignment looks like. The host
 colours on the page label a database entry and not the water, which is what `results/residue_structure/`
 already said and what a triage order over an unmeasured library now says independently.
+
+**Writing that sentence produced the trap it is about, twice, and the second time in this file.**
+`host_confidence_summary` shipped `best_identity_percent` and `best_aligned_aa` as two maxima taken
+separately over the rows, and both the web page and the first version of the paragraph above paired
+them into one match: *100.0% identity over 53 amino acids*, where the 100% row is 21 aa long and
+the 53 aa row is a different subject. **A pairing of two maxima describes a subject that does not
+exist**, and it flatters hardest exactly where it matters, since 100% over 21 aa is a chance
+alignment and 100% over 53 aa would not be. Two fields invited it and a reader took the invitation,
+so the fix is in `concern_ranking.py` rather than in each consumer: the summary now carries
+`closest_row_aligned_aa`, the closest row's **own** length, next to a sentence saying the two
+maxima are independent and must not be printed as one match. The same paragraph also quoted one
+seed's maximum as the whole residue's; a per-seed best spanning 70.4 to 100.0% has to be reported
+as a range.
 
 Two notes on the remaining two sections. `profile` (the whole library through Kraken2) and `taxa`
 (divergence over the identified contigs) need the databases, so they belong on the next pass with

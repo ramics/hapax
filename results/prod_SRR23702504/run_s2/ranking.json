@@ -187,7 +187,10 @@
   "at_or_above_0.5": 0,
   "at_or_above_0.2": 5,
   "best_identity_percent": 90.9,
+  "closest_row_aligned_aa": 22,
+  "longest_alignment_aa": 53,
   "best_aligned_aa": 53,
+  "best_fields_are_independent": "best_identity_percent and best_aligned_aa (= longest_alignment_aa) are maxima over the rows taken separately and are usually different subjects. Do not print them as one match. The identity's own alignment length is closest_row_aligned_aa.",
   "reading": "how much of the matched record's host group transfers to the reads. Built from identity and aligned length. If the maximum is low, no relative in this residue is close enough for its host to mean anything, and the host colours on this page are labels on the database rather than claims about the sample"
  },
  "subjects": [
@@ -3352,7 +3355,7 @@
    "rank": 79
   }
  ],
- "git_sha": "481a23d5d30c1b8c5340b4c3eb063af70dcf24b1",
- "tree_dirty": false,
- "script_sha256": "4198f9f82246219b"
+ "git_sha": "4eb144e90d08ff5c2345e0385191068bffb98f93-dirty",
+ "tree_dirty": true,
+ "script_sha256": "1746a03f54b14dd0"
 }
