@@ -235,7 +235,7 @@ mkdir -p /opt/hapax/out/nontemplate_prefix
 for sd in @@PREFIX_SEEDS@@; do
   [ -s "/opt/hapax/out/nontemplate_prefix/nontemplate_prefix_s$sd.json" ] && continue
   "$PY" -I /opt/hapax/experiments/nontemplate_prefix_map.py --seed "$sd" \
-    --pairs @@PREFIX_PAIRS@@ --r1 "$R1" --r2 "$R2" \
+    --pairs @@PREFIX_PAIRS@@ --libraries "$ACC" \
     --silva /opt/hapax/db/silva/silva_dna.fa --threads "$THREADS" \
     --work /opt/hapax/wk/ntprefix --out /opt/hapax/out/nontemplate_prefix \
     || die "the prefix measurement failed on seed $sd"
