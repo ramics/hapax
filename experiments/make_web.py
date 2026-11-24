@@ -2093,6 +2093,11 @@ function interval(iv) {
   // 53 aa belonged to a different subject. A pairing of two maxima is a subject that
   // does not exist, and identity over a short alignment is a ratio of small integers,
   // which is exactly why the length has to be the one that identity was measured over.
+  // The producer now carries that length itself (closest_row_aligned_aa, with a field
+  // saying the two maxima are separate maxima), and the two agree on both measured
+  // libraries - 21 aa here, 35 on the other - which is the cross-check worth having.
+  // The page keeps deriving it from the rows so a ranking written before that field
+  // renders the same rather than silently losing the length.
   const best = (R.subjects || []).filter(r => r.median_identity_percent != null)
     .sort((a, b) => (b.median_identity_percent - a.median_identity_percent) ||
                     ((b.median_aligned_aa || 0) - (a.median_aligned_aa || 0)))[0];
