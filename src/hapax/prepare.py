@@ -35,6 +35,7 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from . import tools
 from .config import Config, ConfigError
 
 
@@ -188,12 +189,8 @@ def assemble(cfg: Config, r1: Path, r2: Path | None, trim_r2: int, work: Path,
           "--manifest", out / "trim_manifest.json"],
          repo, "trimming mate 2 for the assembler")
 
-    megahit = cfg.tools.get("megahit") or shutil.which("megahit")
-    minimap2 = cfg.tools.get("minimap2") or shutil.which("minimap2")
-    if not megahit or not minimap2:
-        raise PrepareError(
-            "the assembly needs megahit and minimap2. Put them on the PATH with "
-            "environment.yml, or name them under [tools] in the config.")
+    found = tools.resolve_all(cfg, ("megahit", "minimap2"))
+    megahit, minimap2 = found["megahit"], found["minimap2"]
     _run([sys.executable, "-I", repo / "experiments/path_settings.py", "--seed", 1,
           "--stages", "assemble", "--arms", "baseline",
           "--reads", asm_in / f"{cfg.label}_1.fq", "--r2", asm_in / f"{cfg.label}_2.fq",
@@ -241,10 +238,10 @@ def split(cfg: Config, contigs: Path, work: Path, out: Path, repo: Path) -> dict
               "--dmnd", cfg.database("protein"),
               "--silva-mmi", silva_mmi,
               "--threads", cfg.threads, "--work", work / "contigs", "--out", out,
-              *(["--classify-bin", cfg.tools["classify"]] if cfg.tools.get("classify")
-                else []),
-              *(["--diamond-bin", cfg.tools["diamond"]] if cfg.tools.get("diamond")
-                else [])],
+              # Always passed, never left to the script's default, which is the layout of
+              # one container written where a parameter goes. See hapax.tools.
+              "--classify-bin", tools.resolve(cfg, "classify"),
+              "--diamond-bin", tools.resolve(cfg, "diamond")],
              repo, "identifying the contigs")
 
     asm_dir = contigs.parent

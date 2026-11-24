@@ -142,7 +142,10 @@ def test_the_driver_no_longer_needs_the_contig_flags_from_a_caller():
                             unidentified=Path("/u.fa"), removal_evidence=None,
                             measured={"block": 1234})
         argv = legacy_argv(cfg, Path("/r1.fq"), Path("/r2.fq"), Path("/out"),
-                           ["cascade"], prepared)
+                           ["cascade"], prepared,
+                           {"classify": Path("/k2/classify"),
+                            "diamond": Path("/b/diamond"),
+                            "minimap2": Path("/b/minimap2")})
     finally:
         cfg_path.unlink()
     for flag in ("--trim-r2", "--assembly", "--contigs", "--identified-contigs",
@@ -157,3 +160,72 @@ def test_the_driver_no_longer_needs_the_contig_flags_from_a_caller():
     assert argv[argv.index("--block") + 1] == "1234", (
         "a stride measured off the file has to reach the stages, or the measurement was "
         "decoration")
+
+
+# ------------------------------------------------------- where the external binaries are
+
+
+def test_a_stated_tool_path_is_used_as_it_is(tmp_path):
+    """Stating it is the override, so it is not searched for or checked against PATH."""
+    from hapax import tools
+
+    binary = tmp_path / "classify"
+    binary.write_text("#!/bin/sh\n")
+    cfg = _cfg(tmp_path, extra=f'\n[tools]\nclassify = "{binary}"\n')
+    assert tools.resolve(cfg, "classify") == binary
+
+
+def test_a_stated_tool_path_that_is_not_there_is_refused(tmp_path):
+    from hapax import tools
+
+    cfg = _cfg(tmp_path, extra='\n[tools]\nclassify = "/nowhere/classify"\n')
+    with pytest.raises(ConfigError, match="nothing there"):
+        tools.resolve(cfg, "classify")
+
+
+def test_a_missing_tool_is_refused_and_names_how_to_supply_it(tmp_path, monkeypatch):
+    """The fault this replaces: nine scripts default --classify-bin to a path inside one
+    container, so a machine without that directory got a FileNotFoundError out of a
+    subprocess rather than a statement about its own installation."""
+    from hapax import tools
+
+    monkeypatch.setattr(tools.shutil, "which", lambda name: None)
+    cfg = _cfg(tmp_path)
+    with pytest.raises(ConfigError, match=r"\[tools\]"):
+        tools.resolve(cfg, "classify")
+    with pytest.raises(ConfigError, match="minimap2"):
+        tools.resolve(cfg, "minimap2")
+
+
+def test_every_absent_tool_is_named_in_one_refusal(tmp_path, monkeypatch):
+    from hapax import tools
+
+    monkeypatch.setattr(tools.shutil, "which", lambda name: None)
+    cfg = _cfg(tmp_path)
+    with pytest.raises(ConfigError) as e:
+        tools.resolve_all(cfg, ("classify", "diamond", "minimap2"))
+    for name in ("classify", "diamond", "minimap2"):
+        assert name in str(e.value), (
+            "one refusal per missing tool is the same fix discovered three times")
+
+
+def test_classify_is_found_through_the_kraken2_wrapper(tmp_path, monkeypatch):
+    """`classify` is on no distribution's PATH; the wrapper records where it is.
+
+    Written as a test rather than trusted because the two layouts this repo has met put
+    it in different places: bioconda in <prefix>/libexec, the staged tarball in
+    <prefix>/share/kraken2-<version>/libexec.
+    """
+    from hapax import tools
+
+    prefix = tmp_path / "env"
+    (prefix / "bin").mkdir(parents=True)
+    libexec = prefix / "share" / "kraken2-2.17.2" / "libexec"
+    libexec.mkdir(parents=True)
+    (libexec / "classify").write_text("binary")
+    wrapper = prefix / "bin" / "kraken2"
+    wrapper.write_text('#!/usr/bin/env perl\nmy $KRAKEN2_DIR = "%s";\n' % libexec)
+    monkeypatch.setattr(tools.shutil, "which",
+                        lambda name: str(wrapper) if name == "kraken2" else None)
+    cfg = _cfg(tmp_path)
+    assert tools.resolve(cfg, "classify") == libexec / "classify"

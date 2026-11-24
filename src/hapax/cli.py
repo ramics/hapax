@@ -26,7 +26,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from . import __version__
+from . import __version__, tools
 from .config import Config, ConfigError, load
 from .prepare import PrepareError, prepare
 from .registry import RegistryError
@@ -61,7 +61,8 @@ def legacy_driver():
 
 
 def legacy_argv(cfg: Config, r1: Path, r2: Path | None, out: Path,
-                stages: list[str], prepared=None) -> list[str]:
+                stages: list[str], prepared=None,
+                binaries: dict[str, Path] | None = None) -> list[str]:
     """The config, as the flags the legacy driver takes.
 
     Every value comes from the config or is left out. Nothing here supplies a default for
@@ -110,10 +111,16 @@ def legacy_argv(cfg: Config, r1: Path, r2: Path | None, out: Path,
                        ("spacers", "--spacers")):
         if name in cfg.databases:
             argv += [flag, str(cfg.database(name))]
+    # Resolved by the caller and always passed on, rather than left to each script's
+    # default. Nine of them default `--classify-bin` to a path inside one container, which
+    # is a machine fact in the place a parameter goes; see hapax.tools for why that is the
+    # same fault as a trim reaching a library it was not measured on. It is resolved in
+    # `cmd_run` rather than here so that this function stays a pure translation of the
+    # config and the unit suite keeps running with no external tool installed (TOOLS.md).
     for name, flag in (("classify", "--classify-bin"), ("diamond", "--diamond-bin"),
                        ("minimap2", "--minimap2")):
-        if name in cfg.tools:
-            argv += [flag, str(Path(cfg.tools[name]).expanduser())]
+        if (binaries or {}).get(name):
+            argv += [flag, str(binaries[name])]
     if "pairs" in cfg.run:
         argv += ["--pairs", str(cfg.run["pairs"])]
     if "report_pairs" in cfg.run:
@@ -178,7 +185,10 @@ def cmd_run(args) -> int:
     prepared = None
     if not args.skip_prepare:
         prepared = prepare(cfg, r1, r2, out, work, repo_root())
-    argv = legacy_argv(cfg, r1, r2, out, stages, prepared)
+    # The external binaries, found once for the whole run: two tiers of one cascade run by
+    # two builds of Kraken2 is an operating point nobody could write down.
+    binaries = tools.resolve_all(cfg, ("classify", "diamond", "minimap2"))
+    argv = legacy_argv(cfg, r1, r2, out, stages, prepared, binaries)
     # The translation is written into the run directory before the run, so that a run
     # directory says what command produced it even when the config has since changed.
     # The config file itself is copied for the same reason: a path to a config is not a
@@ -191,6 +201,9 @@ def cmd_run(args) -> int:
         "legacy_argv": argv,
         "prepared": prepared.as_manifest() if prepared else None,
         "sample_facts": cfg.inputs.get("sample_facts"),
+        # Which binary each name resolved to, recorded because the same tool name on two
+        # machines is two builds, and a version is part of an operating point.
+        "binaries": {k: str(v) for k, v in binaries.items()},
         "note": "the package translates one config into the legacy driver's flags; "
                 "PLAN.md step 7 replaces the subprocess with imports",
     }, indent=1) + "\n")
