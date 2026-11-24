@@ -36,9 +36,9 @@ label = "{label}"
 """
 
 
-def _cfg(tmp_path, label="fixture", extra=""):
+def _cfg(tmp_path, label="fixture", extra="", base=BASE):
     p = tmp_path / "run.toml"
-    p.write_text(BASE.format(label=label) + extra)
+    p.write_text(base.format(label=label) + extra)
     return load(p)
 
 
@@ -251,3 +251,30 @@ def test_only_the_drivers_own_stages_reach_its_stages_flag(tmp_path):
     unknown = sorted(set(passed) - set(driver().STAGE_ORDER))
     assert not unknown, f"the driver has no such stage: {unknown}"
     assert set(passed) == {n for n in R.production() if R.stages[n].in_driver}
+
+
+def test_the_two_protein_tiers_reach_the_driver_in_order(tmp_path):
+    """Viral then Swiss-Prot. The distance stage reports which tier held the nearest
+    relative and refuses a list of any other length, so the order is part of the answer
+    and cannot come from iterating a table."""
+    from hapax.cli import legacy_argv
+
+    cfg = _cfg(tmp_path, extra='\n[databases]\nsprot = "/b/sprot.dmnd"\n'
+                               'protein = "/a/viral.dmnd"\n')
+    argv = legacy_argv(cfg, Path("/r1.fq"), None, tmp_path, ["cascade"])
+    at = argv.index("--dmnd")
+    assert argv[at + 1:at + 3] == ["/a/viral.dmnd", "/b/sprot.dmnd"]
+
+
+def test_a_field_left_out_on_purpose_is_stated_and_passed_on(tmp_path):
+    """A field whose reference is absent stops the run, because a dropped field reads as
+    a zero. Naming it makes the omission an operating point rather than a hole."""
+    from hapax.cli import legacy_argv
+
+    cfg = _cfg(tmp_path, extra='\n[databases]\n',
+               base='[run]\nseed = 1\nseeds = 1\nreport_without = ["crispr"]\n\n'
+                    '[inputs]\nlabel = "{label}"\n')
+    argv = legacy_argv(cfg, Path("/r1.fq"), None, tmp_path, ["reads"])
+    assert argv[argv.index("--report-without") + 1] == "crispr"
+    assert "--report-without" not in legacy_argv(
+        _cfg(tmp_path), Path("/r1.fq"), None, tmp_path, ["reads"])

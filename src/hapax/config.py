@@ -34,8 +34,13 @@ LIBRARY_FACTS = ("trim_r2", "block", "layout", "pairs")
 #: REFUSED rather than ignored: a typo in a threshold is a silently different operating
 #: point, and every number here ships with its operating point or is unreadable.
 SCHEMA = {
+    # `report_without` names per-read report fields to leave out ON PURPOSE, and the
+    # reason it is a setting rather than a fallback is the distinction this whole file is
+    # about: a field whose reference is absent stops the run, because a dropped field
+    # reads as a zero. Saying so in the config makes the omission a stated operating
+    # point that the page carries, instead of a hole.
     "run": {"seed", "seeds", "threads", "out", "pairs", "report_pairs", "stages",
-            "allow_partial"},
+            "allow_partial", "report_without"},
     # `sample_facts` is what the page says the water was: the matrix, the place, the
     # collection date, the molecule, each with how it was established. It is here rather
     # than in the library registry because production water has no registry entry, and

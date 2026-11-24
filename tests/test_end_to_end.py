@@ -295,12 +295,23 @@ threads = 2
 pairs = 9000
 report_pairs = 4000
 out = "{out}"
+# The CRISPR field is left out ON PURPOSE, and that is a different thing from its being
+# absent. It scores a read against spacers extracted from this sample's own assemblies,
+# which a 16 kb bacterial window does not carry; the run refuses to start on a field whose
+# reference is missing, because a dropped field reads as a zero. Named here, the omission
+# is a stated operating point the page carries.
+report_without = ["crispr"]
 
 [inputs]
 label = "fixture"
 sample_facts = {{ matrix = "simulated reads", place = "the CI fixture", molecule = "RNA", basis = "tests/fixtures/manifest.json: three real genomes, 9,987 simulated pairs, built by make_fixture.py --seed 1. Not water, and no number from it belongs in results/." }}
 
 [library]
+# One seed reads the whole file, so the stride is the file. Stated because the measurement
+# declines to invent one for a single seed, and left unstated the cascade would resolve it
+# from the library registry, which has no entry for a fixture and refuses.
+block = 9987
+block_basis = "the fixture's whole pair count (tests/fixtures/manifest.json); with one seed there is no second block to skip to"
 trim_r2 = 0
 trim_r2_basis = "the fixture's reads are simulated with no non-template prefix (tests/fixtures/make_fixture.py), so any trim would delete real template. The prefix instrument cannot measure it here: the rRNA arm is a 16 kb window and anchoring falls below its 2,000-mate floor."
 
@@ -310,6 +321,12 @@ trim_r2_basis = "the fixture's reads are simulated with no non-template prefix (
 protein_fasta = "{fixture}/db/prot_known.faa"
 nucleotide = "{dbs}/nt_known.mmi"
 protein = "{dbs}/prot_known.dmnd"
+# The second protein tier, in order: the distance stage reports which of the two held the
+# nearest relative and refuses a list of any other length. These are the background
+# slice's own open reading frames, built by build_dbs.sh, and they deliberately exclude
+# the divergent arm's source - a query inside the reference it is searched against reads
+# the same on both piles.
+sprot = "{dbs}/prot_broad.dmnd"
 rrna = "{dbs}/silva_toy.mmi"
 classifier = "{dbs}/k2_toy"
 """

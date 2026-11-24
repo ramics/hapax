@@ -47,6 +47,12 @@ jobs:
           kraken2 --version
           minimap2 --version
           node --version
+      - name: build the k-mer counter
+        # The linkage and census stages drive two Rust binaries out of
+        # experiments/kmer_coverage, and refuse rather than running without them. They are
+        # build artefacts of this repo rather than external tools, so they are built here
+        # instead of being pinned in TOOLS.md. Eight seconds in release mode.
+        run: cargo build --release --manifest-path experiments/kmer_coverage/Cargo.toml
       - name: install the package
         # `pip install .` is the whole install in PLAN.md 4. Until the package skeleton
         # lands (step 3) there is no pyproject.toml, so this step is allowed to fail and

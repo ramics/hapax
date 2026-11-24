@@ -27,6 +27,54 @@ done
 echo "== protein index (DIAMOND) =="
 diamond makedb --in "$here/db/prot_known.faa" --db "$out/prot_known" --quiet
 
+# A SECOND, BROADER PROTEIN TIER. The distance stage takes an ordered pair of protein
+# indexes, viral then Swiss-Prot, and refuses any other number: it reports which of the
+# two held the nearest relative, and one index cannot answer that. The second tier here is
+# the open reading frames of the fixture's bacterial background, found on the committed
+# slice at build time rather than fetched, which keeps the fixture offline.
+#
+# WHAT IT MUST NOT CONTAIN is the divergent arm's own source. The arm is a mutated PMMoV
+# and PMMoV's real proteins are tier one; if they were in both tiers the stage would read
+# the same identity whichever tier won, which is the trap of a query sitting inside the
+# reference it is searched against - it reads 100% on both piles and the control moves
+# with the test.
+python3 - "$here/genomes/background_ecoli.fa" "$out/prot_broad.faa" <<'PY'
+import sys
+
+CODONS = {}
+BASES = "TCAG"
+AMINO = ("FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG")
+for i, b1 in enumerate(BASES):
+    for j, b2 in enumerate(BASES):
+        for k, b3 in enumerate(BASES):
+            CODONS[b1 + b2 + b3] = AMINO[i * 16 + j * 4 + k]
+
+src, dst = sys.argv[1], sys.argv[2]
+seq = "".join(l.strip() for l in open(src) if not l.startswith(">")).upper()
+rc = seq[::-1].translate(str.maketrans("ACGT", "TGCA"))
+
+def translate(s):
+    return "".join(CODONS.get(s[i:i + 3], "X") for i in range(0, len(s) - 2, 3))
+
+# Six frames, each cut at stops, keeping anything 60 aa or longer. 60 because a DIAMOND
+# subject shorter than that gives alignments too short to clear an E-value floor on a
+# 150 nt read, and a subject nothing can significantly hit is a subject that is not in
+# the database as far as any measurement is concerned.
+peptides = []
+for strand, s in (("plus", seq), ("minus", rc)):
+    for frame in range(3):
+        for piece in translate(s[frame:]).split("*"):
+            if len(piece) >= 60:
+                peptides.append((strand, frame, piece))
+if not peptides:
+    raise SystemExit("no open reading frame of 60 aa in the background slice")
+with open(dst, "w") as fh:
+    for n, (strand, frame, piece) in enumerate(peptides, 1):
+        fh.write(f">fixture_background_orf_{n} {strand} frame {frame + 1}\n{piece}\n")
+print(f"{len(peptides)} background ORFs")
+PY
+diamond makedb --in "$out/prot_broad.faa" --db "$out/prot_broad" --quiet
+
 echo "== nucleotide index (minimap2) =="
 minimap2 -d "$out/nt_known.mmi" "$here/db/nt_known.fa" 2>/dev/null
 minimap2 -d "$out/silva_toy.mmi" "$here/db/silva_toy.fa" 2>/dev/null

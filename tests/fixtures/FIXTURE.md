@@ -66,6 +66,14 @@ taxonomy is four nodes written by `build_dbs.sh`, because `--download-taxonomy` 
 about 400 MB from NCBI and that is the wrong dependency for a test that runs on every pull
 request.
 
+There are **two protein indexes**, in order: `prot_known.dmnd` from the committed viral
+proteins, and `prot_broad.dmnd` from the open reading frames of the bacterial background
+slice, found at build time so that nothing is fetched. The distance stage takes the pair
+and reports which of the two held the nearest relative, and refuses a list of any other
+length. The second tier deliberately excludes the divergent arm's source: the real PMMoV
+proteins are in tier one only, because a query that sits inside the reference it is
+searched against reads the same identity on both piles.
+
 ## What ground truth is allowed to do here
 
 Every read's name carries the arm it came from. That is usable only by a test: it tells

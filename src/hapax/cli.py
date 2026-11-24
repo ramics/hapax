@@ -106,11 +106,19 @@ def legacy_argv(cfg: Config, r1: Path, r2: Path | None, out: Path,
                 argv += [flag, str(value)]
     if cfg.inputs.get("single_end"):
         argv.append("--single-end")
-    for name, flag in (("rrna", "--silva"),
-                       ("protein", "--dmnd"), ("classifier", "--k2-dbs"),
+    for name, flag in (("rrna", "--silva"), ("classifier", "--k2-dbs"),
                        ("spacers", "--spacers")):
         if name in cfg.databases:
             argv += [flag, str(cfg.database(name))]
+    # `--dmnd` is an ORDERED pair, viral then Swiss-Prot, and the distance stage refuses a
+    # list of any other length: it reports which of the two produced the nearest relative,
+    # and a single index cannot answer that. The order is the config's two keys rather
+    # than a list under one, so neither can be given without saying which it is.
+    protein = [cfg.database(n) for n in ("protein", "sprot") if n in cfg.databases]
+    if protein:
+        argv += ["--dmnd", *[str(p) for p in protein]]
+    if cfg.run.get("report_without"):
+        argv += ["--report-without", *cfg.run["report_without"]]
     # Resolved by the caller and always passed on, rather than left to each script's
     # default. Nine of them default `--classify-bin` to a path inside one container, which
     # is a machine fact in the place a parameter goes; see hapax.tools for why that is the
