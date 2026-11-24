@@ -102,7 +102,7 @@ def _environment_pins() -> dict[str, str]:
 
 #: environment.yml name -> the name TOOLS.md's table uses for the same tool.
 TOOLS_MD_NAME = {"megahit": "MEGAHIT", "diamond": "DIAMOND", "kraken2": "Kraken2",
-                 "minimap2": "minimap2", "blast": "BLAST+"}
+                 "minimap2": "minimap2", "blast": "BLAST+", "nodejs": "Node.js"}
 
 
 def test_the_conda_pins_match_tools_md():

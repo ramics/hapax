@@ -53,6 +53,15 @@ jobs:
         # build artefacts of this repo rather than external tools, so they are built here
         # instead of being pinned in TOOLS.md. Eight seconds in release mode.
         run: cargo build --release --manifest-path experiments/kmer_coverage/Cargo.toml
+      - name: the page renderer's browser
+        # The render check loads the written page in a real browser and reports which
+        # sections reached the DOM, which is the one check a file test cannot do: a
+        # section can resolve from its file and still render nothing. Without the module
+        # the check returns nothing and the build says so, so the job would pass while
+        # asserting far less than it looks like it asserts.
+        run: |
+          npm install --no-save playwright@1.49.1
+          npx --yes playwright@1.49.1 install --with-deps chromium
       - name: install the package
         # `pip install .` is the whole install in PLAN.md 4. Until the package skeleton
         # lands (step 3) there is no pyproject.toml, so this step is allowed to fail and

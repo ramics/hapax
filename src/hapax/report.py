@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -241,8 +242,7 @@ def build(rundir: Path, out: Path | None = None, seed: int = 1,
                     "present": s.present, "problems": list(s.problems),
                     "optional": s.optional}
                    for s in states],
-        **(check or {"top": None,
-                     "render_check": "node is not installed, so the page was not run"}),
+        **(check or {"top": None, "render_check": _why_no_render_check()}),
     }, indent=1) + "\n")
     if check is not None:
         undrawn = [s for s in SECTIONS if s not in (check.get("top") or [])]
@@ -252,6 +252,21 @@ def build(rundir: Path, out: Path | None = None, seed: int = 1,
                 f"reached the DOM: {undrawn}. A section that resolved and did not render "
                 f"is the one case file checks cannot see.")
     return 0
+
+
+def _why_no_render_check() -> str:
+    """Which of the two absences this is, because they are different machines to fix.
+
+    The message said "node is not installed" for both, and on the machine where the job
+    runs node IS installed and the Playwright module is not. One sentence naming the wrong
+    cause sends the next reader to the wrong fix, which is the same failure as a census
+    that cannot tell an empty table from a search that never ran.
+    """
+    if shutil.which("node") is None:
+        return ("node is not installed, so the page was not run. The check loads the "
+                "written page in a browser and reports which sections reached the DOM.")
+    return ("node is installed and its playwright module is not, so the page was not "
+            "run: `npm install playwright && npx playwright install chromium`.")
 
 
 def _mark_partial(page: Path, absent: dict) -> None:

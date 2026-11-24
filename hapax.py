@@ -1100,7 +1100,13 @@ class Run:
         }
         (self.dir / "strains.json").write_text(json.dumps(out, indent=2))
         multi = [r for r in rows if r["residue_reads"] >= 3]
-        return self.record("strains", "ok", subjects=len(rows),
+        # THE FILES, NAMED. The three stages written in this process rather than called
+        # as a subprocess recorded a status and no outputs, so a run directory said
+        # "ok" beside three stages and nothing said what they had produced. A clean exit
+        # code is not an output, and the check that caught this is the one that reads the
+        # manifest rather than the directory listing.
+        return self.record("strains", "ok", outputs=["strains.json"],
+                           subjects=len(rows),
                            subjects_with_3_or_more_reads=len(multi))
 
     # -- derived views --------------------------------------------------------
@@ -1218,7 +1224,8 @@ class Run:
                                   "reports across-seed spread instead",
                "source": "tiers.json", "source_sha256_16": sha256(p)[:16]}
         (self.dir / "tier_table.json").write_text(json.dumps(out, indent=2))
-        return self.record("intervals", "ok", rows=len(rows),
+        return self.record("intervals", "ok", outputs=["tier_table.json"],
+                           rows=len(rows),
                            operating_point_complete=not any(v is None for v in op.values()))
 
     def layers(self) -> dict:
@@ -1320,7 +1327,8 @@ class Run:
                            "score ordering tracks database proximity",
         }
         (self.dir / "layers.json").write_text(json.dumps(summary, indent=2))
-        return self.record("layers", "ok", totals=totals,
+        return self.record("layers", "ok",
+                           outputs=["layers.json", "layers.jsonl"], totals=totals,
                            counts=counts.get("residue", {}),
                            separating_layers=[k for k, v in comparison.items()
                                               if v.get("separates")])
