@@ -316,3 +316,85 @@ def test_every_report_section_has_a_stage_that_fills_it():
     order = re.search(r"STAGE_ORDER = \[(.*?)\]", src, re.S).group(1)
     for stage in ("profile", "taxa", "ranking"):
         assert f'"{stage}"' in order, stage
+
+
+#: Every flag that names an index, and the config key that supplies it. Which index was
+#: consulted is an operating point: a removal fraction means nothing without it, and one
+#: Kraken2 database removes 42.8%, 21.7% or 3.5% of the same library depending only on
+#: its confidence setting. Each of these defaulted to a path under this checkout's own
+#: `data/`, which is the `default=14` fault applied to the quantity that matters most.
+INDEX_FLAGS = {"--k2-dbs": "classifier", "--silva": "rrna", "--dmnd": "protein",
+               "--pfam": "pfam"}
+
+
+def test_no_index_flag_carries_a_default():
+    """A default index is a guessed operating point, and this repo has withdrawn a figure
+    whose index silently differed from the one named."""
+    parser_actions = {}
+    import contextlib
+    import io
+    with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(
+            io.StringIO()):
+        with pytest.raises(SystemExit):
+            sys.argv = ["hapax", "run", "--help"]
+            hapax.main()
+    # Read the declarations rather than the help text: the help is prose and the default
+    # is the thing that fires.
+    source = HAPAX.read_text()
+    for flag in INDEX_FLAGS:
+        start = source.index(f'r.add_argument("{flag}"')
+        decl = source[start:source.index("r.add_argument", start + 10)]
+        assert "ROOT /" not in decl, (
+            f"{flag} defaults to a path inside this checkout. A caller who forgets it "
+            f"would measure against whatever that path held and the manifest would name "
+            f"what was asked for")
+        assert "default=[]" in decl or "default=None" in decl, flag
+        parser_actions[flag] = decl
+    assert len(parser_actions) == len(INDEX_FLAGS)
+
+
+@pytest.mark.parametrize("flag,key", sorted(INDEX_FLAGS.items()))
+def test_a_stage_refuses_the_index_it_was_not_given_naming_the_config_key(flag, key,
+                                                                         tmp_path):
+    """Leaving the flag off has the same end as passing the wrong index.
+
+    The stage script below carries its own default, so a tier with no index given still
+    runs, still removes some fraction of the library, and reports it against an index
+    nobody chose. The refusal has to name the setting, because a reader of a message that
+    quotes `data/pfam/Pfam-A.hmm` has to work out for themselves what that file is.
+
+    The refusal arrives from the preflight, before anything runs, which is where a run
+    that would not have done what was asked is supposed to stop.
+    """
+    stage_for = {"--k2-dbs": "cascade", "--silva": "cascade", "--dmnd": "cascade",
+                 "--pfam": "divergent"}
+    # Every index except the one under test, so the message is about that one. The paths
+    # only have to exist: what is being tested is the absence, not the content.
+    others = []
+    for other in INDEX_FLAGS:
+        if other == flag:
+            continue
+        # `--dmnd` is an ORDERED PAIR, viral then Swiss-Prot, and the distance stage
+        # refuses a list of any other length: it reports which of the two produced the
+        # nearest relative, which a single index cannot answer.
+        names = ["viral", "sprot"] if other == "--dmnd" else ["db"]
+        paths = []
+        for name in names:
+            stand_in = tmp_path / f"{other.strip('-')}_{name}.db"
+            stand_in.write_text("x")
+            paths.append(str(stand_in))
+        others += [other, *paths]
+    # The `divergent` stage skips before it looks at a profile library when there is no
+    # identified pile to measure the distance over, and that order is right, so this
+    # gives it one.
+    pile = tmp_path / "identified.fa"
+    pile.write_text(">c\nACGT\n")
+    code, manifest, log = run_hapax(tmp_path, "--library", "SRR23973193",
+                                    "--stages", stage_for[flag], "--contigs",
+                                    "--identified-contigs", str(pile), *others)
+    assert code == 2, log
+    assert manifest["status"] == "refused to start"
+    problems = " ".join(manifest["problems"])
+    assert flag in problems, problems
+    assert key in problems, (
+        f"the refusal names {flag} and not the config key that supplies it; {problems}")
