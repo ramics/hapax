@@ -34,7 +34,7 @@ minimap2 -d "$out/silva_toy.mmi" "$here/db/silva_toy.fa" 2>/dev/null
 echo "== classifier library (Kraken2) =="
 k2="$out/k2_toy"
 rm -rf "$k2"
-mkdir -p "$k2/taxonomy" "$k2/library"
+mkdir -p "$k2/taxonomy"
 
 # A minimal NCBI-format taxonomy: root, the two domains the fixture's named material
 # falls in, and one species under each. The taxids are the real NCBI ones (562
@@ -57,7 +57,14 @@ DMP
 
 # Kraken2 takes the taxid from the sequence header, so the library is the same sequence
 # as the nucleotide index with a taxid written onto each record.
-python3 - "$here/db/nt_known.fa" "$k2/library/toy.fna" <<'PY'
+#
+# AND IT HAS TO BE ADDED WITH --add-to-library, NOT COPIED INTO library/. Dropping the
+# FASTA into that directory looks like it should work, and the build then aborts with "no
+# preliminary seqid/taxid mapping files found": the seqid-to-taxid mapping is derived from
+# the headers by --add-to-library, which writes prelim_map.txt, and --build reads that
+# rather than the sequence. --no-masking because low-complexity masking calls dustmasker,
+# and a toy index should not depend on a tool nothing else in the fixture needs.
+python3 - "$here/db/nt_known.fa" "$out/k2_library.fna" <<'PY'
 import sys
 src, dst = sys.argv[1], sys.argv[2]
 taxid = {"NC_000913.3": 562, "NC_001417.2": 329852}
@@ -77,6 +84,7 @@ PY
 # minimizer length, which kraken2-build enforces: its default of 7 is legal under the
 # default l=31 and not under l=25, so leaving it out fails the build rather than being
 # clamped. Stated here rather than inherited.
+kraken2-build --add-to-library "$out/k2_library.fna" --db "$k2" --no-masking
 kraken2-build --build --db "$k2" --threads "${THREADS:-2}" \
   --kmer-len 31 --minimizer-len 25 --minimizer-spaces 6
 
