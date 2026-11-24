@@ -168,3 +168,26 @@ def test_no_report_section_depends_on_a_panel_a_library_may_not_have():
         f"Either the report must distinguish 'this library has no such panel, and "
         f"libraries.json says so' from 'a stage did not run', or the output stays off "
         f"the page.")
+
+
+def test_an_absent_enrichment_carries_what_the_run_recorded(tmp_path):
+    """The cause of an absence is read from the run, and a missing record says so.
+
+    The registry's `absence_means` explains what the page shows without the file, which
+    is always true. It also carried a guess at the cause - "which not every machine has
+    staged" - and on SRR34217566 both indexes were staged and the stage failed on a stale
+    read-path default. The two findings call for different fixes, so the recorded status
+    travels beside the note.
+    """
+    from hapax import report
+
+    (tmp_path / "enrichments.json").write_text(json.dumps({"stages": [
+        {"stage": "workup", "status": "failed", "reason": "FileNotFoundError: berlin"},
+        {"stage": "architecture", "status": "skipped", "reason": "it reads the workup"},
+    ]}))
+    failed = report._why_absent(tmp_path, "workup")
+    assert failed["recorded"] == "failed" and "berlin" in failed["recorded_reason"]
+    assert report._why_absent(tmp_path, "names")["recorded"].startswith("nothing:")
+    # No record at all is its own answer, not the same as a stage nobody ran.
+    assert report._why_absent(tmp_path / "elsewhere", "workup")["recorded"].startswith(
+        "nothing: this run wrote no")

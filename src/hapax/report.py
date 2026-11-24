@@ -237,8 +237,16 @@ def build(rundir: Path, out: Path | None = None, seed: int = 1,
         # Enrichments this run did not produce, each with what the page shows instead.
         # Recorded rather than left out, because an absence a reader cannot see is the
         # same as an absence nobody declared.
+        # WHY IT IS ABSENT COMES FROM THE RUN, NOT FROM THE REGISTRY. `absence_means`
+        # says what the page shows without the file, which is a property of the report
+        # and always true. The CAUSE is not: the registry's note for the per-gene workup
+        # reads "which not every machine has staged", and on this library both indexes
+        # were staged and the stage failed on a stale read-path default. A machine
+        # without the database and a stage that crashed are two different findings, and
+        # `enrichments.json` already holds which one happened.
         "enrichments_absent": [{"stage": s.stage, "file": s.filename,
-                                "section": s.section, "means": s.absence_means}
+                                "section": s.section, "means": s.absence_means,
+                                **_why_absent(rundir, s.stage)}
                                for s in states if s.optional and not s.present],
         "inputs": [{"stage": s.stage, "file": s.filename, "section": s.section,
                     "present": s.present, "problems": list(s.problems),
@@ -269,6 +277,29 @@ def _why_no_render_check() -> str:
                 "written page in a browser and reports which sections reached the DOM.")
     return ("node is installed and its playwright module is not, so the page was not "
             "run: `npm install playwright && npx playwright install chromium`.")
+
+
+def _why_absent(rundir: Path, stage: str) -> dict:
+    """What the run recorded about one enrichment, or that nothing recorded it.
+
+    Three states a reader must be able to tell apart: the stage ran and failed, the stage
+    was skipped with a reason, and nothing about it was written down at all. The third is
+    not an absence of the stage, it is an absence of the record, and it is reported as
+    that rather than folded into "not produced".
+    """
+    record = rundir / "enrichments.json"
+    if not record.exists():
+        return {"recorded": "nothing: this run wrote no enrichments.json"}
+    try:
+        rows = json.loads(record.read_text()).get("stages", [])
+    except json.JSONDecodeError as exc:
+        return {"recorded": f"unreadable: {record.name} is not JSON ({exc})"}
+    for row in rows:
+        if row.get("stage") == stage:
+            reason = (row.get("reason") or "").strip()
+            return {"recorded": row.get("status", "no status"),
+                    "recorded_reason": reason[-800:] or None}
+    return {"recorded": f"nothing: {record.name} has no row for {stage}"}
 
 
 def _mark_partial(page: Path, absent: dict) -> None:
