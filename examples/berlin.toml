@@ -1,0 +1,70 @@
+# A run configuration, annotated. Copy it, then change every path.
+#
+# WHY A COMMENTED EXAMPLE AND NOT A TEMPLATE TO FILL IN. A configuration copied from
+# another run's configuration is a default with extra steps, and the value this repo has
+# been bitten by twice is exactly the kind a copy carries over: a mate-2 trim of 14
+# applied to a library with no non-template prefix deletes fourteen real bases from every
+# mate, silently, in the direction of less recognition. So every library fact stated here
+# carries how it was established, and `hapax run` refuses one that does not. Leave a fact
+# out and the run measures it; state it and the run uses what you said.
+#
+# The values below are SRR23973193, the Berlin wastewater library this repo's committed
+# numbers were measured on. They are here because a reader can check them against
+# `experiments/libraries.json` and `data/MANIFEST.md`, not because they transfer.
+
+[inputs]
+r1 = "data/berlin/SRR23973193_1.fastq.gz"
+r2 = "data/berlin/SRR23973193_2.fastq.gz"
+# The accession is what the run calls itself and what the library registry is keyed on.
+# A library with no archive record states `label` instead; inventing an accession would
+# put a string that looks like an archive record on a page.
+accession = "SRR23973193"
+
+# What the water was, each with how it was established. The page states its ignorance
+# rather than guessing when a field is absent, so an unknown here costs a sentence on the
+# report and nothing else.
+[inputs.sample_facts]
+matrix = "untreated influent, grab sample"
+matrix_basis = "PRJNA948850 sample attributes"
+place = "Berlin, Germany"
+place_basis = "PRJNA948850 BioSample"
+collected = "2021-10-13"
+collected_basis = "GSE228220 series matrix; the SRA record carries no collection date"
+molecule = "RNA, rRNA not depleted"
+molecule_basis = "filed TRANSCRIPTOMIC; rRNA is about a third of the library as measured"
+
+[library]
+# 14 nt of non-template 5' sequence on mate 2. Measured, not assumed: the two mates are
+# not interchangeable afterwards, since R2 is 93 nt against R1's 107.
+trim_r2 = 14
+trim_r2_basis = "experiments/nontemplate_prefix_map.py, mode over five seeds"
+# One seed's material is a contiguous block of the flow cell. The size is a fact about
+# this library's 8,731,224 pairs: a block sized for a larger library leaves the later
+# seeds of a smaller one reading nothing, and the run directory still looks complete.
+block = 1500000
+block_basis = "8,731,224 pairs over five non-overlapping blocks; experiments/libraries.json"
+
+[databases]
+# Printed by `hapax fetch-db`. The `classifier` list is the cascade's TIER ORDER, and the
+# committed tier table is only readable beside a run that used these four: one database
+# removes 42.8%, 21.7% or 3.5% of the same library depending only on its confidence
+# setting, so naming the database alone does not say what a tier did.
+rrna = "data/db/silva/silva_dna.fa"
+classifier = [
+  "data/db/k2/k2_viral_20261022.d",
+  "data/db/k2/k2_standard_08_GB_20261022.d",
+  "data/db/k2/k2_pluspf_08_GB_20261022.d",
+  "data/db/k2/k2_pluspf_16_GB_20261022.d",
+]
+# An ordered pair, viral then Swiss-Prot. The distance stage reports which of the two
+# produced the nearest relative, and a single index cannot answer that.
+protein = "data/db/prot/viral.dmnd"
+sprot = "data/db/prot/sprot.dmnd"
+# The FASTA the protein index was built from, read for its subject names. Reading the
+# index instead would be a second source for one answer, able to disagree.
+protein_fasta = "data/db/prot/viral.1.protein.faa.gz"
+pfam = "data/db/pfam/Pfam-A.hmm"
+
+[run]
+seed = 1
+threads = 8
