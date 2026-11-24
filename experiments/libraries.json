@@ -142,6 +142,15 @@
    "crossplant_panel": "cp3",
    "crossplant_panel_basis": "The library is NOT a member of cp3 - results/crossplant/panel.tsv holds 536 rows and this accession is not one of them - so its query reads are not searched against its own library, which is the refusal crossplant_stage.py enforces and the one that would invent recurrence (54% false growth against a 6% swap control). The plant IS in the panel with 12 libraries, three of them influent from this same date (2020-09-11, YIF807/808/809), so the paired within-plant stratum the measurement needs exists and is same-plant-same-date-other-water: it separates water type from drift, which no other pairing in the panel does.",
    "panel_basis": "which truth panel and which cross-plant panel apply to this library. The panels themselves are defined in experiments/stage_references.json; a null here is a measured absence and must carry its *_absent_because reason, which experiments/stage_refs.py refuses without."
+  },
+  "fixture": {
+   "label": "the CI read fixture, not a sequencing run: 9,987 simulated pairs over three real genomes (tests/fixtures/)",
+   "truth_panel": null,
+   "truth_panel_absent_because": "no depositor has assembled genomes out of this material, because the material is simulated. The fixture's known distance is the measured protein identity of its divergent arm, which belongs to the end-to-end test and never to a report (SPEC 13.4).",
+   "crossplant_panel": null,
+   "crossplant_panel_absent_because": "there are no other plants: the fixture is one simulated library and a cross-plant panel is a set of libraries from elsewhere. A panel pointed at anything real here would compare simulated reads against water.",
+   "panel_basis": "which truth panel and which cross-plant panel apply to this library. Both are measured absences for a fixture and carry their reasons, which experiments/stage_refs.py refuses without.",
+   "partial_entry": "panel facts only, on purpose. The trim and the block are NOT here: the fixture's run configuration states them with their bases (tests/test_end_to_end.py), and a value in this file would be a second source that a config forgetting to state one would inherit silently. It appears here at all because a stage that resolves a per-library panel refuses an unknown library, which is the right answer for real water and would stop a fixture run that has nothing to resolve."
   }
  },
  "status": "hand-written from measurements recorded elsewhere in results/. Each value names what established it. Nothing here is derived at run time."

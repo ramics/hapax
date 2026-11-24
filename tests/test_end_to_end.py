@@ -295,12 +295,14 @@ threads = 2
 pairs = 9000
 report_pairs = 4000
 out = "{out}"
-# The CRISPR field is left out ON PURPOSE, and that is a different thing from its being
-# absent. It scores a read against spacers extracted from this sample's own assemblies,
-# which a 16 kb bacterial window does not carry; the run refuses to start on a field whose
-# reference is missing, because a dropped field reads as a zero. Named here, the omission
-# is a stated operating point the page carries.
-report_without = ["crispr"]
+# Three per-read fields are left out ON PURPOSE, which is a different thing from their
+# being absent. CRISPR scores a read against spacers from this sample's own assemblies,
+# which a 16 kb bacterial window does not carry; Rfam and Pfam each need a multi-gigabyte
+# profile library, and Rfam needs Infernal's cmscan besides, none of which belongs in a
+# job that runs on every pull request. The run refuses to start on a field whose reference
+# is missing, because a dropped field reads as a zero. Named here, each omission is a
+# stated operating point that the page carries rather than a hole in it.
+report_without = ["crispr", "rfam", "pfam"]
 
 [inputs]
 label = "fixture"
