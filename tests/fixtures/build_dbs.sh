@@ -72,7 +72,13 @@ with open(src) as fh, open(dst, "w") as out:
             out.write(line)
 PY
 
-kraken2-build --build --db "$k2" --threads "${THREADS:-2}" --kmer-len 31 --minimizer-len 25
+# k=31 because 31 is the k this repo's every k-mer operating point is stated at, and the
+# minimizer length follows from it. --minimizer-spaces must be at most a quarter of the
+# minimizer length, which kraken2-build enforces: its default of 7 is legal under the
+# default l=31 and not under l=25, so leaving it out fails the build rather than being
+# clamped. Stated here rather than inherited.
+kraken2-build --build --db "$k2" --threads "${THREADS:-2}" \
+  --kmer-len 31 --minimizer-len 25 --minimizer-spaces 6
 
 echo "built into $out:"
 ls -la "$out"
