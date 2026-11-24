@@ -302,7 +302,7 @@ def cmd_run(args) -> int:
     # what that costs.
     from .enrich import enrich
 
-    for record in enrich(cfg, out, root, cfg.seed):
+    for record in enrich(cfg, out, root, cfg.seed, (r1, r2)):
         if record["status"] != "ok":
             print(f"  {record['stage']}: {record['status']} - {record['reason']}",
                   file=sys.stderr)

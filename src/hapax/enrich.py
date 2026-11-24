@@ -47,13 +47,18 @@ def _attempt(repo: Path, name: str, args: list, stage: str, needs: list[str]) ->
     return {"stage": stage, "status": "ok", **code}
 
 
-def enrich(cfg: Config, out: Path, repo: Path, seed: int) -> list[dict]:
+def enrich(cfg: Config, out: Path, repo: Path, seed: int,
+           reads: tuple[Path, Path | None]) -> list[dict]:
     """Run the three, in their declared order, and write what happened.
 
     The order is the registry's: the architecture call reads the per-gene workup, so it is
     absent wherever the workup is, and recording that explicitly is why it is attempted
     rather than skipped on inspection.
     """
+    # THE READS THE RUN ACTUALLY READ, resolved once by the caller. `cfg.inputs["r1"]`
+    # is not that: the command line may name the FASTQs instead, which is how the CI
+    # fixture runs, and a config with no [inputs] r1 then raised a KeyError here after
+    # every stage. One resolution, passed in, is the same rule as the binaries.
     records: list[dict] = []
     # THE TAXA STAGE'S OUTPUT, not `strains.json`. Two files in one run directory answer
     # to the word strains: the `strains` stage writes a read-level table of SUBJECTS, and
@@ -103,7 +108,7 @@ def enrich(cfg: Config, out: Path, repo: Path, seed: int) -> list[dict]:
              # for a library it does not know. Stating it is the override, and the
              # absence is the question, never a value.
              "--library", cfg.label,
-             "--r1", cfg.inputs["r1"], "--r2", cfg.inputs["r2"],
+             "--r1", reads[0], *(["--r2", reads[1]] if reads[1] else []),
              *(["--trim-r2", cfg.fact("trim_r2")]
                if cfg.fact("trim_r2") is not None else []),
              # HOW MANY MATES THE MAP-BACK STREAMS, stated rather than left at the
