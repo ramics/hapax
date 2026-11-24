@@ -10,6 +10,12 @@ A run needs them. `hapax.py run` checks every input, index and tool before it st
 refuses with exit status 2 if one is missing, so a missing binary is found in seconds, not
 at the stage that needs it.
 
+**Where they come from, since 2026-11-23.** Kraken2, MEGAHIT and minimap2 used to exist
+only as bare paths into somebody's staging directory (`$S/k2pkg/root/share/...` appears in
+nine scripts) with nothing in the repo that built them, so a production run on a new
+machine could not be started by reading this repo. `experiments/prod_userdata.sh` stages
+all three from pinned sources and proves each one runs before anything expensive starts.
+
 ## Pinned, and why
 
 A version is **pinned** where a committed number depends on it or where an earlier version
@@ -23,6 +29,9 @@ has failed. Moving a pin is a provenance change: re-run what it describes.
 | HMMER | 3.4 | `ec2_reach.py` `HMMER_VERSION` | `hmmsearch`, `jackhmmer` arms of `reach_arms.py` | Recorded in 9 manifests. Separate from `pyhmmer` in `requirements.txt`. |
 | HH-suite | 3.3.0 | `ec2_reach.py` `HHSUITE_VERSION` | `hhsearch` arm of `reach_arms.py` | Recorded in 8 manifests; searched against `pfamA_35.0` (`HH_PFAM_URL`). |
 | Kraken2 | 2.17.2 | default `--classify-bin` path in `subtract_known.py` and 8 other scripts | Kraken2 tiers of the cascade | The cascade calls the `classify` binary directly, not the `kraken2` wrapper, so `--classify-bin` points inside the package. Database is part of the operating point: manifests record `k2_viral_20210517.d`, `k2_pluspf08`, `k2_pluspf16`. |
+| Kraken2 | 2.17.2 | `ec2_prod.py` `KRAKEN2_URL` | staged by `prod_userdata.sh` | The same version, now with a source: `conda.anaconda.org/bioconda/linux-64/kraken2-2.17.2-pl5321h3be2455_0.conda`, extracted under `k2pkg/root` so the path matches the one nine scripts already name. The `classify` binary links only against system libraries on Amazon Linux 2023, and the instance proves it runs before staging 33 GB of databases. |
+| MEGAHIT | 1.2.9 | `ec2_prod.py` `MEGAHIT_URL` | `path_settings.py`, `residue_assembly.py`, `pair_ladder.py` | `bioconda/linux-64/megahit-1.2.9-haf24da9_8.tar.bz2`. Moved from "recorded, not pinned" to pinned when it became a committed download: every assembly in this repo records v1.2.9 and an assembly is not re-run cheaply. |
+| minimap2 | 2.31 | `ec2_prod.py` `MINIMAP2_URL` | `path_settings.py` `--minimap2`, `truth_panel.py` | `bioconda/linux-64/minimap2-2.31-h118bc1c_0.conda`, the same release as `mappy` 2.31 in `requirements.txt`, so the binary and the library side of the cascade are one version. |
 
 ## Recorded, not pinned
 
@@ -31,8 +40,8 @@ writes that version into its own manifest; whether it changes a number is unmeas
 
 | Tool | Recorded | Used by |
 |---|---|---|
-| minimap2 | 2.31-r1302 (3 manifests), 2.28-r1209 (1) | `pair_ladder.py`, `path_settings_absorption.py`. The cascade uses `mappy` 2.31 instead, the same release. |
-| MEGAHIT | v1.2.9 | `residue_assembly.py`, `pair_ladder.py` |
+| minimap2 | 2.31-r1302 (3 manifests), 2.28-r1209 (1) | `pair_ladder.py`, `path_settings_absorption.py`. The cascade uses `mappy` 2.31 instead, the same release. Pinned above since `ec2_prod.py` stages it. |
+| MEGAHIT | v1.2.9 | `residue_assembly.py`, `pair_ladder.py`. Pinned above since `ec2_prod.py` stages it. |
 | SPAdes / metaSPAdes | v4.3.0 | `pair_ladder.py` |
 | PenguiN | 5.cf8933-MPI | `pair_ladder.py` |
 | Haploflow | not recorded | `pair_ladder.py` |

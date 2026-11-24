@@ -27,6 +27,7 @@ already warns for scripts. And unlike the original, it raises instead of writing
 from __future__ import annotations
 
 import hashlib
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -42,22 +43,56 @@ def _sha(path: Path) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def _git(*args: str) -> subprocess.CompletedProcess:
-    return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True)
+def _git(*args: str) -> subprocess.CompletedProcess | None:
+    """None when there is no git at all, which is an instance rather than a checkout."""
+    try:
+        return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True)
+    except FileNotFoundError:
+        return None
+
+
+#: For a machine with NO CHECKOUT. An EC2 instance gets a tarball of the code and no git,
+#: so every script importing this module raised there - measured, on the first production
+#: launch, where it crashed the step that decides the mate-2 trim and made the shell report
+#: a refusal that had not happened. "unknown" is what this module exists to refuse, and
+#: there is a better answer available: the launcher keys the payload by the commit and
+#: refuses to launch when the shipped files are dirty, so the commit IS known and the tree
+#: IS clean, from outside. The launcher passes it in this variable.
+#:
+#: It is read only when git cannot answer. A machine with a checkout ignores it, so it
+#: cannot be used to dress a dirty tree up as a clean one locally.
+SHA_ENV = "HAPAX_GIT_SHA"
+
+
+def _env_sha() -> str | None:
+    v = (os.environ.get(SHA_ENV) or "").strip()
+    return v or None
 
 
 def git_sha() -> str:
     """HEAD, with "-dirty" appended when tracked files differ from it."""
     r = _git("rev-parse", "HEAD")
-    if r.returncode != 0:
-        raise ProvenanceError(f"git rev-parse failed in {ROOT}: {r.stderr.strip()}")
+    if r is None or r.returncode != 0:
+        env = _env_sha()
+        if env:
+            return env
+        detail = "git is not installed" if r is None else r.stderr.strip()
+        raise ProvenanceError(
+            f"git rev-parse failed in {ROOT}: {detail}. On a machine with no checkout, set "
+            f"{SHA_ENV} to the commit the code was shipped from; a manifest that cannot say "
+            f"which code ran should not be written.")
     return r.stdout.strip() + ("-dirty" if tree_dirty() else "")
 
 
 def tree_dirty() -> bool:
     r = _git("diff", "--quiet", "HEAD")
-    if r.returncode not in (0, 1):
-        raise ProvenanceError(f"git diff failed in {ROOT}: {r.stderr.strip()}")
+    if r is None or r.returncode not in (0, 1):
+        if _env_sha():
+            # No checkout to compare against. The launcher's refusal to ship a dirty tree
+            # is what stands behind this, and the SHA above says which commit.
+            return False
+        detail = "git is not installed" if r is None else r.stderr.strip()
+        raise ProvenanceError(f"git diff failed in {ROOT}: {detail}")
     return r.returncode == 1
 
 
@@ -74,6 +109,15 @@ def local_modules(exclude: Path | None = None) -> dict[str, str]:
             continue
         p = Path(f).resolve()
         if p.suffix != ".py" or ROOT not in p.parents:
+            continue
+        # A virtualenv created INSIDE the repo root puts third-party code under it, and
+        # "every module loaded from this repo" then quietly includes site-packages. The
+        # first production run recorded `venv/lib/python3.12/site-packages/
+        # _distutils_hack/__init__.py` in its manifests beside this repo's own modules,
+        # which makes `code_sha256` change when a dependency changes - the dependency set
+        # is `pip_freeze.txt` and `loud.Consulted`'s job, and mixing the two means neither
+        # hash answers its own question.
+        if "site-packages" in p.parts or "dist-packages" in p.parts:
             continue
         if exclude is not None and p == Path(exclude).resolve():
             continue

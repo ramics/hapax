@@ -1,0 +1,6 @@
++ /opt/hapax/megahit/bin/megahit --version
+MEGAHIT v1.2.9
++ /opt/hapax/minimap2/bin/minimap2 --version
+2.31-r1302
++ /opt/hapax/bin/diamond version
+diamond version 2.1.10

@@ -74,12 +74,17 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
-def git(*args: str) -> str:
-    try:
-        return subprocess.run(["git", *args], cwd=ROOT, capture_output=True,
-                              text=True, check=True).stdout.strip()
-    except Exception:
-        return ""
+#: WHY THIS DRIVER DOES NOT HAVE ITS OWN git() ANY MORE. It had one, four lines, that
+#: swallowed every exception and returned "". On an instance there is a payload tarball and
+#: no git, so it returned "" for both calls below, and every seed manifest of the first
+#: production pass over a new library records `git_sha: ""` with `tree_dirty: false` -
+#: because `bool("")` is False, so the manifest asserted a clean tree that was never
+#: checked. `provenance.py` was fixed for exactly this machine (it takes the commit from
+#: HAPAX_GIT_SHA, which the launcher sets, only when git cannot answer) and the driver never
+#: imported it. Same family as the shuffle and the trim: the second writer did not know
+#: which condition the first was fixing, so the shared module is imported and never retyped,
+#: and it raises where the copy fell back.
+from provenance import git_sha, tree_dirty  # noqa: E402  (after the sys.path insert above)
 
 
 def wilson(k: int, n: int, z: float = 1.96) -> dict | None:
@@ -187,6 +192,18 @@ class Run:
         # machine where that file exists the stage runs happily against the wrong sample
         # and nothing in the output says so, which is worse than a missing file. So hapax
         # must pass every such flag itself; one absent from the argv is a refusal.
+        # AND IT MUST PASS THE LIBRARY ITSELF, TO EVERY SCRIPT THAT TAKES ONE. `hapax run`
+        # requires `--library` and then handed it to two of the thirteen stages. The other
+        # scripts resolve their per-library facts through `library_facts`, whose `--library`
+        # defaults to the discriminating dataset so that every committed command reproduces
+        # unchanged - so a stage that is not told which library it is looking at asks for
+        # Berlin's facts. Measured, on the first production library: the `linkage` stage
+        # needed a block stride, was not given one, and refused because the read path named
+        # SRR23702504 while `--library` said SRR23973193. That refusal is the path check
+        # doing its job one layer in; on a library whose reads sit under a neutral path it
+        # would have used Berlin's stride silently, which is the original bug.
+        if script in LIBRARY_AWARE and "--library" not in argv:
+            argv = [*argv, "--library", self.args.library]
         without = set(getattr(self.args, "report_without", []) or [])
         defaulted = [flag for flag, field in SAMPLE_SPECIFIC.get(script, [])
                      if flag not in argv and not (field and field in without)]
@@ -589,6 +606,15 @@ class Run:
             return self.record("contigs", "failed", reason=f"{p} is absent or empty")
         rows = self.dir / "contigs.jsonl"
         n = 0
+        # ONE HASH, NOT ONE PER ROW. Every row carries the source file's digest, and the
+        # digest was taken inside the per-contig writer, so this re-read the whole file
+        # once per contig: on the first production library's 104 MB of unidentifiable
+        # contigs, 194,703 contigs x 104 MB is about 20 TB of SHA-256 for a stage whose
+        # own arithmetic is a length and a GC fraction. Measured: the stage had run 1h45
+        # and was roughly two thirds through, against seconds for the parse, and it is a
+        # PER-SEED cost, so five seeds would have spent most of a day on it. The file does
+        # not change while it is being read, so the digest is taken once here.
+        source_sha = sha256(p)[:16]
         with open(p) as fh, open(rows, "w") as out:
             name, buf = None, []
 
@@ -606,7 +632,7 @@ class Run:
                     "n_fraction": round(1 - acgt / len(seq), 4),
                     "class": "assembled_unidentifiable",
                     "operating_point": {
-                        "source": str(p), "source_sha256_16": sha256(p)[:16],
+                        "source": str(p), "source_sha256_16": source_sha,
                         "note": "class is the cascade's own label at its 40-base minimum "
                                 "match length; no classifier was run on the contig here"},
                 }) + "\n")
@@ -627,7 +653,7 @@ class Run:
                            outputs={"contigs.jsonl": {
                                "bytes": rows.stat().st_size, "rows": n,
                                "sha256_16": sha256(rows)[:16]}},
-                           assembly={"source": str(p), "sha256_16": sha256(p)[:16],
+                           assembly={"source": str(p), "sha256_16": source_sha,
                                      "assembled_at_run_time": False,
                                      "note": "supplied contig set; see assembly.json"})
 
@@ -1268,8 +1294,7 @@ class Run:
         manifest = {
             "tool": "hapax run", "spec": "SPEC.md 8.1",
             "script": "hapax.py", "script_sha256": sha256(ROOT / "hapax.py"),
-            "git_sha": git("rev-parse", "HEAD"),
-            "tree_dirty": bool(git("status", "--porcelain")),
+            "git_sha": git_sha(), "tree_dirty": tree_dirty(),
             "seed": a.seed,
             "inputs": {"r1": str(a.r1), "r2": str(a.r2),
                        "r1_bytes": a.r1.stat().st_size if a.r1.exists() else None,
@@ -1424,6 +1449,18 @@ SAMPLE_SPECIFIC = {
     "crossplant_stage.py": [("--library", None)],
 }
 
+#: Scripts that accept `--library`, and are therefore told which one every time they run.
+#:
+#: `hapax run` requires `--library` of its caller and passed it on to two of them. The rest
+#: take it through `library_facts.add_argument`, whose default is the discriminating
+#: dataset, so a stage that was not told asked for Berlin's facts. `Run.call` now appends
+#: it for every script in this set. The set is asserted against the scripts' own source by
+#: `tests/test_hapax_stages.py`, so a script that becomes library-aware and is not added
+#: here fails the suite rather than quietly inheriting Berlin.
+LIBRARY_AWARE = {"subtract_known.py", "residue_report.py", "linkage_census.py",
+                 "spike_holdout.py", "mate_friends.py", "divergent_known.py",
+                 "truth_panel.py", "crossplant_stage.py"}
+
 #: Scripts that implement --preflight: they check their own required inputs and tools.
 PREFLIGHT_SCRIPTS = {"subtract_known.py", "residue_report.py", "linkage_census.py",
                      "spike_holdout.py", "removal_shortlist.py", "truth_panel.py",
@@ -1432,6 +1469,25 @@ PREFLIGHT_SCRIPTS = {"subtract_known.py", "residue_report.py", "linkage_census.p
 STAGE_ORDER = ["cascade", "contigs", "reads", "linkage", "census", "calibration",
                "intervals", "layers", "strains", "divergent", "shortlist", "panel",
                "crossplant"]
+
+#: Stages that score the run against sequence whose distance was fixed BEFORE it, and so
+#: are validation of the tool rather than output of it.
+#:
+#: Imo, 2026-11-23: *"why are we asking for depositor assembled genomes IN PROD THERE IS NO
+#: DEPOSITOR"*, and earlier the same day: *"why would we, with unknown wastewater, have a
+#: genome with a distance fixed before the run? by default we know nothing. we always know
+#: nothing."* `panel` scores recovery against the depositors' own assemblies from that
+#: water; `calibration` scores a spiked divergence ladder. Both are real and both are how
+#: this tool is known to work at all - and neither has an answer on water nobody has
+#: deposited from, which is every sample production is for. So they are not in the default
+#: set: a production run does not ask the question, rather than asking it and recording an
+#: absence. They stay selectable by name, which is how a fixture library runs them.
+#:
+#: This is the same conclusion the report reached from the other end (SPEC 13.4): no
+#: ground-truth section on any page, because a section that renders empty on real water
+#: tells its reader something is missing from their sample.
+VALIDATION_STAGES = ["calibration", "panel"]
+PRODUCTION_STAGES = [s for s in STAGE_ORDER if s not in VALIDATION_STAGES]
 
 
 def main() -> int:
@@ -1569,7 +1625,11 @@ def main() -> int:
     r.add_argument("--calibrate", action="store_true",
                    help="run the per-sample divergence ladder. Without it the run carries "
                         "no positive control and says so")
-    r.add_argument("--stages", nargs="+", default=STAGE_ORDER, choices=STAGE_ORDER)
+    r.add_argument("--stages", nargs="+", default=PRODUCTION_STAGES, choices=STAGE_ORDER,
+                   help="default: every production stage. The validation stages "
+                        + ", ".join(VALIDATION_STAGES) + " are selectable by name and are "
+                        "not run by default, because they score the run against sequence "
+                        "whose distance was fixed before it and unknown water has none")
     r.add_argument("--work", type=Path, default=None)
     r.add_argument("--plan", action="store_true", help="print the stages and exit")
     args = ap.parse_args()
@@ -1597,7 +1657,7 @@ def main() -> int:
             print(f"  - {p}", file=sys.stderr)
         (run.dir / "manifest.json").write_text(json.dumps({
             "tool": "hapax run", "script_sha256": sha256(ROOT / "hapax.py"),
-            "git_sha": git("rev-parse", "HEAD"), "seed": args.seed,
+            "git_sha": git_sha(), "tree_dirty": tree_dirty(), "seed": args.seed,
             "status": "refused to start", "complete": False,
             "problems": run.problems,
             "parameters": {k: (str(v) if isinstance(v, Path) else

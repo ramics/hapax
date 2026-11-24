@@ -10,6 +10,7 @@ download date when a file is fetched.
 | HIV-1 *env* population data with ground truth | Imo's curated alignments (thesis ch. 2/4) | not yet | ask Imo for location |
 | HBV reference (dual-coding stress test) | NC_003977 | 2026-11-19 (efetch fasta + gb) | about half the genome is dual-coding (1,591 of 3,215 nt by CDS) |
 | Public wastewater metagenome | to choose (SRA) | not yet | pick after HIV results |
+| Production run on a new library | SRR23702504 (PRJNA941081), Yeongdok plant effluent, South Korea, collected 2020-09-11 | 2026-11-23 (SRA, on the instance) | 32,125,614 pairs, 2 x 151 nt, 9,701,935,428 bases. Chosen because nothing in this repo had measured anything on it: a different plant on a different continent, absent from `results/crossplant/panel.tsv` while its plant is in it with 12 libraries (three influent from the same date), so cross-plant subtraction is legal and has a within-plant stratum. Staged by `experiments/prod_userdata.sh`, never into this container. |
 | Human astrovirus 1 (ORF annotation truth) | NC_001943 | 2026-11-19 (efetch fasta + gb) | used by experiments/orf_annotation.py |
 
 ## Multi-swarm metagenome (experiments/fetch_swarm_panels.py)

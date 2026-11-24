@@ -503,10 +503,32 @@ def main() -> None:
             if rows else None,
             "at_or_above_0.5": sum(1 for r in rows if r["host_confidence"] >= 0.5),
             "at_or_above_0.2": sum(1 for r in rows if r["host_confidence"] >= 0.2),
+            # TWO INDEPENDENT MAXIMA IN ONE DICT INVITE BEING PAIRED, AND A PAIRING OF
+            # MAXIMA DESCRIBES A SUBJECT THAT DOES NOT EXIST. These two fields are the
+            # best identity over all rows and the best alignment length over all rows,
+            # which are different subjects on all five seeds of SRR23702504: the summary
+            # reads 100.0% and 53 aa where the 100.0% row is 21 aa long and the 53 aa row
+            # is a different subject entirely. A reader of the page did pair them, and
+            # short-alignment identity is exactly where the pairing flatters: 100% over 21
+            # aa is a chance alignment and 100% over 53 aa would not be. So the closest
+            # row's OWN length ships beside its identity, and the two independent maxima
+            # keep names that say they are independent.
             "best_identity_percent": max((r["median_identity_percent"] or 0)
                                          for r in rows) if rows else None,
+            "closest_row_aligned_aa": (
+                max(rows, key=lambda r: r["median_identity_percent"] or 0)
+                ["median_aligned_aa"] if rows else None),
+            "longest_alignment_aa": max((r["median_aligned_aa"] or 0) for r in rows)
+            if rows else None,
+            # kept under its old name so nothing that reads it breaks, with the reading
+            # that stops it being paired
             "best_aligned_aa": max((r["median_aligned_aa"] or 0) for r in rows)
             if rows else None,
+            "best_fields_are_independent": (
+                "best_identity_percent and best_aligned_aa (= longest_alignment_aa) are "
+                "maxima over the rows taken separately and are usually different "
+                "subjects. Do not print them as one match. The identity's own alignment "
+                "length is closest_row_aligned_aa."),
             "reading": "how much of the matched record's host group transfers to the "
                        "reads. Built from identity and aligned length. If the maximum is "
                        "low, no relative in this residue is close enough for its host to "

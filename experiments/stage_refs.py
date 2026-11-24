@@ -109,6 +109,40 @@ def resolve(library: str, kind: str, refs: dict | None = None) -> dict:
     return out
 
 
+def resolve_optional(library: str, kind: str, refs: dict | None = None) -> dict:
+    """`resolve`, but an unknown LIBRARY is a fourth state rather than a refusal.
+
+    Only for a caller that is reporting what a run will be able to do, not for a stage.
+    A stage that is about to score against a panel must refuse on an unknown library -
+    that is what `resolve` is for and why it raises. A launcher is in the opposite
+    position: a library with no entry is the case production exists for, so refusing
+    there would make "a sample nobody has touched" impossible by construction. The two
+    callers want opposite answers to the same question, so they get different functions
+    rather than a flag, and the strict one stays the default.
+
+    An unknown PANEL NAME or a missing FILE still raises here, because those are a
+    broken entry rather than an absent one.
+    """
+    try:
+        return resolve(library, kind, refs)
+    except UnknownLibrary as e:
+        # WHICH FILE DECIDES WHETHER A LIBRARY IS KNOWN. Panel membership moved out of
+        # stage_references.json and into libraries.json, so the registry of libraries is
+        # library_facts' and this read has to go there: looking for a `libraries` block in
+        # the references file raised KeyError on every call after the move.
+        try:
+            library_facts.library(library)
+        except UnknownLibrary:
+            pass
+        else:
+            raise                       # a broken entry, not an absent one
+        return {"state": "unregistered", "library": library, "kind": kind,
+                "reason": f"{library} has no entry in {library_facts.FACTS.name}, so "
+                          f"this stage "
+                          f"has no reference for it and will be skipped with that reason. "
+                          f"({e.args[0].split('.')[0]})"}
+
+
 def missing_files(resolved: dict) -> list[str]:
     """Which of a resolved reference's files are absent or empty.
 

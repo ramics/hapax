@@ -1,0 +1,44 @@
+# WHAT IS NOT KEPT HERE, AND WHY, SO THE ABSENCE IS NOT MISTAKEN FOR AN OVERSIGHT.
+# Same rule as results/holdout_cascade/.gitignore, with one difference recorded at the end.
+#
+# `stages/cascade_rows.jsonl` is subtract_known.py's per-read row dump, 17 MB per seed. It is
+# an intermediate on the way to tiers.json, keyed by the stage manifest's content hash, and
+# the same class of file as `results/*/work/` which this repo already ignores. Every removal
+# percentage rests on tiers.json and tier_table.json, kept for every seed.
+run_s*/stages/cascade_rows.jsonl
+
+# The per-contig and per-read row dumps. Kept for SEED 1 ONLY, because one seed's rows
+# should be inspectable rather than merely described.
+#
+# THE DIFFERENCE FROM THE HOLDOUT DIRECTORY, and it is a property of this library rather
+# than a change of policy: `contigs.jsonl` is one row per unidentifiable contig, and this
+# assembly has 194,703 of them against the holdout's few thousand - 79 MB per seed plain,
+# 3.7 MB gzipped. Five seeds plain would be 395 MB in a repo whose whole results tree is
+# 583 MB. So that one file is committed compressed.
+#
+# `reads.jsonl` and `layers.jsonl` are committed PLAIN at 5.6 MB and 756 KB, under the name
+# every other run directory in this repo uses, and gzipping them was a mistake worth
+# recording: this was the first run directory to carry a `.jsonl.gz`, and the page builder
+# that reads a run directory looked for the plain name only, found no rows, and drew an
+# empty residue table and two empty search arms for 32 M pairs without saying anything. A
+# reader that cannot find a file it was not told to expect is a silent zero, so a new
+# spelling is only worth inventing where it buys something - which for 79 MB it does and
+# for 756 KB it does not. The uncompressed run directory for every seed is in S3 at the
+# path the launch manifest records, and the report names it.
+run_s*/contigs.jsonl
+run_s*/reads.jsonl
+run_s*/layers.jsonl
+run_s*/*.jsonl.gz
+!run_s1/contigs.jsonl.gz
+!run_s1/reads.jsonl
+!run_s1/layers.jsonl
+
+# removal_evidence.tsv is the identification table the shortlist stage reads, 20 MB plain
+# and 5 MB gzipped, written once for the whole library rather than per seed. Kept, as gzip.
+removal_evidence.tsv
+
+# `reads.jsonl` for seeds 2-5 was fetched from S3 to produce `ranking.json` beside each seed's
+# tiers.json, and is not kept: the rule above keeps one seed's rows inspectable, and the
+# ranking it feeds is committed. ranking.json is a presentation step over committed inputs,
+# so it carries its own git_sha - a real one, unlike the seed manifests, because it ran here
+# rather than on an instance with no git.
