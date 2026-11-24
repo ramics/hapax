@@ -481,6 +481,14 @@ class Run:
         argv = ["--seed", str(a.seed), "--pairs", str(a.linkage_pairs),
                 "--r1", str(a.r1), "--r2", str(a.r2), "--trim-r2", str(a.trim_r2),
                 "--work", str(self.work / "linkage_work"), "--out", str(out)]
+        # THE STRIDE TOO, NOT ONLY THE TRIM. `mate_friends.py` resolves both from the
+        # library registry when it is given neither, so a run whose stride was stated on
+        # the command line reached this stage without it and refused on a library the
+        # registry does not describe - which is every library production is for. The trim
+        # was passed and the stride beside it was not, which is the same omission the rule
+        # above this method is about.
+        if a.block:
+            argv += ["--block", str(a.block)]
         return self.call("linkage", "mate_friends.py", argv,
                          {"linkage.json": out / f"mate_friends_s{a.seed}.json"},
                          out / f"mate_friends_s{a.seed}.json")
@@ -705,6 +713,13 @@ class Run:
                 "--out", str(out / f"divergent_known_s{a.seed}.json")]
         if a.diamond_bin:
             argv += ["--diamond-bin", str(a.diamond_bin)]
+        # The profile library, which this stage needs and nothing was passing: the script
+        # defaults it to a path under this repo's data/, so on the machine where that file
+        # exists the stage ran and on every other machine it exited with the path. Which
+        # profile library the domain calls came from is an operating point, so it is given
+        # rather than found.
+        if a.pfam:
+            argv += ["--pfam", str(a.pfam)]
         return self.call("divergent", "divergent_known.py", argv,
                          {f"divergent_known_s{a.seed}.json":
                               out / f"divergent_known_s{a.seed}.json"},
@@ -750,7 +765,11 @@ class Run:
                 "--trim-r2", str(a.trim_r2), "--db", str(db),
                 "--threads", str(a.threads),
                 "--work", str(out / "work"),
-                "--out", str(out / f"public_health_profile_s{a.seed}.json")]
+                # A DIRECTORY, which is what this script's --out is: it writes its own
+                # per-seed file inside. Handed the file path instead, it made a directory
+                # of that name and wrote the file inside it, so the stage both succeeded
+                # and produced nothing the run directory could find.
+                "--out", str(out)]
         if a.classify_bin:
             argv += ["--classify-bin", str(a.classify_bin)]
         return self.call("profile", "public_health_profile.py", argv,
@@ -786,7 +805,10 @@ class Run:
         argv = ["--seed", str(a.seed), "--contigs", str(src), "--db", str(db),
                 "--dmnd", str(a.dmnd[0]), "--threads", str(a.threads),
                 "--work", str(out / "work"),
-                "--out", str(out / f"known_strain_divergence_s{a.seed}.json")]
+                # A directory, as in the profile stage above: this script writes its own
+                # per-seed filename inside it. The two scripts that take a file path and
+                # the two that take a directory look identical from the flag.
+                "--out", str(out)]
         if a.classify_bin:
             argv += ["--classify-bin", str(a.classify_bin)]
         if a.diamond_bin:
@@ -1078,7 +1100,13 @@ class Run:
         }
         (self.dir / "strains.json").write_text(json.dumps(out, indent=2))
         multi = [r for r in rows if r["residue_reads"] >= 3]
-        return self.record("strains", "ok", subjects=len(rows),
+        # THE FILES, NAMED. The three stages written in this process rather than called
+        # as a subprocess recorded a status and no outputs, so a run directory said
+        # "ok" beside three stages and nothing said what they had produced. A clean exit
+        # code is not an output, and the check that caught this is the one that reads the
+        # manifest rather than the directory listing.
+        return self.record("strains", "ok", outputs=["strains.json"],
+                           subjects=len(rows),
                            subjects_with_3_or_more_reads=len(multi))
 
     # -- derived views --------------------------------------------------------
@@ -1196,7 +1224,8 @@ class Run:
                                   "reports across-seed spread instead",
                "source": "tiers.json", "source_sha256_16": sha256(p)[:16]}
         (self.dir / "tier_table.json").write_text(json.dumps(out, indent=2))
-        return self.record("intervals", "ok", rows=len(rows),
+        return self.record("intervals", "ok", outputs=["tier_table.json"],
+                           rows=len(rows),
                            operating_point_complete=not any(v is None for v in op.values()))
 
     def layers(self) -> dict:
@@ -1298,7 +1327,8 @@ class Run:
                            "score ordering tracks database proximity",
         }
         (self.dir / "layers.json").write_text(json.dumps(summary, indent=2))
-        return self.record("layers", "ok", totals=totals,
+        return self.record("layers", "ok",
+                           outputs=["layers.json", "layers.jsonl"], totals=totals,
                            counts=counts.get("residue", {}),
                            separating_layers=[k for k, v in comparison.items()
                                               if v.get("separates")])
@@ -1734,6 +1764,11 @@ def main() -> int:
                    default=[ROOT / "data/silva/SSU.fa.gz", ROOT / "data/silva/LSU.fa.gz"])
     r.add_argument("--dmnd", type=Path, nargs="*",
                    default=[ROOT / "data/prot/viral.dmnd", ROOT / "data/prot/sprot.dmnd"])
+    r.add_argument("--pfam", type=Path, default=None,
+                   help="the Pfam-A HMM library the per-gene distance workup scans ORFs "
+                        "against, at the curators' gathering cutoffs. Left unset, the "
+                        "script's own default path under data/ is used, which exists on "
+                        "one machine")
     r.add_argument("--spike-genome", type=Path, default=None,
                    help="REQUIRED with --calibrate, no default: it was chosen as absent "
                         "from Berlin's assembly, which says nothing about another sample's. "

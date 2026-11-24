@@ -21,11 +21,13 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
 HAPAX = ROOT / "hapax.py"
 ROWS = ROOT / "results" / "holdout_cascade" / "contig_rows_s1.tsv"
 
-import hapax  # noqa: E402
+# Loaded from its path, not by name: `hapax` is the package now (see tests/legacy.py).
+from legacy import driver  # noqa: E402
+
+hapax = driver()
 
 NEW = ("shortlist", "panel", "crossplant")
 

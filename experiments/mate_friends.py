@@ -176,6 +176,22 @@ def recovery(X: np.ndarray, partner: np.ndarray, ks: list[int],
     produce a perfect result from nothing.
     """
     n = len(X)
+    # AN EMPTY SUBSET IS A CENSUS, NOT AN ERROR. `mates_overlap` and `mates_disjoint`
+    # partition the pairs, and on a library whose insert is longer than twice the read
+    # one side of that partition is empty - which is a fact about the library, measured.
+    # Asked for zero query points, the neighbour search raised, so a legitimate reading
+    # of a short-insert library stopped the stage. The count is reported with the reason,
+    # because an empty table and a test that never ran must not look the same.
+    rows_in = np.arange(n) if subset is None else np.flatnonzero(subset)
+    if len(rows_in) == 0 or n < 2:
+        out = {str(k): {"recovery": None, "chance": None, "enrichment": None}
+               for k in ks}
+        out["n_queries"] = int(len(rows_in))
+        out["n_points"] = int(n)
+        out["state"] = ("no query points in this subset, so the recovery rate is not "
+                        "defined here" if n >= 2 else
+                        "fewer than two points, so no point has a neighbour")
+        return out
     perm = rng.permutation(n)
     inv = np.empty(n, dtype=np.int64)
     inv[perm] = np.arange(n)

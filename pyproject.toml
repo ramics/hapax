@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hapax"
+version = "0.3.0"
+description = "Subtract what is identifiable in a metagenome, then characterise what is left"
+requires-python = ">=3.13"
+readme = "README.md"
+license = "MIT"
+dynamic = ["dependencies"]
+
+# `hapax` on the PATH after `pip install .`, which with environment.yml is the whole
+# install in PLAN.md 4. Until this file the entry point was `python hapax.py` from the
+# repo root, so the tool could not be installed anywhere and every committed command
+# carried a path.
+[project.scripts]
+hapax = "hapax.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# One declaration of the Python dependencies, read from the file the existing tripwire
+# test already checks every import against (tests/test_dependencies.py). Restating them
+# here would be a second copy of a list that is kept honest in one place, which is the
+# defect this repo has had in roughly twenty scripts.
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+# The version is a provenance field: PLAN.md 2 says a number in results/ names the
+# package version that produced it, in place of the per-script hash rule, which stays
+# for experiments/. 0.3.0 rather than 0.1.0 because the pipeline it wraps is not new.

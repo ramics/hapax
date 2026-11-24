@@ -143,3 +143,21 @@ def provenance(script) -> dict:
             "script_sha256": _sha(script)[:16],
             "modules_sha256": {k: v[:16] for k, v in mods.items()},
             "code_sha256": whole.hexdigest()[:16]}
+
+
+def rel(path) -> str:
+    """A path for a manifest: repo-relative where it is in the repo, absolute otherwise.
+
+    WHY THIS IS SHARED. Four scripts recorded their inputs with a bare
+    `path.relative_to(ROOT)`, which raises for any path outside the checkout. That held
+    while every input was a file under `data/`, and stopped holding the first time a run
+    directory was somewhere else: a stage that had already done its work died while
+    writing down what it had used. The fix is not a try/except at each site, because the
+    question - what do I call this path in a record - has one answer.
+
+    The repo-relative form is kept where it applies, because it is what makes two
+    machines' manifests comparable; an absolute path outside the repo is reported as it
+    is, since there is nothing to make it relative to.
+    """
+    p = Path(path).resolve()
+    return str(p.relative_to(ROOT)) if p.is_relative_to(ROOT) else str(p)

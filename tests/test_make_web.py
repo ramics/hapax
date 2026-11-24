@@ -219,11 +219,41 @@ def test_a_hand_written_sentence_is_recorded_as_an_override(tmp_path):
     assert page["derived"]["lede"].startswith("Treated wastewater")
 
 
-def test_a_descriptor_for_a_library_nobody_has_described_refuses(tmp_path):
+def test_a_descriptor_whose_accession_is_not_the_runs_own_refuses(tmp_path):
+    """A descriptor must not dress one run's directory in another sample's words."""
     d = _holdout()
     d["sample"]["accession"] = "SRR99999999"
-    with pytest.raises(SystemExit, match="not in experiments/libraries.json"):
+    with pytest.raises(SystemExit, match="is not in the run's own input path"):
         make_web.load_page(_write(tmp_path, d), None)
+
+
+def test_a_library_nobody_has_described_gets_a_page_that_says_so(tmp_path):
+    """The rule changed here, on purpose, and this is the reason.
+
+    This used to refuse: a library with no entry in `experiments/libraries.json` could
+    not have a page. That is right for a registry lookup and wrong for this tool. The
+    registry raising is correct, because the alternative is another library's facts, and
+    a PRODUCTION sample is by definition one the registry does not know - so the old
+    behaviour meant the only samples that could have a page were the ones somebody had
+    already described, which is a fixture-shaped tool (SPEC 13.4).
+
+    So an unknown library now gets a page that states it knows nothing about the water,
+    and the statement is RECORDED as an override rather than made quietly, so nobody can
+    read the sentence as a derived fact. Nothing is guessed in either direction.
+    """
+    d = _holdout()
+    d["sample"] = {"accession": "SRR99999999"}
+    # A run directory of its own, whose reads name the same thing, so the agreement check
+    # above does not fire first and hide what this test is about.
+    run = tmp_path / "run"
+    run.mkdir()
+    (run / "manifest.json").write_text(json.dumps(
+        {"inputs": {"r1": "/x/SRR99999999_1.fastq.gz"}}))
+    page = make_web.load_page(_write(tmp_path, d), run)
+    assert page["unknown_library"] is True
+    assert "unknown_library" in page["overrides"]
+    assert "no sample facts" in page["derived"]["lede"]
+    assert page["derived"]["facts"] == {}
 
 
 def test_a_committed_fact_with_no_clause_refuses_rather_than_vanishing(tmp_path,

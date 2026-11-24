@@ -62,6 +62,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from public_health_profile import load_taxonomy, lineage_maps, say  # noqa: E402
+from provenance import rel  # noqa: E402
 from subtract_known import provenance  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -255,11 +256,11 @@ def main() -> None:
         "question": ("when we find a virus we already know, is it the one in the database "
                      "or a divergent strain of it"),
         "operating_point": {
-            "contigs": str(args.contigs.relative_to(ROOT)),
+            "contigs": rel(args.contigs),
             "min_contig_nt": args.min_contig,
             "kraken2_confidence": args.confidence,
             "kraken2_database": args.db.name,
-            "protein_database": str(args.dmnd.relative_to(ROOT)),
+            "protein_database": rel(args.dmnd),
             "diamond_mode": args.diamond_mode,
             "diamond_evalue": 1e-5,
             "min_alignment_aa_for_an_identity": MIN_ALN_AA,

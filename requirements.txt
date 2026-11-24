@@ -48,5 +48,10 @@ matplotlib>=3.11.2
 # ec2_*.py launchers only. Nothing that computes a number imports it.
 boto3>=1.44.9
 
+# src/hapax/schemas.py: the contract between a stage's output and the report section
+# that renders it. A validator written here would be a validator nobody has tested, and
+# the contract is the point of the exercise, not the validating.
+jsonschema>=4.26.0
+
 # --- tests ------------------------------------------------------------------------------
 pytest>=9.1.1

@@ -1,0 +1,29 @@
+# The external tools the pipeline drives, as one conda environment.
+#
+# WHY THIS FILE EXISTS. PLAN.md 4 says the whole install on a fresh machine is
+# `conda env create -f environment.yml && pip install .`. Until this file, the tools were
+# installed by hand on an instance and by EC2 UserData, with the versions recorded in
+# TOOLS.md afterwards rather than requested beforehand, so two machines could disagree and
+# nothing would say so.
+#
+# Versions are the ones TOOLS.md pins. A version moved here and not there, or the reverse,
+# is caught by tests/test_dependencies.py.
+name: hapax
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.13
+  - pip
+  # Assembly, search and mapping. The pipeline shells out to each of these; the pins are
+  # in TOOLS.md with what each was measured with.
+  - megahit=1.2.9
+  - diamond=2.1.10
+  - kraken2=2.17.2
+  - minimap2=2.31
+  - blast=2.17.0
+  # The render check runs the written page under node, which is how a section that
+  # resolved and never reached the DOM is caught rather than assumed present.
+  - nodejs=22
+  - pip:
+      - -r requirements.txt

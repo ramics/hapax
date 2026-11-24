@@ -28,8 +28,12 @@ LOCAL = {"python"}
 
 
 def _sources() -> list[Path]:
+    # src/ is the product since PLAN.md step 3, and it was the first place an import
+    # could be added without this tripwire seeing it: the package is not under
+    # experiments/ and not a test, so for one commit `jsonschema` was declared and, as
+    # far as this file could tell, imported nowhere.
     return sorted([ROOT / "hapax.py", *(ROOT / "experiments").rglob("*.py"),
-                   *(ROOT / "tests").glob("*.py")])
+                   *(ROOT / "src").rglob("*.py"), *(ROOT / "tests").glob("*.py")])
 
 
 def _third_party() -> dict[str, list[str]]:
@@ -74,3 +78,49 @@ def test_nothing_declared_is_unused():
     provenance claim nobody is making."""
     used = {DIST.get(m, m).lower() for m in _third_party()}
     assert not (_declared() - used), f"declared but never imported: {_declared() - used}"
+
+
+#: The conda environment's pins, and TOOLS.md's. They are two statements of one fact.
+#:
+#: `environment.yml` arrived with PLAN.md step 2, because "the whole install is
+#: `conda env create` plus `pip install .`" needs a file that asks for the tools rather
+#: than a table that records what somebody happened to install. That makes two places a
+#: version is written, which is the shape of every defaulted sample fact this repo has
+#: had to unpick: the stage list was typed in three places and the launcher's copy is the
+#: one that ran. So the two are compared here, and a pin moved in one place fails the
+#: suite rather than letting a run resolve to a version no committed number was measured
+#: with.
+def _environment_pins() -> dict[str, str]:
+    pins = {}
+    for line in (ROOT / "environment.yml").read_text().splitlines():
+        line = line.split("#")[0].strip()
+        if line.startswith("- ") and "=" in line:
+            name, _, version = line[2:].partition("=")
+            pins[name.strip()] = version.strip()
+    return pins
+
+
+#: environment.yml name -> the name TOOLS.md's table uses for the same tool.
+TOOLS_MD_NAME = {"megahit": "MEGAHIT", "diamond": "DIAMOND", "kraken2": "Kraken2",
+                 "minimap2": "minimap2", "blast": "BLAST+", "nodejs": "Node.js"}
+
+
+def test_the_conda_pins_match_tools_md():
+    pins = _environment_pins()
+    rows = (ROOT / "TOOLS.md").read_text()
+    wrong = []
+    for conda_name, md_name in TOOLS_MD_NAME.items():
+        version = pins.get(conda_name)
+        assert version, f"{conda_name} is not pinned in environment.yml"
+        # The table's row for the tool, as `| Tool | **version** or version |`.
+        for row in rows.splitlines():
+            cells = [c.strip() for c in row.split("|")]
+            if len(cells) > 3 and cells[1] == md_name:
+                recorded = cells[2].replace("*", "")
+                if version not in recorded:
+                    wrong.append(f"{md_name}: environment.yml asks for {version}, "
+                                 f"TOOLS.md pins {recorded}")
+                break
+        else:
+            wrong.append(f"{md_name} is in environment.yml and not in TOOLS.md's table")
+    assert not wrong, "\n  " + "\n  ".join(wrong)

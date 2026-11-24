@@ -143,13 +143,29 @@ def measure(r1: Path, r2: Path | None, pairs_per_seed: int, seeds: int) -> dict:
         "r1": sorted(l1.items(), key=lambda kv: -kv[1])[:5],
         **({"r2": sorted(l2.items(), key=lambda kv: -kv[1])[:5]} if r2 is not None else {}),
     }
-    out["block"] = stride_for(pairs, pairs_per_seed, seeds)
-    out["block_basis"] = (
-        f"derived from the {pairs} pairs counted in this file: the largest round stride "
-        f"that fits {seeds} disjoint contiguous blocks of {pairs_per_seed} pairs with a "
-        f"{STRIDE_MARGIN:.0%} margin, so a file that counts shorter than its metadata "
-        f"still reads five blocks rather than leaving the last seeds empty.")
-    out["measured_not_stated"] = ["pairs", "read_length", "layout", "block"]
+    # ONE SEED HAS NO STRIDE, AND THAT IS NOT A FAILURE TO MEASURE ONE. The stride exists
+    # to keep several seeds reading disjoint blocks of the file, so with one seed there is
+    # nothing for it to separate and `stride_for` raises rather than inventing a number.
+    # Refusing the whole measurement on that basis would mean a one-seed instrument - a
+    # fixture, a pilot - could not be measured at all, so the absence is recorded with its
+    # reason instead. A headline result still needs five seeds (CLAUDE.md); this records
+    # what this file can hold, not what a result may claim.
+    out["seeds"] = seeds
+    if seeds < 2:
+        out["block"] = None
+        out["block_absent_because"] = (
+            f"one seed was asked for, and a stride only separates two or more. The single "
+            f"block is the first {pairs_per_seed} pairs of {pairs}.")
+    else:
+        out["block"] = stride_for(pairs, pairs_per_seed, seeds)
+        out["block_basis"] = (
+            f"derived from the {pairs} pairs counted in this file: the largest round "
+            f"stride that fits {seeds} disjoint contiguous blocks of {pairs_per_seed} "
+            f"pairs with a {STRIDE_MARGIN:.0%} margin, so a file that counts shorter than "
+            f"its metadata still reads five blocks rather than leaving the last seeds "
+            f"empty.")
+    out["measured_not_stated"] = (["pairs", "read_length", "layout"]
+                                  + (["block"] if out["block"] is not None else []))
     out["not_measurable_from_the_file"] = {
         "trim_r2": "needs the reads mapped onto known sequence; see "
                    "experiments/nontemplate_prefix_map.py and trim_from_prefix.py",

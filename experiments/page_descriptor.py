@@ -51,12 +51,24 @@ CLAUSES = (
 NOT_SPOKEN = ("basis",)
 
 
-def sample_facts(accession: str) -> dict:
-    """The library's `sample` block, or {} where it has none. Never another library's."""
+def sample_facts(accession: str, facts: dict | None = None) -> dict:
+    """The library's `sample` block, or {} where it has none. Never another library's.
+
+    `facts` lets the CALLER supply the block instead, for water that is not in
+    `experiments/libraries.json` at all. That is the case this tool is for: a production
+    run on an input nobody has deposited from has no registry entry, and until this
+    argument existed such a run could not have a page, because the registry raises for a
+    library it does not know - correctly, since the alternative is another library's
+    facts. Supplied facts are an override with a provenance of their own (the run's
+    config, recorded in the run directory), not a fallback: when they are given, nothing
+    is read from the registry, and when they are not, the registry's refusal stands.
+    """
+    if facts is not None:
+        return facts
     return library_facts.library(accession).get("sample") or {}
 
 
-def check(accession: str) -> None:
+def check(accession: str, facts: dict | None = None) -> None:
     """Refuse a committed fact the grammar has no clause for.
 
     The sibling thread caught this on the library that the whole genericness test turns
@@ -68,7 +80,7 @@ def check(accession: str) -> None:
     it does not belong in the block.
     """
     spoken = {k for k, _, _ in CLAUSES} | set(NOT_SPOKEN)
-    extra = sorted(set(sample_facts(accession)) - spoken)
+    extra = sorted(set(sample_facts(accession, facts)) - spoken)
     if extra:
         raise library_facts.UnknownLibrary(
             f"{accession}: sample block carries {', '.join(extra)}, which "
@@ -76,34 +88,36 @@ def check(accession: str) -> None:
             f"without saying so. Add a clause or remove the fact.")
 
 
-def lede(accession: str) -> str:
-    check(accession)
-    s = sample_facts(accession)
+def lede(accession: str, facts: dict | None = None) -> str:
+    check(accession, facts)
+    s = sample_facts(accession, facts)
     parts = [(t.format(s[k]), j) for k, t, j in CLAUSES if s.get(k)]
     if not parts:
-        return (f"{accession} has no sample block in experiments/libraries.json, so this "
-                f"page says nothing about what the water was. Add one, with how each "
-                f"fact was established, and the sentence appears here.")
+        where = ("the run's configuration" if facts is not None
+                 else "experiments/libraries.json")
+        return (f"{accession} has no sample facts in {where}, so this page says nothing "
+                f"about what the water was. Add them, with how each fact was "
+                f"established, and the sentence appears here.")
     out = parts[0][0][0].upper() + parts[0][0][1:]
     for text, join in parts[1:]:
         out += join + text
     return out + "."
 
 
-def title(accession: str) -> str:
+def title(accession: str, facts: dict | None = None) -> str:
     """Named by its place where the library records one, by its accession otherwise.
 
     Imo's reading preference is names, not accessions. It is not applied where the name
     would have to be invented: a library whose deposit gives no locality is titled by the
     only identifier that is certainly its own.
     """
-    s = sample_facts(accession)
+    s = sample_facts(accession, facts)
     return f"{s.get('place') or accession} run viewer"
 
 
-def derive(accession: str) -> dict:
-    return {"title": title(accession), "lede": lede(accession),
-            "facts": sample_facts(accession)}
+def derive(accession: str, facts: dict | None = None) -> dict:
+    return {"title": title(accession, facts), "lede": lede(accession, facts),
+            "facts": sample_facts(accession, facts)}
 
 
 if __name__ == "__main__":  # a one-line check for a library, before a page exists
