@@ -2086,11 +2086,24 @@ function interval(iv) {
   // leaderboard rather than under it: a reader who scrolls the cards without seeing this
   // will read the host colours as claims about the sample.
   const hc = R.host_confidence_summary || {};
+  // ONE ROW'S IDENTITY WITH THAT ROW'S OWN ALIGNMENT LENGTH. The summary carries the
+  // maximum identity and the maximum aligned length as two independent maxima, and this
+  // sentence used to put them together: on the second production library that read
+  // "100.0% identity over 53 amino acids" when the 100% was a 21 aa alignment and the
+  // 53 aa belonged to a different subject. A pairing of two maxima is a subject that
+  // does not exist, and identity over a short alignment is a ratio of small integers,
+  // which is exactly why the length has to be the one that identity was measured over.
+  const best = (R.subjects || []).filter(r => r.median_identity_percent != null)
+    .sort((a, b) => (b.median_identity_percent - a.median_identity_percent) ||
+                    ((b.median_aligned_aa || 0) - (a.median_aligned_aa || 0)))[0];
   const warn = el('div', 'callout');
   warn.innerHTML = '<b>Read this before the colours below.</b> No residue subject is ' +
-    'close enough for its host to transfer. The best of all ' + hc.subjects + ' is ' +
-    num(hc.best_identity_percent, 1) + '% identity over ' + hc.best_aligned_aa +
-    ' amino acids, <b>' + hc['at_or_above_0.5'] + ' of ' + hc.subjects +
+    'close enough for its host to transfer. ' +
+    (best ? 'The closest of all ' + hc.subjects + ' reads ' +
+      num(best.median_identity_percent, 1) + '% identity over ' +
+      best.median_aligned_aa + ' amino acids, '
+      : 'Not one of the ' + hc.subjects + ' carries an identity, ') +
+    '<b>' + hc['at_or_above_0.5'] + ' of ' + hc.subjects +
     '</b> clear half confidence, and the median is ' + num(hc.median, 2) +
     '. The host groups below label a database record. The surveillance question has ' +
     'run past the edge of what the references answer, which is itself the ' +
