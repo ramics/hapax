@@ -106,6 +106,15 @@ def enrich(cfg: Config, out: Path, repo: Path, seed: int) -> list[dict]:
              "--r1", cfg.inputs["r1"], "--r2", cfg.inputs["r2"],
              *(["--trim-r2", cfg.fact("trim_r2")]
                if cfg.fact("trim_r2") is not None else []),
+             # HOW MANY MATES THE MAP-BACK STREAMS, stated rather than left at the
+             # script's 0, which is the whole library. Every other stage of the run reads
+             # one seed's block of this many pairs, and a mappy pass over 11.6 M pairs is
+             # about half an hour per seed against about a minute here. The script records
+             # what it streamed under `mates_actually_streamed`, so the operating point
+             # travels with the depth. It streams from the head of each file rather than
+             # from the seed's block, so this read support is one per-contig depth and not
+             # a per-seed estimate.
+             "--map-limit", cfg.run.get("pairs", 200_000),
              # A file, and a work directory beside it: this script writes the path it is
              # given rather than a name of its own inside it, and `--work` is required.
              "--work", out / "work" / "workup",
