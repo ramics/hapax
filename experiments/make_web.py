@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import platform
 import random
@@ -4685,14 +4686,30 @@ const {chromium} = require('playwright');
 """
 
 
+def _render_check_dir() -> Path:
+    """Where to put the check script, which decides whether it can find playwright.
+
+    Node resolves a bare `require` from the SCRIPT's directory upward, not from the
+    working directory. The script used to be written beside the page, which on any real
+    run is a run directory under /tmp with no node_modules above it: `npm install
+    playwright` in the checkout, which is where anyone would run it, then had no effect
+    and the check reported itself as unavailable. So the script goes where the module is
+    installed, and beside the page only when nothing in the checkout can hold it.
+    """
+    for candidate in (ROOT, Path.cwd()):
+        if (candidate / "node_modules" / "playwright").exists():
+            return candidate
+    return ROOT if os.access(ROOT, os.W_OK) else Path.cwd()
+
+
 def render_check(page_path: Path) -> dict | None:
     """Run the written page; None where no browser is available, and the build says so."""
-    tmp = page_path.parent / ".render_check.js"
+    tmp = _render_check_dir() / ".render_check.js"
     try:
         tmp.write_text(RENDER_CHECK)
         r = subprocess.run(["node", str(tmp), str(page_path.resolve())],
                            capture_output=True, text=True, timeout=120)
-    except (FileNotFoundError, subprocess.TimeoutExpired):
+    except (FileNotFoundError, subprocess.TimeoutExpired, OSError):
         return None
     finally:
         tmp.unlink(missing_ok=True)
