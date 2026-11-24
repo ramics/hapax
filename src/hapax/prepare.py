@@ -30,13 +30,12 @@ from __future__ import annotations
 
 import json
 import shutil
-import subprocess
 import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from . import tools
+from . import scripts, tools
 from .assembly_input import rename_megahit, trim_mate2
 from .measure import measure_to
 from .config import Config, ConfigError
@@ -82,13 +81,20 @@ class Prepared:
         }
 
 
-def _run(cmd: list[str], cwd: Path, what: str) -> str:
+def _run(repo: Path, name: str, args: list, what: str, out: Path) -> str:
+    """One declared script through `hapax.scripts`, its code record kept in the run.
+
+    The record goes to `script_calls.jsonl` in the run directory, so a run that assembled
+    its own library names the assembler driver's hash and every module it imports.
+    """
     started = time.time()
-    proc = subprocess.run([str(c) for c in cmd], cwd=cwd, capture_output=True, text=True)
+    proc, code = scripts.run(repo, name, args)
+    with open(out / "script_calls.jsonl", "a") as fh:
+        fh.write(json.dumps({"step": what, **code}) + "\n")
     if proc.returncode != 0:
         raise PrepareError(
             f"{what} failed after {time.time() - started:.0f}s:\n"
-            f"  {' '.join(str(c) for c in cmd)}\n{proc.stdout[-2000:]}\n{proc.stderr[-3000:]}")
+            f"  {' '.join(code['argv'])}\n{proc.stdout[-2000:]}\n{proc.stderr[-3000:]}")
     return proc.stdout
 
 
@@ -199,13 +205,13 @@ def assemble(cfg: Config, r1: Path, r2: Path | None, trim_r2: int, work: Path,
 
     found = tools.resolve_all(cfg, ("megahit", "minimap2"))
     megahit, minimap2 = found["megahit"], found["minimap2"]
-    _run([sys.executable, "-I", repo / "experiments/path_settings.py", "--seed", 1,
+    _run(repo, "path_settings.py", ["--seed", 1,
           "--stages", "assemble", "--arms", "baseline",
           "--reads", asm_in / f"{cfg.label}_1.fq", "--r2", asm_in / f"{cfg.label}_2.fq",
           "--megahit", megahit, "--minimap2", minimap2,
           "--threads", cfg.threads, "--no-truth-panel",
           "--work", work, "--out", out / "assembly"],
-         repo, "assembling the library with MEGAHIT")
+         "assembling the library with MEGAHIT", out)
 
     final = asm_dir / "final.contigs.fa"
     if not (final.exists() and final.stat().st_size):
@@ -240,7 +246,7 @@ def split(cfg: Config, contigs: Path, work: Path, out: Path, repo: Path) -> dict
 
     result = out / "contig_identification.json"
     if not result.exists():
-        _run([sys.executable, "-I", repo / "experiments/classify_contigs.py", "--seed", 1,
+        _run(repo, "classify_contigs.py", ["--seed", 1,
               "--contigs", contigs,
               "--k2-db", cfg.database("classifier"),
               "--dmnd", cfg.database("protein"),
@@ -250,7 +256,7 @@ def split(cfg: Config, contigs: Path, work: Path, out: Path, repo: Path) -> dict
               # one container written where a parameter goes. See hapax.tools.
               "--classify-bin", tools.resolve(cfg, "classify"),
               "--diamond-bin", tools.resolve(cfg, "diamond")],
-             repo, "identifying the contigs")
+             "identifying the contigs", out)
 
     asm_dir = contigs.parent
     piles = {"identified_norrna": asm_dir / "sample_contigs_identified_norrna.fa",

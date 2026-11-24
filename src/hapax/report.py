@@ -23,11 +23,11 @@ from __future__ import annotations
 import json
 import re
 import shutil
-import subprocess
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+from . import scripts
 from .registry import Stage
 from .schemas import validate
 from .stages import ORPHAN_REPORT_INPUTS, R, SECTIONS
@@ -214,10 +214,11 @@ def build(rundir: Path, out: Path | None = None, seed: int = 1,
     repo = Path(repo) if repo else _repo()
     page = descriptor(rundir, rundir / "page_descriptor.json")
     out = Path(out) if out else rundir / "report.html"
-    proc = subprocess.run(
-        [sys.executable, str(repo / "experiments/make_web.py"), str(page),
-         "--rundir", str(rundir), "--out", str(out), "--seed", str(seed)],
-        cwd=repo, capture_output=True, text=True)
+    # Without -I, as before: the generator was always started this way, and isolation is
+    # a change to what it can import that this refactor does not make.
+    proc, generator = scripts.run(
+        repo, "make_web.py", [page, "--rundir", rundir, "--out", out, "--seed", seed],
+        isolated=False)
     sys.stderr.write(proc.stderr)
     sys.stdout.write(proc.stdout)
     if proc.returncode != 0:
@@ -230,6 +231,7 @@ def build(rundir: Path, out: Path | None = None, seed: int = 1,
     check = _render_check(repo, out)
     (rundir / "render_check.json").write_text(json.dumps({
         "page": str(out), "seed": seed, "allow_partial": allow_partial,
+        "generator": generator,
         "sections_declared": SECTIONS,
         "sections_not_drawable": sorted(absent),
         # Enrichments this run did not produce, each with what the page shows instead.
