@@ -1,0 +1,45 @@
+{
+  "script": "experiments/crossplant_stage.py",
+  "git_sha": "e7ab28f1637be82128a1d2f867e852b03a29b7fb",
+  "tree_dirty": false,
+  "script_sha256": "8b4c84ec1f428326",
+  "modules_sha256": {
+    "experiments/loud.py": "f4092b57016034c2",
+    "experiments/provenance.py": "81bdbf9062586c1e",
+    "experiments/stage_refs.py": "af1369c8613aa944"
+  },
+  "code_sha256": "f58d56615f1eefb0",
+  "seed": 4,
+  "parameters": {
+    "seed": 4,
+    "library": "SRR23702504",
+    "stages": [
+      "queries"
+    ],
+    "contig_dir": "/opt/hapax/stage/wk/asm_baseline",
+    "run_dir": null,
+    "arm": "reads",
+    "window": null,
+    "references": null,
+    "work": "/opt/hapax/stage/wk/hapax_shared/crossplant_work",
+    "out": "/opt/hapax/stage/wk/hapax_shared/crossplant",
+    "preflight": false
+  },
+  "consulted": [
+    {
+      "role": "cross-plant panel",
+      "path": "/opt/hapax/results/crossplant/panel.tsv",
+      "state": "searched",
+      "queries": 536,
+      "hits": 530
+    },
+    {
+      "role": "this run's contigs",
+      "path": "/opt/hapax/stage/wk/asm_baseline",
+      "state": "searched",
+      "queries": 131476,
+      "hits": 131476
+    }
+  ],
+  "wall_seconds": 15.21
+}

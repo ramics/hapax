@@ -1,0 +1,29 @@
+{
+  "script": "experiments/trim_mate2.py",
+  "git_sha": "e7ab28f1637be82128a1d2f867e852b03a29b7fb",
+  "tree_dirty": false,
+  "script_sha256": "8617ef5fdcac83c5",
+  "modules_sha256": {
+    "experiments/library_facts.py": "60b39cdbb3cbd34f",
+    "experiments/provenance.py": "81bdbf9062586c1e"
+  },
+  "code_sha256": "783e700a948761ea",
+  "parameters": {
+    "r1": "/opt/hapax/data/yeongdok/SRR23702504_1.fastq.gz",
+    "r2": "/opt/hapax/data/yeongdok/SRR23702504_2.fastq.gz",
+    "library": "SRR23702504",
+    "trim_r2": 0,
+    "out_dir": "/opt/hapax/stage/asm_in",
+    "prefix": "SRR23702504",
+    "manifest": "/opt/hapax/out/prod_SRR23702504/trim_manifest.json"
+  },
+  "pairs": 32125614,
+  "trim_r2": 0,
+  "mate2_shorter_than_the_prefix": 0,
+  "mate2_shorter_note": "written as a single N so the record count matches mate 1",
+  "outputs": {
+    "/opt/hapax/stage/asm_in/SRR23702504_1.fq": 12420293820,
+    "/opt/hapax/stage/asm_in/SRR23702504_2.fq": 12420293820
+  },
+  "wall_seconds": 174.7
+}
