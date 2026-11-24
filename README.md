@@ -20,32 +20,56 @@ abundance above roughly one in a million.
 ## Install
 
 ```
-python3 -m pip install -r requirements.txt
-python3 -m pytest
+conda env create -f environment.yml && conda activate hapax
+pip install .
 ```
 
-The tests run on the Python packages alone. A real run also drives BLAST, DIAMOND, Kraken2
-and foldseek, pinned in [`TOOLS.md`](TOOLS.md).
+That installs the Python side and the external binaries hapax drives, pinned in
+[`TOOLS.md`](TOOLS.md). The unit suite needs none of them:
+
+```
+python3 -m pip install -r requirements.txt && python3 -m pytest
+```
+
+## Reference databases
+
+```
+hapax fetch-db --all --dest data/db
+```
+
+Downloads SILVA, the four Kraken2 databases, the two protein indexes and Pfam-A, and
+prints the `[databases]` table to paste into a run configuration. Every download is
+recorded in `fetch_manifest.json` with its URL, byte count and digest, because which index
+a run consulted is half of what its removal fraction means. SILVA is checked against the
+byte count in [`data/MANIFEST.md`](data/MANIFEST.md) and a mismatch stops the fetch: a
+changed release is a changed operating point. The current-release pointers have their
+identity recorded instead, since no stable archive URL exists for them. Three keys cannot be
+fetched and are refused with that reason, because the run produces them from the reads it
+was given.
+
+`hapax fetch-db --dry-run --all` prints the inventory, the URLs and which sizes are
+asserted, and downloads nothing.
 
 ## Run
 
 ```
-python3 hapax.py run SAMPLE_1.fastq.gz SAMPLE_2.fastq.gz \
-    --seed N --out RUNDIR --library ACCESSION --trim-r2 K \
-    --contigs IDENTIFIED_RRNA.fa IDENTIFIED_OTHER.fa \
-    --unidentified-contigs UNIDENTIFIED.fa \
-    --identified-contigs IDENTIFIED_OTHER.fa \
-    --rrna-contigs IDENTIFIED_RRNA.fa \
-    --assembly ASSEMBLY.fa \
-    --cross-sample-ref OTHER_SAMPLES.fa \
-    --spacers SPACERS.fa
-
-python3 experiments/make_web.py results/web/pages/SAMPLE.json   # run viewer
+hapax run --config run.toml --out RUNDIR --report
 ```
 
-Each sample's own files are passed explicitly. Add `--plan` to print the stages and exit;
-`python3 hapax.py run --help` lists every option. hapax checks all inputs, indexes and tools
-up front and exits 2 if one is missing.
+One TOML file carries the inputs, the databases, the operating points and the library's
+own facts. A value that is a property of one sequencing run, such as the mate-2 trim, is
+either measured by the run or stated in the configuration with how it was established;
+there is no default, because a trim of 14 applied to a library with no non-template prefix
+deletes fourteen real bases from every mate in the direction of less recognition.
+
+```
+hapax stages --config run.toml    # the stages, their order and what each fills
+hapax report RUNDIR               # rebuild the page from a finished run
+```
+
+The report refuses to build when a section has no file behind it, so a page that renders
+is a page whose every section came from this run. `--allow-partial` builds anyway and
+marks the page as incomplete.
 
 ## More
 

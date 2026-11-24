@@ -22,6 +22,7 @@ import argparse
 import importlib.util
 import json
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -109,7 +110,11 @@ def legacy_argv(cfg: Config, r1: Path, r2: Path | None, out: Path,
     for name, flag in (("rrna", "--silva"), ("classifier", "--k2-dbs"),
                        ("spacers", "--spacers"), ("pfam", "--pfam")):
         if name in cfg.databases:
-            argv += [flag, str(cfg.database(name))]
+            # `--k2-dbs` is the cascade's TIER LIST and its order is the tier order, so
+            # `classifier` may name several databases. One database removes 42.8%, 21.7%
+            # or 3.5% of the same library depending only on its confidence setting, so a
+            # config able to name only one could not reproduce a committed tier table.
+            argv += [flag, *[str(p) for p in cfg.database_list(name)]]
     # `--dmnd` is an ORDERED pair, viral then Swiss-Prot, and the distance stage refuses a
     # list of any other length: it reports which of the two produced the nearest relative,
     # and a single index cannot answer that. The order is the config's two keys rather
@@ -194,14 +199,41 @@ def cmd_run(args) -> int:
     r1 = Path(args.reads[0]) if args.reads else Path(cfg.inputs["r1"])
     r2 = (Path(args.reads[1]) if len(args.reads) > 1
           else Path(cfg.inputs["r2"]) if cfg.inputs.get("r2") else None)
+    # EVERY ABSENCE IN ONE REFUSAL, before anything is created. The tools were resolved
+    # in one pass for the stated reason that a machine with three missing binaries is a
+    # machine to fix once, and the same argument crosses the category boundary: a reads
+    # path with a typo in it used to be found by the driver's own preflight, one pass
+    # LATER than the tool check, so a caller with a new machine and a new config fixed
+    # three installs, re-ran, and then learned that their FASTQ path was wrong. The
+    # driver still preflights, since it knows which stage needs what; this is the subset
+    # that can be checked from the config alone.
+    absent = [f"[inputs] {k} = {p} does not exist"
+              for k, p in (("r1", r1), ("r2", r2)) if p is not None and not p.exists()]
+    for key in sorted(cfg.databases):
+        for path in cfg.database_list(key):
+            if not path.exists():
+                absent.append(f"[databases] {key} = {path} does not exist")
+    try:
+        # The external binaries, found once for the whole run: two tiers of one cascade
+        # run by two builds of Kraken2 is an operating point nobody could write down.
+        binaries = tools.resolve_all(cfg, ("classify", "diamond", "minimap2"))
+    except ConfigError as e:
+        if not absent:
+            raise
+        binaries = {}
+        # `resolve_all` already collects its own absences into one message, so it is
+        # split back into lines here rather than appended as a block: a list a reader
+        # works down should be one list.
+        absent += str(e).splitlines()
+    if absent:
+        raise ConfigError(
+            "refusing to start, because the run would not have done what was asked:\n  "
+            + "\n  ".join(absent))
     out.mkdir(parents=True, exist_ok=True)
     work = Path(args.work).resolve() if args.work else out / "work"
     prepared = None
     if not args.skip_prepare:
         prepared = prepare(cfg, r1, r2, out, work, repo_root())
-    # The external binaries, found once for the whole run: two tiers of one cascade run by
-    # two builds of Kraken2 is an operating point nobody could write down.
-    binaries = tools.resolve_all(cfg, ("classify", "diamond", "minimap2"))
     argv = legacy_argv(cfg, r1, r2, out, stages, prepared, binaries)
     # The translation is written into the run directory before the run, so that a run
     # directory says what command produced it even when the config has since changed.
@@ -277,6 +309,52 @@ def cmd_report(args) -> int:
         return 1
 
 
+def cmd_fetch_db(args) -> int:
+    """Download the reference sets a run consults, and record what was downloaded.
+
+    PLAN.md's definition of done opens with this command. Until it existed the four
+    URLs and the two asserted byte counts lived only in an EC2 UserData script, so the
+    first step of a run on new water was to read a shell heredoc.
+    """
+    from . import fetchdb
+
+    keys = list(fetchdb.BY_KEY) if args.all else list(args.only or [])
+    if not keys:
+        print("hapax fetch-db: name a set with --only, or --all. Known sets:",
+              file=sys.stderr)
+        for refset in fetchdb.INVENTORY:
+            print(f"  {refset.key:<11} {refset.what}", file=sys.stderr)
+        for key, why in fetchdb.NOT_FETCHABLE.items():
+            print(f"  {key:<11} NOT FETCHABLE: {why.split('.')[0]}.", file=sys.stderr)
+        return 2
+    # The binary that builds the protein indexes. A stated path is the override and is
+    # used as it is; otherwise it is found on PATH, and left as None when it is not
+    # there, so that fetching the sets that need no DIAMOND still works on a machine
+    # that has none. The refusal then names only the set that actually needed it.
+    diamond = args.diamond or shutil.which("diamond")
+    try:
+        manifest = fetchdb.fetch(keys, Path(args.dest), repo_root(),
+                                 threads=args.threads,
+                                 diamond=Path(diamond) if diamond else None,
+                                 dry_run=args.dry_run)
+    except fetchdb.FetchError as e:
+        print(f"hapax fetch-db: {e}", file=sys.stderr)
+        return 1
+    if args.dry_run:
+        for key, plan in manifest["sets"].items():
+            print(f"{key}: {plan['what']}")
+            print(f"  why      {plan['why']}")
+            print(f"  fills    {plan['fills']}"
+                  f"{'  (already present)' if plan['present'] else ''}")
+            for url, pinned in zip(plan["urls"], plan["pinned_bytes"]):
+                size = f"{pinned:,} bytes, asserted" if pinned else "size recorded"
+                print(f"  {url}  [{size}]")
+        return 0
+    print(fetchdb.config_block(manifest))
+    print(f"recorded in {Path(args.dest) / 'fetch_manifest.json'}", file=sys.stderr)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(
         prog="hapax",
@@ -313,10 +391,25 @@ def main(argv: list[str] | None = None) -> int:
     s = sub.add_parser("stages", help="print the stages, their order and what they fill")
     s.add_argument("--config", type=Path, default=None)
 
+    f = sub.add_parser("fetch-db", help="download the reference sets a run consults")
+    f.add_argument("--all", action="store_true", help="every fetchable set")
+    f.add_argument("--only", nargs="+", default=None, metavar="SET",
+                   help="named sets only, e.g. --only rrna protein")
+    f.add_argument("--dest", type=Path, default=Path("data/db"),
+                   help="where the sets are written. Default: data/db")
+    f.add_argument("--threads", type=int, default=4)
+    f.add_argument("--diamond", type=Path, default=None,
+                   help="the diamond binary that builds the protein indexes. A .dmnd "
+                        "built by one version is not readable by another, so this is "
+                        "the same binary the run will search with")
+    f.add_argument("--dry-run", action="store_true",
+                   help="print the inventory, the URLs and which sizes are asserted, "
+                        "and download nothing")
+
     args = ap.parse_args(argv)
     try:
-        return {"run": cmd_run, "report": cmd_report, "stages": cmd_stages}[
-            args.command](args)
+        return {"run": cmd_run, "report": cmd_report, "stages": cmd_stages,
+                "fetch-db": cmd_fetch_db}[args.command](args)
     except (ConfigError, RegistryError, PrepareError) as e:
         print(f"hapax {args.command}: {e}", file=sys.stderr)
         return 2

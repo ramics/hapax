@@ -356,12 +356,24 @@ class Run:
         # exist it would quietly measure against the wrong indexes and report the run's
         # arguments in the manifest - the index named in the provenance not being the one
         # consulted, which is the failure this repo already had to withdraw a figure for.
-        if a.k2_dbs:
-            argv += ["--k2-dbs", *[str(d) for d in a.k2_dbs]]
-        if a.silva:
-            argv += ["--silva", *[str(d) for d in a.silva]]
-        if a.dmnd:
-            argv += ["--dmnd", *[str(d) for d in a.dmnd]]
+        #
+        # AN EMPTY LIST IS NOW A REFUSAL, not a flag left off. Passing nothing has the
+        # same end as passing the wrong index, because the script below then uses its own
+        # default: the tier runs, removes some fraction of the library, and the number is
+        # reported against an index nobody chose. So each one is named here with the
+        # config key that supplies it.
+        for flag, value, key in (("--k2-dbs", a.k2_dbs, "classifier"),
+                                 ("--silva", a.silva, "rrna"),
+                                 ("--dmnd", a.dmnd, "protein and sprot")):
+            if not value:
+                return self.record("cascade", "failed",
+                                   reason=f"{flag} was given no path. It has no default "
+                                          f"because the index is half of what a removal "
+                                          f"fraction means, and leaving the flag off "
+                                          f"makes the tier run against the stage "
+                                          f"script's own default instead. Set "
+                                          f"[databases] {key} in the run config")
+            argv += [flag, *[str(d) for d in value]]
         if a.classify_bin:
             argv += ["--classify-bin", str(a.classify_bin)]
         if a.diamond_bin:
@@ -555,10 +567,17 @@ class Run:
         # passed before, so the ladder measured Berlin's subtrahend for any library. The
         # spike genome is sample-specific too: it is a clean holdout only if it is absent
         # from this sample's assembly.
+        # The two index sets are in this list for the same reason as the sample's files:
+        # the ladder reports sensitivity AT a divergence, and that number is read against
+        # whatever index the ladder's tier 1 consulted. An empty list here would send the
+        # stage script to its own defaults, so the ladder would be calibrated against one
+        # index and the cascade run against another, with nothing on the page saying so.
         absent = [f for f, v in (("--spike-genome", a.spike_genome),
                                  ("--contigs", a.contigs),
                                  ("--unidentified-contigs", a.unidentified_contigs),
-                                 ("--cross-sample-ref", a.cross_sample_ref)) if not v]
+                                 ("--cross-sample-ref", a.cross_sample_ref),
+                                 ("--k2-dbs", a.k2_dbs),
+                                 ("--dmnd", a.dmnd)) if not v]
         if absent:
             return self.record("calibration", "failed",
                                reason=f"the ladder needs this sample's {absent}")
@@ -718,8 +737,20 @@ class Run:
         # exists the stage ran and on every other machine it exited with the path. Which
         # profile library the domain calls came from is an operating point, so it is given
         # rather than found.
-        if a.pfam:
-            argv += ["--pfam", str(a.pfam)]
+        #
+        # UNSET IS A REFUSAL HERE, so that the message names the setting rather than a
+        # path. Without the flag the script exits on `data/pfam/Pfam-A.hmm`, a path that
+        # exists on one machine, and a reader of that message has to find out for
+        # themselves that the file is Pfam-A and where it comes from.
+        if not a.pfam:
+            return self.record("divergent", "failed",
+                               reason="--pfam was not given. The per-gene workup scans "
+                                      "ORFs against a profile library at the curators' "
+                                      "gathering cutoffs, and which library that was is "
+                                      "an operating point, so there is no default. Set "
+                                      "[databases] pfam in the run config; "
+                                      "`hapax fetch-db --only pfam` downloads it")
+        argv += ["--pfam", str(a.pfam)]
         return self.call("divergent", "divergent_known.py", argv,
                          {f"divergent_known_s{a.seed}.json":
                               out / f"divergent_known_s{a.seed}.json"},
@@ -1757,18 +1788,30 @@ def main() -> int:
                         "recurrence (per-read report) and the ladder")
     r.add_argument("--spacers", type=Path, default=None,
                    help="CRISPR spacers extracted from this sample's assemblies")
-    r.add_argument("--k2-dbs", type=Path, nargs="+",
-                   default=[ROOT / "data/k2_viral", ROOT / "data/k2_standard08",
-                            ROOT / "data/k2_pluspf08", ROOT / "data/k2_pluspf16"])
-    r.add_argument("--silva", type=Path, nargs="*",
-                   default=[ROOT / "data/silva/SSU.fa.gz", ROOT / "data/silva/LSU.fa.gz"])
-    r.add_argument("--dmnd", type=Path, nargs="*",
-                   default=[ROOT / "data/prot/viral.dmnd", ROOT / "data/prot/sprot.dmnd"])
+    # WHICH INDEX WAS CONSULTED IS AN OPERATING POINT, SO IT HAS NO DEFAULT. These three
+    # defaulted to paths under this checkout's own `data/`, which is the same fault as the
+    # trim written as `default=14` and the `classify` path into one container, applied to
+    # the quantity that matters most: a removal fraction means nothing without the index
+    # that produced it, one Kraken2 database removes 42.8%, 21.7% or 3.5% of the same
+    # library depending only on its confidence setting, and this repo has already had to
+    # withdraw a figure whose index silently differed from the one named. A caller who
+    # forgets the flag now gets a refusal naming the config key instead of a number
+    # measured against whatever those paths happened to hold. `--assembly` above already
+    # carries this reasoning; it was applied to one sample's file and not to the indexes.
+    r.add_argument("--k2-dbs", type=Path, nargs="+", default=[],
+                   help="the classifier tiers, IN TIER ORDER. No default: the index is "
+                        "half of what a removal fraction means")
+    r.add_argument("--silva", type=Path, nargs="*", default=[],
+                   help="the ribosomal reference. No default, for the same reason")
+    r.add_argument("--dmnd", type=Path, nargs="*", default=[],
+                   help="the protein indexes, viral then Swiss-Prot. No default, and the "
+                        "distance stage requires exactly these two in this order: it "
+                        "reports which of them produced the nearest relative")
     r.add_argument("--pfam", type=Path, default=None,
                    help="the Pfam-A HMM library the per-gene distance workup scans ORFs "
-                        "against, at the curators' gathering cutoffs. Left unset, the "
-                        "script's own default path under data/ is used, which exists on "
-                        "one machine")
+                        "against, at the curators' gathering cutoffs. No default: which "
+                        "profile library the domain calls came from is an operating "
+                        "point, and the `divergent` stage refuses without it")
     r.add_argument("--spike-genome", type=Path, default=None,
                    help="REQUIRED with --calibrate, no default: it was chosen as absent "
                         "from Berlin's assembly, which says nothing about another sample's. "

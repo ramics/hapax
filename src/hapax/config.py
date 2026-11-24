@@ -105,7 +105,28 @@ class Config:
                 f"index cannot be given one by this code: which index is consulted is "
                 f"the operating point, and a run whose index was guessed is a number "
                 f"without one.")
-        return Path(self.databases[name]).expanduser()
+        value = self.databases[name]
+        if isinstance(value, list):
+            raise ConfigError(
+                f"[databases] {name} names {len(value)} paths in {self.path}, and this "
+                f"caller asked for one. Use database_list where several are meant: a "
+                f"set of indexes silently reduced to its first member is a different "
+                f"operating point from the one the config states.")
+        return Path(value).expanduser()
+
+    def database_list(self, name: str) -> list[Path]:
+        """One or several paths for a key, in the order the config gives them.
+
+        The order is load-bearing where a key names a cascade's tiers, so this preserves
+        it and never sorts. A single string is a list of one rather than an error,
+        because the common case is one index and a config should not have to say `[...]`
+        to name it.
+        """
+        value = self.databases[name] if name in self.databases else None
+        if value is None:
+            self.database(name)          # raises with the reason
+        values = value if isinstance(value, list) else [value]
+        return [Path(v).expanduser() for v in values]
 
 
 def load(path: Path) -> Config:
