@@ -1,7 +1,7 @@
 {
  "what_this_is": "the end-to-end fixture: a ten-thousand-pair library carrying all three of the report's output classes, with toy indexes built from its own sequence. It is a test of whether every report section is filled, and it is NOT a benchmark: no number from it belongs in results/.",
  "script": "tests/fixtures/make_fixture.py",
- "script_sha256": "a6af18af0e9dfa2ec8efb75217c4ca69cbb190030ab54368a89c1b4b5e04cf45",
+ "script_sha256": "7e72d695d7dc26fc777b6fec6b72fbc5e47e6f7dbd5d259e0fcd94f336651807",
  "seed": 1,
  "built_on": "2026-11-24",
  "accessions": {
@@ -113,12 +113,12 @@
    "sha256_16": "95b84568b217d250"
   },
   "reads/fixture_R1.fastq.gz": {
-   "bytes": 396447,
-   "sha256_16": "ea77e75f0eec44a8"
+   "bytes": 403584,
+   "sha256_16": "d29fbd2f45ab318f"
   },
   "reads/fixture_R2.fastq.gz": {
-   "bytes": 394428,
-   "sha256_16": "4707e98ab2cff015"
+   "bytes": 401404,
+   "sha256_16": "0c3f080194a0e9a6"
   }
  }
 }

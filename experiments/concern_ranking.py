@@ -66,6 +66,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from provenance import rel
 from subtract_known import provenance
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -480,7 +481,7 @@ def main() -> None:
                                  "aligned_aa_full": ALIGN_FULL,
                                  "aligned_aa_none": ALIGN_NONE},
         "host_table": {"groups": groups,
-                       "source": str(args.table.relative_to(ROOT)),
+                       "source": rel(args.table),
                        "subjects_no_rule_placed": unplaced,
                        "subjects_total": len(rows),
                        "coverage_note": "an unplaced name is grouped unknown_host and "

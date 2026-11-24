@@ -71,6 +71,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import library_facts
 
+from provenance import rel  # noqa: E402
 from subtract_known import provenance  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -421,7 +422,7 @@ def main() -> None:
                        "have seen. Untargeted shotgun is reported as insensitive for "
                        "human pathogens at wastewater concentrations, so absence here is "
                        "much weaker evidence than absence from a targeted assay"),
-        "panel_source": str(args.panel.relative_to(ROOT)),
+        "panel_source": rel(args.panel),
         "seed": args.seed,
         "wall_seconds": round(time.perf_counter() - t_start, 1),
         **provenance(__file__),

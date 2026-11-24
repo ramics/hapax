@@ -332,7 +332,16 @@ def write_fastq(path: Path, reads: list[tuple[str, str, str]], mate: int) -> Non
     # mtime=0 so that a rebuild is byte-identical: gzip stamps the wall clock into its
     # header otherwise, and a fixture whose checksum changes on every rebuild cannot be
     # pinned by the manifest that exists to pin it.
-    payload = "".join(f"@{name}/{mate}\n{seq}\n+\n{qual}\n" for name, seq, qual in reads)
+    # THE MATE GOES AFTER THE SPACE, NOT INTO THE NAME. Both mates of a pair carry the
+    # same identifier in real Illumina output, and every tool downstream takes the token
+    # before the first space as the read's name. Written as `name/1`, the mate suffix
+    # became part of the name - and Kraken2, which strips a trailing /1 or /2 when it is
+    # given paired input, then returned a set of names that matched nothing else in the
+    # run. The cascade's own accounting caught it, with a removed set larger than the
+    # block it was removing from and a negative residue, which is the impossible case an
+    # assertion is for.
+    payload = "".join(f"@{name} {mate}:N:0:1\n{seq}\n+\n{qual}\n"
+                      for name, seq, qual in reads)
     with open(path, "wb") as raw, gzip.GzipFile(fileobj=raw, mode="wb", compresslevel=9,
                                                 mtime=0) as fh:
         fh.write(payload.encode())
