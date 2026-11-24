@@ -1032,10 +1032,12 @@ class Run:
         one that only the residue points at is a relative of something in the database and
         nothing more until it assembles.
 
-        EVERY SUBJECT CARRIES ITS E-VALUE DISTRIBUTION. A 107 nt query against a large
-        index finds about 40 bases at about 88% by chance, and the chance band reads
-        identically on residue and identified reads, so a subject built out of chance hits
-        would look exactly like a divergent strain without one.
+        EVERY SUBJECT CARRIES ITS E-VALUE DISTRIBUTION. A short nucleotide query against a
+        large index finds about 40 bases at about 88% by chance - measured on SRR23973193's
+        107 nt reads, and quoted with that library because a read length is a fact about one
+        sequencing run - and the chance band reads identically on residue and identified
+        reads, so a subject built out of chance hits would look exactly like a divergent
+        strain without one.
         """
         p = self.dir / "reads.jsonl"
         if not p.exists():
@@ -1131,10 +1133,17 @@ class Run:
                            "from a database and score ordering tracks database proximity, "
                            "so the ordering here is by how many residue reads point at the "
                            "subject",
-            "caveat": "a 107 nt query against a large index finds about 40 bases at about "
-                      "88% by chance and the chance band reads identically on residue and "
-                      "identified reads, so every row carries its worst E-value as well as "
-                      "its median",
+            # THE 107 nt IS BERLIN'S READ LENGTH, AND THIS FIELD TRAVELS TO EVERY
+            # LIBRARY. Written as a bare property of "a query", it told a 2 x 150 library's
+            # own report that its reads were 107 nt. The chance band was measured on the
+            # discriminating dataset and the measurement is still the right one to quote;
+            # what it cannot do is describe this run's reads, so it is quoted with the
+            # library it came from, which is the same rule the trim follows.
+            "caveat": "a short nucleotide query against a large index finds a chance-level "
+                      "partial match - about 40 bases at about 88% identity, measured on "
+                      "SRR23973193's 107 nt reads - and the chance band reads identically "
+                      "on residue and identified reads, so every row carries its worst "
+                      "E-value as well as its median",
         }
         (self.dir / "strains.json").write_text(json.dumps(out, indent=2))
         multi = [r for r in rows if r["residue_reads"] >= 3]
