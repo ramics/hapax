@@ -143,7 +143,7 @@ def legacy_argv(cfg: Config, r1: Path, r2: Path | None, out: Path,
     # `cmd_run` rather than here so that this function stays a pure translation of the
     # config and the unit suite keeps running with no external tool installed (TOOLS.md).
     for name, flag in (("classify", "--classify-bin"), ("diamond", "--diamond-bin"),
-                       ("minimap2", "--minimap2")):
+                       ("minimap2", "--minimap2"), ("cmscan", "--cmscan-bin")):
         if (binaries or {}).get(name):
             argv += [flag, str(binaries[name])]
     if "pairs" in cfg.run:
@@ -236,7 +236,15 @@ def cmd_run(args) -> int:
     try:
         # The external binaries, found once for the whole run: two tiers of one cascade
         # run by two builds of Kraken2 is an operating point nobody could write down.
-        binaries = tools.resolve_all(cfg, ("classify", "diamond", "minimap2"))
+        # `cmscan` is Infernal's, and only the rfam field uses it. Resolved only when
+        # that field is requested, so a machine with no Infernal still runs everything
+        # else: requiring it always would refuse a run over a field the caller left out
+        # by name, and not requiring it when asked would let residue_report.py fall back
+        # to the one container path its default carries.
+        wanted = ["classify", "diamond", "minimap2"]
+        if "rfam" not in set(cfg.run.get("report_without") or []):
+            wanted.append("cmscan")
+        binaries = tools.resolve_all(cfg, tuple(wanted))
     except ConfigError as e:
         if not absent:
             raise

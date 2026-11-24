@@ -38,7 +38,10 @@ from .config import Config, ConfigError
 
 #: Tool name as `[tools]` and the registry of scripts spell it -> what to look for on
 #: PATH. `classify` has no PATH name of its own; see `_find_classify`.
-ON_PATH = {"diamond": "diamond", "minimap2": "minimap2", "megahit": "megahit"}
+ON_PATH = {"diamond": "diamond", "minimap2": "minimap2", "megahit": "megahit",
+           # Infernal's, for the rfam field of the per-read report. Resolved only when
+           # that field is requested; see cli.cmd_run.
+           "cmscan": "cmscan"}
 
 
 def _find_classify() -> Path | None:

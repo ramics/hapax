@@ -442,6 +442,13 @@ class Run:
             argv += ["--dmnd", *[str(d) for d in a.dmnd]]
         if a.diamond_bin:
             argv += ["--diamond-bin", str(a.diamond_bin)]
+        # Infernal's cmscan, for the rfam field only. Its script default is one
+        # container's layout (`/home/user/tools/inf/bin/cmscan`), which is the same fault
+        # as a default trim: it runs on the machine it was written on and fails elsewhere,
+        # here after the whole cascade. The field is either left out by name, in which
+        # case no binary is needed, or the caller resolved one.
+        if "rfam" not in without and a.cmscan_bin:
+            argv += ["--cmscan-bin", str(a.cmscan_bin)]
         if a.single_end:
             argv += ["--single-end"]
         if a.report_without:
@@ -1746,6 +1753,10 @@ def main() -> int:
                         "refuse. Costs twice the search time for the same answer, which "
                         "is cheaper than a second code path through the cascade")
     r.add_argument("--diamond-bin", type=Path, default=None)
+    # Resolved by the caller when the rfam field is requested, and absent otherwise: a
+    # machine with no Infernal can still run every other field, and must not be given a
+    # path that only exists somewhere else.
+    r.add_argument("--cmscan-bin", type=Path, default=None)
     r.add_argument("--classify-bin", type=Path, default=None,
                    help="Kraken2's raw `classify` binary, not the kraken2 wrapper")
     r.add_argument("--threads", type=int, default=4)

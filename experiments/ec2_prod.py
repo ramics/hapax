@@ -158,7 +158,16 @@ PAYLOAD_MODULES = ("hapax.py", "requirements.txt", "SPEC.md", "blind_spots.json"
                    # The two files that make `--oneshot`'s install the DOCUMENTED install
                    # rather than something this launcher assembled. The instance asserts
                    # both by name before it spends anything.
-                   "pyproject.toml", "environment.yml", "README.md")
+                   "pyproject.toml", "environment.yml", "README.md",
+                   # The renderer reads this one from the repo, not from the run
+                   # directory: the six fixed Methods rows, stored per accession, printed
+                   # "Not measured on this library" for any other. Nothing under
+                   # `results/` was in the payload, so the generator threw a
+                   # FileNotFoundError after all 14 stages of seed 1 had finished, and
+                   # `hapax run` correctly refused to write a page without its Methods
+                   # section. `tests/test_payload.py` derives this from the renderer's
+                   # own source rather than trusting the list.
+                   "results/web/methods.json")
 
 
 def payload_files(root: Path, library: str | None = None) -> list[str]:

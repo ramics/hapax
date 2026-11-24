@@ -30,7 +30,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from . import scripts
+from . import scripts, tools
 from .config import Config
 
 
@@ -76,6 +76,11 @@ def enrich(cfg: Config, out: Path, repo: Path, seed: int) -> list[dict]:
              "--strains", strains, "--contigs", contigs or "",
              "--pfam", pfam, "--dmnd-sprot", sprot,
              "--dmnd", cfg.database("protein"), "--threads", cfg.threads,
+             # Always passed, never left to the script's default, which is the layout of
+             # one container written where a parameter goes: `/home/user/tools/diamond`.
+             # On an instance that is not there, and the workup failed with a
+             # FileNotFoundError 11 stages into a paid run. Same rule as prepare.split.
+             "--diamond-bin", tools.resolve(cfg, "diamond"),
              # A file, and a work directory beside it: this script writes the path it is
              # given rather than a name of its own inside it, and `--work` is required.
              "--work", out / "work" / "workup",

@@ -47,6 +47,7 @@ writes that version into its own manifest; whether it changes a number is unmeas
 | SPAdes / metaSPAdes | v4.3.0 | `pair_ladder.py` |
 | PenguiN | 5.cf8933-MPI | `pair_ladder.py` |
 | Haploflow | not recorded | `pair_ladder.py` |
+| Infernal (`cmscan`) | not recorded | `residue_report.py`'s `rfam` field, and nothing else. **It is in neither `environment.yml` nor any staging script, so the documented install cannot run that field** — found when a production run's first seed finished with `--report-without rfam` and a tripwire asked why nothing passed `--cmscan-bin`. The field is therefore reported as not searched by name rather than as a zero, and `hapax run` resolves the binary only when the field is requested, so asking for it on a machine without Infernal is a refusal before the run starts instead of a container path that exists on one machine. Adding it to the install means pinning a version and re-running what the `rfam` field appears in. |
 
 `experiments/codon_assembler/` is the archived first direction and keeps its own
 dependencies (it also drives `seqkit`, `samtools` and `genomad`). Its Rust crate builds
