@@ -201,7 +201,8 @@ def test_reads_to_report_in_one_command(tmp_path):
     run = subprocess.run(
         [*cmd, "run", "--config", str(config),
          str(FIXTURE / "reads/fixture_R1.fastq.gz"),
-         str(FIXTURE / "reads/fixture_R2.fastq.gz"), "--out", str(out)],
+         str(FIXTURE / "reads/fixture_R2.fastq.gz"), "--out", str(out),
+         "--report"],
         capture_output=True, text=True, timeout=5400, cwd=ROOT)
     assert entry is not None, (
         "there is no installed `hapax` entry point; `pip install .` is the whole install "
@@ -261,16 +262,35 @@ def test_reads_to_report_in_one_command(tmp_path):
 #: committed config carrying a path from someone's machine is how a sample fact became a
 #: default in roughly twenty scripts (CLAUDE.md).
 CONFIG = """\
-# The fixture, as one run configuration. Nothing here is hand-measured: `trim_r2` is
-# absent on purpose, so the run has to measure it off the reads and write what it found
-# into the run directory (PLAN.md 2, "config, not edited constants").
+# The fixture, as one run configuration: everything a new input needs, in one file.
+#
+# `trim_r2` is STATED here with its basis rather than left to be measured, and the reason
+# is the honest one. Measuring a non-template 5' prefix needs reads anchored to a
+# reference, and the instrument that does it refuses below 2,000 anchored mates, because
+# at lower depth the histogram describes the reference's reach into the water rather than
+# the library's chemistry. This fixture's rRNA arm is a 16 kb window, so the measurement
+# would refuse, which is correct. What the run does measure off the reads is the pair
+# count, the modal read length per mate, the layout and the seed stride.
 [run]
 seed = 1
+# One seed, stated. The seeds read disjoint blocks of the file, so five of them need a
+# library five blocks long: 9,987 pairs cannot hold five blocks of 9,000, and the
+# measurement refuses a stride that would make them overlap rather than silently
+# producing a directory that looks like a five-seed result. A headline result needs five
+# seeds; a fixture is not a result.
+seeds = 1
 threads = 2
+pairs = 9000
+report_pairs = 4000
 out = "{out}"
 
 [inputs]
 label = "fixture"
+sample_facts = {{ matrix = "simulated reads", place = "the CI fixture", molecule = "RNA", basis = "tests/fixtures/manifest.json: three real genomes, 9,987 simulated pairs, built by make_fixture.py --seed 1. Not water, and no number from it belongs in results/." }}
+
+[library]
+trim_r2 = 0
+trim_r2_basis = "the fixture's reads are simulated with no non-template prefix (tests/fixtures/make_fixture.py), so any trim would delete real template. The prefix instrument cannot measure it here: the rRNA arm is a 16 kb window and anchoring falls below its 2,000-mate floor."
 
 [databases]
 nucleotide = "{dbs}/nt_known.mmi"

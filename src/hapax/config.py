@@ -36,7 +36,14 @@ LIBRARY_FACTS = ("trim_r2", "block", "layout", "pairs")
 SCHEMA = {
     "run": {"seed", "seeds", "threads", "out", "pairs", "report_pairs", "stages",
             "allow_partial"},
-    "inputs": {"r1", "r2", "label", "accession", "single_end"},
+    # `sample_facts` is what the page says the water was: the matrix, the place, the
+    # collection date, the molecule, each with how it was established. It is here rather
+    # than in the library registry because production water has no registry entry, and
+    # the page states its ignorance rather than guessing when it is absent.
+    # `assembly` names an assembly produced elsewhere, which is used as it is: two hours
+    # of MEGAHIT that only exists on a machine with a dead-man timer gets paid for twice.
+    "inputs": {"r1", "r2", "label", "accession", "single_end", "sample_facts",
+               "assembly"},
     "library": set(LIBRARY_FACTS) | {f"{k}_basis" for k in LIBRARY_FACTS},
     "databases": {"nucleotide", "protein", "rrna", "classifier", "cross_sample",
                   "spacers"},

@@ -28,6 +28,7 @@ from pathlib import Path
 
 from . import __version__
 from .config import Config, ConfigError, load
+from .prepare import PrepareError, prepare
 from .registry import RegistryError
 from .stages import ORPHAN_REPORT_INPUTS, R
 
@@ -60,7 +61,7 @@ def legacy_driver():
 
 
 def legacy_argv(cfg: Config, r1: Path, r2: Path | None, out: Path,
-                stages: list[str]) -> list[str]:
+                stages: list[str], prepared=None) -> list[str]:
     """The config, as the flags the legacy driver takes.
 
     Every value comes from the config or is left out. Nothing here supplies a default for
@@ -76,13 +77,35 @@ def legacy_argv(cfg: Config, r1: Path, r2: Path | None, out: Path,
     # the accession. A config that states its facts never reaches that lookup, which is
     # how a fixture with no archive accession runs at all.
     argv += ["--library", cfg.label]
-    for key, flag in (("trim_r2", "--trim-r2"), ("block", "--block")):
-        value = cfg.fact(key)
-        if value is not None:
-            argv += [flag, str(value)]
+    # THE TRIM AND THE CONTIG PILES COME FROM THE RUN, NOT FROM THE CALLER. This is the
+    # whole of PLAN.md step 5: the driver required --trim-r2 and four paths, and the only
+    # thing that knew how to produce them was 250 lines of shell, so the tool could not
+    # be run on a new input by reading the repo. `prepare` performs those steps and this
+    # passes what they produced.
+    if prepared is not None:
+        argv += ["--trim-r2", str(prepared.trim_r2),
+                 "--assembly", str(prepared.assembly),
+                 "--contigs", str(prepared.rrna), str(prepared.identified_norrna),
+                 "--identified-contigs", str(prepared.identified_norrna),
+                 "--rrna-contigs", str(prepared.rrna),
+                 "--unidentified-contigs", str(prepared.unidentified),
+                 # The sample's own identified contigs are the most efficient subtrahend
+                 # measured here, +30.3 points, and they are the sample's own: nothing
+                 # from another library reaches this flag.
+                 "--cross-sample-ref", str(prepared.identified_norrna)]
+        if prepared.removal_evidence:
+            argv += ["--removal-evidence", str(prepared.removal_evidence)]
+        block = cfg.fact("block") or (prepared.measured or {}).get("block")
+        if block:
+            argv += ["--block", str(block)]
+    else:
+        for key, flag in (("trim_r2", "--trim-r2"), ("block", "--block")):
+            value = cfg.fact(key)
+            if value is not None:
+                argv += [flag, str(value)]
     if cfg.inputs.get("single_end"):
         argv.append("--single-end")
-    for name, flag in (("nucleotide", "--cross-sample-ref"), ("rrna", "--silva"),
+    for name, flag in (("rrna", "--silva"),
                        ("protein", "--dmnd"), ("classifier", "--k2-dbs"),
                        ("spacers", "--spacers")):
         if name in cfg.databases:
@@ -150,8 +173,12 @@ def cmd_run(args) -> int:
     r1 = Path(args.reads[0]) if args.reads else Path(cfg.inputs["r1"])
     r2 = (Path(args.reads[1]) if len(args.reads) > 1
           else Path(cfg.inputs["r2"]) if cfg.inputs.get("r2") else None)
-    argv = legacy_argv(cfg, r1, r2, out, stages)
     out.mkdir(parents=True, exist_ok=True)
+    work = Path(args.work).resolve() if args.work else out / "work"
+    prepared = None
+    if not args.skip_prepare:
+        prepared = prepare(cfg, r1, r2, out, work, repo_root())
+    argv = legacy_argv(cfg, r1, r2, out, stages, prepared)
     # The translation is written into the run directory before the run, so that a run
     # directory says what command produced it even when the config has since changed.
     # The config file itself is copied for the same reason: a path to a config is not a
@@ -162,12 +189,24 @@ def cmd_run(args) -> int:
         "config_text": cfg.path.read_text(),
         "stages": stages,
         "legacy_argv": argv,
+        "prepared": prepared.as_manifest() if prepared else None,
+        "sample_facts": cfg.inputs.get("sample_facts"),
         "note": "the package translates one config into the legacy driver's flags; "
                 "PLAN.md step 7 replaces the subprocess with imports",
     }, indent=1) + "\n")
     root = repo_root()
     proc = subprocess.run([sys.executable, str(root / "hapax.py"), *argv], cwd=root)
-    return proc.returncode
+    if proc.returncode != 0 or not args.report:
+        return proc.returncode
+    # One command from reads to report (PLAN.md 4). The report refuses an incomplete run,
+    # so a zero here means every declared section was drawn from a file this run wrote.
+    from .report import ReportError, build
+
+    try:
+        return build(out, seed=cfg.seed, repo=root)
+    except ReportError as e:
+        print(f"hapax run: {e}", file=sys.stderr)
+        return 1
 
 
 def cmd_report(args) -> int:
@@ -201,6 +240,16 @@ def main(argv: list[str] | None = None) -> int:
                    help="R1 and R2. Omitted, they are read from [inputs] in the config")
     r.add_argument("--config", type=Path, required=True)
     r.add_argument("--out", type=Path, default=None)
+    r.add_argument("--work", type=Path, default=None,
+                   help="where the assembly and the indexes are built. Default: work/ "
+                        "inside the run directory")
+    r.add_argument("--skip-prepare", action="store_true",
+                   help="do not measure, assemble or split; the config must then state "
+                        "every value the stages need. For re-running the cascade over an "
+                        "assembly this run directory already has")
+    r.add_argument("--report", action="store_true",
+                   help="build the page when the stages finish, which is what makes this "
+                        "one command from reads to report")
 
     p = sub.add_parser("report", help="rebuild the page from a run directory")
     p.add_argument("rundir", type=Path)
@@ -218,7 +267,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         return {"run": cmd_run, "report": cmd_report, "stages": cmd_stages}[
             args.command](args)
-    except (ConfigError, RegistryError) as e:
+    except (ConfigError, RegistryError, PrepareError) as e:
         print(f"hapax {args.command}: {e}", file=sys.stderr)
         return 2
 
