@@ -149,14 +149,21 @@ def test_the_driver_no_longer_needs_the_contig_flags_from_a_caller():
     finally:
         cfg_path.unlink()
     for flag in ("--trim-r2", "--assembly", "--contigs", "--identified-contigs",
-                 "--rrna-contigs", "--unidentified-contigs", "--cross-sample-ref"):
+                 "--rrna-contigs", "--unidentified-contigs"):
         assert flag in argv, f"{flag} is not supplied by the run, so a caller still must"
     assert argv[argv.index("--trim-r2") + 1] == "3"
-    # The cross-sample reference is the SAMPLE'S OWN identified contigs. Nothing from
-    # another library reaches that flag: the sample's own assembly is the most efficient
-    # subtrahend measured here and also removes 0.0% of a genuinely novel virus, so what
-    # it is matters more than that it is set.
-    assert argv[argv.index("--cross-sample-ref") + 1] == "/i.fa"
+    # `--cross-sample-ref` IS NOT ONE OF THEM, and it used to be. The cascade's
+    # self-assembly tier takes the sample's own identified contigs through `--contigs`
+    # and `--selfasm`; this flag feeds the per-read recurrence field, which asks whether
+    # the same sequence assembles in OTHER samples from the same works and counts
+    # distinct samples by contig name. Given the sample's own assembly it counts one
+    # sample, its own, for every read that maps, which is recurrence fabricated by
+    # construction. The run cannot produce such a reference, so it comes from the config
+    # or the field is named in report_without.
+    assert "--cross-sample-ref" not in argv, (
+        "the run is supplying its own assembly as the cross-sample reference, which "
+        "makes every residue read that maps recur in exactly one sample: itself")
+    assert "/i.fa" in argv, "the sample's own contigs still reach the cascade"
     assert argv[argv.index("--block") + 1] == "1234", (
         "a stride measured off the file has to reach the stages, or the measurement was "
         "decoration")

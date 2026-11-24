@@ -175,10 +175,13 @@ INVENTORY: tuple[RefSet, ...] = (
 #: Keys a config can carry that no download can fill, and why. Named so that a caller who
 #: asks for one gets the reason rather than "unknown set", which would read as a typo.
 NOT_FETCHABLE = {
-    "cross_sample": "the sample's own identified contigs, which `hapax run` produces "
-                    "from the reads it was given. It is the most efficient subtrahend "
-                    "measured here (+30.3 points over the next best) precisely because "
-                    "it is this sample's, and nothing downloaded can stand in for it.",
+    "cross_sample": "assemblies of OTHER samples from the same works, which the "
+                    "per-read recurrence field counts distinct samples in. There is no "
+                    "release to fetch because it is a property of a sampling programme, "
+                    "and the one substitution that looks harmless is the one that breaks "
+                    "it: the sample's own assembly makes every read that maps recur in "
+                    "exactly one sample, its own. Query material from inside the library "
+                    "searched gave 54% false growth against a 6% swap control.",
     "spacers": "CRISPR spacers from this sample's own assemblies, produced by the run.",
     "nucleotide": "a study-specific nucleotide pile. There is no general release to "
                   "fetch, and a wrong one here is a changed operating point for the "

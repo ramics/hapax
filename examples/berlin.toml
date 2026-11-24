@@ -24,14 +24,16 @@ accession = "SRR23973193"
 # rather than guessing when a field is absent, so an unknown here costs a sentence on the
 # report and nothing else.
 [inputs.sample_facts]
+# Only the keys the page's sentence has a clause for, and ONE basis for the block.
+# experiments/page_descriptor.py refuses a key it cannot speak, which is right: a fact
+# somebody wrote down that the renderer drops without saying so is worse than no fact,
+# and that asymmetry once lost "South Korea" off the one library here not in Europe.
 matrix = "untreated influent, grab sample"
-matrix_basis = "PRJNA948850 sample attributes"
-place = "Berlin, Germany"
-place_basis = "PRJNA948850 BioSample"
+place = "Berlin"
+country = "Germany"
 collected = "2021-10-13"
-collected_basis = "GSE228220 series matrix; the SRA record carries no collection date"
 molecule = "RNA, rRNA not depleted"
-molecule_basis = "filed TRANSCRIPTOMIC; rRNA is about a third of the library as measured"
+basis = "PRJNA948850 sample attributes and the GSE228220 series matrix, which is the only source for the collection date: the SRA record carries none. rRNA is about a third of the library as measured, not as assumed."
 
 [library]
 # 14 nt of non-template 5' sequence on mate 2. Measured, not assumed: the two mates are

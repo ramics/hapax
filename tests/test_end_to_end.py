@@ -295,14 +295,17 @@ threads = 2
 pairs = 9000
 report_pairs = 4000
 out = "{out}"
-# Three per-read fields are left out ON PURPOSE, which is a different thing from their
+# Four per-read fields are left out ON PURPOSE, which is a different thing from their
 # being absent. CRISPR scores a read against spacers from this sample's own assemblies,
 # which a 16 kb bacterial window does not carry; Rfam and Pfam each need a multi-gigabyte
 # profile library, and Rfam needs Infernal's cmscan besides, none of which belongs in a
-# job that runs on every pull request. The run refuses to start on a field whose reference
-# is missing, because a dropped field reads as a zero. Named here, each omission is a
-# stated operating point that the page carries rather than a hole in it.
-report_without = ["crispr", "rfam", "pfam"]
+# job that runs on every pull request. Cross-sample recurrence asks whether a sequence
+# assembles in OTHER samples from the same works, and there is exactly one sample here:
+# pointing it at this run's own assembly would count one recurrence, its own, for every
+# read that maps. The run refuses to start on a field whose reference is missing, because
+# a dropped field reads as a zero. Named here, each omission is a stated operating point
+# that the page carries rather than a hole in it.
+report_without = ["crispr", "rfam", "pfam", "cross_sample"]
 
 [inputs]
 label = "fixture"

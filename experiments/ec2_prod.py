@@ -87,7 +87,17 @@ LAUNCHER_STAGES = [s for s in PRODUCTION_STAGES if s not in NO_REFERENCE_ON_THIS
 
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = Path(__file__).resolve().parent / "prod_userdata.sh"
+#: The same launch, running the documented install and the documented command instead of
+#: 450 lines of hand-rolled staging. Selected with `--oneshot`; see that template's header
+#: for why it exists beside the other rather than replacing it.
+ONESHOT_TEMPLATE = Path(__file__).resolve().parent / "prod_oneshot.sh"
 BOOTSTRAP = Path(__file__).resolve().parent / "bigindex_bootstrap.sh"
+
+#: micromamba, which creates the environment from the committed `environment.yml`. Pinned
+#: for the reason every version here is pinned: the solve decides which build of MEGAHIT,
+#: DIAMOND, Kraken2 and minimap2 a number was produced with, and a run's own log records
+#: what it resolved to.
+MICROMAMBA_VERSION = "2.0.8"
 
 #: Pinned for the reason every version in this repo is pinned: a number produced by
 #: "latest" cannot be reproduced by anyone reading it later.
@@ -144,7 +154,11 @@ DEFAULT_HARD_STOP_MINUTES = 660
 HEARTBEAT_SECONDS = 300
 
 PAYLOAD_MODULES = ("hapax.py", "requirements.txt", "SPEC.md", "blind_spots.json",
-                   "experiments/prod_run.sh")
+                   "experiments/prod_run.sh",
+                   # The two files that make `--oneshot`'s install the DOCUMENTED install
+                   # rather than something this launcher assembled. The instance asserts
+                   # both by name before it spends anything.
+                   "pyproject.toml", "environment.yml", "README.md")
 
 
 def payload_files(root: Path, library: str | None = None) -> list[str]:
@@ -176,6 +190,19 @@ def payload_files(root: Path, library: str | None = None) -> list[str]:
     was the thing nobody listed, so the list is derived from the registry that names it.
     """
     files = list(PAYLOAD_MODULES)
+    # THE PACKAGE, for the --oneshot template, whose whole install is `pip install .`.
+    # Shipped as a directory for the reason the docstring above gives for `experiments/`:
+    # a list of modules typed by hand is a list that loses one. `pyproject.toml` and
+    # `environment.yml` are in PAYLOAD_MODULES and asserted on the instance by name,
+    # because without either of them the install is not the documented install.
+    for p in sorted((root / "src").rglob("*")):
+        # `.egg-info` is build metadata left behind by an editable install in whatever
+        # tree this launcher runs in. It is gitignored, so the dirty-tree refusal cannot
+        # see it, and shipping it would put files in the payload that the commit does not
+        # describe - the one thing the commit is there to guarantee.
+        if p.is_dir() or "__pycache__" in p.parts or ".egg-info" in str(p):
+            continue
+        files.append(str(p.relative_to(root)))
     for p in sorted((root / "experiments").rglob("*")):
         if p.is_dir() or "codon_assembler" in p.parts or "__pycache__" in p.parts:
             continue
@@ -234,13 +261,41 @@ def git_head(root: Path, shipped: list[str]) -> tuple[str, bool, bool]:
                               text=True, check=True).stdout.strip()
 
     watched = [*shipped, "experiments/ec2_prod.py", "experiments/prod_userdata.sh",
-               "experiments/ec2_common.py"]
+               "experiments/prod_oneshot.sh", "experiments/ec2_common.py"]
     try:
         return (git("rev-parse", "HEAD"),
                 bool(git("status", "--porcelain", "--", *watched)),
                 bool(git("status", "--porcelain")))
     except Exception:
         return "unknown", True, True
+
+
+def _sample_facts_toml(sample: dict) -> str:
+    """The library's `sample` block as TOML lines for `[inputs.sample_facts]`.
+
+    Each fact carries the same `basis` from the entry, because the entry records one basis
+    for the block rather than one per clause and inventing a per-clause basis here would
+    be prose this code wrote. A library with no sample block produces a `basis` line
+    saying so, which is what the page then prints: it states its ignorance rather than
+    describing water nobody recorded.
+    """
+    if not sample:
+        return ('basis = "the archive record carries no matrix, place, date or molecule '
+                'for this library, so the page says what it does not know"')
+    # ONE `basis` FOR THE BLOCK, and only keys the sentence has a clause for.
+    # `page_descriptor.check` RAISES on a key it cannot speak, which is right: a fact
+    # somebody wrote down that the renderer silently drops is the asymmetry that lost
+    # "South Korea" off the one library not in Europe. So a per-clause `*_basis` here
+    # would refuse the page rather than decorate it.
+    import page_descriptor
+
+    lines = []
+    for key, _, _ in page_descriptor.CLAUSES:
+        if sample.get(key):
+            lines.append(f'{key} = "{str(sample[key]).replace(chr(34), chr(39))}"')
+    basis = (sample.get("basis") or "").replace('"', "'").replace("\n", " ")
+    lines.append(f'basis = "{basis}"')
+    return "\n".join(lines)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -273,10 +328,11 @@ def main(argv: list[str] | None = None) -> int:
                          "only with a basis written into experiments/libraries.json - on a "
                          "library with little ribosomal content the SILVA instrument "
                          "cannot anchor enough reads to measure anything")
-    ap.add_argument("--stages", default=" ".join(LAUNCHER_STAGES),
-                    help="hapax stages, defaulting to hapax.py's own production list minus "
-                         "the stages this instance stages no reference data for "
-                         "(NO_REFERENCE_ON_THIS_INSTANCE says which and why). `panel` and "
+    ap.add_argument("--stages", default=None,
+                    help="hapax stages. The default template drops the stages it stages "
+                         "no reference data for (NO_REFERENCE_ON_THIS_INSTANCE says which "
+                         "and why); --oneshot keeps them, because `hapax fetch-db --all` "
+                         "downloads the one index that was missing. `panel` and "
                          "`calibration` are validation stages and are not in the "
                          "production list at all (SPEC 13.4)")
     ap.add_argument("--megahit-memory", type=float, default=0.85,
@@ -307,11 +363,44 @@ def main(argv: list[str] | None = None) -> int:
                          "survived in the store, so the next pass reads it. It is used "
                          "as-is and no assembly manifest is written, so the run's "
                          "provenance for that step is the pass that produced it")
+    ap.add_argument("--oneshot", action="store_true",
+                    help="run `conda env create -f environment.yml && pip install .`, "
+                         "`hapax fetch-db --all` and `hapax run --config --report` and "
+                         "nothing else, which is what PLAN.md's definition of done is "
+                         "judged on. The default template stages the indexes and the "
+                         "binaries by hand and calls a shell driver, all of which is now "
+                         "a command in the package")
+    ap.add_argument("--report-without", nargs="*", default=None,
+                    help="per-read report fields to leave out ON PURPOSE (--oneshot "
+                         "only). Defaults to the fields whose reference is a property of "
+                         "a sampling programme or a profile library this pass does not "
+                         "stage. A field whose reference is absent and NOT named here "
+                         "stops the run, because a dropped field reads as a zero")
     ap.add_argument("--attach", help="watch an already-running instance")
     ap.add_argument("--detach", action="store_true")
     ap.add_argument("--dry-run", action="store_true", help="authorize only, launch nothing")
     ap.add_argument("--print-user-data", action="store_true")
     args = ap.parse_args(argv)
+
+    # WHICH STAGES, RESOLVED AFTER PARSING rather than as a default, because the answer
+    # depends on the template. `divergent` was dropped from production launches for one
+    # reason: the instance staged no Pfam-A and the stage refuses without it. `hapax
+    # fetch-db --all` downloads it, so under --oneshot the exclusion no longer describes
+    # anything and keeping it would drop a stage the report needs a section from.
+    if args.stages is None:
+        args.stages = " ".join(PRODUCTION_STAGES if args.oneshot else LAUNCHER_STAGES)
+    if args.report_without is not None and not args.oneshot:
+        raise SystemExit("--report-without is only read by the --oneshot template, which "
+                         "writes it into the run configuration; the default template "
+                         "takes it from prod_run.sh's own environment")
+    if args.report_without is None:
+        # Each of these is a field whose reference this pass does not have, named so that
+        # the omission is a stated operating point rather than a zero. cross_sample needs
+        # assemblies of OTHER samples from the same works, which is a property of a
+        # sampling programme and which the sample's own assembly cannot stand in for;
+        # rfam and pfam each need a profile library and, for rfam, Infernal besides;
+        # crispr needs spacers called from this sample's assemblies.
+        args.report_without = ["cross_sample", "rfam", "crispr", "pfam"]
 
     # A LIBRARY WITH NO ENTRY IS THE CASE THIS IS FOR, so a missing one is not a refusal.
     # The registries are still read here rather than on the instance, because where an
@@ -406,7 +495,19 @@ def main(argv: list[str] | None = None) -> int:
         K2_DBS=" ".join(K2_DBS), K2_DB_CONTIGS=K2_DB_CONTIGS,
         ASSEMBLY_FROM=(args.assembly_from or ""),
     )
-    run_script = render(TEMPLATE, None, **tokens)
+    if args.oneshot:
+        tokens.update(
+            MICROMAMBA_VERSION=MICROMAMBA_VERSION,
+            SEEDS_COUNT=len(args.seeds.split()),
+            STAGES_TOML=", ".join(f'"{s}"' for s in args.stages.split()),
+            REPORT_WITHOUT_TOML=", ".join(f'"{f}"' for f in args.report_without),
+            # The page's one-line description of the water, from this library's own entry
+            # rather than from anything this code knows. A clause whose fact is absent is
+            # left out of the sentence instead of guessed, which is why this is built from
+            # the keys that are there rather than from a fixed list.
+            SAMPLE_FACTS=_sample_facts_toml(facts.get("sample") or {}),
+        )
+    run_script = render(ONESHOT_TEMPLATE if args.oneshot else TEMPLATE, None, **tokens)
     run_key = (f"{prefix}/code/prod-run-{commit[:12]}-"
                f"{hashlib.sha256(run_script.encode()).hexdigest()[:12]}.sh")
     script = render(BOOTSTRAP, 16_384, COMMIT=commit, BUCKET=bucket, REGION=ec2lib.REGION,
