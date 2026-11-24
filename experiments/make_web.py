@@ -1992,6 +1992,17 @@ function interval(iv) {
     'Leftover reads with a named relative, by what kind of thing that relative is.');
   if (!K) { p.append(el('div', 'absent', 'no kind summary in ranking.json'));
     app.append(p); return; }
+  /* NOTHING SEARCHED IS A CENSUS, AND THE INTERVAL IS CORRECTLY NULL. The producer
+     writes `share_named: null` where the denominator is zero, which is right: a share of
+     nothing has no value and inventing 0% would read as "no leftover has a relative"
+     rather than "no leftover was searched". This panel then read `.point` off that null,
+     threw, and took every panel after it off the page - the whole report, from one
+     legitimate zero. So the zero is rendered, and it says which zero it is. */
+  if (!K.searched) {
+    p.append(el('div', 'absent', 'no leftover mate in this run was searched for a ' +
+      'named relative, so there is no kind to assign. That is a count of this run and ' +
+      'not a finding: zero searched is not zero named.'));
+    app.append(p); return; }
   const KCOL = {putative_phage: 'var(--g-phage)',
     virus_no_phage_signal: 'var(--residue)',
     putative_bacterial: 'var(--g-vert)',
@@ -4212,10 +4223,17 @@ function interval(iv) {
       {lab: 'recognised, unnamed', v: Math.max(0, ident - named - rr),
        col: 'var(--v-mute)', sub: 'mostly own-sample contigs (' + pct(own) +
          '), rest adapter and low complexity'},
+      /* THE SUB-LABELS SAY WHAT THE PILE IS, NOT WHAT IT MEASURED SOMEWHERE ELSE.
+         These two read "median depth 6" and "median depth 1", which are one library's
+         measurements written into the renderer. No stage in a run produces a median
+         depth per pile, so on any other sample they are a number with no provenance -
+         and on a small run the page contradicted itself on one screen, printing depth 6
+         two lines above a sentence that said depth 1. What each pile IS can be said from
+         its definition, and needs no measurement. */
       {lab: 'assembles, unidentified', v: brk.assembled_unidentified.point,
-       col: 'var(--v2-soft)', sub: 'median depth 6'},
+       col: 'var(--v2-soft)', sub: 'assembled here and nothing could name it'},
       {lab: 'residual', v: brk.residual.point, col: 'var(--v2)',
-       sub: 'median depth 1'},
+       sub: 'no name, and no contig here either'},
     ].filter(b => b.v > 0);
     const tot = bands.reduce((a, b) => a + b.v, 0) || 1;
     const bar = el('div', 'split');
@@ -4234,11 +4252,17 @@ function interval(iv) {
   })();
 
   const note = el('div', 'callout');
+  /* The two sentences that remain are about what a SEARCH can establish, which is a
+     property of the method and holds on every sample. The three that were here with them
+     - artefact under 1%, no abundant unknown genome, median depth 1 - are measurements of
+     one library, and this run produces none of them: no stage writes a per-pile median
+     depth, and the artefact fraction of the residue is not computed anywhere. Printed
+     anyway they were a claim about somebody's water taken from another sample, which is
+     the fault the vocabulary file exists to prevent, applied to the numbers and not yet
+     to the claims beside them. */
   note.innerHTML = '<b>Unnamed is not novel.</b> A search establishes that sequence ' +
     'is already known. It cannot establish novelty, because any search-derived score ' +
-    'tracks distance to the database. Artefact signatures account for under 1% of this ' +
-    'pile, it contains no abundant unknown genome, and its median depth is 1.' +
-    cite('residue');
+    'tracks distance to the database.' + cite('residue');
   p.append(note);
   app.append(p);
 })();
