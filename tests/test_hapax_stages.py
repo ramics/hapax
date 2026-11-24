@@ -273,3 +273,44 @@ def test_provenance_refuses_rather_than_reporting_a_clean_tree_it_cannot_see(mon
     monkeypatch.setenv(provenance.SHA_ENV, "deadbee")
     assert provenance.git_sha() == "deadbee"
     assert provenance.tree_dirty() is False
+
+def test_a_deselected_stage_records_whose_choice_it_was():
+    """`--stages` defaults to every stage, so a missing stage was asked for.
+
+    The holdout fixture's run directory carries four stages recorded as "not selected
+    with --stages", and the page built from it then reports an incomplete run without
+    saying that the subset was typed by hand rather than forced by the library. Two of
+    those four (linkage, census) this library forbids anyway - both are mate-linkage
+    instruments and it is single-end - so one reason was hiding the other. A deselected
+    stage now names the default it departs from, and the library's own constraint where
+    there is one.
+    """
+    src = HAPAX.read_text()
+    assert 'reason="not selected with --stages"' not in src
+    assert "deselected on the command line" in src
+    assert "could not have run on this library either" in src
+
+
+def test_every_report_section_has_a_stage_that_fills_it():
+    """A report section with no stage behind it is a hole in the tool, not in the water.
+
+    The first production pass over an untouched library built a page whose every summary
+    section was a census of an absent file, because the three scripts that fill them grew
+    as experiments over one sample and were never adopted into `hapax run`: the watchlist
+    screen and the composition read public_health_profile_s*.json, the distance line reads
+    known_strain_divergence_s*.json, and the unnamed remainder reads ranking.json. Each
+    now has a stage, and this test fails if a later section arrives without one.
+    """
+    src = HAPAX.read_text()
+    for script, stage in (("public_health_profile.py", "profile"),
+                          ("known_strain_divergence.py", "taxa"),
+                          ("concern_ranking.py", "ranking"),
+                          ("divergent_known.py", "divergent")):
+        assert script in src, script
+        assert f'"{stage}"' in src, stage
+        assert f"def {stage}(self)" in src, stage
+    # And they are in the default run, not only available behind a flag.
+    import re
+    order = re.search(r"STAGE_ORDER = \[(.*?)\]", src, re.S).group(1)
+    for stage in ("profile", "taxa", "ranking"):
+        assert f'"{stage}"' in order, stage

@@ -294,19 +294,36 @@ def main() -> int:
           f"names a seed.")
         w("")
     done = [load(p / "manifest.json") or {} for p in runs]
-    # `complete` is false whenever any stage did not produce output, and a stage left out of
-    # production by SPEC 13.4 is one of those - so a correct production run reports
-    # "complete runs: 0 of 5", which reads as five failures. The count a reader wants is how
-    # many stages FAILED, with the unselected ones named separately, so the line says both
-    # and never prints a bare completeness figure.
+    # THREE COUNTS, NOT ONE, BECAUSE THEY MEAN DIFFERENT THINGS AND ONE HID THE OTHERS
+    # TWICE, IN BOTH DIRECTIONS.
+    #
+    # `complete` is false whenever any stage produced no output, and a stage deliberately
+    # left out of a production pass (SPEC 13.4) is one of those, so a correct run reported
+    # "complete runs: 0 of 5" and read as five failures. The fix for that printed the
+    # failure count alone and dropped completeness entirely, which is the opposite error:
+    # a run whose stages all exited cleanly while writing nothing then reads as fine, and
+    # PLAN.md 1.5 is that fault. A stage exiting zero is not a filled report section.
+    #
+    # So the line carries all three: how many stages FAILED, how many produced NO OUTPUT
+    # without failing, and the plain completeness figure with the deliberate omissions
+    # named beside it. A reader can tell a refusal from an omission from an empty success.
+    # Judging a run on its outputs rather than its exit codes is PLAN.md step 4, where the
+    # report build itself starts refusing; this line is the visible version in the interim.
     failed = sum(len([s for s in (m.get("stages") or []) if s.get("status") == "failed"])
                  for m in done)
     unsel = sorted({s.get("stage") for m in done for s in (m.get("stages") or [])
                     if s.get("status") == "skipped"})
-    w(f"Stages that failed: **{failed}** across {len(done)} seeds. No run is marked "
-      f"`complete` because {len(unsel)} stages are not part of a production pass "
+    empty = sum(len([s for s in (m.get("stages") or [])
+                     if s.get("status") not in ("failed", "skipped") and not s.get("outputs")])
+                for m in done)
+    complete = sum(1 for m in done if m.get("complete"))
+    w(f"Stages that failed: **{failed}** across {len(done)} seeds; stages that exited "
+      f"without failing and wrote no output: **{empty}**; runs marked `complete`: "
+      f"**{complete} of {len(done)}**. Completeness is low by construction here because "
+      f"{len(unsel)} stages are not part of a production pass "
       f"(`{'`, `'.join(str(u) for u in unsel)}`), which is the manifest recording a "
-      f"deliberate omission and not a failure. Wall clock per seed: "
+      f"deliberate omission and not a failure, and the figure is printed anyway so that "
+      f"an empty stage cannot hide behind a clean exit code. Wall clock per seed: "
       f"{[round(m.get('wall_seconds', 0) / 60, 1) for m in done]} minutes.")
     w("")
 

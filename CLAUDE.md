@@ -105,8 +105,9 @@ Record them and say so rather than tuning a simulator until it looks good.
   destroys exactly what the hash exists to protect. Finish the run or kill it; this has now
   cost two restarts.
 - Any reported number is reproducible from a committed script plus a seed.
-- **Controls, search-output parsing and provenance come from shared modules, imported,
-  never re-typed**: `shuffle_control.py`, `search_hits.py`, `provenance.py`. Each raises
+- **Controls, search-output parsing, provenance and run-directory row dumps come from
+  shared modules, imported, never re-typed**: `shuffle_control.py`, `search_hits.py`,
+  `provenance.py`, `run_rows.py`. Each raises
   where a copy used to fall back. The same shuffle bug shipped twice in two days because
   the second writer did not know which condition the first was fixing. Existing copies
   are grandfathered, with their measured behaviour, in `experiments/SHARED.md`. A tripwire

@@ -1,9 +1,16 @@
 {
  "what_this_is": "Per-library facts that are properties of a sequencing run, not of this code. They were written as defaults in roughly fifteen scripts and as bare literals inside five more, one copy each, which is how a value measured on one library silently applies itself to another.",
- "how_to_use_it": "Ask for a library by accession. A script that cannot name its library must be told the values explicitly; it must never fall back to another library's. Adding a library means adding an entry here with how each value was established.",
+ "how_to_use_it": "Ask for a library by accession. A script that cannot name its library must be told the values explicitly; it must never fall back to another library's. Adding a library means adding an entry here with how each value was established. The `sample` block is what the run viewer's one-line description is assembled from (experiments/page_descriptor.py): the matrix, the place, the collection date and the molecule, each a property of the water and not of this code. A clause whose fact is absent is left out of the sentence rather than guessed, and a library with no sample block gets a page that says so.",
  "libraries": {
   "SRR23973193": {
    "label": "Berlin influent, the discriminating dataset",
+   "sample": {
+    "matrix": "influent",
+    "place": "Berlin",
+    "country": "Germany",
+    "molecule": "RNA",
+    "basis": "PRJNA948850/GSE228220: untreated influent from one Berlin treatment plant, RNA library. The collection date is absent here because data/MANIFEST.md does not record one for this run, and a date nobody wrote down is not a date."
+   },
    "bioproject": "PRJNA948850",
    "layout": "paired",
    "pairs": 8731224,
@@ -24,6 +31,13 @@
   },
   "SRR23421544": {
    "label": "the holdout library, the positive control",
+   "sample": {
+    "matrix": "treated wastewater",
+    "place": "Russia",
+    "molecule": "RNA",
+    "collected": "2022-05-10",
+    "basis": "PRJNA917124 run metadata, read off the BioSample when the holdout was selected (results/holdout_run/). The locality is the country because the deposit gives no finer one."
+   },
    "bioproject": "PRJNA917124",
    "layout": "single",
    "layout_note": "the metadata says library_layout=PAIRED and the library is single-end. Everything SPEC 4.3 gains from merging the mates is untestable here, so this instrument is weaker than production, in the direction that makes the withheld genome harder to find.",
@@ -39,6 +53,14 @@
   },
   "SRR23973265": {
    "label": "Berlin influent 2022-06-16, RNA: the drift comparison",
+   "sample": {
+    "matrix": "influent",
+    "place": "Berlin",
+    "country": "Germany",
+    "molecule": "RNA",
+    "collected": "2022-06-16",
+    "basis": "PRJNA948850 run metadata; the date is the one results/dna_rna_pair/ selected this library for, eight months after the discriminating run."
+   },
    "bioproject": "PRJNA948850",
    "layout": "paired",
    "trim_r2": 14,
@@ -48,6 +70,14 @@
   },
   "SRR23973375": {
    "label": "Berlin influent 2022-06-16, DNA: the kind control for the RNA pair",
+   "sample": {
+    "matrix": "influent",
+    "place": "Berlin",
+    "country": "Germany",
+    "molecule": "DNA",
+    "collected": "2022-06-16",
+    "basis": "PRJNA948850 run metadata: the same water and date as SRR23973265, sequenced as DNA. It is the kind control for that pair."
+   },
    "bioproject": "PRJNA948850",
    "layout": "paired",
    "trim_r2": 14,

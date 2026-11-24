@@ -1009,7 +1009,9 @@ manufacturing the numbers this project has had to withdraw.
    pile (§4.4).
 
 **Adjustable, because the numbers already exist at every setting:** the significance floor
-(E-value or bitscore) on any search panel; identity and coverage bands, including the two
+(an E-value, in decades: the bitscore slider was cut because a merged read gains less
+bitscore than its length predicts, so the E-value is the test and a second floor over the
+same hits was a second way to read one number) on any search panel; identity and coverage bands, including the two
 axes that define class A's shortlist cell, with its count and its control count recomputing
 together; the minimum contig length and depth for the characterisable set (shipped at 500 nt
 and 2×); ranking by the conserved gene against whole-contig best hit, with the spread always
@@ -1034,6 +1036,65 @@ the recurrence depth stratum and occupancy cut; and the residue table's filters,
 summary-then-detail shape as the panels: the controls that change a headline sit with that
 headline, and the rest live in a Detail list. A control the reader never moves should be
 invisible, and a control that cannot move honestly should be visible as a stated constraint.
+
+### 13.4 One format, every sample
+
+Imo, 2026-11-23: *"we're building a **generic** tool. **generic**. that runs on **any
+sample** and reports results in a **consistent format**. everything we've been doing before
+this is a **guide experiment**... even if that tool hides the holdout among 400 other
+perfectly assembled diverse genomes."*
+
+**The report is a fixed list of sections in a fixed order, identical on every library.** The
+generator holds one list. A section is never added because a sample has something extra and
+never dropped because a sample has nothing: where a library does not carry a measurement, the
+section stays where it is and says, in one line, that this run did not measure it — the same
+sentence in the same place for every such library. Two consequences this spec is explicit
+about, because the first cut of the page broke both:
+
+- **A page that reshapes itself per sample cannot be compared with another page.** A reader
+  who learns where a figure lives on one library must find it in the same place on the next.
+  The earlier rule that demoted an empty summary panel into Detail kept any one page tidy at
+  the cost of every page having a different shape, and it is gone.
+- **A missing section and a measured absence must not look the same.** An absence is a census
+  entry with the run's own reason in it (§13.1's refusal discipline, one layer out): a stage
+  that was not run says so, with what it would take, in the place its result would have
+  occupied.
+
+**The report has no ground-truth section, on any sample.** Imo, 2026-11-23: *"WHY WOULD WE,
+WITH UNKNOWN WASTEWATER, HAVE A GENOME WITH A DISTANCE FIXED BEFORE THE RUN? BY DEFAULT WE
+KNOW NOTHING. WE ALWAYS KNOW NOTHING."* A genome whose true distance was settled before the
+run — the withheld genome of §6, the deposited panel of §6d — is a **fixture that validates
+this tool**, not something the tool found in anybody's water. It therefore belongs to the
+validation suite, `tests/` and `results/holdout_run/`, and **nothing in the report is built
+from it**: no panel, no row, no marker on the distance axis, and no input a descriptor could
+only fill on the fixture library. The report contains what was measured on this water and
+nothing about what we happened to know in advance.
+
+This went wrong twice, in opposite directions, and both are worth recording because both
+looked like progress. First the withheld genome was the hero panel of the one library that
+had one, which is a page shaped like a fixture. Then it became a section on *every* page that
+every other sample rendered empty, which is worse: it tells a reader of their own water that
+something is missing from it. The third answer is that the section does not exist. Three
+descriptor inputs went with it, and the Berlin page was drawing the withheld genome's point
+on its distance axis from the holdout's gene map — a fixture's known distance printed on a
+page about a different sample. A test asserts the generator carries no input and no panel
+that only a fixture could fill.
+
+**Nothing on a page is written for one sample.** Every plain-English claim is assembled from
+committed data — `experiments/virus_vocabulary.json` for the biology, `libraries.json` for
+the sample facts, the run directory for everything measured — and the renderer supplies
+grammar only (§13.2). The page's own title and the one line saying what the water is were the
+last hand-written English on it; they are now derived by `experiments/page_descriptor.py`
+from the library's `sample` block, which carries the matrix, the place, the collection date
+and the molecule, each with how it was established. **A fact the library does not carry is
+left out of the sentence, never guessed**, and a library with no sample block gets a page
+that says that rather than a confident sentence nobody can attribute. A descriptor may state
+a title or a lede itself; that is an override, honoured and recorded as one beside what would
+have been said.
+
+The test of this rule is operational: **a library nobody has touched produces its page with
+nobody writing a sentence for it.** A descriptor is then a run directory, the files outside
+it the panels may read, and nothing else.
 
 ---
 

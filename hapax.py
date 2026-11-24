@@ -711,6 +711,118 @@ class Run:
                          out / f"divergent_known_s{a.seed}.json",
                          requested=[src, *a.dmnd])
 
+    # -- what the report's own sections need ----------------------------------
+    #
+    # THREE SECTIONS OF THE REPORT HAD NO STAGE AT ALL. The run viewer's fixed sections
+    # (SPEC 13.4) are the watchlist screen, what the water is, how far the assembled
+    # viruses sit from anything published, and the unnamed remainder. The first two read
+    # `public_health_profile_s*.json`, the third `known_strain_divergence_s*.json`, the
+    # fourth `ranking.json` - and `hapax run` produced none of them, because all three
+    # scripts grew as experiments over one sample and were never adopted. The first
+    # production pass over a library nobody had touched therefore built a page whose
+    # every summary section was a census of an absent file: correct, and nearly empty.
+    # A report section with no stage behind it is a hole in the tool, not in the water.
+    def profile(self) -> dict:
+        """Kraken2 over the whole library: the watchlist screen and the composition.
+
+        This is the only stage that answers the first question a reader has - is anything
+        here that we watch for - and it answers it with a level in read pairs and a named
+        panel, not with a verdict. It is also where the composition circles come from, so
+        a run without it has no "what this water is" at all.
+
+        Skipped rather than approximated when no Kraken2 database is given, like every
+        other stage here: the panel's levels are meaningless without the database they
+        were measured against, and the confidence setting moves removal by a factor of
+        twelve, so there is nothing to fall back on.
+        """
+        a = self.args
+        db = (a.k2_dbs or [None])[-1]
+        if db is None:
+            return self.record("profile", "skipped",
+                               reason="no --k2-dbs given, so there is no database to "
+                                      "screen the watchlist against")
+        db = Path(db)
+        gone = self.missing("profile", [db, a.r1, a.r2])
+        if gone:
+            return self.record("profile", "failed", reason=f"absent inputs: {gone}")
+        out = self.work / "profile"
+        argv = ["--seed", str(a.seed), "--r1", str(a.r1), "--r2", str(a.r2),
+                "--trim-r2", str(a.trim_r2), "--db", str(db),
+                "--threads", str(a.threads),
+                "--work", str(out / "work"),
+                "--out", str(out / f"public_health_profile_s{a.seed}.json")]
+        if a.classify_bin:
+            argv += ["--classify-bin", str(a.classify_bin)]
+        return self.call("profile", "public_health_profile.py", argv,
+                         {f"public_health_profile_s{a.seed}.json":
+                              out / f"public_health_profile_s{a.seed}.json"},
+                         out / f"public_health_profile_s{a.seed}.json", requested=[db])
+
+    def taxa(self) -> dict:
+        """How far each named virus in this sample sits from its published relative.
+
+        The distance line the report leads with. It is NOT the cascade's one bit: a contig
+        matching its reference at 99.9% and one matching at 66.5% are both `identified`,
+        and this stage is what keeps the number. Ranked on the conserved gene with the
+        per-gene spread beside it, because whole-contig identity is whichever gene won on
+        bitscore and a divergent contig's genes disagree by a median of 17.4 points.
+
+        The script's own `--contigs` default is one particular sample's assembly, which is
+        exactly the silent-wrong-sample failure this file passes every such flag to avoid.
+        """
+        a = self.args
+        src = getattr(a, "identified_contigs", None)
+        db = (a.k2_dbs or [None])[-1]
+        if not src or db is None or not a.dmnd:
+            return self.record("taxa", "skipped",
+                               reason="needs --identified-contigs, a --k2-dbs database "
+                                      "and a protein index; the distance to a named "
+                                      "relative cannot be measured without all three")
+        src, db = Path(src), Path(db)
+        gone = self.missing("taxa", [src, db, Path(a.dmnd[0])])
+        if gone:
+            return self.record("taxa", "failed", reason=f"absent inputs: {gone}")
+        out = self.work / "taxa"
+        argv = ["--seed", str(a.seed), "--contigs", str(src), "--db", str(db),
+                "--dmnd", str(a.dmnd[0]), "--threads", str(a.threads),
+                "--work", str(out / "work"),
+                "--out", str(out / f"known_strain_divergence_s{a.seed}.json")]
+        if a.classify_bin:
+            argv += ["--classify-bin", str(a.classify_bin)]
+        if a.diamond_bin:
+            argv += ["--diamond-bin", str(a.diamond_bin)]
+        return self.call("taxa", "known_strain_divergence.py", argv,
+                         {f"known_strain_divergence_s{a.seed}.json":
+                              out / f"known_strain_divergence_s{a.seed}.json"},
+                         out / f"known_strain_divergence_s{a.seed}.json",
+                         requested=[src, db, Path(a.dmnd[0])])
+
+    def ranking(self) -> dict:
+        """Order the residue's named relatives by how much a second look is worth.
+
+        Cheap - it reads this run's own outputs and no index - and it is what the unnamed
+        remainder section is built from, including the census of how much of the residue
+        no reference names. It runs last because it reads the run directory, so it has to
+        see `strains.json` already adopted.
+
+        Its host column is a label on a database record, never a claim about the water,
+        and the stage carries that reading through rather than restating it here.
+        """
+        a = self.args
+        gone = self.missing("ranking", [self.dir / "strains.json"])
+        if gone:
+            return self.record("ranking", "skipped",
+                               reason="strains.json is not in this run directory, so "
+                                      "there are no residue subjects to rank. It is "
+                                      "written by the strains stage")
+        out = self.work / "ranking"
+        if not self.preflighting:
+            out.mkdir(parents=True, exist_ok=True)
+        argv = [str(self.dir), "--out", str(out / "ranking.json")]
+        return self.call("ranking", "concern_ranking.py", argv,
+                         {"ranking.json": out / "ranking.json"},
+                         out / "ranking.json")
+
     # -- what the removal pile hides -----------------------------------------
     def shortlist(self) -> dict:
         """Rank the pile tier 1 removed by how much of each contig its best hit explains.
@@ -1420,12 +1532,14 @@ LAYER_FIELDS = {
 }
 
 #: Stages that run an experiment script, and so are preflighted by calling it.
-SCRIPT_STAGES = ["cascade", "reads", "linkage", "census", "calibration", "divergent",
-                 "shortlist", "panel", "crossplant"]
+SCRIPT_STAGES = ["profile", "cascade", "reads", "linkage", "census", "calibration",
+                 "taxa", "divergent", "shortlist", "panel", "crossplant", "ranking"]
 #: Flags whose script default is one specific sample's file or setting, which hapax must
 #: therefore always pass. The second element names the per-read field that may be left out
 #: with --report-without instead.
 SAMPLE_SPECIFIC = {
+    "public_health_profile.py": [("--r1", None), ("--r2", None), ("--trim-r2", None)],
+    "known_strain_divergence.py": [("--contigs", None)],
     "subtract_known.py": [("--r1", None), ("--r2", None), ("--trim-r2", None),
                           ("--selfasm", None)],
     "residue_report.py": [("--library-r1", "abundance"), ("--library-r2", "abundance"),
@@ -1457,18 +1571,24 @@ SAMPLE_SPECIFIC = {
 #: it for every script in this set. The set is asserted against the scripts' own source by
 #: `tests/test_hapax_stages.py`, so a script that becomes library-aware and is not added
 #: here fails the suite rather than quietly inheriting Berlin.
+#:
+#: `public_health_profile.py` is here because of the merge this set was written on either
+#: side of: the stage that runs it was added on one branch while the set was added on the
+#: other, so each half was right and the pair left a library-aware script taking the
+#: discriminating dataset's trim through its default. The test above is what caught it,
+#: which is the reason the set is asserted against source rather than trusted.
 LIBRARY_AWARE = {"subtract_known.py", "residue_report.py", "linkage_census.py",
                  "spike_holdout.py", "mate_friends.py", "divergent_known.py",
-                 "truth_panel.py", "crossplant_stage.py"}
+                 "truth_panel.py", "crossplant_stage.py", "public_health_profile.py"}
 
 #: Scripts that implement --preflight: they check their own required inputs and tools.
 PREFLIGHT_SCRIPTS = {"subtract_known.py", "residue_report.py", "linkage_census.py",
                      "spike_holdout.py", "removal_shortlist.py", "truth_panel.py",
                      "crossplant_stage.py"}
 
-STAGE_ORDER = ["cascade", "contigs", "reads", "linkage", "census", "calibration",
-               "intervals", "layers", "strains", "divergent", "shortlist", "panel",
-               "crossplant"]
+STAGE_ORDER = ["profile", "cascade", "contigs", "reads", "linkage", "census",
+               "calibration", "intervals", "layers", "strains", "taxa", "divergent",
+               "shortlist", "panel", "crossplant", "ranking"]
 
 #: Stages that score the run against sequence whose distance was fixed BEFORE it, and so
 #: are validation of the tool rather than output of it.
@@ -1664,9 +1784,21 @@ def main() -> int:
                                [str(x) for x in v] if isinstance(v, list) else v)
                            for k, v in vars(args).items()}}, indent=2))
         return 2
+    # A DESELECTED STAGE SAYS WHOSE CHOICE IT WAS, and says so against the default.
+    # `--stages` defaults to every stage, so a run missing one was asked to miss it by
+    # whoever typed the command - and the report that reads this manifest cannot tell
+    # that from a stage the library could not support unless the manifest says which.
+    # The holdout fixture's directory carries four stages recorded as "not selected",
+    # two of which (linkage, census) this library forbids anyway: both are mate-linkage
+    # instruments and it is single-end. One reason hid the other, so a deselected stage
+    # that could not have run names the library's constraint as well as the flag.
     for name in STAGE_ORDER:
         if name not in args.stages:
-            run.record(name, "skipped", reason="not selected with --stages")
+            why = ("deselected on the command line with --stages, which otherwise runs "
+                   f"every stage ({', '.join(STAGE_ORDER)})")
+            if args.single_end and name in ("linkage", "census"):
+                why += f". It could not have run on this library either: {Run.SINGLE_END_SKIP}"
+            run.record(name, "skipped", reason=why)
             continue
         getattr(run, name)()
     return run.finish()
