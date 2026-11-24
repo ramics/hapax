@@ -199,14 +199,41 @@ def cmd_run(args) -> int:
     r1 = Path(args.reads[0]) if args.reads else Path(cfg.inputs["r1"])
     r2 = (Path(args.reads[1]) if len(args.reads) > 1
           else Path(cfg.inputs["r2"]) if cfg.inputs.get("r2") else None)
+    # EVERY ABSENCE IN ONE REFUSAL, before anything is created. The tools were resolved
+    # in one pass for the stated reason that a machine with three missing binaries is a
+    # machine to fix once, and the same argument crosses the category boundary: a reads
+    # path with a typo in it used to be found by the driver's own preflight, one pass
+    # LATER than the tool check, so a caller with a new machine and a new config fixed
+    # three installs, re-ran, and then learned that their FASTQ path was wrong. The
+    # driver still preflights, since it knows which stage needs what; this is the subset
+    # that can be checked from the config alone.
+    absent = [f"[inputs] {k} = {p} does not exist"
+              for k, p in (("r1", r1), ("r2", r2)) if p is not None and not p.exists()]
+    for key in sorted(cfg.databases):
+        for path in cfg.database_list(key):
+            if not path.exists():
+                absent.append(f"[databases] {key} = {path} does not exist")
+    try:
+        # The external binaries, found once for the whole run: two tiers of one cascade
+        # run by two builds of Kraken2 is an operating point nobody could write down.
+        binaries = tools.resolve_all(cfg, ("classify", "diamond", "minimap2"))
+    except ConfigError as e:
+        if not absent:
+            raise
+        binaries = {}
+        # `resolve_all` already collects its own absences into one message, so it is
+        # split back into lines here rather than appended as a block: a list a reader
+        # works down should be one list.
+        absent += str(e).splitlines()
+    if absent:
+        raise ConfigError(
+            "refusing to start, because the run would not have done what was asked:\n  "
+            + "\n  ".join(absent))
     out.mkdir(parents=True, exist_ok=True)
     work = Path(args.work).resolve() if args.work else out / "work"
     prepared = None
     if not args.skip_prepare:
         prepared = prepare(cfg, r1, r2, out, work, repo_root())
-    # The external binaries, found once for the whole run: two tiers of one cascade run by
-    # two builds of Kraken2 is an operating point nobody could write down.
-    binaries = tools.resolve_all(cfg, ("classify", "diamond", "minimap2"))
     argv = legacy_argv(cfg, r1, r2, out, stages, prepared, binaries)
     # The translation is written into the run directory before the run, so that a run
     # directory says what command produced it even when the config has since changed.

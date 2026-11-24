@@ -265,3 +265,35 @@ def test_the_committed_example_config_loads_and_states_its_bases():
     for key in cfg.databases:
         assert (key in fetchdb.BY_KEY or key in fetchdb.NOT_FETCHABLE
                 or any(key in s.extra for s in fetchdb.INVENTORY)), key
+
+
+def test_a_run_names_every_absence_in_one_refusal_and_creates_nothing(tmp_path,
+                                                                     monkeypatch,
+                                                                     capsys):
+    """One pass over the config, not one category per pass.
+
+    The tool check and the path check used to be two passes with the driver's preflight
+    in between, so a caller with a new machine and a new config fixed three installs,
+    re-ran, and only then learned their FASTQ path had a typo. Nothing is created either:
+    a run directory left behind by a refused run is a directory a later run will read.
+    """
+    from hapax.cli import main
+    cfg = tmp_path / "run.toml"
+    cfg.write_text(
+        '[inputs]\nlabel = "x"\nr1 = "no/such_1.fq.gz"\nr2 = "no/such_2.fq.gz"\n\n'
+        '[databases]\nrrna = "no/silva.fa"\nclassifier = ["no/a.d", "no/b.d"]\n')
+    out = tmp_path / "run"
+    monkeypatch.setenv("HAPAX_REPO", str(Path(__file__).resolve().parents[1]))
+    code = main(["run", "--config", str(cfg), "--out", str(out), "--skip-prepare"])
+    assert code == 2
+    message = capsys.readouterr().err
+    # Both categories in the one message, each naming the table it came from.
+    for needle in ("[inputs] r1", "[inputs] r2", "[databases] rrna",
+                   "[databases] classifier"):
+        assert needle in message, message
+    assert message.count("[databases] classifier") == 2, (
+        "a key naming two indexes reports one absence; a reader fixes one path and "
+        "finds the next on the following run")
+    assert not out.exists(), (
+        "the refused run created its output directory, which a later run would read as "
+        "a run that happened")
