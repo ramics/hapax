@@ -248,7 +248,10 @@ def split(cfg: Config, contigs: Path, work: Path, out: Path, repo: Path) -> dict
     if not result.exists():
         _run(repo, "classify_contigs.py", ["--seed", 1,
               "--contigs", contigs,
-              "--k2-db", cfg.database("classifier"),
+              # The single contig-identification database, not the cascade's tier list:
+              # `classify_contigs.py` reads one `hash.k2d` and writes that database's name
+              # into every row it produces. See CONFIG_KEYS in config.py.
+              "--k2-db", cfg.database("classifier_contigs"),
               "--dmnd", cfg.database("protein"),
               "--silva-mmi", silva_mmi,
               "--threads", cfg.threads, "--work", work / "contigs", "--out", out,

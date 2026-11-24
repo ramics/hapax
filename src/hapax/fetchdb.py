@@ -54,6 +54,9 @@ K2_DBS = ("k2_viral_20261022", "k2_standard_08_GB_20261022",
           "k2_pluspf_08_GB_20261022", "k2_pluspf_16_GB_20261022")
 
 K2_BASE = "https://genome-idx.s3.amazonaws.com/kraken"
+# Which ONE of the four identifies assembled contigs, named rather than taken by position:
+# `experiments/ec2_prod.py` carries the same value, and a position would move with the list.
+K2_DB_CONTIGS = "k2_pluspf_16_GB_20261022"
 SILVA_BASE = "https://ftp.arb-silva.de/release_138_1/Exports"
 
 
@@ -135,6 +138,14 @@ INVENTORY: tuple[RefSet, ...] = (
             for db in K2_DBS),
         fills="k2",
         many=True,
+        # The contig stage consults ONE of these four, and which one is an operating point
+        # that has to be stated rather than derived: `classify_contigs.py` reads one
+        # `hash.k2d` and writes that database's name into every row of
+        # `contig_identification.json`. The 16 GB pluspf is named because it is what
+        # `results/prod_SRR23702504/` was produced with, so a run that takes this block
+        # unedited is comparable to the committed contig identifications. Taking the
+        # cascade list's first member instead would silently pick the 50 MB viral index.
+        extra={"classifier_contigs": f"k2/{K2_DB_CONTIGS}.d"},
     ),
     RefSet(
         key="protein",

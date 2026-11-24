@@ -234,6 +234,26 @@ def test_the_printed_config_block_is_a_config_this_package_accepts(tmp_path,
     # `protein_fasta` comes along with the protein index, because the name map reads the
     # FASTA the index was built from rather than the index.
     assert "protein_fasta" in cfg.databases
+    # And `classifier_contigs` comes along with the classifier list, naming the one of the
+    # four that identifies contigs. Without it in the printed block, a run config taken
+    # from `fetch-db` unedited reaches the contig stage with a list where it needs one
+    # path, which is how a five-seed launch died 57 minutes in.
+    assert cfg.database("classifier_contigs").name == f"{fetchdb.K2_DB_CONTIGS}.d"
+
+
+def test_the_contig_classifier_is_one_of_the_databases_actually_fetched():
+    """A named operating point that nothing downloads is a path that will not exist.
+
+    It is named rather than taken by position, because a position moves when the list
+    does, and `experiments/ec2_prod.py` carries the same value for the launcher path.
+    """
+    import sys
+    assert fetchdb.K2_DB_CONTIGS in fetchdb.K2_DBS
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "experiments"))
+    import ec2_prod
+    assert ec2_prod.K2_DB_CONTIGS == fetchdb.K2_DB_CONTIGS, (
+        "the launcher and the package name different contig classifiers, so a run "
+        "through one is not comparable to a run through the other")
 
 
 def test_asking_for_one_path_where_the_config_names_several_is_refused(tmp_path):

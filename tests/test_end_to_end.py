@@ -333,7 +333,15 @@ protein = "{dbs}/prot_known.dmnd"
 # the same on both piles.
 sprot = "{dbs}/prot_broad.dmnd"
 rrna = "{fixture}/db/silva_toy.fa"
-classifier = "{dbs}/k2_toy"
+# A LIST of one, deliberately, where a bare string would also load: production names four
+# here, and the list is the shape that found a caller asking for a single path. The fixture
+# being smaller than production is fine; being a different SHAPE from production is how a
+# fault reaches a paid run with CI green behind it.
+classifier = ["{dbs}/k2_toy"]
+# The contig stage's single database is its own key, because it is its own operating point:
+# classify_contigs.py reads one database and writes its name into every row. The fixture has
+# one toy library and names it for both.
+classifier_contigs = "{dbs}/k2_toy"
 # The profile library the per-gene distance workup scans ORFs against. Eight toy profiles
 # built by build_dbs.sh, which is why this run reports no domain fraction: the gathering
 # cutoff in them is the fixture's and not a curator's.

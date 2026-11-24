@@ -58,6 +58,10 @@ classifier = [
   "data/db/k2/k2_pluspf_08_GB_20261022.d",
   "data/db/k2/k2_pluspf_16_GB_20261022.d",
 ]
+# Which ONE of those four identifies assembled contigs. A separate key because it is a
+# separate operating point: classify_contigs.py reads one database and writes its name into
+# every row it produces, where the cascade's number is only readable beside the whole list.
+classifier_contigs = "data/db/k2/k2_pluspf_16_GB_20261022.d"
 # An ordered pair, viral then Swiss-Prot. The distance stage reports which of the two
 # produced the nearest relative, and a single index cannot answer that.
 protein = "data/db/prot/viral.dmnd"

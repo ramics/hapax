@@ -54,8 +54,15 @@ SCHEMA = {
     # protein index was built from, which the name map reads rather than reading the
     # index - a second source for the same names could disagree with the database the
     # search actually used.
-    "databases": {"nucleotide", "protein", "rrna", "classifier", "cross_sample",
-                  "spacers", "pfam", "sprot", "protein_fasta"},
+    # `classifier` is the read cascade's ORDERED TIER LIST and `classifier_contigs` is the
+    # single database that identifies assembled contigs. They are two keys and not one
+    # because they are two operating points: the cascade's number is only readable beside
+    # the whole list it consulted, while a contig is classified against one database whose
+    # name is written into every row of `contig_identification.json`. Reducing the list to
+    # its first member for the contig stage, or running the contig stage four times, would
+    # both report something other than what the config states.
+    "databases": {"nucleotide", "protein", "rrna", "classifier", "classifier_contigs",
+                  "cross_sample", "spacers", "pfam", "sprot", "protein_fasta"},
     "tools": {"diamond", "classify", "minimap2", "megahit"},
 }
 
