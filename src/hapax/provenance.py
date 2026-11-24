@@ -7,8 +7,11 @@ a content hash of the module that wrote it, so two runs from a dirty tree can st
 apart by inspection. It raises rather than writing "unknown", for the same reason the
 script version does: a manifest that cannot say which code ran should not be written.
 
-The commit is read from git when there is a checkout, and from `HAPAX_GIT_SHA` only when
-git cannot answer, which is the instance case the script version documents.
+The commit is read from git in the checkout `hapax.cli.repo_root` finds, which is
+`HAPAX_REPO` when set. Not from this file's own location: an installed package lives in
+site-packages, which is no checkout, and the end-to-end job installs it that way. Only when
+git cannot answer there is `HAPAX_GIT_SHA` read, the instance case the script version
+documents.
 """
 from __future__ import annotations
 
@@ -19,7 +22,6 @@ from pathlib import Path
 
 from . import __version__
 
-ROOT = Path(__file__).resolve().parents[2]
 SHA_ENV = "HAPAX_GIT_SHA"
 
 
@@ -27,26 +29,33 @@ class ProvenanceError(RuntimeError):
     """Raised instead of writing a manifest that cannot identify its code."""
 
 
-def _git(*args: str):
+def _root() -> Path:
+    from .cli import repo_root
+
+    return repo_root()
+
+
+def _git(root: Path, *args: str):
     try:
-        return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True)
+        return subprocess.run(["git", *args], cwd=root, capture_output=True, text=True)
     except FileNotFoundError:
         return None
 
 
 def commit() -> tuple[str, bool]:
     """HEAD and whether tracked files differ from it."""
-    head = _git("rev-parse", "HEAD")
+    root = _root()
+    head = _git(root, "rev-parse", "HEAD")
     if head is None or head.returncode != 0:
         env = (os.environ.get(SHA_ENV) or "").strip()
         if env:
             return env, False
         raise ProvenanceError(
-            f"git cannot name the commit in {ROOT} and {SHA_ENV} is not set; a manifest "
+            f"git cannot name the commit in {root} and {SHA_ENV} is not set; a manifest "
             f"that cannot say which code ran should not be written")
-    diff = _git("diff", "--quiet", "HEAD")
+    diff = _git(root, "diff", "--quiet", "HEAD")
     if diff is None or diff.returncode not in (0, 1):
-        raise ProvenanceError(f"git diff failed in {ROOT}")
+        raise ProvenanceError(f"git diff failed in {root}")
     return head.stdout.strip(), diff.returncode == 1
 
 

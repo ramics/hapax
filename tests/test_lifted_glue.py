@@ -110,3 +110,22 @@ def test_measure_refuses_overlapping_seeds_like_the_script(tmp_path):
     assert r.returncode != 0 and "DISJOINT" in r.stderr
     with pytest.raises(ValueError, match="DISJOINT"):
         measure_to(R1, R2, 10_000_000, 5, tmp_path / "p.json")
+
+
+def test_provenance_reads_the_checkout_not_the_install_location(tmp_path):
+    """The end-to-end job installs the package into site-packages, which is no checkout.
+    The first version of `hapax.provenance` asked git about its own file's directory and
+    refused there; the commit has to come from the checkout `repo_root` finds."""
+    import shutil
+
+    shutil.copytree(ROOT / "src/hapax", tmp_path / "site/hapax")
+    env = {"HAPAX_REPO": str(ROOT), "PATH": __import__("os").environ["PATH"],
+           "PYTHONPATH": str(tmp_path / "site")}
+    r = subprocess.run([sys.executable, "-c",
+                        "import json, hapax.provenance as p; "
+                        "print(json.dumps(p.record(p.__file__, 'x')))"],
+                       cwd=tmp_path, env=env, capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True,
+                          text=True).stdout.strip()
+    assert json.loads(r.stdout)["git_sha"].startswith(head)
