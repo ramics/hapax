@@ -54,9 +54,16 @@ class Prepared:
     unidentified: Path
     removal_evidence: Path | None
     measured: dict = field(default_factory=dict)
+    #: Empty where the caller staged an assembly, and the assembler's own record of the
+    #: run otherwise. `assembled_at_run_time` is the existing manifest convention, and
+    #: what it is worth is visible in `results/holdout_cascade/`, whose assembly recorded
+    #: it as false and pointed at a file that does not exist: only the contig names
+    #: survive, so the command line behind a committed result cannot be recovered.
+    assembly_record: dict = field(default_factory=dict)
 
     def as_manifest(self) -> dict:
         return {
+            "assembly_record": self.assembly_record,
             "trim_r2": self.trim_r2,
             "trim_r2_source": self.trim_r2_source,
             "assembly": str(self.assembly),
@@ -283,6 +290,17 @@ def prepare(cfg: Config, r1: Path, r2: Path | None, out: Path, work: Path,
     measured = measure(cfg, r1, r2, out, repo)
     trim_r2, source = resolve_trim(cfg, measured)
     contigs = assemble(cfg, r1, r2, trim_r2, work, out, repo)
+    # The assembler's own record, carried into the run's manifest rather than left in a
+    # work directory: whether the run built its own contigs or was handed them is the
+    # difference between one command from reads and a pipeline with a missing first half,
+    # and a reader cannot tell them apart from the contigs.
+    record = out / "assembly" / "assembly_baseline.json"
+    assembly_record = {"assembled_at_run_time": False,
+                       "why": "the configuration named an assembly under [inputs], which "
+                              "is used as it is"} if cfg.inputs.get("assembly") else {}
+    if record.exists():
+        assembly_record = {"assembled_at_run_time": True,
+                           **json.loads(record.read_text())}
     piles = split(cfg, contigs, work, out, repo)
     evidence = out / "removal_evidence.tsv"
     prepared = Prepared(
@@ -290,6 +308,6 @@ def prepare(cfg: Config, r1: Path, r2: Path | None, out: Path, work: Path,
         identified_norrna=piles["identified_norrna"], rrna=piles["rrna"],
         unidentified=piles["unidentified"],
         removal_evidence=evidence if evidence.exists() else None,
-        measured=measured)
+        measured=measured, assembly_record=assembly_record)
     (out / "prepared.json").write_text(json.dumps(prepared.as_manifest(), indent=1) + "\n")
     return prepared

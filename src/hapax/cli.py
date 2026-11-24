@@ -225,6 +225,17 @@ def cmd_run(args) -> int:
     proc = subprocess.run([sys.executable, str(root / "hapax.py"), *argv], cwd=root)
     if proc.returncode != 0:
         return proc.returncode
+    # The run's manifest describes the whole run, and until step 7 the run is two
+    # programs: the driver writes manifest.json and knows nothing of the steps that
+    # produced its inputs. So the assembler's record is merged in here. Without it a
+    # reader of the manifest cannot tell a run that assembled its own library from one
+    # handed contigs by a caller, which is the difference PLAN.md step 5 is about.
+    manifest = out / "manifest.json"
+    if prepared is not None and manifest.exists():
+        doc = json.loads(manifest.read_text())
+        doc["assembly"] = prepared.assembly_record
+        doc["prepared"] = prepared.as_manifest()
+        manifest.write_text(json.dumps(doc, indent=1) + "\n")
     # The enrichment stages, which the driver does not have (PLAN.md step 6). They run
     # after it because each reads a file the driver's stages wrote, and their absences are
     # recorded rather than raised: the sections that read them render without them and say

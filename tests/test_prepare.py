@@ -278,3 +278,26 @@ def test_a_field_left_out_on_purpose_is_stated_and_passed_on(tmp_path):
     assert argv[argv.index("--report-without") + 1] == "crispr"
     assert "--report-without" not in legacy_argv(
         _cfg(tmp_path), Path("/r1.fq"), None, tmp_path, ["reads"])
+
+
+def test_the_manifest_says_whether_the_run_assembled_its_own_contigs(tmp_path):
+    """`assembled_at_run_time`, in the file a reader opens.
+
+    The convention already existed and what it is worth is visible in
+    results/holdout_cascade/, whose assembly recorded it as false and pointed at a file
+    that does not exist: only the contig names survive, so the command line behind a
+    committed result cannot be recovered. A run that builds its own contigs and does not
+    say so is indistinguishable from one handed them by a caller.
+    """
+    from hapax.prepare import Prepared
+
+    p = Prepared(trim_r2=0, trim_r2_source="x", assembly=Path("/a.fa"),
+                 identified_norrna=Path("/i.fa"), rrna=Path("/r.fa"),
+                 unidentified=Path("/u.fa"), removal_evidence=None,
+                 assembly_record={"assembled_at_run_time": True, "contigs": 5})
+    assert p.as_manifest()["assembly_record"]["assembled_at_run_time"] is True
+    assert Prepared(trim_r2=0, trim_r2_source="x", assembly=Path("/a.fa"),
+                    identified_norrna=Path("/i.fa"), rrna=Path("/r.fa"),
+                    unidentified=Path("/u.fa"),
+                    removal_evidence=None).as_manifest()["assembly_record"] == {}, (
+        "an empty record must not read as an assembly this run built")
