@@ -28,8 +28,12 @@ LOCAL = {"python"}
 
 
 def _sources() -> list[Path]:
+    # src/ is the product since PLAN.md step 3, and it was the first place an import
+    # could be added without this tripwire seeing it: the package is not under
+    # experiments/ and not a test, so for one commit `jsonschema` was declared and, as
+    # far as this file could tell, imported nowhere.
     return sorted([ROOT / "hapax.py", *(ROOT / "experiments").rglob("*.py"),
-                   *(ROOT / "tests").glob("*.py")])
+                   *(ROOT / "src").rglob("*.py"), *(ROOT / "tests").glob("*.py")])
 
 
 def _third_party() -> dict[str, list[str]]:

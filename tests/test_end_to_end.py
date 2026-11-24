@@ -226,11 +226,18 @@ def test_reads_to_report_in_one_command(tmp_path):
         "PLAN.md step 5: the contigs were supplied rather than assembled by the run, so "
         "this is not one command from reads")
 
-    # PHASE 3, PLAN.md step 4: the report builds, and refuses rather than printing absence.
+    # PHASE 3, PLAN.md step 4: the report builds from the run directory alone, and
+    # refuses rather than printing an absence.
     page = out / "report.html"
+    report = subprocess.run([*cmd, "report", str(out)], capture_output=True, text=True,
+                            timeout=1800, cwd=ROOT)
+    assert report.returncode == 0, (
+        "PLAN.md step 4/6: the report refused this run. That refusal is correct "
+        f"behaviour and the run is what is incomplete.\n{report.stdout[-4000:]}"
+        f"\n{report.stderr[-4000:]}")
     assert page.exists(), (
-        "PLAN.md step 4: the run wrote no report. `hapax run` must finish at the page, "
-        "and `hapax report DIR` must rebuild it alone.")
+        "`hapax report` returned 0 and wrote no page, which is the one outcome that must "
+        "not be possible")
 
     # PHASE 4, PLAN.md step 6: every section filled from a file the run wrote.
     check = json.loads((out / "render_check.json").read_text())

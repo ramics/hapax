@@ -458,16 +458,30 @@ def load_page(path: Path, rundir: Path | None) -> dict:
         problems.append("missing sample.accession")
     else:
         try:
-            derived = page_descriptor.derive(smp["accession"])
-        except library_facts.UnknownLibrary as e:
-            problems.append(str(e))
-            derived = {}
+            # `sample_facts`, where a descriptor carries it, is the water's own facts
+            # supplied by the caller instead of read from the registry. That is what lets
+            # a run on an input nobody has deposited from have a page at all: the
+            # registry raises for a library it does not know, correctly, and a production
+            # sample is by definition one it does not know. Supplied facts are recorded
+            # as an override below, like a stated title.
+            derived = page_descriptor.derive(smp["accession"], d.get("sample_facts"))
+        except library_facts.UnknownLibrary:
+            # A library the registry does not know is the ordinary case for this tool:
+            # production water has no entry, and the registry raising is correct, since
+            # the alternative is another library's facts. So the page is built stating
+            # that it knows nothing about the water, and the statement is RECORDED as an
+            # override rather than made quietly - the page then says it has no facts,
+            # instead of carrying a sentence nobody can attribute.
+            derived = page_descriptor.derive(smp["accession"], {})
+            d["unknown_library"] = True
         # Derived unless overridden, and an override says so rather than looking derived.
         d["derived"] = derived
         d["overrides"] = sorted(
             [k for k in ("title",) if d.get(k) and d[k] != derived.get(k)] +
             [f"sample.{k}" for k in ("lede",)
-             if smp.get(k) and smp[k] != derived.get(k)])
+             if smp.get(k) and smp[k] != derived.get(k)] +
+            (["sample_facts"] if d.get("sample_facts") is not None else []) +
+            (["unknown_library"] if d.get("unknown_library") else []))
         d.setdefault("title", derived.get("title"))
         if not smp.get("lede"):
             smp["lede"] = derived.get("lede")

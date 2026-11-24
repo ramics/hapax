@@ -171,25 +171,21 @@ def cmd_run(args) -> int:
 
 
 def cmd_report(args) -> int:
-    """Rebuild the page from a run directory alone.
+    """Rebuild the page from a run directory alone, refusing an incomplete one.
 
-    The strict version of this - a missing section is a build error, a schema per output,
-    `--allow-partial` for a banner instead - is PLAN.md step 4. Today it calls the
-    existing generator, which needs a page descriptor, and says so rather than pretending
-    a run directory is enough.
+    PLAN.md step 4. A run directory is now the whole input: the page descriptor is
+    assembled from what the run recorded about itself, every declared stage output is
+    checked against its schema before anything is written, and a section that cannot be
+    drawn stops the build unless the caller asked for a partial page on purpose.
     """
-    root = repo_root()
-    rundir = Path(args.rundir).resolve()
-    if args.page is None:
-        print("hapax report needs --page until PLAN.md step 4: the generator takes a page "
-              "descriptor (results/web/pages/<sample>.json) and a run directory, and a "
-              "run directory alone does not yet say what the sample is.", file=sys.stderr)
-        return 2
-    cmd = [sys.executable, str(root / "experiments/make_web.py"), str(args.page),
-           "--rundir", str(rundir)]
-    if args.out:
-        cmd += ["--out", str(args.out)]
-    return subprocess.run(cmd, cwd=root).returncode
+    from .report import ReportError, build
+
+    try:
+        return build(Path(args.rundir), out=args.out, seed=args.seed,
+                     allow_partial=args.allow_partial, repo=repo_root())
+    except ReportError as e:
+        print(f"hapax report: {e}", file=sys.stderr)
+        return 1
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -208,8 +204,12 @@ def main(argv: list[str] | None = None) -> int:
 
     p = sub.add_parser("report", help="rebuild the page from a run directory")
     p.add_argument("rundir", type=Path)
-    p.add_argument("--page", type=Path, default=None)
     p.add_argument("--out", type=Path, default=None)
+    p.add_argument("--seed", type=int, default=1)
+    p.add_argument("--allow-partial", action="store_true",
+                   help="build the page from an incomplete run. It is marked as "
+                        "incomplete on the page itself, because a page that renders is "
+                        "a page somebody reads")
 
     s = sub.add_parser("stages", help="print the stages, their order and what they fill")
     s.add_argument("--config", type=Path, default=None)
