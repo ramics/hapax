@@ -1,0 +1,270 @@
+{
+  "pairs_scored": 2000,
+  "fields": {
+    "gc": {
+      "residue": {
+        "mean": 0.4680418,
+        "min": 0.1556,
+        "max": 0.7881,
+        "sd": 0.12460941270878302,
+        "n": 2000
+      },
+      "shuffled_null": {
+        "mean": 0.4680418,
+        "min": 0.1556,
+        "max": 0.7881,
+        "sd": 0.12460941270878302,
+        "n": 2000
+      }
+    },
+    "entropy3": {
+      "residue": {
+        "mean": 0.8895069,
+        "min": 0.6055,
+        "max": 0.9646,
+        "sd": 0.03836411324379193,
+        "n": 2000
+      },
+      "shuffled_null": {
+        "mean": 0.90375405,
+        "min": 0.639,
+        "max": 0.9642,
+        "sd": 0.03429976414653246,
+        "n": 2000
+      }
+    },
+    "longest_orf_aa": {
+      "residue": {
+        "mean": 78.791,
+        "min": 30,
+        "max": 101,
+        "sd": 19.13267750928597,
+        "n": 2000
+      },
+      "shuffled_null": {
+        "mean": 67.088,
+        "min": 28,
+        "max": 101,
+        "sd": 19.375653898178275,
+        "n": 2000
+      }
+    },
+    "frame_identifiable_frac": {
+      "residue": 0.147,
+      "shuffled_null": 0.09
+    },
+    "kmer16_duplicate_frac": {
+      "residue": {
+        "mean": 0.0057869,
+        "min": 0.0,
+        "max": 1.0,
+        "sd": 0.05668132509651965,
+        "n": 2000
+      },
+      "shuffled_null": {
+        "mean": 0.0,
+        "min": 0.0,
+        "max": 0.0,
+        "sd": 0.0,
+        "n": 2000
+      }
+    },
+    "closest_viral": {
+      "any_hit_frac": 0.984,
+      "bitscore": {
+        "mean": 28.93816056910569,
+        "min": 23.5,
+        "max": 49.7,
+        "sd": 3.0076486247151566,
+        "n": 1968
+      },
+      "pident": {
+        "mean": 44.5594512195122,
+        "min": 22.0,
+        "max": 90.0,
+        "sd": 9.699658121305983,
+        "n": 1968
+      },
+      "bitscore_sweep": {
+        "30": 0.2345,
+        "40": 0.017,
+        "50": 0.0,
+        "60": 0.0,
+        "80": 0.0,
+        "100": 0.0
+      },
+      "subtracted_reads_any_hit_frac": 0.995,
+      "subtracted_reads_bitscore": {
+        "mean": 32.28326633165829,
+        "min": 23.5,
+        "max": 94.0,
+        "sd": 9.19120814002846,
+        "n": 1990
+      }
+    },
+    "closest_sprot": {
+      "any_hit_frac": 0.9895,
+      "bitscore": {
+        "mean": 29.95755432036382,
+        "min": 23.9,
+        "max": 49.7,
+        "sd": 4.386850385044341,
+        "n": 1979
+      },
+      "pident": {
+        "mean": 44.95366346639717,
+        "min": 24.4,
+        "max": 87.5,
+        "sd": 10.124384187538519,
+        "n": 1979
+      },
+      "bitscore_sweep": {
+        "30": 0.3085,
+        "40": 0.061,
+        "50": 0.0,
+        "60": 0.0,
+        "80": 0.0,
+        "100": 0.0
+      },
+      "subtracted_reads_any_hit_frac": 0.996,
+      "subtracted_reads_bitscore": {
+        "mean": 37.38303212851405,
+        "min": 23.9,
+        "max": 107.0,
+        "sd": 15.073827799312518,
+        "n": 1992
+      }
+    }
+  },
+  "artefact_rates": {
+    "adapter": 0.0,
+    "primer_dimer": 0.0,
+    "low_entropy_0.5": 0.0
+  },
+  "motif_rate": "not searched: --without",
+  "motif_rate_on_subtracted_reads": "not searched: --without",
+  "library_abundance": {
+    "library_pairs_counted": 400000,
+    "sketch_bits": 28,
+    "kmers_added": 96796658,
+    "counter_saturation_frac": 4.6938657760620117e-07,
+    "residue_median_count": {
+      "mean": 0.5725,
+      "min": 0,
+      "max": 65,
+      "sd": 2.7255197630891423,
+      "n": 2000
+    },
+    "subtracted_median_count": {
+      "mean": 5.3445,
+      "min": 0,
+      "max": 255,
+      "sd": 19.46962641979715,
+      "n": 2000
+    },
+    "residue_recurrence_sweep": {
+      "1": 0.1435,
+      "2": 0.074,
+      "3": 0.0505,
+      "5": 0.033,
+      "10": 0.0165,
+      "20": 0.004,
+      "50": 0.0005
+    },
+    "wall_seconds": 274.50116426300156
+  },
+  "crispr": null,
+  "rfam": null,
+  "dinucleotide": {
+    "CpG_oe_residue": {
+      "mean": 0.9562036,
+      "min": 0.0,
+      "max": 2.0977,
+      "sd": 0.35763189826184016,
+      "n": 2000
+    },
+    "UpA_oe_residue": {
+      "mean": 0.6689958,
+      "min": 0.0,
+      "max": 2.1482,
+      "sd": 0.27557432446894115,
+      "n": 2000
+    }
+  },
+  "folding": {
+    "mfe_residue": {
+      "mean": -36.970375,
+      "min": -109.0,
+      "max": -5.7,
+      "sd": 14.767168338572729,
+      "n": 2000
+    },
+    "z_residue": {
+      "mean": -0.296003,
+      "min": -6.788,
+      "max": 1.649,
+      "sd": 0.7882715667982141,
+      "n": 2000
+    },
+    "frac_z_under_minus2": 0.028
+  },
+  "cross_sample_recurrence": null,
+  "chimaera_split_rate": 0.045,
+  "chimaera_split_rate_on_subtracted_reads": 0.096,
+  "field_state": {
+    "abundance": "computed",
+    "cross_sample": "not searched: --without",
+    "rfam": "not searched: --without",
+    "crispr": "not searched: --without",
+    "pfam": "not searched: --without",
+    "chimaera": "computed"
+  },
+  "consulted": [
+    {
+      "role": "closest_viral residue",
+      "path": "/opt/hapax/prot/viral.dmnd",
+      "bytes": 239074080,
+      "mtime": 1795454279,
+      "state": "searched",
+      "queries": 2000,
+      "hits": 1968
+    },
+    {
+      "role": "closest_sprot residue",
+      "path": "/opt/hapax/prot/sprot.dmnd",
+      "bytes": 294430316,
+      "mtime": 1795454300,
+      "state": "searched",
+      "queries": 2000,
+      "hits": 1979
+    },
+    {
+      "role": "chimaera",
+      "path": "/opt/hapax/stage/wk/asm_baseline/sample_contigs.fa",
+      "bytes": 283106023,
+      "mtime": 1795454611,
+      "state": "searched",
+      "queries": 2000,
+      "hits": 90
+    },
+    {
+      "role": "closest_viral known",
+      "path": "/opt/hapax/prot/viral.dmnd",
+      "bytes": 239074080,
+      "mtime": 1795454279,
+      "state": "searched",
+      "queries": 2000,
+      "hits": 1990
+    },
+    {
+      "role": "closest_sprot known",
+      "path": "/opt/hapax/prot/sprot.dmnd",
+      "bytes": 294430316,
+      "mtime": 1795454300,
+      "state": "searched",
+      "queries": 2000,
+      "hits": 1992
+    }
+  ],
+  "known_pile_pairs": 2000
+}

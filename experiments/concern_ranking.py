@@ -36,9 +36,23 @@ with c built from identity and aligned length. At 95% identity over 100 aa a hum
 associated relative keeps nearly all its weight; at 45% over 30 aa it keeps almost none
 and the row is ranked as an unknown, which is what it is.
 
-WHY IT IS NOT A PIPELINE STAGE. It measures nothing. It reads a finished run directory and
-reorders it, so it lives beside `subject_names.py` as a presentation step. Keeping it out
-of `hapax.py` is the honest signal that no number in the run changes because of it.
+WHY IT IS A PIPELINE STAGE, HAVING ARGUED THAT IT WAS NOT. This docstring used to say that
+keeping it out of `hapax.py` was the honest signal that no number in the run changes because
+of it. That was right about the script and wrong about the report. It measures nothing and
+changes no number - it reads a finished run directory and reorders it - but the run viewer's
+unnamed-remainder section is built from its output, and a section with no stage behind it is
+a hole in the tool rather than in the water: the first production pass over a library nobody
+had touched produced a page whose summary sections were a census of absent files. So it is
+stage `ranking`, last in STAGE_ORDER because it reads the run's own outputs, and it still
+measures nothing: no number anywhere else in the run moves if it is skipped, which is why it
+is also the one stage that costs seconds and consults no index.
+
+WHAT ITS HOST COLUMN IS. A label on a database record, never a claim about the water. Over
+41,829 residue subjects of the discriminating library host confidence maxes at 0.40, and on
+the second library through production, SRR23702504, every one of its 58-83 ranked subjects
+per seed is unknown_host with a maximum of 0.256 and a closest relative at 78.6% identity
+over 52 aa. Nothing there is close enough to a named record for that record's host to
+transfer, so the ceiling travels with the colours wherever they are drawn.
 """
 
 from __future__ import annotations
@@ -503,10 +517,32 @@ def main() -> None:
             if rows else None,
             "at_or_above_0.5": sum(1 for r in rows if r["host_confidence"] >= 0.5),
             "at_or_above_0.2": sum(1 for r in rows if r["host_confidence"] >= 0.2),
+            # TWO INDEPENDENT MAXIMA IN ONE DICT INVITE BEING PAIRED, AND A PAIRING OF
+            # MAXIMA DESCRIBES A SUBJECT THAT DOES NOT EXIST. These two fields are the
+            # best identity over all rows and the best alignment length over all rows,
+            # which are different subjects on all five seeds of SRR23702504: the summary
+            # reads 100.0% and 53 aa where the 100.0% row is 21 aa long and the 53 aa row
+            # is a different subject entirely. A reader of the page did pair them, and
+            # short-alignment identity is exactly where the pairing flatters: 100% over 21
+            # aa is a chance alignment and 100% over 53 aa would not be. So the closest
+            # row's OWN length ships beside its identity, and the two independent maxima
+            # keep names that say they are independent.
             "best_identity_percent": max((r["median_identity_percent"] or 0)
                                          for r in rows) if rows else None,
+            "closest_row_aligned_aa": (
+                max(rows, key=lambda r: r["median_identity_percent"] or 0)
+                ["median_aligned_aa"] if rows else None),
+            "longest_alignment_aa": max((r["median_aligned_aa"] or 0) for r in rows)
+            if rows else None,
+            # kept under its old name so nothing that reads it breaks, with the reading
+            # that stops it being paired
             "best_aligned_aa": max((r["median_aligned_aa"] or 0) for r in rows)
             if rows else None,
+            "best_fields_are_independent": (
+                "best_identity_percent and best_aligned_aa (= longest_alignment_aa) are "
+                "maxima over the rows taken separately and are usually different "
+                "subjects. Do not print them as one match. The identity's own alignment "
+                "length is closest_row_aligned_aa."),
             "reading": "how much of the matched record's host group transfers to the "
                        "reads. Built from identity and aligned length. If the maximum is "
                        "low, no relative in this residue is close enough for its host to "

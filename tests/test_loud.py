@@ -216,8 +216,11 @@ def test_stale_index_cache_is_rebuilt_not_served(kit):
 # ------------------------------------------------------------------------------- hapax.py
 
 def _run(tmp_path, **kw) -> hapax.Run:
+    # `--library` is required of `hapax run`, and `Run.call` hands it to every stage
+    # script that accepts one, so a Run built without it is not one hapax can build.
     args = Namespace(out=tmp_path / "run", work=None, seed=1, stages=hapax.STAGE_ORDER,
-                     dmnd=[tmp_path / "v.dmnd"], r1=tmp_path / "r1", r2=tmp_path / "r2")
+                     dmnd=[tmp_path / "v.dmnd"], r1=tmp_path / "r1", r2=tmp_path / "r2",
+                     library="SRR23973193")
     for k, v in kw.items():
         setattr(args, k, v)
     return hapax.Run(args)

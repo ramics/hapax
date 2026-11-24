@@ -71,6 +71,33 @@ LIBRARIES = {
 }
 
 
+def spec_for(name: str) -> dict:
+    """The three libraries above by nickname, or ANY library by accession.
+
+    WHY THIS EXISTS. The three keys above are the libraries this measurement was written
+    for, and their read paths are written into this file. That made the one instrument
+    that can measure a new library's prefix the one script a new library cannot be given
+    to - and the prefix is the first number a production run needs, before any value for
+    it exists to be inherited. So an accession is resolved through
+    `experiments/libraries.json`, which carries the read paths and raises for a library it
+    does not know. The nicknames keep working, so every committed command reproduces.
+
+    It is deliberately the same file that supplies `trim_r2`, and the circularity is only
+    apparent: this script reads `r1`/`r2` and never `trim_r2`, because the prefix under
+    test has to still be on the read. A library whose entry has no trim yet - `null` with
+    a reason, which is how an unmeasured value is written here - is exactly the case this
+    serves.
+    """
+    if name in LIBRARIES:
+        return LIBRARIES[name]
+    import library_facts
+    entry = library_facts.library(name)       # raises UnknownLibrary, never a bare KeyError
+    r1 = library_facts.fact(name, "r1")
+    return {"run": name, "dir": str(Path(r1).parent),
+            "note": entry.get("label", "resolved from experiments/libraries.json"),
+            "r1": r1, "r2": library_facts.fact(name, "r2")}
+
+
 def clips(aligner, seq: str, min_mlen: int, min_mapq: int):
     """(five_prime_clip, three_prime_clip, strand) for the best anchored hit, or None.
 
@@ -125,9 +152,12 @@ def main() -> None:
 
     results, timings = {}, {}
     for name in args.libraries:
-        spec = LIBRARIES[name]
-        d = ROOT / spec["dir"]
-        r1, r2 = d / f"{spec['run']}_1.fastq.gz", d / f"{spec['run']}_2.fastq.gz"
+        spec = spec_for(name)
+        if "r1" in spec:                      # resolved from experiments/libraries.json
+            r1, r2 = ROOT / spec["r1"], ROOT / spec["r2"]
+        else:
+            d = ROOT / spec["dir"]
+            r1, r2 = d / f"{spec['run']}_1.fastq.gz", d / f"{spec['run']}_2.fastq.gz"
         for p in (r1, r2):
             if not p.exists():
                 raise SystemExit(f"{p} is missing")

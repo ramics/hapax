@@ -1,0 +1,65 @@
+{
+  "status": "ok",
+  "panel": {
+    "name": "cp3",
+    "table": "/opt/hapax/results/crossplant/panel.tsv",
+    "table_sha256_16": "1f94f259ad326c59",
+    "rows": 536,
+    "eligible_subjects_at_depth": 530,
+    "why_fewer_than_rows": "a library below the fixed subject depth is left out rather than scanned shallower; the committed pass scanned 530 of this table's 536 rows",
+    "plants": 32,
+    "projects": [
+      "PRJNA1543313",
+      "PRJNA729801",
+      "PRJNA842541",
+      "PRJNA924011",
+      "PRJNA941081",
+      "PRJNA948850"
+    ],
+    "subject_depth_pairs": 2000000,
+    "query_length_nt": 90,
+    "contig_window_nt": 90,
+    "witness_instrument": "exact canonical 31-mer presence, the same instrument as results/recurrence/",
+    "staged_for_reuse": {
+      "results_prefix": "s3://amazebio-corpora-897641797669/corpora/results/hapax-bigindex/results/crossplant/",
+      "what_is_staged": "the reduced query x subject bit matrices and the per-subject witness files of the runs already made, which is what a report reads",
+      "what_is_NOT_staged": "the 531 subject FASTQ subsets themselves. Each pass re-downloads them from SRA on the instance, which is the bulk of its wall time; staging them once would make later passes cheaper and has not been done, so a new sample's pass costs a fresh download.",
+      "why_that_is_recorded_here": "An absent staged copy is a cost, not a failure, and a stage that silently re-downloaded would hide it."
+    },
+    "query_library_is_not_a_member": true
+  },
+  "rules_enforced": [
+    "Query reads must come from OUTSIDE the library searched. Own-library reads are abundant by construction: measured at 54% false growth against a 6% swap control, and queries are drawn from spots outside each library's own subject subset for exactly this reason.",
+    "The query library is never a panel member and never enters a union. SRR23973193 is absent from panel.tsv by construction.",
+    "Report PAIRED per plant, never pooled. Within-plant rates run 0.1530 to 0.9593, a six-fold spread, so a pooled within-minus-between difference compares plants instead of comparing within against between. The paired gap is +0.1432 (most1), positive in 32 of 32 plants.",
+    "Contig queries go in 90 nt windows, the same width as the read queries, so the instrument does not change between the two arms.",
+    "Read every saturation figure DOWN the depth column, not across the pile row: depth decides and the pile label almost nothing. A union is blind to anything present once, not to novelty."
+  ],
+  "operating_points": {
+    "required": [
+      "most1",
+      "most2",
+      "any1",
+      "any2"
+    ],
+    "both_travel": "They disagree by a factor of four about the thing the measurement is for - at depth 1 the identified-versus-residue gap is 8.5 points at `most` and 42.0 at `any` - so neither ships alone."
+  },
+  "what_this_panel_cannot_say": "Absence here means no 31 exact bases shared with any panel library, which past roughly 10-15% divergence is not the same as having no relative there. One substitution destroys up to 31 of a 90 nt mate's 60 31-mers.",
+  "stages": {
+    "queries": {
+      "state": "built",
+      "file": "/opt/hapax/stage/wk/hapax_shared/crossplant_work/queries/contig_queries.tsv",
+      "rows": 131476,
+      "window_nt": 90,
+      "manifest": "/opt/hapax/stage/wk/hapax_shared/crossplant_work/queries/contig_queries_manifest.json",
+      "why_windows": "a single 90 nt read at depth one is a weak probe of whether a molecule is background elsewhere; a contig offers many independent windows of the same molecule, and the two windows of a query pair are a replicate rather than a second instrument because they are the same length and the same kit",
+      "next_step": "upload beside the panel under the pass's query-set prefix and launch with experiments/ec2_crossplant.py --query-mode contigs; subject subsets are not staged, so that pass pays a fresh download"
+    },
+    "report": {
+      "state": "not selected",
+      "why": "report was not in --stages, so nothing of it ran"
+    }
+  },
+  "library": "SRR23702504",
+  "spec": "SPEC.md 7.1"
+}

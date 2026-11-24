@@ -1,16 +1,11 @@
 {
- "_what": "Everything the run viewer says about this sample that is not read from the run directory. experiments/make_web.py takes this file and nothing else that differs by sample.",
- "title": "Holdout run viewer",
+ "_what": "Which run directory this page is built from, and which files outside it the panels may read. Nothing else differs by sample: the title and the one-line description of the water are derived from experiments/libraries.json by experiments/page_descriptor.py, so a sample nobody has touched gets its page without anybody writing a sentence for it. Stating title or sample.lede here overrides the derived one and is recorded as an override.",
  "sample": {
-  "accession": "SRR23421544",
-  "lede": "Treated wastewater from Russia, collected on 2022-05-10, sequenced as RNA."
+  "accession": "SRR23421544"
  },
  "rundir": "results/holdout_cascade/run_s1",
  "inputs": {
   "spectrum": {"not_run": "the gene-level divergent stage (experiments/divergent_known.py) has not been run on this library"},
-  "spectrum_big_index": {"not_run": "follows the spectrum"},
-  "spectrum_reference_point": {"not_run": "follows the spectrum"},
-  "spectrum_reference_truth": {"not_run": "follows the spectrum"},
-  "truth_gene_map": {"path": "results/holdout_cascade/gene_map_s1.json"}
+  "spectrum_big_index": {"not_run": "follows the spectrum"}
  }
 }
