@@ -198,12 +198,17 @@ def test_reads_to_report_in_one_command(tmp_path):
     # PHASE 1, PLAN.md step 3: one installed command that takes a config.
     entry = shutil.which("hapax")
     cmd = ([entry] if entry else [sys.executable, str(ROOT / "hapax.py")])
+    # HAPAX_REPO because the package does not carry the stage scripts yet: an installed
+    # `hapax` has to be told where the checkout with experiments/ is, and it refuses with
+    # that message rather than guessing. PLAN.md step 7 ends the need for it, and this
+    # test will stop setting it then.
+    env = {**os.environ, "HAPAX_REPO": str(ROOT)}
     run = subprocess.run(
         [*cmd, "run", "--config", str(config),
          str(FIXTURE / "reads/fixture_R1.fastq.gz"),
          str(FIXTURE / "reads/fixture_R2.fastq.gz"), "--out", str(out),
          "--report"],
-        capture_output=True, text=True, timeout=5400, cwd=ROOT)
+        capture_output=True, text=True, timeout=5400, cwd=ROOT, env=env)
     assert entry is not None, (
         "there is no installed `hapax` entry point; `pip install .` is the whole install "
         "in PLAN.md 4 and the package skeleton is step 3")
@@ -231,7 +236,7 @@ def test_reads_to_report_in_one_command(tmp_path):
     # refuses rather than printing an absence.
     page = out / "report.html"
     report = subprocess.run([*cmd, "report", str(out)], capture_output=True, text=True,
-                            timeout=1800, cwd=ROOT)
+                            timeout=1800, cwd=ROOT, env=env)
     assert report.returncode == 0, (
         "PLAN.md step 4/6: the report refused this run. That refusal is correct "
         f"behaviour and the run is what is incomplete.\n{report.stdout[-4000:]}"

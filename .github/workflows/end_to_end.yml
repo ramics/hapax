@@ -53,6 +53,10 @@ jobs:
       - name: reads to report
         env:
           HAPAX_E2E: "1"
+          # The installed package does not carry the stage scripts, so it has to be told
+          # where the checkout holding experiments/ is. It refuses with that message
+          # rather than guessing, which is why this is set here and not defaulted.
+          HAPAX_REPO: ${{ github.workspace }}
         run: python -m pytest tests/test_end_to_end.py -v
       - name: keep the run directory
         if: always()
