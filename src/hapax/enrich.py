@@ -79,7 +79,10 @@ def enrich(cfg: Config, out: Path, repo: Path, seed: int) -> list[dict]:
              "--strains", strains, "--contigs", contigs or "",
              "--pfam", pfam, "--dmnd-sprot", sprot,
              "--dmnd", cfg.database("protein"), "--threads", cfg.threads,
-             "--out", out],
+             # A file, and a work directory beside it: this script writes the path it is
+             # given rather than a name of its own inside it, and `--work` is required.
+             "--work", out / "work" / "workup",
+             "--out", out / f"divergent_contig_workup_s{seed}.json"],
             repo, "workup", [str(strains), str(pfam), str(sprot)]))
 
     if workup.exists():

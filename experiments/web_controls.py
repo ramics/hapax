@@ -90,19 +90,31 @@ def _bounds(values, step, shipped):
             "n_values": len(vs), "widened_to_include_shipped": widened}
 
 
-def _decades(evalues):
+def _decades(evalues, shipped=None):
     """The E-value decades this run's own hits span, strongest first.
 
     Decades and not a smooth axis: an E-value floor is quoted, cited and argued about in
     decades, and the interesting thing about this control is not where between 1e-5 and
     1e-6 it sits but that the withdrawn reading of a 92.3% hit rate was taken with no
     floor at all.
+
+    THE GRID IS WIDENED TO REACH THE SHIPPED FLOOR, as the continuous bounds are, and for
+    the same reason. A run whose weakest hit is 1e-11 spans no decade containing 1e-5, and
+    the shipped marker then has nowhere to sit: the build refused, which is right when the
+    default cannot be resolved and wrong here, because a floor weaker than every hit in
+    the run is a floor every hit already clears. Widening states that, where moving the
+    default would have marked a setting the run never used. Decades are exact points, so
+    this adds no interpolation - the thing the snapping rule above exists to prevent.
     """
     vs = [v for v in _finite(evalues) if v > 0]
     if not vs:
         return None
     lo = max(-300, math.floor(math.log10(min(vs))))
     hi = min(2, math.ceil(math.log10(max(vs))))
+    if shipped is not None and math.isfinite(shipped) and shipped > 0:
+        e = round(math.log10(shipped))
+        if math.isclose(float(f"1e{e}"), shipped, rel_tol=1e-9):
+            lo, hi = min(lo, e), max(hi, e)
     return [{"value": float(f"1e{e}"), "label": f"1e{e}" if e else "1 (no floor)"}
             for e in range(hi, lo - 1, -1)]
 
@@ -146,7 +158,8 @@ def _resolve_one(c: dict, rundir: Path, bundle: dict, search: dict,
     # whose SHIPPED point cannot be resolved - then the page would mark a setting as
     # shipped that the run never used, and a reader would cite it.
     if cid == "evalue_floor":
-        pts = _decades([r[0] for r in search["all"]] + [r[2] for r in search["all"]])
+        pts = _decades([r[0] for r in search["all"]] + [r[2] for r in search["all"]],
+                       shipped=bundle["significant_evalue"])
         if pts is None:
             out["absent"] = ("reads.jsonl is present but no read in it has a hit with an "
                              "E-value, so there is no floor to move: that is a census of "
