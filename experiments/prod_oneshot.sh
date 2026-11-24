@@ -65,6 +65,14 @@ export HAPAX_GIT_SHA="@@COMMIT@@"
 # guess (src/hapax/cli.py refuses instead of guessing).
 export HAPAX_REPO=/opt/hapax
 
+# Intermediates are NOT results, and this bucket has no delete. Some stages put their
+# work directory inside the run directory rather than under --work, so a plain recursive
+# copy of out/ wrote 23 GB of trimmed FASTQs and minimap2 indexes per seed into permanent
+# storage - measured on i-076a4f01b36b82684, where the four largest files were 5 GB each
+# and none of them is evidence of anything. The exclusion is here rather than in the
+# package because the package decides where it works and this decides what is kept.
+OUT_EXCLUDE=(--exclude "*/work/*" --exclude "work/*")
+
 die() {
   echo "=== shutting down: $1 ==="
   echo "$1" > /opt/hapax/why.txt 2>/dev/null || true
@@ -76,7 +84,8 @@ die() {
     --include "why.txt" --include "run.toml" --include "*.json" \
     --exclude "mamba/*" --exclude "*/site-packages/*" --exclude "db/*" \
     --region "$REGION" || true
-  aws s3 cp /opt/hapax/out/ "$OUTS3/" --recursive --region "$REGION" || true
+  aws s3 cp /opt/hapax/out/ "$OUTS3/" --recursive "${OUT_EXCLUDE[@]}" \
+    --region "$REGION" || true
   shutdown -c || true
   shutdown -h now || systemctl --no-block poweroff || halt -p || true
   exit "${2:-1}"
@@ -94,7 +103,8 @@ die() {
       --include "run.toml" --include "*.json" --exclude "mamba/*" \
       --exclude "*/site-packages/*" --exclude "db/*" --region "$REGION" \
       >/dev/null 2>&1 || true
-    aws s3 cp /opt/hapax/out/ "$OUTS3/" --recursive --region "$REGION" \
+    aws s3 cp /opt/hapax/out/ "$OUTS3/" --recursive "${OUT_EXCLUDE[@]}" \
+      --region "$REGION" \
       >/dev/null 2>&1 || true
   done
 ) &
@@ -314,7 +324,8 @@ for sd in @@SEEDS@@; do
     || die "hapax run failed on seed $sd; its manifest and log-run-s$sd.txt say where"
   test -s "$OUT/report.html" || die "seed $sd exited 0 and wrote no report, which is the \
 one outcome that must not be possible"
-  aws s3 cp /opt/hapax/out/ "$OUTS3/" --recursive --region "$REGION" || true
+  aws s3 cp /opt/hapax/out/ "$OUTS3/" --recursive "${OUT_EXCLUDE[@]}" \
+    --region "$REGION" || true
 done
 
 # The assembly itself, so a later pass over this sample never re-assembles.
