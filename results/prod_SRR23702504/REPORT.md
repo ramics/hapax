@@ -306,6 +306,13 @@ maxima are independent and must not be printed as one match. The same paragraph 
 seed's maximum as the whole residue's; a per-seed best spanning 70.4 to 100.0% has to be reported
 as a range.
 
+The corrected number is carried by two instruments rather than one. The web view derives the
+closest row's length from the rows itself and gets 21 aa on this library and 35 aa on Berlin, which
+is what `closest_row_aligned_aa` now reports, so the field is cross-checked rather than taken on
+trust. The renderer keeps its own derivation deliberately, because a `ranking.json` written before
+the field existed would otherwise render with no length at all, which is the quiet loss the field
+was added to prevent.
+
 Two notes on the remaining two sections. `profile` (the whole library through Kraken2) and `taxa`
 (divergence over the identified contigs) need the databases, so they belong on the next pass with
 an instance up rather than being back-filled here; `taxa` should be cheap beside what this pass
