@@ -274,6 +274,10 @@ R.add(Stage(
         "stage's, which is what lets a section with no producer be a build error instead "
         "of a page that tells a reader something is missing from their sample.",
     script="make_web.py",
+    # The package's, not the driver's: the driver never built the page, which is why a run
+    # could finish with every stage green and no report. Marked rather than special-cased
+    # at each use, because `--stages report` to the driver is an argparse error.
+    in_driver=False,
     needs=("intervals", "layers", "census", "strains", "ranking", "profile", "taxa",
            "workup", "architecture", "names"),
     outputs=(Output("report.html", "report", section=METHODS),

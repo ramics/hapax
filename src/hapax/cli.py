@@ -125,7 +125,13 @@ def legacy_argv(cfg: Config, r1: Path, r2: Path | None, out: Path,
         argv += ["--pairs", str(cfg.run["pairs"])]
     if "report_pairs" in cfg.run:
         argv += ["--report-pairs", str(cfg.run["report_pairs"])]
-    argv += ["--stages", *[s for s in stages if s != "report"]]
+    # Only the stages the DRIVER has. `report` is the package's, and so are the three
+    # enrichments adopted in step 6, which run after it; passing one of those on
+    # `--stages` is an argparse choice error rather than a skipped stage, so the registry's
+    # `in_driver` is what decides rather than a name-by-name exclusion that has to be kept
+    # in step with the adoptions.
+    driver_stages = [s for s in stages if R.stages[s].in_driver]
+    argv += ["--stages", *driver_stages]
     return argv
 
 

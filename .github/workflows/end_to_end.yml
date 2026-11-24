@@ -15,7 +15,11 @@
 # measuring is how much of the rebuild is left.
 name: end-to-end
 on:
+  # `push:` on its own ran this twice for every commit on a branch with a pull request
+  # open, which is two conda solves and two index builds for one answer. The push arm is
+  # narrowed to the default branch so that a merge is still measured.
   push:
+    branches: [main]
   pull_request:
 jobs:
   fixture:

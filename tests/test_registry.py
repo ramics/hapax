@@ -84,9 +84,9 @@ def test_the_registry_agrees_with_the_legacy_driver_about_production():
 
     hapax = driver()
     # `report` is a stage here and was not one in the driver: the page was built by hand
-    # afterwards, which is why a run could finish with every stage green and no page.
-    mine = {n for n in R.production()
-            if R.stages[n].in_driver and n != "report"}
+    # afterwards, which is why a run could finish with every stage green and no page. It
+    # is marked as the package's, so no exception for it is needed here.
+    mine = {n for n in R.production() if R.stages[n].in_driver}
     assert mine == set(hapax.PRODUCTION_STAGES), (
         f"registry: {sorted(mine)}\n"
         f"driver:   {sorted(hapax.PRODUCTION_STAGES)}")
@@ -103,8 +103,6 @@ def test_a_stage_the_package_runs_is_marked_as_the_packages():
 
     declared_by_driver = set(driver().STAGE_ORDER)
     for name, stage in R.stages.items():
-        if name == "report":
-            continue
         if stage.in_driver:
             assert name in declared_by_driver, (
                 f"{name} is marked as the driver's stage and the driver does not declare "

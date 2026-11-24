@@ -229,3 +229,25 @@ def test_classify_is_found_through_the_kraken2_wrapper(tmp_path, monkeypatch):
                         lambda name: str(wrapper) if name == "kraken2" else None)
     cfg = _cfg(tmp_path)
     assert tools.resolve(cfg, "classify") == libexec / "classify"
+
+
+def test_only_the_drivers_own_stages_reach_its_stages_flag(tmp_path):
+    """The driver's `--stages` is an argparse choice list, so a stage it does not have is
+    an exit code 2 before anything runs rather than a stage that is skipped.
+
+    Three stages were adopted by the package in PLAN.md step 6 and `report` was never the
+    driver's, and the translation excluded `report` by name. A by-name exclusion has to be
+    kept in step with every later adoption, and was not.
+    """
+    from legacy import driver
+
+    from hapax.cli import legacy_argv
+    from hapax.stages import R
+
+    cfg = _cfg(tmp_path)
+    argv = legacy_argv(cfg, Path("/r1.fq"), Path("/r2.fq"), tmp_path, R.production())
+    passed = argv[argv.index("--stages") + 1:]
+    assert passed, "no stage reached the driver"
+    unknown = sorted(set(passed) - set(driver().STAGE_ORDER))
+    assert not unknown, f"the driver has no such stage: {unknown}"
+    assert set(passed) == {n for n in R.production() if R.stages[n].in_driver}
