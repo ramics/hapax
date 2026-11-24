@@ -140,20 +140,31 @@ PY="$ENV/bin/python"
   node --version; } > /opt/hapax/log-versions.txt 2>&1 \
   || die "the environment is missing a tool the pipeline drives; see log-versions.txt"
 cat /opt/hapax/log-versions.txt
+"$PY" -m pip install /opt/hapax > /opt/hapax/log-pip.txt 2>&1 \
+  || die "pip install . failed; see log-pip.txt"
+command -v hapax || die "pip install . left no hapax on PATH"
+hapax --version || die "the installed hapax will not start"
+
 # `classify` is Kraken2's own helper and is on no distribution's PATH; hapax.tools finds
 # it beside the wrapper. Proved here so a missing one costs ten minutes, not four hours.
-"$PY" - <<'PYEOF' > /opt/hapax/log-classify.txt 2>&1 || die "hapax cannot find Kraken2's classify helper; see log-classify.txt"
+#
+# AFTER THE INSTALL, FROM /tmp, UNDER -I, and the first launch of this template paid for
+# all three. The check ran before `pip install .` and with the working directory at
+# /opt/hapax, so `from hapax import tools` resolved `hapax` to /opt/hapax/hapax.py, the
+# legacy driver, which has no `tools`: a correct environment failed on an import that
+# could never have succeeded. The package and the driver share a name, which is why
+# cli.py loads the driver by path and never by name, and a bare `python` launched from
+# the checkout walks into the same ambiguity one layer out. -I keeps the working
+# directory off sys.path, and /tmp keeps hapax.py out of reach regardless.
+( cd /tmp && "$PY" -I - <<'PYEOF'
 from pathlib import Path
 from hapax import tools
 from hapax.config import Config
 print(tools.resolve(Config(path=Path("preflight")), "classify"))
 PYEOF
+) > /opt/hapax/log-classify.txt 2>&1 || die "hapax cannot find Kraken2's classify helper; see log-classify.txt"
 cat /opt/hapax/log-classify.txt
 
-"$PY" -m pip install /opt/hapax > /opt/hapax/log-pip.txt 2>&1 \
-  || die "pip install . failed; see log-pip.txt"
-command -v hapax || die "pip install . left no hapax on PATH"
-hapax --version || die "the installed hapax will not start"
 "$PY" -m pip freeze > /opt/hapax/out/pip_freeze.txt 2>&1 || true
 
 # ---------------------------------------------------------------- this repo's own Rust
