@@ -440,3 +440,32 @@ def test_the_generated_tables_carry_numbers_and_not_a_column_of_dashes(tmp_path)
     for heading in ("## The assembly", "## The cascade", "## Measured off the file",
                     "## The mate-2 non-template prefix"):
         assert heading in text, f"{heading} did not render from {res}"
+
+
+def test_the_host_summary_never_invites_a_pairing_of_two_maxima():
+    """The closest row's identity must ship with that row's OWN alignment length.
+
+    `host_confidence_summary` carried `best_identity_percent` and `best_aligned_aa` as
+    maxima taken separately over the rows, and they are different subjects on every seed of
+    the first production run. Printed as one match they read "100.0% identity over 53 amino
+    acids", where the 100% row is 21 aa and the 53 aa row is something else - a subject that
+    does not exist, flattering hardest where identity is least trustworthy. A web page did
+    pair them. The invariant is checked on committed output rather than a fixture, because
+    the defect was in what the field shape invited, not in any arithmetic.
+    """
+    rankings = sorted(ROOT.glob("results/prod_*/run_s*/ranking.json"))
+    if not rankings:
+        pytest.skip("no ranking is committed")
+    for path in rankings:
+        r = json.loads(path.read_text())
+        h = r["host_confidence_summary"]
+        rows = r["subjects"]
+        if not rows:
+            continue
+        assert "closest_row_aligned_aa" in h, f"{path} has no closest_row_aligned_aa"
+        assert "best_fields_are_independent" in h, f"{path} does not say the maxima are independent"
+        closest = max(rows, key=lambda x: x["median_identity_percent"] or 0)
+        assert h["best_identity_percent"] == closest["median_identity_percent"]
+        assert h["closest_row_aligned_aa"] == closest["median_aligned_aa"], (
+            f"{path}: closest_row_aligned_aa is not the closest row's own length")
+        assert h["longest_alignment_aa"] == max((x["median_aligned_aa"] or 0) for x in rows)
