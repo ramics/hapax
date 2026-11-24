@@ -143,3 +143,28 @@ def test_the_descriptor_states_ignorance_rather_than_supplying_facts(tmp_path):
     assert set(d["inputs"]) == {"spectrum", "spectrum_big_index"}
     for v in d["inputs"].values():
         assert "not_run" in v, "a declared absence and an undeclared one are not the same"
+
+
+def test_no_report_section_depends_on_a_panel_a_library_may_not_have():
+    """A section fed by a per-library panel could not be drawn for most water.
+
+    Two stages resolve a reference out of `experiments/libraries.json` and skip with a
+    committed reason when this library has none: `panel` (the depositors' truth genomes)
+    and `crossplant` (the 530-library background). Neither output fills a report section
+    today, which is why a run on water in no panel still builds a complete page — and the
+    only reason this is not load-bearing is that nobody has attached a section to one.
+
+    If one is attached, the report's own contract makes the absence a refusal, and the
+    page for every production sample becomes incomplete for a property of the water
+    rather than a hole in the tool. The two absences are not interchangeable and the
+    report cannot currently tell them apart, so this asserts the condition instead.
+    """
+    per_library_panels = {"panel", "crossplant"}
+    attached = {name: [o.filename for o in R.stages[name].outputs if o.section]
+                for name in per_library_panels if name in R.stages}
+    offenders = {k: v for k, v in attached.items() if v}
+    assert not offenders, (
+        f"{offenders} now fills a report section from a panel a library may not have. "
+        f"Either the report must distinguish 'this library has no such panel, and "
+        f"libraries.json says so' from 'a stage did not run', or the output stays off "
+        f"the page.")
