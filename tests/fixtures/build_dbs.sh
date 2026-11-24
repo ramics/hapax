@@ -77,7 +77,55 @@ diamond makedb --in "$out/prot_broad.faa" --db "$out/prot_broad" --quiet
 
 echo "== nucleotide index (minimap2) =="
 minimap2 -d "$out/nt_known.mmi" "$here/db/nt_known.fa" 2>/dev/null
-minimap2 -d "$out/silva_toy.mmi" "$here/db/silva_toy.fa" 2>/dev/null
+# No rRNA index is built here. The cascade takes `--silva` as FASTA, because it strips the
+# taxonomy string out of each header and turns SILVA's U back into T before indexing, and
+# the contig split takes an index. Both come from the one committed FASTA, each consumer
+# building what it needs, rather than this script producing a second artefact that one of
+# the two would have to be given instead.
+
+echo "== profile library (a toy Pfam-A) =="
+# WHY A TOY PROFILE LIBRARY EXISTS AT ALL. The per-gene distance stage scans each ORF
+# against Pfam-A at the curators' own gathering cutoffs, and Pfam-A is 1.5 GB. Without a
+# library the stage exits on the path, so the end-to-end job could not reach it. Eight
+# single-sequence profiles built here from the committed viral proteins are enough to make
+# the stage run and to put a domain call on the divergent arm, which is homology to the
+# profile rather than identity to a database entry.
+#
+# WHAT IT IS NOT. It is not Pfam, and no domain count from the fixture means anything about
+# any family: the gathering cutoff below is chosen here, where a real one is a curator's
+# statement about a real family. The fixture exercises the code path. The measured claim -
+# 811 of 1,317 real ORFs carry a domain at gathering cutoffs against 0 of 932 shuffled -
+# comes from the real library and nowhere near this file.
+python3 - "$here/db/prot_known.faa" "$out/pfam_toy.hmm" <<'HMM'
+import sys
+
+import pyhmmer
+
+src, dst = sys.argv[1], sys.argv[2]
+alpha = pyhmmer.easel.Alphabet.amino()
+bg = pyhmmer.plan7.Background(alpha)
+# A fixed seed, because the builder samples and a fixture whose indexes differ between two
+# builds of one commit cannot tell a code change from a rebuild.
+builder = pyhmmer.plan7.Builder(alpha, seed=1)
+hmms = []
+with pyhmmer.easel.SequenceFile(src, digital=True, alphabet=alpha) as fh:
+    for seq in fh:
+        hmm, _, _ = builder.build(seq, bg)
+        hmm.name = seq.name
+        hmm.description = b"fixture profile, not a Pfam family"
+        # A gathering cutoff has to be PRESENT or the scan raises: it runs at
+        # bit_cutoffs="gathering" on purpose, so that no domain threshold in a report is
+        # this repo's opinion. 20 bits is this fixture's opinion, which is the reason the
+        # fixture reports no domain fraction anywhere.
+        hmm.cutoffs.gathering = (20.0, 20.0)
+        hmms.append(hmm)
+if not hmms:
+    raise SystemExit("no profile was built")
+with open(dst, "wb") as out:
+    for hmm in hmms:
+        hmm.write(out)
+print(f"{len(hmms)} profiles")
+HMM
 
 echo "== classifier library (Kraken2) =="
 k2="$out/k2_toy"
@@ -135,6 +183,13 @@ PY
 kraken2-build --add-to-library "$out/k2_library.fna" --db "$k2" --no-masking
 kraken2-build --build --db "$k2" --threads "${THREADS:-2}" \
   --kmer-len 31 --minimizer-len 25 --minimizer-spaces 6
+
+# The taxonomy is ALSO left at the database root. Kraken2 itself reads its own compiled
+# taxo.k2d and does not need these, but the stages that turn a taxid into a name read
+# nodes.dmp and names.dmp beside the database, which is the layout the databases this
+# repo has been run against have. Copied rather than moved so that a rebuild of the
+# library still has them where kraken2-build expects.
+cp "$k2/taxonomy/nodes.dmp" "$k2/taxonomy/names.dmp" "$k2/"
 
 echo "built into $out:"
 ls -la "$out"

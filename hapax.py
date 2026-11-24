@@ -481,6 +481,14 @@ class Run:
         argv = ["--seed", str(a.seed), "--pairs", str(a.linkage_pairs),
                 "--r1", str(a.r1), "--r2", str(a.r2), "--trim-r2", str(a.trim_r2),
                 "--work", str(self.work / "linkage_work"), "--out", str(out)]
+        # THE STRIDE TOO, NOT ONLY THE TRIM. `mate_friends.py` resolves both from the
+        # library registry when it is given neither, so a run whose stride was stated on
+        # the command line reached this stage without it and refused on a library the
+        # registry does not describe - which is every library production is for. The trim
+        # was passed and the stride beside it was not, which is the same omission the rule
+        # above this method is about.
+        if a.block:
+            argv += ["--block", str(a.block)]
         return self.call("linkage", "mate_friends.py", argv,
                          {"linkage.json": out / f"mate_friends_s{a.seed}.json"},
                          out / f"mate_friends_s{a.seed}.json")
@@ -705,6 +713,13 @@ class Run:
                 "--out", str(out / f"divergent_known_s{a.seed}.json")]
         if a.diamond_bin:
             argv += ["--diamond-bin", str(a.diamond_bin)]
+        # The profile library, which this stage needs and nothing was passing: the script
+        # defaults it to a path under this repo's data/, so on the machine where that file
+        # exists the stage ran and on every other machine it exited with the path. Which
+        # profile library the domain calls came from is an operating point, so it is given
+        # rather than found.
+        if a.pfam:
+            argv += ["--pfam", str(a.pfam)]
         return self.call("divergent", "divergent_known.py", argv,
                          {f"divergent_known_s{a.seed}.json":
                               out / f"divergent_known_s{a.seed}.json"},
@@ -1734,6 +1749,11 @@ def main() -> int:
                    default=[ROOT / "data/silva/SSU.fa.gz", ROOT / "data/silva/LSU.fa.gz"])
     r.add_argument("--dmnd", type=Path, nargs="*",
                    default=[ROOT / "data/prot/viral.dmnd", ROOT / "data/prot/sprot.dmnd"])
+    r.add_argument("--pfam", type=Path, default=None,
+                   help="the Pfam-A HMM library the per-gene distance workup scans ORFs "
+                        "against, at the curators' gathering cutoffs. Left unset, the "
+                        "script's own default path under data/ is used, which exists on "
+                        "one machine")
     r.add_argument("--spike-genome", type=Path, default=None,
                    help="REQUIRED with --calibrate, no default: it was chosen as absent "
                         "from Berlin's assembly, which says nothing about another sample's. "

@@ -329,6 +329,10 @@ protein = "{dbs}/prot_known.dmnd"
 # the divergent arm's source - a query inside the reference it is searched against reads
 # the same on both piles.
 sprot = "{dbs}/prot_broad.dmnd"
-rrna = "{dbs}/silva_toy.mmi"
+rrna = "{fixture}/db/silva_toy.fa"
 classifier = "{dbs}/k2_toy"
+# The profile library the per-gene distance workup scans ORFs against. Eight toy profiles
+# built by build_dbs.sh, which is why this run reports no domain fraction: the gathering
+# cutoff in them is the fixture's and not a curator's.
+pfam = "{dbs}/pfam_toy.hmm"
 """

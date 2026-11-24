@@ -107,7 +107,7 @@ def legacy_argv(cfg: Config, r1: Path, r2: Path | None, out: Path,
     if cfg.inputs.get("single_end"):
         argv.append("--single-end")
     for name, flag in (("rrna", "--silva"), ("classifier", "--k2-dbs"),
-                       ("spacers", "--spacers")):
+                       ("spacers", "--spacers"), ("pfam", "--pfam")):
         if name in cfg.databases:
             argv += [flag, str(cfg.database(name))]
     # `--dmnd` is an ORDERED pair, viral then Swiss-Prot, and the distance stage refuses a
