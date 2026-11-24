@@ -9,8 +9,9 @@ decides how much of every read is thrown away arrived as a flag somebody typed (
 1.2, 1.9). This module performs those steps as declared stages of the run.
 
 WHAT IT DOES NOT CHANGE. It drives the same scripts with the same arguments and the same
-operating points as the shell did: `trim_mate2.py`, `path_settings.py --stages assemble
---arms baseline`, `megahit_rename.py`, the SILVA index built from `subtract_known`'s own
+operating points as the shell did: the mate-2 trim and the MEGAHIT relabelling (lifted into
+`hapax.assembly_input`, byte-equal to `trim_mate2.py` and `megahit_rename.py` by test),
+`path_settings.py --stages assemble --arms baseline`, the SILVA index built from `subtract_known`'s own
 two functions, and `classify_contigs.py`. Rewriting any of them here would be a second
 instrument reading the same quantity, and the committed numbers were produced by these.
 PLAN.md step 7 lifts their code into the package; this step moves the ORCHESTRATION, which
@@ -29,13 +30,14 @@ from __future__ import annotations
 
 import json
 import shutil
-import subprocess
 import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from . import tools
+from . import scripts, tools
+from .assembly_input import rename_megahit, trim_mate2
+from .measure import measure_to
 from .config import Config, ConfigError
 
 
@@ -79,13 +81,20 @@ class Prepared:
         }
 
 
-def _run(cmd: list[str], cwd: Path, what: str) -> str:
+def _run(repo: Path, name: str, args: list, what: str, out: Path) -> str:
+    """One declared script through `hapax.scripts`, its code record kept in the run.
+
+    The record goes to `script_calls.jsonl` in the run directory, so a run that assembled
+    its own library names the assembler driver's hash and every module it imports.
+    """
     started = time.time()
-    proc = subprocess.run([str(c) for c in cmd], cwd=cwd, capture_output=True, text=True)
+    proc, code = scripts.run(repo, name, args)
+    with open(out / "script_calls.jsonl", "a") as fh:
+        fh.write(json.dumps({"step": what, **code}) + "\n")
     if proc.returncode != 0:
         raise PrepareError(
             f"{what} failed after {time.time() - started:.0f}s:\n"
-            f"  {' '.join(str(c) for c in cmd)}\n{proc.stdout[-2000:]}\n{proc.stderr[-3000:]}")
+            f"  {' '.join(code['argv'])}\n{proc.stdout[-2000:]}\n{proc.stderr[-3000:]}")
     return proc.stdout
 
 
@@ -115,13 +124,11 @@ def measure(cfg: Config, r1: Path, r2: Path | None, out: Path, repo: Path) -> di
     # headline result still needs five (CLAUDE.md); a fixture is not a result, and stating
     # one here is how a 9,987-pair library runs at all instead of refusing.
     seeds = int(cfg.run.get("seeds", 5))
-    _run([sys.executable, "-I", repo / "experiments/measure_library.py",
-          "--r1", r1, *(["--r2", r2] if r2 else []), "--seeds", seeds,
-          "--pairs-per-seed", pairs_per_seed, "--out", manifest,
-          *(["--accession", cfg.inputs["accession"]] if cfg.inputs.get("accession")
-            else [])],
-         repo, "measuring the library off its reads")
-    return json.loads(manifest.read_text())
+    try:
+        return measure_to(r1, r2, pairs_per_seed, seeds, manifest,
+                          accession=cfg.inputs.get("accession"))
+    except ValueError as e:
+        raise PrepareError(f"measuring the library off its reads failed: {e}") from e
 
 
 def resolve_trim(cfg: Config, measured: dict) -> tuple[int, str]:
@@ -190,21 +197,21 @@ def assemble(cfg: Config, r1: Path, r2: Path | None, trim_r2: int, work: Path,
     # Read-level stages trim as they stream; MEGAHIT reads files, so it needs a trimmed
     # copy. The copy is an intermediate and nothing reads it afterwards.
     asm_in = work / "asm_in"
-    _run([sys.executable, "-I", repo / "experiments/trim_mate2.py",
-          "--r1", r1, "--r2", r2 or r1, "--trim-r2", trim_r2,
-          "--out-dir", asm_in, "--prefix", cfg.label,
-          "--manifest", out / "trim_manifest.json"],
-         repo, "trimming mate 2 for the assembler")
+    try:
+        trim_mate2(r1, r2 or r1, trim_r2, asm_in, cfg.label,
+                   manifest=out / "trim_manifest.json")
+    except ValueError as e:
+        raise PrepareError(f"trimming mate 2 for the assembler failed: {e}") from e
 
     found = tools.resolve_all(cfg, ("megahit", "minimap2"))
     megahit, minimap2 = found["megahit"], found["minimap2"]
-    _run([sys.executable, "-I", repo / "experiments/path_settings.py", "--seed", 1,
+    _run(repo, "path_settings.py", ["--seed", 1,
           "--stages", "assemble", "--arms", "baseline",
           "--reads", asm_in / f"{cfg.label}_1.fq", "--r2", asm_in / f"{cfg.label}_2.fq",
           "--megahit", megahit, "--minimap2", minimap2,
           "--threads", cfg.threads, "--no-truth-panel",
           "--work", work, "--out", out / "assembly"],
-         repo, "assembling the library with MEGAHIT")
+         "assembling the library with MEGAHIT", out)
 
     final = asm_dir / "final.contigs.fa"
     if not (final.exists() and final.stat().st_size):
@@ -214,10 +221,10 @@ def assemble(cfg: Config, r1: Path, r2: Path | None, trim_r2: int, work: Path,
     # sample_contigs_unidentified.fa and sample_contigs_identified.fa in its contig
     # directory BY NAME, so calling the relabelled assembly anything else makes a stage
     # that would otherwise run refuse for a reason that has nothing to do with the sample.
-    _run([sys.executable, "-I", repo / "experiments/megahit_rename.py",
-          "--contigs", final, "--out", contigs, "--tag", cfg.label,
-          "--manifest", out / "rename_manifest.json"],
-         repo, "relabelling the assembly")
+    try:
+        rename_megahit(final, contigs, cfg.label, manifest=out / "rename_manifest.json")
+    except ValueError as e:
+        raise PrepareError(f"relabelling the assembly failed: {e}") from e
     return contigs
 
 
@@ -239,7 +246,7 @@ def split(cfg: Config, contigs: Path, work: Path, out: Path, repo: Path) -> dict
 
     result = out / "contig_identification.json"
     if not result.exists():
-        _run([sys.executable, "-I", repo / "experiments/classify_contigs.py", "--seed", 1,
+        _run(repo, "classify_contigs.py", ["--seed", 1,
               "--contigs", contigs,
               "--k2-db", cfg.database("classifier"),
               "--dmnd", cfg.database("protein"),
@@ -249,7 +256,7 @@ def split(cfg: Config, contigs: Path, work: Path, out: Path, repo: Path) -> dict
               # one container written where a parameter goes. See hapax.tools.
               "--classify-bin", tools.resolve(cfg, "classify"),
               "--diamond-bin", tools.resolve(cfg, "diamond")],
-             repo, "identifying the contigs")
+             "identifying the contigs", out)
 
     asm_dir = contigs.parent
     piles = {"identified_norrna": asm_dir / "sample_contigs_identified_norrna.fa",
