@@ -251,8 +251,12 @@ TRIM_BASIS=""
 if [ -n "$TRIM" ]; then
   # A stated trim always wins and is never checked, because stating it is the override.
   # The measurement still ships beside it; what changes is whether its answer is USED.
-  TRIM_BASIS="stated on the launcher; the instance's own measurement exited $MEASURED_RC \
-with answer '${MEASURED:-none}' and was not used"
+  # The stated reason travels with the value. Without it the basis read "stated on the
+  # launcher", which records that a person chose but not what they chose on - and a stated
+  # trim is the one library fact here that no instrument can certify, so the sentence is
+  # the whole of the evidence.
+  TRIM_BASIS="@@TRIM_R2_BASIS_STATED@@ (stated on the launcher; the instance's own \
+measurement exited $MEASURED_RC with answer '${MEASURED:-none}' and was not used)"
 else
   [ "$MEASURED_RC" = "0" ] || die "no single mate-2 trim can be named for $ACC; see \
 out/nontemplate_prefix/trim_from_prefix.json. The run stops here rather than inheriting \

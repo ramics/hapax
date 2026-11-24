@@ -328,6 +328,12 @@ def main(argv: list[str] | None = None) -> int:
                          "only with a basis written into experiments/libraries.json - on a "
                          "library with little ribosomal content the SILVA instrument "
                          "cannot anchor enough reads to measure anything")
+    ap.add_argument("--trim-r2-basis", default=None,
+                    help="why that value, in a sentence, carried into the run config and "
+                         "so onto the page. Required with --trim-r2, for the same reason "
+                         "the config refuses a library fact with no basis: a stated trim "
+                         "is a person's judgement, and a judgement nobody wrote down is "
+                         "indistinguishable from another library's default")
     ap.add_argument("--stages", default=None,
                     help="hapax stages. The default template drops the stages it stages "
                          "no reference data for (NO_REFERENCE_ON_THIS_INSTANCE says which "
@@ -506,7 +512,14 @@ def main(argv: list[str] | None = None) -> int:
             # left out of the sentence instead of guessed, which is why this is built from
             # the keys that are there rather than from a fixed list.
             SAMPLE_FACTS=_sample_facts_toml(facts.get("sample") or {}),
+            TRIM_R2_BASIS_STATED=(args.trim_r2_basis or ""),
         )
+        if args.trim_r2 is not None and not args.trim_r2_basis:
+            raise SystemExit(
+                "refusing to launch: --trim-r2 states a library fact, and a stated fact "
+                "with no basis is what experiments/libraries.json and the run config both "
+                "refuse. Pass --trim-r2-basis saying why that value, in a sentence; it is "
+                "carried into the run config and onto the page.")
     run_script = render(ONESHOT_TEMPLATE if args.oneshot else TEMPLATE, None, **tokens)
     # The two templates write to two different prefixes on purpose: the bucket has no
     # delete, and one of them is the committed producer of results/prod_SRR23702504/.
