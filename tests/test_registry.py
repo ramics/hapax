@@ -85,9 +85,34 @@ def test_the_registry_agrees_with_the_legacy_driver_about_production():
     hapax = driver()
     # `report` is a stage here and was not one in the driver: the page was built by hand
     # afterwards, which is why a run could finish with every stage green and no page.
-    assert set(R.production()) - {"report"} == set(hapax.PRODUCTION_STAGES), (
-        f"registry: {sorted(set(R.production()) - {'report'})}\n"
+    mine = {n for n in R.production()
+            if R.stages[n].in_driver and n != "report"}
+    assert mine == set(hapax.PRODUCTION_STAGES), (
+        f"registry: {sorted(mine)}\n"
         f"driver:   {sorted(hapax.PRODUCTION_STAGES)}")
+
+
+def test_a_stage_the_package_runs_is_marked_as_the_packages():
+    """A stage marked as the driver's that the driver does not have would run nowhere.
+
+    That is not hypothetical: the stage list was typed in three places and the launcher's
+    copy is the one that ran, so a stage left out of one copy ran nowhere and nothing said
+    so.
+    """
+    from legacy import driver
+
+    declared_by_driver = set(driver().STAGE_ORDER)
+    for name, stage in R.stages.items():
+        if name == "report":
+            continue
+        if stage.in_driver:
+            assert name in declared_by_driver, (
+                f"{name} is marked as the driver's stage and the driver does not declare "
+                f"it, so nothing runs it")
+        else:
+            assert name not in declared_by_driver, (
+                f"{name} is marked as the package's stage and the driver also declares "
+                f"it, so it would run twice")
 
 
 def test_every_report_section_is_filled_by_some_stage():
@@ -130,12 +155,16 @@ def test_every_file_the_report_reads_is_declared():
         f"ORPHAN_REPORT_INPUTS with the script that would.")
 
 
-def test_every_declared_report_input_has_a_producing_stage_or_is_a_named_orphan():
-    """The census PLAN.md step 6 empties.
+def test_every_declared_report_input_has_a_producing_stage():
+    """The census PLAN.md step 6 emptied.
 
-    Three sections had no producer and the page told a reader of their own water that
-    something was missing from it. Writing the map down found three more. This asserts the
-    orphan list EXACTLY: adopting one means deleting it from here, and a new one fails.
+    It held six. Three were sections rendering a census of an absent file, and are stages
+    now. Three more, found by writing the map down, were enrichments whose sections render
+    without them: stages now too, with optional outputs that state what their absence
+    costs. The two kinds have to look different, because treating an enrichment as a hole
+    would make every run without a Pfam database refuse, and treating a hole as an
+    enrichment is what the page was doing when a run with three empty sections built
+    cleanly.
     """
     produced = {o.filename for s in R.stages.values() for o in s.outputs}
     produced |= {"manifest.json", "blind_spots.json"}        # written by the run itself
@@ -143,11 +172,39 @@ def test_every_declared_report_input_has_a_producing_stage_or_is_a_named_orphan(
         canonical = pattern.replace("_s*.json", "_s{seed}.json")
         assert canonical in produced or who == "the run itself", (
             f"{pattern} is declared as coming from {who}, and no stage output matches it")
-    assert set(ORPHAN_REPORT_INPUTS) == {
-        "architecture_s*.json", "subject_names.json",
-        "divergent_contig_workup_s*.json"}, (
-        "the orphan census changed. If a producer was adopted, delete its line; if a new "
-        "orphan appeared, that is a report section that will render an absence.")
+    assert ORPHAN_REPORT_INPUTS == {}, (
+        f"a report input has no producing stage: {sorted(ORPHAN_REPORT_INPUTS)}. That is "
+        f"a section that will render an absence on a page about somebody's water.")
+
+
+def test_an_optional_output_has_to_say_what_its_absence_costs():
+    """An absence with no stated consequence is the thing a reader cannot weigh."""
+    from hapax.registry import Output
+
+    with pytest.raises(ValueError, match="absence_means"):
+        Output("x.json", "ranking", optional=True)
+    for name, stage in R.stages.items():
+        for out in stage.outputs:
+            if out.optional:
+                assert len(out.absence_means or "") > 40, (
+                    f"{name}/{out.filename} is optional and does not say what the page "
+                    f"shows instead")
+
+
+def test_the_enrichments_are_optional_and_the_measurements_are_not():
+    """Which of the six were holes and which were enrichments, asserted rather than
+    remembered. Moving one across this line changes whether a run refuses."""
+    optional = {out.filename for s in R.stages.values() for out in s.outputs
+                if out.optional}
+    assert optional == {"divergent_contig_workup_s{seed}.json", "architecture_s{seed}.json",
+                        "subject_names.json"}, sorted(optional)
+    required_sections = {out.filename for s in R.stages.values() for out in s.outputs
+                         if out.section and not out.optional}
+    for f in ("public_health_profile_s{seed}.json",
+              "known_strain_divergence_s{seed}.json", "ranking.json"):
+        assert f in required_sections, (
+            f"{f} filled a section that used to render empty; if it becomes optional a "
+            f"run with three empty sections builds cleanly again")
 
 
 def test_every_stage_says_why_it_exists():

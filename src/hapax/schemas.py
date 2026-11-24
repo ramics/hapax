@@ -107,6 +107,13 @@ SCHEMAS: dict[str, dict] = {
                        "unit": {"type": "string", "minLength": 1},
                        "blind_to": {"type": ["object", "array", "string"]}},
     },
+    "workup": {"type": "object", "minProperties": 1},
+    "architecture": {"type": "object", "minProperties": 1},
+    "names": {"type": "object", "required": ["names"],
+              # `names` may be empty: a run whose subjects are all unnamed in the source
+              # FASTA has nothing to map, and that is a measured absence rather than a
+              # missing file. The key has to be there, so the page can tell the two apart.
+              "properties": {"names": {"type": "object"}}},
     "calibration": {"type": "object"},
     "panel": {"type": "object"},
     "report": {},            # the page is HTML; its check is the render check

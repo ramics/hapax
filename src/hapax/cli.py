@@ -196,8 +196,20 @@ def cmd_run(args) -> int:
     }, indent=1) + "\n")
     root = repo_root()
     proc = subprocess.run([sys.executable, str(root / "hapax.py"), *argv], cwd=root)
-    if proc.returncode != 0 or not args.report:
+    if proc.returncode != 0:
         return proc.returncode
+    # The enrichment stages, which the driver does not have (PLAN.md step 6). They run
+    # after it because each reads a file the driver's stages wrote, and their absences are
+    # recorded rather than raised: the sections that read them render without them and say
+    # what that costs.
+    from .enrich import enrich
+
+    for record in enrich(cfg, out, root, cfg.seed):
+        if record["status"] != "ok":
+            print(f"  {record['stage']}: {record['status']} - {record['reason']}",
+                  file=sys.stderr)
+    if not args.report:
+        return 0
     # One command from reads to report (PLAN.md 4). The report refuses an incomplete run,
     # so a zero here means every declared section was drawn from a file this run wrote.
     from .report import ReportError, build

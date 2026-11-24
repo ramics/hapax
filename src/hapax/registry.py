@@ -50,6 +50,33 @@ class Output:
     filename: str
     schema: str
     section: str | None = None
+    #: An output whose absence the section HANDLES, with a stated consequence, rather
+    #: than a hole where a measurement should be.
+    #:
+    #: The distinction is the whole of PLAN.md step 6 and it took writing the
+    #: declarations down to see. Three report inputs had no stage and the sections that
+    #: read them rendered as a census of an absent file: that is a hole in the tool, and
+    #: the page told a reader of their own water that something was missing from it.
+    #: Three more had no stage and their sections render WITHOUT them and say what that
+    #: costs - the distance panel falls back to the whole-contig hit, the subject table
+    #: shows an accession where it could show an organism. Those are enrichments.
+    #:
+    #: Treating the two alike in either direction is wrong. Calling an enrichment a hole
+    #: would make every run that lacks a Pfam database refuse; calling a hole an
+    #: enrichment is what the page was doing when a run with three empty sections built
+    #: cleanly. So an optional output is recorded as absent WITH its consequence, and a
+    #: required one stops the build.
+    optional: bool = False
+    #: What the page shows instead, where `optional`. Required with it: an absence with
+    #: no stated consequence is the thing a reader cannot weigh.
+    absence_means: str | None = None
+
+    def __post_init__(self):
+        if self.optional and not self.absence_means:
+            raise ValueError(
+                f"{self.filename} is declared optional with no absence_means. An output "
+                f"whose absence is allowed has to say what the page shows instead, or "
+                f"nobody reading the page can tell what they are missing.")
 
 
 @dataclass(frozen=True)
@@ -65,6 +92,15 @@ class Stage:
     #: then the name is recorded here so that the dependency is declared rather than
     #: implicit in a subprocess call, which is PLAN.md 1.7.
     script: str | None = None
+    #: Whether the legacy driver runs this stage, or the package does.
+    #:
+    #: Recorded rather than inferred, because the alternative is a stage that silently
+    #: does not run: the stage list was typed in three places and the launcher's copy is
+    #: the one that ran, so a stage left out of one copy ran nowhere and nothing said so.
+    #: `tests/test_registry.py` checks this field against the driver's own list, so a
+    #: stage marked as the driver's that the driver does not have fails the suite.
+    #: Step 7 ends the split by moving everything into the package.
+    in_driver: bool = True
 
     def files(self, seed: int) -> list[str]:
         """The distinct files this stage writes. Distinct, because one file can fill two

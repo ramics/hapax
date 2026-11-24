@@ -45,8 +45,12 @@ SCHEMA = {
     "inputs": {"r1", "r2", "label", "accession", "single_end", "sample_facts",
                "assembly"},
     "library": set(LIBRARY_FACTS) | {f"{k}_basis" for k in LIBRARY_FACTS},
+    # `pfam` and `sprot` are the per-gene workup's; `protein_fasta` is the FASTA the
+    # protein index was built from, which the name map reads rather than reading the
+    # index - a second source for the same names could disagree with the database the
+    # search actually used.
     "databases": {"nucleotide", "protein", "rrna", "classifier", "cross_sample",
-                  "spacers"},
+                  "spacers", "pfam", "sprot", "protein_fasta"},
     "tools": {"diamond", "classify", "minimap2", "megahit"},
 }
 

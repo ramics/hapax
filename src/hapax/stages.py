@@ -172,6 +172,71 @@ R.add(Stage(
     outputs=(Output("ranking.json", "ranking", section=REMAINDER),),
 ))
 
+
+# ------------------------------------------------- the enrichments, adopted in step 6
+#
+# These three were the orphans that writing this file down found: files the report reads
+# which no stage wrote. They are NOT the same kind of gap as `profile`, `taxa` and
+# `ranking`, and the difference decides what the report does about them. Those three had
+# no producer and their sections rendered a census of an absent file, which tells a
+# reader of their own water that something is missing from it. These three have no
+# producer and the sections that read them render WITHOUT them, saying what that costs.
+#
+# So they are declared, they run, and their outputs are optional with the consequence of
+# each absence stated. A run with no Pfam database still produces a report; it produces a
+# report that says the distance panel ranked on the whole-contig hit.
+
+R.add(Stage(
+    name="workup",
+    in_driver=False,
+    why="The per-gene workup of the divergent end. A whole-contig identity is not a "
+        "property of the contig: it reports whichever gene won on bitscore, and one "
+        "contig's own genes differ by a median 17.4 points against a near-reference "
+        "control's 2.35. This is what lets the distance panel rank on the conserved gene "
+        "instead.",
+    script="divergent_contig_workup.py",
+    needs=("strains",),
+    outputs=(Output("divergent_contig_workup_s{seed}.json", "workup", section=DISTANCE,
+                    optional=True,
+                    absence_means="the distance panel ranks on the whole-contig best hit "
+                                  "and says so, which is the reading SPEC 2.2 calls not a "
+                                  "property of the contig. It needs a Pfam HMM library "
+                                  "and a Swiss-Prot protein index, which not every "
+                                  "machine has staged."),),
+))
+
+R.add(Stage(
+    name="architecture",
+    in_driver=False,
+    why="What the page is allowed to say an assembled thing IS, in plain English, from "
+        "experiments/virus_vocabulary.json and the evidence that actually fired. It "
+        "declines with a reason rather than ever recording 'not a phage', which is why "
+        "the renderer has no vocabulary of its own and a wrong word is wrong in one "
+        "place.",
+    script="architecture_call.py",
+    needs=("workup",),
+    outputs=(Output("architecture_s{seed}.json", "architecture", section=DISTANCE,
+                    optional=True,
+                    absence_means="the page names no architecture for an assembled thing "
+                                  "and makes no claim about what it is. It reads the "
+                                  "per-gene workup, so it is absent wherever that is."),),
+))
+
+R.add(Stage(
+    name="names",
+    in_driver=False,
+    why="Accession to organism name, read from the same protein FASTA the search index "
+        "was built from rather than from a second source that could disagree with it. "
+        "Imo's reading preference is names, not accessions.",
+    script="subject_names.py",
+    needs=("strains", "ranking"),
+    outputs=(Output("subject_names.json", "names", optional=True,
+                    absence_means="the strains panel and the sampled read table show the "
+                                  "accession alone rather than inventing a label. It "
+                                  "needs the FASTA the protein index was built from, "
+                                  "which a run given only a .dmnd does not have."),),
+))
+
 # ---------------------------------------------------------------- validation, not output
 #
 # Imo, 2026-11-23: "why would we, with unknown wastewater, have a genome with a distance
@@ -209,7 +274,8 @@ R.add(Stage(
         "stage's, which is what lets a section with no producer be a build error instead "
         "of a page that tells a reader something is missing from their sample.",
     script="make_web.py",
-    needs=("intervals", "layers", "census", "strains", "ranking", "profile", "taxa"),
+    needs=("intervals", "layers", "census", "strains", "ranking", "profile", "taxa",
+           "workup", "architecture", "names"),
     outputs=(Output("report.html", "report", section=METHODS),
              Output("render_check.json", "render_check")),
 ))
@@ -241,29 +307,20 @@ REPORT_INPUTS = {
     "public_health_profile_s*.json": "profile",
     "known_strain_divergence_s*.json": "taxa",
     "calibration_ladder.json": "calibration",
+    "divergent_contig_workup_s*.json": "workup",
+    "architecture_s*.json": "architecture",
+    "subject_names.json": "names",
 }
 
-#: Files the report reads that NO stage writes, with the script that would write each.
+#: Files the report reads that no stage writes. Empty since PLAN.md step 6.
 #:
-#: Each is a section or a panel that renders an absence on every run, and none of them is
-#: an absence in the water: the script exists in `experiments/` and was never adopted
-#: into `hapax run`, which is the same fault as the three PLAN.md 1.3 named and was found
-#: the same way, by writing the map above down.
+#: It held six. Three - `public_health_profile_s*.json`, `known_strain_divergence_s*.json`
+#: and `ranking.json` - were sections rendering a census of an absent file, and are stages
+#: now. Three more, found by writing `REPORT_INPUTS` down, were enrichments whose sections
+#: render without them: they are stages now too, and their outputs are declared optional
+#: with the consequence of each absence stated, which is a different claim and has to look
+#: like one.
 #:
-#: PLAN.md step 6 empties this. Until then `tests/test_registry.py` asserts it EXACTLY,
-#: so an orphan that is adopted has to be removed from here and a new one fails the
-#: suite. A census, not a hidden absence.
-ORPHAN_REPORT_INPUTS = {
-    "architecture_s*.json": "experiments/architecture_call.py, which decides what the "
-                            "page is allowed to say an assembled thing is, from "
-                            "virus_vocabulary.json and the evidence that fired",
-    "subject_names.json": "experiments/subject_names.py, which maps an accession to an "
-                          "organism name from the same FASTA the DIAMOND database was "
-                          "built from. Absent, the page shows the accession alone",
-    "divergent_contig_workup_s*.json": "experiments/divergent_contig_queries.py and "
-                                       "conserved_positions.py, the per-gene workup the "
-                                       "distance panel ranks on. Absent, the panel falls "
-                                       "back to the whole-contig hit, which is the "
-                                       "reading SPEC 2.2 says is not a property of the "
-                                       "contig",
-}
+#: `tests/test_registry.py` asserts this is empty, so a report input added without a
+#: producer fails the suite rather than rendering as an absence on somebody's page.
+ORPHAN_REPORT_INPUTS: dict[str, str] = {}

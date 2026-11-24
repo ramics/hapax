@@ -248,11 +248,18 @@ def test_reads_to_report_in_one_command(tmp_path):
         [f"PLAN.md step 6: {len(missing)} of {len(SECTIONS)} report sections did not "
          f"render from a file this run wrote:"]
         + [f"  {s}: needs {SECTION_NEEDS[s]}" for s in missing])
-    absent = check.get("absent_inputs") or []
-    assert not absent, (
-        f"these sections rendered a census of an absent file rather than a measurement: "
-        f"{absent}. On real water that tells a reader something is missing from their "
-        f"sample when what is missing is a stage (SPEC 13.4).")
+    assert not check.get("sections_not_drawable"), (
+        f"these sections could not be drawn from a file this run wrote: "
+        f"{check['sections_not_drawable']}. On real water that tells a reader something "
+        f"is missing from their sample when what is missing is a stage (SPEC 13.4).")
+    # An enrichment this run could not produce is allowed and must be RECORDED with what
+    # the page shows instead. The fixture stages no Pfam library, so the per-gene workup
+    # and the architecture call are expected here; the point is that each one says what
+    # its absence costs rather than leaving a reader to wonder.
+    for record in check.get("enrichments_absent") or []:
+        assert record["means"], (
+            f"{record['file']} is absent with no stated consequence, which is the thing "
+            f"a reader cannot weigh")
 
 
 #: The run configuration, which is the whole of what a new input needs (PLAN.md 2).
@@ -293,6 +300,9 @@ trim_r2 = 0
 trim_r2_basis = "the fixture's reads are simulated with no non-template prefix (tests/fixtures/make_fixture.py), so any trim would delete real template. The prefix instrument cannot measure it here: the rRNA arm is a 16 kb window and anchoring falls below its 2,000-mate floor."
 
 [databases]
+# The FASTA the protein index was built from, so the name map reads the same source the
+# search used rather than a second one that could disagree with it.
+protein_fasta = "{fixture}/db/prot_known.faa"
 nucleotide = "{dbs}/nt_known.mmi"
 protein = "{dbs}/prot_known.dmnd"
 rrna = "{dbs}/silva_toy.mmi"

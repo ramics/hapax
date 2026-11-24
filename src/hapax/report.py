@@ -44,10 +44,25 @@ class InputState:
     section: str | None
     present: bool
     problems: tuple[str, ...] = ()
+    optional: bool = False
+    absence_means: str | None = None
 
     @property
     def usable(self) -> bool:
         return self.present and not self.problems
+
+    @property
+    def blocks_its_section(self) -> bool:
+        """An absent enrichment does not stop the build; an absent measurement does.
+
+        An output declared optional has a section that renders without it and says what
+        that costs. A present-but-INVALID optional file is still a failure: the section
+        has no way to say "this file is here and wrong", and silently treating a broken
+        file as an absence would be the renderer's old behaviour with an extra step.
+        """
+        if self.usable:
+            return False
+        return not (self.optional and not self.present)
 
     def line(self) -> str:
         if not self.present:
@@ -82,7 +97,8 @@ def inspect(rundir: Path, seed: int) -> list[InputState]:
             path = _resolve(rundir, out.filename, seed)
             if path is None:
                 states.append(InputState(name, out.filename.format(seed=seed),
-                                         out.section, False))
+                                         out.section, False, optional=out.optional,
+                                         absence_means=out.absence_means))
                 continue
             problems: tuple[str, ...] = ()
             if path.suffix == ".json":
@@ -94,7 +110,9 @@ def inspect(rundir: Path, seed: int) -> list[InputState]:
                     problems = tuple(validate(out.schema, data))
             elif path.stat().st_size == 0:
                 problems = ("is empty",)
-            states.append(InputState(name, path.name, out.section, True, problems))
+            states.append(InputState(name, path.name, out.section, True, problems,
+                                     optional=out.optional,
+                                     absence_means=out.absence_means))
     return states
 
 
@@ -108,7 +126,7 @@ def missing_sections(states: list[InputState]) -> dict[str, list[InputState]]:
     """
     out: dict[str, list[InputState]] = {}
     for section in SECTIONS:
-        bad = [s for s in states if s.section == section and not s.usable]
+        bad = [s for s in states if s.section == section and s.blocks_its_section]
         if bad:
             out[section] = bad
     return out
@@ -213,8 +231,15 @@ def build(rundir: Path, out: Path | None = None, seed: int = 1,
         "page": str(out), "seed": seed, "allow_partial": allow_partial,
         "sections_declared": SECTIONS,
         "sections_not_drawable": sorted(absent),
+        # Enrichments this run did not produce, each with what the page shows instead.
+        # Recorded rather than left out, because an absence a reader cannot see is the
+        # same as an absence nobody declared.
+        "enrichments_absent": [{"stage": s.stage, "file": s.filename,
+                                "section": s.section, "means": s.absence_means}
+                               for s in states if s.optional and not s.present],
         "inputs": [{"stage": s.stage, "file": s.filename, "section": s.section,
-                    "present": s.present, "problems": list(s.problems)}
+                    "present": s.present, "problems": list(s.problems),
+                    "optional": s.optional}
                    for s in states],
         **(check or {"top": None,
                      "render_check": "node is not installed, so the page was not run"}),
