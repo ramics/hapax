@@ -508,6 +508,18 @@ def main(argv: list[str] | None = None) -> int:
             SAMPLE_FACTS=_sample_facts_toml(facts.get("sample") or {}),
         )
     run_script = render(ONESHOT_TEMPLATE if args.oneshot else TEMPLATE, None, **tokens)
+    # The two templates write to two different prefixes on purpose: the bucket has no
+    # delete, and one of them is the committed producer of results/prod_SRR23702504/.
+    # The launch manifest named only the one, so for a --oneshot run it recorded a
+    # location nothing would ever be written to, and the watcher built from it reported a
+    # live run as silent. Read against the rendered script rather than kept in step by
+    # hand, because the pointer and the thing it points at were already out of step.
+    seg = "oneshot" if args.oneshot else "prod"
+    for want in (f"/logs/{seg}-", f"/results/{seg}/"):
+        if want not in run_script:
+            raise SystemExit(
+                f"the rendered run script does not write under {want}, so the launch "
+                f"manifest would record a prefix nothing uploads to")
     run_key = (f"{prefix}/code/prod-run-{commit[:12]}-"
                f"{hashlib.sha256(run_script.encode()).hexdigest()[:12]}.sh")
     script = render(BOOTSTRAP, 16_384, COMMIT=commit, BUCKET=bucket, REGION=ec2lib.REGION,
@@ -592,8 +604,8 @@ def main(argv: list[str] | None = None) -> int:
         "kraken2": KRAKEN2_VERSION, "megahit": MEGAHIT_VERSION,
         "minimap2": MINIMAP2_VERSION, "kraken2_dbs": list(K2_DBS),
         "launched": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        "results_prefix": f"s3://{bucket}/{prefix}/results/prod/{args.library}/{iid}/",
-        "logs_prefix": f"s3://{bucket}/{prefix}/logs/prod-{args.library}-{iid}/",
+        "results_prefix": f"s3://{bucket}/{prefix}/results/{seg}/{args.library}/{iid}/",
+        "logs_prefix": f"s3://{bucket}/{prefix}/logs/{seg}-{args.library}-{iid}/",
     }, indent=2)
     out = ROOT / f"results/prod_{args.library}"
     out.mkdir(parents=True, exist_ok=True)
