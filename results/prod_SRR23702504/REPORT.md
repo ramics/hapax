@@ -268,6 +268,39 @@ None of these was a wrong number. All five are a generated page that looked fini
 which is the failure mode the convention exists to prevent, so they belong here rather than in a
 commit message.
 
+### The largest gap was not in the generator: three of the web report's five sections had no stage
+
+Found by the thread that builds the web view, on this run's output, and it is the sharpest version
+of the whole ledger. The report has five sections. **A clean production pass could fill two of
+them**, because the other three read files that `hapax run` has never produced: the watchlist and
+composition read `public_health_profile_s*.json`, the distance line reads
+`known_strain_divergence_s*.json`, and the unnamed remainder reads `ranking.json`. All three
+scripts grew as experiments over Berlin, were run by hand there, and were never promoted to stages
+— so on Berlin the files happen to exist, and on any other library they cannot. A pipeline that
+produces a report with three empty sections is a worse failure than any of the five above, and it
+was invisible for exactly the reason the rest of this document keeps circling: the only library
+anyone had rendered was the one the by-hand runs had been done on.
+
+What is fixed here: **`ranking.json` is committed for all five seeds**, produced in-container from
+the committed run directories in seconds at no cost. The result is worth stating, because it is a
+second water agreeing with the first. All of the 58 to 83 ranked subjects per seed are
+`unknown_host`; host confidence maxes at **0.256** against Berlin's 0.40, nothing reaches 0.5, and
+the closest relative in the whole residue is 78.6% identity over 52 amino acids. **Nothing in this
+water's residue is close enough to a named record for that record's host to transfer.** The host
+colours on the page label a database entry and not the water, which is what `results/residue_structure/`
+already said and what a triage order over an unmeasured library now says independently.
+
+Two notes on the remaining two sections. `profile` (the whole library through Kraken2) and `taxa`
+(divergence over the identified contigs) need the databases, so they belong on the next pass with
+an instance up rather than being back-filled here; `taxa` should be cheap beside what this pass
+already paid, and `profile` is a whole-library Kraken2 run and will not be. And the three scripts
+are now stages on another branch, which contradicts `concern_ranking.py`'s own docstring: it
+carries a paragraph headed *why it is not a pipeline stage*, arguing that keeping it out of
+`hapax.py` is the honest signal that no number in the run changes because of it. That argument was
+right about what the script does and wrong about what a report needs; whichever way it is settled,
+the docstring and the stage list must not disagree, because the reasoning in a docstring is the
+research.
+
 ## Cost and wall clock
 
 | Launch | Commit | Result | Wall | Cost |

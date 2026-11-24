@@ -36,3 +36,9 @@ run_s*/*.jsonl.gz
 # removal_evidence.tsv is the identification table the shortlist stage reads, 20 MB plain
 # and 5 MB gzipped, written once for the whole library rather than per seed. Kept, as gzip.
 removal_evidence.tsv
+
+# `reads.jsonl` for seeds 2-5 was fetched from S3 to produce `ranking.json` beside each seed's
+# tiers.json, and is not kept: the rule above keeps one seed's rows inspectable, and the
+# ranking it feeds is committed. ranking.json is a presentation step over committed inputs,
+# so it carries its own git_sha - a real one, unlike the seed manifests, because it ran here
+# rather than on an instance with no git.
