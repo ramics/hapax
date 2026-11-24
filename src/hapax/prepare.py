@@ -9,8 +9,9 @@ decides how much of every read is thrown away arrived as a flag somebody typed (
 1.2, 1.9). This module performs those steps as declared stages of the run.
 
 WHAT IT DOES NOT CHANGE. It drives the same scripts with the same arguments and the same
-operating points as the shell did: `trim_mate2.py`, `path_settings.py --stages assemble
---arms baseline`, `megahit_rename.py`, the SILVA index built from `subtract_known`'s own
+operating points as the shell did: the mate-2 trim and the MEGAHIT relabelling (lifted into
+`hapax.assembly_input`, byte-equal to `trim_mate2.py` and `megahit_rename.py` by test),
+`path_settings.py --stages assemble --arms baseline`, the SILVA index built from `subtract_known`'s own
 two functions, and `classify_contigs.py`. Rewriting any of them here would be a second
 instrument reading the same quantity, and the committed numbers were produced by these.
 PLAN.md step 7 lifts their code into the package; this step moves the ORCHESTRATION, which
@@ -36,6 +37,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from . import tools
+from .assembly_input import rename_megahit, trim_mate2
+from .measure import measure_to
 from .config import Config, ConfigError
 
 
@@ -115,13 +118,11 @@ def measure(cfg: Config, r1: Path, r2: Path | None, out: Path, repo: Path) -> di
     # headline result still needs five (CLAUDE.md); a fixture is not a result, and stating
     # one here is how a 9,987-pair library runs at all instead of refusing.
     seeds = int(cfg.run.get("seeds", 5))
-    _run([sys.executable, "-I", repo / "experiments/measure_library.py",
-          "--r1", r1, *(["--r2", r2] if r2 else []), "--seeds", seeds,
-          "--pairs-per-seed", pairs_per_seed, "--out", manifest,
-          *(["--accession", cfg.inputs["accession"]] if cfg.inputs.get("accession")
-            else [])],
-         repo, "measuring the library off its reads")
-    return json.loads(manifest.read_text())
+    try:
+        return measure_to(r1, r2, pairs_per_seed, seeds, manifest,
+                          accession=cfg.inputs.get("accession"))
+    except ValueError as e:
+        raise PrepareError(f"measuring the library off its reads failed: {e}") from e
 
 
 def resolve_trim(cfg: Config, measured: dict) -> tuple[int, str]:
@@ -190,11 +191,11 @@ def assemble(cfg: Config, r1: Path, r2: Path | None, trim_r2: int, work: Path,
     # Read-level stages trim as they stream; MEGAHIT reads files, so it needs a trimmed
     # copy. The copy is an intermediate and nothing reads it afterwards.
     asm_in = work / "asm_in"
-    _run([sys.executable, "-I", repo / "experiments/trim_mate2.py",
-          "--r1", r1, "--r2", r2 or r1, "--trim-r2", trim_r2,
-          "--out-dir", asm_in, "--prefix", cfg.label,
-          "--manifest", out / "trim_manifest.json"],
-         repo, "trimming mate 2 for the assembler")
+    try:
+        trim_mate2(r1, r2 or r1, trim_r2, asm_in, cfg.label,
+                   manifest=out / "trim_manifest.json")
+    except ValueError as e:
+        raise PrepareError(f"trimming mate 2 for the assembler failed: {e}") from e
 
     found = tools.resolve_all(cfg, ("megahit", "minimap2"))
     megahit, minimap2 = found["megahit"], found["minimap2"]
@@ -214,10 +215,10 @@ def assemble(cfg: Config, r1: Path, r2: Path | None, trim_r2: int, work: Path,
     # sample_contigs_unidentified.fa and sample_contigs_identified.fa in its contig
     # directory BY NAME, so calling the relabelled assembly anything else makes a stage
     # that would otherwise run refuse for a reason that has nothing to do with the sample.
-    _run([sys.executable, "-I", repo / "experiments/megahit_rename.py",
-          "--contigs", final, "--out", contigs, "--tag", cfg.label,
-          "--manifest", out / "rename_manifest.json"],
-         repo, "relabelling the assembly")
+    try:
+        rename_megahit(final, contigs, cfg.label, manifest=out / "rename_manifest.json")
+    except ValueError as e:
+        raise PrepareError(f"relabelling the assembly failed: {e}") from e
     return contigs
 
 
