@@ -2624,12 +2624,28 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
     const w = iv => '<span class="mono">' + pct(iv.lo_block_corrected) + ', ' +
       pct(iv.hi_block_corrected) + '</span>';
     const d2 = el('p', 'note');
-    d2.innerHTML = '<b>Widened for block sampling.</b> These reads are a contiguous ' +
-      'block of the file rather than a random sample of the library, and a Wilson ' +
-      'interval assumes the latter. Measured over all 8.7 million pairs, the real ' +
+    /* BORROWED OR MEASURED IS THE FIRST THING ABOUT THIS NUMBER, NOT THE LAST. The
+       sentence opened "Measured over all 8.7 million pairs", a count typed in from the
+       library the factors were measured on, and put the source in its final clause. The
+       producer records `design_effect_borrowed` and a note saying in words that the
+       correction is applied here unmeasured, and the page printed neither: on a library
+       whose own dispersion nobody has measured, the widened interval read as this run's
+       own measurement. Where it is borrowed the sentence says so before the numbers, and
+       the pair count comes out, because the only library it could describe is the one
+       named in the source. */
+    const borrowed = b.design_effect_borrowed;
+    d2.innerHTML = '<b>Widened for block sampling' +
+      (borrowed ? ', with a factor measured elsewhere' : '') + '.</b> These reads are ' +
+      'a contiguous block of the file rather than a random sample of the library, and a ' +
+      'Wilson interval assumes the latter. ' +
+      (borrowed
+        ? 'The factor is ' + esc(b.design_effect_note || 'borrowed from another library')
+          + '. There, the '
+        : 'Over the whole library, the ') +
       'between-block spread exceeds the binomial one by ' + num(de.identified, 2) +
       'x on identified and ' + num(de.residual, 2) + 'x on the residue, with random ' +
-      'samples of the same size reading 1.0 as the control. So the honest intervals are ' +
+      'samples of the same size reading 1.0 as the control. So the ' +
+      (borrowed ? 'intervals carried here' : 'honest intervals') + ' are ' +
       'identified [' + w(ident) + ']' + (tier2 ? ', assembled-not-identified [' +
       w(tier2) + ']' : '') + ', residual [' + w(resid) + ']. ' + esc(de._source) + '.';
     p.append(d2);
