@@ -579,3 +579,37 @@ def test_a_section_with_no_file_anywhere_says_so(tmp_path):
     text = out.read_text()
     assert "## The assembly" not in text
     assert "Sections not in this file" in text and "assembly_baseline.json" in text
+
+
+def test_the_launch_ledger_refuses_rather_than_totalling_zero(tmp_path):
+    """A table of dashes totalling $0.00 reads as a free run, not a failed measurement.
+
+    `run_ledger.py` reads each launch's wall clock from the instance's own writes to S3,
+    because a terminated instance leaves `describe_instances` within hours. The first
+    version joined the bucket prefix without its separator, every listing came back empty,
+    and the generated table rendered a dash per launch and "at least $0.00 across 9
+    launches". The spend is the figure the EC2 rule is written against, so an unmeasurable
+    one is a refusal.
+    """
+    res = tmp_path / "prod_SRR23702504"
+    res.mkdir()
+    (res / "launch_i-0000000000000dead.json").write_text(json.dumps(
+        {"commit": "0" * 40, "instance_type": "r6i.2xlarge", "volume_gb": 300,
+         "launched": "2026-01-01T00:00:00Z", "projected_usd": 1.0}))
+    r = subprocess.run([sys.executable, "-I", "experiments/run_ledger.py",
+                        "--library", "SRR23702504", "--results", str(res),
+                        "--out", str(tmp_path / "L.md")],
+                       cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode != 0, r.stdout
+    assert "would read as a free run" in (r.stderr + r.stdout)
+
+
+def test_the_launch_ledger_needs_a_launch_manifest(tmp_path):
+    res = tmp_path / "prod_SRR23702504"
+    res.mkdir()
+    r = subprocess.run([sys.executable, "-I", "experiments/run_ledger.py",
+                        "--library", "SRR23702504", "--results", str(res),
+                        "--out", str(tmp_path / "L.md")],
+                       cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode != 0
+    assert "no launch_i-" in (r.stderr + r.stdout)
