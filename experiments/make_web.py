@@ -2865,14 +2865,35 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
   tb.innerHTML = '<thead><tr><th>field</th><th>residue</th><th>shuffled null</th>' +
     '<th>identified reads</th><th>state</th></tr></thead>';
   const body = el('tbody');
-  const mean = o => o && o.mean != null ? num(o.mean, 4) + ' <span class="dim mono">&plusmn;' +
-    num(o.sd, 3) + '</span>' : (o && o.any_hit_frac != null ? pct(o.any_hit_frac) : '-');
+  /* THREE SHAPES, AND THE THIRD RENDERED AS A DASH. A field ships either a mean with a
+     standard deviation, a hit fraction, or a bare number, and this read the first two and
+     fell through to '-' on the third: `frame_identifiable_frac` held 0.1615 on the residue
+     against 0.0950 on the null, printed an empty cell on both arms, and the state column
+     beside it still said "calibrated". A dash is this table's word for not measured, so a
+     measurement that arrives in an unexpected shape was rendered as its own absence. The
+     bare number is read, and a shape this function cannot read at all is loud rather than
+     blank, because a dash is indistinguishable from the honest case. */
+  const mean = o => {
+    if (o == null) return '-';
+    if (typeof o === 'number') return num(o, 4);
+    if (o.mean != null) {
+      return num(o.mean, 4) + (o.sd != null
+        ? ' <span class="dim mono">&plusmn;' + num(o.sd, 3) + '</span>' : '');
+    }
+    if (o.any_hit_frac != null) return pct(o.any_hit_frac);
+    if (typeof o === 'object' && Object.keys(o).length) {
+      return '<span class="absent">shape not read: ' +
+        esc(Object.keys(o).join(', ')) + '</span>';
+    }
+    return '-';
+  };
   Object.keys(fields).forEach(k => {
     const v = fields[k] || {};
     const st = state[k];
     const txt = typeof st === 'string' ? st : (st && st.state) || 'not recorded';
     const tr = el('tr');
-    tr.innerHTML = '<td>' + esc(k) + '</td><td class="mono">' + mean(v.residue || v) +
+    tr.innerHTML = '<td>' + esc(k) + '</td><td class="mono">' +
+      mean(v.residue != null ? v.residue : v) +
       '</td><td class="mono">' + mean(v.shuffled_null) + '</td><td class="mono">' +
       (v.subtracted_reads_any_hit_frac != null ? pct(v.subtracted_reads_any_hit_frac)
         : (v.subtracted_reads_bitscore ? num(v.subtracted_reads_bitscore.mean, 2)
