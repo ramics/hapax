@@ -256,3 +256,33 @@ def test_a_run_that_measured_nothing_carries_an_empty_measured_block(tmp_path):
         {"tool": "hapax run", "parameters": {"library": "SRR23702504"}}))
     out = descriptor(tmp_path, tmp_path / "d.json", 1)
     assert json.loads(out.read_text())["measured"] == {}
+
+
+def test_no_committed_page_declares_an_input_the_run_directory_holds():
+    """The quiet direction, checked on the descriptors that are written by hand.
+
+    `report.descriptor` resolves `inputs.spectrum` by looking in the run directory, which
+    is what a generated page needs. The archived pages under `results/web/pages/` carry
+    hand-written descriptors instead, and a sentence typed when a stage did not exist is
+    exactly what went wrong on the generated side: a complete run drew its headline
+    spectrum as an empty axis and told three of its controls the stage had not run, beside
+    that stage's own output in the same directory. An input declared present and missing
+    is a refusal the generator raises on; this is the other direction, which renders
+    quietly in the register the rest of the page uses for genuine limits.
+    """
+    pattern = {"spectrum": "divergent_known_s*.json"}
+    pages = sorted((ROOT / "results/web/pages").glob("*.json"))
+    assert pages, "no committed page descriptor to check"
+    for page in pages:
+        d = json.loads(page.read_text())
+        rundir = ROOT / str(d.get("rundir") or "")
+        if not rundir.is_dir():
+            continue
+        for key, decl in (d.get("inputs") or {}).items():
+            if "not_run" not in decl or key not in pattern:
+                continue
+            stray = sorted(f.name for f in rundir.glob(pattern[key]))
+            assert not stray, (
+                f"{page.name} declares inputs.{key} not run, and {rundir} holds "
+                f"{stray}. Resolve the declaration against the run rather than "
+                f"asserting it.")
