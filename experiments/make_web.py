@@ -3927,9 +3927,16 @@ function interval(iv) {
   hero.innerHTML = '<div class="vmain"><b>' + belowNinety.length + ' of ' + taxa.length +
     '</b> assembled viruses sit <b>below 90% identity</b> to their closest published ' +
     'protein' + cite('contigid') +
-    '.</div>' + (deep.length ? '<div class="vmain">Of the ' + rows.length +
-      ' worked up gene by gene, <b>' + deep.length + '</b> are complete genomes carried ' +
-      'at over 100x read depth' + cite('depth') + '.</div>' : '') +
+    '.</div>' +
+    // The two counts in this section come from two piles, and the page used to print the
+    // first as a sentence and the second as a bare "15 of them" under the figure, leaving
+    // a reader to guess at the relation. They are stated side by side and NOT as a
+    // subset: the gene-level workup selects its own contigs, so 15 of 34 would be a claim
+    // about an overlap this page has not measured.
+    '<div class="vmain"><b>' + rows.length + '</b> contigs are scored gene by gene, ' +
+    'which is what the figure below lays out' +
+    (deep.length ? ', and <b>' + deep.length + '</b> of those are complete genomes ' +
+      'carried at over 100x read depth' + cite('depth') : '') + '.</div>' +
     '<div class="vsub">Identity here means one gene against the single closest protein ' +
     'in the reference sets, at E&lt;1e-5 over at least 60 aa. Below about 90% that ' +
     'protein is a nearest neighbour rather than an identification, and the name it ' +
@@ -3944,6 +3951,12 @@ function interval(iv) {
      all. Nothing is recomputed - both identities and the depth were measured - and the
      line under the rug says what moved. */
   const HIDS = ['spec_rank', 'min_contig_nt', 'min_depth'];
+  // The pile the figure draws FROM, which is not the pile the headline counts: the
+  // sentence above says how many assembled viruses there are, and the figure marks the
+  // ones scored gene by gene that clear the shipped length and depth floors. Those were
+  // 34 and 15 on SRR34217566, printed as "34" and "15 of them" with nothing saying what
+  // the 15 were 15 of.
+  const rugTotal = rows.length;
   const rugHost = el('div');
   const rugNote = el('div', 'note');
   // `shipped` reads the defaults rather than the current state, because the comparison
@@ -4023,9 +4036,13 @@ function interval(iv) {
     s += '</svg>';
     rugHost.innerHTML = '';
     const host = el('div', 'scroll'); host.innerHTML = s; rugHost.append(host);
-    rugNote.innerHTML = 'One mark per contig, ' + rows.length + ' of them, stacked ' +
-      'where several land on the same identity. Position is the gene the row was ranked ' +
-      'on, the polymerase wherever one is called.' + cite('genespread') +
+    rugNote.innerHTML = 'One mark per contig, ' + rows.length +
+      (rows.length === rugTotal
+        ? ' of them'
+        : ' of the ' + rugTotal + ' scored gene by gene; the rest sit below the length ' +
+          'or depth floor on the control row above') +
+      ', stacked where several land on the same identity. Position is the gene the row ' +
+      'was ranked on, the polymerase wherever one is called.' + cite('genespread') +
       (ctlAnyMoved(HIDS)
         ? ' <span class="relabel">At your setting: ' + rows.length + ' contigs and ' +
           deep.length + ' finished genomes, against ' + rugRowsShipped.n + ' and ' +
