@@ -3471,8 +3471,32 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
     setFoot(rows, R, lane);
   }
 
+  /* THIS RUN'S SPREAD, NOT THE REPOSITORY'S. The sentence said "the genes of a
+     divergent contig disagree by a median 12.8 points", which is the figure from the
+     11,361-contig pile of another library; this run measured 8.6 against a near-reference
+     control of 0.95 and printed those two numbers in the headline section above. The
+     repository figure is the right thing to quote only where the run measured none, and
+     then it is quoted as what it is. */
+  function spreadClause() {
+    const W = D.contig_workup;
+    const d = W && (W.summary || {}).divergent || {};
+    const c = W && (W.summary || {}).control_near_reference || {};
+    const dv = d.median_orf_identity_spread_points;
+    const cv = c.median_orf_identity_spread_points;
+    if (dv == null) {
+      return 'the genes of a divergent contig disagree by a median 12.8 points over ' +
+        'the 11,361-contig pile of results/divergent_known/, which this run did not ' +
+        'measure for itself';
+    }
+    return 'on this run the genes of one divergent contig disagree by a median ' +
+      num(dv, 1) + ' points' +
+      (cv == null ? '' : ', against ' + num(cv, 2) +
+        ' on contigs that match their reference');
+  }
+
   function setFoot(rows, R, lane) {
     const c = S.census || {};
+    let ringed = 0;
     const thin = lane.filter(r => /covered/.test(r.why)).length;
     const shortAln = lane.length - thin;
     foot.innerHTML =
@@ -3480,8 +3504,7 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
       'polymerase on ' + rows.filter(r => r.src === 'polymerase').length +
       ' of ' + rows.length + ' contigs drawn, the whole-contig hit on the rest, stated ' +
       'per row - because a contig that carries one identity carries whichever gene won ' +
-      'on bitscore, and the genes of a divergent contig disagree by a median 12.8 ' +
-      'points. The ' +
+      'on bitscore, and ' + spreadClause() + '. The ' +
       'bar through each dot is that disagreement. Colour is how much of the scored gene ' +
       'the alignment spans, pale to deep, because identity flatters towards familiar by ' +
       '+17.2 points when coverage is under half against +7.1 above 90%. Height is ' +
@@ -3494,10 +3517,21 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
       ' with under ' + Math.round(ctlGet('spec_min_coverage') * 100) +
       '% of the scored gene aligned and ' + shortAln + ' aligned over under ' +
       ctlGet('spec_min_aln_aa') + ' aa - and it is a census, not a verdict. ' +
-      '<b>A ring</b> marks the ' + S.on_axis.filter(r => r.big).length + ' contigs that ' +
-      'also went to core_nt, 319 GB: green collapsed to a strain-level identification ' +
-      'there, blue got closer without reaching one, orange stayed distant. The ring ' +
-      'is a label and not a move along this axis, ' +
+      /* A LEGEND FOR MARKS THAT ARE NOT ON THE FIGURE. With no larger-index block run,
+         this read "a ring marks the 0 contigs that also went to core_nt, 319 GB: green
+         collapsed to a strain-level identification there, blue got closer without
+         reaching one, orange stayed distant", teaching a three-colour code for rings
+         that do not exist and implying the comparison had been made and come back
+         empty. Where none ran the sentence says so and the colours are not described. */
+      ((ringed = S.on_axis.filter(r => r.big).length)
+        ? '<b>A ring</b> marks the ' + ringed + ' contig' +
+          (ringed === 1 ? '' : 's') + ' that also went to core_nt, 319 GB: green ' +
+          'collapsed to a strain-level identification there, blue got closer without ' +
+          'reaching one, orange stayed distant. The ring ' +
+          'is a label and not a move along this axis, '
+        : '<b>No contig here went to a larger index</b>, so no ring is drawn and ' +
+          'nothing on this axis has been checked against core_nt. A ring would be ' +
+          'a label and not a move along this axis, ') +
       'because core_nt is a nucleotide index and this axis is protein identity; a ' +
       'displacement arrow waits on the protein pass against nr, which is the same ' +
       'instrument at a larger size. ' +
