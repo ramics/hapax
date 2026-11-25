@@ -83,27 +83,27 @@ MEGAHIT `MEGAHIT v1.2.9`, minimap2 `2.31-r1302`, reads sha256 `6e5d8651dad125c3`
 
 ## The cascade
 
-Operating point: `{"k2_confidence": 0.1, "min_match_length_nt": 40, "diamond_bitscore": 50.0, "diamond_sensitivity": "--sensitive", "entropy_min": 0.5, "homopolymer_max": 25, "trim_r2": 0}`. Percentages are of read **pairs**, the occurrence-weighted unit. Spread is the observed range over 4 seeds and is not a dispersion estimate.
+Operating point: `{"k2_confidence": 0.1, "min_match_length_nt": 40, "diamond_bitscore": 50.0, "diamond_sensitivity": "--sensitive", "entropy_min": 0.5, "homopolymer_max": 25, "trim_r2": 0}`. Percentages are of read **pairs**, the occurrence-weighted unit. Spread is the observed range over 5 seeds and is not a dispersion estimate.
 
 | quantity | mean (min-max) |
 |---|---|
 | pairs read per seed | 200000 |
-| union removed | 93.49 (92.40-96.51) |
-| residue | 6.51 (3.49-7.60) |
-| tier 3 (unplaceable reads) | 3.28 (2.11-3.74) |
+| union removed | 94.10 (92.40-96.54) |
+| residue | 5.90 (3.46-7.60) |
+| tier 3 (unplaceable reads) | 3.05 (2.11-3.74) |
 
 | tier | alone | marginal | cumulative | index GB |
 |---|---|---|---|---|
-| artefact | 1.54 (0.61-4.30) | 1.54 (0.61-4.30) | 1.54 (0.61-4.30) | 0.000 |
-| rrna | 79.21 (76.06-88.35) | 78.04 (75.82-84.45) | 79.58 (76.43-88.75) | 1.052 |
-| k2_viral_20261022.d | 0.16 (0.12-0.25) | 0.07 (0.06-0.09) | 79.65 (76.49-88.84) | 0.667 |
-| k2_standard_08_GB_20261022.d | 3.34 (2.86-4.75) | 0.28 (0.18-0.32) | 79.93 (76.81-89.02) | 8.005 |
-| k2_pluspf_08_GB_20261022.d | 2.93 (2.50-4.14) | 0.00 | 79.93 (76.81-89.02) | 8.005 |
-| k2_pluspf_16_GB_20261022.d | 14.95 (12.84-21.17) | 1.29 (0.81-1.48) | 81.22 (78.25-89.83) | 16.005 |
-| selfasm_sample_contigs_rrna | 84.07 (81.83-90.27) | 8.26 (4.27-9.73) | 89.48 (87.78-94.10) | 0.007 |
-| selfasm_sample_contigs_identified_norrna | 4.18 (3.94-4.72) | 1.97 (1.00-2.36) | 91.45 (90.14-95.10) | 0.007 |
-| prot_viral | 0.18 (0.13-0.20) | 0.18 (0.13-0.20) | 91.63 (90.34-95.24) | 0.239 |
-| prot_sprot | 2.01 (1.37-2.23) | 1.86 (1.27-2.06) | 93.49 (92.40-96.51) | 0.294 |
+| artefact | 2.09 (0.61-4.30) | 2.09 (0.61-4.30) | 2.09 (0.61-4.30) | 0.000 |
+| rrna | 81.03 (76.06-88.35) | 79.32 (75.82-84.45) | 81.41 (76.43-88.75) | 1.052 |
+| k2_viral_20261022.d | 0.18 (0.12-0.25) | 0.07 (0.06-0.09) | 81.48 (76.49-88.84) | 0.667 |
+| k2_standard_08_GB_20261022.d | 3.63 (2.86-4.79) | 0.27 (0.18-0.32) | 81.75 (76.81-89.02) | 8.005 |
+| k2_pluspf_08_GB_20261022.d | 3.19 (2.50-4.22) | 0.00 | 81.75 (76.81-89.02) | 8.005 |
+| k2_pluspf_16_GB_20261022.d | 16.19 (12.84-21.17) | 1.21 (0.81-1.48) | 82.95 (78.25-89.87) | 16.005 |
+| selfasm_sample_contigs_rrna | 85.32 (81.83-90.33) | 7.47 (4.27-9.73) | 90.42 (87.78-94.19) | 0.007 |
+| selfasm_sample_contigs_identified_norrna | 4.29 (3.94-4.72) | 1.77 (0.97-2.36) | 92.19 (90.14-95.16) | 0.007 |
+| prot_viral | 0.17 (0.13-0.20) | 0.17 (0.13-0.20) | 92.36 (90.34-95.29) | 0.239 |
+| prot_sprot | 1.87 (1.35-2.23) | 1.74 (1.24-2.06) | 94.10 (92.40-96.54) | 0.294 |
 
 Measured and not subtracted, so carrying no row above: `observe_sample_contigs_unidentified`. Matching sequence nobody has named is recorded against the read and does not remove it.
 
@@ -111,26 +111,24 @@ Measured and not subtracted, so carrying no row above: `observe_sample_contigs_u
 
 | seeds | stage | status | reason |
 |---|---|---|---|
-| all 4 | profile | ok |  |
-| all 4 | cascade | ok |  |
-| all 4 | contigs | ok |  |
-| all 4 | reads | ok |  |
-| all 4 | linkage | ok |  |
-| all 4 | census | ok |  |
-| all 4 | calibration | skipped | deselected on the command line with --stages, which otherwise runs every stage (profile, cascade, contigs, reads, linkage, census, calibration, intervals, layers, strains, taxa, divergent, shortlist, panel, crossplant... |
-| all 4 | intervals | ok |  |
-| all 4 | layers | ok |  |
-| all 4 | strains | ok |  |
-| all 4 | taxa | ok |  |
-| all 4 | divergent | ok |  |
-| all 4 | shortlist | ok |  |
-| all 4 | panel | skipped | deselected on the command line with --stages, which otherwise runs every stage (profile, cascade, contigs, reads, linkage, census, calibration, intervals, layers, strains, taxa, divergent, shortlist, panel, crossplant... |
-| all 4 | crossplant | skipped | Szeged is not one of the 32 plants in results/crossplant/panel.tsv, and no library from this plant is. A cross-plant figure needs a within-plant stratum, because the within-plant rate itself runs 15-96% and a pooled d... |
-| all 4 | ranking | ok |  |
+| all 5 | profile | ok |  |
+| all 5 | cascade | ok |  |
+| all 5 | contigs | ok |  |
+| all 5 | reads | ok |  |
+| all 5 | linkage | ok |  |
+| all 5 | census | ok |  |
+| all 5 | calibration | skipped | deselected on the command line with --stages, which otherwise runs every stage (profile, cascade, contigs, reads, linkage, census, calibration, intervals, layers, strains, taxa, divergent, shortlist, panel, crossplant... |
+| all 5 | intervals | ok |  |
+| all 5 | layers | ok |  |
+| all 5 | strains | ok |  |
+| all 5 | taxa | ok |  |
+| all 5 | divergent | ok |  |
+| all 5 | shortlist | ok |  |
+| all 5 | panel | skipped | deselected on the command line with --stages, which otherwise runs every stage (profile, cascade, contigs, reads, linkage, census, calibration, intervals, layers, strains, taxa, divergent, shortlist, panel, crossplant... |
+| all 5 | crossplant | skipped | Szeged is not one of the 32 plants in results/crossplant/panel.tsv, and no library from this plant is. A cross-plant figure needs a within-plant stratum, because the within-plant rate itself runs 15-96% and a pooled d... |
+| all 5 | ranking | ok |  |
 
-Every stage returned the same status and reason on all 4 seeds, so no row here names a seed.
+Every stage returned the same status and reason on all 5 seeds, so no row here names a seed.
 
-Seeds with a directory and no manifest, so counted nowhere above: **s5**. Those seeds had not finished when this table was written.
-
-Stages that failed: **0** across 4 seeds; stages that exited without failing and wrote no output: **0**; runs marked `complete`: **0 of 4**. Completeness is low by construction here because 3 stages are not part of a production pass (`calibration`, `crossplant`, `panel`), which is the manifest recording a deliberate omission and not a failure, and the figure is printed anyway so that an empty stage cannot hide behind a clean exit code. Wall clock per seed: [65.2, 65.9, 66.1, 68.7] minutes.
+Stages that failed: **0** across 5 seeds; stages that exited without failing and wrote no output: **0**; runs marked `complete`: **0 of 5**. Completeness is low by construction here because 3 stages are not part of a production pass (`calibration`, `crossplant`, `panel`), which is the manifest recording a deliberate omission and not a failure, and the figure is printed anyway so that an empty stage cannot hide behind a clean exit code. Wall clock per seed: [65.2, 65.9, 66.1, 68.7, 68.3] minutes.
 

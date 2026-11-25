@@ -1,0 +1,92 @@
+{
+ "assembly_record": {},
+ "trim_r2": 0,
+ "trim_r2_source": "stated in run.toml: 0 because this library carries no non-template prefix: nontemplate_prefix_map.py read a mate-2 5' soft-clip mode of 0 in 5 of 5 seeds on 17,930 to 18,192 anchored reads per seed, nine times trim_from_prefix.py's floor, with mate 1's mode also 0; the histogram is flat, the mode holding 21.4 to 21.9% against a 25% floor, so trim_from_prefix.py refuses to name a prefix, and 0 is the only value that cannot delete real template (measured on instance i-00d39f385a5a96422, commit 5cb21c317fd9) (stated on the launcher; the instance's own measurement exited 2 with answer 'none' and was not used)",
+ "assembly": "/opt/hapax/wk/asm_baseline/sample_contigs.fa",
+ "identified_contigs_norrna": "/opt/hapax/wk/asm_baseline/sample_contigs_identified_norrna.fa",
+ "rrna_contigs": "/opt/hapax/wk/asm_baseline/sample_contigs_rrna.fa",
+ "unidentified_contigs": "/opt/hapax/wk/asm_baseline/sample_contigs_unidentified.fa",
+ "removal_evidence": "/opt/hapax/out/run_s4/removal_evidence.tsv",
+ "measured_off_the_reads": {
+  "pairs": 11589124,
+  "pairs_basis": "records counted in SRR34217566_1.fastq.gz",
+  "read_length": [
+   151,
+   151
+  ],
+  "layout": "paired",
+  "read_length_basis": "modal sequence length over the first 100000 records of each mate. Read length is the one recognition wall this project has measured moving (SPEC 4.2), so it is recorded rather than assumed comparable to another library's.",
+  "read_length_spread": {
+   "r1": [
+    [
+     151,
+     68088
+    ],
+    [
+     150,
+     20486
+    ],
+    [
+     149,
+     4563
+    ],
+    [
+     148,
+     1101
+    ],
+    [
+     147,
+     517
+    ]
+   ],
+   "r2": [
+    [
+     151,
+     59451
+    ],
+    [
+     150,
+     24140
+    ],
+    [
+     149,
+     8075
+    ],
+    [
+     148,
+     2346
+    ],
+    [
+     147,
+     707
+    ]
+   ]
+  },
+  "seeds": 5,
+  "block": 2500000,
+  "block_basis": "derived from the 11589124 pairs counted in this file: the largest round stride that fits 5 disjoint contiguous blocks of 200000 pairs with a 10% margin, so a file that counts shorter than its metadata still reads five blocks rather than leaving the last seeds empty.",
+  "measured_not_stated": [
+   "pairs",
+   "read_length",
+   "layout",
+   "block"
+  ],
+  "not_measurable_from_the_file": {
+   "trim_r2": "needs the reads mapped onto known sequence; see experiments/nontemplate_prefix_map.py and trim_from_prefix.py",
+   "sample": "the matrix, place, collection date and molecule are properties of the water and of the deposit, not of the FASTQ",
+   "crossplant_panel": "membership of a committed panel, not a property of the reads"
+  },
+  "wall_seconds": 47.7,
+  "accession": "SRR34217566",
+  "r1": "/opt/hapax/data/reads/SRR34217566_1.fastq.gz",
+  "r2": "/opt/hapax/data/reads/SRR34217566_2.fastq.gz",
+  "provenance": {
+   "producer": "hapax.measure.measure_to",
+   "hapax_version": "0.3.0",
+   "git_sha": "1dc582e6621af117ddad75b48baf3d388a724286",
+   "tree_dirty": false,
+   "module_sha256": "af2b90d7ae5d2e590b5e75d64fcc1a05cf1d1775c4e86642648feb62dfe8f73f"
+  }
+ },
+ "note": "produced by hapax run, not supplied by a caller. The split is by identification and never by assembly: a contig that assembled and could not be identified stays in the residue."
+}

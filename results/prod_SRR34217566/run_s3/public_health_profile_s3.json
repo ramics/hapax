@@ -1,0 +1,3737 @@
+{
+ "unit": "read PAIRS, the occurrence-weighted unit; never distinct k-mers",
+ "library_pairs": 11589124,
+ "whole_library": true,
+ "operating_point": {
+  "classifier": "kraken2 2.17.2",
+  "database": "k2_pluspf_16_GB_20261022.d",
+  "database_bytes": 16005099618,
+  "confidences": [
+   0.0,
+   0.1,
+   0.2
+  ],
+  "trim_r2": 0,
+  "paired": true
+ },
+ "at_confidence": {
+  "0.0": {
+   "pairs": 11589124,
+   "by_superkingdom": [
+    {
+     "group": "Bacteria",
+     "pairs": 7650330,
+     "fraction": 0.66013
+    },
+    {
+     "group": "unclassified",
+     "pairs": 3174297,
+     "fraction": 0.273903
+    },
+    {
+     "group": "Eukaryota",
+     "pairs": 360016,
+     "fraction": 0.031065
+    },
+    {
+     "group": "Archaea",
+     "pairs": 203818,
+     "fraction": 0.017587
+    },
+    {
+     "group": "classified, but above any of these groups",
+     "pairs": 197078,
+     "fraction": 0.017005
+    },
+    {
+     "group": "Viruses",
+     "pairs": 3585,
+     "fraction": 0.000309
+    }
+   ],
+   "top_taxa": {
+    "Bacteria": [
+     {
+      "name": "Bacteria (no deeper than domain)",
+      "pairs": 609736,
+      "fraction": 0.05261278
+     },
+     {
+      "name": "Bacteroides graminisolvens",
+      "pairs": 215322,
+      "fraction": 0.01857966
+     },
+     {
+      "name": "Macellibacteroides fermentans",
+      "pairs": 187005,
+      "fraction": 0.01613625
+     },
+     {
+      "name": "Aliarcobacter cryaerophilus",
+      "pairs": 142240,
+      "fraction": 0.01227358
+     },
+     {
+      "name": "Pseudomonadati (no deeper than kingdom)",
+      "pairs": 135350,
+      "fraction": 0.01167905
+     },
+     {
+      "name": "Actinomycetes (no deeper than class)",
+      "pairs": 122535,
+      "fraction": 0.01057328
+     },
+     {
+      "name": "Bacteroidota (no deeper than phylum)",
+      "pairs": 97418,
+      "fraction": 0.00840598
+     },
+     {
+      "name": "Acetoanaerobium (no deeper than genus)",
+      "pairs": 94470,
+      "fraction": 0.00815161
+     },
+     {
+      "name": "Schaalia sp. JY-X169",
+      "pairs": 92843,
+      "fraction": 0.00801122
+     },
+     {
+      "name": "Bacillati (no deeper than kingdom)",
+      "pairs": 86545,
+      "fraction": 0.00746778
+     },
+     {
+      "name": "Proteocatella sp. QWL-06",
+      "pairs": 78121,
+      "fraction": 0.00674089
+     },
+     {
+      "name": "Veillonella (no deeper than genus)",
+      "pairs": 74880,
+      "fraction": 0.00646123
+     },
+     {
+      "name": "Aliarcobacter (no deeper than genus)",
+      "pairs": 74180,
+      "fraction": 0.00640083
+     },
+     {
+      "name": "Bacillota (no deeper than phylum)",
+      "pairs": 72056,
+      "fraction": 0.00621755
+     },
+     {
+      "name": "Arcobacteraceae (no deeper than family)",
+      "pairs": 71210,
+      "fraction": 0.00614455
+     },
+     {
+      "name": "Leptolyngbya sp. 7M",
+      "pairs": 69958,
+      "fraction": 0.00603652
+     },
+     {
+      "name": "Clostridia (no deeper than class)",
+      "pairs": 64609,
+      "fraction": 0.00557497
+     },
+     {
+      "name": "Bacteroidales (no deeper than order)",
+      "pairs": 59662,
+      "fraction": 0.0051481
+     },
+     {
+      "name": "Gammaproteobacteria (no deeper than class)",
+      "pairs": 55913,
+      "fraction": 0.00482461
+     },
+     {
+      "name": "uncultured Acetobacteroides sp.",
+      "pairs": 51157,
+      "fraction": 0.00441422
+     },
+     {
+      "name": "Oscillospiraceae (no deeper than family)",
+      "pairs": 48525,
+      "fraction": 0.00418712
+     },
+     {
+      "name": "Sporomusaceae (no deeper than family)",
+      "pairs": 48288,
+      "fraction": 0.00416667
+     },
+     {
+      "name": "Prevotella (no deeper than genus)",
+      "pairs": 46140,
+      "fraction": 0.00398132
+     },
+     {
+      "name": "Micrococcales (no deeper than order)",
+      "pairs": 45234,
+      "fraction": 0.00390314
+     },
+     {
+      "name": "Streptococcus (no deeper than genus)",
+      "pairs": 43031,
+      "fraction": 0.00371305
+     },
+     {
+      "name": "Pseudomonadota (no deeper than phylum)",
+      "pairs": 40543,
+      "fraction": 0.00349837
+     },
+     {
+      "name": "Prevotellaceae (no deeper than family)",
+      "pairs": 40189,
+      "fraction": 0.00346782
+     },
+     {
+      "name": "Opitutaceae (no deeper than family)",
+      "pairs": 40042,
+      "fraction": 0.00345514
+     },
+     {
+      "name": "Acinetobacter (no deeper than genus)",
+      "pairs": 38880,
+      "fraction": 0.00335487
+     },
+     {
+      "name": "Sulfurospirillum (no deeper than genus)",
+      "pairs": 34967,
+      "fraction": 0.00301723
+     },
+     {
+      "name": "Planctomycetia (no deeper than class)",
+      "pairs": 34608,
+      "fraction": 0.00298625
+     },
+     {
+      "name": "Gemmataceae (no deeper than family)",
+      "pairs": 34528,
+      "fraction": 0.00297935
+     },
+     {
+      "name": "Megasphaera (no deeper than genus)",
+      "pairs": 33444,
+      "fraction": 0.00288581
+     },
+     {
+      "name": "Cloacibacterium (no deeper than genus)",
+      "pairs": 33146,
+      "fraction": 0.0028601
+     },
+     {
+      "name": "Fontisphaera persica",
+      "pairs": 32162,
+      "fraction": 0.00277519
+     },
+     {
+      "name": "Ruminococcus callidus",
+      "pairs": 32062,
+      "fraction": 0.00276656
+     },
+     {
+      "name": "Desulfomicrobium (no deeper than genus)",
+      "pairs": 31391,
+      "fraction": 0.00270866
+     },
+     {
+      "name": "Eubacteriales (no deeper than order)",
+      "pairs": 30820,
+      "fraction": 0.00265939
+     },
+     {
+      "name": "Desulfobulbus sp.",
+      "pairs": 30268,
+      "fraction": 0.00261176
+     },
+     {
+      "name": "Nitrospira (no deeper than genus)",
+      "pairs": 30032,
+      "fraction": 0.0025914
+     }
+    ],
+    "Archaea": [
+     {
+      "name": "Methanothrix (no deeper than genus)",
+      "pairs": 38210,
+      "fraction": 0.00329706
+     },
+     {
+      "name": "Methanothrix soehngenii",
+      "pairs": 22105,
+      "fraction": 0.00190739
+     },
+     {
+      "name": "Methanobrevibacter acididurans",
+      "pairs": 20708,
+      "fraction": 0.00178685
+     },
+     {
+      "name": "Methanosarcina (no deeper than genus)",
+      "pairs": 11024,
+      "fraction": 0.00095124
+     },
+     {
+      "name": "Candidatus Methanoplasma termitum",
+      "pairs": 10559,
+      "fraction": 0.00091111
+     },
+     {
+      "name": "Methanothrix sp.",
+      "pairs": 8015,
+      "fraction": 0.0006916
+     },
+     {
+      "name": "Methanospirillum lacunae",
+      "pairs": 7074,
+      "fraction": 0.0006104
+     },
+     {
+      "name": "Methanomicrobia (no deeper than class)",
+      "pairs": 5965,
+      "fraction": 0.00051471
+     },
+     {
+      "name": "Methanobrevibacter (no deeper than genus)",
+      "pairs": 5818,
+      "fraction": 0.00050202
+     },
+     {
+      "name": "Methanosarcina sp.",
+      "pairs": 5353,
+      "fraction": 0.0004619
+     },
+     {
+      "name": "Methanospirillum (no deeper than genus)",
+      "pairs": 4876,
+      "fraction": 0.00042074
+     },
+     {
+      "name": "Methanospirillum hungatei",
+      "pairs": 4245,
+      "fraction": 0.00036629
+     },
+     {
+      "name": "Methanomicrobiales (no deeper than order)",
+      "pairs": 4150,
+      "fraction": 0.00035809
+     },
+     {
+      "name": "Thermoproteati (no deeper than kingdom)",
+      "pairs": 3512,
+      "fraction": 0.00030304
+     },
+     {
+      "name": "Methanomethylovorans (no deeper than genus)",
+      "pairs": 3444,
+      "fraction": 0.00029718
+     },
+     {
+      "name": "Methanobacterium (no deeper than genus)",
+      "pairs": 3412,
+      "fraction": 0.00029441
+     },
+     {
+      "name": "Methanoculleus receptaculi",
+      "pairs": 2201,
+      "fraction": 0.00018992
+     },
+     {
+      "name": "Methanoregula formicica",
+      "pairs": 2174,
+      "fraction": 0.00018759
+     },
+     {
+      "name": "Methanomethylovorans hollandica",
+      "pairs": 2107,
+      "fraction": 0.00018181
+     },
+     {
+      "name": "Methanobacteriota (no deeper than phylum)",
+      "pairs": 1954,
+      "fraction": 0.00016861
+     },
+     {
+      "name": "Thermofilum adornatum",
+      "pairs": 1944,
+      "fraction": 0.00016774
+     },
+     {
+      "name": "Methanoculleus (no deeper than genus)",
+      "pairs": 1747,
+      "fraction": 0.00015074
+     },
+     {
+      "name": "Methanospirillum stamsii",
+      "pairs": 1609,
+      "fraction": 0.00013884
+     },
+     {
+      "name": "Methanobacterium congolense",
+      "pairs": 1585,
+      "fraction": 0.00013677
+     },
+     {
+      "name": "Methanobacteriaceae (no deeper than family)",
+      "pairs": 1584,
+      "fraction": 0.00013668
+     },
+     {
+      "name": "Methanoculleus bourgensis",
+      "pairs": 1377,
+      "fraction": 0.00011882
+     },
+     {
+      "name": "Methanomassiliicoccales (no deeper than order)",
+      "pairs": 1355,
+      "fraction": 0.00011692
+     },
+     {
+      "name": "Methanosarcina barkeri",
+      "pairs": 1194,
+      "fraction": 0.00010303
+     },
+     {
+      "name": "Methanoregula boonei",
+      "pairs": 1188,
+      "fraction": 0.00010251
+     },
+     {
+      "name": "Thermoprotei (no deeper than class)",
+      "pairs": 1125,
+      "fraction": 9.707e-05
+     },
+     {
+      "name": "Methanomethylophilus alvi",
+      "pairs": 1066,
+      "fraction": 9.198e-05
+     },
+     {
+      "name": "Thermoplasmata (no deeper than class)",
+      "pairs": 1066,
+      "fraction": 9.198e-05
+     },
+     {
+      "name": "Candidatus Methanomassiliicoccus intestinalis",
+      "pairs": 1062,
+      "fraction": 9.164e-05
+     },
+     {
+      "name": "Methanomassiliicoccaceae (no deeper than family)",
+      "pairs": 1022,
+      "fraction": 8.819e-05
+     },
+     {
+      "name": "Methanospirillum purgamenti",
+      "pairs": 1008,
+      "fraction": 8.698e-05
+     },
+     {
+      "name": "Methanothrix harundinacea",
+      "pairs": 954,
+      "fraction": 8.232e-05
+     },
+     {
+      "name": "Fervidicoccus sp. SLHALR4",
+      "pairs": 870,
+      "fraction": 7.507e-05
+     },
+     {
+      "name": "Methanosarcinaceae (no deeper than family)",
+      "pairs": 865,
+      "fraction": 7.464e-05
+     },
+     {
+      "name": "Methanosphaera (no deeper than genus)",
+      "pairs": 845,
+      "fraction": 7.291e-05
+     },
+     {
+      "name": "uncultured Methanomethylovorans sp.",
+      "pairs": 783,
+      "fraction": 6.756e-05
+     }
+    ],
+    "Eukaryota": [
+     {
+      "name": "Theileria (no deeper than genus)",
+      "pairs": 37386,
+      "fraction": 0.00322596
+     },
+     {
+      "name": "Homo sapiens",
+      "pairs": 37221,
+      "fraction": 0.00321172
+     },
+     {
+      "name": "Dictyostelium discoideum",
+      "pairs": 26242,
+      "fraction": 0.00226436
+     },
+     {
+      "name": "Eukaryota (no deeper than domain)",
+      "pairs": 23054,
+      "fraction": 0.00198928
+     },
+     {
+      "name": "Rhizophagus irregularis",
+      "pairs": 17365,
+      "fraction": 0.00149839
+     },
+     {
+      "name": "Dikarya (no deeper than subkingdom)",
+      "pairs": 13298,
+      "fraction": 0.00114746
+     },
+     {
+      "name": "Thalassiosira pseudonana",
+      "pairs": 12260,
+      "fraction": 0.00105789
+     },
+     {
+      "name": "Toxoplasma gondii",
+      "pairs": 10011,
+      "fraction": 0.00086383
+     },
+     {
+      "name": "Phaeodactylum tricornutum",
+      "pairs": 9253,
+      "fraction": 0.00079842
+     },
+     {
+      "name": "Stramenopiles (no deeper than clade)",
+      "pairs": 8926,
+      "fraction": 0.0007702
+     },
+     {
+      "name": "Plasmodium relictum",
+      "pairs": 8371,
+      "fraction": 0.00072232
+     },
+     {
+      "name": "Babesia microti",
+      "pairs": 7510,
+      "fraction": 0.00064802
+     },
+     {
+      "name": "Cyanidioschyzon merolae",
+      "pairs": 7394,
+      "fraction": 0.00063801
+     },
+     {
+      "name": "Dothideomycetes (no deeper than class)",
+      "pairs": 7218,
+      "fraction": 0.00062283
+     },
+     {
+      "name": "Bremia lactucae",
+      "pairs": 6618,
+      "fraction": 0.00057105
+     },
+     {
+      "name": "Botrytis cinerea",
+      "pairs": 6112,
+      "fraction": 0.00052739
+     },
+     {
+      "name": "Plasmodium (no deeper than genus)",
+      "pairs": 5377,
+      "fraction": 0.00046397
+     },
+     {
+      "name": "Cryptosporidium parvum",
+      "pairs": 5359,
+      "fraction": 0.00046242
+     },
+     {
+      "name": "Ascomycota (no deeper than phylum)",
+      "pairs": 5105,
+      "fraction": 0.0004405
+     },
+     {
+      "name": "Yarrowia lipolytica",
+      "pairs": 5045,
+      "fraction": 0.00043532
+     },
+     {
+      "name": "Aconoidasida (no deeper than class)",
+      "pairs": 4819,
+      "fraction": 0.00041582
+     },
+     {
+      "name": "Rhizoctonia solani",
+      "pairs": 4309,
+      "fraction": 0.00037181
+     },
+     {
+      "name": "Neurospora crassa",
+      "pairs": 3860,
+      "fraction": 0.00033307
+     },
+     {
+      "name": "Plasmodium vinckei",
+      "pairs": 3707,
+      "fraction": 0.00031987
+     },
+     {
+      "name": "Trypanosomatidae (no deeper than family)",
+      "pairs": 3173,
+      "fraction": 0.00027379
+     },
+     {
+      "name": "Tetrapisispora phaffii",
+      "pairs": 2883,
+      "fraction": 0.00024877
+     },
+     {
+      "name": "Bigelowiella natans",
+      "pairs": 2693,
+      "fraction": 0.00023237
+     },
+     {
+      "name": "Coccidioides posadasii",
+      "pairs": 2458,
+      "fraction": 0.0002121
+     },
+     {
+      "name": "Malassezia (no deeper than genus)",
+      "pairs": 2376,
+      "fraction": 0.00020502
+     },
+     {
+      "name": "Piroplasmida (no deeper than order)",
+      "pairs": 2355,
+      "fraction": 0.00020321
+     },
+     {
+      "name": "Babesia bovis",
+      "pairs": 2204,
+      "fraction": 0.00019018
+     },
+     {
+      "name": "Plasmodium (no deeper than subgenus)",
+      "pairs": 2044,
+      "fraction": 0.00017637
+     },
+     {
+      "name": "Brettanomyces bruxellensis",
+      "pairs": 1968,
+      "fraction": 0.00016981
+     },
+     {
+      "name": "Brettanomyces nanus",
+      "pairs": 1944,
+      "fraction": 0.00016774
+     },
+     {
+      "name": "Apicomplexa (no deeper than phylum)",
+      "pairs": 1874,
+      "fraction": 0.0001617
+     },
+     {
+      "name": "saccharomyceta (no deeper than clade)",
+      "pairs": 1873,
+      "fraction": 0.00016162
+     },
+     {
+      "name": "Puccinia (no deeper than genus)",
+      "pairs": 1793,
+      "fraction": 0.00015471
+     },
+     {
+      "name": "Sar (no deeper than clade)",
+      "pairs": 1663,
+      "fraction": 0.0001435
+     },
+     {
+      "name": "Pleosporineae (no deeper than suborder)",
+      "pairs": 1603,
+      "fraction": 0.00013832
+     },
+     {
+      "name": "Sarcocystidae (no deeper than family)",
+      "pairs": 1589,
+      "fraction": 0.00013711
+     }
+    ],
+    "classified, but above any of these groups": [
+     {
+      "name": "cellular organisms (no deeper than cellular root)",
+      "pairs": 183817,
+      "fraction": 0.01586116
+     },
+     {
+      "name": "root (no rank given)",
+      "pairs": 13034,
+      "fraction": 0.00112468
+     },
+     {
+      "name": "other sequences (no rank given)",
+      "pairs": 227,
+      "fraction": 1.959e-05
+     }
+    ],
+    "Viruses": [
+     {
+      "name": "Tobamovirus viridimaculae",
+      "pairs": 476,
+      "fraction": 4.107e-05
+     },
+     {
+      "name": "Voulevirus limivivens",
+      "pairs": 337,
+      "fraction": 2.908e-05
+     },
+     {
+      "name": "Tobamovirus fructirugosum",
+      "pairs": 330,
+      "fraction": 2.847e-05
+     },
+     {
+      "name": "Ashucavirus caenivicinum",
+      "pairs": 211,
+      "fraction": 1.821e-05
+     },
+     {
+      "name": "Sehpovirus borboradaptatum",
+      "pairs": 189,
+      "fraction": 1.631e-05
+     },
+     {
+      "name": "Wenzhou picorna-like virus 47",
+      "pairs": 183,
+      "fraction": 1.579e-05
+     },
+     {
+      "name": "Tobamovirus capsici",
+      "pairs": 176,
+      "fraction": 1.519e-05
+     },
+     {
+      "name": "Andihavirus borborohabitans",
+      "pairs": 131,
+      "fraction": 1.13e-05
+     },
+     {
+      "name": "Thiyevirus asiocola",
+      "pairs": 108,
+      "fraction": 9.32e-06
+     },
+     {
+      "name": "Tobamovirus mititessellati",
+      "pairs": 107,
+      "fraction": 9.23e-06
+     },
+     {
+      "name": "Megatotivirus ni",
+      "pairs": 65,
+      "fraction": 5.61e-06
+     },
+     {
+      "name": "Kinglevirus lutadaptatum",
+      "pairs": 58,
+      "fraction": 5e-06
+     },
+     {
+      "name": "Grendvuvirus asiocola",
+      "pairs": 53,
+      "fraction": 4.57e-06
+     },
+     {
+      "name": "Bahdevuvirus caenivivens",
+      "pairs": 40,
+      "fraction": 3.45e-06
+     },
+     {
+      "name": "Ulinhavirus borborovivens",
+      "pairs": 38,
+      "fraction": 3.28e-06
+     },
+     {
+      "name": "Fahrmivirus caenivivens",
+      "pairs": 37,
+      "fraction": 3.19e-06
+     },
+     {
+      "name": "Hubei picorna-like virus 61",
+      "pairs": 32,
+      "fraction": 2.76e-06
+     },
+     {
+      "name": "Decadevirus asiocola",
+      "pairs": 31,
+      "fraction": 2.67e-06
+     },
+     {
+      "name": "Leviviricetes (no deeper than class)",
+      "pairs": 31,
+      "fraction": 2.67e-06
+     },
+     {
+      "name": "Bicehmovirus limenecus",
+      "pairs": 30,
+      "fraction": 2.59e-06
+     },
+     {
+      "name": "Carlavirus sigmasolani",
+      "pairs": 29,
+      "fraction": 2.5e-06
+     },
+     {
+      "name": "Trotivirus neoasiovicinum",
+      "pairs": 27,
+      "fraction": 2.33e-06
+     },
+     {
+      "name": "Mosigvirus (no deeper than genus)",
+      "pairs": 27,
+      "fraction": 2.33e-06
+     },
+     {
+      "name": "Kayfunavirus (no deeper than genus)",
+      "pairs": 27,
+      "fraction": 2.33e-06
+     },
+     {
+      "name": "Carlavirus misolani",
+      "pairs": 25,
+      "fraction": 2.16e-06
+     },
+     {
+      "name": "Tobamovirus tabaci",
+      "pairs": 22,
+      "fraction": 1.9e-06
+     },
+     {
+      "name": "Lohngkovirus caenadaptatum",
+      "pairs": 22,
+      "fraction": 1.9e-06
+     },
+     {
+      "name": "Kahnovirus copri",
+      "pairs": 21,
+      "fraction": 1.81e-06
+     },
+     {
+      "name": "Huhmpluvirus limenecus",
+      "pairs": 20,
+      "fraction": 1.73e-06
+     },
+     {
+      "name": "Kempsvovirus caenivivens",
+      "pairs": 19,
+      "fraction": 1.64e-06
+     },
+     {
+      "name": "Austrovirus limicola",
+      "pairs": 16,
+      "fraction": 1.38e-06
+     },
+     {
+      "name": "Brazilian marseillevirus",
+      "pairs": 15,
+      "fraction": 1.29e-06
+     },
+     {
+      "name": "Skunavirus (no deeper than genus)",
+      "pairs": 15,
+      "fraction": 1.29e-06
+     },
+     {
+      "name": "Rubivirus ruteetense",
+      "pairs": 15,
+      "fraction": 1.29e-06
+     },
+     {
+      "name": "Tobamovirus cucurbitae",
+      "pairs": 14,
+      "fraction": 1.21e-06
+     },
+     {
+      "name": "Gammacystovirus phiYY",
+      "pairs": 14,
+      "fraction": 1.21e-06
+     },
+     {
+      "name": "Mintuvirus pelovivens",
+      "pairs": 13,
+      "fraction": 1.12e-06
+     },
+     {
+      "name": "Rosenblumvirus CSA13",
+      "pairs": 13,
+      "fraction": 1.12e-06
+     },
+     {
+      "name": "Tequatrovirus (no deeper than genus)",
+      "pairs": 13,
+      "fraction": 1.12e-06
+     },
+     {
+      "name": "Kuttervirus (no deeper than genus)",
+      "pairs": 12,
+      "fraction": 1.04e-06
+     }
+    ]
+   },
+   "panel": [
+    {
+     "name": "Leptospira",
+     "taxid": 171,
+     "group": "environmental",
+     "why_on_the_panel": "leptospirosis, rodent urine, flood-associated",
+     "pairs": 16514,
+     "fraction": 0.001424956709411341,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Toxoplasma gondii",
+     "taxid": 5811,
+     "group": "parasite",
+     "why_on_the_panel": "oocysts shed by cats reach water",
+     "pairs": 10011,
+     "fraction": 0.0008638271538038596,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Cryptosporidium",
+     "taxid": 5806,
+     "group": "parasite",
+     "why_on_the_panel": "chlorine-tolerant, drinking-water outbreaks",
+     "pairs": 5359,
+     "fraction": 0.00046241631377833215,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Staphylococcus aureus",
+     "taxid": 1280,
+     "group": "antimicrobial resistance",
+     "why_on_the_panel": "ESKAPE; MRSA community carriage",
+     "pairs": 3652,
+     "fraction": 0.0003151230412238233,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Clostridioides difficile",
+     "taxid": 1496,
+     "group": "healthcare-associated",
+     "why_on_the_panel": "healthcare-associated diarrhoea, spore-forming, survives treatment",
+     "pairs": 1409,
+     "fraction": 0.00012157950851160106,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Escherichia coli",
+     "taxid": 562,
+     "group": "indicator",
+     "why_on_the_panel": "mostly commensal here: it is the faecal indicator organism, not by itself a pathogen signal",
+     "pairs": 1111,
+     "fraction": 9.586574446869324e-05,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Klebsiella pneumoniae",
+     "taxid": 573,
+     "group": "antimicrobial resistance",
+     "why_on_the_panel": "ESKAPE; carbapenem resistance spreads through sewage",
+     "pairs": 934,
+     "fraction": 8.05928040807916e-05,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Acinetobacter baumannii",
+     "taxid": 470,
+     "group": "antimicrobial resistance",
+     "why_on_the_panel": "ESKAPE; highly drug-resistant hospital pathogen",
+     "pairs": 468,
+     "fraction": 4.038268983919751e-05,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Listeria monocytogenes",
+     "taxid": 1639,
+     "group": "enteric bacterium",
+     "why_on_the_panel": "foodborne, high case fatality in pregnancy and the elderly",
+     "pairs": 368,
+     "fraction": 3.17539099590271e-05,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Pseudomonas aeruginosa",
+     "taxid": 287,
+     "group": "antimicrobial resistance",
+     "why_on_the_panel": "ESKAPE; environmental reservoir and hospital pathogen",
+     "pairs": 367,
+     "fraction": 3.16676221602254e-05,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Salmonella enterica",
+     "taxid": 28901,
+     "group": "enteric bacterium",
+     "why_on_the_panel": "salmonellosis, notifiable in most countries",
+     "pairs": 230,
+     "fraction": 1.984619372439194e-05,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Shigella",
+     "taxid": 620,
+     "group": "enteric bacterium",
+     "why_on_the_panel": "shigellosis, low infectious dose, faecal-oral",
+     "pairs": 90,
+     "fraction": 7.765901892153366e-06,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Enterococcus faecium",
+     "taxid": 1352,
+     "group": "antimicrobial resistance",
+     "why_on_the_panel": "ESKAPE; vancomycin resistance, and a faecal indicator",
+     "pairs": 87,
+     "fraction": 7.507038495748255e-06,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Vibrio cholerae",
+     "taxid": 666,
+     "group": "enteric bacterium",
+     "why_on_the_panel": "cholera; the organism wastewater surveillance was invented for",
+     "pairs": 48,
+     "fraction": 4.141814342481796e-06,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Helicobacter pylori",
+     "taxid": 210,
+     "group": "chronic",
+     "why_on_the_panel": "gastric cancer risk; a possible waterborne route",
+     "pairs": 47,
+     "fraction": 4.055526543680092e-06,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Yersinia enterocolitica",
+     "taxid": 630,
+     "group": "enteric bacterium",
+     "why_on_the_panel": "foodborne gastroenteritis",
+     "pairs": 22,
+     "fraction": 1.8983315736374897e-06,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Campylobacter jejuni",
+     "taxid": 197,
+     "group": "enteric bacterium",
+     "why_on_the_panel": "the commonest bacterial gastroenteritis in Europe",
+     "pairs": 13,
+     "fraction": 1.1217413844221532e-06,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Giardia",
+     "taxid": 5740,
+     "group": "parasite",
+     "why_on_the_panel": "giardiasis, cyst-forming, waterborne",
+     "pairs": 11,
+     "fraction": 9.491657868187448e-07,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Mycobacterium tuberculosis",
+     "taxid": 1773,
+     "group": "notifiable",
+     "why_on_the_panel": "tuberculosis; wastewater detection is an active research question",
+     "pairs": 10,
+     "fraction": 8.628779880170408e-07,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Legionella pneumophila",
+     "taxid": 446,
+     "group": "environmental",
+     "why_on_the_panel": "legionellosis; an environmental organism with a water route",
+     "pairs": 5,
+     "fraction": 4.314389940085204e-07,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Mamastrovirus",
+     "taxid": 249588,
+     "group": "enteric virus",
+     "why_on_the_panel": "human astroviruses, paediatric gastroenteritis",
+     "pairs": 4,
+     "fraction": 3.451511952068163e-07,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Dengue virus",
+     "taxid": 12637,
+     "group": "arbovirus",
+     "why_on_the_panel": "arboviral, imported-case indicator",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Entamoeba histolytica",
+     "taxid": 5759,
+     "group": "parasite",
+     "why_on_the_panel": "amoebic dysentery, faecal-oral",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Enterovirus",
+     "taxid": 12059,
+     "group": "enteric virus",
+     "why_on_the_panel": "includes poliovirus, EV-D68 and EV-A71; the genus polio surveillance watches",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Enterovirus C",
+     "taxid": 138950,
+     "group": "enteric virus",
+     "why_on_the_panel": "the species containing the polioviruses, reported separately from the genus",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Hepatitis B virus",
+     "taxid": 10407,
+     "group": "bloodborne",
+     "why_on_the_panel": "bloodborne hepatitis",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Hepatitis E virus",
+     "taxid": 291484,
+     "group": "enteric virus",
+     "why_on_the_panel": "waterborne hepatitis, zoonotic in Europe via pigs",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Hepatovirus A",
+     "taxid": 12092,
+     "group": "enteric virus",
+     "why_on_the_panel": "hepatitis A, faecal-oral, outbreak-prone in low-vaccination groups",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Human immunodeficiency virus 1",
+     "taxid": 11676,
+     "group": "bloodborne",
+     "why_on_the_panel": "bloodborne; a detection in sewage would be unexpected and worth explaining",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Influenza A virus",
+     "taxid": 11320,
+     "group": "respiratory virus",
+     "why_on_the_panel": "seasonal and pandemic influenza, including avian spillover",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Influenza B virus",
+     "taxid": 11520,
+     "group": "respiratory virus",
+     "why_on_the_panel": "seasonal influenza",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Kobuvirus",
+     "taxid": 194960,
+     "group": "enteric virus",
+     "why_on_the_panel": "Aichivirus A, gastroenteritis, routinely abundant in sewage",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Mastadenovirus",
+     "taxid": 10509,
+     "group": "enteric virus",
+     "why_on_the_panel": "enteric adenovirus types 40/41, and a classic faecal indicator",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Measles morbillivirus",
+     "taxid": 11234,
+     "group": "vaccine-preventable",
+     "why_on_the_panel": "outbreaks follow vaccination gaps and wastewater detection precedes case reports",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Mumps orthorubulavirus",
+     "taxid": 2560602,
+     "group": "vaccine-preventable",
+     "why_on_the_panel": "vaccine-preventable, shed in urine and saliva",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Norovirus",
+     "taxid": 142786,
+     "group": "enteric virus",
+     "why_on_the_panel": "the commonest cause of epidemic gastroenteritis and the most-watched target in wastewater",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Orthopneumovirus",
+     "taxid": 1868215,
+     "group": "respiratory virus",
+     "why_on_the_panel": "respiratory syncytial virus, a major infant hospitalisation cause",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Orthopoxvirus",
+     "taxid": 10242,
+     "group": "emerging",
+     "why_on_the_panel": "the genus containing mpox and smallpox",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Parechovirus",
+     "taxid": 138954,
+     "group": "enteric virus",
+     "why_on_the_panel": "neonatal sepsis and meningitis; shed in faeces",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Rotavirus A",
+     "taxid": 28875,
+     "group": "enteric virus",
+     "why_on_the_panel": "the leading cause of severe childhood diarrhoea and a vaccine-programme indicator",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Rubella virus",
+     "taxid": 11041,
+     "group": "vaccine-preventable",
+     "why_on_the_panel": "congenital rubella is the reason elimination is tracked",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Sapovirus",
+     "taxid": 95341,
+     "group": "enteric virus",
+     "why_on_the_panel": "gastroenteritis, under-ascertained clinically and visible in sewage",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Severe acute respiratory syndrome coronavirus 2",
+     "taxid": 2697049,
+     "group": "respiratory virus",
+     "why_on_the_panel": "the virus that made wastewater surveillance routine",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "West Nile virus",
+     "taxid": 11082,
+     "group": "arbovirus",
+     "why_on_the_panel": "arboviral, bird reservoir, local transmission in Europe",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    }
+   ],
+   "classify_seconds": 49.4
+  },
+  "0.1": {
+   "pairs": 11589124,
+   "by_superkingdom": [
+    {
+     "group": "unclassified",
+     "pairs": 9618297,
+     "fraction": 0.829942
+    },
+    {
+     "group": "Bacteria",
+     "pairs": 1811839,
+     "fraction": 0.15634
+    },
+    {
+     "group": "Archaea",
+     "pairs": 82394,
+     "fraction": 0.00711
+    },
+    {
+     "group": "classified, but above any of these groups",
+     "pairs": 71042,
+     "fraction": 0.00613
+    },
+    {
+     "group": "Eukaryota",
+     "pairs": 4929,
+     "fraction": 0.000425
+    },
+    {
+     "group": "Viruses",
+     "pairs": 623,
+     "fraction": 5.4e-05
+    }
+   ],
+   "top_taxa": {
+    "Bacteria": [
+     {
+      "name": "Bacteria (no deeper than domain)",
+      "pairs": 426779,
+      "fraction": 0.03682582
+     },
+     {
+      "name": "Pseudomonadati (no deeper than kingdom)",
+      "pairs": 85417,
+      "fraction": 0.00737044
+     },
+     {
+      "name": "Arcobacteraceae (no deeper than family)",
+      "pairs": 83844,
+      "fraction": 0.00723471
+     },
+     {
+      "name": "Bacteroidales (no deeper than order)",
+      "pairs": 81667,
+      "fraction": 0.00704687
+     },
+     {
+      "name": "Acetoanaerobium (no deeper than genus)",
+      "pairs": 63213,
+      "fraction": 0.00545451
+     },
+     {
+      "name": "Bacillati (no deeper than kingdom)",
+      "pairs": 57809,
+      "fraction": 0.00498821
+     },
+     {
+      "name": "Bacteroidota (no deeper than phylum)",
+      "pairs": 55004,
+      "fraction": 0.00474617
+     },
+     {
+      "name": "Bacteroides graminisolvens",
+      "pairs": 43525,
+      "fraction": 0.00375568
+     },
+     {
+      "name": "Aliarcobacter (no deeper than genus)",
+      "pairs": 39058,
+      "fraction": 0.00337023
+     },
+     {
+      "name": "Clostridia (no deeper than class)",
+      "pairs": 38831,
+      "fraction": 0.00335064
+     },
+     {
+      "name": "Actinomycetes (no deeper than class)",
+      "pairs": 36609,
+      "fraction": 0.00315891
+     },
+     {
+      "name": "Bacillota (no deeper than phylum)",
+      "pairs": 34415,
+      "fraction": 0.00296959
+     },
+     {
+      "name": "Streptococcus (no deeper than genus)",
+      "pairs": 31939,
+      "fraction": 0.00275595
+     },
+     {
+      "name": "Weeksellaceae (no deeper than family)",
+      "pairs": 29390,
+      "fraction": 0.002536
+     },
+     {
+      "name": "Schaalia sp. JY-X169",
+      "pairs": 28788,
+      "fraction": 0.00248405
+     },
+     {
+      "name": "Macellibacteroides fermentans",
+      "pairs": 24463,
+      "fraction": 0.00211086
+     },
+     {
+      "name": "Proteocatella sp. QWL-06",
+      "pairs": 23556,
+      "fraction": 0.0020326
+     },
+     {
+      "name": "Gammaproteobacteria (no deeper than class)",
+      "pairs": 21129,
+      "fraction": 0.00182317
+     },
+     {
+      "name": "Pseudomonadota (no deeper than phylum)",
+      "pairs": 20207,
+      "fraction": 0.00174362
+     },
+     {
+      "name": "Bacteroidia (no deeper than class)",
+      "pairs": 19248,
+      "fraction": 0.00166087
+     },
+     {
+      "name": "Bacteroides (no deeper than genus)",
+      "pairs": 18837,
+      "fraction": 0.0016254
+     },
+     {
+      "name": "Megasphaera (no deeper than genus)",
+      "pairs": 17731,
+      "fraction": 0.00152997
+     },
+     {
+      "name": "Nitrospira (no deeper than genus)",
+      "pairs": 15568,
+      "fraction": 0.00134333
+     },
+     {
+      "name": "Desulfovibrio (no deeper than genus)",
+      "pairs": 12216,
+      "fraction": 0.00105409
+     },
+     {
+      "name": "Campylobacterales (no deeper than order)",
+      "pairs": 12052,
+      "fraction": 0.00103994
+     },
+     {
+      "name": "Aliarcobacter cryaerophilus",
+      "pairs": 11629,
+      "fraction": 0.00100344
+     },
+     {
+      "name": "Porphyromonadaceae (no deeper than family)",
+      "pairs": 11434,
+      "fraction": 0.00098661
+     },
+     {
+      "name": "Oscillospiraceae (no deeper than family)",
+      "pairs": 11223,
+      "fraction": 0.00096841
+     },
+     {
+      "name": "Betaproteobacteria (no deeper than class)",
+      "pairs": 10983,
+      "fraction": 0.0009477
+     },
+     {
+      "name": "Brooklawnia propionicigenes",
+      "pairs": 10234,
+      "fraction": 0.00088307
+     },
+     {
+      "name": "Bacteroidota/Chlorobiota group (no deeper than clade)",
+      "pairs": 9908,
+      "fraction": 0.00085494
+     },
+     {
+      "name": "Sulfurospirillum (no deeper than genus)",
+      "pairs": 8875,
+      "fraction": 0.0007658
+     },
+     {
+      "name": "Clostridium (no deeper than genus)",
+      "pairs": 8686,
+      "fraction": 0.0007495
+     },
+     {
+      "name": "Bifidobacterium (no deeper than genus)",
+      "pairs": 8608,
+      "fraction": 0.00074277
+     },
+     {
+      "name": "Alphaproteobacteria (no deeper than class)",
+      "pairs": 8511,
+      "fraction": 0.0007344
+     },
+     {
+      "name": "Moraxellaceae (no deeper than family)",
+      "pairs": 8484,
+      "fraction": 0.00073207
+     },
+     {
+      "name": "Flavobacteriales (no deeper than order)",
+      "pairs": 7827,
+      "fraction": 0.00067537
+     },
+     {
+      "name": "Acinetobacter (no deeper than genus)",
+      "pairs": 7729,
+      "fraction": 0.00066692
+     },
+     {
+      "name": "Eubacteriales (no deeper than order)",
+      "pairs": 7560,
+      "fraction": 0.00065234
+     },
+     {
+      "name": "Bacteroidaceae (no deeper than family)",
+      "pairs": 7481,
+      "fraction": 0.00064552
+     }
+    ],
+    "Archaea": [
+     {
+      "name": "Methanomicrobia (no deeper than class)",
+      "pairs": 22876,
+      "fraction": 0.00197392
+     },
+     {
+      "name": "Methanothrix (no deeper than genus)",
+      "pairs": 15407,
+      "fraction": 0.00132944
+     },
+     {
+      "name": "Methanobacteriaceae (no deeper than family)",
+      "pairs": 7706,
+      "fraction": 0.00066493
+     },
+     {
+      "name": "Methanobacteriota (no deeper than phylum)",
+      "pairs": 7175,
+      "fraction": 0.00061911
+     },
+     {
+      "name": "Methanobrevibacter (no deeper than genus)",
+      "pairs": 5252,
+      "fraction": 0.00045318
+     },
+     {
+      "name": "Methanosarcinaceae (no deeper than family)",
+      "pairs": 3932,
+      "fraction": 0.00033928
+     },
+     {
+      "name": "Methanomicrobiales (no deeper than order)",
+      "pairs": 3166,
+      "fraction": 0.00027319
+     },
+     {
+      "name": "Methanobrevibacter acididurans",
+      "pairs": 2535,
+      "fraction": 0.00021874
+     },
+     {
+      "name": "Methanosarcina (no deeper than genus)",
+      "pairs": 2137,
+      "fraction": 0.0001844
+     },
+     {
+      "name": "Methanobacteriati (no deeper than kingdom)",
+      "pairs": 2068,
+      "fraction": 0.00017844
+     },
+     {
+      "name": "Stenosarchaea group (no deeper than clade)",
+      "pairs": 1859,
+      "fraction": 0.00016041
+     },
+     {
+      "name": "Archaea (no deeper than domain)",
+      "pairs": 1818,
+      "fraction": 0.00015687
+     },
+     {
+      "name": "Methanospirillum (no deeper than genus)",
+      "pairs": 1065,
+      "fraction": 9.19e-05
+     },
+     {
+      "name": "Methanobacterium (no deeper than genus)",
+      "pairs": 909,
+      "fraction": 7.844e-05
+     },
+     {
+      "name": "Methanomicrobiaceae (no deeper than family)",
+      "pairs": 864,
+      "fraction": 7.455e-05
+     },
+     {
+      "name": "Methanomassiliicoccales (no deeper than order)",
+      "pairs": 679,
+      "fraction": 5.859e-05
+     },
+     {
+      "name": "Methanoculleus (no deeper than genus)",
+      "pairs": 544,
+      "fraction": 4.694e-05
+     },
+     {
+      "name": "Methanomethylovorans (no deeper than genus)",
+      "pairs": 297,
+      "fraction": 2.563e-05
+     },
+     {
+      "name": "Methanospirillum lacunae",
+      "pairs": 208,
+      "fraction": 1.795e-05
+     },
+     {
+      "name": "Methanosphaera (no deeper than genus)",
+      "pairs": 198,
+      "fraction": 1.708e-05
+     },
+     {
+      "name": "Methanothrix soehngenii",
+      "pairs": 198,
+      "fraction": 1.708e-05
+     },
+     {
+      "name": "Thermoplasmata (no deeper than class)",
+      "pairs": 150,
+      "fraction": 1.294e-05
+     },
+     {
+      "name": "Methanospirillum hungatei",
+      "pairs": 144,
+      "fraction": 1.243e-05
+     },
+     {
+      "name": "Methanoculleus receptaculi",
+      "pairs": 139,
+      "fraction": 1.199e-05
+     },
+     {
+      "name": "Methanomada group (no deeper than clade)",
+      "pairs": 123,
+      "fraction": 1.061e-05
+     },
+     {
+      "name": "Methanoregula (no deeper than genus)",
+      "pairs": 121,
+      "fraction": 1.044e-05
+     },
+     {
+      "name": "Candidatus Methanoplasma termitum",
+      "pairs": 118,
+      "fraction": 1.018e-05
+     },
+     {
+      "name": "Methanomassiliicoccaceae (no deeper than family)",
+      "pairs": 93,
+      "fraction": 8.02e-06
+     },
+     {
+      "name": "Methanobacterium formicicum",
+      "pairs": 65,
+      "fraction": 5.61e-06
+     },
+     {
+      "name": "Methanobacteriales (no deeper than order)",
+      "pairs": 60,
+      "fraction": 5.18e-06
+     },
+     {
+      "name": "Methanocorpusculum labreanum",
+      "pairs": 51,
+      "fraction": 4.4e-06
+     },
+     {
+      "name": "Methanomethylophilus alvi",
+      "pairs": 44,
+      "fraction": 3.8e-06
+     },
+     {
+      "name": "Methanoregulaceae (no deeper than family)",
+      "pairs": 38,
+      "fraction": 3.28e-06
+     },
+     {
+      "name": "Methanosphaerula (no deeper than genus)",
+      "pairs": 36,
+      "fraction": 3.11e-06
+     },
+     {
+      "name": "Candidatus Nitrosocosmicus (no deeper than genus)",
+      "pairs": 31,
+      "fraction": 2.67e-06
+     },
+     {
+      "name": "Thermoplasmatota (no deeper than phylum)",
+      "pairs": 26,
+      "fraction": 2.24e-06
+     },
+     {
+      "name": "Methanobacterium lacus",
+      "pairs": 25,
+      "fraction": 2.16e-06
+     },
+     {
+      "name": "Methanobacterium congolense",
+      "pairs": 25,
+      "fraction": 2.16e-06
+     },
+     {
+      "name": "Methanothrix sp.",
+      "pairs": 23,
+      "fraction": 1.98e-06
+     },
+     {
+      "name": "Methanoregula boonei",
+      "pairs": 23,
+      "fraction": 1.98e-06
+     }
+    ],
+    "classified, but above any of these groups": [
+     {
+      "name": "cellular organisms (no deeper than cellular root)",
+      "pairs": 53154,
+      "fraction": 0.00458654
+     },
+     {
+      "name": "root (no rank given)",
+      "pairs": 17888,
+      "fraction": 0.00154352
+     }
+    ],
+    "Eukaryota": [
+     {
+      "name": "Stramenopiles (no deeper than clade)",
+      "pairs": 816,
+      "fraction": 7.041e-05
+     },
+     {
+      "name": "Sordariomycetes (no deeper than class)",
+      "pairs": 564,
+      "fraction": 4.867e-05
+     },
+     {
+      "name": "Eukaryota (no deeper than domain)",
+      "pairs": 502,
+      "fraction": 4.332e-05
+     },
+     {
+      "name": "leotiomyceta (no deeper than clade)",
+      "pairs": 391,
+      "fraction": 3.374e-05
+     },
+     {
+      "name": "Hypocreales (no deeper than order)",
+      "pairs": 207,
+      "fraction": 1.786e-05
+     },
+     {
+      "name": "Brettanomyces bruxellensis",
+      "pairs": 192,
+      "fraction": 1.657e-05
+     },
+     {
+      "name": "Sar (no deeper than clade)",
+      "pairs": 174,
+      "fraction": 1.501e-05
+     },
+     {
+      "name": "Bremia lactucae",
+      "pairs": 156,
+      "fraction": 1.346e-05
+     },
+     {
+      "name": "Dictyostelium discoideum",
+      "pairs": 155,
+      "fraction": 1.337e-05
+     },
+     {
+      "name": "saccharomyceta (no deeper than clade)",
+      "pairs": 150,
+      "fraction": 1.294e-05
+     },
+     {
+      "name": "Trypanosomatidae (no deeper than family)",
+      "pairs": 143,
+      "fraction": 1.234e-05
+     },
+     {
+      "name": "Thalassiosira pseudonana",
+      "pairs": 128,
+      "fraction": 1.104e-05
+     },
+     {
+      "name": "Ascomycota (no deeper than phylum)",
+      "pairs": 102,
+      "fraction": 8.8e-06
+     },
+     {
+      "name": "Bacillariophyta (no deeper than phylum)",
+      "pairs": 101,
+      "fraction": 8.72e-06
+     },
+     {
+      "name": "Homo sapiens",
+      "pairs": 100,
+      "fraction": 8.63e-06
+     },
+     {
+      "name": "Pleosporineae (no deeper than suborder)",
+      "pairs": 97,
+      "fraction": 8.37e-06
+     },
+     {
+      "name": "Dikarya (no deeper than subkingdom)",
+      "pairs": 92,
+      "fraction": 7.94e-06
+     },
+     {
+      "name": "Sordariales (no deeper than order)",
+      "pairs": 90,
+      "fraction": 7.77e-06
+     },
+     {
+      "name": "Cutaneotrichosporon cavernicola",
+      "pairs": 77,
+      "fraction": 6.64e-06
+     },
+     {
+      "name": "Naegleria (no deeper than genus)",
+      "pairs": 75,
+      "fraction": 6.47e-06
+     },
+     {
+      "name": "Hypocreomycetidae (no deeper than subclass)",
+      "pairs": 75,
+      "fraction": 6.47e-06
+     },
+     {
+      "name": "Pichiaceae (no deeper than family)",
+      "pairs": 62,
+      "fraction": 5.35e-06
+     },
+     {
+      "name": "Brettanomyces (no deeper than genus)",
+      "pairs": 53,
+      "fraction": 4.57e-06
+     },
+     {
+      "name": "Phaeodactylum tricornutum",
+      "pairs": 39,
+      "fraction": 3.37e-06
+     },
+     {
+      "name": "Aspergillaceae (no deeper than family)",
+      "pairs": 39,
+      "fraction": 3.37e-06
+     },
+     {
+      "name": "Saccharomycetaceae (no deeper than family)",
+      "pairs": 25,
+      "fraction": 2.16e-06
+     },
+     {
+      "name": "Basidiomycota (no deeper than phylum)",
+      "pairs": 24,
+      "fraction": 2.07e-06
+     },
+     {
+      "name": "Tremellomycetes (no deeper than class)",
+      "pairs": 23,
+      "fraction": 1.98e-06
+     },
+     {
+      "name": "Dothideomycetes (no deeper than class)",
+      "pairs": 19,
+      "fraction": 1.64e-06
+     },
+     {
+      "name": "Eurotiomycetidae (no deeper than subclass)",
+      "pairs": 16,
+      "fraction": 1.38e-06
+     },
+     {
+      "name": "Saccharomycotina (no deeper than subphylum)",
+      "pairs": 15,
+      "fraction": 1.29e-06
+     },
+     {
+      "name": "Aconoidasida (no deeper than class)",
+      "pairs": 14,
+      "fraction": 1.21e-06
+     },
+     {
+      "name": "Pleosporaceae (no deeper than family)",
+      "pairs": 14,
+      "fraction": 1.21e-06
+     },
+     {
+      "name": "Trichomonas vaginalis",
+      "pairs": 12,
+      "fraction": 1.04e-06
+     },
+     {
+      "name": "Penicillium digitatum",
+      "pairs": 12,
+      "fraction": 1.04e-06
+     },
+     {
+      "name": "Saccharomyces cerevisiae",
+      "pairs": 11,
+      "fraction": 9.5e-07
+     },
+     {
+      "name": "Eurotiales (no deeper than order)",
+      "pairs": 11,
+      "fraction": 9.5e-07
+     },
+     {
+      "name": "Fungi (no deeper than kingdom)",
+      "pairs": 10,
+      "fraction": 8.6e-07
+     },
+     {
+      "name": "Saccharomyces (no deeper than genus)",
+      "pairs": 9,
+      "fraction": 7.8e-07
+     },
+     {
+      "name": "Nakaseomyces glabratus",
+      "pairs": 9,
+      "fraction": 7.8e-07
+     }
+    ],
+    "Viruses": [
+     {
+      "name": "Tobamovirus fructirugosum",
+      "pairs": 173,
+      "fraction": 1.493e-05
+     },
+     {
+      "name": "Tobamovirus capsici",
+      "pairs": 64,
+      "fraction": 5.52e-06
+     },
+     {
+      "name": "Tobamovirus viridimaculae",
+      "pairs": 61,
+      "fraction": 5.26e-06
+     },
+     {
+      "name": "Wenzhou picorna-like virus 47",
+      "pairs": 35,
+      "fraction": 3.02e-06
+     },
+     {
+      "name": "Sehpovirus borboradaptatum",
+      "pairs": 31,
+      "fraction": 2.67e-06
+     },
+     {
+      "name": "Voulevirus limivivens",
+      "pairs": 30,
+      "fraction": 2.59e-06
+     },
+     {
+      "name": "Tobamovirus (no deeper than genus)",
+      "pairs": 28,
+      "fraction": 2.42e-06
+     },
+     {
+      "name": "Tobamovirus mititessellati",
+      "pairs": 26,
+      "fraction": 2.24e-06
+     },
+     {
+      "name": "Kayfunavirus (no deeper than genus)",
+      "pairs": 23,
+      "fraction": 1.98e-06
+     },
+     {
+      "name": "Norzivirales (no deeper than order)",
+      "pairs": 16,
+      "fraction": 1.38e-06
+     },
+     {
+      "name": "Mosigvirus (no deeper than genus)",
+      "pairs": 13,
+      "fraction": 1.12e-06
+     },
+     {
+      "name": "Ulinhavirus borborovivens",
+      "pairs": 7,
+      "fraction": 6e-07
+     },
+     {
+      "name": "Ashucavirus caenivicinum",
+      "pairs": 7,
+      "fraction": 6e-07
+     },
+     {
+      "name": "Tobamovirus tabaci",
+      "pairs": 7,
+      "fraction": 6e-07
+     },
+     {
+      "name": "Grendvuvirus asiocola",
+      "pairs": 7,
+      "fraction": 6e-07
+     },
+     {
+      "name": "Webervirus (no deeper than genus)",
+      "pairs": 7,
+      "fraction": 6e-07
+     },
+     {
+      "name": "Tevenvirinae (no deeper than subfamily)",
+      "pairs": 7,
+      "fraction": 6e-07
+     },
+     {
+      "name": "Jiaodavirus (no deeper than genus)",
+      "pairs": 6,
+      "fraction": 5.2e-07
+     },
+     {
+      "name": "Hubei picorna-like virus 36",
+      "pairs": 6,
+      "fraction": 5.2e-07
+     },
+     {
+      "name": "Skunavirus (no deeper than genus)",
+      "pairs": 6,
+      "fraction": 5.2e-07
+     },
+     {
+      "name": "Straboviridae (no deeper than family)",
+      "pairs": 5,
+      "fraction": 4.3e-07
+     },
+     {
+      "name": "Kuttervirus (no deeper than genus)",
+      "pairs": 5,
+      "fraction": 4.3e-07
+     },
+     {
+      "name": "Leviviricetes (no deeper than class)",
+      "pairs": 4,
+      "fraction": 3.5e-07
+     },
+     {
+      "name": "Cucumovirus CMV",
+      "pairs": 4,
+      "fraction": 3.5e-07
+     },
+     {
+      "name": "Tequatrovirus (no deeper than genus)",
+      "pairs": 3,
+      "fraction": 2.6e-07
+     },
+     {
+      "name": "Teseptimavirus (no deeper than genus)",
+      "pairs": 3,
+      "fraction": 2.6e-07
+     },
+     {
+      "name": "Hubei picorna-like virus 61",
+      "pairs": 2,
+      "fraction": 1.7e-07
+     },
+     {
+      "name": "Ackermannviridae (no deeper than family)",
+      "pairs": 2,
+      "fraction": 1.7e-07
+     },
+     {
+      "name": "Caudoviricetes (no deeper than class)",
+      "pairs": 2,
+      "fraction": 1.7e-07
+     },
+     {
+      "name": "Drulisvirus (no deeper than genus)",
+      "pairs": 2,
+      "fraction": 1.7e-07
+     },
+     {
+      "name": "Kempsvovirus caenivivens",
+      "pairs": 2,
+      "fraction": 1.7e-07
+     },
+     {
+      "name": "Mamastrovirus (no deeper than genus)",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Bromovirus BMV",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Steigviridae (no deeper than family)",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Kahnovirus copri",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Crinivirus cucurbitae",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Tobamovirus maculatessellati",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Potexvirus pepini",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Potyvirus yituberosi",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Suoliviridae (no deeper than family)",
+      "pairs": 1,
+      "fraction": 9e-08
+     }
+    ]
+   },
+   "panel": [
+    {
+     "name": "Leptospira",
+     "taxid": 171,
+     "group": "environmental",
+     "why_on_the_panel": "leptospirosis, rodent urine, flood-associated",
+     "pairs": 263,
+     "fraction": 2.2693691084848173e-05,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Pseudomonas aeruginosa",
+     "taxid": 287,
+     "group": "antimicrobial resistance",
+     "why_on_the_panel": "ESKAPE; environmental reservoir and hospital pathogen",
+     "pairs": 28,
+     "fraction": 2.416058366447714e-06,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Escherichia coli",
+     "taxid": 562,
+     "group": "indicator",
+     "why_on_the_panel": "mostly commensal here: it is the faecal indicator organism, not by itself a pathogen signal",
+     "pairs": 10,
+     "fraction": 8.628779880170408e-07,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Cryptosporidium",
+     "taxid": 5806,
+     "group": "parasite",
+     "why_on_the_panel": "chlorine-tolerant, drinking-water outbreaks",
+     "pairs": 2,
+     "fraction": 1.7257559760340816e-07,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Mamastrovirus",
+     "taxid": 249588,
+     "group": "enteric virus",
+     "why_on_the_panel": "human astroviruses, paediatric gastroenteritis",
+     "pairs": 2,
+     "fraction": 1.7257559760340816e-07,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Acinetobacter baumannii",
+     "taxid": 470,
+     "group": "antimicrobial resistance",
+     "why_on_the_panel": "ESKAPE; highly drug-resistant hospital pathogen",
+     "pairs": 1,
+     "fraction": 8.628779880170408e-08,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Enterococcus faecium",
+     "taxid": 1352,
+     "group": "antimicrobial resistance",
+     "why_on_the_panel": "ESKAPE; vancomycin resistance, and a faecal indicator",
+     "pairs": 1,
+     "fraction": 8.628779880170408e-08,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Giardia",
+     "taxid": 5740,
+     "group": "parasite",
+     "why_on_the_panel": "giardiasis, cyst-forming, waterborne",
+     "pairs": 1,
+     "fraction": 8.628779880170408e-08,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Listeria monocytogenes",
+     "taxid": 1639,
+     "group": "enteric bacterium",
+     "why_on_the_panel": "foodborne, high case fatality in pregnancy and the elderly",
+     "pairs": 1,
+     "fraction": 8.628779880170408e-08,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Campylobacter jejuni",
+     "taxid": 197,
+     "group": "enteric bacterium",
+     "why_on_the_panel": "the commonest bacterial gastroenteritis in Europe",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Clostridioides difficile",
+     "taxid": 1496,
+     "group": "healthcare-associated",
+     "why_on_the_panel": "healthcare-associated diarrhoea, spore-forming, survives treatment",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Dengue virus",
+     "taxid": 12637,
+     "group": "arbovirus",
+     "why_on_the_panel": "arboviral, imported-case indicator",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Entamoeba histolytica",
+     "taxid": 5759,
+     "group": "parasite",
+     "why_on_the_panel": "amoebic dysentery, faecal-oral",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Enterovirus",
+     "taxid": 12059,
+     "group": "enteric virus",
+     "why_on_the_panel": "includes poliovirus, EV-D68 and EV-A71; the genus polio surveillance watches",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Enterovirus C",
+     "taxid": 138950,
+     "group": "enteric virus",
+     "why_on_the_panel": "the species containing the polioviruses, reported separately from the genus",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Helicobacter pylori",
+     "taxid": 210,
+     "group": "chronic",
+     "why_on_the_panel": "gastric cancer risk; a possible waterborne route",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Hepatitis B virus",
+     "taxid": 10407,
+     "group": "bloodborne",
+     "why_on_the_panel": "bloodborne hepatitis",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Hepatitis E virus",
+     "taxid": 291484,
+     "group": "enteric virus",
+     "why_on_the_panel": "waterborne hepatitis, zoonotic in Europe via pigs",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Hepatovirus A",
+     "taxid": 12092,
+     "group": "enteric virus",
+     "why_on_the_panel": "hepatitis A, faecal-oral, outbreak-prone in low-vaccination groups",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Human immunodeficiency virus 1",
+     "taxid": 11676,
+     "group": "bloodborne",
+     "why_on_the_panel": "bloodborne; a detection in sewage would be unexpected and worth explaining",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Influenza A virus",
+     "taxid": 11320,
+     "group": "respiratory virus",
+     "why_on_the_panel": "seasonal and pandemic influenza, including avian spillover",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Influenza B virus",
+     "taxid": 11520,
+     "group": "respiratory virus",
+     "why_on_the_panel": "seasonal influenza",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Klebsiella pneumoniae",
+     "taxid": 573,
+     "group": "antimicrobial resistance",
+     "why_on_the_panel": "ESKAPE; carbapenem resistance spreads through sewage",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Kobuvirus",
+     "taxid": 194960,
+     "group": "enteric virus",
+     "why_on_the_panel": "Aichivirus A, gastroenteritis, routinely abundant in sewage",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Legionella pneumophila",
+     "taxid": 446,
+     "group": "environmental",
+     "why_on_the_panel": "legionellosis; an environmental organism with a water route",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Mastadenovirus",
+     "taxid": 10509,
+     "group": "enteric virus",
+     "why_on_the_panel": "enteric adenovirus types 40/41, and a classic faecal indicator",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Measles morbillivirus",
+     "taxid": 11234,
+     "group": "vaccine-preventable",
+     "why_on_the_panel": "outbreaks follow vaccination gaps and wastewater detection precedes case reports",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Mumps orthorubulavirus",
+     "taxid": 2560602,
+     "group": "vaccine-preventable",
+     "why_on_the_panel": "vaccine-preventable, shed in urine and saliva",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Mycobacterium tuberculosis",
+     "taxid": 1773,
+     "group": "notifiable",
+     "why_on_the_panel": "tuberculosis; wastewater detection is an active research question",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Norovirus",
+     "taxid": 142786,
+     "group": "enteric virus",
+     "why_on_the_panel": "the commonest cause of epidemic gastroenteritis and the most-watched target in wastewater",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Orthopneumovirus",
+     "taxid": 1868215,
+     "group": "respiratory virus",
+     "why_on_the_panel": "respiratory syncytial virus, a major infant hospitalisation cause",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Orthopoxvirus",
+     "taxid": 10242,
+     "group": "emerging",
+     "why_on_the_panel": "the genus containing mpox and smallpox",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Parechovirus",
+     "taxid": 138954,
+     "group": "enteric virus",
+     "why_on_the_panel": "neonatal sepsis and meningitis; shed in faeces",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Rotavirus A",
+     "taxid": 28875,
+     "group": "enteric virus",
+     "why_on_the_panel": "the leading cause of severe childhood diarrhoea and a vaccine-programme indicator",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Rubella virus",
+     "taxid": 11041,
+     "group": "vaccine-preventable",
+     "why_on_the_panel": "congenital rubella is the reason elimination is tracked",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Salmonella enterica",
+     "taxid": 28901,
+     "group": "enteric bacterium",
+     "why_on_the_panel": "salmonellosis, notifiable in most countries",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Sapovirus",
+     "taxid": 95341,
+     "group": "enteric virus",
+     "why_on_the_panel": "gastroenteritis, under-ascertained clinically and visible in sewage",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Severe acute respiratory syndrome coronavirus 2",
+     "taxid": 2697049,
+     "group": "respiratory virus",
+     "why_on_the_panel": "the virus that made wastewater surveillance routine",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Shigella",
+     "taxid": 620,
+     "group": "enteric bacterium",
+     "why_on_the_panel": "shigellosis, low infectious dose, faecal-oral",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Staphylococcus aureus",
+     "taxid": 1280,
+     "group": "antimicrobial resistance",
+     "why_on_the_panel": "ESKAPE; MRSA community carriage",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Toxoplasma gondii",
+     "taxid": 5811,
+     "group": "parasite",
+     "why_on_the_panel": "oocysts shed by cats reach water",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Vibrio cholerae",
+     "taxid": 666,
+     "group": "enteric bacterium",
+     "why_on_the_panel": "cholera; the organism wastewater surveillance was invented for",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "West Nile virus",
+     "taxid": 11082,
+     "group": "arbovirus",
+     "why_on_the_panel": "arboviral, bird reservoir, local transmission in Europe",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Yersinia enterocolitica",
+     "taxid": 630,
+     "group": "enteric bacterium",
+     "why_on_the_panel": "foodborne gastroenteritis",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    }
+   ],
+   "classify_seconds": 40.8
+  },
+  "0.2": {
+   "pairs": 11589124,
+   "by_superkingdom": [
+    {
+     "group": "unclassified",
+     "pairs": 11409187,
+     "fraction": 0.984474
+    },
+    {
+     "group": "Bacteria",
+     "pairs": 162917,
+     "fraction": 0.014058
+    },
+    {
+     "group": "classified, but above any of these groups",
+     "pairs": 11898,
+     "fraction": 0.001027
+    },
+    {
+     "group": "Archaea",
+     "pairs": 4890,
+     "fraction": 0.000422
+    },
+    {
+     "group": "Eukaryota",
+     "pairs": 198,
+     "fraction": 1.7e-05
+    },
+    {
+     "group": "Viruses",
+     "pairs": 34,
+     "fraction": 3e-06
+    }
+   ],
+   "top_taxa": {
+    "Bacteria": [
+     {
+      "name": "Bacteria (no deeper than domain)",
+      "pairs": 51598,
+      "fraction": 0.00445228
+     },
+     {
+      "name": "Pseudomonadati (no deeper than kingdom)",
+      "pairs": 17272,
+      "fraction": 0.00149036
+     },
+     {
+      "name": "Acetoanaerobium (no deeper than genus)",
+      "pairs": 12536,
+      "fraction": 0.0010817
+     },
+     {
+      "name": "Bacteroidales (no deeper than order)",
+      "pairs": 7475,
+      "fraction": 0.000645
+     },
+     {
+      "name": "Bacillati (no deeper than kingdom)",
+      "pairs": 7110,
+      "fraction": 0.00061351
+     },
+     {
+      "name": "Flavobacteriales (no deeper than order)",
+      "pairs": 5586,
+      "fraction": 0.000482
+     },
+     {
+      "name": "Bacteroidota (no deeper than phylum)",
+      "pairs": 4742,
+      "fraction": 0.00040918
+     },
+     {
+      "name": "Bacillota (no deeper than phylum)",
+      "pairs": 4347,
+      "fraction": 0.00037509
+     },
+     {
+      "name": "Brooklawnia propionicigenes",
+      "pairs": 3829,
+      "fraction": 0.0003304
+     },
+     {
+      "name": "Weeksellaceae (no deeper than family)",
+      "pairs": 3193,
+      "fraction": 0.00027552
+     },
+     {
+      "name": "Bacteroidaceae (no deeper than family)",
+      "pairs": 2935,
+      "fraction": 0.00025325
+     },
+     {
+      "name": "Clostridia (no deeper than class)",
+      "pairs": 2720,
+      "fraction": 0.0002347
+     },
+     {
+      "name": "Gammaproteobacteria (no deeper than class)",
+      "pairs": 2551,
+      "fraction": 0.00022012
+     },
+     {
+      "name": "Megasphaera (no deeper than genus)",
+      "pairs": 2187,
+      "fraction": 0.00018871
+     },
+     {
+      "name": "Actinomycetes (no deeper than class)",
+      "pairs": 1984,
+      "fraction": 0.00017119
+     },
+     {
+      "name": "Bacteroidia (no deeper than class)",
+      "pairs": 1923,
+      "fraction": 0.00016593
+     },
+     {
+      "name": "Arcobacteraceae (no deeper than family)",
+      "pairs": 1697,
+      "fraction": 0.00014643
+     },
+     {
+      "name": "Desulfovibrio (no deeper than genus)",
+      "pairs": 1620,
+      "fraction": 0.00013979
+     },
+     {
+      "name": "Pseudomonadota (no deeper than phylum)",
+      "pairs": 1457,
+      "fraction": 0.00012572
+     },
+     {
+      "name": "Peptostreptococcaceae (no deeper than family)",
+      "pairs": 1396,
+      "fraction": 0.00012046
+     },
+     {
+      "name": "Desulfovibrio desulfuricans",
+      "pairs": 1268,
+      "fraction": 0.00010941
+     },
+     {
+      "name": "Acinetobacter (no deeper than genus)",
+      "pairs": 1238,
+      "fraction": 0.00010682
+     },
+     {
+      "name": "Propionibacteriales (no deeper than order)",
+      "pairs": 1209,
+      "fraction": 0.00010432
+     },
+     {
+      "name": "Streptococcus (no deeper than genus)",
+      "pairs": 1192,
+      "fraction": 0.00010286
+     },
+     {
+      "name": "Nitrospira (no deeper than genus)",
+      "pairs": 789,
+      "fraction": 6.808e-05
+     },
+     {
+      "name": "Neisseriaceae (no deeper than family)",
+      "pairs": 749,
+      "fraction": 6.463e-05
+     },
+     {
+      "name": "Schaalia sp. JY-X169",
+      "pairs": 749,
+      "fraction": 6.463e-05
+     },
+     {
+      "name": "Aliarcobacter (no deeper than genus)",
+      "pairs": 726,
+      "fraction": 6.264e-05
+     },
+     {
+      "name": "Turneriella parva",
+      "pairs": 669,
+      "fraction": 5.773e-05
+     },
+     {
+      "name": "Campylobacterales (no deeper than order)",
+      "pairs": 633,
+      "fraction": 5.462e-05
+     },
+     {
+      "name": "Propionibacteriaceae (no deeper than family)",
+      "pairs": 620,
+      "fraction": 5.35e-05
+     },
+     {
+      "name": "Moraxellaceae (no deeper than family)",
+      "pairs": 616,
+      "fraction": 5.315e-05
+     },
+     {
+      "name": "Turicibacter (no deeper than genus)",
+      "pairs": 606,
+      "fraction": 5.229e-05
+     },
+     {
+      "name": "Pirellulales (no deeper than order)",
+      "pairs": 512,
+      "fraction": 4.418e-05
+     },
+     {
+      "name": "Lachnospiraceae (no deeper than family)",
+      "pairs": 483,
+      "fraction": 4.168e-05
+     },
+     {
+      "name": "Bifidobacterium (no deeper than genus)",
+      "pairs": 477,
+      "fraction": 4.116e-05
+     },
+     {
+      "name": "Tolumonas auensis",
+      "pairs": 471,
+      "fraction": 4.064e-05
+     },
+     {
+      "name": "Burkholderiales (no deeper than order)",
+      "pairs": 438,
+      "fraction": 3.779e-05
+     },
+     {
+      "name": "Cloacibacterium (no deeper than genus)",
+      "pairs": 435,
+      "fraction": 3.754e-05
+     },
+     {
+      "name": "Oscillospiraceae (no deeper than family)",
+      "pairs": 402,
+      "fraction": 3.469e-05
+     }
+    ],
+    "classified, but above any of these groups": [
+     {
+      "name": "root (no rank given)",
+      "pairs": 7057,
+      "fraction": 0.00060893
+     },
+     {
+      "name": "cellular organisms (no deeper than cellular root)",
+      "pairs": 4841,
+      "fraction": 0.00041772
+     }
+    ],
+    "Archaea": [
+     {
+      "name": "Methanomicrobia (no deeper than class)",
+      "pairs": 1860,
+      "fraction": 0.0001605
+     },
+     {
+      "name": "Methanobacteriaceae (no deeper than family)",
+      "pairs": 817,
+      "fraction": 7.05e-05
+     },
+     {
+      "name": "Methanosarcinaceae (no deeper than family)",
+      "pairs": 469,
+      "fraction": 4.047e-05
+     },
+     {
+      "name": "Methanothrix (no deeper than genus)",
+      "pairs": 383,
+      "fraction": 3.305e-05
+     },
+     {
+      "name": "Stenosarchaea group (no deeper than clade)",
+      "pairs": 332,
+      "fraction": 2.865e-05
+     },
+     {
+      "name": "Methanobacteriota (no deeper than phylum)",
+      "pairs": 268,
+      "fraction": 2.313e-05
+     },
+     {
+      "name": "Archaea (no deeper than domain)",
+      "pairs": 248,
+      "fraction": 2.14e-05
+     },
+     {
+      "name": "Methanobrevibacter (no deeper than genus)",
+      "pairs": 127,
+      "fraction": 1.096e-05
+     },
+     {
+      "name": "Methanobacteriati (no deeper than kingdom)",
+      "pairs": 83,
+      "fraction": 7.16e-06
+     },
+     {
+      "name": "Methanomicrobiales (no deeper than order)",
+      "pairs": 81,
+      "fraction": 6.99e-06
+     },
+     {
+      "name": "Methanospirillum (no deeper than genus)",
+      "pairs": 66,
+      "fraction": 5.69e-06
+     },
+     {
+      "name": "Methanobacterium (no deeper than genus)",
+      "pairs": 41,
+      "fraction": 3.54e-06
+     },
+     {
+      "name": "Methanobrevibacter acididurans",
+      "pairs": 41,
+      "fraction": 3.54e-06
+     },
+     {
+      "name": "Methanosarcina (no deeper than genus)",
+      "pairs": 32,
+      "fraction": 2.76e-06
+     },
+     {
+      "name": "Methanomicrobiaceae (no deeper than family)",
+      "pairs": 12,
+      "fraction": 1.04e-06
+     },
+     {
+      "name": "Methanoregula (no deeper than genus)",
+      "pairs": 5,
+      "fraction": 4.3e-07
+     },
+     {
+      "name": "Methanomada group (no deeper than clade)",
+      "pairs": 4,
+      "fraction": 3.5e-07
+     },
+     {
+      "name": "Methanomethylovorans (no deeper than genus)",
+      "pairs": 2,
+      "fraction": 1.7e-07
+     },
+     {
+      "name": "Methanoculleus receptaculi",
+      "pairs": 2,
+      "fraction": 1.7e-07
+     },
+     {
+      "name": "Methanobacteriales (no deeper than order)",
+      "pairs": 2,
+      "fraction": 1.7e-07
+     },
+     {
+      "name": "Methanosphaera (no deeper than genus)",
+      "pairs": 2,
+      "fraction": 1.7e-07
+     },
+     {
+      "name": "Nitrososphaeraceae (no deeper than family)",
+      "pairs": 2,
+      "fraction": 1.7e-07
+     },
+     {
+      "name": "Candidatus Methanomassiliicoccus intestinalis",
+      "pairs": 2,
+      "fraction": 1.7e-07
+     },
+     {
+      "name": "Methanobacterium formicicum",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Methanobacterium lacus",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Methanothrix soehngenii",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Methanobrevibacter smithii",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Methanosarcina barkeri",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Methanoculleus (no deeper than genus)",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Methanocorpusculum labreanum",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Methanomassiliicoccales (no deeper than order)",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Nitrososphaeria (no deeper than class)",
+      "pairs": 1,
+      "fraction": 9e-08
+     }
+    ],
+    "Eukaryota": [
+     {
+      "name": "leotiomyceta (no deeper than clade)",
+      "pairs": 39,
+      "fraction": 3.37e-06
+     },
+     {
+      "name": "Sordariomycetes (no deeper than class)",
+      "pairs": 30,
+      "fraction": 2.59e-06
+     },
+     {
+      "name": "Hypocreomycetidae (no deeper than subclass)",
+      "pairs": 23,
+      "fraction": 1.98e-06
+     },
+     {
+      "name": "Stramenopiles (no deeper than clade)",
+      "pairs": 14,
+      "fraction": 1.21e-06
+     },
+     {
+      "name": "Ascomycota (no deeper than phylum)",
+      "pairs": 13,
+      "fraction": 1.12e-06
+     },
+     {
+      "name": "Homo sapiens",
+      "pairs": 13,
+      "fraction": 1.12e-06
+     },
+     {
+      "name": "Saccharomyces (no deeper than genus)",
+      "pairs": 7,
+      "fraction": 6e-07
+     },
+     {
+      "name": "Dikarya (no deeper than subkingdom)",
+      "pairs": 7,
+      "fraction": 6e-07
+     },
+     {
+      "name": "Brettanomyces (no deeper than genus)",
+      "pairs": 6,
+      "fraction": 5.2e-07
+     },
+     {
+      "name": "Hypocreales (no deeper than order)",
+      "pairs": 5,
+      "fraction": 4.3e-07
+     },
+     {
+      "name": "saccharomyceta (no deeper than clade)",
+      "pairs": 5,
+      "fraction": 4.3e-07
+     },
+     {
+      "name": "Eukaryota (no deeper than domain)",
+      "pairs": 4,
+      "fraction": 3.5e-07
+     },
+     {
+      "name": "Pleosporineae (no deeper than suborder)",
+      "pairs": 3,
+      "fraction": 2.6e-07
+     },
+     {
+      "name": "Eurotiomycetidae (no deeper than subclass)",
+      "pairs": 3,
+      "fraction": 2.6e-07
+     },
+     {
+      "name": "Bacillariophyta (no deeper than phylum)",
+      "pairs": 3,
+      "fraction": 2.6e-07
+     },
+     {
+      "name": "Nakaseomyces glabratus",
+      "pairs": 3,
+      "fraction": 2.6e-07
+     },
+     {
+      "name": "Sar (no deeper than clade)",
+      "pairs": 3,
+      "fraction": 2.6e-07
+     },
+     {
+      "name": "Thalassiosira pseudonana",
+      "pairs": 2,
+      "fraction": 1.7e-07
+     },
+     {
+      "name": "Saccharomycotina (no deeper than subphylum)",
+      "pairs": 2,
+      "fraction": 1.7e-07
+     },
+     {
+      "name": "Dictyostelium discoideum",
+      "pairs": 2,
+      "fraction": 1.7e-07
+     },
+     {
+      "name": "Saccharomycetaceae (no deeper than family)",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Ascochyta rabiei",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Bremia lactucae",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Trypanosomatidae (no deeper than family)",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Fusarium solani species complex (no deeper than species group)",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Plasmodium (no deeper than genus)",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Debaryomyces hansenii",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Opisthokonta (no deeper than clade)",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Cryptosporidium parvum",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Sordariales (no deeper than order)",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Pichiomycetes (no deeper than class)",
+      "pairs": 1,
+      "fraction": 9e-08
+     }
+    ],
+    "Viruses": [
+     {
+      "name": "Tobamovirus fructirugosum",
+      "pairs": 16,
+      "fraction": 1.38e-06
+     },
+     {
+      "name": "Sehpovirus borboradaptatum",
+      "pairs": 4,
+      "fraction": 3.5e-07
+     },
+     {
+      "name": "Tobamovirus mititessellati",
+      "pairs": 2,
+      "fraction": 1.7e-07
+     },
+     {
+      "name": "Webervirus (no deeper than genus)",
+      "pairs": 2,
+      "fraction": 1.7e-07
+     },
+     {
+      "name": "Tobamovirus capsici",
+      "pairs": 2,
+      "fraction": 1.7e-07
+     },
+     {
+      "name": "Grendvuvirus asiocola",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Tobamovirus viridimaculae",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Skunavirus (no deeper than genus)",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Straboviridae (no deeper than family)",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Tobamovirus (no deeper than genus)",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Tequatrovirus (no deeper than genus)",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Drulisvirus (no deeper than genus)",
+      "pairs": 1,
+      "fraction": 9e-08
+     },
+     {
+      "name": "Kempsvovirus caenivivens",
+      "pairs": 1,
+      "fraction": 9e-08
+     }
+    ]
+   },
+   "panel": [
+    {
+     "name": "Cryptosporidium",
+     "taxid": 5806,
+     "group": "parasite",
+     "why_on_the_panel": "chlorine-tolerant, drinking-water outbreaks",
+     "pairs": 1,
+     "fraction": 8.628779880170408e-08,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Leptospira",
+     "taxid": 171,
+     "group": "environmental",
+     "why_on_the_panel": "leptospirosis, rodent urine, flood-associated",
+     "pairs": 1,
+     "fraction": 8.628779880170408e-08,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Pseudomonas aeruginosa",
+     "taxid": 287,
+     "group": "antimicrobial resistance",
+     "why_on_the_panel": "ESKAPE; environmental reservoir and hospital pathogen",
+     "pairs": 1,
+     "fraction": 8.628779880170408e-08,
+     "detected": true,
+     "upper_bound_if_absent": null
+    },
+    {
+     "name": "Acinetobacter baumannii",
+     "taxid": 470,
+     "group": "antimicrobial resistance",
+     "why_on_the_panel": "ESKAPE; highly drug-resistant hospital pathogen",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Campylobacter jejuni",
+     "taxid": 197,
+     "group": "enteric bacterium",
+     "why_on_the_panel": "the commonest bacterial gastroenteritis in Europe",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Clostridioides difficile",
+     "taxid": 1496,
+     "group": "healthcare-associated",
+     "why_on_the_panel": "healthcare-associated diarrhoea, spore-forming, survives treatment",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Dengue virus",
+     "taxid": 12637,
+     "group": "arbovirus",
+     "why_on_the_panel": "arboviral, imported-case indicator",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Entamoeba histolytica",
+     "taxid": 5759,
+     "group": "parasite",
+     "why_on_the_panel": "amoebic dysentery, faecal-oral",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Enterococcus faecium",
+     "taxid": 1352,
+     "group": "antimicrobial resistance",
+     "why_on_the_panel": "ESKAPE; vancomycin resistance, and a faecal indicator",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Enterovirus",
+     "taxid": 12059,
+     "group": "enteric virus",
+     "why_on_the_panel": "includes poliovirus, EV-D68 and EV-A71; the genus polio surveillance watches",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Enterovirus C",
+     "taxid": 138950,
+     "group": "enteric virus",
+     "why_on_the_panel": "the species containing the polioviruses, reported separately from the genus",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Escherichia coli",
+     "taxid": 562,
+     "group": "indicator",
+     "why_on_the_panel": "mostly commensal here: it is the faecal indicator organism, not by itself a pathogen signal",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Giardia",
+     "taxid": 5740,
+     "group": "parasite",
+     "why_on_the_panel": "giardiasis, cyst-forming, waterborne",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Helicobacter pylori",
+     "taxid": 210,
+     "group": "chronic",
+     "why_on_the_panel": "gastric cancer risk; a possible waterborne route",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Hepatitis B virus",
+     "taxid": 10407,
+     "group": "bloodborne",
+     "why_on_the_panel": "bloodborne hepatitis",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Hepatitis E virus",
+     "taxid": 291484,
+     "group": "enteric virus",
+     "why_on_the_panel": "waterborne hepatitis, zoonotic in Europe via pigs",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Hepatovirus A",
+     "taxid": 12092,
+     "group": "enteric virus",
+     "why_on_the_panel": "hepatitis A, faecal-oral, outbreak-prone in low-vaccination groups",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Human immunodeficiency virus 1",
+     "taxid": 11676,
+     "group": "bloodborne",
+     "why_on_the_panel": "bloodborne; a detection in sewage would be unexpected and worth explaining",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Influenza A virus",
+     "taxid": 11320,
+     "group": "respiratory virus",
+     "why_on_the_panel": "seasonal and pandemic influenza, including avian spillover",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Influenza B virus",
+     "taxid": 11520,
+     "group": "respiratory virus",
+     "why_on_the_panel": "seasonal influenza",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Klebsiella pneumoniae",
+     "taxid": 573,
+     "group": "antimicrobial resistance",
+     "why_on_the_panel": "ESKAPE; carbapenem resistance spreads through sewage",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Kobuvirus",
+     "taxid": 194960,
+     "group": "enteric virus",
+     "why_on_the_panel": "Aichivirus A, gastroenteritis, routinely abundant in sewage",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Legionella pneumophila",
+     "taxid": 446,
+     "group": "environmental",
+     "why_on_the_panel": "legionellosis; an environmental organism with a water route",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Listeria monocytogenes",
+     "taxid": 1639,
+     "group": "enteric bacterium",
+     "why_on_the_panel": "foodborne, high case fatality in pregnancy and the elderly",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Mamastrovirus",
+     "taxid": 249588,
+     "group": "enteric virus",
+     "why_on_the_panel": "human astroviruses, paediatric gastroenteritis",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Mastadenovirus",
+     "taxid": 10509,
+     "group": "enteric virus",
+     "why_on_the_panel": "enteric adenovirus types 40/41, and a classic faecal indicator",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Measles morbillivirus",
+     "taxid": 11234,
+     "group": "vaccine-preventable",
+     "why_on_the_panel": "outbreaks follow vaccination gaps and wastewater detection precedes case reports",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Mumps orthorubulavirus",
+     "taxid": 2560602,
+     "group": "vaccine-preventable",
+     "why_on_the_panel": "vaccine-preventable, shed in urine and saliva",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Mycobacterium tuberculosis",
+     "taxid": 1773,
+     "group": "notifiable",
+     "why_on_the_panel": "tuberculosis; wastewater detection is an active research question",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Norovirus",
+     "taxid": 142786,
+     "group": "enteric virus",
+     "why_on_the_panel": "the commonest cause of epidemic gastroenteritis and the most-watched target in wastewater",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Orthopneumovirus",
+     "taxid": 1868215,
+     "group": "respiratory virus",
+     "why_on_the_panel": "respiratory syncytial virus, a major infant hospitalisation cause",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Orthopoxvirus",
+     "taxid": 10242,
+     "group": "emerging",
+     "why_on_the_panel": "the genus containing mpox and smallpox",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Parechovirus",
+     "taxid": 138954,
+     "group": "enteric virus",
+     "why_on_the_panel": "neonatal sepsis and meningitis; shed in faeces",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Rotavirus A",
+     "taxid": 28875,
+     "group": "enteric virus",
+     "why_on_the_panel": "the leading cause of severe childhood diarrhoea and a vaccine-programme indicator",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Rubella virus",
+     "taxid": 11041,
+     "group": "vaccine-preventable",
+     "why_on_the_panel": "congenital rubella is the reason elimination is tracked",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Salmonella enterica",
+     "taxid": 28901,
+     "group": "enteric bacterium",
+     "why_on_the_panel": "salmonellosis, notifiable in most countries",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Sapovirus",
+     "taxid": 95341,
+     "group": "enteric virus",
+     "why_on_the_panel": "gastroenteritis, under-ascertained clinically and visible in sewage",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Severe acute respiratory syndrome coronavirus 2",
+     "taxid": 2697049,
+     "group": "respiratory virus",
+     "why_on_the_panel": "the virus that made wastewater surveillance routine",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Shigella",
+     "taxid": 620,
+     "group": "enteric bacterium",
+     "why_on_the_panel": "shigellosis, low infectious dose, faecal-oral",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Staphylococcus aureus",
+     "taxid": 1280,
+     "group": "antimicrobial resistance",
+     "why_on_the_panel": "ESKAPE; MRSA community carriage",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Toxoplasma gondii",
+     "taxid": 5811,
+     "group": "parasite",
+     "why_on_the_panel": "oocysts shed by cats reach water",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Vibrio cholerae",
+     "taxid": 666,
+     "group": "enteric bacterium",
+     "why_on_the_panel": "cholera; the organism wastewater surveillance was invented for",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "West Nile virus",
+     "taxid": 11082,
+     "group": "arbovirus",
+     "why_on_the_panel": "arboviral, bird reservoir, local transmission in Europe",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    },
+    {
+     "name": "Yersinia enterocolitica",
+     "taxid": 630,
+     "group": "enteric bacterium",
+     "why_on_the_panel": "foodborne gastroenteritis",
+     "pairs": 0,
+     "fraction": 0.0,
+     "detected": false,
+     "upper_bound_if_absent": 2.5886339640511226e-07
+    }
+   ],
+   "classify_seconds": 32.5
+  }
+ },
+ "shuffled_null": {
+  "0.0": {
+   "pairs": 11589124,
+   "classified": 118161,
+   "fraction_classified": 0.01019585,
+   "panel_rows_detected": 24,
+   "panel_pairs": 977
+  },
+  "0.1": {
+   "pairs": 11589124,
+   "classified": 20,
+   "fraction_classified": 1.73e-06,
+   "panel_rows_detected": 0,
+   "panel_pairs": 0
+  },
+  "0.2": {
+   "pairs": 11589124,
+   "classified": 0,
+   "fraction_classified": 0.0,
+   "panel_rows_detected": 0,
+   "panel_pairs": 0
+  }
+ },
+ "null_reading": "the same library with every read shuffled, through the same classifier at the same thresholds. It controls one thing: whether base composition alone manufactures a call. It does NOT control misassignment between close relatives, which is the failure that threatens a low-count detection here, and no control in this run does",
+ "reading": "a classified-read profile of a METATRANSCRIPTOME. A fraction here is a fraction of the RNA that was sequenced, not of the organisms in the water: rRNA content, extraction and depth all sit between the two, and a bacterium with many ribosomes contributes far more reads than its cell count would suggest",
+ "bias": "Kraken2 over-calls at low confidence, so the fractions at confidence 0 are upper bounds and those at 0.2 lower bounds. The sweep brackets the answer; it does not estimate it. Unclassified is not evidence of novelty - see results/full_residue_search/, where the same reads are searched against protein indexes",
+ "panel_note": "every entry is reported whether or not it was seen. A not-detected row carries the rule-of-three 95% upper bound over the pairs classified, which bounds what THIS SEQUENCING could have seen. Untargeted shotgun is reported as insensitive for human pathogens at wastewater concentrations, so absence here is much weaker evidence than absence from a targeted assay",
+ "panel_source": "experiments/pathogen_panel.json",
+ "seed": 3,
+ "wall_seconds": 891.9,
+ "git_sha": "1dc582e6621af117ddad75b48baf3d388a724286",
+ "tree_dirty": false,
+ "script_sha256": "3d228f816192e537"
+}

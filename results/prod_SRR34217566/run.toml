@@ -1,0 +1,34 @@
+[inputs]
+r1 = "/opt/hapax/data/reads/SRR34217566_1.fastq.gz"
+r2 = "/opt/hapax/data/reads/SRR34217566_2.fastq.gz"
+accession = "SRR34217566"
+
+[inputs.sample_facts]
+matrix = "municipal wastewater"
+place = "Szeged"
+country = "Hungary"
+collected = "2024"
+molecule = "RNA"
+basis = "PRJNA1282049 run metadata via ENA filereport. The archive gives the year only, with no month or day, so the page says 2024 and does not invent a date. The matrix is recorded as municipal wastewater because the paired DNA libraries of the same study name the plant ('Szeged Municipal Wastewater Treatment Plant') while the RNA libraries name only the city; whether this run is influent or effluent is NOT stated by the archive and is therefore not stated here, which matters because the ribosomal fraction differs by two orders of magnitude between the two."
+
+[library]
+trim_r2 = 0
+trim_r2_basis = "0 because this library carries no non-template prefix: nontemplate_prefix_map.py read a mate-2 5' soft-clip mode of 0 in 5 of 5 seeds on 17,930 to 18,192 anchored reads per seed, nine times trim_from_prefix.py's floor, with mate 1's mode also 0; the histogram is flat, the mode holding 21.4 to 21.9% against a 25% floor, so trim_from_prefix.py refuses to name a prefix, and 0 is the only value that cannot delete real template (measured on instance i-00d39f385a5a96422, commit 5cb21c317fd9) (stated on the launcher; the instance's own measurement exited 2 with answer 'none' and was not used)"
+
+[run]
+seeds = 5
+pairs = 200000
+report_pairs = 2000
+threads = 8
+stages = ["profile", "cascade", "contigs", "reads", "linkage", "census", "intervals", "layers", "strains", "taxa", "divergent", "shortlist", "crossplant", "ranking"]
+report_without = ["cross_sample", "rfam", "crispr", "pfam"]
+
+[databases]
+rrna = "/opt/hapax/db/silva/silva_dna.fa"
+classifier = ["/opt/hapax/db/k2/k2_viral_20261022.d", "/opt/hapax/db/k2/k2_standard_08_GB_20261022.d", "/opt/hapax/db/k2/k2_pluspf_08_GB_20261022.d", "/opt/hapax/db/k2/k2_pluspf_16_GB_20261022.d"]
+classifier_contigs = "/opt/hapax/db/k2/k2_pluspf_16_GB_20261022.d"
+protein = "/opt/hapax/db/prot/viral.dmnd"
+protein_fasta = "/opt/hapax/db/prot/viral.1.protein.faa.gz"
+sprot = "/opt/hapax/db/prot/sprot.dmnd"
+pfam = "/opt/hapax/db/pfam/Pfam-A.hmm"
+

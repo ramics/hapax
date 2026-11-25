@@ -1,0 +1,1243 @@
+{
+ "unit": "a scored contig",
+ "question": "which architecture the committed vocabulary's rule calls for each contig, and on what evidence",
+ "nothing_here_is_measured": "the rule and every word it attaches are hand-written background knowledge in experiments/virus_vocabulary.json. This script only applies them and records what fired. A contig with no matching evidence is null, never 'not a phage'.",
+ "source": "/opt/hapax/out/run_s5/divergent_contig_workup_s5.json",
+ "vocabulary": "experiments/virus_vocabulary.json",
+ "census": {
+  "contigs": 45,
+  "by_architecture": {
+   "not called": 26,
+   "ssrna_phage": 19
+  },
+  "not_called": 26
+ },
+ "blind_spots": [
+  "the rule fires on a single matching domain or subject title, so one mislabelled gene calls the whole contig; the evidence that fired is recorded per contig so a reader can see how thin a call is",
+  "there is one architecture in the vocabulary, so this cannot distinguish between architectures, only recognise the one it knows or decline",
+  "a subject title is a label on a database record. 'ssRNA phage' in a title is a claim made by whoever deposited it"
+ ],
+ "rows": [
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_27951_length_690_cov_2.0000_megahit_k141_15628",
+   "arm": "divergent",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_14482_length_1057_cov_5.0000_megahit_k141_19591",
+   "arm": "divergent",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [
+    {
+     "role": "polymerase",
+     "pfam": "RNA_replicase_B"
+    },
+    {
+     "role": "coat",
+     "pfam": "Levi_coat"
+    }
+   ],
+   "evidence_title": [
+    {
+     "role": "polymerase",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "coat",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 4,
+   "contig": "SRR34217566_NODE_26933_length_1962_cov_5.7908_megahit_k141_15491",
+   "arm": "divergent",
+   "genes_called": 2,
+   "genes_with_a_role": 2,
+   "roles_present": [
+    "coat",
+    "polymerase"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "polymerase",
+   "least_diverged_role": "coat",
+   "identity_spread_points": 6.4,
+   "nearest_subject_provenance": "environmental_record"
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [
+    {
+     "role": "polymerase",
+     "pfam": "RNA_replicase_B"
+    }
+   ],
+   "evidence_title": [
+    {
+     "role": "polymerase",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "coat",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "maturation",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 4,
+   "contig": "SRR34217566_NODE_32004_length_3686_cov_17.0000_megahit_k141_39636",
+   "arm": "divergent",
+   "genes_called": 3,
+   "genes_with_a_role": 3,
+   "roles_present": [
+    "coat",
+    "maturation",
+    "polymerase"
+   ],
+   "has_every_expected_role": true,
+   "most_diverged_role": "maturation",
+   "least_diverged_role": "coat",
+   "identity_spread_points": 19.9,
+   "nearest_subject_provenance": "environmental_record"
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [
+    {
+     "role": "coat",
+     "pfam": "Levi_coat"
+    },
+    {
+     "role": "polymerase",
+     "pfam": "RNA_replicase_B"
+    }
+   ],
+   "evidence_title": [
+    {
+     "role": "coat",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "polymerase",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 4,
+   "contig": "SRR34217566_NODE_33081_length_2082_cov_6.0000_megahit_k141_16303",
+   "arm": "divergent",
+   "genes_called": 2,
+   "genes_with_a_role": 2,
+   "roles_present": [
+    "coat",
+    "polymerase"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "polymerase",
+   "least_diverged_role": "coat",
+   "identity_spread_points": 16.0,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_39815_length_744_cov_3.0000_megahit_k141_28659",
+   "arm": "divergent",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "polymerase"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "polymerase",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [
+    {
+     "role": "polymerase",
+     "pfam": "RNA_replicase_B"
+    }
+   ],
+   "evidence_title": [
+    {
+     "role": "polymerase",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "coat",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "maturation",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 4,
+   "contig": "SRR34217566_NODE_40065_length_1960_cov_9.0000_megahit_k141_5301",
+   "arm": "divergent",
+   "genes_called": 3,
+   "genes_with_a_role": 3,
+   "roles_present": [
+    "coat",
+    "maturation",
+    "polymerase"
+   ],
+   "has_every_expected_role": true,
+   "most_diverged_role": "polymerase",
+   "least_diverged_role": "coat",
+   "identity_spread_points": 2.7,
+   "nearest_subject_provenance": "environmental_record"
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [
+    {
+     "role": "polymerase",
+     "pfam": "RNA_replicase_B"
+    }
+   ],
+   "evidence_title": [
+    {
+     "role": "polymerase",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 2,
+   "contig": "SRR34217566_NODE_22217_length_1111_cov_4.0000_megahit_k141_14882",
+   "arm": "divergent",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "polymerase"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "polymerase",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": "environmental_record"
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [
+    {
+     "role": "maturation",
+     "pfam": "Phage_mat-A"
+    }
+   ],
+   "evidence_title": [
+    {
+     "role": "maturation",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 2,
+   "contig": "SRR34217566_NODE_26637_length_1011_cov_4.0000_megahit_k141_26928",
+   "arm": "divergent",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "maturation"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "maturation",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": "environmental_record"
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_21200_length_598_cov_2.0000_megahit_k141_20467",
+   "arm": "divergent",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [
+    {
+     "role": "polymerase",
+     "pfam": "RNA_replicase_B"
+    },
+    {
+     "role": "coat",
+     "pfam": "Levi_coat"
+    },
+    {
+     "role": "maturation",
+     "pfam": "Phage_mat-A"
+    }
+   ],
+   "evidence_title": [
+    {
+     "role": "polymerase",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "coat",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "maturation",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 6,
+   "contig": "SRR34217566_NODE_26037_length_3752_cov_42.0000_megahit_k141_26842",
+   "arm": "divergent",
+   "genes_called": 3,
+   "genes_with_a_role": 3,
+   "roles_present": [
+    "coat",
+    "maturation",
+    "polymerase"
+   ],
+   "has_every_expected_role": true,
+   "most_diverged_role": "maturation",
+   "least_diverged_role": "coat",
+   "identity_spread_points": 8.1,
+   "nearest_subject_provenance": "environmental_record"
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_35225_length_890_cov_2.0000_megahit_k141_45820",
+   "arm": "divergent",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "polymerase"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "polymerase",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_6468_length_1028_cov_3.0000_megahit_k141_18548",
+   "arm": "divergent",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_30567_length_691_cov_2.0000_megahit_k141_27446",
+   "arm": "divergent",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [
+    {
+     "role": "maturation",
+     "pfam": "Phage_mat-A"
+    },
+    {
+     "role": "coat",
+     "pfam": "Levi_coat"
+    }
+   ],
+   "evidence_title": [
+    {
+     "role": "maturation",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "coat",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "polymerase",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 5,
+   "contig": "SRR34217566_NODE_3647_length_2711_cov_7.0000_megahit_k141_482",
+   "arm": "divergent",
+   "genes_called": 3,
+   "genes_with_a_role": 3,
+   "roles_present": [
+    "coat",
+    "maturation",
+    "polymerase"
+   ],
+   "has_every_expected_role": true,
+   "most_diverged_role": "maturation",
+   "least_diverged_role": "polymerase",
+   "identity_spread_points": 9.1,
+   "nearest_subject_provenance": "environmental_record"
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_23138_length_1063_cov_4.0000_megahit_k141_26532",
+   "arm": "control_near_reference",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_25777_length_940_cov_6.0000_megahit_k141_3436",
+   "arm": "control_near_reference",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [],
+   "evidence_title": [
+    {
+     "role": "coat",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "maturation",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 2,
+   "contig": "SRR34217566_NODE_2436_length_1233_cov_4.0000_megahit_k141_329",
+   "arm": "control_near_reference",
+   "genes_called": 2,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "maturation"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "maturation",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": "environmental_record"
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_3756_length_942_cov_8.0000_megahit_k141_6370",
+   "arm": "control_near_reference",
+   "genes_called": 2,
+   "genes_with_a_role": 2,
+   "roles_present": [
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": "other",
+   "identity_spread_points": 1.0,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_28767_length_657_cov_1.0000_megahit_k141_39227",
+   "arm": "control_near_reference",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [
+    {
+     "role": "polymerase",
+     "pfam": "RNA_replicase_B"
+    }
+   ],
+   "evidence_title": [
+    {
+     "role": "coat",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "polymerase",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 3,
+   "contig": "SRR34217566_NODE_26961_length_1294_cov_4.0000_megahit_k141_15494",
+   "arm": "control_near_reference",
+   "genes_called": 2,
+   "genes_with_a_role": 2,
+   "roles_present": [
+    "coat",
+    "polymerase"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "polymerase",
+   "least_diverged_role": "coat",
+   "identity_spread_points": 2.6,
+   "nearest_subject_provenance": "environmental_record"
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [
+    {
+     "role": "polymerase",
+     "pfam": "RNA_replicase_B"
+    },
+    {
+     "role": "coat",
+     "pfam": "Levi_coat"
+    },
+    {
+     "role": "maturation",
+     "pfam": "Phage_mat-A"
+    }
+   ],
+   "evidence_title": [
+    {
+     "role": "polymerase",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "coat",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "maturation",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 6,
+   "contig": "SRR34217566_NODE_29704_length_3335_cov_17.0000_megahit_k141_27333",
+   "arm": "control_near_reference",
+   "genes_called": 3,
+   "genes_with_a_role": 3,
+   "roles_present": [
+    "coat",
+    "maturation",
+    "polymerase"
+   ],
+   "has_every_expected_role": true,
+   "most_diverged_role": "polymerase",
+   "least_diverged_role": "coat",
+   "identity_spread_points": 1.4,
+   "nearest_subject_provenance": "environmental_record"
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [
+    {
+     "role": "coat",
+     "pfam": "Levi_coat"
+    },
+    {
+     "role": "maturation",
+     "pfam": "Phage_mat-A"
+    }
+   ],
+   "evidence_title": [
+    {
+     "role": "coat",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "maturation",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "maturation",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 5,
+   "contig": "SRR34217566_NODE_13782_length_1658_cov_5.0000_megahit_k141_25361",
+   "arm": "control_near_reference",
+   "genes_called": 3,
+   "genes_with_a_role": 2,
+   "roles_present": [
+    "maturation"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "maturation",
+   "least_diverged_role": "maturation",
+   "identity_spread_points": 3.6,
+   "nearest_subject_provenance": "environmental_record"
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [
+    {
+     "role": "polymerase",
+     "pfam": "RNA_replicase_B"
+    }
+   ],
+   "evidence_title": [
+    {
+     "role": "polymerase",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 2,
+   "contig": "SRR34217566_NODE_19694_length_804_cov_3.0000_megahit_k141_32108",
+   "arm": "control_near_reference",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "polymerase"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "polymerase",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": "environmental_record"
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_7547_length_6211_cov_18.0000_megahit_k141_42290",
+   "arm": "control_near_reference",
+   "genes_called": 4,
+   "genes_with_a_role": 4,
+   "roles_present": [
+    "coat",
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": "other",
+   "identity_spread_points": 0.9,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_17008_length_7695_cov_7.0000_megahit_k141_25749",
+   "arm": "control_near_reference",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_26414_length_604_cov_2.0000_megahit_k141_38907",
+   "arm": "control_near_reference",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "polymerase"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "polymerase",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_33394_length_1447_cov_4.0000_megahit_k141_27807",
+   "arm": "control_near_reference",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [],
+   "evidence_title": [
+    {
+     "role": "polymerase",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 1,
+   "contig": "SRR34217566_NODE_17028_length_670_cov_8.9093_megahit_k141_2248",
+   "arm": "control_near_reference",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "polymerase"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "polymerase",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": "environmental_record"
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [
+    {
+     "role": "polymerase",
+     "pfam": "RNA_replicase_B"
+    }
+   ],
+   "evidence_title": [
+    {
+     "role": "polymerase",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 2,
+   "contig": "SRR34217566_NODE_4503_length_840_cov_3.0000_megahit_k141_12461",
+   "arm": "control_near_reference",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "polymerase"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "polymerase",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": "environmental_record"
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [
+    {
+     "role": "maturation",
+     "pfam": "Phage_mat-A"
+    }
+   ],
+   "evidence_title": [
+    {
+     "role": "maturation",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 2,
+   "contig": "SRR34217566_NODE_40861_length_537_cov_3.0000_megahit_k141_28800",
+   "arm": "control_near_reference",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "maturation"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "maturation",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": "environmental_record"
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [
+    {
+     "role": "polymerase",
+     "pfam": "RNA_replicase_B"
+    },
+    {
+     "role": "coat",
+     "pfam": "Levi_coat"
+    },
+    {
+     "role": "maturation",
+     "pfam": "Phage_mat-A"
+    }
+   ],
+   "evidence_title": [
+    {
+     "role": "polymerase",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "other",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "coat",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "maturation",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 7,
+   "contig": "SRR34217566_NODE_23148_length_3733_cov_13.0000_megahit_k141_20715",
+   "arm": "control_near_reference",
+   "genes_called": 4,
+   "genes_with_a_role": 4,
+   "roles_present": [
+    "coat",
+    "maturation",
+    "other",
+    "polymerase"
+   ],
+   "has_every_expected_role": true,
+   "most_diverged_role": "other",
+   "least_diverged_role": "polymerase",
+   "identity_spread_points": 3.1,
+   "nearest_subject_provenance": "environmental_record"
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [
+    {
+     "role": "polymerase",
+     "pfam": "RNA_replicase_B"
+    },
+    {
+     "role": "coat",
+     "pfam": "Levi_coat"
+    }
+   ],
+   "evidence_title": [
+    {
+     "role": "polymerase",
+     "substring": "ssRNA phage"
+    },
+    {
+     "role": "coat",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 4,
+   "contig": "SRR34217566_NODE_14215_length_1606_cov_4.0000_megahit_k141_19552",
+   "arm": "control_near_reference",
+   "genes_called": 2,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "polymerase"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "polymerase",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": "environmental_record"
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_27575_length_3825_cov_15.0000_megahit_k141_3649",
+   "arm": "control_near_reference",
+   "genes_called": 2,
+   "genes_with_a_role": 2,
+   "roles_present": [
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": "other",
+   "identity_spread_points": 0.4,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_24838_length_2696_cov_26.0000_megahit_k141_15221",
+   "arm": "control_near_reference",
+   "genes_called": 3,
+   "genes_with_a_role": 3,
+   "roles_present": [
+    "coat",
+    "other",
+    "polymerase"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": "coat",
+   "identity_spread_points": 0.8,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_10108_length_1497_cov_7.0000_megahit_k141_24899",
+   "arm": "control_near_reference",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_14527_length_3522_cov_7.0000_megahit_k141_43139",
+   "arm": "control_near_reference",
+   "genes_called": 2,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "polymerase"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "polymerase",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_30542_length_2623_cov_8.0000_megahit_k141_9821",
+   "arm": "control_near_reference",
+   "genes_called": 3,
+   "genes_with_a_role": 3,
+   "roles_present": [
+    "coat",
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": "other",
+   "identity_spread_points": 0.8,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_23280_length_2232_cov_9.0000_megahit_k141_8853",
+   "arm": "control_near_reference",
+   "genes_called": 2,
+   "genes_with_a_role": 2,
+   "roles_present": [
+    "other",
+    "polymerase"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": "polymerase",
+   "identity_spread_points": 0.9,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_20813_length_1001_cov_7.0000_megahit_k141_32254",
+   "arm": "control_near_reference",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_30228_length_938_cov_5.0000_megahit_k141_33499",
+   "arm": "control_near_reference",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_9952_length_617_cov_2.0000_megahit_k141_24885",
+   "arm": "control_near_reference",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_13193_length_518_cov_5.0000_megahit_k141_42976",
+   "arm": "control_near_reference",
+   "genes_called": 1,
+   "genes_with_a_role": 0,
+   "roles_present": [],
+   "has_every_expected_role": false,
+   "most_diverged_role": null,
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  },
+  {
+   "architecture": "ssrna_phage",
+   "evidence_pfam": [],
+   "evidence_title": [
+    {
+     "role": "other",
+     "substring": "ssRNA phage"
+    }
+   ],
+   "genes_firing": 1,
+   "contig": "SRR34217566_NODE_22942_length_512_cov_5.0000_megahit_k141_26503",
+   "arm": "control_near_reference",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": "environmental_record"
+  },
+  {
+   "architecture": null,
+   "not_called_because": "no gene carries a domain or a subject title that any architecture rule in the vocabulary names. This is an absence of evidence and not a call.",
+   "evidence_pfam": [],
+   "evidence_title": [],
+   "genes_firing": 0,
+   "contig": "SRR34217566_NODE_9615_length_500_cov_3.0000_megahit_k141_42553",
+   "arm": "control_near_reference",
+   "genes_called": 1,
+   "genes_with_a_role": 1,
+   "roles_present": [
+    "other"
+   ],
+   "has_every_expected_role": false,
+   "most_diverged_role": "other",
+   "least_diverged_role": null,
+   "identity_spread_points": null,
+   "nearest_subject_provenance": null
+  }
+ ],
+ "seed": 5,
+ "timings_seconds": {
+  "total": 0.001
+ },
+ "git_sha": "1dc582e6621af117ddad75b48baf3d388a724286",
+ "tree_dirty": false,
+ "script_sha256": "07be28fec0d4d6e5",
+ "modules_sha256": {
+  "experiments/provenance.py": "ffe687a85906eed6",
+  "mamba/envs/hapax/lib/python3.13/__future__.py": "981d4c398849f9eb",
+  "mamba/envs/hapax/lib/python3.13/_collections_abc.py": "87601195497fde3b",
+  "mamba/envs/hapax/lib/python3.13/_compression.py": "3ad5d60627477a60",
+  "mamba/envs/hapax/lib/python3.13/_sitebuiltins.py": "f688c89b860d5839",
+  "mamba/envs/hapax/lib/python3.13/_weakrefset.py": "91895a451d06e9f5",
+  "mamba/envs/hapax/lib/python3.13/abc.py": "e558702a95cdce3f",
+  "mamba/envs/hapax/lib/python3.13/argparse.py": "51d0cac86f746dcc",
+  "mamba/envs/hapax/lib/python3.13/bz2.py": "b217459e4c74ccb3",
+  "mamba/envs/hapax/lib/python3.13/codecs.py": "2f278497548b8313",
+  "mamba/envs/hapax/lib/python3.13/collections/__init__.py": "f1bcb4869aeb7225",
+  "mamba/envs/hapax/lib/python3.13/contextlib.py": "c1e0d67b2007de11",
+  "mamba/envs/hapax/lib/python3.13/copyreg.py": "c8eda41f05c6bf95",
+  "mamba/envs/hapax/lib/python3.13/encodings/__init__.py": "3a8c3b489e903815",
+  "mamba/envs/hapax/lib/python3.13/encodings/aliases.py": "368bf46e530f71d2",
+  "mamba/envs/hapax/lib/python3.13/encodings/utf_8.py": "ba0cac0602695835",
+  "mamba/envs/hapax/lib/python3.13/encodings/utf_8_sig.py": "1ef3da8d8aa08149",
+  "mamba/envs/hapax/lib/python3.13/enum.py": "e191c67b2e1e9bce",
+  "mamba/envs/hapax/lib/python3.13/fnmatch.py": "95391dac2ce9f600",
+  "mamba/envs/hapax/lib/python3.13/functools.py": "c95756a4d9bfb159",
+  "mamba/envs/hapax/lib/python3.13/genericpath.py": "cdac5a68dd738051",
+  "mamba/envs/hapax/lib/python3.13/gettext.py": "7178d6ebdd0647b0",
+  "mamba/envs/hapax/lib/python3.13/glob.py": "e6693972d5999ae0",
+  "mamba/envs/hapax/lib/python3.13/hashlib.py": "f129b330e6ab878a",
+  "mamba/envs/hapax/lib/python3.13/importlib/_bootstrap_external.py": "283ca9ae00bd7758",
+  "mamba/envs/hapax/lib/python3.13/io.py": "7cec3cb8ac004058",
+  "mamba/envs/hapax/lib/python3.13/json/__init__.py": "43e38afede6d52ae",
+  "mamba/envs/hapax/lib/python3.13/json/decoder.py": "dc98d3e677612ea7",
+  "mamba/envs/hapax/lib/python3.13/json/encoder.py": "bfaf651515edeb7b",
+  "mamba/envs/hapax/lib/python3.13/json/scanner.py": "572958017eae8842",
+  "mamba/envs/hapax/lib/python3.13/keyword.py": "18c2be738c04ad20",
+  "mamba/envs/hapax/lib/python3.13/locale.py": "cc50796e094fab09",
+  "mamba/envs/hapax/lib/python3.13/lzma.py": "6a923ba49b338971",
+  "mamba/envs/hapax/lib/python3.13/ntpath.py": "724d595af8f305ff",
+  "mamba/envs/hapax/lib/python3.13/operator.py": "c048f8a6852832d5",
+  "mamba/envs/hapax/lib/python3.13/os.py": "18560b0a37dfb90b",
+  "mamba/envs/hapax/lib/python3.13/pathlib/__init__.py": "07921047886282e3",
+  "mamba/envs/hapax/lib/python3.13/pathlib/_abc.py": "75e6bc728013d114",
+  "mamba/envs/hapax/lib/python3.13/pathlib/_local.py": "0530b4186ec5845e",
+  "mamba/envs/hapax/lib/python3.13/posixpath.py": "69acb9e294987cd6",
+  "mamba/envs/hapax/lib/python3.13/re/__init__.py": "dbe158a677c6aaac",
+  "mamba/envs/hapax/lib/python3.13/re/_casefix.py": "1b12d9136f23db6c",
+  "mamba/envs/hapax/lib/python3.13/re/_compiler.py": "83537237a82294d0",
+  "mamba/envs/hapax/lib/python3.13/re/_constants.py": "1dbe236d34fa934e",
+  "mamba/envs/hapax/lib/python3.13/re/_parser.py": "c7a6c80b3b448f50",
+  "mamba/envs/hapax/lib/python3.13/reprlib.py": "76003eea30d186a9",
+  "mamba/envs/hapax/lib/python3.13/selectors.py": "4b8a60cfbb619d08",
+  "mamba/envs/hapax/lib/python3.13/shutil.py": "7619899fbdf67c74",
+  "mamba/envs/hapax/lib/python3.13/signal.py": "0363c964c90ac0b3",
+  "mamba/envs/hapax/lib/python3.13/site.py": "ea80b1f9fd676ec6",
+  "mamba/envs/hapax/lib/python3.13/stat.py": "07217986d9b2172b",
+  "mamba/envs/hapax/lib/python3.13/subprocess.py": "3418c49f58081da8",
+  "mamba/envs/hapax/lib/python3.13/threading.py": "a979d5ab97993d7f",
+  "mamba/envs/hapax/lib/python3.13/types.py": "3a289bc5366e96d0",
+  "mamba/envs/hapax/lib/python3.13/warnings.py": "e040f52be0199c69",
+  "mamba/envs/hapax/lib/python3.13/zipimport.py": "ec9f157ff6d4ebd2"
+ },
+ "code_sha256": "30a936e0e6fa3546",
+ "vocabulary_sha256": "fac234ada805d997"
+}

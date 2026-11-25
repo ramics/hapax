@@ -1,0 +1,170 @@
+{
+  "script": "experiments/subtract_known.py",
+  "git_sha": "1dc582e6621af117ddad75b48baf3d388a724286",
+  "tree_dirty": false,
+  "script_sha256": "8fe97eb5c6c50170",
+  "pairs_requested": 200000,
+  "pairs_read": 200000,
+  "consulted": [
+    {
+      "role": "rrna",
+      "path": "/opt/hapax/db/silva/silva_dna.fa",
+      "bytes": 1051728936,
+      "mtime": 1795571255,
+      "state": "searched",
+      "queries": 200000,
+      "hits": 176693
+    },
+    {
+      "role": "k2_viral_20261022.d",
+      "path": "/opt/hapax/db/k2/k2_viral_20261022.d",
+      "bytes": 1230959768,
+      "files": 16,
+      "mtime": 1792618574,
+      "state": "searched",
+      "queries": 200000,
+      "hits": 497,
+      "confidence": 0.1
+    },
+    {
+      "role": "k2_standard_08_GB_20261022.d",
+      "path": "/opt/hapax/db/k2/k2_standard_08_GB_20261022.d",
+      "bytes": 8689619378,
+      "files": 17,
+      "mtime": 1792690425,
+      "state": "searched",
+      "queries": 200000,
+      "hits": 9504,
+      "confidence": 0.1
+    },
+    {
+      "role": "k2_pluspf_08_GB_20261022.d",
+      "path": "/opt/hapax/db/k2/k2_pluspf_08_GB_20261022.d",
+      "bytes": 8694325567,
+      "files": 17,
+      "mtime": 1792681485,
+      "state": "searched",
+      "queries": 200000,
+      "hits": 8287,
+      "confidence": 0.1
+    },
+    {
+      "role": "k2_pluspf_16_GB_20261022.d",
+      "path": "/opt/hapax/db/k2/k2_pluspf_16_GB_20261022.d",
+      "bytes": 16691633588,
+      "files": 17,
+      "mtime": 1792706204,
+      "state": "searched",
+      "queries": 200000,
+      "hits": 42343,
+      "confidence": 0.1
+    },
+    {
+      "role": "selfasm_sample_contigs_rrna",
+      "path": "/opt/hapax/wk/asm_baseline/sample_contigs_rrna.fa",
+      "bytes": 7179570,
+      "mtime": 1795587653,
+      "state": "searched",
+      "queries": 200000,
+      "hits": 180544
+    },
+    {
+      "role": "selfasm_sample_contigs_identified_norrna",
+      "path": "/opt/hapax/wk/asm_baseline/sample_contigs_identified_norrna.fa",
+      "bytes": 7126148,
+      "mtime": 1795587653,
+      "state": "searched",
+      "queries": 200000,
+      "hits": 9431
+    },
+    {
+      "role": "observe_sample_contigs_unidentified",
+      "path": "/opt/hapax/wk/asm_baseline/sample_contigs_unidentified.fa",
+      "bytes": 14506620,
+      "mtime": 1795587653,
+      "state": "searched",
+      "queries": 200000,
+      "hits": 50306,
+      "subtracted": false
+    },
+    {
+      "role": "prot_viral",
+      "path": "/opt/hapax/db/prot/viral.dmnd",
+      "bytes": 239074080,
+      "mtime": 1795571977,
+      "state": "searched",
+      "queries": 9795,
+      "hits": 7690,
+      "removed": 267,
+      "conditioned_on": "survivors of all nucleotide tiers"
+    },
+    {
+      "role": "prot_sprot",
+      "path": "/opt/hapax/db/prot/sprot.dmnd",
+      "bytes": 294430316,
+      "mtime": 1795571982,
+      "state": "searched",
+      "queries": 9795,
+      "hits": 8776,
+      "removed": 2749,
+      "conditioned_on": "survivors of all nucleotide tiers"
+    }
+  ],
+  "parameters": {
+    "seed": 4,
+    "pairs": 200000,
+    "library": "SRR34217566",
+    "block": 2500000,
+    "r1": "/opt/hapax/data/reads/SRR34217566_1.fastq.gz",
+    "r2": "/opt/hapax/data/reads/SRR34217566_2.fastq.gz",
+    "trim_r2": 0,
+    "k2_dbs": [
+      "/opt/hapax/db/k2/k2_viral_20261022.d",
+      "/opt/hapax/db/k2/k2_standard_08_GB_20261022.d",
+      "/opt/hapax/db/k2/k2_pluspf_08_GB_20261022.d",
+      "/opt/hapax/db/k2/k2_pluspf_16_GB_20261022.d"
+    ],
+    "classify_bin": "/opt/hapax/mamba/envs/hapax/share/kraken2-2.17.2/libexec/classify",
+    "silva": [
+      "/opt/hapax/db/silva/silva_dna.fa"
+    ],
+    "selfasm": [
+      "/opt/hapax/wk/asm_baseline/sample_contigs_rrna.fa",
+      "/opt/hapax/wk/asm_baseline/sample_contigs_identified_norrna.fa"
+    ],
+    "observe": [
+      "/opt/hapax/wk/asm_baseline/sample_contigs_unidentified.fa"
+    ],
+    "dmnd": [
+      "/opt/hapax/db/prot/viral.dmnd",
+      "/opt/hapax/db/prot/sprot.dmnd"
+    ],
+    "diamond_bin": "/opt/hapax/mamba/envs/hapax/bin/diamond",
+    "threads": 8,
+    "k2_confidence": [
+      "0.0",
+      "0.05",
+      "0.1",
+      "0.2"
+    ],
+    "k2_memory_map": true,
+    "k2_operating_confidence": 0.1,
+    "diamond_sensitivity": "--sensitive",
+    "diamond_bitscore": 50.0,
+    "entropy_min": 0.5,
+    "homopolymer_max": 25,
+    "min_mlen": 40,
+    "work": "/opt/hapax/out/run_s4/work/cascade_work",
+    "out": "/opt/hapax/out/run_s4/work/cascade",
+    "keep_known": 20000,
+    "rows_out": true,
+    "preflight": false
+  },
+  "wall_seconds": 433.8535015399975,
+  "peak_rss_bytes": 5936640000,
+  "python": "3.13.18",
+  "mappy": "2.31",
+  "diamond": "diamond version 2.1.10",
+  "platform": "Linux-6.18.62-127.179.amzn2023.x86_64-x86_64-with-glibc2.34",
+  "cpu_count": 8
+}

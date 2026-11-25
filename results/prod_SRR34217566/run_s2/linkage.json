@@ -1,0 +1,456 @@
+{
+  "script": "experiments/mate_friends.py",
+  "git_sha": "1dc582e6621af117ddad75b48baf3d388a724286",
+  "tree_dirty": false,
+  "script_sha256": "455b2f5609ac0b75",
+  "parameters": {
+    "seed": 2,
+    "pairs": 20000,
+    "block": 2500000,
+    "r1": "/opt/hapax/data/reads/SRR34217566_1.fastq.gz",
+    "r2": "/opt/hapax/data/reads/SRR34217566_2.fastq.gz",
+    "library": "SRR34217566",
+    "trim_r2": 0,
+    "ks": [
+      1,
+      5,
+      10,
+      50
+    ],
+    "tool": "/opt/hapax/experiments/kmer_coverage/target/release/kmer_coverage",
+    "library_pairs": 2000,
+    "length_match": true,
+    "work": "/opt/hapax/out/run_s2/work/linkage_work",
+    "out": "/opt/hapax/out/run_s2/work/linkage"
+  },
+  "axes": [
+    "log_cov",
+    "cov_spread",
+    "zero_frac",
+    "cov_step",
+    "gc",
+    "entropy3",
+    "CpG_oe",
+    "UpA_oe",
+    "homopolymer",
+    "mean_error_prob"
+  ],
+  "mate_points": 39880,
+  "pairs_used": 19940,
+  "pairs_dropped_no_kmers": 60,
+  "file_offset_pairs": 2500000,
+  "coverage_seconds": 83.7,
+  "result": {
+    "all": {
+      "1": {
+        "recovery": 0.07111,
+        "chance": 2.5e-05,
+        "enrichment": 2835.93
+      },
+      "5": {
+        "recovery": 0.10085,
+        "chance": 0.000125,
+        "enrichment": 804.38
+      },
+      "10": {
+        "recovery": 0.11743,
+        "chance": 0.000251,
+        "enrichment": 468.29
+      },
+      "50": {
+        "recovery": 0.17691,
+        "chance": 0.001254,
+        "enrichment": 141.1
+      },
+      "n_queries": 39880,
+      "n_points": 39880
+    },
+    "overlap_rate_of_pairs": 0.7011,
+    "mates_overlap": {
+      "1": {
+        "recovery": 0.10054,
+        "chance": 2.5e-05,
+        "enrichment": 4009.58
+      },
+      "5": {
+        "recovery": 0.14032,
+        "chance": 0.000125,
+        "enrichment": 1119.15
+      },
+      "10": {
+        "recovery": 0.1621,
+        "chance": 0.000251,
+        "enrichment": 646.44
+      },
+      "50": {
+        "recovery": 0.23721,
+        "chance": 0.001254,
+        "enrichment": 189.2
+      },
+      "n_queries": 27958,
+      "n_points": 39880
+    },
+    "mates_disjoint": {
+      "1": {
+        "recovery": 0.00218,
+        "chance": 2.5e-05,
+        "enrichment": 86.97
+      },
+      "5": {
+        "recovery": 0.0083,
+        "chance": 0.000125,
+        "enrichment": 66.23
+      },
+      "10": {
+        "recovery": 0.01267,
+        "chance": 0.000251,
+        "enrichment": 50.51
+      },
+      "50": {
+        "recovery": 0.03548,
+        "chance": 0.001254,
+        "enrichment": 28.3
+      },
+      "n_queries": 11922,
+      "n_points": 39880
+    },
+    "from_mate1": {
+      "1": {
+        "recovery": 0.07136,
+        "chance": 2.5e-05,
+        "enrichment": 2845.93
+      },
+      "5": {
+        "recovery": 0.10095,
+        "chance": 0.000125,
+        "enrichment": 805.18
+      },
+      "10": {
+        "recovery": 0.11836,
+        "chance": 0.000251,
+        "enrichment": 471.99
+      },
+      "50": {
+        "recovery": 0.17743,
+        "chance": 0.001254,
+        "enrichment": 141.52
+      },
+      "n_queries": 19940,
+      "n_points": 39880
+    },
+    "from_mate2": {
+      "1": {
+        "recovery": 0.07146,
+        "chance": 2.5e-05,
+        "enrichment": 2849.93
+      },
+      "5": {
+        "recovery": 0.1013,
+        "chance": 0.000125,
+        "enrichment": 807.98
+      },
+      "10": {
+        "recovery": 0.117,
+        "chance": 0.000251,
+        "enrichment": 466.59
+      },
+      "50": {
+        "recovery": 0.17688,
+        "chance": 0.001254,
+        "enrichment": 141.08
+      },
+      "n_queries": 19940,
+      "n_points": 39880
+    },
+    "by_coverage_decile": [
+      {
+        "decile": 1,
+        "n": 3946,
+        "log_cov_range": [
+          0.693,
+          1.946
+        ],
+        "recovery_at_10": 0.11227,
+        "enrichment_at_10": 447.7
+      },
+      {
+        "decile": 2,
+        "n": 4026,
+        "log_cov_range": [
+          1.946,
+          4.585
+        ],
+        "recovery_at_10": 0.16095,
+        "enrichment_at_10": 641.87
+      },
+      {
+        "decile": 3,
+        "n": 3981,
+        "log_cov_range": [
+          4.585,
+          5.799
+        ],
+        "recovery_at_10": 0.15273,
+        "enrichment_at_10": 609.05
+      },
+      {
+        "decile": 4,
+        "n": 3990,
+        "log_cov_range": [
+          5.799,
+          6.558
+        ],
+        "recovery_at_10": 0.12381,
+        "enrichment_at_10": 493.74
+      },
+      {
+        "decile": 5,
+        "n": 3996,
+        "log_cov_range": [
+          6.558,
+          7.175
+        ],
+        "recovery_at_10": 0.12813,
+        "enrichment_at_10": 510.96
+      },
+      {
+        "decile": 6,
+        "n": 3988,
+        "log_cov_range": [
+          7.175,
+          7.686
+        ],
+        "recovery_at_10": 0.11184,
+        "enrichment_at_10": 445.99
+      },
+      {
+        "decile": 7,
+        "n": 3988,
+        "log_cov_range": [
+          7.686,
+          8.211
+        ],
+        "recovery_at_10": 0.11309,
+        "enrichment_at_10": 450.99
+      },
+      {
+        "decile": 8,
+        "n": 3989,
+        "log_cov_range": [
+          8.211,
+          8.815
+        ],
+        "recovery_at_10": 0.09652,
+        "enrichment_at_10": 384.89
+      },
+      {
+        "decile": 9,
+        "n": 3988,
+        "log_cov_range": [
+          8.815,
+          9.539
+        ],
+        "recovery_at_10": 0.09579,
+        "enrichment_at_10": 381.99
+      },
+      {
+        "decile": 10,
+        "n": 3988,
+        "log_cov_range": [
+          9.539,
+          11.061
+        ],
+        "recovery_at_10": 0.07899,
+        "enrichment_at_10": 314.99
+      }
+    ],
+    "coverage_only": {
+      "1": {
+        "recovery": 0.04047,
+        "chance": 2.5e-05,
+        "enrichment": 1613.96
+      },
+      "5": {
+        "recovery": 0.05572,
+        "chance": 0.000125,
+        "enrichment": 444.39
+      },
+      "10": {
+        "recovery": 0.06547,
+        "chance": 0.000251,
+        "enrichment": 261.09
+      },
+      "50": {
+        "recovery": 0.10048,
+        "chance": 0.001254,
+        "enrichment": 80.14
+      },
+      "n_queries": 39880,
+      "n_points": 39880
+    },
+    "composition_only": {
+      "1": {
+        "recovery": 0.05123,
+        "chance": 2.5e-05,
+        "enrichment": 2042.95
+      },
+      "5": {
+        "recovery": 0.06996,
+        "chance": 0.000125,
+        "enrichment": 557.99
+      },
+      "10": {
+        "recovery": 0.08129,
+        "chance": 0.000251,
+        "enrichment": 324.19
+      },
+      "50": {
+        "recovery": 0.12382,
+        "chance": 0.001254,
+        "enrichment": 98.76
+      },
+      "n_queries": 39880,
+      "n_points": 39880
+    },
+    "permuted_partner_null": {
+      "1": {
+        "recovery": 3e-05,
+        "chance": 2.5e-05,
+        "enrichment": 1.0
+      },
+      "5": {
+        "recovery": 8e-05,
+        "chance": 0.000125,
+        "enrichment": 0.6
+      },
+      "10": {
+        "recovery": 0.00023,
+        "chance": 0.000251,
+        "enrichment": 0.9
+      },
+      "50": {
+        "recovery": 0.0011,
+        "chance": 0.001254,
+        "enrichment": 0.88
+      },
+      "n_queries": 39880,
+      "n_points": 39880
+    },
+    "scale_ladder": [
+      {
+        "pairs": 2492,
+        "points": 4984,
+        "recovery_at_10": 0.19663,
+        "enrichment_at_10": 97.98,
+        "disjoint_recovery_at_10": 0.05028,
+        "disjoint_enrichment_at_10": 25.05
+      },
+      {
+        "pairs": 4985,
+        "points": 9970,
+        "recovery_at_10": 0.17372,
+        "enrichment_at_10": 173.18,
+        "disjoint_recovery_at_10": 0.0263,
+        "disjoint_enrichment_at_10": 26.22
+      },
+      {
+        "pairs": 9970,
+        "points": 19940,
+        "recovery_at_10": 0.13922,
+        "enrichment_at_10": 277.59,
+        "disjoint_recovery_at_10": 0.02188,
+        "disjoint_enrichment_at_10": 43.63
+      },
+      {
+        "pairs": 19940,
+        "points": 39880,
+        "recovery_at_10": 0.11745,
+        "enrichment_at_10": 468.39,
+        "disjoint_recovery_at_10": 0.01267,
+        "disjoint_enrichment_at_10": 50.51
+      }
+    ],
+    "length_matched": {
+      "all": {
+        "1": {
+          "recovery": 0.07094,
+          "chance": 2.5e-05,
+          "enrichment": 2828.93
+        },
+        "5": {
+          "recovery": 0.10023,
+          "chance": 0.000125,
+          "enrichment": 799.38
+        },
+        "10": {
+          "recovery": 0.11698,
+          "chance": 0.000251,
+          "enrichment": 466.49
+        },
+        "50": {
+          "recovery": 0.1765,
+          "chance": 0.001254,
+          "enrichment": 140.78
+        },
+        "n_queries": 39880,
+        "n_points": 39880
+      },
+      "pairs_dropped_no_kmers": 60,
+      "coverage_seconds": 79.2,
+      "mate1_truncated_to": "len(mate2)",
+      "from_mate1": {
+        "1": {
+          "recovery": 0.07081,
+          "chance": 2.5e-05,
+          "enrichment": 2823.93
+        },
+        "5": {
+          "recovery": 0.1009,
+          "chance": 0.000125,
+          "enrichment": 804.78
+        },
+        "10": {
+          "recovery": 0.118,
+          "chance": 0.000251,
+          "enrichment": 470.59
+        },
+        "50": {
+          "recovery": 0.17713,
+          "chance": 0.001254,
+          "enrichment": 141.28
+        },
+        "n_queries": 19940,
+        "n_points": 39880
+      },
+      "from_mate2": {
+        "1": {
+          "recovery": 0.07096,
+          "chance": 2.5e-05,
+          "enrichment": 2829.93
+        },
+        "5": {
+          "recovery": 0.09965,
+          "chance": 0.000125,
+          "enrichment": 794.78
+        },
+        "10": {
+          "recovery": 0.116,
+          "chance": 0.000251,
+          "enrichment": 462.59
+        },
+        "50": {
+          "recovery": 0.17593,
+          "chance": 0.001254,
+          "enrichment": 140.32
+        },
+        "n_queries": 19940,
+        "n_points": 39880
+      }
+    }
+  },
+  "readout": "fraction of mates whose own partner is among their k nearest neighbours in the standardised 10-axis per-mate space, against the chance rate k/(n-1)",
+  "bias": "a pair's two mates come from one insert and 26-27% of them literally overlap, so this is an UPPER BOUND on friendship resolution between reads of one genome, not an estimate of it. The planted-genome purity in results/residue_structure/ is the lower bound. Mate 2 is 93 nt against mate 1's 107 and carries 62 scorable 31-mers against 76, so the two directions are different measurements and are reported apart",
+  "wall_seconds": 261.51749948199904,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.62-127.179.amzn2023.x86_64-x86_64-with-glibc2.34"
+}

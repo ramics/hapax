@@ -1,0 +1,701 @@
+{
+  "pairs": 200000,
+  "operating_point": {
+    "k2_confidence": 0.1,
+    "min_match_length_nt": 40,
+    "diamond_bitscore": 50.0,
+    "diamond_sensitivity": "--sensitive",
+    "entropy_min": 0.5,
+    "homopolymer_max": 25,
+    "trim_r2": 0
+  },
+  "breakdown": {
+    "identified": {
+      "point": 0.92566,
+      "lo": 0.924502,
+      "hi": 0.926802,
+      "k": 185132,
+      "n": 200000,
+      "method": "wilson_95",
+      "design_effect": 1.58,
+      "lo_block_corrected": 0.9238430000000001,
+      "hi_block_corrected": 0.927477
+    },
+    "assembled_unidentified": {
+      "point": 0.038185,
+      "lo": 0.037354,
+      "hi": 0.039034,
+      "k": 7637,
+      "n": 200000,
+      "method": "wilson_95",
+      "design_effect": 1.27,
+      "lo_block_corrected": 0.0371182,
+      "hi_block_corrected": 0.039251799999999996
+    },
+    "residual": {
+      "point": 0.036155,
+      "lo": 0.035346,
+      "hi": 0.036982,
+      "k": 7231,
+      "n": 200000,
+      "method": "wilson_95",
+      "design_effect": 1.09,
+      "lo_block_corrected": 0.03526338,
+      "hi_block_corrected": 0.03704662
+    },
+    "tier2_from": "the union of observe_sample_contigs_unidentified",
+    "tier2_per_observe_set": {
+      "observe_sample_contigs_unidentified": 0.038185
+    },
+    "note": "tier 2 is observed and never subtracted. The three fractions share one denominator and sum to the library; the per-set fractions below do not, because the observe sets overlap",
+    "design_effect": {
+      "identified": 1.58,
+      "assembled_unidentified": 1.27,
+      "residual": 1.09,
+      "_default": 1.27,
+      "_source": "results/block_position_bias/REPORT.md, 5 seeds, measured on SRR23973193",
+      "_why": "the cascade reads a contiguous block of the FASTQ, so a Wilson interval, which assumes a simple random sample of the library, is too narrow",
+      "_control": "uniform random samples of the same size read 0.92-1.10 on the same statistic, so the instrument is sound and the blocks are the finding",
+      "_never_from_seeds": "these come from all 87 windows of the library and must never be re-estimated from a run's own five seeds: computed that way the same statistic reads 0.65 and 0.44 and reverses its sign, because five numbers cannot measure a variance. Reproduced independently at 1.44 and 1.61 by experiments/block_dispersion.py"
+    },
+    "design_effect_borrowed": true,
+    "design_effect_note": "measured on SRR23973193 and applied here unmeasured; the block-corrected intervals are an estimate borrowed from another library"
+  },
+  "curve": [
+    {
+      "tier": "artefact",
+      "index_bytes": 120,
+      "cumulative_index_bytes": 120,
+      "tier_alone_removed": 0.00618,
+      "marginal_removed": 0.00618,
+      "cumulative_removed": 0.00618,
+      "residue": 0.99382,
+      "wall_seconds": 17.44749958600005,
+      "tier_alone_removed_interval": {
+        "point": 0.00618,
+        "lo": 0.005846,
+        "hi": 0.006533,
+        "k": 1236,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "marginal_removed_interval": {
+        "point": 0.00618,
+        "lo": 0.005846,
+        "hi": 0.006533,
+        "k": 1236,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "cumulative_removed_interval": {
+        "point": 0.00618,
+        "lo": 0.005846,
+        "hi": 0.006533,
+        "k": 1236,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "residue_interval": {
+        "point": 0.99382,
+        "lo": 0.993467,
+        "hi": 0.994154,
+        "k": 198764,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "operating_point": {
+        "k2_confidence": 0.1,
+        "min_match_length_nt": 40,
+        "diamond_bitscore": 50.0,
+        "diamond_sensitivity": "--sensitive",
+        "entropy_min": 0.5,
+        "homopolymer_max": 25,
+        "trim_r2": 0
+      },
+      "threshold_sweep": {
+        "entropy_sweep": {
+          "0.30": 0.003035,
+          "0.40": 0.00306,
+          "0.50": 0.003115,
+          "0.60": 0.00323,
+          "0.70": 0.003625,
+          "0.80": 0.00648
+        }
+      },
+      "sweep_span_points": {
+        "entropy_sweep": 0.344
+      }
+    },
+    {
+      "tier": "rrna",
+      "index_bytes": 1051728936,
+      "cumulative_index_bytes": 1051729056,
+      "tier_alone_removed": 0.76247,
+      "marginal_removed": 0.760045,
+      "cumulative_removed": 0.766225,
+      "residue": 0.23377499999999996,
+      "wall_seconds": 85.87554632499996,
+      "tier_alone_removed_interval": {
+        "point": 0.76247,
+        "lo": 0.7606,
+        "hi": 0.76433,
+        "k": 152494,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "marginal_removed_interval": {
+        "point": 0.760045,
+        "lo": 0.758168,
+        "hi": 0.761912,
+        "k": 152009,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "cumulative_removed_interval": {
+        "point": 0.766225,
+        "lo": 0.764365,
+        "hi": 0.768075,
+        "k": 153245,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "residue_interval": {
+        "point": 0.233775,
+        "lo": 0.231925,
+        "hi": 0.235635,
+        "k": 46755,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "operating_point": {
+        "k2_confidence": 0.1,
+        "min_match_length_nt": 40,
+        "diamond_bitscore": 50.0,
+        "diamond_sensitivity": "--sensitive",
+        "entropy_min": 0.5,
+        "homopolymer_max": 25,
+        "trim_r2": 0
+      },
+      "threshold_sweep": {
+        "mlen_sweep": {
+          "30": 0.76247,
+          "40": 0.76247,
+          "50": 0.74079,
+          "60": 0.72236,
+          "80": 0.679905,
+          "100": 0.627245
+        }
+      },
+      "sweep_span_points": {
+        "mlen_sweep": 13.522
+      }
+    },
+    {
+      "tier": "k2_viral_20261022.d",
+      "index_bytes": 667038743,
+      "cumulative_index_bytes": 1718767799,
+      "tier_alone_removed": 0.001335,
+      "marginal_removed": 0.00058,
+      "cumulative_removed": 0.766805,
+      "residue": 0.23319500000000004,
+      "wall_seconds": 4.270320103998529,
+      "tier_alone_removed_interval": {
+        "point": 0.001335,
+        "lo": 0.001184,
+        "hi": 0.001505,
+        "k": 267,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "marginal_removed_interval": {
+        "point": 0.00058,
+        "lo": 0.000484,
+        "hi": 0.000696,
+        "k": 116,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "cumulative_removed_interval": {
+        "point": 0.766805,
+        "lo": 0.764947,
+        "hi": 0.768653,
+        "k": 153361,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "residue_interval": {
+        "point": 0.233195,
+        "lo": 0.231347,
+        "hi": 0.235053,
+        "k": 46639,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "operating_point": {
+        "k2_confidence": 0.1,
+        "min_match_length_nt": 40,
+        "diamond_bitscore": 50.0,
+        "diamond_sensitivity": "--sensitive",
+        "entropy_min": 0.5,
+        "homopolymer_max": 25,
+        "trim_r2": 0
+      },
+      "threshold_sweep": {
+        "confidence_sweep": {
+          "0.00": 0.021515,
+          "0.05": 0.00218,
+          "0.10": 0.001335,
+          "0.20": 0.001145
+        }
+      },
+      "sweep_span_points": {
+        "confidence_sweep": 2.037
+      }
+    },
+    {
+      "tier": "k2_standard_08_GB_20261022.d",
+      "index_bytes": 8005058058,
+      "cumulative_index_bytes": 9723825857,
+      "tier_alone_removed": 0.02871,
+      "marginal_removed": 0.00322,
+      "cumulative_removed": 0.770025,
+      "residue": 0.22997500000000004,
+      "wall_seconds": 27.923539791998337,
+      "tier_alone_removed_interval": {
+        "point": 0.02871,
+        "lo": 0.027987,
+        "hi": 0.029451,
+        "k": 5742,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "marginal_removed_interval": {
+        "point": 0.00322,
+        "lo": 0.002981,
+        "hi": 0.003478,
+        "k": 644,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "cumulative_removed_interval": {
+        "point": 0.770025,
+        "lo": 0.768176,
+        "hi": 0.771864,
+        "k": 154005,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "residue_interval": {
+        "point": 0.229975,
+        "lo": 0.228136,
+        "hi": 0.231824,
+        "k": 45995,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "operating_point": {
+        "k2_confidence": 0.1,
+        "min_match_length_nt": 40,
+        "diamond_bitscore": 50.0,
+        "diamond_sensitivity": "--sensitive",
+        "entropy_min": 0.5,
+        "homopolymer_max": 25,
+        "trim_r2": 0
+      },
+      "threshold_sweep": {
+        "confidence_sweep": {
+          "0.00": 0.509275,
+          "0.05": 0.15069,
+          "0.10": 0.02871,
+          "0.20": 0.000485
+        }
+      },
+      "sweep_span_points": {
+        "confidence_sweep": 50.879
+      }
+    },
+    {
+      "tier": "k2_pluspf_08_GB_20261022.d",
+      "index_bytes": 8005099554,
+      "cumulative_index_bytes": 17728925411,
+      "tier_alone_removed": 0.025465,
+      "marginal_removed": 1e-05,
+      "cumulative_removed": 0.770035,
+      "residue": 0.22996499999999997,
+      "wall_seconds": 21.163916141998925,
+      "tier_alone_removed_interval": {
+        "point": 0.025465,
+        "lo": 0.024784,
+        "hi": 0.026165,
+        "k": 5093,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "marginal_removed_interval": {
+        "point": 1e-05,
+        "lo": 3e-06,
+        "hi": 3.6e-05,
+        "k": 2,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "cumulative_removed_interval": {
+        "point": 0.770035,
+        "lo": 0.768186,
+        "hi": 0.771874,
+        "k": 154007,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "residue_interval": {
+        "point": 0.229965,
+        "lo": 0.228126,
+        "hi": 0.231814,
+        "k": 45993,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "operating_point": {
+        "k2_confidence": 0.1,
+        "min_match_length_nt": 40,
+        "diamond_bitscore": 50.0,
+        "diamond_sensitivity": "--sensitive",
+        "entropy_min": 0.5,
+        "homopolymer_max": 25,
+        "trim_r2": 0
+      },
+      "threshold_sweep": {
+        "confidence_sweep": {
+          "0.00": 0.513125,
+          "0.05": 0.14031,
+          "0.10": 0.025465,
+          "0.20": 0.00032
+        }
+      },
+      "sweep_span_points": {
+        "confidence_sweep": 51.281
+      }
+    },
+    {
+      "tier": "k2_pluspf_16_GB_20261022.d",
+      "index_bytes": 16005099554,
+      "cumulative_index_bytes": 33734024965,
+      "tier_alone_removed": 0.12892,
+      "marginal_removed": 0.01423,
+      "cumulative_removed": 0.784265,
+      "residue": 0.215735,
+      "wall_seconds": 3.097740747996795,
+      "tier_alone_removed_interval": {
+        "point": 0.12892,
+        "lo": 0.127458,
+        "hi": 0.130396,
+        "k": 25784,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "marginal_removed_interval": {
+        "point": 0.01423,
+        "lo": 0.01372,
+        "hi": 0.014758,
+        "k": 2846,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "cumulative_removed_interval": {
+        "point": 0.784265,
+        "lo": 0.782457,
+        "hi": 0.786062,
+        "k": 156853,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "residue_interval": {
+        "point": 0.215735,
+        "lo": 0.213938,
+        "hi": 0.217543,
+        "k": 43147,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "operating_point": {
+        "k2_confidence": 0.1,
+        "min_match_length_nt": 40,
+        "diamond_bitscore": 50.0,
+        "diamond_sensitivity": "--sensitive",
+        "entropy_min": 0.5,
+        "homopolymer_max": 25,
+        "trim_r2": 0
+      },
+      "threshold_sweep": {
+        "confidence_sweep": {
+          "0.00": 0.64352,
+          "0.05": 0.297335,
+          "0.10": 0.12892,
+          "0.20": 0.01216
+        }
+      },
+      "sweep_span_points": {
+        "confidence_sweep": 63.136
+      }
+    },
+    {
+      "tier": "selfasm_sample_contigs_rrna",
+      "index_bytes": 7179570,
+      "cumulative_index_bytes": 33741204535,
+      "tier_alone_removed": 0.82081,
+      "marginal_removed": 0.096325,
+      "cumulative_removed": 0.88059,
+      "residue": 0.11941000000000002,
+      "wall_seconds": 31.480945576999147,
+      "tier_alone_removed_interval": {
+        "point": 0.82081,
+        "lo": 0.819123,
+        "hi": 0.822485,
+        "k": 164162,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "marginal_removed_interval": {
+        "point": 0.096325,
+        "lo": 0.09504,
+        "hi": 0.097626,
+        "k": 19265,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "cumulative_removed_interval": {
+        "point": 0.88059,
+        "lo": 0.879162,
+        "hi": 0.882004,
+        "k": 176118,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "residue_interval": {
+        "point": 0.11941,
+        "lo": 0.117996,
+        "hi": 0.120838,
+        "k": 23882,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "operating_point": {
+        "k2_confidence": 0.1,
+        "min_match_length_nt": 40,
+        "diamond_bitscore": 50.0,
+        "diamond_sensitivity": "--sensitive",
+        "entropy_min": 0.5,
+        "homopolymer_max": 25,
+        "trim_r2": 0
+      },
+      "threshold_sweep": {
+        "mlen_sweep": {
+          "30": 0.82081,
+          "40": 0.82081,
+          "50": 0.812735,
+          "60": 0.80374,
+          "80": 0.78689,
+          "100": 0.77134
+        }
+      },
+      "sweep_span_points": {
+        "mlen_sweep": 4.947
+      }
+    },
+    {
+      "tier": "selfasm_sample_contigs_identified_norrna",
+      "index_bytes": 7126148,
+      "cumulative_index_bytes": 33748330683,
+      "tier_alone_removed": 0.039435,
+      "marginal_removed": 0.022485,
+      "cumulative_removed": 0.903075,
+      "residue": 0.09692500000000004,
+      "wall_seconds": 1.9649115590000292,
+      "tier_alone_removed_interval": {
+        "point": 0.039435,
+        "lo": 0.038591,
+        "hi": 0.040297,
+        "k": 7887,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "marginal_removed_interval": {
+        "point": 0.022485,
+        "lo": 0.021844,
+        "hi": 0.023144,
+        "k": 4497,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "cumulative_removed_interval": {
+        "point": 0.903075,
+        "lo": 0.901771,
+        "hi": 0.904364,
+        "k": 180615,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "residue_interval": {
+        "point": 0.096925,
+        "lo": 0.095636,
+        "hi": 0.098229,
+        "k": 19385,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "operating_point": {
+        "k2_confidence": 0.1,
+        "min_match_length_nt": 40,
+        "diamond_bitscore": 50.0,
+        "diamond_sensitivity": "--sensitive",
+        "entropy_min": 0.5,
+        "homopolymer_max": 25,
+        "trim_r2": 0
+      },
+      "threshold_sweep": {
+        "mlen_sweep": {
+          "30": 0.039435,
+          "40": 0.039435,
+          "50": 0.03821,
+          "60": 0.03715,
+          "80": 0.03505,
+          "100": 0.03378
+        }
+      },
+      "sweep_span_points": {
+        "mlen_sweep": 0.566
+      }
+    },
+    {
+      "tier": "prot_viral",
+      "index_bytes": 239074080,
+      "cumulative_index_bytes": 33987404763,
+      "tier_alone_removed": 0.00194,
+      "marginal_removed": 0.00194,
+      "cumulative_removed": 0.905015,
+      "residue": 0.09498499999999999,
+      "wall_seconds": 48.1160222540002,
+      "tier_alone_removed_interval": {
+        "point": 0.00194,
+        "lo": 0.001756,
+        "hi": 0.002143,
+        "k": 388,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "marginal_removed_interval": {
+        "point": 0.00194,
+        "lo": 0.001756,
+        "hi": 0.002143,
+        "k": 388,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "cumulative_removed_interval": {
+        "point": 0.905015,
+        "lo": 0.903722,
+        "hi": 0.906292,
+        "k": 181003,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "residue_interval": {
+        "point": 0.094985,
+        "lo": 0.093708,
+        "hi": 0.096278,
+        "k": 18997,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "operating_point": {
+        "k2_confidence": 0.1,
+        "min_match_length_nt": 40,
+        "diamond_bitscore": 50.0,
+        "diamond_sensitivity": "--sensitive",
+        "entropy_min": 0.5,
+        "homopolymer_max": 25,
+        "trim_r2": 0
+      },
+      "threshold_sweep": {
+        "bitscore_sweep": {
+          "30": 0.16915140572607687,
+          "40": 0.0362651534691772,
+          "50": 0.020015475883415013,
+          "60": 0.009956151663657467,
+          "80": 0.0015991746195511995,
+          "100": 0.0
+        }
+      },
+      "sweep_span_points": {
+        "bitscore_sweep": 16.915
+      }
+    },
+    {
+      "tier": "prot_sprot",
+      "index_bytes": 294430316,
+      "cumulative_index_bytes": 34281835079,
+      "tier_alone_removed": 0.02225,
+      "marginal_removed": 0.020645,
+      "cumulative_removed": 0.92566,
+      "residue": 0.07433999999999996,
+      "wall_seconds": 58.102325296000345,
+      "tier_alone_removed_interval": {
+        "point": 0.02225,
+        "lo": 0.021613,
+        "hi": 0.022906,
+        "k": 4450,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "marginal_removed_interval": {
+        "point": 0.020645,
+        "lo": 0.020031,
+        "hi": 0.021277,
+        "k": 4129,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "cumulative_removed_interval": {
+        "point": 0.92566,
+        "lo": 0.924502,
+        "hi": 0.926802,
+        "k": 185132,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "residue_interval": {
+        "point": 0.07434,
+        "lo": 0.073198,
+        "hi": 0.075498,
+        "k": 14868,
+        "n": 200000,
+        "method": "wilson_95"
+      },
+      "operating_point": {
+        "k2_confidence": 0.1,
+        "min_match_length_nt": 40,
+        "diamond_bitscore": 50.0,
+        "diamond_sensitivity": "--sensitive",
+        "entropy_min": 0.5,
+        "homopolymer_max": 25,
+        "trim_r2": 0
+      },
+      "threshold_sweep": {
+        "bitscore_sweep": {
+          "30": 0.44446737167913336,
+          "40": 0.286664947124065,
+          "50": 0.22955893732267216,
+          "60": 0.17461955119938097,
+          "80": 0.07335568738715502,
+          "100": 0.006912561258705184
+        }
+      },
+      "sweep_span_points": {
+        "bitscore_sweep": 43.755
+      }
+    }
+  ],
+  "interval_method": "wilson_95_on_this_run's_counts; a multi-seed run reports across-seed spread instead",
+  "source": "tiers.json",
+  "source_sha256_16": "539117228af27669"
+}

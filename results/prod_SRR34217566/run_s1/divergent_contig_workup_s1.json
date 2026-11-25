@@ -1,0 +1,3422 @@
+{
+ "unit": "one row per contig; orf_rows is one row per predicted protein",
+ "question": "what are the contigs that sit far from any published protein",
+ "the_word_strain": "reserved for 90-97% identity. A row at 30-45% is not a divergent strain of the taxon it is named after; the subject is the nearest neighbour in a sparse database. divergence_class states the band on every row.",
+ "bands": [
+  {
+   "at_least_percent": 97.0,
+   "reading": "reference or near-reference"
+  },
+  {
+   "at_least_percent": 90.0,
+   "reading": "divergent strain of the named taxon"
+  },
+  {
+   "at_least_percent": 70.0,
+   "reading": "same genus or thereabouts, not a strain"
+  },
+  {
+   "at_least_percent": 40.0,
+   "reading": "family-level or looser; the subject is a nearest neighbour, not an identification"
+  },
+  {
+   "at_least_percent": 0.0,
+   "reading": "below any band a name survives"
+  }
+ ],
+ "operating_point": {
+  "min_alignment_aa": 60,
+  "significant_evalue": 1e-05,
+  "diamond_mode": "--sensitive",
+  "min_orf_aa": 50,
+  "pfam_threshold": "curators' gathering cutoffs, not an E-value of ours",
+  "divergent_arm_is_below_percent": 90.0,
+  "control_arm_is_at_or_above_percent": 95.0,
+  "mate_2_trimmed_nt": 0,
+  "mates_streamed_per_file": "whole library",
+  "mates_actually_streamed": 23178248
+ },
+ "summary": {
+  "divergent": {
+   "contigs": 15,
+   "median_orfs": 1,
+   "fraction_with_any_orf_subject": 1.0,
+   "fraction_with_any_pfam_domain": 0.8,
+   "fraction_flagged_subject_disagreement": 0.4,
+   "median_coding_density": 0.994,
+   "median_mapped_depth": 5.0,
+   "median_breadth_covered": 1.0,
+   "contigs_with_two_or_more_scorable_genes": 6,
+   "median_orf_identity_spread_points": 8.6,
+   "by_gene_role": {
+    "polymerase": {
+     "orfs": 9,
+     "median_pident": 80.9,
+     "min_pident": 48.0,
+     "max_pident": 89.3
+    },
+    "coat": {
+     "orfs": 6,
+     "median_pident": 81.5,
+     "min_pident": 54.4,
+     "max_pident": 92.9
+    },
+    "other": {
+     "orfs": 5,
+     "median_pident": 85.6,
+     "min_pident": 39.6,
+     "max_pident": 88.0
+    },
+    "maturation": {
+     "orfs": 5,
+     "median_pident": 83.0,
+     "min_pident": 52.0,
+     "max_pident": 84.8
+    }
+   }
+  },
+  "control_near_reference": {
+   "contigs": 30,
+   "median_orfs": 1.0,
+   "fraction_with_any_orf_subject": 1.0,
+   "fraction_with_any_pfam_domain": 0.9,
+   "fraction_flagged_subject_disagreement": 0.3667,
+   "median_coding_density": 0.97,
+   "median_mapped_depth": 7.0,
+   "median_breadth_covered": 1.0,
+   "contigs_with_two_or_more_scorable_genes": 10,
+   "median_orf_identity_spread_points": 0.95,
+   "by_gene_role": {
+    "other": {
+     "orfs": 23,
+     "median_pident": 99.1,
+     "min_pident": 95.2,
+     "max_pident": 100.0
+    },
+    "polymerase": {
+     "orfs": 11,
+     "median_pident": 98.6,
+     "min_pident": 96.1,
+     "max_pident": 100.0
+    },
+    "maturation": {
+     "orfs": 6,
+     "median_pident": 96.3,
+     "min_pident": 93.8,
+     "max_pident": 98.7
+    },
+    "coat": {
+     "orfs": 6,
+     "median_pident": 98.7,
+     "min_pident": 97.6,
+     "max_pident": 100.0
+    }
+   }
+  }
+ },
+ "the_number_to_rank_by": "polymerase_pident where the contig has one, because a whole-contig best hit reports whichever gene won on bitscore. orf_identity_spread_points is how far that choice could have moved the row.",
+ "how_to_read": "Compare the two arms column by column. A field that reads the same on both is describing assembly, not divergence. subject_disagreement_flag fires on a mis-joined contig AND on a genuine virus whose genes have different nearest neighbours, so read it beside evenness_within_2x_of_median and never alone.",
+ "blind_spots": [
+  "An ORF with no subject and no domain is unexplained, not non-coding: past about 20-30% identity sequence search is at the end of its reach and the instrument that still works is structure, which is not attempted here",
+  "pyrodigal in meta mode calls ORFs on ribosomal and other non-coding loci; an ORF is a prediction, not an observed protein",
+  "the contigs are the study authors' assembly, so each is already a consensus and hides within-sample strain mixtures below about 3.8% divergence",
+  "the control arm is near-reference contigs from this same assembly, which shares the assembler and the library with the test arm but not its divergence; it cannot control for anything the assembler does to divergent sequence specifically"
+ ],
+ "contigs_not_found_in_the_assembly": [],
+ "rows": [
+  {
+   "taxon": "Enterococcus faecium",
+   "on_the_panel": true,
+   "contig_nt": 690,
+   "whole_contig_subject": "YP_013610613.1",
+   "whole_contig_pident": 31.6,
+   "whole_contig_aln_aa": 231,
+   "whole_contig_evalue": 3.59e-17,
+   "divergence_class": "below any band a name survives",
+   "arm": "divergent",
+   "contig": "SRR34217566_NODE_27951_length_690_cov_2.0000_megahit_k141_15628",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 39.6,
+   "orf_identity_max": 39.6,
+   "coding_density": 0.994,
+   "read_support": {
+    "mapped_mean_depth": 2.58,
+    "mapped_median_depth": 2.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.8072,
+    "max_depth": 6
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_27951_length_690_cov_2.0000_megahit_k141_15628__orf1",
+     "start": 3,
+     "end": 689,
+     "strand": 1,
+     "aa_len": 229,
+     "partial": true,
+     "best_subject": "sp|P37367|ATA1_SYNY3",
+     "best_title": "sp|P37367|ATA1_SYNY3 Cation-transporting ATPase pma1 OS=Synechocystis sp. (strain ATCC 27184 / PCC 6803 / Kazusa) OX=1111708 GN=pma1 PE=3 SV=2",
+     "pident": 39.6,
+     "aln_aa": 240,
+     "evalue": 2.27e-39,
+     "significant": true,
+     "divergence_class": "below any band a name survives",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "Cation_ATPase",
+       "description": "P-type ATPase, cytoplasmic domain N"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 31.6
+  },
+  {
+   "taxon": "Pseudomonas aeruginosa",
+   "on_the_panel": true,
+   "contig_nt": 1057,
+   "whole_contig_subject": "YP_009611957.1",
+   "whole_contig_pident": 40.5,
+   "whole_contig_aln_aa": 291,
+   "whole_contig_evalue": 3.02e-63,
+   "divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
+   "arm": "divergent",
+   "contig": "SRR34217566_NODE_14482_length_1057_cov_5.0000_megahit_k141_19591",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 59.8,
+   "orf_identity_max": 59.8,
+   "coding_density": 0.998,
+   "read_support": {
+    "mapped_mean_depth": 11.76,
+    "mapped_median_depth": 11,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.7275,
+    "max_depth": 25
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_14482_length_1057_cov_5.0000_megahit_k141_19591__orf1",
+     "start": 2,
+     "end": 1057,
+     "strand": -1,
+     "aa_len": 352,
+     "partial": true,
+     "best_subject": "sp|Q7X2S8|CLPB_MEIRU",
+     "best_title": "sp|Q7X2S8|CLPB_MEIRU Chaperone protein ClpB OS=Meiothermus ruber OX=277 GN=clpB PE=3 SV=1",
+     "pident": 59.8,
+     "aln_aa": 296,
+     "evalue": 5.55e-115,
+     "significant": true,
+     "divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "AAA",
+       "description": "ATPase family associated with various cellular activities (AAA)"
+      },
+      {
+       "id": "AAA_2",
+       "description": "AAA domain (Cdc48 subfamily)"
+      },
+      {
+       "id": "AAA_5",
+       "description": "AAA domain (dynein-related subfamily)"
+      },
+      {
+       "id": "ClpB_D2-small",
+       "description": "C-terminal, D2-small domain, of ClpB protein"
+      },
+      {
+       "id": "Sigma54_activat",
+       "description": "Sigma-54 interaction domain"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 40.5
+  },
+  {
+   "taxon": "Mintuvirus pelovivens",
+   "on_the_panel": false,
+   "contig_nt": 1962,
+   "whole_contig_subject": "YP_010769234.1",
+   "whole_contig_pident": 48.0,
+   "whole_contig_aln_aa": 444,
+   "whole_contig_evalue": 1.7e-125,
+   "divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
+   "arm": "divergent",
+   "contig": "SRR34217566_NODE_26933_length_1962_cov_5.7908_megahit_k141_15491",
+   "orfs": 2,
+   "orfs_with_a_subject": 2,
+   "orfs_with_a_pfam_domain": 2,
+   "distinct_subjects_across_orfs": 2,
+   "polymerase_pident": 48.0,
+   "polymerase_divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
+   "orf_identity_spread_points": 6.4,
+   "orf_identity_min": 48.0,
+   "orf_identity_max": 54.4,
+   "coding_density": 0.95,
+   "read_support": {
+    "mapped_mean_depth": 25.73,
+    "mapped_median_depth": 21.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.7951,
+    "max_depth": 85
+   },
+   "subject_disagreement_flag": true,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_26933_length_1962_cov_5.7908_megahit_k141_15491__orf1",
+     "start": 3,
+     "end": 1457,
+     "strand": -1,
+     "aa_len": 485,
+     "partial": true,
+     "best_subject": "YP_010769234.1",
+     "best_title": "YP_010769234.1 RNA-directed RNA polymerase [ssRNA phage SRR5466729_1]",
+     "pident": 48.0,
+     "aln_aa": 444,
+     "evalue": 8.07e-128,
+     "significant": true,
+     "divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
+     "gene_role": "polymerase",
+     "pfam": [
+      {
+       "id": "RNA_replicase_B",
+       "description": "RNA replicase, beta-chain"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_26933_length_1962_cov_5.7908_megahit_k141_15491__orf2",
+     "start": 1462,
+     "end": 1872,
+     "strand": -1,
+     "aa_len": 136,
+     "partial": false,
+     "best_subject": "YP_010769926.1",
+     "best_title": "YP_010769926.1 coat protein [ssRNA phage SRR7976310_5]",
+     "pident": 54.4,
+     "aln_aa": 136,
+     "evalue": 1.55e-43,
+     "significant": true,
+     "divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
+     "gene_role": "coat",
+     "pfam": [
+      {
+       "id": "Levi_coat",
+       "description": "Levivirus coat protein"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 48.0
+  },
+  {
+   "taxon": "Gulmivirus asiohabitans",
+   "on_the_panel": false,
+   "contig_nt": 3686,
+   "whole_contig_subject": "YP_010770665.1",
+   "whole_contig_pident": 59.5,
+   "whole_contig_aln_aa": 642,
+   "whole_contig_evalue": 5.78e-250,
+   "divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
+   "arm": "divergent",
+   "contig": "SRR34217566_NODE_32004_length_3686_cov_17.0000_megahit_k141_39636",
+   "orfs": 3,
+   "orfs_with_a_subject": 3,
+   "orfs_with_a_pfam_domain": 2,
+   "distinct_subjects_across_orfs": 3,
+   "polymerase_pident": 59.5,
+   "polymerase_divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
+   "orf_identity_spread_points": 19.9,
+   "orf_identity_min": 52.0,
+   "orf_identity_max": 71.9,
+   "coding_density": 0.885,
+   "read_support": {
+    "mapped_mean_depth": 20.06,
+    "mapped_median_depth": 20.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.8226,
+    "max_depth": 52
+   },
+   "subject_disagreement_flag": true,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_32004_length_3686_cov_17.0000_megahit_k141_39636__orf1",
+     "start": 2,
+     "end": 1918,
+     "strand": -1,
+     "aa_len": 639,
+     "partial": true,
+     "best_subject": "YP_010770665.1",
+     "best_title": "YP_010770665.1 RNA-directed RNA polymerase [ssRNA phage SRR7976301_12]",
+     "pident": 59.5,
+     "aln_aa": 642,
+     "evalue": 8.47e-259,
+     "significant": true,
+     "divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
+     "gene_role": "polymerase",
+     "pfam": [
+      {
+       "id": "DUF24635",
+       "description": "Domain of unknown function (DUF24635)"
+      },
+      {
+       "id": "RNA_replicase_B",
+       "description": "RNA replicase, beta-chain"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_32004_length_3686_cov_17.0000_megahit_k141_39636__orf2",
+     "start": 2027,
+     "end": 2392,
+     "strand": -1,
+     "aa_len": 121,
+     "partial": false,
+     "best_subject": "YP_010770664.1",
+     "best_title": "YP_010770664.1 coat protein [ssRNA phage SRR7976301_12]",
+     "pident": 71.9,
+     "aln_aa": 121,
+     "evalue": 4.83e-56,
+     "significant": true,
+     "divergence_class": "same genus or thereabouts, not a strain",
+     "gene_role": "coat",
+     "pfam": [
+      {
+       "id": "PhiCb5_coat",
+       "description": "Phage phiCb5, coat protein"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_32004_length_3686_cov_17.0000_megahit_k141_39636__orf3",
+     "start": 2432,
+     "end": 3412,
+     "strand": -1,
+     "aa_len": 326,
+     "partial": false,
+     "best_subject": "YP_010770657.1",
+     "best_title": "YP_010770657.1 maturation protein [ssRNA phage SRR6960507_11]",
+     "pident": 52.0,
+     "aln_aa": 325,
+     "evalue": 4.5e-123,
+     "significant": true,
+     "divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
+     "gene_role": "maturation",
+     "pfam": []
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 59.5
+  },
+  {
+   "taxon": "Lohngkovirus caenicola",
+   "on_the_panel": false,
+   "contig_nt": 2082,
+   "whole_contig_subject": "YP_010769149.1",
+   "whole_contig_pident": 63.4,
+   "whole_contig_aln_aa": 555,
+   "whole_contig_evalue": 1.64e-252,
+   "divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
+   "arm": "divergent",
+   "contig": "SRR34217566_NODE_33081_length_2082_cov_6.0000_megahit_k141_16303",
+   "orfs": 2,
+   "orfs_with_a_subject": 2,
+   "orfs_with_a_pfam_domain": 2,
+   "distinct_subjects_across_orfs": 2,
+   "polymerase_pident": 63.4,
+   "polymerase_divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
+   "orf_identity_spread_points": 16.0,
+   "orf_identity_min": 63.4,
+   "orf_identity_max": 79.4,
+   "coding_density": 0.989,
+   "read_support": {
+    "mapped_mean_depth": 6.46,
+    "mapped_median_depth": 5.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.7128,
+    "max_depth": 22
+   },
+   "subject_disagreement_flag": true,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_33081_length_2082_cov_6.0000_megahit_k141_16303__orf1",
+     "start": 3,
+     "end": 398,
+     "strand": 1,
+     "aa_len": 131,
+     "partial": true,
+     "best_subject": "YP_010769153.1",
+     "best_title": "YP_010769153.1 coat protein [ssRNA phage ESE029]",
+     "pident": 79.4,
+     "aln_aa": 131,
+     "evalue": 2.11e-69,
+     "significant": true,
+     "divergence_class": "same genus or thereabouts, not a strain",
+     "gene_role": "coat",
+     "pfam": [
+      {
+       "id": "Levi_coat",
+       "description": "Levivirus coat protein"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_33081_length_2082_cov_6.0000_megahit_k141_16303__orf2",
+     "start": 410,
+     "end": 2074,
+     "strand": 1,
+     "aa_len": 554,
+     "partial": false,
+     "best_subject": "YP_010769149.1",
+     "best_title": "YP_010769149.1 RNA-directed RNA polymerase [ssRNA phage SRR7976299_11]",
+     "pident": 63.4,
+     "aln_aa": 555,
+     "evalue": 2.71e-254,
+     "significant": true,
+     "divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
+     "gene_role": "polymerase",
+     "pfam": [
+      {
+       "id": "RNA_replicase_B",
+       "description": "RNA replicase, beta-chain"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 63.4
+  },
+  {
+   "taxon": "Potexvirus pepini",
+   "on_the_panel": false,
+   "contig_nt": 744,
+   "whole_contig_subject": "NP_663724.1",
+   "whole_contig_pident": 72.1,
+   "whole_contig_aln_aa": 247,
+   "whole_contig_evalue": 3.37e-108,
+   "divergence_class": "same genus or thereabouts, not a strain",
+   "arm": "divergent",
+   "contig": "SRR34217566_NODE_39815_length_744_cov_3.0000_megahit_k141_28659",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 0,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": 72.1,
+   "polymerase_divergence_class": "same genus or thereabouts, not a strain",
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 72.1,
+   "orf_identity_max": 72.1,
+   "coding_density": 0.995,
+   "read_support": {
+    "mapped_mean_depth": 3.57,
+    "mapped_median_depth": 4.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.7823,
+    "max_depth": 8
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_39815_length_744_cov_3.0000_megahit_k141_28659__orf1",
+     "start": 2,
+     "end": 742,
+     "strand": 1,
+     "aa_len": 247,
+     "partial": true,
+     "best_subject": "NP_663724.1",
+     "best_title": "NP_663724.1 RNA dependent RNA polymerase [Pepino mosaic virus]",
+     "pident": 72.1,
+     "aln_aa": 247,
+     "evalue": 3.37e-108,
+     "significant": true,
+     "divergence_class": "same genus or thereabouts, not a strain",
+     "gene_role": "polymerase",
+     "pfam": []
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 72.1
+  },
+  {
+   "taxon": "Bicehmovirus",
+   "on_the_panel": false,
+   "contig_nt": 1960,
+   "whole_contig_subject": "YP_010771001.1",
+   "whole_contig_pident": 80.9,
+   "whole_contig_aln_aa": 371,
+   "whole_contig_evalue": 1.33e-215,
+   "divergence_class": "same genus or thereabouts, not a strain",
+   "arm": "divergent",
+   "contig": "SRR34217566_NODE_40065_length_1960_cov_9.0000_megahit_k141_5301",
+   "orfs": 3,
+   "orfs_with_a_subject": 3,
+   "orfs_with_a_pfam_domain": 2,
+   "distinct_subjects_across_orfs": 3,
+   "polymerase_pident": 80.9,
+   "polymerase_divergence_class": "same genus or thereabouts, not a strain",
+   "orf_identity_spread_points": 2.7,
+   "orf_identity_min": 80.9,
+   "orf_identity_max": 83.6,
+   "coding_density": 0.911,
+   "read_support": {
+    "mapped_mean_depth": 11.09,
+    "mapped_median_depth": 11.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.7082,
+    "max_depth": 26
+   },
+   "subject_disagreement_flag": true,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_40065_length_1960_cov_9.0000_megahit_k141_5301__orf1",
+     "start": 3,
+     "end": 1115,
+     "strand": -1,
+     "aa_len": 371,
+     "partial": true,
+     "best_subject": "YP_010771001.1",
+     "best_title": "YP_010771001.1 RNA-directed RNA polymerase [ssRNA phage SRR6255513_1]",
+     "pident": 80.9,
+     "aln_aa": 371,
+     "evalue": 3.46e-220,
+     "significant": true,
+     "divergence_class": "same genus or thereabouts, not a strain",
+     "gene_role": "polymerase",
+     "pfam": [
+      {
+       "id": "DUF24635",
+       "description": "Domain of unknown function (DUF24635)"
+      },
+      {
+       "id": "RNA_replicase_B",
+       "description": "RNA replicase, beta-chain"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_40065_length_1960_cov_9.0000_megahit_k141_5301__orf2",
+     "start": 1251,
+     "end": 1619,
+     "strand": -1,
+     "aa_len": 122,
+     "partial": false,
+     "best_subject": "YP_010771000.1",
+     "best_title": "YP_010771000.1 coat protein [ssRNA phage SRR6255513_1]",
+     "pident": 83.6,
+     "aln_aa": 122,
+     "evalue": 2.75e-69,
+     "significant": true,
+     "divergence_class": "same genus or thereabouts, not a strain",
+     "gene_role": "coat",
+     "pfam": [
+      {
+       "id": "PhiCb5_coat",
+       "description": "Phage phiCb5, coat protein"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_40065_length_1960_cov_9.0000_megahit_k141_5301__orf3",
+     "start": 1655,
+     "end": 1960,
+     "strand": -1,
+     "aa_len": 101,
+     "partial": true,
+     "best_subject": "YP_010770999.1",
+     "best_title": "YP_010770999.1 maturation protein [ssRNA phage SRR6255513_1]",
+     "pident": 83.0,
+     "aln_aa": 100,
+     "evalue": 4.73e-57,
+     "significant": true,
+     "divergence_class": "same genus or thereabouts, not a strain",
+     "gene_role": "maturation",
+     "pfam": []
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 80.9
+  },
+  {
+   "taxon": "Ulinhavirus borborohabitans",
+   "on_the_panel": false,
+   "contig_nt": 1111,
+   "whole_contig_subject": "YP_010769566.1",
+   "whole_contig_pident": 82.9,
+   "whole_contig_aln_aa": 369,
+   "whole_contig_evalue": 4.8e-232,
+   "divergence_class": "same genus or thereabouts, not a strain",
+   "arm": "divergent",
+   "contig": "SRR34217566_NODE_22217_length_1111_cov_4.0000_megahit_k141_14882",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": 82.9,
+   "polymerase_divergence_class": "same genus or thereabouts, not a strain",
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 82.9,
+   "orf_identity_max": 82.9,
+   "coding_density": 0.995,
+   "read_support": {
+    "mapped_mean_depth": 5.77,
+    "mapped_median_depth": 6,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.9037,
+    "max_depth": 10
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_22217_length_1111_cov_4.0000_megahit_k141_14882__orf1",
+     "start": 3,
+     "end": 1109,
+     "strand": -1,
+     "aa_len": 369,
+     "partial": true,
+     "best_subject": "YP_010769566.1",
+     "best_title": "YP_010769566.1 RNA-directed RNA polymerase [ssRNA phage SRR7976326_3]",
+     "pident": 82.9,
+     "aln_aa": 369,
+     "evalue": 4.8e-232,
+     "significant": true,
+     "divergence_class": "same genus or thereabouts, not a strain",
+     "gene_role": "polymerase",
+     "pfam": [
+      {
+       "id": "RNA_replicase_B",
+       "description": "RNA replicase, beta-chain"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 82.9
+  },
+  {
+   "taxon": "Bahdevuvirus caenivivens",
+   "on_the_panel": false,
+   "contig_nt": 1011,
+   "whole_contig_subject": "YP_010768694.1",
+   "whole_contig_pident": 83.6,
+   "whole_contig_aln_aa": 336,
+   "whole_contig_evalue": 1.93e-200,
+   "divergence_class": "same genus or thereabouts, not a strain",
+   "arm": "divergent",
+   "contig": "SRR34217566_NODE_26637_length_1011_cov_4.0000_megahit_k141_26928",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 83.6,
+   "orf_identity_max": 83.6,
+   "coding_density": 0.996,
+   "read_support": {
+    "mapped_mean_depth": 4.29,
+    "mapped_median_depth": 4,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.9941,
+    "max_depth": 9
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_26637_length_1011_cov_4.0000_megahit_k141_26928__orf1",
+     "start": 2,
+     "end": 1009,
+     "strand": 1,
+     "aa_len": 336,
+     "partial": true,
+     "best_subject": "YP_010768694.1",
+     "best_title": "YP_010768694.1 maturation protein [ssRNA phage SRR5466365_1]",
+     "pident": 83.6,
+     "aln_aa": 336,
+     "evalue": 1.93e-200,
+     "significant": true,
+     "divergence_class": "same genus or thereabouts, not a strain",
+     "gene_role": "maturation",
+     "pfam": [
+      {
+       "id": "Phage_mat-A",
+       "description": "Phage maturation protein"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 83.6
+  },
+  {
+   "taxon": "Kahnovirus copri",
+   "on_the_panel": false,
+   "contig_nt": 598,
+   "whole_contig_subject": "YP_010359490.1",
+   "whole_contig_pident": 85.6,
+   "whole_contig_aln_aa": 195,
+   "whole_contig_evalue": 4.63e-112,
+   "divergence_class": "same genus or thereabouts, not a strain",
+   "arm": "divergent",
+   "contig": "SRR34217566_NODE_21200_length_598_cov_2.0000_megahit_k141_20467",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 0,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 85.6,
+   "orf_identity_max": 85.6,
+   "coding_density": 0.997,
+   "read_support": {
+    "mapped_mean_depth": 2.9,
+    "mapped_median_depth": 3.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.9281,
+    "max_depth": 5
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_21200_length_598_cov_2.0000_megahit_k141_20467__orf1",
+     "start": 2,
+     "end": 598,
+     "strand": 1,
+     "aa_len": 199,
+     "partial": true,
+     "best_subject": "YP_010359490.1",
+     "best_title": "YP_010359490.1 hypothetical protein M1M51_gp023 [uncultured phage cr44_1]",
+     "pident": 85.6,
+     "aln_aa": 195,
+     "evalue": 4.63e-112,
+     "significant": true,
+     "divergence_class": "same genus or thereabouts, not a strain",
+     "gene_role": "other",
+     "pfam": []
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 85.6
+  },
+  {
+   "taxon": "Thiyevirus asiocola",
+   "on_the_panel": false,
+   "contig_nt": 3752,
+   "whole_contig_subject": "YP_010769956.1",
+   "whole_contig_pident": 86.0,
+   "whole_contig_aln_aa": 637,
+   "whole_contig_evalue": 0.0,
+   "divergence_class": "same genus or thereabouts, not a strain",
+   "arm": "divergent",
+   "contig": "SRR34217566_NODE_26037_length_3752_cov_42.0000_megahit_k141_26842",
+   "orfs": 3,
+   "orfs_with_a_subject": 3,
+   "orfs_with_a_pfam_domain": 3,
+   "distinct_subjects_across_orfs": 3,
+   "polymerase_pident": 86.0,
+   "polymerase_divergence_class": "same genus or thereabouts, not a strain",
+   "orf_identity_spread_points": 8.1,
+   "orf_identity_min": 84.8,
+   "orf_identity_max": 92.9,
+   "coding_density": 0.943,
+   "read_support": {
+    "mapped_mean_depth": 43.34,
+    "mapped_median_depth": 39.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.7505,
+    "max_depth": 112
+   },
+   "subject_disagreement_flag": true,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_26037_length_3752_cov_42.0000_megahit_k141_26842__orf1",
+     "start": 43,
+     "end": 1956,
+     "strand": -1,
+     "aa_len": 637,
+     "partial": false,
+     "best_subject": "YP_010769956.1",
+     "best_title": "YP_010769956.1 RNA-directed RNA polymerase [ssRNA phage SRR6960509_10]",
+     "pident": 86.0,
+     "aln_aa": 637,
+     "evalue": 0.0,
+     "significant": true,
+     "divergence_class": "same genus or thereabouts, not a strain",
+     "gene_role": "polymerase",
+     "pfam": [
+      {
+       "id": "RNA_replicase_B",
+       "description": "RNA replicase, beta-chain"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_26037_length_3752_cov_42.0000_megahit_k141_26842__orf2",
+     "start": 2018,
+     "end": 2401,
+     "strand": -1,
+     "aa_len": 127,
+     "partial": false,
+     "best_subject": "YP_010769955.1",
+     "best_title": "YP_010769955.1 coat protein [ssRNA phage SRR6960509_10]",
+     "pident": 92.9,
+     "aln_aa": 127,
+     "evalue": 1.28e-79,
+     "significant": true,
+     "divergence_class": "divergent strain of the named taxon",
+     "gene_role": "coat",
+     "pfam": [
+      {
+       "id": "Levi_coat",
+       "description": "Levivirus coat protein"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_26037_length_3752_cov_42.0000_megahit_k141_26842__orf3",
+     "start": 2428,
+     "end": 3672,
+     "strand": -1,
+     "aa_len": 414,
+     "partial": false,
+     "best_subject": "YP_010769954.1",
+     "best_title": "YP_010769954.1 maturation protein [ssRNA phage SRR6960509_10]",
+     "pident": 84.8,
+     "aln_aa": 414,
+     "evalue": 9.6e-263,
+     "significant": true,
+     "divergence_class": "same genus or thereabouts, not a strain",
+     "gene_role": "maturation",
+     "pfam": [
+      {
+       "id": "Phage_mat-A",
+       "description": "Phage maturation protein"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 86.0
+  },
+  {
+   "taxon": "Carlavirus sigmasolani",
+   "on_the_panel": false,
+   "contig_nt": 890,
+   "whole_contig_subject": "YP_277428.1",
+   "whole_contig_pident": 86.1,
+   "whole_contig_aln_aa": 296,
+   "whole_contig_evalue": 3.2e-173,
+   "divergence_class": "same genus or thereabouts, not a strain",
+   "arm": "divergent",
+   "contig": "SRR34217566_NODE_35225_length_890_cov_2.0000_megahit_k141_45820",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 0,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": 86.1,
+   "polymerase_divergence_class": "same genus or thereabouts, not a strain",
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 86.1,
+   "orf_identity_max": 86.1,
+   "coding_density": 0.997,
+   "read_support": {
+    "mapped_mean_depth": 2.13,
+    "mapped_median_depth": 2.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 1.0,
+    "max_depth": 3
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_35225_length_890_cov_2.0000_megahit_k141_45820__orf1",
+     "start": 3,
+     "end": 890,
+     "strand": -1,
+     "aa_len": 296,
+     "partial": true,
+     "best_subject": "YP_277428.1",
+     "best_title": "YP_277428.1 RNA-directed RNA polymerase [Potato virus S]",
+     "pident": 86.1,
+     "aln_aa": 296,
+     "evalue": 3.2e-173,
+     "significant": true,
+     "divergence_class": "same genus or thereabouts, not a strain",
+     "gene_role": "polymerase",
+     "pfam": []
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 86.1
+  },
+  {
+   "taxon": "Alphanodavirus boolarraense",
+   "on_the_panel": false,
+   "contig_nt": 1028,
+   "whole_contig_subject": "NP_689439.1",
+   "whole_contig_pident": 87.7,
+   "whole_contig_aln_aa": 341,
+   "whole_contig_evalue": 2.56e-225,
+   "divergence_class": "same genus or thereabouts, not a strain",
+   "arm": "divergent",
+   "contig": "SRR34217566_NODE_6468_length_1028_cov_3.0000_megahit_k141_18548",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 87.7,
+   "orf_identity_max": 87.7,
+   "coding_density": 0.997,
+   "read_support": {
+    "mapped_mean_depth": 4.19,
+    "mapped_median_depth": 4.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.787,
+    "max_depth": 11
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_6468_length_1028_cov_3.0000_megahit_k141_18548__orf1",
+     "start": 2,
+     "end": 1027,
+     "strand": 1,
+     "aa_len": 342,
+     "partial": true,
+     "best_subject": "NP_689439.1",
+     "best_title": "NP_689439.1 protein A [Boolarra virus]",
+     "pident": 87.7,
+     "aln_aa": 341,
+     "evalue": 2.56e-225,
+     "significant": true,
+     "divergence_class": "same genus or thereabouts, not a strain",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "Noda_Vmethyltr",
+       "description": "Nodavirus Vmethyltransferase"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 87.7
+  },
+  {
+   "taxon": "Asinivirinae",
+   "on_the_panel": false,
+   "contig_nt": 691,
+   "whole_contig_subject": "YP_010359447.1",
+   "whole_contig_pident": 88.3,
+   "whole_contig_aln_aa": 230,
+   "whole_contig_evalue": 7.95e-144,
+   "divergence_class": "same genus or thereabouts, not a strain",
+   "arm": "divergent",
+   "contig": "SRR34217566_NODE_30567_length_691_cov_2.0000_megahit_k141_27446",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 88.0,
+   "orf_identity_max": 88.0,
+   "coding_density": 0.689,
+   "read_support": {
+    "mapped_mean_depth": 3.32,
+    "mapped_median_depth": 2,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.7236,
+    "max_depth": 11
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_30567_length_691_cov_2.0000_megahit_k141_27446__orf2",
+     "start": 214,
+     "end": 690,
+     "strand": -1,
+     "aa_len": 158,
+     "partial": true,
+     "best_subject": "YP_010359447.1",
+     "best_title": "YP_010359447.1 major head protein [uncultured phage cr44_1]",
+     "pident": 88.0,
+     "aln_aa": 158,
+     "evalue": 8.21e-96,
+     "significant": true,
+     "divergence_class": "same genus or thereabouts, not a strain",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "Crass_capsid",
+       "description": "Crassvirus major capsid protein"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 88.3
+  },
+  {
+   "taxon": "Trotivirus neoasiovicinum",
+   "on_the_panel": false,
+   "contig_nt": 2711,
+   "whole_contig_subject": "YP_010769564.1",
+   "whole_contig_pident": 80.2,
+   "whole_contig_aln_aa": 445,
+   "whole_contig_evalue": 8.05e-264,
+   "divergence_class": "same genus or thereabouts, not a strain",
+   "arm": "divergent",
+   "contig": "SRR34217566_NODE_3647_length_2711_cov_7.0000_megahit_k141_482",
+   "orfs": 3,
+   "orfs_with_a_subject": 3,
+   "orfs_with_a_pfam_domain": 2,
+   "distinct_subjects_across_orfs": 3,
+   "polymerase_pident": 89.3,
+   "polymerase_divergence_class": "same genus or thereabouts, not a strain",
+   "orf_identity_spread_points": 9.1,
+   "orf_identity_min": 80.2,
+   "orf_identity_max": 89.3,
+   "coding_density": 0.931,
+   "read_support": {
+    "mapped_mean_depth": 7.71,
+    "mapped_median_depth": 8,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.7248,
+    "max_depth": 24
+   },
+   "subject_disagreement_flag": true,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_3647_length_2711_cov_7.0000_megahit_k141_482__orf1",
+     "start": 57,
+     "end": 1397,
+     "strand": 1,
+     "aa_len": 446,
+     "partial": false,
+     "best_subject": "YP_010769564.1",
+     "best_title": "YP_010769564.1 maturation protein [ssRNA phage SRR7976326_3]",
+     "pident": 80.2,
+     "aln_aa": 445,
+     "evalue": 5.78e-271,
+     "significant": true,
+     "divergence_class": "same genus or thereabouts, not a strain",
+     "gene_role": "maturation",
+     "pfam": [
+      {
+       "id": "Phage_mat-A",
+       "description": "Phage maturation protein"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_3647_length_2711_cov_7.0000_megahit_k141_482__orf2",
+     "start": 1472,
+     "end": 1924,
+     "strand": 1,
+     "aa_len": 150,
+     "partial": false,
+     "best_subject": "YP_010769565.1",
+     "best_title": "YP_010769565.1 coat protein [ssRNA phage SRR7976326_3]",
+     "pident": 88.0,
+     "aln_aa": 150,
+     "evalue": 2.03e-87,
+     "significant": true,
+     "divergence_class": "same genus or thereabouts, not a strain",
+     "gene_role": "coat",
+     "pfam": [
+      {
+       "id": "Levi_coat",
+       "description": "Levivirus coat protein"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_3647_length_2711_cov_7.0000_megahit_k141_482__orf3",
+     "start": 1978,
+     "end": 2709,
+     "strand": 1,
+     "aa_len": 244,
+     "partial": true,
+     "best_subject": "YP_010769566.1",
+     "best_title": "YP_010769566.1 RNA-directed RNA polymerase [ssRNA phage SRR7976326_3]",
+     "pident": 89.3,
+     "aln_aa": 244,
+     "evalue": 1.25e-152,
+     "significant": true,
+     "divergence_class": "same genus or thereabouts, not a strain",
+     "gene_role": "polymerase",
+     "pfam": []
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 89.3
+  },
+  {
+   "taxon": "Tobamovirus mititessellati",
+   "on_the_panel": false,
+   "contig_nt": 1063,
+   "whole_contig_subject": "NP_062913.2",
+   "whole_contig_pident": 95.2,
+   "whole_contig_aln_aa": 353,
+   "whole_contig_evalue": 1.78e-232,
+   "divergence_class": "divergent strain of the named taxon",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_23138_length_1063_cov_4.0000_megahit_k141_26532",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 95.2,
+   "orf_identity_max": 95.2,
+   "coding_density": 0.998,
+   "read_support": {
+    "mapped_mean_depth": 5.42,
+    "mapped_median_depth": 5,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.6698,
+    "max_depth": 13
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_23138_length_1063_cov_4.0000_megahit_k141_26532__orf1",
+     "start": 2,
+     "end": 1063,
+     "strand": -1,
+     "aa_len": 354,
+     "partial": true,
+     "best_subject": "NP_062913.2",
+     "best_title": "NP_062913.2 183 kDa protein [Tobacco mild green mosaic virus]",
+     "pident": 95.2,
+     "aln_aa": 353,
+     "evalue": 1.78e-232,
+     "significant": true,
+     "divergence_class": "divergent strain of the named taxon",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "RdRP_2",
+       "description": "RNA dependent RNA polymerase"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 95.2
+  },
+  {
+   "taxon": "Tobamovirus mititessellati",
+   "on_the_panel": false,
+   "contig_nt": 940,
+   "whole_contig_subject": "NP_062914.1",
+   "whole_contig_pident": 95.5,
+   "whole_contig_aln_aa": 312,
+   "whole_contig_evalue": 4.64e-200,
+   "divergence_class": "divergent strain of the named taxon",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_25777_length_940_cov_6.0000_megahit_k141_3436",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 95.5,
+   "orf_identity_max": 95.5,
+   "coding_density": 0.998,
+   "read_support": {
+    "mapped_mean_depth": 6.8,
+    "mapped_median_depth": 7.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.7872,
+    "max_depth": 15
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_25777_length_940_cov_6.0000_megahit_k141_3436__orf1",
+     "start": 2,
+     "end": 940,
+     "strand": 1,
+     "aa_len": 313,
+     "partial": true,
+     "best_subject": "NP_062914.1",
+     "best_title": "NP_062914.1 126 kDa protein [Tobacco mild green mosaic virus]",
+     "pident": 95.5,
+     "aln_aa": 312,
+     "evalue": 4.64e-200,
+     "significant": true,
+     "divergence_class": "divergent strain of the named taxon",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "Viral_helicase1",
+       "description": "Viral superfamily 1 RNA helicase core domain"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 95.5
+  },
+  {
+   "taxon": "Kinglevirus lutadaptatum",
+   "on_the_panel": false,
+   "contig_nt": 1233,
+   "whole_contig_subject": "YP_010770835.1",
+   "whole_contig_pident": 95.6,
+   "whole_contig_aln_aa": 316,
+   "whole_contig_evalue": 4.15e-225,
+   "divergence_class": "divergent strain of the named taxon",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_2436_length_1233_cov_4.0000_megahit_k141_329",
+   "orfs": 2,
+   "orfs_with_a_subject": 2,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 2,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 95.6,
+   "orf_identity_max": 95.6,
+   "coding_density": 0.921,
+   "read_support": {
+    "mapped_mean_depth": 5.54,
+    "mapped_median_depth": 5,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.6383,
+    "max_depth": 15
+   },
+   "subject_disagreement_flag": true,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_2436_length_1233_cov_4.0000_megahit_k141_329__orf1",
+     "start": 24,
+     "end": 197,
+     "strand": -1,
+     "aa_len": 57,
+     "partial": false,
+     "best_subject": "YP_010770836.1",
+     "best_title": "YP_010770836.1 coat protein [ssRNA phage SRR5466337_3]",
+     "pident": 98.2,
+     "aln_aa": 57,
+     "evalue": 3.59e-34,
+     "significant": false,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "coat",
+     "pfam": [
+      {
+       "id": "PhiCb5_coat",
+       "description": "Phage phiCb5, coat protein"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_2436_length_1233_cov_4.0000_megahit_k141_329__orf2",
+     "start": 271,
+     "end": 1233,
+     "strand": -1,
+     "aa_len": 320,
+     "partial": true,
+     "best_subject": "YP_010770835.1",
+     "best_title": "YP_010770835.1 maturation protein [ssRNA phage SRR5466337_3]",
+     "pident": 95.6,
+     "aln_aa": 316,
+     "evalue": 4.52e-226,
+     "significant": true,
+     "divergence_class": "divergent strain of the named taxon",
+     "gene_role": "maturation",
+     "pfam": []
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 95.6
+  },
+  {
+   "taxon": "Tobamovirus mititessellati",
+   "on_the_panel": false,
+   "contig_nt": 942,
+   "whole_contig_subject": "NP_062915.1",
+   "whole_contig_pident": 95.9,
+   "whole_contig_aln_aa": 219,
+   "whole_contig_evalue": 2.66e-145,
+   "divergence_class": "divergent strain of the named taxon",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_3756_length_942_cov_8.0000_megahit_k141_6370",
+   "orfs": 2,
+   "orfs_with_a_subject": 2,
+   "orfs_with_a_pfam_domain": 2,
+   "distinct_subjects_across_orfs": 2,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": 1.0,
+   "orf_identity_min": 95.9,
+   "orf_identity_max": 96.9,
+   "coding_density": 1.007,
+   "read_support": {
+    "mapped_mean_depth": 10.67,
+    "mapped_median_depth": 10.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.8408,
+    "max_depth": 23
+   },
+   "subject_disagreement_flag": true,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_3756_length_942_cov_8.0000_megahit_k141_6370__orf1",
+     "start": 1,
+     "end": 657,
+     "strand": -1,
+     "aa_len": 219,
+     "partial": true,
+     "best_subject": "NP_062915.1",
+     "best_title": "NP_062915.1 28.5 kDa protein [Tobacco mild green mosaic virus]",
+     "pident": 95.9,
+     "aln_aa": 219,
+     "evalue": 6.27e-147,
+     "significant": true,
+     "divergence_class": "divergent strain of the named taxon",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "MP",
+       "description": "Viral movement protein (MP)"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_3756_length_942_cov_8.0000_megahit_k141_6370__orf2",
+     "start": 647,
+     "end": 940,
+     "strand": -1,
+     "aa_len": 97,
+     "partial": true,
+     "best_subject": "NP_062913.2",
+     "best_title": "NP_062913.2 183 kDa protein [Tobacco mild green mosaic virus]",
+     "pident": 96.9,
+     "aln_aa": 98,
+     "evalue": 8.5e-59,
+     "significant": true,
+     "divergence_class": "divergent strain of the named taxon",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "RdRP_2",
+       "description": "RNA dependent RNA polymerase"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 95.9
+  },
+  {
+   "taxon": "Tobamovirus tabaci",
+   "on_the_panel": false,
+   "contig_nt": 657,
+   "whole_contig_subject": "NP_597748.1",
+   "whole_contig_pident": 95.9,
+   "whole_contig_aln_aa": 217,
+   "whole_contig_evalue": 1.31e-146,
+   "divergence_class": "divergent strain of the named taxon",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_28767_length_657_cov_1.0000_megahit_k141_39227",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 95.9,
+   "orf_identity_max": 95.9,
+   "coding_density": 0.994,
+   "read_support": {
+    "mapped_mean_depth": 2.24,
+    "mapped_median_depth": 2,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 1.0,
+    "max_depth": 4
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_28767_length_657_cov_1.0000_megahit_k141_39227__orf1",
+     "start": 3,
+     "end": 656,
+     "strand": 1,
+     "aa_len": 218,
+     "partial": true,
+     "best_subject": "NP_597748.1",
+     "best_title": "NP_597748.1 Movement protein [Tobacco mosaic virus]",
+     "pident": 95.9,
+     "aln_aa": 217,
+     "evalue": 1.31e-146,
+     "significant": true,
+     "divergence_class": "divergent strain of the named taxon",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "MP",
+       "description": "Viral movement protein (MP)"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 95.9
+  },
+  {
+   "taxon": "Fahrmivirus caenivivens",
+   "on_the_panel": false,
+   "contig_nt": 1294,
+   "whole_contig_subject": "YP_010770063.1",
+   "whole_contig_pident": 96.1,
+   "whole_contig_aln_aa": 311,
+   "whole_contig_evalue": 4.56e-209,
+   "divergence_class": "divergent strain of the named taxon",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_26961_length_1294_cov_4.0000_megahit_k141_15494",
+   "orfs": 2,
+   "orfs_with_a_subject": 2,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 2,
+   "polymerase_pident": 96.1,
+   "polymerase_divergence_class": "divergent strain of the named taxon",
+   "orf_identity_spread_points": 2.6,
+   "orf_identity_min": 96.1,
+   "orf_identity_max": 98.7,
+   "coding_density": 0.905,
+   "read_support": {
+    "mapped_mean_depth": 5.61,
+    "mapped_median_depth": 6.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.9266,
+    "max_depth": 11
+   },
+   "subject_disagreement_flag": true,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_26961_length_1294_cov_4.0000_megahit_k141_15494__orf1",
+     "start": 1,
+     "end": 240,
+     "strand": 1,
+     "aa_len": 79,
+     "partial": true,
+     "best_subject": "YP_010770062.1",
+     "best_title": "YP_010770062.1 coat protein [ssRNA phage SRR6960509_14]",
+     "pident": 98.7,
+     "aln_aa": 79,
+     "evalue": 1.55e-45,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "coat",
+     "pfam": []
+    },
+    {
+     "orf": "SRR34217566_NODE_26961_length_1294_cov_4.0000_megahit_k141_15494__orf2",
+     "start": 361,
+     "end": 1293,
+     "strand": 1,
+     "aa_len": 311,
+     "partial": true,
+     "best_subject": "YP_010770063.1",
+     "best_title": "YP_010770063.1 RNA-directed RNA polymerase [ssRNA phage SRR6960509_14]",
+     "pident": 96.1,
+     "aln_aa": 311,
+     "evalue": 1.14e-210,
+     "significant": true,
+     "divergence_class": "divergent strain of the named taxon",
+     "gene_role": "polymerase",
+     "pfam": [
+      {
+       "id": "RNA_replicase_B",
+       "description": "RNA replicase, beta-chain"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 96.1
+  },
+  {
+   "taxon": "Ashucavirus caenivicinum",
+   "on_the_panel": false,
+   "contig_nt": 3335,
+   "whole_contig_subject": "YP_010769077.1",
+   "whole_contig_pident": 96.2,
+   "whole_contig_aln_aa": 572,
+   "whole_contig_evalue": 0.0,
+   "divergence_class": "divergent strain of the named taxon",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_29704_length_3335_cov_17.0000_megahit_k141_27333",
+   "orfs": 3,
+   "orfs_with_a_subject": 3,
+   "orfs_with_a_pfam_domain": 3,
+   "distinct_subjects_across_orfs": 3,
+   "polymerase_pident": 96.2,
+   "polymerase_divergence_class": "divergent strain of the named taxon",
+   "orf_identity_spread_points": 1.4,
+   "orf_identity_min": 96.2,
+   "orf_identity_max": 97.6,
+   "coding_density": 0.976,
+   "read_support": {
+    "mapped_mean_depth": 20.05,
+    "mapped_median_depth": 18,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.7718,
+    "max_depth": 61
+   },
+   "subject_disagreement_flag": true,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_29704_length_3335_cov_17.0000_megahit_k141_27333__orf1",
+     "start": 2,
+     "end": 1717,
+     "strand": -1,
+     "aa_len": 572,
+     "partial": true,
+     "best_subject": "YP_010769077.1",
+     "best_title": "YP_010769077.1 RNA-directed RNA polymerase [ssRNA phage SRR7976357_8]",
+     "pident": 96.2,
+     "aln_aa": 572,
+     "evalue": 0.0,
+     "significant": true,
+     "divergence_class": "divergent strain of the named taxon",
+     "gene_role": "polymerase",
+     "pfam": [
+      {
+       "id": "RNA_replicase_B",
+       "description": "RNA replicase, beta-chain"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_29704_length_3335_cov_17.0000_megahit_k141_27333__orf2",
+     "start": 1772,
+     "end": 2152,
+     "strand": -1,
+     "aa_len": 126,
+     "partial": false,
+     "best_subject": "YP_010769076.1",
+     "best_title": "YP_010769076.1 coat protein [ssRNA phage SRR7976357_8]",
+     "pident": 97.6,
+     "aln_aa": 126,
+     "evalue": 2.13e-82,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "coat",
+     "pfam": [
+      {
+       "id": "Levi_coat",
+       "description": "Levivirus coat protein"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_29704_length_3335_cov_17.0000_megahit_k141_27333__orf3",
+     "start": 2175,
+     "end": 3335,
+     "strand": -1,
+     "aa_len": 386,
+     "partial": true,
+     "best_subject": "YP_010769075.1",
+     "best_title": "YP_010769075.1 maturation protein, partial [ssRNA phage SRR7976357_8]",
+     "pident": 96.6,
+     "aln_aa": 383,
+     "evalue": 1.11e-280,
+     "significant": true,
+     "divergence_class": "divergent strain of the named taxon",
+     "gene_role": "maturation",
+     "pfam": [
+      {
+       "id": "Phage_mat-A",
+       "description": "Phage maturation protein"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 96.2
+  },
+  {
+   "taxon": "Grendvuvirus asiocola",
+   "on_the_panel": false,
+   "contig_nt": 1658,
+   "whole_contig_subject": "YP_010771401.1",
+   "whole_contig_pident": 96.3,
+   "whole_contig_aln_aa": 489,
+   "whole_contig_evalue": 0.0,
+   "divergence_class": "divergent strain of the named taxon",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_13782_length_1658_cov_5.0000_megahit_k141_25361",
+   "orfs": 3,
+   "orfs_with_a_subject": 3,
+   "orfs_with_a_pfam_domain": 2,
+   "distinct_subjects_across_orfs": 2,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": 3.6,
+   "orf_identity_min": 93.8,
+   "orf_identity_max": 97.4,
+   "coding_density": 0.908,
+   "read_support": {
+    "mapped_mean_depth": 5.64,
+    "mapped_median_depth": 6.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.8474,
+    "max_depth": 11
+   },
+   "subject_disagreement_flag": true,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_13782_length_1658_cov_5.0000_megahit_k141_25361__orf1",
+     "start": 3,
+     "end": 158,
+     "strand": -1,
+     "aa_len": 52,
+     "partial": true,
+     "best_subject": "YP_010771402.1",
+     "best_title": "YP_010771402.1 coat protein [ssRNA phage SRR5466725_16]",
+     "pident": 94.2,
+     "aln_aa": 52,
+     "evalue": 3.46e-26,
+     "significant": false,
+     "divergence_class": "divergent strain of the named taxon",
+     "gene_role": "coat",
+     "pfam": [
+      {
+       "id": "Levi_coat",
+       "description": "Levivirus coat protein"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_13782_length_1658_cov_5.0000_megahit_k141_25361__orf2",
+     "start": 187,
+     "end": 1101,
+     "strand": -1,
+     "aa_len": 304,
+     "partial": false,
+     "best_subject": "YP_010771401.1",
+     "best_title": "YP_010771401.1 maturation protein [ssRNA phage SRR5466725_16]",
+     "pident": 97.4,
+     "aln_aa": 304,
+     "evalue": 9.05e-213,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "maturation",
+     "pfam": [
+      {
+       "id": "Phage_mat-A",
+       "description": "Phage maturation protein"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_13782_length_1658_cov_5.0000_megahit_k141_25361__orf3",
+     "start": 1219,
+     "end": 1656,
+     "strand": -1,
+     "aa_len": 145,
+     "partial": true,
+     "best_subject": "YP_010771401.1",
+     "best_title": "YP_010771401.1 maturation protein [ssRNA phage SRR5466725_16]",
+     "pident": 93.8,
+     "aln_aa": 145,
+     "evalue": 2.44e-90,
+     "significant": true,
+     "divergence_class": "divergent strain of the named taxon",
+     "gene_role": "maturation",
+     "pfam": []
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 96.3
+  },
+  {
+   "taxon": "Ulinhavirus borborovivens",
+   "on_the_panel": false,
+   "contig_nt": 804,
+   "whole_contig_subject": "YP_010769746.1",
+   "whole_contig_pident": 97.3,
+   "whole_contig_aln_aa": 264,
+   "whole_contig_evalue": 7.84e-195,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_19694_length_804_cov_3.0000_megahit_k141_32108",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": 97.3,
+   "polymerase_divergence_class": "reference or near-reference",
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 97.3,
+   "orf_identity_max": 97.3,
+   "coding_density": 0.988,
+   "read_support": {
+    "mapped_mean_depth": 4.02,
+    "mapped_median_depth": 3.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.6891,
+    "max_depth": 11
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_19694_length_804_cov_3.0000_megahit_k141_32108__orf1",
+     "start": 10,
+     "end": 804,
+     "strand": -1,
+     "aa_len": 264,
+     "partial": true,
+     "best_subject": "YP_010769746.1",
+     "best_title": "YP_010769746.1 RNA-directed RNA polymerase [ssRNA phage SRR6960803_6]",
+     "pident": 97.3,
+     "aln_aa": 264,
+     "evalue": 9.45e-195,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "polymerase",
+     "pfam": [
+      {
+       "id": "RNA_replicase_B",
+       "description": "RNA replicase, beta-chain"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 97.3
+  },
+  {
+   "taxon": "Tobamovirus viridimaculae",
+   "on_the_panel": false,
+   "contig_nt": 6211,
+   "whole_contig_subject": "NP_044577.1",
+   "whole_contig_pident": 97.6,
+   "whole_contig_aln_aa": 1648,
+   "whole_contig_evalue": 0.0,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_7547_length_6211_cov_18.0000_megahit_k141_42290",
+   "orfs": 4,
+   "orfs_with_a_subject": 4,
+   "orfs_with_a_pfam_domain": 4,
+   "distinct_subjects_across_orfs": 3,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": 0.9,
+   "orf_identity_min": 97.6,
+   "orf_identity_max": 98.5,
+   "coding_density": 0.982,
+   "read_support": {
+    "mapped_mean_depth": 28.68,
+    "mapped_median_depth": 28,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.7678,
+    "max_depth": 77
+   },
+   "subject_disagreement_flag": true,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_7547_length_6211_cov_18.0000_megahit_k141_42290__orf1",
+     "start": 1,
+     "end": 435,
+     "strand": -1,
+     "aa_len": 145,
+     "partial": true,
+     "best_subject": "NP_044580.1",
+     "best_title": "NP_044580.1 coat protein [Cucumber green mottle mosaic virus]",
+     "pident": 97.9,
+     "aln_aa": 145,
+     "evalue": 2.73e-93,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "coat",
+     "pfam": [
+      {
+       "id": "TMV_coat",
+       "description": "Virus coat protein (TMV like)"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_7547_length_6211_cov_18.0000_megahit_k141_42290__orf2",
+     "start": 410,
+     "end": 1204,
+     "strand": -1,
+     "aa_len": 264,
+     "partial": false,
+     "best_subject": "sp|P19522|MVP_CGMVW",
+     "best_title": "sp|P19522|MVP_CGMVW Movement protein OS=Cucumber green mottle mosaic virus (strain watermelon W) OX=12237 GN=MP PE=3 SV=1",
+     "pident": 98.5,
+     "aln_aa": 264,
+     "evalue": 1.5e-178,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "MP",
+       "description": "Viral movement protein (MP)"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_7547_length_6211_cov_18.0000_megahit_k141_42290__orf3",
+     "start": 1191,
+     "end": 2627,
+     "strand": -1,
+     "aa_len": 478,
+     "partial": false,
+     "best_subject": "NP_044577.1",
+     "best_title": "NP_044577.1 186K protein [Cucumber green mottle mosaic virus]",
+     "pident": 98.3,
+     "aln_aa": 478,
+     "evalue": 0.0,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "RdRP_2",
+       "description": "RNA dependent RNA polymerase"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_7547_length_6211_cov_18.0000_megahit_k141_42290__orf4",
+     "start": 2703,
+     "end": 6137,
+     "strand": -1,
+     "aa_len": 1144,
+     "partial": false,
+     "best_subject": "NP_044577.1",
+     "best_title": "NP_044577.1 186K protein [Cucumber green mottle mosaic virus]",
+     "pident": 97.6,
+     "aln_aa": 1144,
+     "evalue": 0.0,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "Chropara_Vmeth",
+       "description": "Chroparavirus methyltransferase"
+      },
+      {
+       "id": "Viral_helicase1",
+       "description": "Viral superfamily 1 RNA helicase core domain"
+      },
+      {
+       "id": "Vmethyltransf",
+       "description": "Viral methyltransferase"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 97.6
+  },
+  {
+   "taxon": "Wenzhou picorna-like virus 47",
+   "on_the_panel": false,
+   "contig_nt": 7695,
+   "whole_contig_subject": "YP_009337399.1",
+   "whole_contig_pident": 98.0,
+   "whole_contig_aln_aa": 2558,
+   "whole_contig_evalue": 0.0,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_17008_length_7695_cov_7.0000_megahit_k141_25749",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 98.0,
+   "orf_identity_max": 98.0,
+   "coding_density": 0.989,
+   "read_support": {
+    "mapped_mean_depth": 7.49,
+    "mapped_median_depth": 7,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.7739,
+    "max_depth": 22
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_17008_length_7695_cov_7.0000_megahit_k141_25749__orf1",
+     "start": 3,
+     "end": 7613,
+     "strand": -1,
+     "aa_len": 2537,
+     "partial": true,
+     "best_subject": "YP_009337399.1",
+     "best_title": "YP_009337399.1 hypothetical protein [Wenzhou picorna-like virus 47]",
+     "pident": 98.0,
+     "aln_aa": 2558,
+     "evalue": 0.0,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "RdRP_1",
+       "description": "Viral RNA-dependent RNA polymerase"
+      },
+      {
+       "id": "RNA_helicase",
+       "description": "RNA helicase"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 98.0
+  },
+  {
+   "taxon": "Carlavirus sigmasolani",
+   "on_the_panel": false,
+   "contig_nt": 604,
+   "whole_contig_subject": "YP_277428.1",
+   "whole_contig_pident": 98.0,
+   "whole_contig_aln_aa": 201,
+   "whole_contig_evalue": 6.63e-128,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_26414_length_604_cov_2.0000_megahit_k141_38907",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 0,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": 98.0,
+   "polymerase_divergence_class": "reference or near-reference",
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 98.0,
+   "orf_identity_max": 98.0,
+   "coding_density": 0.997,
+   "read_support": {
+    "mapped_mean_depth": 3.72,
+    "mapped_median_depth": 3.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.6738,
+    "max_depth": 9
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_26414_length_604_cov_2.0000_megahit_k141_38907__orf1",
+     "start": 1,
+     "end": 603,
+     "strand": 1,
+     "aa_len": 201,
+     "partial": true,
+     "best_subject": "YP_277428.1",
+     "best_title": "YP_277428.1 RNA-directed RNA polymerase [Potato virus S]",
+     "pident": 98.0,
+     "aln_aa": 201,
+     "evalue": 6.63e-128,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "polymerase",
+     "pfam": []
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 98.0
+  },
+  {
+   "taxon": "Tobamovirus mititessellati",
+   "on_the_panel": false,
+   "contig_nt": 1447,
+   "whole_contig_subject": "NP_062913.2",
+   "whole_contig_pident": 98.1,
+   "whole_contig_aln_aa": 481,
+   "whole_contig_evalue": 0.0,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_33394_length_1447_cov_4.0000_megahit_k141_27807",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 98.1,
+   "orf_identity_max": 98.1,
+   "coding_density": 0.999,
+   "read_support": {
+    "mapped_mean_depth": 4.77,
+    "mapped_median_depth": 5,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.9337,
+    "max_depth": 8
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_33394_length_1447_cov_4.0000_megahit_k141_27807__orf1",
+     "start": 2,
+     "end": 1447,
+     "strand": -1,
+     "aa_len": 482,
+     "partial": true,
+     "best_subject": "NP_062913.2",
+     "best_title": "NP_062913.2 183 kDa protein [Tobacco mild green mosaic virus]",
+     "pident": 98.1,
+     "aln_aa": 481,
+     "evalue": 0.0,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "ToMV_Hel_N",
+       "description": "Tomato mosaic virus helicase, N-terminal domain"
+      },
+      {
+       "id": "Vmethyltransf",
+       "description": "Viral methyltransferase"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 98.1
+  },
+  {
+   "taxon": "Kinglevirus lutadaptatum",
+   "on_the_panel": false,
+   "contig_nt": 670,
+   "whole_contig_subject": "YP_010770837.1",
+   "whole_contig_pident": 98.1,
+   "whole_contig_aln_aa": 159,
+   "whole_contig_evalue": 2.13e-106,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_17028_length_670_cov_8.9093_megahit_k141_2248",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": 98.1,
+   "polymerase_divergence_class": "reference or near-reference",
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 98.1,
+   "orf_identity_max": 98.1,
+   "coding_density": 0.71,
+   "read_support": {
+    "mapped_mean_depth": 10.15,
+    "mapped_median_depth": 9.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.5701,
+    "max_depth": 27
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_17028_length_670_cov_8.9093_megahit_k141_2248__orf2",
+     "start": 194,
+     "end": 670,
+     "strand": 1,
+     "aa_len": 159,
+     "partial": true,
+     "best_subject": "YP_010770837.1",
+     "best_title": "YP_010770837.1 RNA-directed RNA polymerase, partial [ssRNA phage SRR5466337_3]",
+     "pident": 98.1,
+     "aln_aa": 159,
+     "evalue": 1.63e-107,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "polymerase",
+     "pfam": [
+      {
+       "id": "DUF24635",
+       "description": "Domain of unknown function (DUF24635)"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 98.1
+  },
+  {
+   "taxon": "Kinglevirus lutadaptatum",
+   "on_the_panel": false,
+   "contig_nt": 840,
+   "whole_contig_subject": "YP_010770837.1",
+   "whole_contig_pident": 98.6,
+   "whole_contig_aln_aa": 276,
+   "whole_contig_evalue": 2.8e-200,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_4503_length_840_cov_3.0000_megahit_k141_12461",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": 98.6,
+   "polymerase_divergence_class": "reference or near-reference",
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 98.6,
+   "orf_identity_max": 98.6,
+   "coding_density": 0.995,
+   "read_support": {
+    "mapped_mean_depth": 3.52,
+    "mapped_median_depth": 3.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.9048,
+    "max_depth": 7
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_4503_length_840_cov_3.0000_megahit_k141_12461__orf1",
+     "start": 2,
+     "end": 838,
+     "strand": -1,
+     "aa_len": 279,
+     "partial": true,
+     "best_subject": "YP_010770837.1",
+     "best_title": "YP_010770837.1 RNA-directed RNA polymerase, partial [ssRNA phage SRR5466337_3]",
+     "pident": 98.6,
+     "aln_aa": 276,
+     "evalue": 2.8e-200,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "polymerase",
+     "pfam": [
+      {
+       "id": "RNA_replicase_B",
+       "description": "RNA replicase, beta-chain"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 98.6
+  },
+  {
+   "taxon": "Ulinhavirus borborovivens",
+   "on_the_panel": false,
+   "contig_nt": 537,
+   "whole_contig_subject": "YP_010769744.1",
+   "whole_contig_pident": 98.7,
+   "whole_contig_aln_aa": 156,
+   "whole_contig_evalue": 1.36e-107,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_40861_length_537_cov_3.0000_megahit_k141_28800",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 98.7,
+   "orf_identity_max": 98.7,
+   "coding_density": 0.886,
+   "read_support": {
+    "mapped_mean_depth": 3.55,
+    "mapped_median_depth": 3,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.9367,
+    "max_depth": 7
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_40861_length_537_cov_3.0000_megahit_k141_28800__orf2",
+     "start": 59,
+     "end": 535,
+     "strand": -1,
+     "aa_len": 158,
+     "partial": true,
+     "best_subject": "YP_010769744.1",
+     "best_title": "YP_010769744.1 maturation protein [ssRNA phage SRR6960803_6]",
+     "pident": 98.7,
+     "aln_aa": 156,
+     "evalue": 2.42e-107,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "maturation",
+     "pfam": [
+      {
+       "id": "Phage_mat-A",
+       "description": "Phage maturation protein"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 98.7
+  },
+  {
+   "taxon": "Sehpovirus borboradaptatum",
+   "on_the_panel": false,
+   "contig_nt": 3733,
+   "whole_contig_subject": "YP_010769857.1",
+   "whole_contig_pident": 98.9,
+   "whole_contig_aln_aa": 542,
+   "whole_contig_evalue": 0.0,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_23148_length_3733_cov_13.0000_megahit_k141_20715",
+   "orfs": 4,
+   "orfs_with_a_subject": 4,
+   "orfs_with_a_pfam_domain": 3,
+   "distinct_subjects_across_orfs": 4,
+   "polymerase_pident": 98.9,
+   "polymerase_divergence_class": "reference or near-reference",
+   "orf_identity_spread_points": 3.1,
+   "orf_identity_min": 95.8,
+   "orf_identity_max": 98.9,
+   "coding_density": 0.965,
+   "read_support": {
+    "mapped_mean_depth": 15.29,
+    "mapped_median_depth": 15,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.7126,
+    "max_depth": 38
+   },
+   "subject_disagreement_flag": true,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_23148_length_3733_cov_13.0000_megahit_k141_20715__orf1",
+     "start": 71,
+     "end": 1699,
+     "strand": -1,
+     "aa_len": 542,
+     "partial": false,
+     "best_subject": "YP_010769857.1",
+     "best_title": "YP_010769857.1 RNA-directed RNA polymerase [ssRNA phage SRR6960507_6]",
+     "pident": 98.9,
+     "aln_aa": 542,
+     "evalue": 0.0,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "polymerase",
+     "pfam": [
+      {
+       "id": "RNA_replicase_B",
+       "description": "RNA replicase, beta-chain"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_23148_length_3733_cov_13.0000_megahit_k141_20715__orf2",
+     "start": 1686,
+     "end": 2189,
+     "strand": -1,
+     "aa_len": 167,
+     "partial": false,
+     "best_subject": "YP_010769856.1",
+     "best_title": "YP_010769856.1 hypothetical protein QIL64_gp3 [ssRNA phage SRR6960507_6]",
+     "pident": 95.8,
+     "aln_aa": 167,
+     "evalue": 9.49e-117,
+     "significant": true,
+     "divergence_class": "divergent strain of the named taxon",
+     "gene_role": "other",
+     "pfam": []
+    },
+    {
+     "orf": "SRR34217566_NODE_23148_length_3733_cov_13.0000_megahit_k141_20715__orf3",
+     "start": 2210,
+     "end": 2629,
+     "strand": -1,
+     "aa_len": 139,
+     "partial": false,
+     "best_subject": "YP_010769855.1",
+     "best_title": "YP_010769855.1 coat protein [ssRNA phage SRR6960507_6]",
+     "pident": 98.6,
+     "aln_aa": 139,
+     "evalue": 3.39e-92,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "coat",
+     "pfam": [
+      {
+       "id": "Levi_coat",
+       "description": "Levivirus coat protein"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_23148_length_3733_cov_13.0000_megahit_k141_20715__orf4",
+     "start": 2679,
+     "end": 3731,
+     "strand": -1,
+     "aa_len": 350,
+     "partial": true,
+     "best_subject": "YP_010769854.1",
+     "best_title": "YP_010769854.1 maturation protein [ssRNA phage SRR6960507_6]",
+     "pident": 96.0,
+     "aln_aa": 350,
+     "evalue": 2.07e-245,
+     "significant": true,
+     "divergence_class": "divergent strain of the named taxon",
+     "gene_role": "maturation",
+     "pfam": [
+      {
+       "id": "Phage_mat-A",
+       "description": "Phage maturation protein"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 98.9
+  },
+  {
+   "taxon": "Grendvuvirus asiocola",
+   "on_the_panel": false,
+   "contig_nt": 1606,
+   "whole_contig_subject": "YP_010771404.1",
+   "whole_contig_pident": 99.1,
+   "whole_contig_aln_aa": 425,
+   "whole_contig_evalue": 9.35e-306,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_14215_length_1606_cov_4.0000_megahit_k141_19552",
+   "orfs": 2,
+   "orfs_with_a_subject": 2,
+   "orfs_with_a_pfam_domain": 2,
+   "distinct_subjects_across_orfs": 2,
+   "polymerase_pident": 99.3,
+   "polymerase_divergence_class": "reference or near-reference",
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 99.3,
+   "orf_identity_max": 99.3,
+   "coding_density": 0.89,
+   "read_support": {
+    "mapped_mean_depth": 4.36,
+    "mapped_median_depth": 4.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.8506,
+    "max_depth": 12
+   },
+   "subject_disagreement_flag": true,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_14215_length_1606_cov_4.0000_megahit_k141_19552__orf1",
+     "start": 1,
+     "end": 1275,
+     "strand": -1,
+     "aa_len": 425,
+     "partial": true,
+     "best_subject": "YP_010771404.1",
+     "best_title": "YP_010771404.1 RNA-directed RNA polymerase [ssRNA phage SRR5466725_16]",
+     "pident": 99.3,
+     "aln_aa": 425,
+     "evalue": 3.36e-307,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "polymerase",
+     "pfam": [
+      {
+       "id": "RNA_replicase_B",
+       "description": "RNA replicase, beta-chain"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_14215_length_1606_cov_4.0000_megahit_k141_19552__orf3",
+     "start": 1449,
+     "end": 1604,
+     "strand": -1,
+     "aa_len": 51,
+     "partial": true,
+     "best_subject": "YP_010771402.1",
+     "best_title": "YP_010771402.1 coat protein [ssRNA phage SRR5466725_16]",
+     "pident": 88.2,
+     "aln_aa": 51,
+     "evalue": 1.16e-26,
+     "significant": false,
+     "divergence_class": "same genus or thereabouts, not a strain",
+     "gene_role": "coat",
+     "pfam": [
+      {
+       "id": "Levi_coat",
+       "description": "Levivirus coat protein"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 99.3
+  },
+  {
+   "taxon": "Tobamovirus viridimaculae",
+   "on_the_panel": false,
+   "contig_nt": 3825,
+   "whole_contig_subject": "NP_044577.1",
+   "whole_contig_pident": 99.4,
+   "whole_contig_aln_aa": 1255,
+   "whole_contig_evalue": 0.0,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_27575_length_3825_cov_15.0000_megahit_k141_3649",
+   "orfs": 2,
+   "orfs_with_a_subject": 2,
+   "orfs_with_a_pfam_domain": 2,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": 0.4,
+   "orf_identity_min": 99.1,
+   "orf_identity_max": 99.5,
+   "coding_density": 0.982,
+   "read_support": {
+    "mapped_mean_depth": 22.8,
+    "mapped_median_depth": 20,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.8826,
+    "max_depth": 50
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_27575_length_3825_cov_15.0000_megahit_k141_3649__orf1",
+     "start": 2,
+     "end": 325,
+     "strand": -1,
+     "aa_len": 108,
+     "partial": true,
+     "best_subject": "NP_044577.1",
+     "best_title": "NP_044577.1 186K protein [Cucumber green mottle mosaic virus]",
+     "pident": 99.1,
+     "aln_aa": 108,
+     "evalue": 5.02e-68,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "RdRP_2",
+       "description": "RNA dependent RNA polymerase"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_27575_length_3825_cov_15.0000_megahit_k141_3649__orf2",
+     "start": 332,
+     "end": 3766,
+     "strand": -1,
+     "aa_len": 1144,
+     "partial": false,
+     "best_subject": "NP_044577.1",
+     "best_title": "NP_044577.1 186K protein [Cucumber green mottle mosaic virus]",
+     "pident": 99.5,
+     "aln_aa": 1144,
+     "evalue": 0.0,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "Chropara_Vmeth",
+       "description": "Chroparavirus methyltransferase"
+      },
+      {
+       "id": "Viral_helicase1",
+       "description": "Viral superfamily 1 RNA helicase core domain"
+      },
+      {
+       "id": "Vmethyltransf",
+       "description": "Viral methyltransferase"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 99.4
+  },
+  {
+   "taxon": "Tobamovirus fructirugosum",
+   "on_the_panel": false,
+   "contig_nt": 2696,
+   "whole_contig_subject": "NP_597747.1",
+   "whole_contig_pident": 96.0,
+   "whole_contig_aln_aa": 420,
+   "whole_contig_evalue": 5.98e-302,
+   "divergence_class": "divergent strain of the named taxon",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_24838_length_2696_cov_26.0000_megahit_k141_15221",
+   "orfs": 3,
+   "orfs_with_a_subject": 3,
+   "orfs_with_a_pfam_domain": 3,
+   "distinct_subjects_across_orfs": 3,
+   "polymerase_pident": 99.8,
+   "polymerase_divergence_class": "reference or near-reference",
+   "orf_identity_spread_points": 0.8,
+   "orf_identity_min": 99.2,
+   "orf_identity_max": 100.0,
+   "coding_density": 0.947,
+   "read_support": {
+    "mapped_mean_depth": 25.83,
+    "mapped_median_depth": 22.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.5694,
+    "max_depth": 84
+   },
+   "subject_disagreement_flag": true,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_24838_length_2696_cov_26.0000_megahit_k141_15221__orf1",
+     "start": 153,
+     "end": 632,
+     "strand": -1,
+     "aa_len": 159,
+     "partial": false,
+     "best_subject": "YP_009182171.1",
+     "best_title": "YP_009182171.1 17.5 kDa coat protein [Tomato brown rugose fruit virus]",
+     "pident": 100.0,
+     "aln_aa": 159,
+     "evalue": 8.91e-109,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "coat",
+     "pfam": [
+      {
+       "id": "TMV_coat",
+       "description": "Virus coat protein (TMV like)"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_24838_length_2696_cov_26.0000_megahit_k141_15221__orf2",
+     "start": 635,
+     "end": 1435,
+     "strand": -1,
+     "aa_len": 266,
+     "partial": false,
+     "best_subject": "YP_009182170.1",
+     "best_title": "YP_009182170.1 30 kDa movement protein [Tomato brown rugose fruit virus]",
+     "pident": 99.2,
+     "aln_aa": 266,
+     "evalue": 2.36e-184,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "MP",
+       "description": "Viral movement protein (MP)"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_24838_length_2696_cov_26.0000_megahit_k141_15221__orf3",
+     "start": 1422,
+     "end": 2696,
+     "strand": -1,
+     "aa_len": 424,
+     "partial": true,
+     "best_subject": "YP_009182168.1",
+     "best_title": "YP_009182168.1 183 kDa replicase [Tomato brown rugose fruit virus]",
+     "pident": 99.8,
+     "aln_aa": 421,
+     "evalue": 1.25e-303,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "polymerase",
+     "pfam": [
+      {
+       "id": "RdRP_2",
+       "description": "RNA dependent RNA polymerase"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 99.8
+  },
+  {
+   "taxon": "Tobamovirus capsici",
+   "on_the_panel": false,
+   "contig_nt": 1497,
+   "whole_contig_subject": "NP_619740.1",
+   "whole_contig_pident": 99.8,
+   "whole_contig_aln_aa": 498,
+   "whole_contig_evalue": 0.0,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_10108_length_1497_cov_7.0000_megahit_k141_24899",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 99.8,
+   "orf_identity_max": 99.8,
+   "coding_density": 0.997,
+   "read_support": {
+    "mapped_mean_depth": 10.64,
+    "mapped_median_depth": 9,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.845,
+    "max_depth": 28
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_10108_length_1497_cov_7.0000_megahit_k141_24899__orf1",
+     "start": 3,
+     "end": 1496,
+     "strand": -1,
+     "aa_len": 498,
+     "partial": true,
+     "best_subject": "NP_619740.1",
+     "best_title": "NP_619740.1 replication-associated protein [Pepper mild mottle virus]",
+     "pident": 99.8,
+     "aln_aa": 498,
+     "evalue": 0.0,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "ToMV_Hel_N",
+       "description": "Tomato mosaic virus helicase, N-terminal domain"
+      },
+      {
+       "id": "Vmethyltransf",
+       "description": "Viral methyltransferase"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 99.8
+  },
+  {
+   "taxon": "Tobamovirus fructirugosum",
+   "on_the_panel": false,
+   "contig_nt": 3522,
+   "whole_contig_subject": "YP_009182168.1",
+   "whole_contig_pident": 99.8,
+   "whole_contig_aln_aa": 1173,
+   "whole_contig_evalue": 0.0,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_14527_length_3522_cov_7.0000_megahit_k141_43139",
+   "orfs": 2,
+   "orfs_with_a_subject": 2,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": 99.9,
+   "polymerase_divergence_class": "reference or near-reference",
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 99.9,
+   "orf_identity_max": 99.9,
+   "coding_density": 0.994,
+   "read_support": {
+    "mapped_mean_depth": 7.78,
+    "mapped_median_depth": 7.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.7825,
+    "max_depth": 20
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_14527_length_3522_cov_7.0000_megahit_k141_43139__orf1",
+     "start": 1,
+     "end": 150,
+     "strand": -1,
+     "aa_len": 50,
+     "partial": true,
+     "best_subject": "YP_009182168.1",
+     "best_title": "YP_009182168.1 183 kDa replicase [Tomato brown rugose fruit virus]",
+     "pident": 98.0,
+     "aln_aa": 50,
+     "evalue": 2.7e-27,
+     "significant": false,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "polymerase",
+     "pfam": []
+    },
+    {
+     "orf": "SRR34217566_NODE_14527_length_3522_cov_7.0000_megahit_k141_43139__orf2",
+     "start": 169,
+     "end": 3522,
+     "strand": -1,
+     "aa_len": 1117,
+     "partial": true,
+     "best_subject": "YP_009182168.1",
+     "best_title": "YP_009182168.1 183 kDa replicase [Tomato brown rugose fruit virus]",
+     "pident": 99.9,
+     "aln_aa": 1116,
+     "evalue": 0.0,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "polymerase",
+     "pfam": [
+      {
+       "id": "Chropara_Vmeth",
+       "description": "Chroparavirus methyltransferase"
+      },
+      {
+       "id": "ToMV_Hel_N",
+       "description": "Tomato mosaic virus helicase, N-terminal domain"
+      },
+      {
+       "id": "Viral_helicase1",
+       "description": "Viral superfamily 1 RNA helicase core domain"
+      },
+      {
+       "id": "Vmethyltransf",
+       "description": "Viral methyltransferase"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 99.9
+  },
+  {
+   "taxon": "Tobamovirus viridimaculae",
+   "on_the_panel": false,
+   "contig_nt": 2623,
+   "whole_contig_subject": "NP_044577.1",
+   "whole_contig_pident": 100.0,
+   "whole_contig_aln_aa": 400,
+   "whole_contig_evalue": 9.19e-275,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_30542_length_2623_cov_8.0000_megahit_k141_9821",
+   "orfs": 3,
+   "orfs_with_a_subject": 3,
+   "orfs_with_a_pfam_domain": 3,
+   "distinct_subjects_across_orfs": 3,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": 0.8,
+   "orf_identity_min": 99.2,
+   "orf_identity_max": 100.0,
+   "coding_density": 0.95,
+   "read_support": {
+    "mapped_mean_depth": 12.44,
+    "mapped_median_depth": 10,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.7552,
+    "max_depth": 36
+   },
+   "subject_disagreement_flag": true,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_30542_length_2623_cov_8.0000_megahit_k141_9821__orf1",
+     "start": 166,
+     "end": 651,
+     "strand": -1,
+     "aa_len": 161,
+     "partial": false,
+     "best_subject": "NP_044580.1",
+     "best_title": "NP_044580.1 coat protein [Cucumber green mottle mosaic virus]",
+     "pident": 100.0,
+     "aln_aa": 161,
+     "evalue": 3.47e-107,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "coat",
+     "pfam": [
+      {
+       "id": "TMV_coat",
+       "description": "Virus coat protein (TMV like)"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_30542_length_2623_cov_8.0000_megahit_k141_9821__orf2",
+     "start": 626,
+     "end": 1420,
+     "strand": -1,
+     "aa_len": 264,
+     "partial": false,
+     "best_subject": "NP_044579.1",
+     "best_title": "NP_044579.1 movement protein [Cucumber green mottle mosaic virus]",
+     "pident": 99.2,
+     "aln_aa": 264,
+     "evalue": 3.75e-180,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "MP",
+       "description": "Viral movement protein (MP)"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_30542_length_2623_cov_8.0000_megahit_k141_9821__orf3",
+     "start": 1407,
+     "end": 2621,
+     "strand": -1,
+     "aa_len": 404,
+     "partial": true,
+     "best_subject": "NP_044577.1",
+     "best_title": "NP_044577.1 186K protein [Cucumber green mottle mosaic virus]",
+     "pident": 100.0,
+     "aln_aa": 400,
+     "evalue": 1.28e-282,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "RdRP_2",
+       "description": "RNA dependent RNA polymerase"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 100.0
+  },
+  {
+   "taxon": "Tobamovirus capsici",
+   "on_the_panel": false,
+   "contig_nt": 2232,
+   "whole_contig_subject": "NP_619740.1",
+   "whole_contig_pident": 99.6,
+   "whole_contig_aln_aa": 494,
+   "whole_contig_evalue": 0.0,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_23280_length_2232_cov_9.0000_megahit_k141_8853",
+   "orfs": 2,
+   "orfs_with_a_subject": 2,
+   "orfs_with_a_pfam_domain": 2,
+   "distinct_subjects_across_orfs": 2,
+   "polymerase_pident": 100.0,
+   "polymerase_divergence_class": "reference or near-reference",
+   "orf_identity_spread_points": 0.9,
+   "orf_identity_min": 99.1,
+   "orf_identity_max": 100.0,
+   "coding_density": 0.944,
+   "read_support": {
+    "mapped_mean_depth": 10.89,
+    "mapped_median_depth": 10.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.8338,
+    "max_depth": 28
+   },
+   "subject_disagreement_flag": true,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_23280_length_2232_cov_9.0000_megahit_k141_8853__orf1",
+     "start": 1,
+     "end": 699,
+     "strand": -1,
+     "aa_len": 233,
+     "partial": true,
+     "best_subject": "sp|P89658|MVP_PMMVJ",
+     "best_title": "sp|P89658|MVP_PMMVJ Movement protein OS=Pepper mild mottle virus (strain Japan) OX=138663 GN=MP PE=2 SV=1",
+     "pident": 99.1,
+     "aln_aa": 233,
+     "evalue": 6.2e-159,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "MP",
+       "description": "Viral movement protein (MP)"
+      }
+     ]
+    },
+    {
+     "orf": "SRR34217566_NODE_23280_length_2232_cov_9.0000_megahit_k141_8853__orf2",
+     "start": 706,
+     "end": 2115,
+     "strand": -1,
+     "aa_len": 469,
+     "partial": false,
+     "best_subject": "sp|P89657|RDRP_PMMVJ",
+     "best_title": "sp|P89657|RDRP_PMMVJ Replicase large subunit OS=Pepper mild mottle virus (strain Japan) OX=138663 PE=1 SV=1",
+     "pident": 100.0,
+     "aln_aa": 469,
+     "evalue": 0.0,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "polymerase",
+     "pfam": [
+      {
+       "id": "RdRP_2",
+       "description": "RNA dependent RNA polymerase"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "polymerase",
+   "rank_pident": 100.0
+  },
+  {
+   "taxon": "Brazilian marseillevirus",
+   "on_the_panel": false,
+   "contig_nt": 1001,
+   "whole_contig_subject": "YP_009447989.1",
+   "whole_contig_pident": 100.0,
+   "whole_contig_aln_aa": 76,
+   "whole_contig_evalue": 4.51e-45,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_20813_length_1001_cov_7.0000_megahit_k141_32254",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 100.0,
+   "orf_identity_max": 100.0,
+   "coding_density": 0.841,
+   "read_support": {
+    "mapped_mean_depth": 18.74,
+    "mapped_median_depth": 16,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.8222,
+    "max_depth": 43
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_20813_length_1001_cov_7.0000_megahit_k141_32254__orf1",
+     "start": 3,
+     "end": 845,
+     "strand": -1,
+     "aa_len": 281,
+     "partial": true,
+     "best_subject": "sp|P0CG53|UBB_BOVIN",
+     "best_title": "sp|P0CG53|UBB_BOVIN Polyubiquitin-B OS=Bos taurus OX=9913 GN=UBB PE=1 SV=1",
+     "pident": 100.0,
+     "aln_aa": 281,
+     "evalue": 1.45e-197,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "BilA_UBL_2",
+       "description": "BilA ubiquitin-like domain 2"
+      },
+      {
+       "id": "Crinkler",
+       "description": "Crinkler effector protein N-terminal domain"
+      },
+      {
+       "id": "Dsc3_N",
+       "description": "DSC E3 ubiquitin ligase complex subunit 3, ubiquitin-like domain"
+      },
+      {
+       "id": "DUF14142",
+       "description": "Domain of unknown function (DUF14142)"
+      },
+      {
+       "id": "DUF14187",
+       "description": "Domain of unknown function (DUF14187)"
+      },
+      {
+       "id": "DUF25168",
+       "description": "Domain of unknown function (DUF25168)"
+      },
+      {
+       "id": "DUF2604",
+       "description": "Protein of Unknown function (DUF2604)"
+      },
+      {
+       "id": "DUF8436",
+       "description": "Domain of unknown function (DUF8436)"
+      },
+      {
+       "id": "FlgD_ig",
+       "description": "FlgD Ig-like domain"
+      },
+      {
+       "id": "HATPase_c",
+       "description": "Histidine kinase-, DNA gyrase B-, and HSP90-like ATPase"
+      },
+      {
+       "id": "OTU1_UBXL",
+       "description": "OTU1, UBXL domain"
+      },
+      {
+       "id": "Plexin_RBD",
+       "description": "Plexin cytoplasmic RhoGTPase-binding domain"
+      },
+      {
+       "id": "Rad60-SLD",
+       "description": "Ubiquitin-2 like Rad60 SUMO-like"
+      },
+      {
+       "id": "Rad60-SLD_2",
+       "description": "Ubiquitin-2 like Rad60 SUMO-like"
+      },
+      {
+       "id": "RA_2",
+       "description": "RA like domain"
+      },
+      {
+       "id": "TBK1_ULD",
+       "description": "TANK binding kinase 1 ubiquitin-like domain"
+      },
+      {
+       "id": "ubiquitin",
+       "description": "Ubiquitin family"
+      },
+      {
+       "id": "Ubiquitin_2",
+       "description": "Ubiquitin-like domain"
+      },
+      {
+       "id": "Ubiquitin_4",
+       "description": "Ubiquitin-like domain"
+      },
+      {
+       "id": "Ubiquitin_5",
+       "description": "NUB1 Ubiquitin-like domain"
+      },
+      {
+       "id": "UBL_IKK",
+       "description": "IKK UBL domain"
+      },
+      {
+       "id": "Y4oD_C",
+       "description": "Y4oD C-terminal domain"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 100.0
+  },
+  {
+   "taxon": "Tobamovirus capsici",
+   "on_the_panel": false,
+   "contig_nt": 938,
+   "whole_contig_subject": "NP_619741.1",
+   "whole_contig_pident": 100.0,
+   "whole_contig_aln_aa": 273,
+   "whole_contig_evalue": 1.57e-186,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_30228_length_938_cov_5.0000_megahit_k141_33499",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 100.0,
+   "orf_identity_max": 100.0,
+   "coding_density": 0.882,
+   "read_support": {
+    "mapped_mean_depth": 6.72,
+    "mapped_median_depth": 7.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.8817,
+    "max_depth": 12
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_30228_length_938_cov_5.0000_megahit_k141_33499__orf1",
+     "start": 109,
+     "end": 936,
+     "strand": -1,
+     "aa_len": 275,
+     "partial": true,
+     "best_subject": "NP_619741.1",
+     "best_title": "NP_619741.1 replication-associated protein [Pepper mild mottle virus]",
+     "pident": 100.0,
+     "aln_aa": 273,
+     "evalue": 1.98e-186,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "Viral_helicase1",
+       "description": "Viral superfamily 1 RNA helicase core domain"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 100.0
+  },
+  {
+   "taxon": "Tobamovirus capsici",
+   "on_the_panel": false,
+   "contig_nt": 617,
+   "whole_contig_subject": "NP_619741.1",
+   "whole_contig_pident": 100.0,
+   "whole_contig_aln_aa": 197,
+   "whole_contig_evalue": 3.67e-133,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_9952_length_617_cov_2.0000_megahit_k141_24885",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 100.0,
+   "orf_identity_max": 100.0,
+   "coding_density": 0.995,
+   "read_support": {
+    "mapped_mean_depth": 3.01,
+    "mapped_median_depth": 3,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.7844,
+    "max_depth": 7
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_9952_length_617_cov_2.0000_megahit_k141_24885__orf1",
+     "start": 2,
+     "end": 616,
+     "strand": 1,
+     "aa_len": 205,
+     "partial": true,
+     "best_subject": "NP_619741.1",
+     "best_title": "NP_619741.1 replication-associated protein [Pepper mild mottle virus]",
+     "pident": 100.0,
+     "aln_aa": 197,
+     "evalue": 3.67e-133,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "Chropara_Vmeth",
+       "description": "Chroparavirus methyltransferase"
+      },
+      {
+       "id": "Vmethyltransf",
+       "description": "Viral methyltransferase"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 100.0
+  },
+  {
+   "taxon": "Alphabaculovirus anpernyi",
+   "on_the_panel": false,
+   "contig_nt": 518,
+   "whole_contig_subject": "YP_009447989.1",
+   "whole_contig_pident": 100.0,
+   "whole_contig_aln_aa": 70,
+   "whole_contig_evalue": 1.79e-41,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_13193_length_518_cov_5.0000_megahit_k141_42976",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 0,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": null,
+   "orf_identity_max": null,
+   "coding_density": 0.832,
+   "read_support": {
+    "mapped_mean_depth": 8.25,
+    "mapped_median_depth": 7.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.5154,
+    "max_depth": 20
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_13193_length_518_cov_5.0000_megahit_k141_42976__orf1",
+     "start": 43,
+     "end": 474,
+     "strand": 1,
+     "aa_len": 143,
+     "partial": false,
+     "best_subject": "YP_001650969.1",
+     "best_title": "YP_001650969.1 hypothetical protein [Orgyia leucostigma nucleopolyhedrovirus]",
+     "pident": 52.5,
+     "aln_aa": 40,
+     "evalue": 1.01e-05,
+     "significant": false,
+     "divergence_class": "family-level or looser; the subject is a nearest neighbour, not an identification",
+     "gene_role": "other",
+     "pfam": []
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 100.0
+  },
+  {
+   "taxon": "Ulinhavirus borborovivens",
+   "on_the_panel": false,
+   "contig_nt": 512,
+   "whole_contig_subject": "YP_010769743.1",
+   "whole_contig_pident": 100.0,
+   "whole_contig_aln_aa": 119,
+   "whole_contig_evalue": 2.44e-82,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_22942_length_512_cov_5.0000_megahit_k141_26503",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 0,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 100.0,
+   "orf_identity_max": 100.0,
+   "coding_density": 0.701,
+   "read_support": {
+    "mapped_mean_depth": 6.04,
+    "mapped_median_depth": 6.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 0.9375,
+    "max_depth": 9
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_22942_length_512_cov_5.0000_megahit_k141_26503__orf1",
+     "start": 108,
+     "end": 467,
+     "strand": -1,
+     "aa_len": 119,
+     "partial": false,
+     "best_subject": "YP_010769743.1",
+     "best_title": "YP_010769743.1 hypothetical protein QIL36_gp1 [ssRNA phage SRR6960803_6]",
+     "pident": 100.0,
+     "aln_aa": 119,
+     "evalue": 8.92e-83,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "other",
+     "pfam": []
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 100.0
+  },
+  {
+   "taxon": "Kayfunavirus GA2A",
+   "on_the_panel": false,
+   "contig_nt": 500,
+   "whole_contig_subject": "YP_338120.1",
+   "whole_contig_pident": 100.0,
+   "whole_contig_aln_aa": 121,
+   "whole_contig_evalue": 9.36e-79,
+   "divergence_class": "reference or near-reference",
+   "arm": "control_near_reference",
+   "contig": "SRR34217566_NODE_9615_length_500_cov_3.0000_megahit_k141_42553",
+   "orfs": 1,
+   "orfs_with_a_subject": 1,
+   "orfs_with_a_pfam_domain": 1,
+   "distinct_subjects_across_orfs": 1,
+   "polymerase_pident": null,
+   "polymerase_divergence_class": null,
+   "orf_identity_spread_points": null,
+   "orf_identity_min": 100.0,
+   "orf_identity_max": 100.0,
+   "coding_density": 0.724,
+   "read_support": {
+    "mapped_mean_depth": 3.62,
+    "mapped_median_depth": 3.0,
+    "breadth_covered": 1.0,
+    "evenness_within_2x_of_median": 1.0,
+    "max_depth": 6
+   },
+   "subject_disagreement_flag": false,
+   "orf_rows": [
+    {
+     "orf": "SRR34217566_NODE_9615_length_500_cov_3.0000_megahit_k141_42553__orf1",
+     "start": 136,
+     "end": 498,
+     "strand": 1,
+     "aa_len": 121,
+     "partial": true,
+     "best_subject": "YP_338120.1",
+     "best_title": "YP_338120.1 major head protein [Escherichia phage K1F]",
+     "pident": 100.0,
+     "aln_aa": 121,
+     "evalue": 3.05e-79,
+     "significant": true,
+     "divergence_class": "reference or near-reference",
+     "gene_role": "other",
+     "pfam": [
+      {
+       "id": "Gp10A-like",
+       "description": "Major capsid protein"
+      }
+     ]
+    }
+   ],
+   "ranked_on": "whole-contig best hit",
+   "rank_pident": 100.0
+  }
+ ],
+ "seed": 1,
+ "timings_seconds": {
+  "diamond_viral": 40.9,
+  "diamond_sprot": 48.0,
+  "pfam": 37.2,
+  "total": 250.0
+ },
+ "git_sha": "1dc582e6621af117ddad75b48baf3d388a724286",
+ "tree_dirty": false,
+ "script_sha256": "ae3dc99aa381f12f"
+}

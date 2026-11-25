@@ -1,0 +1,127 @@
+{
+  "contigs_file": "/opt/hapax/wk/asm_baseline/sample_contigs.fa",
+  "contigs": 45180,
+  "bases": 25843777,
+  "operating_point": {
+    "kraken2_confidence": 0.1,
+    "diamond_bitscore": 50.0,
+    "kraken2_db": "k2_pluspf_16_GB_20261022.d",
+    "protein_dbs": [
+      "viral"
+    ]
+  },
+  "kraken2_confidence_sweep": {
+    "0.00": 0.6660690571049137,
+    "0.05": 0.34634794156706505,
+    "0.10": 0.15595396193005756,
+    "0.20": 0.00283311199645861
+  },
+  "protein_bitscore_sweep": {
+    "viral": {
+      "30": 0.3317618415227977,
+      "40": 0.15677290836653388,
+      "50": 0.1284639220894201,
+      "60": 0.1082115980522355,
+      "80": 0.07733510402833112,
+      "100": 0.05520141655599823
+    }
+  },
+  "identified_frac": 0.4590084108012395,
+  "identified_bases_frac": 0.5007857404124791,
+  "route_nucleotide_only": 0.12864099158919876,
+  "route_protein_only": 0.10115095174856131,
+  "all": {
+    "contigs": 45180,
+    "bases": 25843777,
+    "len_median": 448.0,
+    "len_p90": 940,
+    "len_max": 17625,
+    "cov_median": 2.0,
+    "frac_over_500nt": 0.3958388667552014,
+    "frac_over_2x": 0.7206507304116866,
+    "frac_over_500nt_and_2x": 0.3068614431164232
+  },
+  "identified": {
+    "contigs": 20738,
+    "bases": 12942195,
+    "len_median": 485.0,
+    "len_p90": 1074,
+    "len_max": 17625,
+    "cov_median": 2.0,
+    "frac_over_500nt": 0.4726588870672196,
+    "frac_over_2x": 0.5470633619442569,
+    "frac_over_500nt_and_2x": 0.3101552705178899
+  },
+  "rrna_contigs": {
+    "contigs": 10906,
+    "bases": 6461958,
+    "len_median": 495.0,
+    "len_p90": 1011,
+    "len_max": 6616,
+    "cov_median": 1.0,
+    "frac_over_500nt": 0.48945534568127635,
+    "frac_over_2x": 0.2806711901705483,
+    "frac_over_500nt_and_2x": 0.21795342013570512
+  },
+  "rrna_contig_frac": 0.24138999557326252,
+  "rrna_bases_frac": 0.25003922607751955,
+  "identified_excluding_rrna": {
+    "contigs": 9832,
+    "bases": 6480237,
+    "len_median": 475.0,
+    "len_p90": 1142,
+    "len_max": 17625,
+    "cov_median": 2.0,
+    "frac_over_500nt": 0.45402766476810413,
+    "frac_over_2x": 0.8425549227013832,
+    "frac_over_500nt_and_2x": 0.4124288039056143
+  },
+  "unidentified": {
+    "contigs": 24442,
+    "bases": 12901582,
+    "len_median": 423.0,
+    "len_p90": 824,
+    "len_max": 11213,
+    "cov_median": 2.0,
+    "frac_over_500nt": 0.33066033876114886,
+    "frac_over_2x": 0.8679322477702316,
+    "frac_over_500nt_and_2x": 0.30406677031339496
+  },
+  "tier2_population": {
+    "contigs": 24442,
+    "bases": 12901582,
+    "len_median": 423.0,
+    "len_p90": 824,
+    "len_max": 11213,
+    "cov_median": 2.0,
+    "frac_over_500nt": 0.33066033876114886,
+    "frac_over_2x": 0.8679322477702316,
+    "frac_over_500nt_and_2x": 0.30406677031339496
+  },
+  "tier2_min_len": 200,
+  "removal_evidence": {
+    "file": "/opt/hapax/out/run_s5/removal_evidence.tsv",
+    "rows": 23756,
+    "a_row_is": "one route's justification for removing one contig. There is no score on this table and no ordering in this file",
+    "routes_are_not_pooled": "protein carries identity and coverage, kraken2 a taxid and a confidence, rrna matching bases; three kinds of number, so group on `route`",
+    "upper_bound_warning": "every identity is measured against the indexes this run was given, so it is an upper bound on distance"
+  },
+  "files": {
+    "identified": "/opt/hapax/wk/asm_baseline/sample_contigs_identified.fa",
+    "identified_excluding_rrna": "/opt/hapax/wk/asm_baseline/sample_contigs_identified_norrna.fa",
+    "rrna_contigs": "/opt/hapax/wk/asm_baseline/sample_contigs_rrna.fa",
+    "unidentified_tier2": "/opt/hapax/wk/asm_baseline/sample_contigs_unidentified.fa"
+  },
+  "index_bytes": {
+    "kraken2": 16000000032,
+    "viral": 239074080
+  },
+  "timings_seconds": {
+    "silva_contigs": 28.742642771998362,
+    "kraken2_conf0.0": 0.559781642001326,
+    "kraken2_conf0.05": 0.5597667959991668,
+    "kraken2_conf0.1": 0.5581819530016219,
+    "kraken2_conf0.2": 0.5534658420001506,
+    "diamond_viral": 69.2137748669993
+  }
+}

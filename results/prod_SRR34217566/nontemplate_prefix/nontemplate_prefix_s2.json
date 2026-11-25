@@ -1,0 +1,266 @@
+{
+  "script": "experiments/nontemplate_prefix_map.py",
+  "git_sha": "1dc582e6621af117ddad75b48baf3d388a724286",
+  "tree_dirty": false,
+  "script_sha256": "35d9a359f2decb03",
+  "parameters": {
+    "seed": 2,
+    "pairs": 100000,
+    "min_mlen": 60,
+    "min_mapq": 30,
+    "silva": "/opt/hapax/db/silva/silva_dna.fa",
+    "threads": 8,
+    "libraries": [
+      "SRR34217566"
+    ],
+    "work": "/opt/hapax/wk/ntprefix",
+    "out": "/opt/hapax/out/nontemplate_prefix"
+  },
+  "libraries": {
+    "SRR34217566": {
+      "run": "SRR34217566",
+      "note": "Szeged municipal wastewater, Hungary, collected 2024, RNA: the first library run through the one-command path, with nothing supplied by hand but the reads, the measured trim and this entry",
+      "pairs_read": 100000,
+      "file_offset_pairs": 100000,
+      "anchored": {
+        "r1": 17857,
+        "r2": 18192
+      },
+      "anchored_frac": {
+        "r1": 0.1786,
+        "r2": 0.1819
+      },
+      "r1_five_prime_clip": {
+        "n": 17857,
+        "mode": 0,
+        "mode_share": 0.9317,
+        "median": 0,
+        "mean": 1.52,
+        "frac_ge_10": 0.0482,
+        "frac_zero": 0.9317,
+        "top": [
+          [
+            0,
+            0.9317
+          ],
+          [
+            2,
+            0.0045
+          ],
+          [
+            5,
+            0.0034
+          ],
+          [
+            22,
+            0.0032
+          ],
+          [
+            7,
+            0.0029
+          ],
+          [
+            20,
+            0.0029
+          ]
+        ]
+      },
+      "r1_three_prime_clip": {
+        "n": 17857,
+        "mode": 0,
+        "mode_share": 0.7903,
+        "median": 0,
+        "mean": 4.6,
+        "frac_ge_10": 0.1272,
+        "frac_zero": 0.7903,
+        "top": [
+          [
+            0,
+            0.7903
+          ],
+          [
+            5,
+            0.0146
+          ],
+          [
+            4,
+            0.0132
+          ],
+          [
+            3,
+            0.0112
+          ],
+          [
+            2,
+            0.0094
+          ],
+          [
+            7,
+            0.0092
+          ]
+        ]
+      },
+      "r1_five_minus_three_mean": -3.08,
+      "r1_five_prime_by_strand": {
+        "plus": {
+          "n": 0
+        },
+        "minus": {
+          "n": 17857,
+          "mode": 0,
+          "mode_share": 0.9317,
+          "median": 0,
+          "mean": 1.52,
+          "frac_ge_10": 0.0482,
+          "frac_zero": 0.9317,
+          "top": [
+            [
+              0,
+              0.9317
+            ],
+            [
+              2,
+              0.0045
+            ],
+            [
+              5,
+              0.0034
+            ],
+            [
+              22,
+              0.0032
+            ],
+            [
+              7,
+              0.0029
+            ],
+            [
+              20,
+              0.0029
+            ]
+          ]
+        }
+      },
+      "r2_five_prime_clip": {
+        "n": 18192,
+        "mode": 0,
+        "mode_share": 0.2139,
+        "median": 5.0,
+        "mean": 7.69,
+        "frac_ge_10": 0.2313,
+        "frac_zero": 0.2139,
+        "top": [
+          [
+            0,
+            0.2139
+          ],
+          [
+            5,
+            0.0936
+          ],
+          [
+            4,
+            0.0903
+          ],
+          [
+            6,
+            0.0765
+          ],
+          [
+            3,
+            0.0765
+          ],
+          [
+            7,
+            0.0674
+          ]
+        ]
+      },
+      "r2_three_prime_clip": {
+        "n": 18192,
+        "mode": 0,
+        "mode_share": 0.8888,
+        "median": 0.0,
+        "mean": 2.73,
+        "frac_ge_10": 0.0776,
+        "frac_zero": 0.8888,
+        "top": [
+          [
+            0,
+            0.8888
+          ],
+          [
+            5,
+            0.0066
+          ],
+          [
+            4,
+            0.0062
+          ],
+          [
+            3,
+            0.0046
+          ],
+          [
+            20,
+            0.0046
+          ],
+          [
+            6,
+            0.0039
+          ]
+        ]
+      },
+      "r2_five_minus_three_mean": 4.96,
+      "r2_five_prime_by_strand": {
+        "plus": {
+          "n": 18192,
+          "mode": 0,
+          "mode_share": 0.2139,
+          "median": 5.0,
+          "mean": 7.69,
+          "frac_ge_10": 0.2313,
+          "frac_zero": 0.2139,
+          "top": [
+            [
+              0,
+              0.2139
+            ],
+            [
+              5,
+              0.0936
+            ],
+            [
+              4,
+              0.0903
+            ],
+            [
+              6,
+              0.0765
+            ],
+            [
+              3,
+              0.0765
+            ],
+            [
+              7,
+              0.0674
+            ]
+          ]
+        },
+        "minus": {
+          "n": 0
+        }
+      }
+    }
+  },
+  "readout": "soft-clip length at each end of the best anchored SILVA alignment, on UNTRIMMED reads. A non-template prefix predicts a sharp mode at a fixed length on one mate's 5' end, absent from its own 3' end and from the other mate",
+  "bias": "adapter read-through clips 3' ends and inflates the within-read control, which makes a real 5' excess harder to see, not easier. Divergence from the SILVA entry clips both ends and cancels in the difference. The DNA library is 0.01% ribosomal so its row is a statement about the reference, not the library",
+  "coordinate_check": "every 5' distribution is also split by strand; equal modes confirm q_st is on the query as supplied, a mirror invalidates the run",
+  "timings": {
+    "SRR34217566": 43.836655171000075
+  },
+  "wall_seconds": 45.551080705000004,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.62-127.179.amzn2023.x86_64-x86_64-with-glibc2.34"
+}

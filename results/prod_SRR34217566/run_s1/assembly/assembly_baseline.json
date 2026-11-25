@@ -1,0 +1,19 @@
+{
+ "arm": "baseline",
+ "flags": [
+  "--min-contig-len",
+  "200"
+ ],
+ "direction": "the committed setting; everything else is read against it",
+ "threads": 8,
+ "seconds": 1406.508434937,
+ "peak_rss_bytes": 2936758272,
+ "contigs": 45180,
+ "bases": 25843777,
+ "n50": 574,
+ "max": 17625,
+ "ge500": 17884,
+ "ge1000": 3984,
+ "ge3000": 215,
+ "contigs_fa": "/opt/hapax/wk/asm_baseline/final.contigs.fa"
+}

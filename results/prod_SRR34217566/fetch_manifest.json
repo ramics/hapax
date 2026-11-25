@@ -1,0 +1,174 @@
+{
+ "sets": {
+  "rrna": {
+   "what": "SILVA 138.1 SSU and LSU NR99, converted to DNA",
+   "fills": "silva/silva_dna.fa",
+   "many": false,
+   "sources": [
+    {
+     "url": "https://ftp.arb-silva.de/release_138_1/Exports/SILVA_138.1_SSURef_NR99_tax_silva.fasta.gz",
+     "file": "SILVA_138.1_SSURef_NR99_tax_silva.fasta.gz",
+     "bytes": 197133995,
+     "sha256": "7078a4e54ee962ca3108e776b8935795c744869e73e24c4718b8b5ff240410d0",
+     "pinned": true
+    },
+    {
+     "url": "https://ftp.arb-silva.de/release_138_1/Exports/SILVA_138.1_LSURef_NR99_tax_silva.fasta.gz",
+     "file": "SILVA_138.1_LSURef_NR99_tax_silva.fasta.gz",
+     "bytes": 67498420,
+     "sha256": "38a9c2959e70338b1b0b2c914992323358ae1d3e776fc7f4f7010d5a49b83ff1",
+     "pinned": true
+    }
+   ],
+   "built": {
+    "built_with": "experiments/subtract_known.py:_silva_to_dna",
+    "bytes": 1051728936,
+    "sha256": "2eac8dae6738fcd5e47657a9a4aba270b50a1191b25225959b7b06adb7644d56"
+   },
+   "fetched_at": "2026-11-25T01:47:12Z",
+   "seconds": 23.3,
+   "paths": [
+    "/opt/hapax/db/silva/silva_dna.fa"
+   ]
+  },
+  "classifier": {
+   "what": "4 Kraken2 databases: k2_viral_20261022, k2_standard_08_GB_20261022, k2_pluspf_08_GB_20261022, k2_pluspf_16_GB_20261022",
+   "fills": "k2",
+   "many": true,
+   "sources": [
+    {
+     "url": "https://genome-idx.s3.amazonaws.com/kraken/k2_viral_20261022.tar.gz",
+     "file": "k2_viral_20261022.d.tar.gz",
+     "bytes": 589941425,
+     "sha256": "1532b484559347bed98c686cb6b0671910f971d358c3873ba184d7ae6778cfa4",
+     "pinned": false
+    },
+    {
+     "url": "https://genome-idx.s3.amazonaws.com/kraken/k2_standard_08_GB_20261022.tar.gz",
+     "file": "k2_standard_08_GB_20261022.d.tar.gz",
+     "bytes": 5936595768,
+     "sha256": "6277ece87fdbd41856d7ca11d4310ef57b86a1673928cdfb57bc26f09ba1c5b9",
+     "pinned": false
+    },
+    {
+     "url": "https://genome-idx.s3.amazonaws.com/kraken/k2_pluspf_08_GB_20261022.tar.gz",
+     "file": "k2_pluspf_08_GB_20261022.d.tar.gz",
+     "bytes": 5911997880,
+     "sha256": "5daf75cd8a2d21b110560ea9a38504a83ae9cae4646e4eaccfa5bec1a28adfb9",
+     "pinned": false
+    },
+    {
+     "url": "https://genome-idx.s3.amazonaws.com/kraken/k2_pluspf_16_GB_20261022.tar.gz",
+     "file": "k2_pluspf_16_GB_20261022.d.tar.gz",
+     "bytes": 11950651116,
+     "sha256": "40ef7159f441f1a8a6d6e58719dda48935e96769aa6a984522afb0757af1a622",
+     "pinned": false
+    }
+   ],
+   "built": {},
+   "fetched_at": "2026-11-25T01:47:36Z",
+   "seconds": 717.2,
+   "paths": [
+    "/opt/hapax/db/k2/k2_viral_20261022.d",
+    "/opt/hapax/db/k2/k2_standard_08_GB_20261022.d",
+    "/opt/hapax/db/k2/k2_pluspf_08_GB_20261022.d",
+    "/opt/hapax/db/k2/k2_pluspf_16_GB_20261022.d"
+   ]
+  },
+  "protein": {
+   "what": "RefSeq viral proteins, as a DIAMOND index",
+   "fills": "prot/viral.dmnd",
+   "many": false,
+   "sources": [
+    {
+     "url": "https://ftp.ncbi.nlm.nih.gov/refseq/release/viral/viral.1.protein.faa.gz",
+     "file": "viral.1.protein.faa.gz",
+     "bytes": 107365470,
+     "sha256": "a26b0e9255493eb8843f88badbacfddbbfa8320fb4a8b2e2b11af8ba5993de73",
+     "pinned": false,
+     "rolling": true,
+     "note": "a current-release pointer with no stable archive URL, so its identity is recorded here and not asserted"
+    }
+   ],
+   "built": {
+    "built_with": "diamond version 2.1.10",
+    "command": [
+     "/opt/hapax/mamba/envs/hapax/bin/diamond",
+     "makedb",
+     "--in",
+     "/opt/hapax/db/prot/viral.1.protein.faa.gz",
+     "--db",
+     "/opt/hapax/db/prot/viral.dmnd",
+     "--threads",
+     "8"
+    ]
+   },
+   "fetched_at": "2026-11-25T01:59:33Z",
+   "seconds": 4.3,
+   "paths": [
+    "/opt/hapax/db/prot/viral.dmnd"
+   ]
+  },
+  "sprot": {
+   "what": "UniProt Swiss-Prot, as a DIAMOND index",
+   "fills": "prot/sprot.dmnd",
+   "many": false,
+   "sources": [
+    {
+     "url": "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz",
+     "file": "uniprot_sprot.fasta.gz",
+     "bytes": 93867502,
+     "sha256": "ee99d69f61547d4730fb5e3f71fa574447fbf51f7e841704a3b0f18b98321ac5",
+     "pinned": false,
+     "rolling": true,
+     "note": "a current-release pointer with no stable archive URL, so its identity is recorded here and not asserted"
+    }
+   ],
+   "built": {
+    "built_with": "diamond version 2.1.10",
+    "command": [
+     "/opt/hapax/mamba/envs/hapax/bin/diamond",
+     "makedb",
+     "--in",
+     "/opt/hapax/db/prot/uniprot_sprot.fasta.gz",
+     "--db",
+     "/opt/hapax/db/prot/sprot.dmnd",
+     "--threads",
+     "8"
+    ]
+   },
+   "fetched_at": "2026-11-25T01:59:37Z",
+   "seconds": 5.2,
+   "paths": [
+    "/opt/hapax/db/prot/sprot.dmnd"
+   ]
+  },
+  "pfam": {
+   "what": "Pfam-A HMM library",
+   "fills": "pfam/Pfam-A.hmm",
+   "many": false,
+   "sources": [
+    {
+     "url": "https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/Pfam-A.hmm.gz",
+     "file": "Pfam-A.hmm.gz",
+     "bytes": 658389433,
+     "sha256": "277356d1ceeba7ed3fc554bfe0ad58fdd87e52c26c1cf490cc90610dbc098f0e",
+     "pinned": false,
+     "rolling": true,
+     "note": "a current-release pointer with no stable archive URL, so its identity is recorded here and not asserted"
+    }
+   ],
+   "built": {
+    "built_with": "gzip",
+    "bytes": 3647010479,
+    "sha256": "4f86f23f7d673cf64e35a786dd89c0159fb6cafafd5301615162af9927b3c243"
+   },
+   "fetched_at": "2026-11-25T01:59:42Z",
+   "seconds": 768.7,
+   "paths": [
+    "/opt/hapax/db/pfam/Pfam-A.hmm"
+   ]
+  }
+ },
+ "dest": "/opt/hapax/db"
+}

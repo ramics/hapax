@@ -1,0 +1,32 @@
+{
+  "script": "experiments/classify_contigs.py",
+  "git_sha": "1dc582e6621af117ddad75b48baf3d388a724286",
+  "script_sha256": "c9b3a4a52d6b97f8d641ac329e87140c735b17ec28f75f349e19cb37ec96405b",
+  "parameters": {
+    "seed": 1,
+    "contigs": "/opt/hapax/wk/asm_baseline/sample_contigs.fa",
+    "k2_db": "/opt/hapax/db/k2/k2_pluspf_16_GB_20261022.d",
+    "classify_bin": "/opt/hapax/mamba/envs/hapax/share/kraken2-2.17.2/libexec/classify",
+    "dmnd": [
+      "/opt/hapax/db/prot/viral.dmnd"
+    ],
+    "diamond_bin": "/opt/hapax/mamba/envs/hapax/bin/diamond",
+    "k2_confidence": [
+      "0.0",
+      "0.05",
+      "0.1",
+      "0.2"
+    ],
+    "operating_confidence": 0.1,
+    "operating_bitscore": 50.0,
+    "silva_mmi": "/opt/hapax/wk/silva.mmi",
+    "rrna_min_mlen": 100,
+    "min_len": 200,
+    "threads": 8,
+    "work": "/opt/hapax/wk/contigs",
+    "out": "/opt/hapax/out/run_s2"
+  },
+  "wall_seconds": 97.18315884100048,
+  "python": "3.13.18",
+  "platform": "Linux-6.18.62-127.179.amzn2023.x86_64-x86_64-with-glibc2.34"
+}
