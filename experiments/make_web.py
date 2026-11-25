@@ -3006,8 +3006,11 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
         (L.sub ? '<div class="csub">' + esc(L.sub) + '</div>' : '') +
         '<div class="cbar"><span style="width:' + Math.max(2, 100 * (r.residue_reads /
           maxr)).toFixed(1) + '%"></span></div>' +
-        '<div class="crow"><b>' + r.residue_reads + '</b> residue reads point here' +
-        (S.known_pile_searched_reads ? ', <b>' + r.known_reads + '</b> identified reads do'
+        '<div class="crow"><b>' + r.residue_reads + '</b> residue read' +
+        (r.residue_reads === 1 ? '' : 's') + ' point' +
+        (r.residue_reads === 1 ? 's' : '') + ' here' +
+        (S.known_pile_searched_reads ? ', <b>' + r.known_reads + '</b> identified read' +
+          (r.known_reads === 1 ? ' does' : 's do')
           : '') + '</div>' +
         '<div class="crow">closest at <b>' + num(id, 1) + '%</b> identity over ' +
         r.median_aligned_aa + ' amino acids' +
