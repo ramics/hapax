@@ -469,3 +469,51 @@ def test_the_host_summary_never_invites_a_pairing_of_two_maxima():
         assert h["closest_row_aligned_aa"] == closest["median_aligned_aa"], (
             f"{path}: closest_row_aligned_aa is not the closest row's own length")
         assert h["longest_alignment_aa"] == max((x["median_aligned_aa"] or 0) for x in rows)
+
+
+def test_a_seed_directory_with_no_manifest_is_not_counted_as_a_seed(tmp_path):
+    """A run in flight leaves a directory, and the census counted it as a finished seed.
+
+    Fetching a five-seed run while seed 5 was still going produced four manifests and a
+    fifth directory holding one file. The stage census read "0 stages failed across 5
+    seeds" and "0 of 5 complete" off that, while the cascade table two sections above it
+    correctly said four: the same run described over two different denominators, and the
+    larger one looked like the authoritative figure. The partial seed is named instead,
+    so a count is always over the seeds that produced a manifest.
+    """
+    import shutil
+    runs = sorted(ROOT.glob("results/prod_*/run_s*/manifest.json"))
+    if len(runs) < 2:
+        pytest.skip("no production run directory with two finished seeds is committed")
+    src = runs[0].parent.parent
+    res = tmp_path / src.name
+    shutil.copytree(src, res)
+    for d in sorted(res.glob("run_s*")):
+        if not (d / "manifest.json").exists():
+            shutil.rmtree(d)
+    kept = sorted(d.name for d in res.glob("run_s*"))
+    (res / "run_s99").mkdir()
+    (res / "run_s99" / "invocation.json").write_text("{}")
+    out = tmp_path / "TABLES.md"
+    r = subprocess.run([sys.executable, "-I", "experiments/report_prod.py",
+                        "--library", src.name.replace("prod_", ""),
+                        "--results", str(res), "--out", str(out)],
+                       cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    text = out.read_text()
+    assert f"across {len(kept)} seeds" in text, text[-900:]
+    assert f"complete`: **0 of {len(kept)}**" in text or \
+        f"of {len(kept)}**" in text, text[-900:]
+    assert "s99" in text, "the directory with no manifest is not named anywhere"
+
+
+def test_a_results_directory_of_unfinished_seeds_is_refused(tmp_path):
+    """Nothing to average over is a refusal, not a table of empty cells."""
+    res = tmp_path / "prod_SRR23702504"
+    (res / "run_s1").mkdir(parents=True)
+    r = subprocess.run([sys.executable, "-I", "experiments/report_prod.py",
+                        "--library", "SRR23702504", "--results", str(res),
+                        "--out", str(tmp_path / "t.md")],
+                       cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode != 0
+    assert "not one manifest.json" in (r.stderr + r.stdout)
