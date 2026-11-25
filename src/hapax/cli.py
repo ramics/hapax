@@ -9,21 +9,18 @@ command of PLAN.md 4, because the driver still starts after assembly and demands
 `--contigs`, `--unidentified-contigs` and `--cross-sample-ref` from its caller. Step 5
 removes those, and `tests/test_end_to_end.py` is what says so out loud.
 
-WHY THE DRIVER IS LOADED BY PATH. The legacy driver is `hapax.py` at the repo root and
-this package is `hapax`, so importing it by name would resolve to whichever came first on
-`sys.path` - a landmine that depends on test ordering. It is loaded from its own file
-instead, which also keeps its content untouched: its `script_sha256` pins five committed
-seed manifests, and editing it to make an import work would break the thing the hash is
-for.
+THE DRIVER RUNS IN THIS PROCESS. It was `hapax.py` at the repo root, loaded by path and
+started as a second program, because importing it by name would have resolved to whichever
+`hapax` came first on `sys.path`. It is now `hapax.driver`, imported like any other module
+(PLAN.md step 7), and `hapax.py` is a shim for the committed command lines. The stages it
+runs are still child processes, on purpose: see `hapax.scripts`.
 """
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import json
 import os
 import shutil
-import subprocess
 import sys
 from pathlib import Path
 
@@ -52,13 +49,30 @@ def repo_root() -> Path:
 
 
 def legacy_driver():
-    """Load the root `hapax.py` from its own file, never by module name."""
-    path = repo_root() / "hapax.py"
-    spec = importlib.util.spec_from_file_location("hapax_legacy_driver", path)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
+    """The driver module. Kept under its old name for callers that read its tables."""
+    from . import driver
+
+    return driver
+
+
+def _drive(argv: list[str]) -> int:
+    """Run the driver on `argv` and return its exit status.
+
+    In this process, so a refusal arrives as a status rather than a lost traceback in a
+    child's stderr. A `SystemExit` from argparse or from a refusal is turned back into
+    the status it carried, which is what the second program used to return.
+    """
+    from . import driver
+
+    try:
+        return int(driver.main([str(a) for a in argv]) or 0)
+    except SystemExit as e:
+        if e.code is None:
+            return 0
+        if isinstance(e.code, int):
+            return e.code
+        print(e.code, file=sys.stderr)
+        return 1
 
 
 def legacy_argv(cfg: Config, r1: Path, r2: Path | None, out: Path,
@@ -278,16 +292,15 @@ def cmd_run(args) -> int:
         # Which binary each name resolved to, recorded because the same tool name on two
         # machines is two builds, and a version is part of an operating point.
         "binaries": {k: str(v) for k, v in binaries.items()},
-        "note": "the package translates one config into the legacy driver's flags; "
-                "PLAN.md step 7 replaces the subprocess with imports",
+        "note": "the package translates one config into the driver's flags and calls "
+                "hapax.driver.main with them, in this process",
     }, indent=1) + "\n")
     root = repo_root()
-    proc = subprocess.run([sys.executable, str(root / "hapax.py"), *argv], cwd=root)
-    if proc.returncode != 0:
-        return proc.returncode
-    # The run's manifest describes the whole run, and until step 7 the run is two
-    # programs: the driver writes manifest.json and knows nothing of the steps that
-    # produced its inputs. So the assembler's record is merged in here. Without it a
+    rc = _drive(argv)
+    if rc != 0:
+        return rc
+    # The driver writes manifest.json and knows nothing of the steps that produced its
+    # inputs, so the assembler's record is merged in here. Without it a
     # reader of the manifest cannot tell a run that assembled its own library from one
     # handed contigs by a caller, which is the difference PLAN.md step 5 is about.
     manifest = out / "manifest.json"

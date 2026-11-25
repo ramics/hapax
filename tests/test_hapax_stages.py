@@ -22,6 +22,9 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 HAPAX = ROOT / "hapax.py"
+#: The driver's source. `hapax.py` is the shim that runs it; tests about what the driver
+#: says read this file.
+DRIVER_SRC = ROOT / "src/hapax/driver.py"
 ROWS = ROOT / "results" / "holdout_cascade" / "contig_rows_s1.tsv"
 
 # Loaded from its path, not by name: `hapax` is the package now (see tests/legacy.py).
@@ -255,7 +258,7 @@ def test_the_driver_has_no_private_git_helper_that_can_return_nothing():
     exists for that machine and raises rather than guessing. This is the shuffle tripwire
     applied to provenance: a new private copy fails here.
     """
-    src = (ROOT / "hapax.py").read_text()
+    src = DRIVER_SRC.read_text()
     assert "def git(" not in src, "hapax.py has grown a private git helper again"
     assert "from provenance import git_sha, tree_dirty" in src
     import provenance
@@ -287,7 +290,7 @@ def test_a_deselected_stage_records_whose_choice_it_was():
     stage now names the default it departs from, and the library's own constraint where
     there is one.
     """
-    src = HAPAX.read_text()
+    src = DRIVER_SRC.read_text()
     assert 'reason="not selected with --stages"' not in src
     assert "deselected on the command line" in src
     assert "could not have run on this library either" in src
@@ -303,7 +306,7 @@ def test_every_report_section_has_a_stage_that_fills_it():
     known_strain_divergence_s*.json, and the unnamed remainder reads ranking.json. Each
     now has a stage, and this test fails if a later section arrives without one.
     """
-    src = HAPAX.read_text()
+    src = DRIVER_SRC.read_text()
     for script, stage in (("public_health_profile.py", "profile"),
                           ("known_strain_divergence.py", "taxa"),
                           ("concern_ranking.py", "ranking"),
@@ -340,7 +343,7 @@ def test_no_index_flag_carries_a_default():
             hapax.main()
     # Read the declarations rather than the help text: the help is prose and the default
     # is the thing that fires.
-    source = HAPAX.read_text()
+    source = DRIVER_SRC.read_text()
     for flag in INDEX_FLAGS:
         start = source.index(f'r.add_argument("{flag}"')
         decl = source[start:source.index("r.add_argument", start + 10)]

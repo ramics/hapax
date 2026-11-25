@@ -26,7 +26,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-DRIVER = ROOT / "hapax.py"
+DRIVER = ROOT / "src/hapax/driver.py"
 EXPERIMENTS = ROOT / "experiments"
 
 

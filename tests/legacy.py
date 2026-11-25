@@ -22,12 +22,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def driver():
-    """The root hapax.py, as a module, loaded once per process."""
-    name = "hapax_legacy_driver"
-    if name in sys.modules:
-        return sys.modules[name]
-    spec = importlib.util.spec_from_file_location(name, ROOT / "hapax.py")
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[name] = module
-    spec.loader.exec_module(module)
+    """The driver module, `hapax.driver`. It was the root `hapax.py`, loaded by path; that
+    file is now a shim, and patching a shim's copies of the driver's names would patch
+    nothing the driver reads."""
+    from hapax import driver as module
+
     return module
