@@ -2120,16 +2120,49 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
   });
   p.append(rows);
   const last = curve[curve.length - 1];
+  /* THE CAPTION NAMES THE ROWS THE TABLE DREW, AND IT NAMED A DIFFERENT ONE. It read
+     "the assembly of this sample is the biggest single bite in the cascade, at 2.3 points
+     from 7.1 MB, while the largest index here is tens of gigabytes and buys fractions of
+     a point". Three things were wrong on this run and none of them is visible beside a
+     table of ten rows: the biggest bite is the ribosomal index at 75.82 points, the
+     self-assembly row the sentence picked is the smaller of the two self-assembly rows
+     and left the 9.73-point one out, and the largest index bought 1.44 points rather than
+     a fraction of one. The point the sentence exists to make - that the index which buys
+     the most per byte is the sample's own assembly - is true and is now computed, with
+     every number read off the same rows the bars are drawn from. */
+  /* A RATIO NEEDS A DENOMINATOR THAT IS THE SAME KIND OF THING ON EVERY ROW. Per byte
+     over every row makes the artefact filter the winner: it is 120 bytes of patterns,
+     not a reference, so the ratio is a small number over a smaller one and says nothing
+     about consulting an index. The comparison is between references, and the floor that
+     separates a reference from a rule is stated in the sentence rather than assumed. */
+  const REFERENCE_MIN_BYTES = 1e6;
+  const sized = curve.filter(c => (c.index_bytes || 0) >= REFERENCE_MIN_BYTES);
+  const byMarginal = curve.slice()
+    .sort((a, b) => (b.marginal_removed || 0) - (a.marginal_removed || 0));
+  const biggest = byMarginal[0] || {};
+  const byBytes = sized.slice().sort((a, b) => b.index_bytes - a.index_bytes);
+  const largest = byBytes[0] || {};
+  const perByte = sized.slice().sort((a, b) =>
+    ((b.marginal_removed || 0) / b.index_bytes) -
+    ((a.marginal_removed || 0) / a.index_bytes));
+  const bestValue = perByte[0] || {};
+  const nothing = curve.filter(c => (c.marginal_removed || 0) < 0.0005).length;
   p.append(el('p', 'note',
-    '<b>The assembly of this sample is the biggest single bite in the cascade</b>, ' +
-    'at ' +
-    num(100 * (curve.filter(c => /selfasm_sample_contigs_identified/.test(c.tier))[0]
-      || {marginal_removed: 0}).marginal_removed, 1) +
-    ' points from ' + gb((curve.filter(c => /selfasm_sample_contigs_identified/
-      .test(c.tier))[0] || {}).index_bytes) +
-    ', while the largest index here is tens of gigabytes and buys fractions of a point. ' +
-    'And <b>several rows take nothing at all</b>: by the time they run, everything they ' +
-    'could name has already been named by something smaller. ' +
+    '<b>Which index you consult beats how big it is.</b> ' +
+    'Of the references over ' + gb(REFERENCE_MIN_BYTES) + ', the most per byte is ' +
+    esc(bestValue.tier) + ', ' +
+    num(100 * (bestValue.marginal_removed || 0), 2) + ' points from ' +
+    gb(bestValue.index_bytes) + ', while the largest index here, ' +
+    esc(largest.tier) + ' at ' + gb(largest.index_bytes) + ', buys ' +
+    num(100 * (largest.marginal_removed || 0), 2) + ' points. ' +
+    'The biggest single bite is ' + esc(biggest.tier) + ' at ' +
+    num(100 * (biggest.marginal_removed || 0), 2) + ' points. ' +
+    (nothing
+      ? '<b>' + nothing + ' row' + (nothing === 1 ? '' : 's') + ' take' +
+        (nothing === 1 ? 's' : '') + ' nothing at all</b>: by the time ' +
+        (nothing === 1 ? 'it runs, everything it could' : 'they run, everything they ' +
+         'could') + ' name has already been named by something else. '
+      : '') +
     'Everything left after the last row is ' + pct(last.residue) +
     ' of the library, which is the subject of this page.'));
   p.append(opChips((t || {}).operating_point || {}));
