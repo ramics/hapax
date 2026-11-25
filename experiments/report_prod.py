@@ -51,6 +51,26 @@ def load(path: Path):
         return None
 
 
+def _ran(entry: dict, ran: dict, key: str) -> str:
+    """One sample fact as the run used it, saying which of the two sources answered.
+
+    A fact absent from the registry is not an unknown: a trim and a block are measured
+    off the reads, and a library whose registry entry deliberately records neither still
+    ran on a definite value. Printing the registry alone said "unmeasured" of a trim the
+    pass had measured, which is the one direction of error this project treats as
+    expensive, since it reads as a gap in the measurement rather than in the lookup.
+    """
+    stated, used = entry.get(key), ran.get(key)
+    fmt = (lambda v: f"{v:,}" if isinstance(v, int) else str(v))
+    if stated is not None:
+        return f"{fmt(stated)}, stated" + (
+            f" (the run recorded {fmt(used)})" if used is not None and used != stated
+            else "")
+    if used is not None:
+        return f"{fmt(used)}, measured on this run"
+    return "neither stated nor recorded"
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--seed", type=int, default=1, help="recorded; inputs are fixed files")
@@ -67,6 +87,8 @@ def main() -> int:
         raise SystemExit(f"{res} holds no run_s* directory")
 
     entry = library_facts.library(args.library)
+    # The parameters of the first seed's own manifest: what the run actually ran on.
+    ran = ((load(runs[0] / "manifest.json") or {}).get("parameters") or {})
     truth = stage_refs.resolve(args.library, "truth_panel")
     cross = stage_refs.resolve(args.library, "crossplant_panel")
 
@@ -89,9 +111,15 @@ def main() -> int:
     w(f"| pairs in the library | {entry.get('pairs', '-'):,} |"
       if isinstance(entry.get("pairs"), int) else "| pairs in the library | - |")
     w(f"| read length | {entry.get('read_length', '-')} |")
-    w(f"| mate-2 trim used | {entry.get('trim_r2', 'unmeasured')} |")
-    w(f"| block stride | {entry.get('block', '-'):,} |"
-      if isinstance(entry.get("block"), int) else "| block stride | - |")
+    # THE VALUE THE RUN USED, not the value the registry holds. For a library whose trim
+    # and block are deliberately absent from the registry - because both are measured on
+    # the instance, which is the point of the one-command path - these two rows read
+    # "unmeasured" and "-" on a run that had measured them both and printed them in its
+    # own operating point two sections down. The registry answers what was supplied; only
+    # the run answers what ran, and where they differ the stated one wins, so both are
+    # shown with the source named.
+    w(f"| mate-2 trim used | {_ran(entry, ran, 'trim_r2')} |")
+    w(f"| block stride | {_ran(entry, ran, 'block')} |")
     w(f"| truth panel | {truth['state']}"
       + (f": {truth.get('panel')}" if truth["state"] == "resolved" else "") + " |")
     w(f"| cross-plant panel | {cross['state']}"
