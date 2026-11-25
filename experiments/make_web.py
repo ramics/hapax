@@ -1720,6 +1720,26 @@ function interval(iv) {
     pct(iv.lo) + ', ' + pct(iv.hi) + ']</span>';
 }
 
+/* WHETHER A TIER RETURNS A NAME IS A PROPERTY OF THE INDEX, NOT OF ITS DIRECTORY NAME.
+   Two panels each carried a literal map of tier names that can name, keyed `k2_viral`,
+   `k2_standard08` and so on. Production pulls its Kraken2 databases through
+   `hapax fetch-db`, which names the directory after the release it downloaded, so the
+   tiers arrive as `k2_viral_20261022.d` and matched nothing: every Kraken2 read moved out
+   of "named" and into "recognised, unnamed", the named band read 2.24% where the cascade
+   had named 4.07%, and the reconciliation panel went on asserting that its two named rows
+   agreed while they stood 15 points apart. Classification is by what the tier IS, and a
+   tier this function does not recognise is returned as unknown so that a new index lands
+   in a stated category rather than quietly in the larger one. */
+function tierKind(name) {
+  const n = String(name || '');
+  if (/^k2_/.test(n) || /^prot_/.test(n)) return 'names';
+  if (n === 'rrna' || n === 'artefact' || /^selfasm_/.test(n)) return 'recognises';
+  if (/^observe_/.test(n)) return 'observes';
+  return 'unknown';
+}
+
+function tierCanName(name) { return tierKind(name) === 'names'; }
+
 // ---------- header
 (function () {
   const r = D.run || {};
@@ -4405,6 +4425,26 @@ function interval(iv) {
   const own = tier('selfasm_sample_contigs_identified_norrna').marginal_removed;
   const rr = tier('rrna').tier_alone_removed;
 
+  /* Each tier in the recognised-but-unnamed band with its own marginal share. The
+     ribosomal index itself has its own band above, so it is excluded here rather than
+     counted twice. A tier `tierKind` does not recognise is listed under its own name, so
+     a new index appears as itself instead of swelling a label written for another one. */
+  function unnamedBandParts(curve, rrAlone) {
+    const NAMES = {artefact: 'adapter and low complexity',
+                   selfasm_sample_contigs_rrna: 'own-sample ribosomal contigs',
+                   selfasm_sample_contigs_identified_norrna:
+                     'own-sample contigs carrying no name'};
+    const parts = (curve || [])
+      .filter(c => tierKind(c.tier) === 'recognises' && c.tier !== 'rrna'
+                   && (c.marginal_removed || 0) > 0)
+      .map(c => [NAMES[c.tier] || c.tier, c.marginal_removed])
+      .sort((a, b) => b[1] - a[1]);
+    if (!parts.length) {
+      return 'no tier in this run removed reads without naming them';
+    }
+    return parts.map(x => x[0] + ' ' + pct(x[1])).join(', ');
+  }
+
   const hero = el('div', 'verdict');
   hero.innerHTML = '<div class="vmain"><b>' +
     pct(1 - (K.named / (K.searched || 1))) + '</b> of residual reads have no ' +
@@ -4421,19 +4461,30 @@ function interval(iv) {
   (function () {
     const brk = (D.tier_table || {}).breakdown, curve = (D.tier_table || {}).curve || [];
     if (!brk || !curve.length) return;
-    const CAN_NAME = {k2_viral: 1, k2_standard08: 1, k2_pluspf08: 1, k2_pluspf16: 1,
-                      prot_viral: 1, prot_sprot: 1};
     let named = 0;
-    curve.forEach(c => { if (CAN_NAME[c.tier]) named += c.marginal_removed || 0; });
+    curve.forEach(c => { if (tierCanName(c.tier)) named += c.marginal_removed || 0; });
     const ident = brk.identified.point;
     const bands = [
       {lab: 'named', v: named, col: 'var(--v1)',
        sub: 'a taxon or an accession'},
-      {lab: 'ribosomal RNA', v: rr, col: 'var(--v1)', op: 0.45,
-       sub: 'identifies a ribosome, not an organism'},
-      {lab: 'recognised, unnamed', v: Math.max(0, ident - named - rr),
-       col: 'var(--v-mute)', sub: 'mostly own-sample contigs (' + pct(own) +
-         '), rest adapter and low complexity'},
+      /* THE BANDS MUST PARTITION THE IDENTIFIED FRACTION, SO EVERY ONE IS A MARGINAL.
+         This band used the ribosomal index's own reach (76.06%) while the band beside it
+         was computed as identified minus named minus this, so the stacked parts summed
+         to 0.24 points more than the band they sat under. The index's own reach is a
+         different quantity, it is the one the sentence above the figure quotes, and it
+         belongs there and not in a stack. */
+      {lab: 'ribosomal RNA', v: tier('rrna').marginal_removed, col: 'var(--v1)',
+       op: 0.45, sub: 'identifies a ribosome, not an organism'},
+      /* THE SUB-LABEL IS A DECOMPOSITION, NOT A GUESS AT ONE. It read "mostly
+         own-sample contigs (2.26%), rest adapter and low complexity" over a band of
+         14.18%: the 2.26% named only the non-ribosomal self-assembly tier and left the
+         9.73% of own-sample RIBOSOMAL contigs out, while the artefact filters it
+         attributed the remainder to removed 0.61%. Every tier in the band is listed with
+         its own marginal share, largest first, in the shape the reconciliation panel
+         below already used. */
+      {lab: 'recognised, unnamed',
+       v: Math.max(0, ident - named - tier('rrna').marginal_removed),
+       col: 'var(--v-mute)', sub: unnamedBandParts(curve, rr)},
       /* THE SUB-LABELS SAY WHAT THE PILE IS, NOT WHAT IT MEASURED SOMEWHERE ELSE.
          These two read "median depth 6" and "median depth 1", which are one library's
          measurements written into the renderer. No stage in a run produces a median
@@ -4447,6 +4498,18 @@ function interval(iv) {
        sub: 'no name, and no contig here either'},
     ].filter(b => b.v > 0);
     const tot = bands.reduce((a, b) => a + b.v, 0) || 1;
+    /* THE INVARIANT, ASSERTED WHERE THE BANDS ARE BUILT. These five are the whole
+       library split by what can be said about each part, so they sum to one. They did
+       not: the named band was short by every Kraken2 tier because a literal map of
+       undated directory names had stopped matching, and the ribosomal band carried an
+       index's own reach where the band beside it had been computed from a marginal. Both
+       faults are invisible in a stacked bar, which normalises by its own total and so
+       draws any set of numbers as a full width. A throw here fails the build, which is
+       the only tell a figure drawn from a wrong total can have. */
+    if (Math.abs(tot - 1) > 0.005) {
+      throw new Error('the library bands sum to ' + tot.toFixed(4) +
+        ' rather than 1: ' + bands.map(b => b.lab + ' ' + b.v.toFixed(4)).join(', '));
+    }
     const bar = el('div', 'split');
     bar.innerHTML = bands.map((b, i) =>
       '<i title="' + esc(b.lab + ': ' + pct(b.v)) + '" style="flex:' +
@@ -4495,15 +4558,13 @@ function interval(iv) {
   // A Kraken2 or DIAMOND hit carries a taxon or an accession; an artefact filter, a
   // SILVA match and a match to a contig from this very sample tell you the sequence has
   // been seen before and nothing about what it is.
-  const CAN_NAME = {k2_viral: 1, k2_standard08: 1, k2_pluspf08: 1, k2_pluspf16: 1,
-                    prot_viral: 1, prot_sprot: 1};
   const WHY = {artefact: 'adapter and low complexity',
                rrna: 'ribosomal RNA',
                selfasm_sample_contigs_rrna: 'own-sample ribosomal contigs',
                selfasm_sample_contigs_identified_norrna: 'own-sample unnamed contigs'};
   curve.forEach(c => {
     const m = c.marginal_removed || 0;
-    if (CAN_NAME[c.tier]) { named += m; }
+    if (tierCanName(c.tier)) { named += m; }
     else { unnamed += m; if (m > 0.002) unnamedRows.push([c.tier, m]); }
   });
   const k2here = 1 - (((P.at_confidence['0.1'] || {}).by_superkingdom || [])
@@ -4522,9 +4583,18 @@ function interval(iv) {
   };
   rowbar('<b>named</b>, one index', k2here, 'var(--v1)',
     'Kraken2 PlusPF-08, confidence 0.1, whole library.');
+  /* Whether the two named rows agree is a comparison, not a sentence: the claim
+     survived the tier names changing underneath it and went on asserting agreement
+     across a fifteen-point gap. The two differ in scope as well as index, and the note
+     under the panel says so, so the row states the gap and leaves the reading there. */
   rowbar('<b>named</b>, whole cascade', named, 'var(--v1)',
-    'sum of every cascade tier returning a taxon or accession. Agrees with the row ' +
-    'above.');
+    'sum of every cascade tier returning a taxon or accession, ' +
+    ((Math.abs(named - k2here) <= 0.02)
+      ? 'within ' + ((Math.abs(named - k2here)) * 100).toFixed(1) +
+        ' percentage points of the row above.'
+      : ((named - k2here) * 100).toFixed(1) +
+        ' percentage points from the row above, which is one index over the whole ' +
+        'library against the cascade over its block.'));
   rowbar('<b>recognised, unnamed</b>', unnamed, 'var(--v-mute)',
     unnamedRows.map(r => (WHY[r[0]] || r[0]) + ', ' + pct(r[1])).join('; ') + '.');
   rowbar('residual', brk.residual.point, 'var(--v2)',

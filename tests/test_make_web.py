@@ -378,3 +378,49 @@ def test_a_flag_count_above_its_own_denominator_is_refused():
             [{"arm": "divergent", "orfs": 1, "orfs_with_a_subject": 1,
               "subject_disagreement_flag": True}],
             {"divergent": {"contigs": 1}})
+
+
+def _page_function(name: str) -> str:
+    """One function lifted out of the page code, so node can be asked what it returns."""
+    src = make_web.PAGE
+    start = src.index(f"function {name}(")
+    depth, i = 0, src.index("{", start)
+    for j in range(i, len(src)):
+        if src[j] == "{":
+            depth += 1
+        elif src[j] == "}":
+            depth -= 1
+            if depth == 0:
+                return src[start:j + 1]
+    raise AssertionError(f"{name} does not close")
+
+
+def test_a_dated_kraken2_directory_still_counts_as_a_tier_that_names():
+    """The tier name carries the database release, and a literal map stopped matching.
+
+    `hapax fetch-db` names each Kraken2 directory after the release it downloaded, so the
+    cascade's tiers arrive as `k2_viral_20261022.d` rather than `k2_viral`. Two panels
+    held a literal map of the undated names: every Kraken2 read moved out of the named
+    band into recognised-but-unnamed, the named band read 2.24% against the cascade's
+    4.07%, and the reconciliation panel asserted that its two named rows agreed across a
+    fifteen-point gap. A tier is classified by what it is, and an unrecognised one is
+    reported as unknown so it cannot land in a band by default.
+    """
+    if subprocess.run(["node", "-e", "0"], capture_output=True).returncode:
+        pytest.skip("no node here")
+    probe = _page_function("tierKind") + """
+const cases = {
+  'k2_viral_20261022.d': 'names', 'k2_pluspf_16_GB_20261022.d': 'names',
+  'k2_viral': 'names', 'prot_viral': 'names', 'prot_sprot': 'names',
+  'rrna': 'recognises', 'artefact': 'recognises',
+  'selfasm_sample_contigs_rrna': 'recognises',
+  'selfasm_sample_contigs_identified_norrna': 'recognises',
+  'observe_sample_contigs_unidentified': 'observes',
+  'something_new': 'unknown', '': 'unknown'};
+const bad = Object.entries(cases).filter(([k, v]) => tierKind(k) !== v)
+  .map(([k, v]) => k + ' read ' + tierKind(k) + ', wanted ' + v);
+if (bad.length) { console.log(bad.join('; ')); process.exit(1); }
+console.log('ok');
+"""
+    r = subprocess.run(["node", "-e", probe], capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout + r.stderr
