@@ -44,13 +44,30 @@ RATES_AS_OF = "2026-11-25"
 EBS_USD_PER_GB_MONTH = 0.08
 
 
+class Unreachable(SystemExit):
+    """The bucket could not be listed, which is not the same as a launch writing nothing.
+
+    CI runs this suite with no AWS credentials, so the first version of the refusal below
+    never fired: botocore raised `NoCredentialsError` out of the paginator and the script
+    exited on a traceback. An environment that cannot reach the bucket and an instance
+    that wrote nothing to it produce the same empty listing and are different facts, so
+    they get different exits.
+    """
+
+
 def _window(s3, bucket: str, prefixes: list[str]):
     """First and last write under any of `prefixes`, and how many keys there are."""
     first = last = None
     n = 0
     for pre in prefixes:
-        for page in s3.get_paginator("list_objects_v2").paginate(Bucket=bucket,
-                                                                 Prefix=pre):
+        try:
+            pages = list(s3.get_paginator("list_objects_v2").paginate(Bucket=bucket,
+                                                                      Prefix=pre))
+        except Exception as e:  # botocore raises several unrelated types here
+            raise Unreachable(
+                f"cannot list s3://{bucket}/{pre}, so no wall clock can be measured "
+                f"and no cost can be stated: {type(e).__name__}: {e}") from e
+        for page in pages:
             for o in page.get("Contents", []):
                 n += 1
                 t = o["LastModified"]
@@ -71,7 +88,14 @@ def main() -> int:
     if not launches:
         raise SystemExit(f"{res} holds no launch_i-*.json, so there is no ledger to write")
 
-    s3 = ec2_common.s3_client()
+    try:
+        s3 = ec2_common.s3_client()
+    except Exception as e:
+        # Building the client fails before any listing when there is no profile or
+        # credential to build it from, so this exit has to sit here as well.
+        raise Unreachable(
+            f"cannot open an S3 client, so no wall clock can be measured and no cost "
+            f"can be stated: {type(e).__name__}: {e}") from e
     rows = []
     for f in launches:
         d = json.loads(f.read_text())
