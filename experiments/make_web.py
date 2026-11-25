@@ -1713,6 +1713,12 @@ function opChips(obj, keys) {
   return d;
 }
 
+/* Counts of one are common at the thin end of this data, which is where the page
+   spends most of its words, so "1 reads" appeared on most rows of the ranking. */
+function plural(n, one, many) {
+  return n.toLocaleString() + ' ' + (Number(n) === 1 ? one : (many || one + 's'));
+}
+
 /* No pile without its interval. */
 function interval(iv) {
   if (!iv) return '<span class="absent">no interval</span>';
@@ -2435,7 +2441,8 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
         '</div>' +
         axis('how far', r.distance, 'var(--residue)',
              num(r.median_identity_percent, 1) + '% id') +
-        axis('how much', r.weight_term, 'var(--identified)', r.residue_reads + ' reads') +
+        axis('how much', r.weight_term, 'var(--identified)',
+              plural(r.residue_reads, 'read')) +
         axis('host', r.host_term, GCOL[r.host_group] || 'var(--null)',
              'conf ' + num(r.host_confidence, 2)) +
         axis('alone', r.only_in_residue ? 1 : 0, 'var(--tier2)',
