@@ -1800,7 +1800,7 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
   const t = D.tier_table, b = (t && t.breakdown) || {};
   if (!b.identified || !b.residual) return;
   const p = panel('Library partition, one square per percent',
-    'One square is one percent of this run read pairs. Pale squares were named by ' +
+    'One square is one percent of this run\\'s read pairs. Pale squares were named by ' +
     'searching; dark squares were not.');
   const frac = {identified: b.identified.point,
     assembled_unidentified: (b.assembled_unidentified || {}).point || 0,
@@ -1850,9 +1850,28 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
   const R = D.ranking, hc = (R && R.host_confidence_summary) || {};
   if (hc.subjects != null) card(String(hc.subjects),
     'known organisms the leftovers resemble from a distance, none of them closely');
-  if (hc.best_identity_percent != null) card(num(hc.best_identity_percent, 1) + '%',
-    'the closest any of those resemblances gets, and over only ' + hc.best_aligned_aa +
-    ' amino acids');
+  /* THE SAME PAIRING OF TWO MAXIMA, IN THE HEADLINE CARD. The warning panel further
+     down takes the closest row and prints that row's own alignment length; this card
+     printed the maximum identity beside the maximum aligned length, which are maxima
+     over the rows taken separately and usually different subjects. It read "96.3%, and
+     over only 60 amino acids" where the 96.3% row is a 31 aa alignment. The producer
+     ships `closest_row_aligned_aa` for exactly this, and a field saying in words that
+     the two maxima must not be printed as one match; the page was ignoring both. The
+     length is taken from the rows where they are available, so a ranking written before
+     that field renders the same, and the card is dropped rather than printed without a
+     length, because an identity over an unstated alignment length is the half of the
+     pair that reads as the whole. */
+  const closestRow = (D.ranking && D.ranking.subjects || [])
+    .filter(r => r.median_identity_percent != null)
+    .sort((a, b) => (b.median_identity_percent - a.median_identity_percent) ||
+                    ((b.median_aligned_aa || 0) - (a.median_aligned_aa || 0)))[0];
+  const closestAa = (closestRow && closestRow.median_aligned_aa) != null
+    ? closestRow.median_aligned_aa : hc.closest_row_aligned_aa;
+  if (hc.best_identity_percent != null && closestAa != null) {
+    card(num(hc.best_identity_percent, 1) + '%',
+      'the closest any of those resemblances gets, over ' + closestAa +
+      ' amino acids of that one match');
+  }
   // The wall, read off the only positive control the tool has. A spiked genome whose
   // reads SURVIVE tier 1 is a genome the cascade failed to recognise, so the first rung
   // where the median genome is more than half unrecognised is where recognition breaks.

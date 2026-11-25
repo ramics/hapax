@@ -424,3 +424,25 @@ console.log('ok');
 """
     r = subprocess.run(["node", "-e", probe], capture_output=True, text=True)
     assert r.returncode == 0, r.stdout + r.stderr
+
+
+def test_the_page_never_pairs_the_two_independent_maxima():
+    """The producer ships a field saying not to, and the page did it anyway.
+
+    `host_confidence_summary` carries `best_identity_percent` and `best_aligned_aa` as
+    maxima over the rows taken separately, usually of different subjects, and carries
+    `best_fields_are_independent` saying in words that they must not be printed as one
+    match. The warning panel honoured that and took the closest row's own length; the
+    headline card above it printed the two maxima together and read "96.3%, and over only
+    60 amino acids" where that 96.3% row is a 31 aa alignment. A pairing of two maxima
+    describes a subject that does not exist, so the page code may not read the maximum
+    length at all: `closest_row_aligned_aa`, or the chosen row's own field, is the only
+    length that may sit beside an identity.
+    """
+    page = make_web.PAGE
+    code = "\n".join(ln for ln in page.split("\n")
+                      if not ln.lstrip().startswith(("//", "*", "/*")))
+    assert "best_aligned_aa" not in code, (
+        "the page reads the maximum aligned length, which belongs to a different "
+        "subject than the maximum identity")
+    assert "longest_alignment_aa" not in code
