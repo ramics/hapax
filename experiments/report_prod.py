@@ -85,6 +85,37 @@ def _shown(path: Path) -> str:
         return str(path)
 
 
+#: Section files that were looked for and not found, so that a section missing from the
+#: generated tables is a line in them rather than nothing at all.
+_NOT_FOUND: list[str] = []
+
+
+def _find(res: Path, runs: list[Path], *names: str):
+    """The first of `names` that exists at the results root or in any seed directory.
+
+    TWO LAYOUTS, ONE GENERATOR. The per-library pass writes the assembly baseline, the
+    contig split and the measured-library record once at the results root; the one-command
+    path writes them inside each seed's own directory, and renamed one of them. Every one
+    of these sections was guarded by a bare `if loaded:`, so on the second layout four
+    whole sections of the generated tables disappeared and the file still looked finished
+    - the same shape as a figure drawn from an input declared absent. The paths tried are
+    recorded whether or not one hits, and the ones that missed are printed, because a
+    section that is not there and a section that was never asked for are different
+    statements.
+    """
+    tried = []
+    for name in names:
+        for base in [res, *runs]:
+            cand = base / name
+            tried.append(cand)
+            if cand.exists():
+                return load(cand)
+    _NOT_FOUND.append(
+        f"{names[0]}, looked for at {len(tried)} paths under "
+        f"{_shown(res)} and in each seed directory")
+    return None
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--seed", type=int, default=1, help="recorded; inputs are fixed files")
@@ -162,7 +193,7 @@ def main() -> int:
     # itself?" Four of these come off the file; where the registry states a different value
     # the stated one is what ran, because stating it is the override, so both are printed
     # and the disagreement is visible rather than reconciled.
-    meas = load(res / "measured_library.json")
+    meas = _find(res, runs, "measured_library.json", "library_measured.json")
     if meas:
         w("## Measured off the file, beside what the registry states")
         w("")
@@ -221,7 +252,7 @@ def main() -> int:
         w("")
 
     # ---- the assembly, with its own argv and version
-    asm = load(res / "assembly/assembly_baseline.json")
+    asm = _find(res, runs, "assembly/assembly_baseline.json")
     if asm:
         w("## The assembly (whole library, committed baseline arm)")
         w("")
@@ -233,7 +264,7 @@ def main() -> int:
                 v = asm[k]
                 w(f"| {k} | {v:,} |" if isinstance(v, int) else f"| {k} | {v} |")
         w("")
-    man = load(res / "assembly/manifest_s1.json")
+    man = _find(res, runs, "assembly/manifest_s1.json")
     if man:
         w(f"MEGAHIT `{man.get('megahit_version', '?')}`, "
           f"minimap2 `{man.get('minimap2_version', '?')}`, "
@@ -241,7 +272,7 @@ def main() -> int:
         w("")
 
     # ---- the contig split: what identification could and could not name
-    cid = load(res / "contig_identification.json")
+    cid = _find(res, runs, "contig_identification.json")
     if cid:
         w("## The contig split (identification, never assembly)")
         w("")
@@ -387,6 +418,11 @@ def main() -> int:
       f"an empty stage cannot hide behind a clean exit code. Wall clock per seed: "
       f"{[round(m.get('wall_seconds', 0) / 60, 1) for m in done]} minutes.")
     w("")
+
+    if _NOT_FOUND:
+        w("Sections not in this file, with the file each one needed: "
+          + "; ".join(f"`{n}`" for n in _NOT_FOUND) + ".")
+        w("")
 
     out = args.out or res / "TABLES.md"
     out.write_text("\n".join(L) + "\n")

@@ -517,3 +517,65 @@ def test_a_results_directory_of_unfinished_seeds_is_refused(tmp_path):
                        cwd=ROOT, capture_output=True, text=True)
     assert r.returncode != 0
     assert "not one manifest.json" in (r.stderr + r.stdout)
+
+
+def test_a_section_whose_file_sits_in_the_seed_directory_still_renders(tmp_path):
+    """Two run layouts, one generator, and four sections vanished on the second.
+
+    The per-library pass writes the assembly baseline, the contig split and the
+    measured-library record once at the results root. The one-command path writes them
+    inside each seed's directory and renamed one of them. Each section was guarded by a
+    bare `if loaded:`, so the generated tables for the third library lost the whole-library
+    assembly, the contig split and the measured-against-registry comparison, and the file
+    still ended with a stage census and looked finished.
+    """
+    import shutil
+    runs = sorted(ROOT.glob("results/prod_*/run_s*/manifest.json"))
+    if not runs:
+        pytest.skip("no production run directory is committed")
+    src = runs[0].parent.parent
+    res = tmp_path / src.name
+    shutil.copytree(src, res)
+    seed = sorted(res.glob("run_s*"))[0]
+    # whichever layout the committed run uses, put the three files in the OTHER place
+    for name in ("measured_library.json", "library_measured.json",
+                 "contig_identification.json", "assembly/assembly_baseline.json"):
+        at_root, at_seed = res / name, seed / name
+        if at_root.exists():
+            at_seed.parent.mkdir(parents=True, exist_ok=True)
+            shutil.move(at_root, at_seed)
+    out = tmp_path / "TABLES.md"
+    r = subprocess.run([sys.executable, "-I", "experiments/report_prod.py",
+                        "--library", src.name.replace("prod_", ""),
+                        "--results", str(res), "--out", str(out)],
+                       cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    text = out.read_text()
+    for heading in ("## The assembly", "## The contig split",
+                    "## Measured off the file"):
+        assert heading in text, (
+            f"{heading} did not render with its file in the seed directory")
+
+
+def test_a_section_with_no_file_anywhere_says_so(tmp_path):
+    """An omitted section is a line in the file, not an absence of one."""
+    import shutil
+    runs = sorted(ROOT.glob("results/prod_*/run_s*/manifest.json"))
+    if not runs:
+        pytest.skip("no production run directory is committed")
+    src = runs[0].parent.parent
+    res = tmp_path / src.name
+    shutil.copytree(src, res)
+    for name in ("assembly/assembly_baseline.json",):
+        for base in [res, *sorted(res.glob("run_s*"))]:
+            if (base / name).exists():
+                (base / name).unlink()
+    out = tmp_path / "TABLES.md"
+    r = subprocess.run([sys.executable, "-I", "experiments/report_prod.py",
+                        "--library", src.name.replace("prod_", ""),
+                        "--results", str(res), "--out", str(out)],
+                       cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    text = out.read_text()
+    assert "## The assembly" not in text
+    assert "Sections not in this file" in text and "assembly_baseline.json" in text
