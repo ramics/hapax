@@ -428,6 +428,13 @@ METHOD_ROWS = [("Input",), ("Procedure",), ("Threshold",), ("Denominator",),
                ("Control", "Control arm"), ("Bias", "Bias direction")]
 METHODS_FILE = ROOT / "results/web/methods.json"
 NOT_MEASURED = "Not measured on this library."
+#: Appended to a row that states its design but holds no number for this sample. A row
+#: that printed the design alone would read as a measurement; NOT_MEASURED alone, which is
+#: what every such row used to read, threw the design away with the number. On a library
+#: nobody has written about, 28 of the 90 rows were blank, and nine of them were blank for
+#: the wrong reason: a shuffled control arm and the direction of a bias are properties of
+#: the procedure and hold whatever water is in the tube.
+NO_VALUE = "No number for this row is recorded for this library."
 
 
 def load_page(path: Path, rundir: Path | None) -> dict:
@@ -529,6 +536,24 @@ def load_page(path: Path, rundir: Path | None) -> dict:
     return d
 
 
+def _unmeasured(entry: dict, label: str) -> str:
+    """What a per-library row says on a page whose library nobody has written about.
+
+    The wording separates two things a blank row used to merge: a control that was never
+    run, and a control that ran under a number nobody has written down. This row is the
+    second, so it says the number is not recorded rather than that nothing was measured.
+
+    The row's own number is not available and is never invented. What can still be printed
+    is the design: which control arm this figure carries, and which way its bias points.
+    Those are properties of the procedure, so they hold for whatever water is in the tube,
+    and dropping them left a reader of a new library's page unable to see that a figure had
+    a control at all - on SRR34217566, 28 of 90 rows read "Not measured on this library."
+    with nine of them stating no number in the first place.
+    """
+    design = (entry.get("design") or {}).get(label)
+    return f"{design} {NO_VALUE}" if design else NOT_MEASURED
+
+
 def resolve_methods(accession: str) -> list[dict]:
     """The Methods entries as this sample's page prints them.
 
@@ -563,11 +588,26 @@ def resolve_methods(accession: str) -> list[dict]:
                                  f"{e['about']} but its Input row does not say so")
             filled = rows
         else:
+            blank = [lab for lab, txt in rows if txt is None]
             for lab in meas:
                 if lab not in labels:
                     raise SystemExit(f"{METHODS_FILE}: {e['id']!r} measured row {lab!r} "
                                      f"for {accession} is not one of its rows")
-            filled = [[lab, meas.get(lab, txt if txt is not None else NOT_MEASURED)]
+                if lab not in blank:
+                    raise SystemExit(
+                        f"{METHODS_FILE}: {e['id']!r} measures row {lab!r} for "
+                        f"{accession} where the row already holds text every page "
+                        f"prints; one library's number must not shadow a statement "
+                        f"made about the tool")
+            for lab in (e.get("design") or {}):
+                if lab not in blank:
+                    raise SystemExit(
+                        f"{METHODS_FILE}: {e['id']!r} states a design for row {lab!r}, "
+                        f"which already holds text that every page prints; a design is "
+                        f"what a row says when the number is this library's and the "
+                        f"number is absent")
+            filled = [[lab, txt if txt is not None
+                       else (meas.get(lab) or _unmeasured(e, lab))]
                       for lab, txt in rows]
         out.append({"id": e["id"], "t": e["title"], "rows": filled})
     return out
@@ -641,6 +681,21 @@ def search_table(piles: dict[str, list[dict]]) -> dict:
     return out
 
 
+def _shown(path: Path) -> str:
+    """The path as the page should print it: repo-relative where it is, absolute otherwise.
+
+    A run directory is not required to sit inside the checkout - the production runs land
+    under /opt/hapax/out and are fetched afterwards - and `relative_to` raises on one that
+    does not, so this used to refuse any page whose inputs the run itself produced. The
+    point of printing it at all is that a reader can find the file, which an absolute path
+    serves and an exception does not.
+    """
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
+
+
 def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int,
            page: dict) -> dict:
     rng = random.Random(seed)
@@ -690,7 +745,7 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int,
         # hand-written sentence is visible as one instead of passing for a derived fact.
         "page": {"title": page["title"], "sample": page["sample"],
                  "derived": page.get("derived"), "overrides": page.get("overrides") or [],
-                 "inputs": {k: ({"path": str(v.relative_to(ROOT))} if v is not None else
+                 "inputs": {k: ({"path": _shown(v)} if v is not None else
                                 {"not_run": page["inputs"][k]["not_run"]})
                             for k, v in page["_inputs"].items()}},
         "methods": resolve_methods(page["sample"]["accession"]),

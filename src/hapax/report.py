@@ -133,7 +133,20 @@ def missing_sections(states: list[InputState]) -> dict[str, list[InputState]]:
     return out
 
 
-def descriptor(rundir: Path, out_path: Path) -> Path:
+def _declare(path: Path, why_absent: str) -> dict:
+    """State a page input as the path the run produced, or as an absence with its reason.
+
+    The generator takes exactly one of `path` or `not_run` per input and refuses a key that
+    carries both or neither, so that "nobody said" and "it does not apply" cannot render
+    the same. This decides between them by looking, which is the only way the answer is
+    about the run in hand: the alternative is a sentence typed once, which goes stale
+    silently and in the direction of under-reporting.
+    """
+    path = Path(path)
+    return {"path": str(path)} if path.exists() else {"not_run": why_absent}
+
+
+def descriptor(rundir: Path, out_path: Path, seed: int = 1) -> Path:
     """Assemble the page descriptor from what the run recorded about itself.
 
     Everything here comes out of the run directory. `sample_facts` is whatever the run's
@@ -165,8 +178,17 @@ def descriptor(rundir: Path, out_path: Path) -> Path:
         # with the reason, rather than left out: a declared absence and an undeclared one
         # look the same on a page and are not the same thing.
         "inputs": {
-            "spectrum": {"not_run": "the divergent-contig workup is not yet a stage of "
-                                    "hapax run (PLAN.md step 6)"},
+            # READ FROM THE RUN, NEVER ASSERTED. This said "the divergent-contig workup is
+            # not yet a stage of hapax run (PLAN.md step 6)" long after the divergent stage
+            # was one, so a complete run of SRR34217566 drew its headline distance spectrum
+            # as an empty axis and told three of its controls that the stage had not run,
+            # beside a run directory holding the stage's 1.7 MB of output. A hardcoded
+            # absence is a claim about this water that nothing measured, and it is the
+            # harder fault to see of the two, because a declared absence renders as
+            # scrupulousness.
+            "spectrum": _declare(rundir / f"divergent_known_s{seed}.json",
+                                 "the divergent stage did not run on this library, so "
+                                 "there are no scored contigs to lay out"),
             "spectrum_big_index": {"not_run": "no larger-index block was run against "
                                               "these contigs"},
         },
@@ -212,7 +234,7 @@ def build(rundir: Path, out: Path | None = None, seed: int = 1,
         raise ReportError("\n".join(lines))
 
     repo = Path(repo) if repo else _repo()
-    page = descriptor(rundir, rundir / "page_descriptor.json")
+    page = descriptor(rundir, rundir / "page_descriptor.json", seed)
     out = Path(out) if out else rundir / "report.html"
     # Without -I, as before: the generator was always started this way, and isolation is
     # a change to what it can import that this refactor does not make.

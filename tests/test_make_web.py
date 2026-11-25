@@ -84,12 +84,24 @@ def test_a_row_measured_on_one_library_is_not_printed_on_another():
     other = {m["id"]: dict(m["rows"]) for m in make_web.resolve_methods("SRR00000000")}
     assert "Berlin" in berlin["library"]["Input"]
     assert "SRR23973193" not in json.dumps(hold)
-    assert hold["cascade"]["Bias"] == make_web.NOT_MEASURED
+    # The number is Berlin's and does not travel. What does travel is the design: a
+    # shuffled control arm and the direction of a bias are properties of the procedure.
+    # Printing neither is what 28 of this page's 90 rows used to do on a library nobody
+    # had written about, nine of them for rows that state no number in the first place.
+    assert "77.10%" in berlin["cascade"]["Bias"]
+    assert "77.10%" not in hold["cascade"]["Bias"]
+    assert hold["cascade"]["Bias"].endswith(make_web.NO_VALUE)
+    assert "identifiable fraction exceeds the nameable" in hold["cascade"]["Bias"]
     # A procedure row is the tool's, and reads the same everywhere.
     assert berlin["cascade"]["Procedure"] == hold["cascade"]["Procedure"]
     # A sample nobody has written about still gets every entry, numbered the same.
     assert list(other) == list(berlin)
-    assert other["library"]["Input"] == make_web.NOT_MEASURED
+    assert other["library"]["Input"].endswith(make_web.NO_VALUE)
+    bare = [(i, lab) for i, e in other.items() for lab, txt in e.items()
+            if txt == make_web.NOT_MEASURED]
+    assert not bare, (
+        f"{len(bare)} rows say only that nothing was measured, where the row's design "
+        f"holds for any water: {bare}")
 
 
 def test_every_entry_has_the_six_fixed_rows():

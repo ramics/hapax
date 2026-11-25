@@ -191,3 +191,41 @@ def test_an_absent_enrichment_carries_what_the_run_recorded(tmp_path):
     # No record at all is its own answer, not the same as a stage nobody ran.
     assert report._why_absent(tmp_path / "elsewhere", "workup")["recorded"].startswith(
         "nothing: this run wrote no")
+
+
+def test_the_descriptor_declares_the_spectrum_the_run_actually_produced(tmp_path):
+    """A hardcoded absence is a claim about this water that nothing measured.
+
+    `inputs.spectrum` read "the divergent-contig workup is not yet a stage of hapax run"
+    long after the divergent stage was one. A complete five-stage run of SRR34217566 then
+    drew its headline distance spectrum as an empty axis, and told three of that figure's
+    controls the stage had not run, beside a run directory holding 1.7 MB of that stage's
+    output. It is the harder of the two directions to notice, because a declared absence
+    renders as scrupulousness rather than as a gap.
+    """
+    from hapax.report import descriptor
+
+    (tmp_path / "manifest.json").write_text(json.dumps(
+        {"tool": "hapax run", "parameters": {"library": "SRR23702504"}}))
+    d = json.loads(descriptor(tmp_path, tmp_path / "page.json", seed=2).read_text())
+    assert "not_run" in d["inputs"]["spectrum"], (
+        "no divergent output in the run directory, so the absence is the honest reading")
+    assert "PLAN.md" not in d["inputs"]["spectrum"]["not_run"], (
+        "the reason must describe this run, not the state of the tool when it was typed")
+
+    (tmp_path / "divergent_known_s2.json").write_text(json.dumps({"rows": []}))
+    d = json.loads(descriptor(tmp_path, tmp_path / "page.json", seed=2).read_text())
+    assert d["inputs"]["spectrum"] == {
+        "path": str(tmp_path / "divergent_known_s2.json")}, (
+        "the stage ran and its output is sitting there; the page has to be told")
+
+
+def test_the_report_build_passes_its_seed_to_the_descriptor(tmp_path):
+    """Seed 2's page must not be told about seed 1's contigs, or the other way about."""
+    import inspect as _inspect
+
+    from hapax import report
+
+    src = _inspect.getsource(report.build)
+    assert 'descriptor(rundir, rundir / "page_descriptor.json", seed)' in src, (
+        "the descriptor resolves per-seed filenames, so the seed has to reach it")
