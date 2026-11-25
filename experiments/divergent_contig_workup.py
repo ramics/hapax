@@ -595,16 +595,12 @@ def main() -> None:
         "timings_seconds": {"diamond_viral": viral["seconds"], "diamond_sprot": sprot_sec,
                             "pfam": pf["seconds"], "total": round(time.time() - t0, 1)},
     }
-    try:
-        sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, check=True,
-                             capture_output=True, text=True).stdout.strip()
-        dirty = bool(subprocess.run(["git", "status", "--porcelain"], cwd=ROOT,
-                                    check=True, capture_output=True,
-                                    text=True).stdout.strip())
-    except Exception:
-        sha, dirty = "unknown", True
-    out["git_sha"] = sha + ("-dirty" if dirty else "")
-    out["tree_dirty"] = dirty
+    # The shared record, not a local copy: a `try/except` around `git` answers "unknown"
+    # and a positive `tree_dirty: true` on an instance with no git installed, which is a
+    # claim about a tree nobody looked at. `provenance.py` reads HAPAX_GIT_SHA where
+    # there is no checkout and raises where it can say nothing.
+    out["git_sha"] = provenance.git_sha()
+    out["tree_dirty"] = provenance.tree_dirty()
     # Taken when the manifest is written, which pins the code that ran whatever the tree
     # looked like. Editing this script while a run of it is in flight stamps the new hash
     # onto the old code's output; that has cost this repo two restarts.

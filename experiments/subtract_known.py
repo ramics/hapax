@@ -84,6 +84,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir
 
+import provenance as _provenance
 from berlin_io import read_pairs, revcomp
 from library_facts import fact, resolve
 from loud import (Consulted, Preflight, cache_is_current, mark_cache, require_output,
@@ -238,20 +239,14 @@ def dir_bytes(p: Path) -> int:
     return sum(f.stat().st_size for f in p.rglob("*") if f.is_file())
 
 
-def git_sha() -> str:
-    try:
-        sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
-        dirty = subprocess.call(["git", "diff", "--quiet", "HEAD"], cwd=ROOT) != 0
-        return sha + ("-dirty" if dirty else "")
-    except Exception:
-        return "unknown"
-
-
-def tree_dirty() -> bool:
-    try:
-        return subprocess.call(["git", "diff", "--quiet", "HEAD"], cwd=ROOT) != 0
-    except Exception:
-        return True
+# THE SHARED MODULE, NOT A LOCAL COPY. Both of these caught every exception and answered
+# "unknown" and True. On an instance there is a payload tarball and no git installed, so
+# every manifest written through them recorded a commit of "unknown" and a positive claim
+# that the tree was dirty - about a tree nobody looked at. `provenance.py` reads
+# HAPAX_GIT_SHA, which the launcher exports from the commit it built the payload from, and
+# raises where it can say nothing at all. Three scripts import these two names from here.
+git_sha = _provenance.git_sha
+tree_dirty = _provenance.tree_dirty
 
 
 def provenance(script) -> dict:

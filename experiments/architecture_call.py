@@ -23,20 +23,27 @@ rather than letting the page assert an agreement with `results/conserved_positio
 import argparse
 import hashlib
 import json
-import subprocess
+import sys
 import time
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir
+import provenance as prov  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 
 
 def provenance(script: Path) -> dict:
-    sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT,
-                         capture_output=True, text=True).stdout.strip()
-    dirty = bool(subprocess.run(["git", "status", "--porcelain"], cwd=ROOT,
-                                capture_output=True, text=True).stdout.strip())
-    return {"git_sha": sha + ("-dirty" if dirty else ""), "tree_dirty": dirty,
-            "script_sha256": hashlib.sha256(script.read_bytes()).hexdigest()[:16],
+    """The shared record, plus the hash of the vocabulary this script's words come from.
+
+    THE PRIVATE COPY WAS THE SAME FAULT THE DRIVER'S WAS. It shelled out to `git` and
+    took whatever came back, so on a machine with a payload tarball and no git installed
+    it wrote `git_sha: ""` and, worse, `tree_dirty: false` - a positive claim about a
+    tree nobody looked at - or, as here, raised FileNotFoundError and lost the stage
+    after the per-gene workup it reads had already run. `provenance.py` reads
+    HAPAX_GIT_SHA where there is no checkout and raises where it can say nothing.
+    """
+    return {**prov.provenance(script),
             "vocabulary_sha256": hashlib.sha256(
                 (ROOT / "experiments/virus_vocabulary.json").read_bytes()
             ).hexdigest()[:16]}
