@@ -1797,7 +1797,11 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
   if (r.incomplete_because && r.incomplete_because.length) {
     const d = el('div', 'note');
     d.innerHTML = '<b>Incomplete run.</b> ' +
-      r.incomplete_because.map(esc).join('; ') +
+      r.incomplete_because.map(function (s) {
+        // A stage's reason is prose written where the stage declined, so it may or
+        // may not end in a full stop. Adding one unconditionally printed "pairing..".
+        s = esc(s); return s.replace(/\.\s*$/, '');
+      }).join('; ') +
       '. A stage that could not run is absent here rather than estimated.';
     h.append(d);
   }
