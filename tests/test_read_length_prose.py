@@ -28,7 +28,7 @@ LENGTH = re.compile(r"\b(?:93|100|101|107|125|150|151|250|300) nt\b")
 #: An accession, which is what turns the length into a quotation with a source.
 ACCESSION = re.compile(r"\b[SED]RR\d+\b")
 
-FILES = (ROOT / "hapax.py", *sorted((ROOT / "src" / "hapax").glob("*.py")))
+FILES = tuple(sorted((ROOT / "src" / "hapax").glob("*.py")))
 
 
 def test_every_read_length_in_prose_names_its_library():

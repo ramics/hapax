@@ -32,7 +32,7 @@ ROOT = Path(__file__).resolve().parents[1]
 #: A filename in prose or in code, including the `{seed}` and `s*` spellings both sides use.
 NAME = re.compile(r"[A-Za-z0-9_.*{}\-]+\.(?:json|jsonl|tsv|fa|faa|fastq|fq)(?:\.gz)?")
 
-CALLERS = (ROOT / "hapax.py", *sorted((ROOT / "src" / "hapax").glob("*.py")))
+CALLERS = tuple(sorted((ROOT / "src" / "hapax").glob("*.py")))
 
 
 def _basename(expr: str) -> str | None:

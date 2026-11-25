@@ -102,6 +102,13 @@ Nothing below changes a pipeline number. Each step is one PR.
    schemas. The fixture test from step 2 goes green here.
 7. **Lift script code into the package** stage by stage, replacing subprocess calls with
    imports, and add `hapax fetch-db`. Archive what the package no longer calls.
+   Finished as agreed on 2026-11-24 (Imo): the driver is `hapax.driver`, run in-process by
+   `hapax run`, with `hapax.py` kept as a shim for committed command lines; the package's
+   glue is lifted with byte-equality tests against the scripts (PR #62); and the science
+   stages stay byte-identical child processes started only through `hapax.scripts` (PR
+   #64), because the process boundary scopes each stage's `code_sha256` to its own code.
+   Nothing was archived: every script with no other caller is the producer of a committed
+   number.
 
 ## 4. Definition of done
 
