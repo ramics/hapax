@@ -290,9 +290,17 @@ def build(rundir: Path, out: Path | None = None, seed: int = 1,
                                 "section": s.section, "means": s.absence_means,
                                 **_why_absent(rundir, s.stage)}
                                for s in states if s.optional and not s.present],
+        # AN ABSENT FILE CARRIES WHY, WHETHER OR NOT ITS STAGE IS AN ENRICHMENT. Only the
+        # optional rows above said why; everything else read `present: false, problems:
+        # []`, which is how a stage skipped with a reason and a declared output that could
+        # never appear came to look identical in this census. Two of the cascade's three
+        # declared files were the second kind on every library for as long as the registry
+        # named the script's filenames instead of the ones the driver writes, and nothing
+        # in the column distinguished them from a real miss.
         "inputs": [{"stage": s.stage, "file": s.filename, "section": s.section,
                     "present": s.present, "problems": list(s.problems),
-                    "optional": s.optional}
+                    "optional": s.optional,
+                    **({} if s.present else _stage_status(rundir, s.stage))}
                    for s in states],
         **(check or {"top": None, "render_check": _why_no_render_check()}),
     }, indent=1) + "\n")
@@ -319,6 +327,28 @@ def _why_no_render_check() -> str:
                 "written page in a browser and reports which sections reached the DOM.")
     return ("node is installed and its playwright module is not, so the page was not "
             "run: `npm install playwright && npx playwright install chromium`.")
+
+
+def _stage_status(rundir: Path, stage: str) -> dict:
+    """What the run's own manifest says happened to one stage, for an absent output.
+
+    A stage deliberately left out of a production pass and a stage whose output went
+    missing are different findings, and a census that prints `present: false` with an
+    empty problem list for both teaches a reader to ignore the column.
+    """
+    f = Path(rundir) / "manifest.json"
+    if not f.exists():
+        return {"stage_status": "unknown: this run wrote no manifest.json"}
+    try:
+        rows = json.loads(f.read_text()).get("stages") or []
+    except (OSError, ValueError) as exc:
+        return {"stage_status": f"unknown: manifest.json is not readable ({exc})"}
+    for row in rows:
+        if row.get("stage") == stage:
+            return {"stage_status": row.get("status") or "no status recorded",
+                    "stage_status_reason": ((row.get("reason") or "").strip()
+                                            or None)}
+    return {"stage_status": f"unknown: manifest.json has no row for {stage}"}
 
 
 def _why_absent(rundir: Path, stage: str) -> dict:

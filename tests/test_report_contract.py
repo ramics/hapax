@@ -286,3 +286,50 @@ def test_no_committed_page_declares_an_input_the_run_directory_holds():
                 f"{page.name} declares inputs.{key} not run, and {rundir} holds "
                 f"{stray}. Resolve the declaration against the run rather than "
                 f"asserting it.")
+
+
+def test_an_absent_output_says_what_happened_to_its_stage(tmp_path):
+    """A deliberate skip and a missing file read the same in this census, and now do not.
+
+    Only the optional rows said why. Everything else was `present: false, problems: []`,
+    which is how two of the cascade's three declared outputs sat in every render check on
+    every library: the registry named the filenames the script writes rather than the ones
+    the driver collects, so those two could never appear, and nothing in the column
+    distinguished them from a real miss.
+    """
+    from hapax.report import _stage_status
+
+    (tmp_path / "manifest.json").write_text(json.dumps(
+        {"tool": "hapax run", "parameters": {"library": "SRR23702504"},
+         "stages": [{"stage": "crossplant", "status": "skipped",
+                     "reason": "no within-plant stratum exists for this library"}]}))
+    got = _stage_status(tmp_path, "crossplant")
+    assert got["stage_status"] == "skipped"
+    assert "within-plant" in (got["stage_status_reason"] or "")
+    # a stage the manifest says nothing about is an absence of the RECORD, not of the
+    # stage, and says which
+    unknown = _stage_status(tmp_path, "linkage")
+    assert unknown["stage_status"].startswith("unknown:")
+    assert "no manifest" in _stage_status(tmp_path / "nope", "linkage")["stage_status"]
+    # and every committed run carries it, so the census a reader sees is the one tested
+    for rc in sorted(ROOT.glob("results/prod_*/run_s*/render_check.json")):
+        rows = json.loads(rc.read_text())["inputs"]
+        for r in rows:
+            if r["present"]:
+                assert "stage_status" not in r, "a present file needs no status"
+            else:
+                assert r.get("stage_status"), (
+                    f"{r['stage']}/{r['file']} is absent with nothing saying why")
+
+
+def test_the_cascade_declares_the_files_a_run_directory_holds():
+    """The driver renames this stage's outputs as it collects them.
+
+    `subtract_known.py` writes `subtract_s{seed}.json`, `manifest_s{seed}.json` and
+    `residue_rows_s{seed}.jsonl` into its work directory; the driver lands them as
+    `tiers.json`, `stages/cascade_manifest.json` and `stages/cascade_rows.jsonl`. The
+    registry named the source side for two of the three.
+    """
+    names = {o.filename for o in R.stages["cascade"].outputs}
+    assert names == {"tiers.json", "stages/cascade_manifest.json",
+                     "stages/cascade_rows.jsonl"}, names

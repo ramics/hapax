@@ -37,9 +37,17 @@ R.add(Stage(
         "where 16 GB of Kraken2 removes 0.66%, so which index is consulted beats how "
         "fast it is consulted by orders of magnitude.",
     script="subtract_known.py",
-    outputs=(Output("subtract_s{seed}.json", "cascade"),
-             Output("residue_rows_s{seed}.jsonl", "residue_rows"),
-             Output("tiers.json", "tiers")),
+    # THE NAMES A RUN DIRECTORY HOLDS, NOT THE NAMES THE SCRIPT WROTE. The driver renames
+    # this stage's three outputs as it collects them: the script's `subtract_s{seed}.json`
+    # lands as `tiers.json`, its `manifest_s{seed}.json` as `stages/cascade_manifest.json`
+    # and its `residue_rows_s{seed}.jsonl` as `stages/cascade_rows.jsonl`. The registry
+    # named the source side, so two of the three declared files were never in any run
+    # directory and every render check on every library reported them `present: false`
+    # with no problem beside them. A declared output that cannot appear trains a reader to
+    # ignore the column that would show a real one missing.
+    outputs=(Output("tiers.json", "tiers"),
+             Output("stages/cascade_manifest.json", "cascade"),
+             Output("stages/cascade_rows.jsonl", "residue_rows")),
 ))
 
 R.add(Stage(
