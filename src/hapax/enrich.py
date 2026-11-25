@@ -111,15 +111,16 @@ def enrich(cfg: Config, out: Path, repo: Path, seed: int,
              "--r1", reads[0], *(["--r2", reads[1]] if reads[1] else []),
              *(["--trim-r2", cfg.fact("trim_r2")]
                if cfg.fact("trim_r2") is not None else []),
-             # HOW MANY MATES THE MAP-BACK STREAMS, stated rather than left at the
-             # script's 0, which is the whole library. Every other stage of the run reads
-             # one seed's block of this many pairs, and a mappy pass over 11.6 M pairs is
-             # about half an hour per seed against about a minute here. The script records
-             # what it streamed under `mates_actually_streamed`, so the operating point
-             # travels with the depth. It streams from the head of each file rather than
-             # from the seed's block, so this read support is one per-contig depth and not
-             # a per-seed estimate.
-             "--map-limit", cfg.run.get("pairs", 200_000),
+             # THE WHOLE LIBRARY, which is what `--map-limit 0` means. Bounding it to
+             # the first 200,000 mates to save half an hour per seed was measured and
+             # withdrawn: the divergent arm is low-abundance by construction, so 1.7% of
+             # the library mapped no read at all and every one of the 45 contigs came
+             # back at depth 0.0. The page's figure drops a contig below depth 1, so the
+             # panel's headline counted 34 assembled viruses above a figure saying no
+             # contig was left to draw. A read-support field computed from a sample that
+             # cannot contain the reads is not a cheaper measurement, it is a different
+             # one that reads zero.
+             "--map-limit", 0,
              # A file, and a work directory beside it: this script writes the path it is
              # given rather than a name of its own inside it, and `--work` is required.
              "--work", out / "work" / "workup",

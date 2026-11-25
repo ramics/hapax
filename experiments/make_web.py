@@ -1232,7 +1232,19 @@ function ctlSetting(ids) {
 function ctlAnyMoved(ids) { return ids.some(ctlMoved); }
 function settingLine(ids) {
   const d = el('div', 'setting');
-  const paint = () => { d.innerHTML = '<b>Read at:</b> ' + esc(ctlSetting(ids)); };
+  // `Read at:` AND NOTHING ELSE IS NOT AN OPERATING POINT. Where every control on a
+  // figure is absent on this run, the join is empty and the page printed a bold label
+  // with nothing after it. The absences are the answer, so they are what it prints.
+  const paint = () => {
+    const said = ctlSetting(ids);
+    if (said) { d.innerHTML = '<b>Read at:</b> ' + esc(said); return; }
+    const why = ids.filter(id => CTLBY[id] && CTLBY[id].absent)
+                   .map(id => CTLBY[id].label + ': ' + CTLBY[id].absent);
+    d.innerHTML = '<b>Read at:</b> the shipped setting. ' +
+      (why.length ? esc('No control on this figure can move on this run. ' +
+                        why.join('. ') + '.')
+                  : esc('This figure has no control.'));
+  };
   paint(); ctlOn(paint);
   return d;
 }
