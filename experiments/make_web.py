@@ -3954,8 +3954,8 @@ function interval(iv) {
   // The pile the figure draws FROM, which is not the pile the headline counts: the
   // sentence above says how many assembled viruses there are, and the figure marks the
   // ones scored gene by gene that clear the shipped length and depth floors. Those were
-  // 34 and 15 on SRR34217566, printed as "34" and "15 of them" with nothing saying what
-  // the 15 were 15 of.
+  // 34 and 15 on the third library through this path, printed as "34" and "15 of them"
+  // with nothing saying what the 15 were 15 of.
   const rugTotal = rows.length;
   const rugHost = el('div');
   const rugNote = el('div', 'note');
