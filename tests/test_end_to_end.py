@@ -266,6 +266,32 @@ def test_reads_to_report_in_one_command(tmp_path):
             f"{record['file']} is absent with no stated consequence, which is the thing "
             f"a reader cannot weigh")
 
+    # PHASE 5: an input the page declares as not run must not be sitting in the run
+    # directory. The distance spectrum - the whole of what class A reports - drew nothing
+    # on a complete production run of SRR34217566 because that declaration was a sentence
+    # typed when it was true, and three of the figure's controls repeated it. A declared
+    # absence is the harder direction to catch, because it reads as scrupulousness rather
+    # than as a gap: an input declared present and missing is a refusal the generator
+    # raises on, while one declared absent and present renders quietly.
+    desc = json.loads((out / "page_descriptor.json").read_text())
+    for key, decl in (desc.get("inputs") or {}).items():
+        if "not_run" not in decl:
+            continue
+        pattern = PAGE_INPUT_OUTPUTS.get(key)
+        if not pattern:
+            continue
+        stray = sorted(f.name for f in out.glob(pattern))
+        assert not stray, (
+            f"the page says of {key!r}: {decl['not_run']!r}, and the run directory holds "
+            f"{stray}. The declaration has to be read off the run, not asserted.")
+
+
+#: What each declarable page input is called where a run writes it. A page declares every
+#: input outside the run directory as a path or as an absence with its reason, and this is
+#: how a test tells the second apart from a stale sentence. One entry per key the
+#: generator accepts; a key this does not name is not checked, because the test cannot
+#: guess where an input it has never heard of would land.
+PAGE_INPUT_OUTPUTS = {"spectrum": "divergent_known_s*.json"}
 
 #: The run configuration, which is the whole of what a new input needs (PLAN.md 2).
 #:
