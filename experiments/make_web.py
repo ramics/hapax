@@ -268,9 +268,43 @@ def _trim_workup(w):
              "title": o["best_title"], "sig": bool(o.get("significant")),
              "pfam": [x["id"] for x in o["pfam"]]}
             for o in r.get("orf_rows", [])]
-    return {k: w[k] for k in ("summary", "operating_point", "the_number_to_rank_by",
-                              "bands", "blind_spots", "seed", "git_sha",
-                              "script_sha256") if k in w} | {"rows": rows}
+    out = {k: w[k] for k in ("summary", "operating_point", "the_number_to_rank_by",
+                             "bands", "blind_spots", "seed", "git_sha",
+                             "script_sha256") if k in w} | {"rows": rows}
+    out["summary"] = _flaggable(w.get("rows", []), out.get("summary") or {})
+    return out
+
+
+def _flaggable(rows, summary):
+    """Fill in the chimaera flag's own denominator, which is not the arm's contig count.
+
+    The flag fires only where a contig carries two or more ORFs with a subject, so a
+    fraction over every contig in the arm is a fraction over a pile that includes
+    contigs the test could not have fired on. Both readings are kept, each beside its
+    count, because the page prints the conditional one and the archived result files
+    quote the unconditional one. This is computed here as well as in the stage so that a
+    run produced before the stage carried the field renders the same number rather than
+    silently falling back to the wider denominator, which reads lower and in the
+    direction of "the flag separates the two arms".
+    """
+    summary = {k: dict(v) if isinstance(v, dict) else v for k, v in summary.items()}
+    for arm, s in summary.items():
+        if not isinstance(s, dict) or "contigs_that_could_be_flagged" in s:
+            continue
+        rs = [r for r in rows if r.get("arm") == arm]
+        flagged = sum(1 for r in rs if r.get("subject_disagreement_flag"))
+        flaggable = sum(1 for r in rs
+                        if (r.get("orfs_with_a_subject") or 0) >= 2
+                        and (r.get("orfs") or 0) > 1)
+        if flagged > flaggable:
+            raise ValueError(
+                f"arm {arm}: {flagged} contigs carry the subject-disagreement flag out "
+                f"of {flaggable} that carry two or more named ORFs, which is the only "
+                "way it can fire")
+        s["contigs_that_could_be_flagged"] = flaggable
+        s["fraction_flagged_of_the_contigs_that_could_be"] = (
+            round(flagged / flaggable, 4) if flaggable else None)
+    return summary
 
 
 def load(p: Path):
@@ -428,6 +462,13 @@ METHOD_ROWS = [("Input",), ("Procedure",), ("Threshold",), ("Denominator",),
                ("Control", "Control arm"), ("Bias", "Bias direction")]
 METHODS_FILE = ROOT / "results/web/methods.json"
 NOT_MEASURED = "Not measured on this library."
+#: Appended to a row that states its design but holds no number for this sample. A row
+#: that printed the design alone would read as a measurement; NOT_MEASURED alone, which is
+#: what every such row used to read, threw the design away with the number. On a library
+#: nobody has written about, 28 of the 90 rows were blank, and nine of them were blank for
+#: the wrong reason: a shuffled control arm and the direction of a bias are properties of
+#: the procedure and hold whatever water is in the tube.
+NO_VALUE = "No number for this row is recorded for this library."
 
 
 def load_page(path: Path, rundir: Path | None) -> dict:
@@ -529,6 +570,24 @@ def load_page(path: Path, rundir: Path | None) -> dict:
     return d
 
 
+def _unmeasured(entry: dict, label: str) -> str:
+    """What a per-library row says on a page whose library nobody has written about.
+
+    The wording separates two things a blank row used to merge: a control that was never
+    run, and a control that ran under a number nobody has written down. This row is the
+    second, so it says the number is not recorded rather than that nothing was measured.
+
+    The row's own number is not available and is never invented. What can still be printed
+    is the design: which control arm this figure carries, and which way its bias points.
+    Those are properties of the procedure, so they hold for whatever water is in the tube,
+    and dropping them left a reader of a new library's page unable to see that a figure had
+    a control at all - on SRR34217566, 28 of 90 rows read "Not measured on this library."
+    with nine of them stating no number in the first place.
+    """
+    design = (entry.get("design") or {}).get(label)
+    return f"{design} {NO_VALUE}" if design else NOT_MEASURED
+
+
 def resolve_methods(accession: str) -> list[dict]:
     """The Methods entries as this sample's page prints them.
 
@@ -563,11 +622,26 @@ def resolve_methods(accession: str) -> list[dict]:
                                  f"{e['about']} but its Input row does not say so")
             filled = rows
         else:
+            blank = [lab for lab, txt in rows if txt is None]
             for lab in meas:
                 if lab not in labels:
                     raise SystemExit(f"{METHODS_FILE}: {e['id']!r} measured row {lab!r} "
                                      f"for {accession} is not one of its rows")
-            filled = [[lab, meas.get(lab, txt if txt is not None else NOT_MEASURED)]
+                if lab not in blank:
+                    raise SystemExit(
+                        f"{METHODS_FILE}: {e['id']!r} measures row {lab!r} for "
+                        f"{accession} where the row already holds text every page "
+                        f"prints; one library's number must not shadow a statement "
+                        f"made about the tool")
+            for lab in (e.get("design") or {}):
+                if lab not in blank:
+                    raise SystemExit(
+                        f"{METHODS_FILE}: {e['id']!r} states a design for row {lab!r}, "
+                        f"which already holds text that every page prints; a design is "
+                        f"what a row says when the number is this library's and the "
+                        f"number is absent")
+            filled = [[lab, txt if txt is not None
+                       else (meas.get(lab) or _unmeasured(e, lab))]
                       for lab, txt in rows]
         out.append({"id": e["id"], "t": e["title"], "rows": filled})
     return out
@@ -641,6 +715,21 @@ def search_table(piles: dict[str, list[dict]]) -> dict:
     return out
 
 
+def _shown(path: Path) -> str:
+    """The path as the page should print it: repo-relative where it is, absolute otherwise.
+
+    A run directory is not required to sit inside the checkout - the production runs land
+    under /opt/hapax/out and are fetched afterwards - and `relative_to` raises on one that
+    does not, so this used to refuse any page whose inputs the run itself produced. The
+    point of printing it at all is that a reader can find the file, which an absolute path
+    serves and an exception does not.
+    """
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
+
+
 def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int,
            page: dict) -> dict:
     rng = random.Random(seed)
@@ -690,7 +779,15 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int,
         # hand-written sentence is visible as one instead of passing for a derived fact.
         "page": {"title": page["title"], "sample": page["sample"],
                  "derived": page.get("derived"), "overrides": page.get("overrides") or [],
-                 "inputs": {k: ({"path": str(v.relative_to(ROOT))} if v is not None else
+                 # What the run measured off the reads themselves, which the descriptor
+                 # carries because the registry answers a different question: it holds
+                 # this library at 150 nt where the file is 151, and a stage's prose
+                 # carried a third library's lengths. The page states the measured answer
+                 # beside either. It arrives through the descriptor rather than being read
+                 # here, because every run-directory file the renderer reads has to be a
+                 # declared output of a stage and this one is written by the launcher.
+                 "measured": page.get("measured") or {},
+                 "inputs": {k: ({"path": _shown(v)} if v is not None else
                                 {"not_run": page["inputs"][k]["not_run"]})
                             for k, v in page["_inputs"].items()}},
         "methods": resolve_methods(page["sample"]["accession"]),
@@ -1232,7 +1329,19 @@ function ctlSetting(ids) {
 function ctlAnyMoved(ids) { return ids.some(ctlMoved); }
 function settingLine(ids) {
   const d = el('div', 'setting');
-  const paint = () => { d.innerHTML = '<b>Read at:</b> ' + esc(ctlSetting(ids)); };
+  // `Read at:` AND NOTHING ELSE IS NOT AN OPERATING POINT. Where every control on a
+  // figure is absent on this run, the join is empty and the page printed a bold label
+  // with nothing after it. The absences are the answer, so they are what it prints.
+  const paint = () => {
+    const said = ctlSetting(ids);
+    if (said) { d.innerHTML = '<b>Read at:</b> ' + esc(said); return; }
+    const why = ids.filter(id => CTLBY[id] && CTLBY[id].absent)
+                   .map(id => CTLBY[id].label + ': ' + CTLBY[id].absent);
+    d.innerHTML = '<b>Read at:</b> the shipped setting. ' +
+      (why.length ? esc('No control on this figure can move on this run. ' +
+                        why.join('. ') + '.')
+                  : esc('This figure has no control.'));
+  };
   paint(); ctlOn(paint);
   return d;
 }
@@ -1612,12 +1721,38 @@ function opChips(obj, keys) {
   return d;
 }
 
+/* Counts of one are common at the thin end of this data, which is where the page
+   spends most of its words, so "1 reads" appeared on most rows of the ranking. */
+function plural(n, one, many) {
+  return n.toLocaleString() + ' ' + (Number(n) === 1 ? one : (many || one + 's'));
+}
+
 /* No pile without its interval. */
 function interval(iv) {
   if (!iv) return '<span class="absent">no interval</span>';
   return '<span class="mono">' + pct(iv.point) + '</span> <span class="dim mono">[' +
     pct(iv.lo) + ', ' + pct(iv.hi) + ']</span>';
 }
+
+/* WHETHER A TIER RETURNS A NAME IS A PROPERTY OF THE INDEX, NOT OF ITS DIRECTORY NAME.
+   Two panels each carried a literal map of tier names that can name, keyed `k2_viral`,
+   `k2_standard08` and so on. Production pulls its Kraken2 databases through
+   `hapax fetch-db`, which names the directory after the release it downloaded, so the
+   tiers arrive as `k2_viral_20261022.d` and matched nothing: every Kraken2 read moved out
+   of "named" and into "recognised, unnamed", the named band read 2.24% where the cascade
+   had named 4.07%, and the reconciliation panel went on asserting that its two named rows
+   agreed while they stood 15 points apart. Classification is by what the tier IS, and a
+   tier this function does not recognise is returned as unknown so that a new index lands
+   in a stated category rather than quietly in the larger one. */
+function tierKind(name) {
+  const n = String(name || '');
+  if (/^k2_/.test(n) || /^prot_/.test(n)) return 'names';
+  if (n === 'rrna' || n === 'artefact' || /^selfasm_/.test(n)) return 'recognises';
+  if (/^observe_/.test(n)) return 'observes';
+  return 'unknown';
+}
+
+function tierCanName(name) { return tierKind(name) === 'names'; }
 
 // ---------- header
 (function () {
@@ -1628,19 +1763,33 @@ function interval(iv) {
   // day, and the accession is the only thing that lets them find it again or compare it
   // with another; "run viewer" told them which program wrote the page.
   const acc = ((inp.r1 || '').match(/([A-Z]{3}\\d{6,})/) || [])[1];
-  h.append(el('h1', null, acc ? esc(acc) + ', untreated wastewater'
+  // THE WATER IS NAMED BY ITS OWN FACTS, NEVER BY THIS FILE. The heading read
+  // `<accession>, untreated wastewater` and the line under it `Untargeted RNA sequencing
+  // of untreated wastewater`, both literals earned by the discriminating dataset. On
+  // the third production library the archive does not say influent or effluent - that
+  // library's own basis says so in as many words, and the ribosomal fraction differs by
+  // two orders of magnitude between the two - so the page's first sentence made a claim
+  // its own facts refused to make. `page.derived.facts` is the block, each fact with how it was
+  // established, and a fact that is absent is left out rather than guessed.
+  const facts = ((D.page || {}).derived || {}).facts || {};
+  const matrix = facts.matrix || null;
+  h.append(el('h1', null, acc ? esc(acc) + (matrix ? ', ' + esc(matrix) : '')
                               : 'Hapax run viewer'));
   h.append(el('p', 'lede',
-    'Untargeted RNA sequencing of untreated wastewater. Screening, composition, ' +
-    'divergence of assembled viruses, and the unnamed remainder. Every figure carries ' +
-    'its operating point and control. No figure scores novelty.'));
+    esc(((D.page || {}).sample || {}).lede || '') +
+    ' Screening, composition, divergence of assembled viruses, and the unnamed ' +
+    'remainder. Every figure carries its operating point and control. No figure ' +
+    'scores novelty.'));
   // Two scopes on one page, said once at the top. The classified profile and the
   // residue search read every pair; the cascade reads a block, because it cannot be run
   // over the library in this container. A reader who assumes one scope for all of it
   // will misread the panels against each other.
   const lib = (D.profile || {}).library_pairs;
   h.append(opChips({sample: acc, library: lib ? lib.toLocaleString() + ' read pairs' : null,
-    'library type': 'RNA, untargeted shotgun',
+    // The molecule is a fact about the library, and `untargeted shotgun` was a claim
+    // about its preparation that no fact here carries: PRJNA948850 alone holds 99
+    // hybrid-capture re-runs of the same RNA, so the word is not free.
+    'library type': facts.molecule || null,
     'cascade block': ((D.parameters || {}).pairs || 0).toLocaleString() + ' pairs',
     seed: r.seed, 'mate 2 trim': inp.trim_r2,
     'git sha': (r.git_sha || '').slice(0, 10),
@@ -1648,7 +1797,11 @@ function interval(iv) {
   if (r.incomplete_because && r.incomplete_because.length) {
     const d = el('div', 'note');
     d.innerHTML = '<b>Incomplete run.</b> ' +
-      r.incomplete_because.map(esc).join('; ') +
+      r.incomplete_because.map(function (s) {
+        // A stage's reason is prose written where the stage declined, so it may or
+        // may not end in a full stop. Adding one unconditionally printed "pairing..".
+        s = esc(s); return s.replace(/\.\s*$/, '');
+      }).join('; ') +
       '. A stage that could not run is absent here rather than estimated.';
     h.append(d);
   }
@@ -1665,7 +1818,7 @@ function interval(iv) {
   const t = D.tier_table, b = (t && t.breakdown) || {};
   if (!b.identified || !b.residual) return;
   const p = panel('Library partition, one square per percent',
-    'One square is one percent of this run read pairs. Pale squares were named by ' +
+    'One square is one percent of this run\\'s read pairs. Pale squares were named by ' +
     'searching; dark squares were not.');
   const frac = {identified: b.identified.point,
     assembled_unidentified: (b.assembled_unidentified || {}).point || 0,
@@ -1715,9 +1868,28 @@ function interval(iv) {
   const R = D.ranking, hc = (R && R.host_confidence_summary) || {};
   if (hc.subjects != null) card(String(hc.subjects),
     'known organisms the leftovers resemble from a distance, none of them closely');
-  if (hc.best_identity_percent != null) card(num(hc.best_identity_percent, 1) + '%',
-    'the closest any of those resemblances gets, and over only ' + hc.best_aligned_aa +
-    ' amino acids');
+  /* THE SAME PAIRING OF TWO MAXIMA, IN THE HEADLINE CARD. The warning panel further
+     down takes the closest row and prints that row's own alignment length; this card
+     printed the maximum identity beside the maximum aligned length, which are maxima
+     over the rows taken separately and usually different subjects. It read "96.3%, and
+     over only 60 amino acids" where the 96.3% row is a 31 aa alignment. The producer
+     ships `closest_row_aligned_aa` for exactly this, and a field saying in words that
+     the two maxima must not be printed as one match; the page was ignoring both. The
+     length is taken from the rows where they are available, so a ranking written before
+     that field renders the same, and the card is dropped rather than printed without a
+     length, because an identity over an unstated alignment length is the half of the
+     pair that reads as the whole. */
+  const closestRow = (D.ranking && D.ranking.subjects || [])
+    .filter(r => r.median_identity_percent != null)
+    .sort((a, b) => (b.median_identity_percent - a.median_identity_percent) ||
+                    ((b.median_aligned_aa || 0) - (a.median_aligned_aa || 0)))[0];
+  const closestAa = (closestRow && closestRow.median_aligned_aa) != null
+    ? closestRow.median_aligned_aa : hc.closest_row_aligned_aa;
+  if (hc.best_identity_percent != null && closestAa != null) {
+    card(num(hc.best_identity_percent, 1) + '%',
+      'the closest any of those resemblances gets, over ' + closestAa +
+      ' amino acids of that one match');
+  }
   // The wall, read off the only positive control the tool has. A spiked genome whose
   // reads SURVIVE tier 1 is a genome the cascade failed to recognise, so the first rung
   // where the median genome is more than half unrecognised is where recognition breaks.
@@ -1966,16 +2138,49 @@ function interval(iv) {
   });
   p.append(rows);
   const last = curve[curve.length - 1];
+  /* THE CAPTION NAMES THE ROWS THE TABLE DREW, AND IT NAMED A DIFFERENT ONE. It read
+     "the assembly of this sample is the biggest single bite in the cascade, at 2.3 points
+     from 7.1 MB, while the largest index here is tens of gigabytes and buys fractions of
+     a point". Three things were wrong on this run and none of them is visible beside a
+     table of ten rows: the biggest bite is the ribosomal index at 75.82 points, the
+     self-assembly row the sentence picked is the smaller of the two self-assembly rows
+     and left the 9.73-point one out, and the largest index bought 1.44 points rather than
+     a fraction of one. The point the sentence exists to make - that the index which buys
+     the most per byte is the sample's own assembly - is true and is now computed, with
+     every number read off the same rows the bars are drawn from. */
+  /* A RATIO NEEDS A DENOMINATOR THAT IS THE SAME KIND OF THING ON EVERY ROW. Per byte
+     over every row makes the artefact filter the winner: it is 120 bytes of patterns,
+     not a reference, so the ratio is a small number over a smaller one and says nothing
+     about consulting an index. The comparison is between references, and the floor that
+     separates a reference from a rule is stated in the sentence rather than assumed. */
+  const REFERENCE_MIN_BYTES = 1e6;
+  const sized = curve.filter(c => (c.index_bytes || 0) >= REFERENCE_MIN_BYTES);
+  const byMarginal = curve.slice()
+    .sort((a, b) => (b.marginal_removed || 0) - (a.marginal_removed || 0));
+  const biggest = byMarginal[0] || {};
+  const byBytes = sized.slice().sort((a, b) => b.index_bytes - a.index_bytes);
+  const largest = byBytes[0] || {};
+  const perByte = sized.slice().sort((a, b) =>
+    ((b.marginal_removed || 0) / b.index_bytes) -
+    ((a.marginal_removed || 0) / a.index_bytes));
+  const bestValue = perByte[0] || {};
+  const nothing = curve.filter(c => (c.marginal_removed || 0) < 0.0005).length;
   p.append(el('p', 'note',
-    '<b>The assembly of this sample is the biggest single bite in the cascade</b>, ' +
-    'at ' +
-    num(100 * (curve.filter(c => /selfasm_sample_contigs_identified/.test(c.tier))[0]
-      || {marginal_removed: 0}).marginal_removed, 1) +
-    ' points from ' + gb((curve.filter(c => /selfasm_sample_contigs_identified/
-      .test(c.tier))[0] || {}).index_bytes) +
-    ', while the largest index here is tens of gigabytes and buys fractions of a point. ' +
-    'And <b>several rows take nothing at all</b>: by the time they run, everything they ' +
-    'could name has already been named by something smaller. ' +
+    '<b>Which index you consult beats how big it is.</b> ' +
+    'Of the references over ' + gb(REFERENCE_MIN_BYTES) + ', the most per byte is ' +
+    esc(bestValue.tier) + ', ' +
+    num(100 * (bestValue.marginal_removed || 0), 2) + ' points from ' +
+    gb(bestValue.index_bytes) + ', while the largest index here, ' +
+    esc(largest.tier) + ' at ' + gb(largest.index_bytes) + ', buys ' +
+    num(100 * (largest.marginal_removed || 0), 2) + ' points. ' +
+    'The biggest single bite is ' + esc(biggest.tier) + ' at ' +
+    num(100 * (biggest.marginal_removed || 0), 2) + ' points. ' +
+    (nothing
+      ? '<b>' + nothing + ' row' + (nothing === 1 ? '' : 's') + ' take' +
+        (nothing === 1 ? 's' : '') + ' nothing at all</b>: by the time ' +
+        (nothing === 1 ? 'it runs, everything it could' : 'they run, everything they ' +
+         'could') + ' name has already been named by something else. '
+      : '') +
     'Everything left after the last row is ' + pct(last.residue) +
     ' of the library, which is the subject of this page.'));
   p.append(opChips((t || {}).operating_point || {}));
@@ -2248,7 +2453,8 @@ function interval(iv) {
         '</div>' +
         axis('how far', r.distance, 'var(--residue)',
              num(r.median_identity_percent, 1) + '% id') +
-        axis('how much', r.weight_term, 'var(--identified)', r.residue_reads + ' reads') +
+        axis('how much', r.weight_term, 'var(--identified)',
+              plural(r.residue_reads, 'read')) +
         axis('host', r.host_term, GCOL[r.host_group] || 'var(--null)',
              'conf ' + num(r.host_confidence, 2)) +
         axis('alone', r.only_in_residue ? 1 : 0, 'var(--tier2)',
@@ -2430,12 +2636,28 @@ function interval(iv) {
     const w = iv => '<span class="mono">' + pct(iv.lo_block_corrected) + ', ' +
       pct(iv.hi_block_corrected) + '</span>';
     const d2 = el('p', 'note');
-    d2.innerHTML = '<b>Widened for block sampling.</b> These reads are a contiguous ' +
-      'block of the file rather than a random sample of the library, and a Wilson ' +
-      'interval assumes the latter. Measured over all 8.7 million pairs, the real ' +
+    /* BORROWED OR MEASURED IS THE FIRST THING ABOUT THIS NUMBER, NOT THE LAST. The
+       sentence opened "Measured over all 8.7 million pairs", a count typed in from the
+       library the factors were measured on, and put the source in its final clause. The
+       producer records `design_effect_borrowed` and a note saying in words that the
+       correction is applied here unmeasured, and the page printed neither: on a library
+       whose own dispersion nobody has measured, the widened interval read as this run's
+       own measurement. Where it is borrowed the sentence says so before the numbers, and
+       the pair count comes out, because the only library it could describe is the one
+       named in the source. */
+    const borrowed = b.design_effect_borrowed;
+    d2.innerHTML = '<b>Widened for block sampling' +
+      (borrowed ? ', with a factor measured elsewhere' : '') + '.</b> These reads are ' +
+      'a contiguous block of the file rather than a random sample of the library, and a ' +
+      'Wilson interval assumes the latter. ' +
+      (borrowed
+        ? 'The factor is ' + esc(b.design_effect_note || 'borrowed from another library')
+          + '. There, the '
+        : 'Over the whole library, the ') +
       'between-block spread exceeds the binomial one by ' + num(de.identified, 2) +
       'x on identified and ' + num(de.residual, 2) + 'x on the residue, with random ' +
-      'samples of the same size reading 1.0 as the control. So the honest intervals are ' +
+      'samples of the same size reading 1.0 as the control. So the ' +
+      (borrowed ? 'intervals carried here' : 'honest intervals') + ' are ' +
       'identified [' + w(ident) + ']' + (tier2 ? ', assembled-not-identified [' +
       w(tier2) + ']' : '') + ', residual [' + w(resid) + ']. ' + esc(de._source) + '.';
     p.append(d2);
@@ -2602,7 +2824,19 @@ function interval(iv) {
       'level, is what decides whether linkage is usable at library scale.'));
     p.append(s2);
   }
-  p.append(el('p', 'note', esc(L.bias || '')));
+  /* THE STAGE'S BIAS STATEMENT, WITH THIS RUN'S MATE LENGTHS BESIDE IT. The linkage
+     stage wrote its mate asymmetry clause with one library's post-trim lengths in it -
+     "mate 2 is 93 nt against mate 1's 107" - and every library's output carried the
+     string, so a 2x151 library was told its own mates were 93 and 107 nt. The stage now
+     measures them, and the page states the run's own lengths here as well, because a run
+     produced before that fix would otherwise keep printing the sentence unchallenged. */
+  const lens = ((D.page || {}).measured || {}).read_length;
+  p.append(el('p', 'note', esc(L.bias || '') +
+    (Array.isArray(lens) && lens.length
+      ? ' On this run the mates measure ' + lens.map(String).join(' and ') +
+        ' nt, so read any length in the sentence above as the library it was measured ' +
+        'on and not as this one.'
+      : '')));
   app.append(p);
 })();
 
@@ -2655,14 +2889,35 @@ function interval(iv) {
   tb.innerHTML = '<thead><tr><th>field</th><th>residue</th><th>shuffled null</th>' +
     '<th>identified reads</th><th>state</th></tr></thead>';
   const body = el('tbody');
-  const mean = o => o && o.mean != null ? num(o.mean, 4) + ' <span class="dim mono">&plusmn;' +
-    num(o.sd, 3) + '</span>' : (o && o.any_hit_frac != null ? pct(o.any_hit_frac) : '-');
+  /* THREE SHAPES, AND THE THIRD RENDERED AS A DASH. A field ships either a mean with a
+     standard deviation, a hit fraction, or a bare number, and this read the first two and
+     fell through to '-' on the third: `frame_identifiable_frac` held 0.1615 on the residue
+     against 0.0950 on the null, printed an empty cell on both arms, and the state column
+     beside it still said "calibrated". A dash is this table's word for not measured, so a
+     measurement that arrives in an unexpected shape was rendered as its own absence. The
+     bare number is read, and a shape this function cannot read at all is loud rather than
+     blank, because a dash is indistinguishable from the honest case. */
+  const mean = o => {
+    if (o == null) return '-';
+    if (typeof o === 'number') return num(o, 4);
+    if (o.mean != null) {
+      return num(o.mean, 4) + (o.sd != null
+        ? ' <span class="dim mono">&plusmn;' + num(o.sd, 3) + '</span>' : '');
+    }
+    if (o.any_hit_frac != null) return pct(o.any_hit_frac);
+    if (typeof o === 'object' && Object.keys(o).length) {
+      return '<span class="absent">shape not read: ' +
+        esc(Object.keys(o).join(', ')) + '</span>';
+    }
+    return '-';
+  };
   Object.keys(fields).forEach(k => {
     const v = fields[k] || {};
     const st = state[k];
     const txt = typeof st === 'string' ? st : (st && st.state) || 'not recorded';
     const tr = el('tr');
-    tr.innerHTML = '<td>' + esc(k) + '</td><td class="mono">' + mean(v.residue || v) +
+    tr.innerHTML = '<td>' + esc(k) + '</td><td class="mono">' +
+      mean(v.residue != null ? v.residue : v) +
       '</td><td class="mono">' + mean(v.shuffled_null) + '</td><td class="mono">' +
       (v.subtracted_reads_any_hit_frac != null ? pct(v.subtracted_reads_any_hit_frac)
         : (v.subtracted_reads_bitscore ? num(v.subtracted_reads_bitscore.mean, 2)
@@ -2775,8 +3030,11 @@ function interval(iv) {
         (L.sub ? '<div class="csub">' + esc(L.sub) + '</div>' : '') +
         '<div class="cbar"><span style="width:' + Math.max(2, 100 * (r.residue_reads /
           maxr)).toFixed(1) + '%"></span></div>' +
-        '<div class="crow"><b>' + r.residue_reads + '</b> residue reads point here' +
-        (S.known_pile_searched_reads ? ', <b>' + r.known_reads + '</b> identified reads do'
+        '<div class="crow"><b>' + r.residue_reads + '</b> residue read' +
+        (r.residue_reads === 1 ? '' : 's') + ' point' +
+        (r.residue_reads === 1 ? 's' : '') + ' here' +
+        (S.known_pile_searched_reads ? ', <b>' + r.known_reads + '</b> identified read' +
+          (r.known_reads === 1 ? ' does' : 's do')
           : '') + '</div>' +
         '<div class="crow">closest at <b>' + num(id, 1) + '%</b> identity over ' +
         r.median_aligned_aa + ' amino acids' +
@@ -3237,8 +3495,32 @@ function interval(iv) {
     setFoot(rows, R, lane);
   }
 
+  /* THIS RUN'S SPREAD, NOT THE REPOSITORY'S. The sentence said "the genes of a
+     divergent contig disagree by a median 12.8 points", which is the figure from the
+     11,361-contig pile of another library; this run measured 8.6 against a near-reference
+     control of 0.95 and printed those two numbers in the headline section above. The
+     repository figure is the right thing to quote only where the run measured none, and
+     then it is quoted as what it is. */
+  function spreadClause() {
+    const W = D.contig_workup;
+    const d = W && (W.summary || {}).divergent || {};
+    const c = W && (W.summary || {}).control_near_reference || {};
+    const dv = d.median_orf_identity_spread_points;
+    const cv = c.median_orf_identity_spread_points;
+    if (dv == null) {
+      return 'the genes of a divergent contig disagree by a median 12.8 points over ' +
+        'the 11,361-contig pile of results/divergent_known/, which this run did not ' +
+        'measure for itself';
+    }
+    return 'on this run the genes of one divergent contig disagree by a median ' +
+      num(dv, 1) + ' points' +
+      (cv == null ? '' : ', against ' + num(cv, 2) +
+        ' on contigs that match their reference');
+  }
+
   function setFoot(rows, R, lane) {
     const c = S.census || {};
+    let ringed = 0;
     const thin = lane.filter(r => /covered/.test(r.why)).length;
     const shortAln = lane.length - thin;
     foot.innerHTML =
@@ -3246,8 +3528,7 @@ function interval(iv) {
       'polymerase on ' + rows.filter(r => r.src === 'polymerase').length +
       ' of ' + rows.length + ' contigs drawn, the whole-contig hit on the rest, stated ' +
       'per row - because a contig that carries one identity carries whichever gene won ' +
-      'on bitscore, and the genes of a divergent contig disagree by a median 12.8 ' +
-      'points. The ' +
+      'on bitscore, and ' + spreadClause() + '. The ' +
       'bar through each dot is that disagreement. Colour is how much of the scored gene ' +
       'the alignment spans, pale to deep, because identity flatters towards familiar by ' +
       '+17.2 points when coverage is under half against +7.1 above 90%. Height is ' +
@@ -3260,10 +3541,21 @@ function interval(iv) {
       ' with under ' + Math.round(ctlGet('spec_min_coverage') * 100) +
       '% of the scored gene aligned and ' + shortAln + ' aligned over under ' +
       ctlGet('spec_min_aln_aa') + ' aa - and it is a census, not a verdict. ' +
-      '<b>A ring</b> marks the ' + S.on_axis.filter(r => r.big).length + ' contigs that ' +
-      'also went to core_nt, 319 GB: green collapsed to a strain-level identification ' +
-      'there, blue got closer without reaching one, orange stayed distant. The ring ' +
-      'is a label and not a move along this axis, ' +
+      /* A LEGEND FOR MARKS THAT ARE NOT ON THE FIGURE. With no larger-index block run,
+         this read "a ring marks the 0 contigs that also went to core_nt, 319 GB: green
+         collapsed to a strain-level identification there, blue got closer without
+         reaching one, orange stayed distant", teaching a three-colour code for rings
+         that do not exist and implying the comparison had been made and come back
+         empty. Where none ran the sentence says so and the colours are not described. */
+      ((ringed = S.on_axis.filter(r => r.big).length)
+        ? '<b>A ring</b> marks the ' + ringed + ' contig' +
+          (ringed === 1 ? '' : 's') + ' that also went to core_nt, 319 GB: green ' +
+          'collapsed to a strain-level identification there, blue got closer without ' +
+          'reaching one, orange stayed distant. The ring ' +
+          'is a label and not a move along this axis, '
+        : '<b>No contig here went to a larger index</b>, so no ring is drawn and ' +
+          'nothing on this axis has been checked against core_nt. A ring would be ' +
+          'a label and not a move along this axis, ') +
       'because core_nt is a nucleotide index and this axis is protein identity; a ' +
       'displacement arrow waits on the protein pass against nr, which is the same ' +
       'instrument at a larger size. ' +
@@ -3571,15 +3863,25 @@ function interval(iv) {
          : n >= 1e3 ? '1 in ' + Math.round(n / 1e3) + ',000'
          : '1 in ' + Math.round(n);
   };
+  // Rows at or above one pair in a hundred thousand, which the sentence below counts.
+  const above = hit.filter(r => r.fraction && r.fraction >= 1e-5);
   const hero = el('div', 'verdict');
   hero.innerHTML =
     '<div class="vmain">' + (top
       ? 'Highest watchlist detection: <b>' + esc(top.name) + '</b>, at <b>' +
         oneIn(top.fraction) + ' read pairs</b>.' + cite('watchlist')
       : 'No watchlist taxon detected.' + cite('watchlist')) + '</div>' +
+    // COUNTED, NOT ASSERTED. This read `No row reaches 1 pair in 100,000`, which was
+    // true of the library the sentence was written on and false on the page it was read
+    // from: the top row directly above it said 1 in 44,000. A claim about the rows is
+    // computed from the rows. `Untargeted` went the same way as the heading's
+    // `untreated`: the preparation of an unseen library is not a fact this code holds.
     '<div class="vsub">' + hit.length + ' of ' + rows.length + ' detected at ' +
-    'confidence ' + CONF + '. No row reaches 1 pair in 100,000. Untargeted RNA ' +
-    'sequencing has low sensitivity for human pathogens at these ' +
+    'confidence ' + CONF + '. ' + (above.length
+      ? above.length + (above.length === 1 ? ' row reaches' : ' rows reach') +
+        ' 1 pair in 100,000 or more.'
+      : 'No row reaches 1 pair in 100,000.') +
+    ' RNA sequencing of wastewater has low sensitivity for human pathogens at these ' +
     'concentrations.' + cite('library') + '</div>';
   p.append(hero);
 
@@ -3757,9 +4059,20 @@ function interval(iv) {
       {lab: 'other living things', v: other, col: 'var(--v3)'},
       {lab: 'named only to a broad group', v: shallow, col: 'var(--v-mute)'},
     ].filter(s => s.v > 0);
-    inner.forEach(s => { s.pct = (100 * s.v / (named || 1)).toFixed(1) + '% of the named part'; });
+    // A SHARE THAT IS NOT ZERO IS NEVER PRINTED AS ZERO. The viral share of the named
+    // part rounded to `0%` in the middle of the ring on a library whose own virus table,
+    // directly below, lists eight named taxa and hundreds of reads. A reader takes the
+    // big number in the ring, and `0%` beside a list of viruses is the page arguing with
+    // itself. Anything present but below the printed precision is shown as a bound.
+    const small = (v, whole, dp) => {
+      const share = 100 * v / (whole || 1);
+      const floor = Math.pow(10, -dp);
+      return v > 0 && share < floor ? '<' + floor.toFixed(dp) + '%'
+                                    : share.toFixed(dp) + '%';
+    };
+    inner.forEach(s => { s.pct = small(s.v, named, 1) + ' of the named part'; });
     const d2 = donut(inner,
-      (100 * (by.Viruses || 0) / (named || 1)).toFixed(0) + '%', 'of that is viral',
+      small(by.Viruses || 0, named, 1), 'of that is viral',
       'and what that named part is');
     // The legend sits under its own donut, never off to the side, and every slice is
     // named in text: one of these three hues carries a contrast warning against the
@@ -3821,17 +4134,72 @@ function interval(iv) {
   const deep = rows.filter(r => (r.read_support || {}).mapped_mean_depth >= 100
                                 && r.contig_nt >= 3000);
 
+  /* A length claim with no chimaera number beside it is the thing CLAUDE.md refuses,
+     and this page was making one: the flag was computed by the stage, carried in the
+     payload and read by nothing, so the Methods entry describing it sat uncited while
+     the section above it counted complete genomes. Both arms are printed from the same
+     summary, flagged over the contigs that could be flagged, and the sentence says what
+     the comparison means rather than leaving two percentages side by side. A missing
+     denominator is reported as not testable, never as 0%. */
+  /* A difference of two fractions is points, not a percent: "within 15.38%" invites a
+     reader to take it as a ratio of the two rates. */
+  function points(g) { return (g * 100).toFixed(1) + ' percentage points'; }
+
+  function chimaeraLine() {
+    const pair = [['divergent', dsum], ['control_near_reference', ctrl]];
+    const got = pair.filter(([, s]) => s && s.contigs_that_could_be_flagged);
+    if (!got.length) {
+      return '<div class="vsub">No contig in this run carries two or more named genes, ' +
+        'so the chimaera check could not fire on either arm' + cite('chimaera') +
+        '. Nothing here is dropped on it.</div>';
+    }
+    const say = got.map(([k, s]) =>
+      pct(s.fraction_flagged_of_the_contigs_that_could_be) + ' of the ' +
+      s.contigs_that_could_be_flagged +
+      (k === 'divergent' ? ' divergent' : ' near-reference control') +
+      ' contigs that could be').join(' and ');
+    /* Whether the two arms read alike is a property of the run, not a sentence to
+       type: on a library where the flag did separate them, the clause below would be
+       asserting the opposite of its own numbers. It is read off the gap, and either way
+       nothing is dropped on the flag, which is the part that does not depend on it. */
+    const gap = (dsum && ctrl
+                 && dsum.fraction_flagged_of_the_contigs_that_could_be != null
+                 && ctrl.fraction_flagged_of_the_contigs_that_could_be != null)
+      ? Math.abs(dsum.fraction_flagged_of_the_contigs_that_could_be
+                 - ctrl.fraction_flagged_of_the_contigs_that_could_be)
+      : null;
+    const reading = gap == null
+      ? ' Only one arm could be tested here, so the flag has no comparison on this run.'
+      : (gap <= 0.2
+         ? ' The two arms read within ' + points(gap) + ' of each other, so the flag ' +
+           'tracks how the assembler joined genes rather than how far they sit from a ' +
+           'reference.'
+         : ' The two arms differ by ' + points(gap) + ', which this page reports without ' +
+           'reading it as divergence: the flag has not been calibrated against an ' +
+           'assembly whose joins are known.');
+    return '<div class="vsub">Genes on one contig disagree about which organism they ' +
+      'come from on ' + say + cite('chimaera') + '.' + reading +
+      ' Nothing is dropped on it.</div>';
+  }
+
   const hero = el('div', 'verdict');
   hero.innerHTML = '<div class="vmain"><b>' + belowNinety.length + ' of ' + taxa.length +
     '</b> assembled viruses sit <b>below 90% identity</b> to their closest published ' +
     'protein' + cite('contigid') +
-    '.</div>' + (deep.length ? '<div class="vmain">Of the ' + rows.length +
-      ' worked up gene by gene, <b>' + deep.length + '</b> are complete genomes carried ' +
-      'at over 100x read depth' + cite('depth') + '.</div>' : '') +
+    '.</div>' +
+    // The two counts in this section come from two piles, and the page used to print the
+    // first as a sentence and the second as a bare "15 of them" under the figure, leaving
+    // a reader to guess at the relation. They are stated side by side and NOT as a
+    // subset: the gene-level workup selects its own contigs, so 15 of 34 would be a claim
+    // about an overlap this page has not measured.
+    '<div class="vmain"><b>' + rows.length + '</b> contigs are scored gene by gene, ' +
+    'which is what the figure below lays out' +
+    (deep.length ? ', and <b>' + deep.length + '</b> of those are complete genomes ' +
+      'carried at over 100x read depth' + cite('depth') : '') + '.</div>' +
     '<div class="vsub">Identity here means one gene against the single closest protein ' +
     'in the reference sets, at E&lt;1e-5 over at least 60 aa. Below about 90% that ' +
     'protein is a nearest neighbour rather than an identification, and the name it ' +
-    'lends is borrowed.</div>';
+    'lends is borrowed.</div>' + chimaeraLine();
   p.append(hero);
 
   /* THE LINE. One quantity, one chart, no legend: everything that would need one is
@@ -3842,6 +4210,12 @@ function interval(iv) {
      all. Nothing is recomputed - both identities and the depth were measured - and the
      line under the rug says what moved. */
   const HIDS = ['spec_rank', 'min_contig_nt', 'min_depth'];
+  // The pile the figure draws FROM, which is not the pile the headline counts: the
+  // sentence above says how many assembled viruses there are, and the figure marks the
+  // ones scored gene by gene that clear the shipped length and depth floors. Those were
+  // 34 and 15 on the third library through this path, printed as "34" and "15 of them"
+  // with nothing saying what the 15 were 15 of.
+  const rugTotal = rows.length;
   const rugHost = el('div');
   const rugNote = el('div', 'note');
   // `shipped` reads the defaults rather than the current state, because the comparison
@@ -3921,9 +4295,13 @@ function interval(iv) {
     s += '</svg>';
     rugHost.innerHTML = '';
     const host = el('div', 'scroll'); host.innerHTML = s; rugHost.append(host);
-    rugNote.innerHTML = 'One mark per contig, ' + rows.length + ' of them, stacked ' +
-      'where several land on the same identity. Position is the gene the row was ranked ' +
-      'on, the polymerase wherever one is called.' + cite('genespread') +
+    rugNote.innerHTML = 'One mark per contig, ' + rows.length +
+      (rows.length === rugTotal
+        ? ' of them'
+        : ' of the ' + rugTotal + ' scored gene by gene; the rest sit below the length ' +
+          'or depth floor on the control row above') +
+      ', stacked where several land on the same identity. Position is the gene the row ' +
+      'was ranked on, the polymerase wherever one is called.' + cite('genespread') +
       (ctlAnyMoved(HIDS)
         ? ' <span class="relabel">At your setting: ' + rows.length + ' contigs and ' +
           deep.length + ' finished genomes, against ' + rugRowsShipped.n + ' and ' +
@@ -4043,8 +4421,17 @@ function interval(iv) {
       'Of the <b>' + tot.toLocaleString() + '</b> leftover reads that point at a named ' +
       'relative at all, <b>' + pct((R.host_mix_reads.bacteriophage || 0) / tot) +
       '</b> point at viruses of bacteria and <b>' + pct(hum / tot) + '</b> at anything ' +
-      'human-associated' + cite('concern') + '. Those ' + hum + ' reads are the enteric ' +
-      'viruses sewage is expected to carry, matched over about 34 amino acids. ' +
+      'human-associated' + cite('concern') + '. ' +
+      // WHAT THOSE READS ARE IS NOT SOMETHING THIS PAGE KNOWS. The sentence read
+      // "Those N reads are the enteric viruses sewage is expected to carry, matched
+      // over about 34 amino acids": an identification the host group does not support,
+      // an expectation about sewage this run did not measure, and an alignment length
+      // measured on another library. At N = 0 it also read "Those 0 reads are the
+      // enteric viruses", which is the sentence arguing with its own number.
+      (hum === 0
+        ? 'No leftover read points at a record whose host is human-associated. '
+        : 'A host group is the host of the matched RECORD, so those ' + hum +
+          ' reads are reads whose nearest named relative carries that label. ') +
       '<b>Host confidence never exceeds ' + num(hc.max, 2) + '</b> anywhere in the ' +
       Number(hc.subjects || 0).toLocaleString() + ' records, so no relative here is ' +
       'close enough for its host to transfer: these are labels on the database, not ' +
@@ -4195,6 +4582,26 @@ function interval(iv) {
   const own = tier('selfasm_sample_contigs_identified_norrna').marginal_removed;
   const rr = tier('rrna').tier_alone_removed;
 
+  /* Each tier in the recognised-but-unnamed band with its own marginal share. The
+     ribosomal index itself has its own band above, so it is excluded here rather than
+     counted twice. A tier `tierKind` does not recognise is listed under its own name, so
+     a new index appears as itself instead of swelling a label written for another one. */
+  function unnamedBandParts(curve, rrAlone) {
+    const NAMES = {artefact: 'adapter and low complexity',
+                   selfasm_sample_contigs_rrna: 'own-sample ribosomal contigs',
+                   selfasm_sample_contigs_identified_norrna:
+                     'own-sample contigs carrying no name'};
+    const parts = (curve || [])
+      .filter(c => tierKind(c.tier) === 'recognises' && c.tier !== 'rrna'
+                   && (c.marginal_removed || 0) > 0)
+      .map(c => [NAMES[c.tier] || c.tier, c.marginal_removed])
+      .sort((a, b) => b[1] - a[1]);
+    if (!parts.length) {
+      return 'no tier in this run removed reads without naming them';
+    }
+    return parts.map(x => x[0] + ' ' + pct(x[1])).join(', ');
+  }
+
   const hero = el('div', 'verdict');
   hero.innerHTML = '<div class="vmain"><b>' +
     pct(1 - (K.named / (K.searched || 1))) + '</b> of residual reads have no ' +
@@ -4211,19 +4618,30 @@ function interval(iv) {
   (function () {
     const brk = (D.tier_table || {}).breakdown, curve = (D.tier_table || {}).curve || [];
     if (!brk || !curve.length) return;
-    const CAN_NAME = {k2_viral: 1, k2_standard08: 1, k2_pluspf08: 1, k2_pluspf16: 1,
-                      prot_viral: 1, prot_sprot: 1};
     let named = 0;
-    curve.forEach(c => { if (CAN_NAME[c.tier]) named += c.marginal_removed || 0; });
+    curve.forEach(c => { if (tierCanName(c.tier)) named += c.marginal_removed || 0; });
     const ident = brk.identified.point;
     const bands = [
       {lab: 'named', v: named, col: 'var(--v1)',
        sub: 'a taxon or an accession'},
-      {lab: 'ribosomal RNA', v: rr, col: 'var(--v1)', op: 0.45,
-       sub: 'identifies a ribosome, not an organism'},
-      {lab: 'recognised, unnamed', v: Math.max(0, ident - named - rr),
-       col: 'var(--v-mute)', sub: 'mostly own-sample contigs (' + pct(own) +
-         '), rest adapter and low complexity'},
+      /* THE BANDS MUST PARTITION THE IDENTIFIED FRACTION, SO EVERY ONE IS A MARGINAL.
+         This band used the ribosomal index's own reach (76.06%) while the band beside it
+         was computed as identified minus named minus this, so the stacked parts summed
+         to 0.24 points more than the band they sat under. The index's own reach is a
+         different quantity, it is the one the sentence above the figure quotes, and it
+         belongs there and not in a stack. */
+      {lab: 'ribosomal RNA', v: tier('rrna').marginal_removed, col: 'var(--v1)',
+       op: 0.45, sub: 'identifies a ribosome, not an organism'},
+      /* THE SUB-LABEL IS A DECOMPOSITION, NOT A GUESS AT ONE. It read "mostly
+         own-sample contigs (2.26%), rest adapter and low complexity" over a band of
+         14.18%: the 2.26% named only the non-ribosomal self-assembly tier and left the
+         9.73% of own-sample RIBOSOMAL contigs out, while the artefact filters it
+         attributed the remainder to removed 0.61%. Every tier in the band is listed with
+         its own marginal share, largest first, in the shape the reconciliation panel
+         below already used. */
+      {lab: 'recognised, unnamed',
+       v: Math.max(0, ident - named - tier('rrna').marginal_removed),
+       col: 'var(--v-mute)', sub: unnamedBandParts(curve, rr)},
       /* THE SUB-LABELS SAY WHAT THE PILE IS, NOT WHAT IT MEASURED SOMEWHERE ELSE.
          These two read "median depth 6" and "median depth 1", which are one library's
          measurements written into the renderer. No stage in a run produces a median
@@ -4237,6 +4655,18 @@ function interval(iv) {
        sub: 'no name, and no contig here either'},
     ].filter(b => b.v > 0);
     const tot = bands.reduce((a, b) => a + b.v, 0) || 1;
+    /* THE INVARIANT, ASSERTED WHERE THE BANDS ARE BUILT. These five are the whole
+       library split by what can be said about each part, so they sum to one. They did
+       not: the named band was short by every Kraken2 tier because a literal map of
+       undated directory names had stopped matching, and the ribosomal band carried an
+       index's own reach where the band beside it had been computed from a marginal. Both
+       faults are invisible in a stacked bar, which normalises by its own total and so
+       draws any set of numbers as a full width. A throw here fails the build, which is
+       the only tell a figure drawn from a wrong total can have. */
+    if (Math.abs(tot - 1) > 0.005) {
+      throw new Error('the library bands sum to ' + tot.toFixed(4) +
+        ' rather than 1: ' + bands.map(b => b.lab + ' ' + b.v.toFixed(4)).join(', '));
+    }
     const bar = el('div', 'split');
     bar.innerHTML = bands.map((b, i) =>
       '<i title="' + esc(b.lab + ': ' + pct(b.v)) + '" style="flex:' +
@@ -4285,15 +4715,13 @@ function interval(iv) {
   // A Kraken2 or DIAMOND hit carries a taxon or an accession; an artefact filter, a
   // SILVA match and a match to a contig from this very sample tell you the sequence has
   // been seen before and nothing about what it is.
-  const CAN_NAME = {k2_viral: 1, k2_standard08: 1, k2_pluspf08: 1, k2_pluspf16: 1,
-                    prot_viral: 1, prot_sprot: 1};
   const WHY = {artefact: 'adapter and low complexity',
                rrna: 'ribosomal RNA',
                selfasm_sample_contigs_rrna: 'own-sample ribosomal contigs',
                selfasm_sample_contigs_identified_norrna: 'own-sample unnamed contigs'};
   curve.forEach(c => {
     const m = c.marginal_removed || 0;
-    if (CAN_NAME[c.tier]) { named += m; }
+    if (tierCanName(c.tier)) { named += m; }
     else { unnamed += m; if (m > 0.002) unnamedRows.push([c.tier, m]); }
   });
   const k2here = 1 - (((P.at_confidence['0.1'] || {}).by_superkingdom || [])
@@ -4312,9 +4740,18 @@ function interval(iv) {
   };
   rowbar('<b>named</b>, one index', k2here, 'var(--v1)',
     'Kraken2 PlusPF-08, confidence 0.1, whole library.');
+  /* Whether the two named rows agree is a comparison, not a sentence: the claim
+     survived the tier names changing underneath it and went on asserting agreement
+     across a fifteen-point gap. The two differ in scope as well as index, and the note
+     under the panel says so, so the row states the gap and leaves the reading there. */
   rowbar('<b>named</b>, whole cascade', named, 'var(--v1)',
-    'sum of every cascade tier returning a taxon or accession. Agrees with the row ' +
-    'above.');
+    'sum of every cascade tier returning a taxon or accession, ' +
+    ((Math.abs(named - k2here) <= 0.02)
+      ? 'within ' + ((Math.abs(named - k2here)) * 100).toFixed(1) +
+        ' percentage points of the row above.'
+      : ((named - k2here) * 100).toFixed(1) +
+        ' percentage points from the row above, which is one index over the whole ' +
+        'library against the cascade over its block.'));
   rowbar('<b>recognised, unnamed</b>', unnamed, 'var(--v-mute)',
     unnamedRows.map(r => (WHY[r[0]] || r[0]) + ', ' + pct(r[1])).join('; ') + '.');
   rowbar('residual', brk.residual.point, 'var(--v2)',
@@ -4480,8 +4917,9 @@ function interval(iv) {
      that simply omitted the control would read as though the setting did not exist. */
   const gone = (CTLDEF.controls || []).filter(c => c.absent);
   if (gone.length) {
-    p.append(el('p', 'note', 'And ' + gone.length + (gone.length === 1 ? ' control that '
-      : ' controls that ') + 'moves on a run which measured it, but not on this one. ' +
+    p.append(el('p', 'note', 'And ' + gone.length +
+      (gone.length === 1 ? ' control that moves' : ' controls that move') +
+      ' on a run which measured them, but not on this one. ' +
       'That is not the same thing as a control that cannot move honestly, so it is said ' +
       'separately:'));
     const box = el('div', 'ctls');

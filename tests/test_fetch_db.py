@@ -76,7 +76,9 @@ def test_a_set_is_either_pinned_or_marked_rolling():
 def test_a_key_that_cannot_be_fetched_is_refused_with_its_reason(tmp_path):
     with pytest.raises(fetchdb.FetchError) as e:
         fetchdb.fetch(["cross_sample"], tmp_path, Path("."))
-    assert "produces" in str(e.value) and "subtrahend" in str(e.value)
+    # The reason has to be the one that matters: not "we have no copy" but "the obvious
+    # substitute fabricates the measurement".
+    assert "OTHER samples" in str(e.value) and "false growth" in str(e.value)
     with pytest.raises(fetchdb.FetchError) as e:
         fetchdb.fetch(["nonsense"], tmp_path, Path("."))
     assert "no reference set named" in str(e.value)
@@ -232,6 +234,26 @@ def test_the_printed_config_block_is_a_config_this_package_accepts(tmp_path,
     # `protein_fasta` comes along with the protein index, because the name map reads the
     # FASTA the index was built from rather than the index.
     assert "protein_fasta" in cfg.databases
+    # And `classifier_contigs` comes along with the classifier list, naming the one of the
+    # four that identifies contigs. Without it in the printed block, a run config taken
+    # from `fetch-db` unedited reaches the contig stage with a list where it needs one
+    # path, which is how a five-seed launch died 57 minutes in.
+    assert cfg.database("classifier_contigs").name == f"{fetchdb.K2_DB_CONTIGS}.d"
+
+
+def test_the_contig_classifier_is_one_of_the_databases_actually_fetched():
+    """A named operating point that nothing downloads is a path that will not exist.
+
+    It is named rather than taken by position, because a position moves when the list
+    does, and `experiments/ec2_prod.py` carries the same value for the launcher path.
+    """
+    import sys
+    assert fetchdb.K2_DB_CONTIGS in fetchdb.K2_DBS
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "experiments"))
+    import ec2_prod
+    assert ec2_prod.K2_DB_CONTIGS == fetchdb.K2_DB_CONTIGS, (
+        "the launcher and the package name different contig classifiers, so a run "
+        "through one is not comparable to a run through the other")
 
 
 def test_asking_for_one_path_where_the_config_names_several_is_refused(tmp_path):
@@ -297,3 +319,36 @@ def test_a_run_names_every_absence_in_one_refusal_and_creates_nothing(tmp_path,
     assert not out.exists(), (
         "the refused run created its output directory, which a later run would read as "
         "a run that happened")
+
+
+def test_a_configs_sample_facts_are_keys_the_page_can_speak():
+    """A fact the sentence has no clause for REFUSES the page, so it cannot ship in an
+    example or be written by a launcher.
+
+    `page_descriptor.check` raises on an unknown key, which is right: a fact somebody
+    wrote down that the renderer drops without saying so is the asymmetry that once lost
+    "South Korea" off the one library here not in Europe. This is that rule applied one
+    layer out, to the places a `sample_facts` block is now AUTHORED: the committed
+    example, and the TOML that the production launcher writes on the instance.
+    """
+    import sys
+    root = Path(__file__).resolve().parents[1]
+    sys.path.insert(0, str(root / "experiments"))
+    import page_descriptor
+
+    cfg = load(root / "examples" / "berlin.toml")
+    page_descriptor.check("SRR23973193", cfg.inputs["sample_facts"])
+
+    import tomllib
+
+    import ec2_prod
+    import library_facts
+    for accession in ("SRR23973193", "SRR23702504", "SRR34217566"):
+        block = ec2_prod._sample_facts_toml(
+            library_facts.library(accession).get("sample") or {})
+        facts = tomllib.loads(block)
+        page_descriptor.check(accession, facts)
+    # And the empty case, which is the production case: water nobody deposited from.
+    facts = tomllib.loads(ec2_prod._sample_facts_toml({}))
+    page_descriptor.check("nothing-known", facts)
+    assert "does not know" in facts["basis"]

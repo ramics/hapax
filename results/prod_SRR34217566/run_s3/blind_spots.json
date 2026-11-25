@@ -1,0 +1,65 @@
+{
+  "comment": "Declared blind spots, carried into every run directory by hapax.py and shown as a fixed panel in the web view rather than a footnote (SPEC.md 8.3). Each entry names the measurement that established it, so a reader can check the claim rather than take it. A blind spot is removed from this file only when a committed result removes it.",
+  "blind_spots": [
+    {
+      "id": "abundance_floor",
+      "statement": "Nothing in this tool detects a molecule present below roughly 1 in a million read pairs.",
+      "evidence": "results/peptide_absence/ (160,774 false flags per million at the 1-in-a-million operating point); results/spike_abundance/ (geNomad calls nothing below ~2x coverage, assembly breadth 0% at 0.5x)",
+      "consequence": "A negative for a rare virus is not evidence of absence. Any sensitivity figure quoted without an abundance is unreadable."
+    },
+    {
+      "id": "divergence_ceiling",
+      "statement": "Recognition of a relative stops between roughly 10% and 20% nucleotide divergence, and nucleotide indexes stop first.",
+      "evidence": "results/spike_holdout/ (spike reads surviving tier 1: 0.00% at 0% divergence, 12.6% at 10%, 81.6% at 20%, 99.6% at 30%; at 20% every nucleotide index identifies zero and the protein tiers 18%)",
+      "consequence": "A read in the residue may be a known organism's homolog at 25% divergence and this tool cannot say so. The protein tier is what holds the ceiling up and must not be dropped for speed."
+    },
+    {
+      "id": "kin_wall",
+      "statement": "Two reads from the same genome find each other in the joint space only down to about 1 in 100,000 of the library.",
+      "evidence": "results/residue_structure/ REPORT.md section 4, 5 seeds (planted-read neighbour purity 99.6% at 1e-3, 10.4% at 1e-5 against a 2.5% control, nothing at 1e-6); results/mate_friends/ gives the mate-linkage upper bound on the same geometry",
+      "consequence": "Grouping is a statement about abundant residue. For anything rarer the tool reports reads, not groups, and the web view must not draw a group that the wall says cannot exist."
+    },
+    {
+      "id": "chimaera_false_positives",
+      "statement": "The split-mapping chimaera test fires on 26% of ordinary known background reads, so a read-level chimaera call carries almost no information.",
+      "evidence": "results/residue_report/ (false-positive rate measured on subtracted reads); results/partial_match_subjects/ (above significance the half-matching shape has no population: matches cover a median 87 of 107 bases and hold identity into the padding)",
+      "consequence": "Chimaera is reported on contigs, after assembly, and not as a read-level verdict."
+    },
+    {
+      "id": "one_sample_one_day",
+      "statement": "Every removal fraction this tool reports is a statement about one library on one day, not about wastewater.",
+      "evidence": "results/dna_rna_pair/ and results/rrna_content/ (same plant, both RNA, eight months apart: rRNA 38.0% to 67.1%, identifiable 22.7% to 40.7%, virus-identifiable 12.0% to 6.5%)",
+      "consequence": "Read every cascade percentage as 'on this sample'. A per-sample calibration run sits behind every score for exactly this reason."
+    },
+    {
+      "id": "threshold_dominates_index_size",
+      "statement": "A reported fraction without its threshold is unreadable: one database removes 42.8%, 21.7% or 3.5% of the same library depending only on its confidence setting.",
+      "evidence": "results/subtract_known/ (Kraken2 PlusPF-16 at confidence 0.0 / 0.1 / 0.2)",
+      "consequence": "Every number in the run directory carries its operating point, and the web view shows the sweep rather than a single value."
+    },
+    {
+      "id": "artefact_detection_weakest",
+      "statement": "Artefact detection is the weakest load-bearing piece of the tool. If almost everything real matches something, whatever truly matches nothing is mostly artefact, and that is the judgement the tool is least able to make.",
+      "evidence": "results/subtract_known/ (across four cumulative protein indexes residue 'any hit' goes 77.7 to 98.9%); the chimaera false-positive rate above",
+      "consequence": "A read with no match anywhere is reported as unplaceable, never as novel."
+    },
+    {
+      "id": "search_cannot_score_novelty",
+      "statement": "An index can answer whether something is already known. It cannot answer whether something is new, because score ordering tracks database proximity.",
+      "evidence": "results/readlevel_features/ (PR #8); results/peptide_absence/ (score ordering put background above spike at every threshold)",
+      "consequence": "There is no novelty score anywhere in the run directory or the web view. The deliverable is identity-to-closest-relative with its coverage and E-value, and the joint space as a density."
+    },
+    {
+      "id": "second_extraction_not_a_subtrahend",
+      "statement": "A matched DNA library from the same water does not hold the RNA residue, so a second extraction is not a cheap way to remove background.",
+      "evidence": "results/dna_rna_pair/ (13.3% of unidentified RNA reads witnessed in the DNA library, less than identified reads' 16.5%; the DNA library is 99.1% unidentified and a phage-dominated virome)",
+      "consequence": "Cross-library subtraction is not offered. Cross-sample recurrence is a reference, never a subtrahend, because subtracting it would make recurrence circular."
+    },
+    {
+      "id": "own_assembly_is_circular_for_recurrence",
+      "statement": "The sample's own assembly is by far the most efficient subtrahend, and that is also what makes it unusable for any recurrence claim.",
+      "evidence": "results/subtract_known/ (15 MB of the sample's own identified contigs removes 30.33 points on top of 32 GB of Kraken2; 1.4 MB of its own rRNA contigs beats all 272 MB of SILVA)",
+      "consequence": "What survives subtraction of the sample's own assembly is rare AND unsequenced, which is a narrower and more honest claim than absence from public databases."
+    }
+  ]
+}

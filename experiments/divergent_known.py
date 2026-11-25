@@ -61,6 +61,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import library_facts  # noqa: E402
+import provenance as _provenance  # noqa: E402
 from shuffle_control import shuffle_all  # noqa: E402  the one copy of the null's shuffle
 
 from divergent_contig_workup import (BANDS, MIN_ALN_AA, SIGNIFICANT_EVALUE, band,
@@ -716,15 +717,12 @@ def main() -> None:
         "seed": a.seed,
         "timings_seconds": dict(secs, total=round(time.time() - t0, 1)),
     }
-    try:
-        sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, check=True,
-                             capture_output=True, text=True).stdout.strip()
-        dirty = bool(subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, check=True,
-                                    capture_output=True, text=True).stdout.strip())
-    except Exception:
-        sha, dirty = "unknown", True
-    out["git_sha"] = sha + ("-dirty" if dirty else "")
-    out["tree_dirty"] = dirty
+    # The shared record, not a local copy: a `try/except` around `git` answers "unknown"
+    # and a positive `tree_dirty: true` on an instance with no git installed, which is a
+    # claim about a tree nobody looked at. `provenance.py` reads HAPAX_GIT_SHA where
+    # there is no checkout and raises where it can say nothing.
+    out["git_sha"] = _provenance.git_sha()
+    out["tree_dirty"] = _provenance.tree_dirty()
     out["script_sha256"] = sha256_of(Path(__file__).resolve())
     a.out.parent.mkdir(parents=True, exist_ok=True)
     a.out.write_text(json.dumps(out, indent=1))

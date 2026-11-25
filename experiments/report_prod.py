@@ -51,6 +51,71 @@ def load(path: Path):
         return None
 
 
+def _ran(entry: dict, ran: dict, key: str) -> str:
+    """One sample fact as the run used it, saying which of the two sources answered.
+
+    A fact absent from the registry is not an unknown: a trim and a block are measured
+    off the reads, and a library whose registry entry deliberately records neither still
+    ran on a definite value. Printing the registry alone said "unmeasured" of a trim the
+    pass had measured, which is the one direction of error this project treats as
+    expensive, since it reads as a gap in the measurement rather than in the lookup.
+    """
+    stated, used = entry.get(key), ran.get(key)
+    fmt = (lambda v: f"{v:,}" if isinstance(v, int) else str(v))
+    if stated is not None:
+        return f"{fmt(stated)}, stated" + (
+            f" (the run recorded {fmt(used)})" if used is not None and used != stated
+            else "")
+    if used is not None:
+        return f"{fmt(used)}, measured on this run"
+    return "neither stated nor recorded"
+
+
+def _shown(path: Path) -> str:
+    """The path as the repo names it, or in full where it sits outside the repo.
+
+    A run directory is not always under the checkout: it can be a work directory on an
+    instance or a copy under a test's tmp_path, and `relative_to` raises on those rather
+    than falling back, which turned one provenance line into a crash. The same fix is in
+    `make_web._shown` for the same reason.
+    """
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
+
+
+#: Section files that were looked for and not found, so that a section missing from the
+#: generated tables is a line in them rather than nothing at all.
+_NOT_FOUND: list[str] = []
+
+
+def _find(res: Path, runs: list[Path], *names: str):
+    """The first of `names` that exists at the results root or in any seed directory.
+
+    TWO LAYOUTS, ONE GENERATOR. The per-library pass writes the assembly baseline, the
+    contig split and the measured-library record once at the results root; the one-command
+    path writes them inside each seed's own directory, and renamed one of them. Every one
+    of these sections was guarded by a bare `if loaded:`, so on the second layout four
+    whole sections of the generated tables disappeared and the file still looked finished
+    - the same shape as a figure drawn from an input declared absent. The paths tried are
+    recorded whether or not one hits, and the ones that missed are printed, because a
+    section that is not there and a section that was never asked for are different
+    statements.
+    """
+    tried = []
+    for name in names:
+        for base in [res, *runs]:
+            cand = base / name
+            tried.append(cand)
+            if cand.exists():
+                return load(cand)
+    _NOT_FOUND.append(
+        f"{names[0]}, looked for at {len(tried)} paths under "
+        f"{_shown(res)} and in each seed directory")
+    return None
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--seed", type=int, default=1, help="recorded; inputs are fixed files")
@@ -62,11 +127,27 @@ def main() -> int:
     res = args.results or ROOT / f"results/prod_{args.library}"
     if not res.exists():
         raise SystemExit(f"{res} does not exist")
-    runs = sorted(res.glob("run_s*"))
-    if not runs:
+    found = sorted(res.glob("run_s*"))
+    if not found:
         raise SystemExit(f"{res} holds no run_s* directory")
+    # A DIRECTORY IS NOT A SEED. A run still in flight, or one fetched while in flight,
+    # leaves a `run_sN` directory holding part of its output and no manifest. Folding
+    # those into the seed count prints a census over seeds it has no data for: this
+    # table read "0 failures across 5 seeds" and "0 of 5 complete" off four finished
+    # seeds and one directory containing a single file, while the cascade table beside
+    # it correctly said four. The two are separated and the partial ones are named, so
+    # that a count is over the seeds that produced a manifest and nothing is averaged
+    # over an absence.
+    runs = [p for p in found if (p / "manifest.json").exists()]
+    started = [p.name.removeprefix("run_") for p in found if p not in runs]
+    if not runs:
+        raise SystemExit(
+            f"{res} holds {len(found)} run_s* directories and not one manifest.json, "
+            "so no seed of this run has finished")
 
     entry = library_facts.library(args.library)
+    # The parameters of the first seed's own manifest: what the run actually ran on.
+    ran = ((load(runs[0] / "manifest.json") or {}).get("parameters") or {})
     truth = stage_refs.resolve(args.library, "truth_panel")
     cross = stage_refs.resolve(args.library, "crossplant_panel")
 
@@ -74,7 +155,7 @@ def main() -> int:
     w = L.append
     w(f"# Tables — production run over {args.library}")
     w("")
-    w(f"Generated by `experiments/report_prod.py` from `{res.relative_to(ROOT)}`. "
+    w(f"Generated by `experiments/report_prod.py` from `{_shown(res)}`. "
       f"Every number here is read out of a committed file in that directory; nothing is "
       f"typed.")
     w("")
@@ -89,9 +170,15 @@ def main() -> int:
     w(f"| pairs in the library | {entry.get('pairs', '-'):,} |"
       if isinstance(entry.get("pairs"), int) else "| pairs in the library | - |")
     w(f"| read length | {entry.get('read_length', '-')} |")
-    w(f"| mate-2 trim used | {entry.get('trim_r2', 'unmeasured')} |")
-    w(f"| block stride | {entry.get('block', '-'):,} |"
-      if isinstance(entry.get("block"), int) else "| block stride | - |")
+    # THE VALUE THE RUN USED, not the value the registry holds. For a library whose trim
+    # and block are deliberately absent from the registry - because both are measured on
+    # the instance, which is the point of the one-command path - these two rows read
+    # "unmeasured" and "-" on a run that had measured them both and printed them in its
+    # own operating point two sections down. The registry answers what was supplied; only
+    # the run answers what ran, and where they differ the stated one wins, so both are
+    # shown with the source named.
+    w(f"| mate-2 trim used | {_ran(entry, ran, 'trim_r2')} |")
+    w(f"| block stride | {_ran(entry, ran, 'block')} |")
     w(f"| truth panel | {truth['state']}"
       + (f": {truth.get('panel')}" if truth["state"] == "resolved" else "") + " |")
     w(f"| cross-plant panel | {cross['state']}"
@@ -106,7 +193,7 @@ def main() -> int:
     # itself?" Four of these come off the file; where the registry states a different value
     # the stated one is what ran, because stating it is the override, so both are printed
     # and the disagreement is visible rather than reconciled.
-    meas = load(res / "measured_library.json")
+    meas = _find(res, runs, "measured_library.json", "library_measured.json")
     if meas:
         w("## Measured off the file, beside what the registry states")
         w("")
@@ -165,7 +252,7 @@ def main() -> int:
         w("")
 
     # ---- the assembly, with its own argv and version
-    asm = load(res / "assembly/assembly_baseline.json")
+    asm = _find(res, runs, "assembly/assembly_baseline.json")
     if asm:
         w("## The assembly (whole library, committed baseline arm)")
         w("")
@@ -177,7 +264,7 @@ def main() -> int:
                 v = asm[k]
                 w(f"| {k} | {v:,} |" if isinstance(v, int) else f"| {k} | {v} |")
         w("")
-    man = load(res / "assembly/manifest_s1.json")
+    man = _find(res, runs, "assembly/manifest_s1.json")
     if man:
         w(f"MEGAHIT `{man.get('megahit_version', '?')}`, "
           f"minimap2 `{man.get('minimap2_version', '?')}`, "
@@ -185,7 +272,7 @@ def main() -> int:
         w("")
 
     # ---- the contig split: what identification could and could not name
-    cid = load(res / "contig_identification.json")
+    cid = _find(res, runs, "contig_identification.json")
     if cid:
         w("## The contig split (identification, never assembly)")
         w("")
@@ -293,6 +380,11 @@ def main() -> int:
         w(f"Every stage returned the same status and reason on all {n} seeds, so no row here "
           f"names a seed.")
         w("")
+    if started:
+        w(f"Seeds with a directory and no manifest, so counted nowhere above: "
+          f"**{', '.join(started)}**. Those seeds had not finished when this table was "
+          f"written.")
+        w("")
     done = [load(p / "manifest.json") or {} for p in runs]
     # THREE COUNTS, NOT ONE, BECAUSE THEY MEAN DIFFERENT THINGS AND ONE HID THE OTHERS
     # TWICE, IN BOTH DIRECTIONS.
@@ -326,6 +418,11 @@ def main() -> int:
       f"an empty stage cannot hide behind a clean exit code. Wall clock per seed: "
       f"{[round(m.get('wall_seconds', 0) / 60, 1) for m in done]} minutes.")
     w("")
+
+    if _NOT_FOUND:
+        w("Sections not in this file, with the file each one needed: "
+          + "; ".join(f"`{n}`" for n in _NOT_FOUND) + ".")
+        w("")
 
     out = args.out or res / "TABLES.md"
     out.write_text("\n".join(L) + "\n")

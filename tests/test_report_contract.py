@@ -20,7 +20,8 @@ from pathlib import Path
 
 import pytest
 
-from hapax.report import ReportError, build, inspect, missing_sections
+from hapax.report import (ReportError, build, descriptor, inspect,
+                          missing_sections)
 from hapax.schemas import SCHEMAS, SchemaError, validate
 from hapax.stages import R, SECTIONS
 
@@ -143,3 +144,192 @@ def test_the_descriptor_states_ignorance_rather_than_supplying_facts(tmp_path):
     assert set(d["inputs"]) == {"spectrum", "spectrum_big_index"}
     for v in d["inputs"].values():
         assert "not_run" in v, "a declared absence and an undeclared one are not the same"
+
+
+def test_no_report_section_depends_on_a_panel_a_library_may_not_have():
+    """A section fed by a per-library panel could not be drawn for most water.
+
+    Two stages resolve a reference out of `experiments/libraries.json` and skip with a
+    committed reason when this library has none: `panel` (the depositors' truth genomes)
+    and `crossplant` (the 530-library background). Neither output fills a report section
+    today, which is why a run on water in no panel still builds a complete page — and the
+    only reason this is not load-bearing is that nobody has attached a section to one.
+
+    If one is attached, the report's own contract makes the absence a refusal, and the
+    page for every production sample becomes incomplete for a property of the water
+    rather than a hole in the tool. The two absences are not interchangeable and the
+    report cannot currently tell them apart, so this asserts the condition instead.
+    """
+    per_library_panels = {"panel", "crossplant"}
+    attached = {name: [o.filename for o in R.stages[name].outputs if o.section]
+                for name in per_library_panels if name in R.stages}
+    offenders = {k: v for k, v in attached.items() if v}
+    assert not offenders, (
+        f"{offenders} now fills a report section from a panel a library may not have. "
+        f"Either the report must distinguish 'this library has no such panel, and "
+        f"libraries.json says so' from 'a stage did not run', or the output stays off "
+        f"the page.")
+
+
+def test_an_absent_enrichment_carries_what_the_run_recorded(tmp_path):
+    """The cause of an absence is read from the run, and a missing record says so.
+
+    The registry's `absence_means` explains what the page shows without the file, which
+    is always true. It also carried a guess at the cause - "which not every machine has
+    staged" - and on SRR34217566 both indexes were staged and the stage failed on a stale
+    read-path default. The two findings call for different fixes, so the recorded status
+    travels beside the note.
+    """
+    from hapax import report
+
+    (tmp_path / "enrichments.json").write_text(json.dumps({"stages": [
+        {"stage": "workup", "status": "failed", "reason": "FileNotFoundError: berlin"},
+        {"stage": "architecture", "status": "skipped", "reason": "it reads the workup"},
+    ]}))
+    failed = report._why_absent(tmp_path, "workup")
+    assert failed["recorded"] == "failed" and "berlin" in failed["recorded_reason"]
+    assert report._why_absent(tmp_path, "names")["recorded"].startswith("nothing:")
+    # No record at all is its own answer, not the same as a stage nobody ran.
+    assert report._why_absent(tmp_path / "elsewhere", "workup")["recorded"].startswith(
+        "nothing: this run wrote no")
+
+
+def test_the_descriptor_declares_the_spectrum_the_run_actually_produced(tmp_path):
+    """A hardcoded absence is a claim about this water that nothing measured.
+
+    `inputs.spectrum` read "the divergent-contig workup is not yet a stage of hapax run"
+    long after the divergent stage was one. A complete five-stage run of SRR34217566 then
+    drew its headline distance spectrum as an empty axis, and told three of that figure's
+    controls the stage had not run, beside a run directory holding 1.7 MB of that stage's
+    output. It is the harder of the two directions to notice, because a declared absence
+    renders as scrupulousness rather than as a gap.
+    """
+    from hapax.report import descriptor
+
+    (tmp_path / "manifest.json").write_text(json.dumps(
+        {"tool": "hapax run", "parameters": {"library": "SRR23702504"}}))
+    d = json.loads(descriptor(tmp_path, tmp_path / "page.json", seed=2).read_text())
+    assert "not_run" in d["inputs"]["spectrum"], (
+        "no divergent output in the run directory, so the absence is the honest reading")
+    assert "PLAN.md" not in d["inputs"]["spectrum"]["not_run"], (
+        "the reason must describe this run, not the state of the tool when it was typed")
+
+    (tmp_path / "divergent_known_s2.json").write_text(json.dumps({"rows": []}))
+    d = json.loads(descriptor(tmp_path, tmp_path / "page.json", seed=2).read_text())
+    assert d["inputs"]["spectrum"] == {
+        "path": str(tmp_path / "divergent_known_s2.json")}, (
+        "the stage ran and its output is sitting there; the page has to be told")
+
+
+def test_the_report_build_passes_its_seed_to_the_descriptor(tmp_path):
+    """Seed 2's page must not be told about seed 1's contigs, or the other way about."""
+    import inspect as _inspect
+
+    from hapax import report
+
+    src = _inspect.getsource(report.build)
+    assert 'descriptor(rundir, rundir / "page_descriptor.json", seed)' in src, (
+        "the descriptor resolves per-seed filenames, so the seed has to reach it")
+
+
+def test_the_descriptor_carries_what_the_run_measured_off_the_reads(tmp_path):
+    """The registry answers what was supplied; only the file answers what the reads are.
+
+    The registry holds SRR34217566 at 150 nt and the file is 151. Separately the linkage
+    stage wrote its mate-asymmetry clause with one library's post-trim lengths inside it,
+    and every library's output carried the string, so a 2x151 library was told its mates
+    were 93 and 107 nt. The page prints the measured answer beside either, and it comes
+    through the descriptor because every run-directory file the renderer reads has to be a
+    declared stage output and this one is written by the launcher.
+    """
+    (tmp_path / "manifest.json").write_text(json.dumps(
+        {"tool": "hapax run", "parameters": {"library": "SRR23702504"}}))
+    (tmp_path / "library_measured.json").write_text(json.dumps(
+        {"pairs": 10, "read_length": [151, 151], "layout": "paired"}))
+    out = descriptor(tmp_path, tmp_path / "d.json", 1)
+    assert json.loads(out.read_text())["measured"]["read_length"] == [151, 151]
+
+
+def test_a_run_that_measured_nothing_carries_an_empty_measured_block(tmp_path):
+    """Absent is empty, not a guess at the registry's answer."""
+    (tmp_path / "manifest.json").write_text(json.dumps(
+        {"tool": "hapax run", "parameters": {"library": "SRR23702504"}}))
+    out = descriptor(tmp_path, tmp_path / "d.json", 1)
+    assert json.loads(out.read_text())["measured"] == {}
+
+
+def test_no_committed_page_declares_an_input_the_run_directory_holds():
+    """The quiet direction, checked on the descriptors that are written by hand.
+
+    `report.descriptor` resolves `inputs.spectrum` by looking in the run directory, which
+    is what a generated page needs. The archived pages under `results/web/pages/` carry
+    hand-written descriptors instead, and a sentence typed when a stage did not exist is
+    exactly what went wrong on the generated side: a complete run drew its headline
+    spectrum as an empty axis and told three of its controls the stage had not run, beside
+    that stage's own output in the same directory. An input declared present and missing
+    is a refusal the generator raises on; this is the other direction, which renders
+    quietly in the register the rest of the page uses for genuine limits.
+    """
+    pattern = {"spectrum": "divergent_known_s*.json"}
+    pages = sorted((ROOT / "results/web/pages").glob("*.json"))
+    assert pages, "no committed page descriptor to check"
+    for page in pages:
+        d = json.loads(page.read_text())
+        rundir = ROOT / str(d.get("rundir") or "")
+        if not rundir.is_dir():
+            continue
+        for key, decl in (d.get("inputs") or {}).items():
+            if "not_run" not in decl or key not in pattern:
+                continue
+            stray = sorted(f.name for f in rundir.glob(pattern[key]))
+            assert not stray, (
+                f"{page.name} declares inputs.{key} not run, and {rundir} holds "
+                f"{stray}. Resolve the declaration against the run rather than "
+                f"asserting it.")
+
+
+def test_an_absent_output_says_what_happened_to_its_stage(tmp_path):
+    """A deliberate skip and a missing file read the same in this census, and now do not.
+
+    Only the optional rows said why. Everything else was `present: false, problems: []`,
+    which is how two of the cascade's three declared outputs sat in every render check on
+    every library: the registry named the filenames the script writes rather than the ones
+    the driver collects, so those two could never appear, and nothing in the column
+    distinguished them from a real miss.
+    """
+    from hapax.report import _stage_status
+
+    (tmp_path / "manifest.json").write_text(json.dumps(
+        {"tool": "hapax run", "parameters": {"library": "SRR23702504"},
+         "stages": [{"stage": "crossplant", "status": "skipped",
+                     "reason": "no within-plant stratum exists for this library"}]}))
+    got = _stage_status(tmp_path, "crossplant")
+    assert got["stage_status"] == "skipped"
+    assert "within-plant" in (got["stage_status_reason"] or "")
+    # a stage the manifest says nothing about is an absence of the RECORD, not of the
+    # stage, and says which
+    unknown = _stage_status(tmp_path, "linkage")
+    assert unknown["stage_status"].startswith("unknown:")
+    assert "no manifest" in _stage_status(tmp_path / "nope", "linkage")["stage_status"]
+    # and every committed run carries it, so the census a reader sees is the one tested
+    for rc in sorted(ROOT.glob("results/prod_*/run_s*/render_check.json")):
+        rows = json.loads(rc.read_text())["inputs"]
+        for r in rows:
+            if r["present"]:
+                assert "stage_status" not in r, "a present file needs no status"
+            else:
+                assert r.get("stage_status"), (
+                    f"{r['stage']}/{r['file']} is absent with nothing saying why")
+
+
+def test_the_cascade_declares_the_files_a_run_directory_holds():
+    """The driver renames this stage's outputs as it collects them.
+
+    `subtract_known.py` writes `subtract_s{seed}.json`, `manifest_s{seed}.json` and
+    `residue_rows_s{seed}.jsonl` into its work directory; the driver lands them as
+    `tiers.json`, `stages/cascade_manifest.json` and `stages/cascade_rows.jsonl`. The
+    registry named the source side for two of the three.
+    """
+    names = {o.filename for o in R.stages["cascade"].outputs}
+    assert names == {"tiers.json", "stages/cascade_manifest.json",
+                     "stages/cascade_rows.jsonl"}, names

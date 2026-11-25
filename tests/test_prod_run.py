@@ -469,3 +469,153 @@ def test_the_host_summary_never_invites_a_pairing_of_two_maxima():
         assert h["closest_row_aligned_aa"] == closest["median_aligned_aa"], (
             f"{path}: closest_row_aligned_aa is not the closest row's own length")
         assert h["longest_alignment_aa"] == max((x["median_aligned_aa"] or 0) for x in rows)
+
+
+def test_a_seed_directory_with_no_manifest_is_not_counted_as_a_seed(tmp_path):
+    """A run in flight leaves a directory, and the census counted it as a finished seed.
+
+    Fetching a five-seed run while seed 5 was still going produced four manifests and a
+    fifth directory holding one file. The stage census read "0 stages failed across 5
+    seeds" and "0 of 5 complete" off that, while the cascade table two sections above it
+    correctly said four: the same run described over two different denominators, and the
+    larger one looked like the authoritative figure. The partial seed is named instead,
+    so a count is always over the seeds that produced a manifest.
+    """
+    import shutil
+    runs = sorted(ROOT.glob("results/prod_*/run_s*/manifest.json"))
+    if len(runs) < 2:
+        pytest.skip("no production run directory with two finished seeds is committed")
+    src = runs[0].parent.parent
+    res = tmp_path / src.name
+    shutil.copytree(src, res)
+    for d in sorted(res.glob("run_s*")):
+        if not (d / "manifest.json").exists():
+            shutil.rmtree(d)
+    kept = sorted(d.name for d in res.glob("run_s*"))
+    (res / "run_s99").mkdir()
+    (res / "run_s99" / "invocation.json").write_text("{}")
+    out = tmp_path / "TABLES.md"
+    r = subprocess.run([sys.executable, "-I", "experiments/report_prod.py",
+                        "--library", src.name.replace("prod_", ""),
+                        "--results", str(res), "--out", str(out)],
+                       cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    text = out.read_text()
+    assert f"across {len(kept)} seeds" in text, text[-900:]
+    assert f"complete`: **0 of {len(kept)}**" in text or \
+        f"of {len(kept)}**" in text, text[-900:]
+    assert "s99" in text, "the directory with no manifest is not named anywhere"
+
+
+def test_a_results_directory_of_unfinished_seeds_is_refused(tmp_path):
+    """Nothing to average over is a refusal, not a table of empty cells."""
+    res = tmp_path / "prod_SRR23702504"
+    (res / "run_s1").mkdir(parents=True)
+    r = subprocess.run([sys.executable, "-I", "experiments/report_prod.py",
+                        "--library", "SRR23702504", "--results", str(res),
+                        "--out", str(tmp_path / "t.md")],
+                       cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode != 0
+    assert "not one manifest.json" in (r.stderr + r.stdout)
+
+
+def test_a_section_whose_file_sits_in_the_seed_directory_still_renders(tmp_path):
+    """Two run layouts, one generator, and four sections vanished on the second.
+
+    The per-library pass writes the assembly baseline, the contig split and the
+    measured-library record once at the results root. The one-command path writes them
+    inside each seed's directory and renamed one of them. Each section was guarded by a
+    bare `if loaded:`, so the generated tables for the third library lost the whole-library
+    assembly, the contig split and the measured-against-registry comparison, and the file
+    still ended with a stage census and looked finished.
+    """
+    import shutil
+    runs = sorted(ROOT.glob("results/prod_*/run_s*/manifest.json"))
+    if not runs:
+        pytest.skip("no production run directory is committed")
+    src = runs[0].parent.parent
+    res = tmp_path / src.name
+    shutil.copytree(src, res)
+    seed = sorted(res.glob("run_s*"))[0]
+    # whichever layout the committed run uses, put the three files in the OTHER place
+    for name in ("measured_library.json", "library_measured.json",
+                 "contig_identification.json", "assembly/assembly_baseline.json"):
+        at_root, at_seed = res / name, seed / name
+        if at_root.exists():
+            at_seed.parent.mkdir(parents=True, exist_ok=True)
+            shutil.move(at_root, at_seed)
+    out = tmp_path / "TABLES.md"
+    r = subprocess.run([sys.executable, "-I", "experiments/report_prod.py",
+                        "--library", src.name.replace("prod_", ""),
+                        "--results", str(res), "--out", str(out)],
+                       cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    text = out.read_text()
+    for heading in ("## The assembly", "## The contig split",
+                    "## Measured off the file"):
+        assert heading in text, (
+            f"{heading} did not render with its file in the seed directory")
+
+
+def test_a_section_with_no_file_anywhere_says_so(tmp_path):
+    """An omitted section is a line in the file, not an absence of one."""
+    import shutil
+    runs = sorted(ROOT.glob("results/prod_*/run_s*/manifest.json"))
+    if not runs:
+        pytest.skip("no production run directory is committed")
+    src = runs[0].parent.parent
+    res = tmp_path / src.name
+    shutil.copytree(src, res)
+    for name in ("assembly/assembly_baseline.json",):
+        for base in [res, *sorted(res.glob("run_s*"))]:
+            if (base / name).exists():
+                (base / name).unlink()
+    out = tmp_path / "TABLES.md"
+    r = subprocess.run([sys.executable, "-I", "experiments/report_prod.py",
+                        "--library", src.name.replace("prod_", ""),
+                        "--results", str(res), "--out", str(out)],
+                       cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    text = out.read_text()
+    assert "## The assembly" not in text
+    assert "Sections not in this file" in text and "assembly_baseline.json" in text
+
+
+def test_the_launch_ledger_refuses_rather_than_totalling_zero(tmp_path):
+    """A table of dashes totalling $0.00 reads as a free run, not a failed measurement.
+
+    `run_ledger.py` reads each launch's wall clock from the instance's own writes to S3,
+    because a terminated instance leaves `describe_instances` within hours. The first
+    version joined the bucket prefix without its separator, every listing came back empty,
+    and the generated table rendered a dash per launch and "at least $0.00 across 9
+    launches". The spend is the figure the EC2 rule is written against, so an unmeasurable
+    one is a refusal.
+    """
+    res = tmp_path / "prod_SRR23702504"
+    res.mkdir()
+    (res / "launch_i-0000000000000dead.json").write_text(json.dumps(
+        {"commit": "0" * 40, "instance_type": "r6i.2xlarge", "volume_gb": 300,
+         "launched": "2026-01-01T00:00:00Z", "projected_usd": 1.0}))
+    r = subprocess.run([sys.executable, "-I", "experiments/run_ledger.py",
+                        "--library", "SRR23702504", "--results", str(res),
+                        "--out", str(tmp_path / "L.md")],
+                       cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode != 0, r.stdout
+    # Two different facts, two different exits. CI has no AWS credentials, so there the
+    # bucket is unreachable; in an environment that can reach it, a launch that wrote
+    # nothing is the case the ledger refuses over. Either way the script states which,
+    # and neither ends in a table of dashes.
+    out = r.stderr + r.stdout
+    assert ("would read as a free run" in out) or ("cannot list s3://" in out), out[-400:]
+    assert "Traceback" not in out, out[-400:]
+
+
+def test_the_launch_ledger_needs_a_launch_manifest(tmp_path):
+    res = tmp_path / "prod_SRR23702504"
+    res.mkdir()
+    r = subprocess.run([sys.executable, "-I", "experiments/run_ledger.py",
+                        "--library", "SRR23702504", "--results", str(res),
+                        "--out", str(tmp_path / "L.md")],
+                       cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode != 0
+    assert "no launch_i-" in (r.stderr + r.stdout)

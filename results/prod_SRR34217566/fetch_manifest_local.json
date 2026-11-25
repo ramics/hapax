@@ -1,0 +1,1189 @@
+{
+  "script": "experiments/fetch_run.py",
+  "git_sha": "00b343aa3bd0604ca7b19f4e4cf0b166047496a5",
+  "tree_dirty": false,
+  "script_sha256": "bf83620e8dd7d2c3",
+  "modules_sha256": {
+    "experiments/ec2_common.py": "a6e9530e9b80aa4f",
+    "experiments/provenance.py": "ffe687a85906eed6"
+  },
+  "code_sha256": "10ccddcbc3aa09f2",
+  "parameters": {
+    "instance": "i-06f4c494a4e10091e",
+    "library": "SRR34217566",
+    "kind": "oneshot",
+    "out": null,
+    "max_mb": 50.0,
+    "include_logs": false,
+    "seed": 1
+  },
+  "instance": "i-06f4c494a4e10091e",
+  "library": "SRR34217566",
+  "prefixes": [
+    "corpora/results/hapax-bigindex/results/oneshot/SRR34217566/i-06f4c494a4e10091e/"
+  ],
+  "copied": [
+    {
+      "key": "fetch_manifest.json",
+      "bytes": 5486,
+      "sha256_16": "62216eca63b5cecd"
+    },
+    {
+      "key": "nontemplate_prefix/nontemplate_prefix_s1.json",
+      "bytes": 6108,
+      "sha256_16": "a009297d6b286b51"
+    },
+    {
+      "key": "nontemplate_prefix/nontemplate_prefix_s2.json",
+      "bytes": 5796,
+      "sha256_16": "786930c591abd382"
+    },
+    {
+      "key": "nontemplate_prefix/nontemplate_prefix_s3.json",
+      "bytes": 6031,
+      "sha256_16": "12dca6cb8f2ce42d"
+    },
+    {
+      "key": "nontemplate_prefix/nontemplate_prefix_s4.json",
+      "bytes": 5799,
+      "sha256_16": "ada82e445590b742"
+    },
+    {
+      "key": "nontemplate_prefix/nontemplate_prefix_s5.json",
+      "bytes": 6285,
+      "sha256_16": "03397532bde8b3b4"
+    },
+    {
+      "key": "nontemplate_prefix/trim_from_prefix.json",
+      "bytes": 6298,
+      "sha256_16": "d70427c77bebcfcb"
+    },
+    {
+      "key": "pip_freeze.txt",
+      "bytes": 699,
+      "sha256_16": "e63f823d18b1aede"
+    },
+    {
+      "key": "run.toml",
+      "bytes": 2259,
+      "sha256_16": "ce2bc9dafdc60a97"
+    },
+    {
+      "key": "run_s1/architecture_s1.json",
+      "bytes": 37150,
+      "sha256_16": "128b70236064ab82"
+    },
+    {
+      "key": "run_s1/assembly/assembly_baseline.json",
+      "bytes": 396,
+      "sha256_16": "72bac3667b681be2"
+    },
+    {
+      "key": "run_s1/assembly/manifest_s1.json",
+      "bytes": 3612,
+      "sha256_16": "6ba1e26b11007c74"
+    },
+    {
+      "key": "run_s1/blind_spots.json",
+      "bytes": 6079,
+      "sha256_16": "0f6d0da62f26d3ee"
+    },
+    {
+      "key": "run_s1/census.json",
+      "bytes": 8364,
+      "sha256_16": "9bade14a81357859"
+    },
+    {
+      "key": "run_s1/contig_identification.json",
+      "bytes": 4007,
+      "sha256_16": "920b2ea88976c48e"
+    },
+    {
+      "key": "run_s1/contig_identification_manifest.json",
+      "bytes": 1028,
+      "sha256_16": "42238da052efb325"
+    },
+    {
+      "key": "run_s1/contigs.jsonl",
+      "bytes": 10182771,
+      "sha256_16": "22ae44a9593e0d28"
+    },
+    {
+      "key": "run_s1/divergent_contig_workup_s1.json",
+      "bytes": 101593,
+      "sha256_16": "78b40dd0b1ffb852"
+    },
+    {
+      "key": "run_s1/divergent_known_s1.json",
+      "bytes": 1682240,
+      "sha256_16": "86730508f04b12ba"
+    },
+    {
+      "key": "run_s1/enrichments.json",
+      "bytes": 3298,
+      "sha256_16": "6ff706e44b0aac8f"
+    },
+    {
+      "key": "run_s1/fields.json",
+      "bytes": 6029,
+      "sha256_16": "b0794da3b62d2aa5"
+    },
+    {
+      "key": "run_s1/invocation.json",
+      "bytes": 9321,
+      "sha256_16": "0096298cf3e994be"
+    },
+    {
+      "key": "run_s1/known_strain_divergence_s1.json",
+      "bytes": 38792,
+      "sha256_16": "c075eafa2515bc1b"
+    },
+    {
+      "key": "run_s1/layers.json",
+      "bytes": 6203,
+      "sha256_16": "e70106d840d6ada8"
+    },
+    {
+      "key": "run_s1/layers.jsonl",
+      "bytes": 663740,
+      "sha256_16": "75e40a04528cbf4a"
+    },
+    {
+      "key": "run_s1/library_measured.json",
+      "bytes": 1930,
+      "sha256_16": "697af410a9fc0f92"
+    },
+    {
+      "key": "run_s1/linkage.json",
+      "bytes": 10614,
+      "sha256_16": "889ca2c709031f07"
+    },
+    {
+      "key": "run_s1/manifest.json",
+      "bytes": 27446,
+      "sha256_16": "11f94b3001403cc5"
+    },
+    {
+      "key": "run_s1/prepared.json",
+      "bytes": 3729,
+      "sha256_16": "8c537b6689419fe7"
+    },
+    {
+      "key": "run_s1/public_health_profile_s1.json",
+      "bytes": 94188,
+      "sha256_16": "5b09e22614860c6d"
+    },
+    {
+      "key": "run_s1/ranking.json",
+      "bytes": 153642,
+      "sha256_16": "0e6e688c3eb19d76"
+    },
+    {
+      "key": "run_s1/reads.jsonl",
+      "bytes": 5854195,
+      "sha256_16": "fc4ff0d1928ac892"
+    },
+    {
+      "key": "run_s1/removal_evidence.tsv",
+      "bytes": 3115014,
+      "sha256_16": "87320731db70ccae"
+    },
+    {
+      "key": "run_s1/removal_shortlist.json",
+      "bytes": 9235,
+      "sha256_16": "d067e4a12a731588"
+    },
+    {
+      "key": "run_s1/removal_shortlist.tsv",
+      "bytes": 9345,
+      "sha256_16": "c7e3b7cb7c6d3aed"
+    },
+    {
+      "key": "run_s1/rename_manifest.json",
+      "bytes": 567,
+      "sha256_16": "78bd11b3de82661d"
+    },
+    {
+      "key": "run_s1/script_calls.jsonl",
+      "bytes": 2126,
+      "sha256_16": "a577951d67dd49f9"
+    },
+    {
+      "key": "run_s1/stages/cascade.log",
+      "bytes": 2105,
+      "sha256_16": "d3beeca17ccbec06"
+    },
+    {
+      "key": "run_s1/stages/cascade_manifest.json",
+      "bytes": 4752,
+      "sha256_16": "adef2438f2d7e902"
+    },
+    {
+      "key": "run_s1/stages/cascade_rows.jsonl",
+      "bytes": 6016588,
+      "sha256_16": "a6fa160318e82914"
+    },
+    {
+      "key": "run_s1/stages/census.log",
+      "bytes": 1414,
+      "sha256_16": "aeacfad190acf6db"
+    },
+    {
+      "key": "run_s1/stages/divergent.log",
+      "bytes": 842,
+      "sha256_16": "99e0ec4484337336"
+    },
+    {
+      "key": "run_s1/stages/linkage.log",
+      "bytes": 526,
+      "sha256_16": "05b29d18196e82af"
+    },
+    {
+      "key": "run_s1/stages/profile.log",
+      "bytes": 1001,
+      "sha256_16": "9edf11cc2dccc433"
+    },
+    {
+      "key": "run_s1/stages/ranking.log",
+      "bytes": 1241,
+      "sha256_16": "fcc7fdf59f1958cf"
+    },
+    {
+      "key": "run_s1/stages/reads.log",
+      "bytes": 3782,
+      "sha256_16": "19932361884d603e"
+    },
+    {
+      "key": "run_s1/stages/removal_shortlist_manifest.json",
+      "bytes": 5681,
+      "sha256_16": "bb6ecad11ae37852"
+    },
+    {
+      "key": "run_s1/stages/shortlist.log",
+      "bytes": 387,
+      "sha256_16": "232c9c108bbfa731"
+    },
+    {
+      "key": "run_s1/stages/taxa.log",
+      "bytes": 838,
+      "sha256_16": "b0667c95d76537e9"
+    },
+    {
+      "key": "run_s1/strains.json",
+      "bytes": 51893,
+      "sha256_16": "b06cf368854ba4d9"
+    },
+    {
+      "key": "run_s1/subject_names.json",
+      "bytes": 499254,
+      "sha256_16": "db70f0e3b18556ea"
+    },
+    {
+      "key": "run_s1/tier_table.json",
+      "bytes": 18947,
+      "sha256_16": "91f3ae2a5830ca89"
+    },
+    {
+      "key": "run_s1/tiers.json",
+      "bytes": 15279,
+      "sha256_16": "e618c8eb5cc9b7d1"
+    },
+    {
+      "key": "run_s1/trim_manifest.json",
+      "bytes": 787,
+      "sha256_16": "9ce74ade95f0861e"
+    },
+    {
+      "key": "run_s2/architecture_s2.json",
+      "bytes": 37150,
+      "sha256_16": "9234b2276512077f"
+    },
+    {
+      "key": "run_s2/blind_spots.json",
+      "bytes": 6079,
+      "sha256_16": "0f6d0da62f26d3ee"
+    },
+    {
+      "key": "run_s2/census.json",
+      "bytes": 8351,
+      "sha256_16": "bc5bd87168e631e3"
+    },
+    {
+      "key": "run_s2/contig_identification.json",
+      "bytes": 4009,
+      "sha256_16": "8f0319b22eeb00e1"
+    },
+    {
+      "key": "run_s2/contig_identification_manifest.json",
+      "bytes": 1028,
+      "sha256_16": "8ea6c907664ab247"
+    },
+    {
+      "key": "run_s2/contigs.jsonl",
+      "bytes": 10182771,
+      "sha256_16": "22ae44a9593e0d28"
+    },
+    {
+      "key": "run_s2/divergent_contig_workup_s2.json",
+      "bytes": 101593,
+      "sha256_16": "898a5cbf1766051b"
+    },
+    {
+      "key": "run_s2/divergent_known_s2.json",
+      "bytes": 1682240,
+      "sha256_16": "b4e8ad6b52045d2c"
+    },
+    {
+      "key": "run_s2/enrichments.json",
+      "bytes": 3298,
+      "sha256_16": "7e253796771836c4"
+    },
+    {
+      "key": "run_s2/fields.json",
+      "bytes": 6022,
+      "sha256_16": "67e43fab5c7be23c"
+    },
+    {
+      "key": "run_s2/invocation.json",
+      "bytes": 8857,
+      "sha256_16": "d50e47d1891b24f6"
+    },
+    {
+      "key": "run_s2/known_strain_divergence_s2.json",
+      "bytes": 38792,
+      "sha256_16": "a592f93de0c48e62"
+    },
+    {
+      "key": "run_s2/layers.json",
+      "bytes": 6179,
+      "sha256_16": "b28af3319a33a74b"
+    },
+    {
+      "key": "run_s2/layers.jsonl",
+      "bytes": 718074,
+      "sha256_16": "fddd8347d74f745d"
+    },
+    {
+      "key": "run_s2/library_measured.json",
+      "bytes": 1930,
+      "sha256_16": "9f4eeddd56bc92aa"
+    },
+    {
+      "key": "run_s2/linkage.json",
+      "bytes": 10611,
+      "sha256_16": "31ab6afea851c9b7"
+    },
+    {
+      "key": "run_s2/manifest.json",
+      "bytes": 26520,
+      "sha256_16": "a8a9ad0c9422eb9f"
+    },
+    {
+      "key": "run_s2/prepared.json",
+      "bytes": 3284,
+      "sha256_16": "c567233695683ab7"
+    },
+    {
+      "key": "run_s2/public_health_profile_s2.json",
+      "bytes": 94187,
+      "sha256_16": "7fb1273a05562336"
+    },
+    {
+      "key": "run_s2/ranking.json",
+      "bytes": 140221,
+      "sha256_16": "09a41394d6e2f23d"
+    },
+    {
+      "key": "run_s2/reads.jsonl",
+      "bytes": 5852889,
+      "sha256_16": "916e7fbee3c70858"
+    },
+    {
+      "key": "run_s2/removal_evidence.tsv",
+      "bytes": 3115014,
+      "sha256_16": "87320731db70ccae"
+    },
+    {
+      "key": "run_s2/removal_shortlist.json",
+      "bytes": 9235,
+      "sha256_16": "c0131b32b131aefb"
+    },
+    {
+      "key": "run_s2/removal_shortlist.tsv",
+      "bytes": 9345,
+      "sha256_16": "c7e3b7cb7c6d3aed"
+    },
+    {
+      "key": "run_s2/script_calls.jsonl",
+      "bytes": 1287,
+      "sha256_16": "d803e9eabc59e227"
+    },
+    {
+      "key": "run_s2/stages/cascade.log",
+      "bytes": 2105,
+      "sha256_16": "00fe55fa78a9d4d0"
+    },
+    {
+      "key": "run_s2/stages/cascade_manifest.json",
+      "bytes": 4751,
+      "sha256_16": "9267c8d1c27dda61"
+    },
+    {
+      "key": "run_s2/stages/cascade_rows.jsonl",
+      "bytes": 6104578,
+      "sha256_16": "293935cfb548d4d6"
+    },
+    {
+      "key": "run_s2/stages/census.log",
+      "bytes": 1414,
+      "sha256_16": "4ddd3ba1096addc0"
+    },
+    {
+      "key": "run_s2/stages/divergent.log",
+      "bytes": 842,
+      "sha256_16": "6b48f66f97a1d513"
+    },
+    {
+      "key": "run_s2/stages/linkage.log",
+      "bytes": 527,
+      "sha256_16": "fc68926fdfb98e40"
+    },
+    {
+      "key": "run_s2/stages/profile.log",
+      "bytes": 1001,
+      "sha256_16": "7fadbcd6d4ed7598"
+    },
+    {
+      "key": "run_s2/stages/ranking.log",
+      "bytes": 1241,
+      "sha256_16": "a715411b11926f87"
+    },
+    {
+      "key": "run_s2/stages/reads.log",
+      "bytes": 3782,
+      "sha256_16": "6aabb2befbb37b7a"
+    },
+    {
+      "key": "run_s2/stages/removal_shortlist_manifest.json",
+      "bytes": 5681,
+      "sha256_16": "ed10124a5c7601d4"
+    },
+    {
+      "key": "run_s2/stages/shortlist.log",
+      "bytes": 387,
+      "sha256_16": "d23b8691d4cdaa2c"
+    },
+    {
+      "key": "run_s2/stages/taxa.log",
+      "bytes": 838,
+      "sha256_16": "df8bb04927171717"
+    },
+    {
+      "key": "run_s2/strains.json",
+      "bytes": 47091,
+      "sha256_16": "17dce81560b1e713"
+    },
+    {
+      "key": "run_s2/subject_names.json",
+      "bytes": 500845,
+      "sha256_16": "a41f9e006f44617b"
+    },
+    {
+      "key": "run_s2/tier_table.json",
+      "bytes": 18952,
+      "sha256_16": "7ac14073f91ecb11"
+    },
+    {
+      "key": "run_s2/tiers.json",
+      "bytes": 15310,
+      "sha256_16": "6a17d0d7d97c8132"
+    },
+    {
+      "key": "run_s3/architecture_s3.json",
+      "bytes": 37150,
+      "sha256_16": "f7bb2f7369466b61"
+    },
+    {
+      "key": "run_s3/blind_spots.json",
+      "bytes": 6079,
+      "sha256_16": "0f6d0da62f26d3ee"
+    },
+    {
+      "key": "run_s3/census.json",
+      "bytes": 8376,
+      "sha256_16": "2ecb8caba24eca52"
+    },
+    {
+      "key": "run_s3/contig_identification.json",
+      "bytes": 4008,
+      "sha256_16": "10b207a3062ae6c0"
+    },
+    {
+      "key": "run_s3/contig_identification_manifest.json",
+      "bytes": 1028,
+      "sha256_16": "c0f18ecf053861f3"
+    },
+    {
+      "key": "run_s3/contigs.jsonl",
+      "bytes": 10182771,
+      "sha256_16": "22ae44a9593e0d28"
+    },
+    {
+      "key": "run_s3/divergent_contig_workup_s3.json",
+      "bytes": 101593,
+      "sha256_16": "160827d66fd40c9a"
+    },
+    {
+      "key": "run_s3/divergent_known_s3.json",
+      "bytes": 1682206,
+      "sha256_16": "f15c307d43a134cf"
+    },
+    {
+      "key": "run_s3/enrichments.json",
+      "bytes": 3298,
+      "sha256_16": "7a7bd9ad149ea843"
+    },
+    {
+      "key": "run_s3/fields.json",
+      "bytes": 6027,
+      "sha256_16": "5c60c59e982b46bf"
+    },
+    {
+      "key": "run_s3/invocation.json",
+      "bytes": 8857,
+      "sha256_16": "d8831e87e2d6426d"
+    },
+    {
+      "key": "run_s3/known_strain_divergence_s3.json",
+      "bytes": 38792,
+      "sha256_16": "b7a7232debeacd08"
+    },
+    {
+      "key": "run_s3/layers.json",
+      "bytes": 6138,
+      "sha256_16": "c486e8245aaf96a1"
+    },
+    {
+      "key": "run_s3/layers.jsonl",
+      "bytes": 717346,
+      "sha256_16": "3554a9bcbb97ccdc"
+    },
+    {
+      "key": "run_s3/library_measured.json",
+      "bytes": 1930,
+      "sha256_16": "34da83c4c86205c7"
+    },
+    {
+      "key": "run_s3/linkage.json",
+      "bytes": 10622,
+      "sha256_16": "c10162d53faed8ad"
+    },
+    {
+      "key": "run_s3/manifest.json",
+      "bytes": 26523,
+      "sha256_16": "769cb18bd10c97eb"
+    },
+    {
+      "key": "run_s3/prepared.json",
+      "bytes": 3284,
+      "sha256_16": "14b23311fea9ab69"
+    },
+    {
+      "key": "run_s3/public_health_profile_s3.json",
+      "bytes": 94187,
+      "sha256_16": "5dbdca493d9238de"
+    },
+    {
+      "key": "run_s3/ranking.json",
+      "bytes": 140740,
+      "sha256_16": "38581a40ffb4c050"
+    },
+    {
+      "key": "run_s3/reads.jsonl",
+      "bytes": 5858929,
+      "sha256_16": "4b4cd53e33b34ee2"
+    },
+    {
+      "key": "run_s3/removal_evidence.tsv",
+      "bytes": 3115014,
+      "sha256_16": "87320731db70ccae"
+    },
+    {
+      "key": "run_s3/removal_shortlist.json",
+      "bytes": 9235,
+      "sha256_16": "24ae244790362f41"
+    },
+    {
+      "key": "run_s3/removal_shortlist.tsv",
+      "bytes": 9345,
+      "sha256_16": "c7e3b7cb7c6d3aed"
+    },
+    {
+      "key": "run_s3/script_calls.jsonl",
+      "bytes": 1287,
+      "sha256_16": "4237b25b6e6aedb4"
+    },
+    {
+      "key": "run_s3/stages/cascade.log",
+      "bytes": 2105,
+      "sha256_16": "6f558a057faf23d7"
+    },
+    {
+      "key": "run_s3/stages/cascade_manifest.json",
+      "bytes": 4752,
+      "sha256_16": "4ccb59e50d41d2e5"
+    },
+    {
+      "key": "run_s3/stages/cascade_rows.jsonl",
+      "bytes": 5972382,
+      "sha256_16": "630bbf2cda528e67"
+    },
+    {
+      "key": "run_s3/stages/census.log",
+      "bytes": 1402,
+      "sha256_16": "0b70db41c963b96a"
+    },
+    {
+      "key": "run_s3/stages/divergent.log",
+      "bytes": 842,
+      "sha256_16": "377d2bf569cc0972"
+    },
+    {
+      "key": "run_s3/stages/linkage.log",
+      "bytes": 527,
+      "sha256_16": "824f4bede2d05e67"
+    },
+    {
+      "key": "run_s3/stages/profile.log",
+      "bytes": 1001,
+      "sha256_16": "73fba45fc6d1200e"
+    },
+    {
+      "key": "run_s3/stages/ranking.log",
+      "bytes": 1241,
+      "sha256_16": "d8bf1973eda85aaf"
+    },
+    {
+      "key": "run_s3/stages/reads.log",
+      "bytes": 3782,
+      "sha256_16": "04fce8ac12dd0f24"
+    },
+    {
+      "key": "run_s3/stages/removal_shortlist_manifest.json",
+      "bytes": 5681,
+      "sha256_16": "cf9cee78adf88fdc"
+    },
+    {
+      "key": "run_s3/stages/shortlist.log",
+      "bytes": 387,
+      "sha256_16": "4e9fc16063437fe9"
+    },
+    {
+      "key": "run_s3/stages/taxa.log",
+      "bytes": 838,
+      "sha256_16": "35a97a99ba95ed51"
+    },
+    {
+      "key": "run_s3/strains.json",
+      "bytes": 47527,
+      "sha256_16": "c77b3e5caae893d2"
+    },
+    {
+      "key": "run_s3/subject_names.json",
+      "bytes": 501623,
+      "sha256_16": "eb17e9852575135a"
+    },
+    {
+      "key": "run_s3/tier_table.json",
+      "bytes": 18973,
+      "sha256_16": "517f5478e39873fe"
+    },
+    {
+      "key": "run_s3/tiers.json",
+      "bytes": 15321,
+      "sha256_16": "539117228af27669"
+    },
+    {
+      "key": "run_s4/architecture_s4.json",
+      "bytes": 37150,
+      "sha256_16": "779be953078cfbab"
+    },
+    {
+      "key": "run_s4/blind_spots.json",
+      "bytes": 6079,
+      "sha256_16": "0f6d0da62f26d3ee"
+    },
+    {
+      "key": "run_s4/census.json",
+      "bytes": 8686,
+      "sha256_16": "810582006e5df0c8"
+    },
+    {
+      "key": "run_s4/contig_identification.json",
+      "bytes": 4006,
+      "sha256_16": "da2bb71100d1be3a"
+    },
+    {
+      "key": "run_s4/contig_identification_manifest.json",
+      "bytes": 1028,
+      "sha256_16": "e3d2b63a169055a5"
+    },
+    {
+      "key": "run_s4/contigs.jsonl",
+      "bytes": 10182771,
+      "sha256_16": "22ae44a9593e0d28"
+    },
+    {
+      "key": "run_s4/divergent_contig_workup_s4.json",
+      "bytes": 101593,
+      "sha256_16": "ab1040c6f82a44c1"
+    },
+    {
+      "key": "run_s4/divergent_known_s4.json",
+      "bytes": 1681873,
+      "sha256_16": "2e010a109f60f6d9"
+    },
+    {
+      "key": "run_s4/enrichments.json",
+      "bytes": 3298,
+      "sha256_16": "8a96d43c15ce3ba3"
+    },
+    {
+      "key": "run_s4/fields.json",
+      "bytes": 6046,
+      "sha256_16": "e43c05f8cc85ca27"
+    },
+    {
+      "key": "run_s4/invocation.json",
+      "bytes": 8857,
+      "sha256_16": "5de2e68696d24696"
+    },
+    {
+      "key": "run_s4/known_strain_divergence_s4.json",
+      "bytes": 38792,
+      "sha256_16": "2e50724649df6a46"
+    },
+    {
+      "key": "run_s4/layers.json",
+      "bytes": 6106,
+      "sha256_16": "c8ef04e173d1d959"
+    },
+    {
+      "key": "run_s4/layers.jsonl",
+      "bytes": 762808,
+      "sha256_16": "9feb2a572f03d27f"
+    },
+    {
+      "key": "run_s4/library_measured.json",
+      "bytes": 1930,
+      "sha256_16": "697af410a9fc0f92"
+    },
+    {
+      "key": "run_s4/linkage.json",
+      "bytes": 10581,
+      "sha256_16": "d60f93969e9ce1dd"
+    },
+    {
+      "key": "run_s4/manifest.json",
+      "bytes": 26526,
+      "sha256_16": "ce5c0cc8fb5c53ed"
+    },
+    {
+      "key": "run_s4/prepared.json",
+      "bytes": 3284,
+      "sha256_16": "4248300537cdd9e8"
+    },
+    {
+      "key": "run_s4/public_health_profile_s4.json",
+      "bytes": 94187,
+      "sha256_16": "4cb834cc3fbdc1ec"
+    },
+    {
+      "key": "run_s4/ranking.json",
+      "bytes": 198649,
+      "sha256_16": "0d95d1229b5cb4b5"
+    },
+    {
+      "key": "run_s4/reads.jsonl",
+      "bytes": 5892321,
+      "sha256_16": "5019d22b4b6eed4d"
+    },
+    {
+      "key": "run_s4/removal_evidence.tsv",
+      "bytes": 3115014,
+      "sha256_16": "87320731db70ccae"
+    },
+    {
+      "key": "run_s4/removal_shortlist.json",
+      "bytes": 9235,
+      "sha256_16": "5b9e3b78d91df571"
+    },
+    {
+      "key": "run_s4/removal_shortlist.tsv",
+      "bytes": 9345,
+      "sha256_16": "c7e3b7cb7c6d3aed"
+    },
+    {
+      "key": "run_s4/script_calls.jsonl",
+      "bytes": 1287,
+      "sha256_16": "1f78d9e5f053584c"
+    },
+    {
+      "key": "run_s4/stages/cascade.log",
+      "bytes": 2104,
+      "sha256_16": "978d9a9b6af687d2"
+    },
+    {
+      "key": "run_s4/stages/cascade_manifest.json",
+      "bytes": 4747,
+      "sha256_16": "c704bff88e6dfb1d"
+    },
+    {
+      "key": "run_s4/stages/cascade_rows.jsonl",
+      "bytes": 2846588,
+      "sha256_16": "c6b2ea97990c431a"
+    },
+    {
+      "key": "run_s4/stages/census.log",
+      "bytes": 1414,
+      "sha256_16": "6409219e11ab97ab"
+    },
+    {
+      "key": "run_s4/stages/divergent.log",
+      "bytes": 842,
+      "sha256_16": "7acd8b94da45ae5f"
+    },
+    {
+      "key": "run_s4/stages/linkage.log",
+      "bytes": 525,
+      "sha256_16": "1df5cfdbc985f603"
+    },
+    {
+      "key": "run_s4/stages/profile.log",
+      "bytes": 1001,
+      "sha256_16": "156c920f88c8f7b5"
+    },
+    {
+      "key": "run_s4/stages/ranking.log",
+      "bytes": 1241,
+      "sha256_16": "d03c25c27f02dd5f"
+    },
+    {
+      "key": "run_s4/stages/reads.log",
+      "bytes": 3782,
+      "sha256_16": "0813a49abfae0a95"
+    },
+    {
+      "key": "run_s4/stages/removal_shortlist_manifest.json",
+      "bytes": 5681,
+      "sha256_16": "b0dd342742f6f43b"
+    },
+    {
+      "key": "run_s4/stages/shortlist.log",
+      "bytes": 387,
+      "sha256_16": "8c30e4b900fd1607"
+    },
+    {
+      "key": "run_s4/stages/taxa.log",
+      "bytes": 838,
+      "sha256_16": "2d601d07d7c5273e"
+    },
+    {
+      "key": "run_s4/strains.json",
+      "bytes": 67540,
+      "sha256_16": "9b88cfd6d034b006"
+    },
+    {
+      "key": "run_s4/subject_names.json",
+      "bytes": 512818,
+      "sha256_16": "a457668c17d1e360"
+    },
+    {
+      "key": "run_s4/tier_table.json",
+      "bytes": 18968,
+      "sha256_16": "2589a5588969c931"
+    },
+    {
+      "key": "run_s4/tiers.json",
+      "bytes": 15324,
+      "sha256_16": "f185ff312059eac3"
+    },
+    {
+      "key": "run_s5/architecture_s5.json",
+      "bytes": 37150,
+      "sha256_16": "a53d350e74dd94e4"
+    },
+    {
+      "key": "run_s5/blind_spots.json",
+      "bytes": 6079,
+      "sha256_16": "0f6d0da62f26d3ee"
+    },
+    {
+      "key": "run_s5/census.json",
+      "bytes": 8525,
+      "sha256_16": "888fda97d69cee86"
+    },
+    {
+      "key": "run_s5/contig_identification.json",
+      "bytes": 4004,
+      "sha256_16": "dc3c5cf19695d576"
+    },
+    {
+      "key": "run_s5/contig_identification_manifest.json",
+      "bytes": 1029,
+      "sha256_16": "b153a5265b73985a"
+    },
+    {
+      "key": "run_s5/contigs.jsonl",
+      "bytes": 10182771,
+      "sha256_16": "22ae44a9593e0d28"
+    },
+    {
+      "key": "run_s5/divergent_contig_workup_s5.json",
+      "bytes": 101593,
+      "sha256_16": "91147bc91ad1e7ae"
+    },
+    {
+      "key": "run_s5/divergent_known_s5.json",
+      "bytes": 1681873,
+      "sha256_16": "b7e4df6b044d6b1b"
+    },
+    {
+      "key": "run_s5/enrichments.json",
+      "bytes": 3298,
+      "sha256_16": "d756e779ba71c9ef"
+    },
+    {
+      "key": "run_s5/fields.json",
+      "bytes": 6027,
+      "sha256_16": "b039e6665e46f9db"
+    },
+    {
+      "key": "run_s5/invocation.json",
+      "bytes": 8857,
+      "sha256_16": "58efc2ba02ee9def"
+    },
+    {
+      "key": "run_s5/known_strain_divergence_s5.json",
+      "bytes": 38792,
+      "sha256_16": "22b0f9f13bd7e714"
+    },
+    {
+      "key": "run_s5/layers.json",
+      "bytes": 6180,
+      "sha256_16": "cbccb16c76e8826e"
+    },
+    {
+      "key": "run_s5/layers.jsonl",
+      "bytes": 768000,
+      "sha256_16": "554470aeab74c793"
+    },
+    {
+      "key": "run_s5/library_measured.json",
+      "bytes": 1930,
+      "sha256_16": "bcf7966199b8e74d"
+    },
+    {
+      "key": "run_s5/linkage.json",
+      "bytes": 10577,
+      "sha256_16": "cda5989a1a578908"
+    },
+    {
+      "key": "run_s5/manifest.json",
+      "bytes": 26540,
+      "sha256_16": "b8db5e9d559d90df"
+    },
+    {
+      "key": "run_s5/page_descriptor.json",
+      "bytes": 1032,
+      "sha256_16": "cab429e78b72e717"
+    },
+    {
+      "key": "run_s5/prepared.json",
+      "bytes": 3284,
+      "sha256_16": "f64c0539b3b2054c"
+    },
+    {
+      "key": "run_s5/public_health_profile_s5.json",
+      "bytes": 94187,
+      "sha256_16": "6d2719b4322c04d0"
+    },
+    {
+      "key": "run_s5/ranking.json",
+      "bytes": 174884,
+      "sha256_16": "21710eb19cdea9da"
+    },
+    {
+      "key": "run_s5/reads.jsonl",
+      "bytes": 5895799,
+      "sha256_16": "38533aec3b52a6dd"
+    },
+    {
+      "key": "run_s5/removal_evidence.tsv",
+      "bytes": 3115014,
+      "sha256_16": "87320731db70ccae"
+    },
+    {
+      "key": "run_s5/removal_shortlist.json",
+      "bytes": 9235,
+      "sha256_16": "f8b00e30f130913f"
+    },
+    {
+      "key": "run_s5/removal_shortlist.tsv",
+      "bytes": 9345,
+      "sha256_16": "c7e3b7cb7c6d3aed"
+    },
+    {
+      "key": "run_s5/render_check.json",
+      "bytes": 5323,
+      "sha256_16": "a5996fe86b74b1f5"
+    },
+    {
+      "key": "run_s5/report.html",
+      "bytes": 2230207,
+      "sha256_16": "223cb681049b2671"
+    },
+    {
+      "key": "run_s5/script_calls.jsonl",
+      "bytes": 1287,
+      "sha256_16": "8a73621880597ded"
+    },
+    {
+      "key": "run_s5/stages/cascade.log",
+      "bytes": 2104,
+      "sha256_16": "f33d3fa11c9a603d"
+    },
+    {
+      "key": "run_s5/stages/cascade_manifest.json",
+      "bytes": 4747,
+      "sha256_16": "b1e9b80cc5843f99"
+    },
+    {
+      "key": "run_s5/stages/cascade_rows.jsonl",
+      "bytes": 2826868,
+      "sha256_16": "a0653777a7ed8769"
+    },
+    {
+      "key": "run_s5/stages/census.log",
+      "bytes": 1414,
+      "sha256_16": "7939e80c81ebd847"
+    },
+    {
+      "key": "run_s5/stages/divergent.log",
+      "bytes": 842,
+      "sha256_16": "1c3009a246af6dcc"
+    },
+    {
+      "key": "run_s5/stages/linkage.log",
+      "bytes": 526,
+      "sha256_16": "fc85f431179b70ca"
+    },
+    {
+      "key": "run_s5/stages/profile.log",
+      "bytes": 1001,
+      "sha256_16": "971cbef9804e2398"
+    },
+    {
+      "key": "run_s5/stages/ranking.log",
+      "bytes": 1241,
+      "sha256_16": "434b663d58a903a7"
+    },
+    {
+      "key": "run_s5/stages/reads.log",
+      "bytes": 3782,
+      "sha256_16": "4d7066cf10487862"
+    },
+    {
+      "key": "run_s5/stages/removal_shortlist_manifest.json",
+      "bytes": 5681,
+      "sha256_16": "18d2802a342a0810"
+    },
+    {
+      "key": "run_s5/stages/shortlist.log",
+      "bytes": 387,
+      "sha256_16": "3d0e0b60762a7a17"
+    },
+    {
+      "key": "run_s5/stages/taxa.log",
+      "bytes": 838,
+      "sha256_16": "71c05db342b3f269"
+    },
+    {
+      "key": "run_s5/strains.json",
+      "bytes": 59256,
+      "sha256_16": "14f50a1f299b6821"
+    },
+    {
+      "key": "run_s5/subject_names.json",
+      "bytes": 506410,
+      "sha256_16": "e981bd76ef6752cc"
+    },
+    {
+      "key": "run_s5/tier_table.json",
+      "bytes": 18963,
+      "sha256_16": "3ea5a041160fcd30"
+    },
+    {
+      "key": "run_s5/tiers.json",
+      "bytes": 15315,
+      "sha256_16": "48ab89b841baa0c0"
+    },
+    {
+      "key": "sample_contigs.fa.gz",
+      "bytes": 8296159,
+      "sha256_16": "e82cd599de1dd7f4"
+    }
+  ],
+  "skipped": [],
+  "differed": [
+    {
+      "key": "run_s1/page_descriptor.json",
+      "local": "/home/user/hapax/results/prod_SRR34217566/run_s1/page_descriptor.json"
+    },
+    {
+      "key": "run_s1/render_check.json",
+      "local": "/home/user/hapax/results/prod_SRR34217566/run_s1/render_check.json"
+    },
+    {
+      "key": "run_s1/report.html",
+      "local": "/home/user/hapax/results/prod_SRR34217566/run_s1/report.html"
+    },
+    {
+      "key": "run_s2/page_descriptor.json",
+      "local": "/home/user/hapax/results/prod_SRR34217566/run_s2/page_descriptor.json"
+    },
+    {
+      "key": "run_s2/render_check.json",
+      "local": "/home/user/hapax/results/prod_SRR34217566/run_s2/render_check.json"
+    },
+    {
+      "key": "run_s2/report.html",
+      "local": "/home/user/hapax/results/prod_SRR34217566/run_s2/report.html"
+    },
+    {
+      "key": "run_s3/page_descriptor.json",
+      "local": "/home/user/hapax/results/prod_SRR34217566/run_s3/page_descriptor.json"
+    },
+    {
+      "key": "run_s3/render_check.json",
+      "local": "/home/user/hapax/results/prod_SRR34217566/run_s3/render_check.json"
+    },
+    {
+      "key": "run_s3/report.html",
+      "local": "/home/user/hapax/results/prod_SRR34217566/run_s3/report.html"
+    },
+    {
+      "key": "run_s4/page_descriptor.json",
+      "local": "/home/user/hapax/results/prod_SRR34217566/run_s4/page_descriptor.json"
+    },
+    {
+      "key": "run_s4/render_check.json",
+      "local": "/home/user/hapax/results/prod_SRR34217566/run_s4/render_check.json"
+    },
+    {
+      "key": "run_s4/report.html",
+      "local": "/home/user/hapax/results/prod_SRR34217566/run_s4/report.html"
+    }
+  ],
+  "note": "skipped and differed are censuses, not omissions: a file left behind and a file the run never wrote are indistinguishable afterwards"
+}

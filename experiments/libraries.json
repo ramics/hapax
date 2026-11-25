@@ -151,6 +151,39 @@
    "crossplant_panel_absent_because": "there are no other plants: the fixture is one simulated library and a cross-plant panel is a set of libraries from elsewhere. A panel pointed at anything real here would compare simulated reads against water.",
    "panel_basis": "which truth panel and which cross-plant panel apply to this library. Both are measured absences for a fixture and carry their reasons, which experiments/stage_refs.py refuses without.",
    "partial_entry": "panel facts only, on purpose. The trim and the block are NOT here: the fixture's run configuration states them with their bases (tests/test_end_to_end.py), and a value in this file would be a second source that a config forgetting to state one would inherit silently. It appears here at all because a stage that resolves a per-library panel refuses an unknown library, which is the right answer for real water and would stop a fixture run that has nothing to resolve."
+  },
+  "SRR34217566": {
+   "label": "Szeged municipal wastewater, Hungary, collected 2024, RNA: the first library run through the one-command path, with nothing supplied by hand but the reads, the measured trim and this entry",
+   "sample": {
+    "matrix": "municipal wastewater",
+    "place": "Szeged",
+    "country": "Hungary",
+    "molecule": "RNA",
+    "collected": "2024",
+    "basis": "PRJNA1282049 run metadata via ENA filereport. The archive gives the year only, with no month or day, so the page says 2024 and does not invent a date. The matrix is recorded as municipal wastewater because the paired DNA libraries of the same study name the plant ('Szeged Municipal Wastewater Treatment Plant') while the RNA libraries name only the city; whether this run is influent or effluent is NOT stated by the archive and is therefore not stated here, which matters because the ribosomal fraction differs by two orders of magnitude between the two."
+   },
+   "bioproject": "PRJNA1282049",
+   "layout": "paired",
+   "pairs": 11589124,
+   "pairs_basis": "ENA filereport read_count for SRR34217566, 3,478,969,814 bases. It is the count before the run, used only to size the block; the run counts the pairs it actually reads and asserts the arithmetic against that.",
+   "read_length": [
+    150,
+    150
+   ],
+   "read_length_basis": "base_count / read_count from ENA is 300.2 bases per pair, so 2 x 150 before any trim. Read length is the one recognition wall this project has measured moving (SPEC 4.2), so a figure from this library is not comparable to Berlin's 107/93 at matched length. It is also the first library here on which SPEC 4.3's mate merge is testable: at 2 x 150 a large share of pairs overlap, where the holdout library is single-end and Berlin's mates are shorter.",
+   "instrument": "Illumina NextSeq 550",
+   "instrument_basis": "ENA filereport instrument_model. A third platform for this repo, after Berlin's NovaSeq 6000 and the panel's HiSeq runs, so an error profile measured on one does not transfer.",
+   "r1": "data/reads/SRR34217566_1.fastq.gz",
+   "r2": "data/reads/SRR34217566_2.fastq.gz",
+   "paths_basis": "where experiments/prod_oneshot.sh stages any library from SRA on the instance that runs the pass. data/ is gitignored, as for every library here.",
+   "trim_r2_absent_because": "DELIBERATELY NOT STATED. The mate-2 non-template prefix is a property of a sequencing run and nothing in this repo has measured it for this one, so there is no value to record. experiments/prod_oneshot.sh measures it on the instance with nontemplate_prefix_map.py against SILVA and writes the answer into the run configuration with that measurement as its basis, or refuses the run before the expensive half. A number here would be read as established.",
+   "block_absent_because": "Also deliberately absent: `hapax run` measures the stride off the read count it finds in the file (experiments/measure_library.py, which refuses a stride that would make the seeds overlap). Berlin's 1.5 M would crowd all five seeds into the first 7.5 M pairs of this 11.6 M-pair library, and the holdout's 1.0 M more so.",
+   "truth_panel": null,
+   "truth_panel_absent_because": "No depositor-assembled genome set exists for this water. results/holdout_candidates/ covers SRR23421542/43/44 only, and scoring this library against those genomes would report another water's ground truth as this one's. Recovery against truth is therefore ABSENT for this sample rather than zero. The study does deposit paired DNA metagenomic libraries from the same plant and year (SRR34217541 and others), which is a same-plant cross-molecule comparison and not a truth panel; it is untested here.",
+   "positive_control_absent_because": "The spiked divergence ladder (--calibrate) needs a cross-sample reference assembly from the same works, which this pass does not stage, so this library runs with no positive control of any kind: nothing in it has a distance fixed before the run.",
+   "crossplant_panel": null,
+   "crossplant_panel_absent_because": "Szeged is not one of the 32 plants in results/crossplant/panel.tsv, and no library from this plant is. A cross-plant figure needs a within-plant stratum, because the within-plant rate itself runs 15-96% and a pooled difference compares plants rather than strata (results/crossplant/REPORT.md); with one library from this plant there is no such stratum. Searching it against the existing 530 would measure how far Hungary is from four other continents, which is a real quantity and not the one the stage reports, so the stage is absent here rather than run on the wrong pairing.",
+   "panel_basis": "which truth panel and which cross-plant panel apply to this library. The panels themselves are defined in experiments/stage_references.json; a null here is a measured absence and must carry its *_absent_because reason, which experiments/stage_refs.py refuses without."
   }
  },
  "status": "hand-written from measurements recorded elsewhere in results/. Each value names what established it. Nothing here is derived at run time."

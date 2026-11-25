@@ -42,7 +42,10 @@ CLAUSES = (
     ("matrix", "{}", " "),
     ("place", "from {}", " "),
     ("country", "{}", ", "),
-    ("collected", "collected on {}", ", "),
+    # "on" for a day, "in" for a year or a month: the archive gives some libraries a
+    # full date and some only a year, and `collected on 2024` is the renderer writing
+    # English about a precision the fact does not have.
+    ("collected", None, ", "),
     ("molecule", "sequenced as {}", ", "),
 )
 
@@ -88,10 +91,21 @@ def check(accession: str, facts: dict | None = None) -> None:
             f"without saying so. Add a clause or remove the fact.")
 
 
+def collected_clause(value: str) -> str:
+    """`collected on 2021-10-13`, `collected in 2024`. A date is as precise as it is."""
+    return f"collected {'on' if str(value).count('-') >= 2 else 'in'} {value}"
+
+
+def _say(key: str, template, value) -> str:
+    if template is None:
+        return collected_clause(value)
+    return template.format(value)
+
+
 def lede(accession: str, facts: dict | None = None) -> str:
     check(accession, facts)
     s = sample_facts(accession, facts)
-    parts = [(t.format(s[k]), j) for k, t, j in CLAUSES if s.get(k)]
+    parts = [(_say(k, t, s[k]), j) for k, t, j in CLAUSES if s.get(k)]
     if not parts:
         where = ("the run's configuration" if facts is not None
                  else "experiments/libraries.json")

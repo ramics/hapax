@@ -221,3 +221,24 @@ def test_a_run_with_fields_dropped_by_name_still_builds(tmp_path):
     assert b["not_searched"]["cross_sample"].startswith("not searched")
     got = {c["id"]: c for c in b["controls"]["controls"]}
     assert "--report-without cross_sample" in got["min_occupancy"]["absent"]
+
+
+def test_a_cannot_move_reason_measured_on_one_library_does_not_print_on_another():
+    """The reason is general; the number illustrating it is a property of one library.
+
+    Three rows of the cannot-move table quoted another sample's measurements as what the
+    page ships: the mate-2 trim "ships as two measured runs, 14 and 16, 1.7 points apart"
+    on a page whose own trim is 0, the assembly row quoted 8.79 points of residue
+    movement, and the search row quoted an agreement measured over 16 contigs of that
+    sample. Same rule as the per-library Methods rows.
+    """
+    import web_controls
+    doc = json.loads(web_controls.CONTROLS_FILE.read_text())
+    rows = {f["control"]: f for f in doc["fixed"]}
+    trim = rows["The mate-2 trim"]
+    assert "14 and 16" not in trim["why"]
+    assert "14 and 16" in trim["measured"]["SRR23973193"]
+    for f in doc["fixed"]:
+        for key, text in (f.get("measured") or {}).items():
+            assert key.startswith("SRR"), f"{f['control']}: measured key {key!r}"
+            assert text, f"{f['control']}: an empty measured sentence"

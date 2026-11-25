@@ -1,0 +1,23 @@
+{
+  "producer": "hapax.assembly_input.trim_mate2",
+  "hapax_version": "0.3.0",
+  "git_sha": "1dc582e6621af117ddad75b48baf3d388a724286",
+  "tree_dirty": false,
+  "module_sha256": "654a57b7cb3aaa35fc328d35ba15474f5af7fcffd04c70a3181f37c92a81a2e0",
+  "parameters": {
+    "r1": "/opt/hapax/data/reads/SRR34217566_1.fastq.gz",
+    "r2": "/opt/hapax/data/reads/SRR34217566_2.fastq.gz",
+    "trim_r2": 0,
+    "out_dir": "/opt/hapax/wk/asm_in",
+    "prefix": "SRR34217566"
+  },
+  "pairs": 11589124,
+  "trim_r2": 0,
+  "mate2_shorter_than_the_prefix": 0,
+  "mate2_shorter_note": "written as a single N so the record count matches mate 1",
+  "outputs": {
+    "/opt/hapax/wk/asm_in/SRR34217566_1.fq": 5137315050,
+    "/opt/hapax/wk/asm_in/SRR34217566_2.fq": 5135383656
+  },
+  "wall_seconds": 57.9
+}

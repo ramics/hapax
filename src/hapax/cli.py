@@ -90,11 +90,23 @@ def legacy_argv(cfg: Config, r1: Path, r2: Path | None, out: Path,
                  "--contigs", str(prepared.rrna), str(prepared.identified_norrna),
                  "--identified-contigs", str(prepared.identified_norrna),
                  "--rrna-contigs", str(prepared.rrna),
-                 "--unidentified-contigs", str(prepared.unidentified),
-                 # The sample's own identified contigs are the most efficient subtrahend
-                 # measured here, +30.3 points, and they are the sample's own: nothing
-                 # from another library reaches this flag.
-                 "--cross-sample-ref", str(prepared.identified_norrna)]
+                 "--unidentified-contigs", str(prepared.unidentified)]
+        # `--cross-sample-ref` IS NOT THE SAMPLE'S OWN ASSEMBLY, and this used to pass it
+        # that way. Two different references were conflated under one idea. The cascade's
+        # self-assembly tier takes the sample's own identified contigs, which is the most
+        # efficient subtrahend measured here, +30.3 points, and it arrives through
+        # `--contigs` and `--selfasm`. `--cross-sample-ref` feeds the per-read
+        # cross-sample recurrence field, which asks whether the same sequence assembles
+        # in OTHER samples from the same works and counts DISTINCT samples by contig
+        # name. Given one sample's own assembly it counts one sample, its own, for every
+        # read that maps: recurrence fabricated by construction, which is the measured
+        # trap behind the cross-plant rule that query reads must come from outside the
+        # library searched (54% false growth against a 6% swap control).
+        #
+        # So it comes from the config or not at all, and not at all means the field is
+        # named in `report_without` rather than quietly dropped.
+        if "cross_sample" in cfg.databases:
+            argv += ["--cross-sample-ref", str(cfg.database("cross_sample"))]
         if prepared.removal_evidence:
             argv += ["--removal-evidence", str(prepared.removal_evidence)]
         block = cfg.fact("block") or (prepared.measured or {}).get("block")
@@ -131,7 +143,7 @@ def legacy_argv(cfg: Config, r1: Path, r2: Path | None, out: Path,
     # `cmd_run` rather than here so that this function stays a pure translation of the
     # config and the unit suite keeps running with no external tool installed (TOOLS.md).
     for name, flag in (("classify", "--classify-bin"), ("diamond", "--diamond-bin"),
-                       ("minimap2", "--minimap2")):
+                       ("minimap2", "--minimap2"), ("cmscan", "--cmscan-bin")):
         if (binaries or {}).get(name):
             argv += [flag, str(binaries[name])]
     if "pairs" in cfg.run:
@@ -194,6 +206,14 @@ def cmd_stages(args) -> int:
 
 def cmd_run(args) -> int:
     cfg = load(args.config)
+    # THE SEED IS A PROPERTY OF THE RUN, NOT OF THE CONFIGURATION, so the command line
+    # overrides it. Five seeds are five invocations over five disjoint blocks of one flow
+    # cell, and without this a caller looping over seeds with one config would run seed 1
+    # five times into five directories: a run that looks like a five-seed result and is
+    # one block reported five times. The stated value is recorded in `invocation.json`
+    # either way, so the run directory says which block it read.
+    if getattr(args, "seed", None) is not None:
+        cfg.run["seed"] = int(args.seed)
     out = Path(args.out or cfg.run.get("out") or ".").resolve()
     stages = selected_stages(cfg)
     r1 = Path(args.reads[0]) if args.reads else Path(cfg.inputs["r1"])
@@ -216,7 +236,15 @@ def cmd_run(args) -> int:
     try:
         # The external binaries, found once for the whole run: two tiers of one cascade
         # run by two builds of Kraken2 is an operating point nobody could write down.
-        binaries = tools.resolve_all(cfg, ("classify", "diamond", "minimap2"))
+        # `cmscan` is Infernal's, and only the rfam field uses it. Resolved only when
+        # that field is requested, so a machine with no Infernal still runs everything
+        # else: requiring it always would refuse a run over a field the caller left out
+        # by name, and not requiring it when asked would let residue_report.py fall back
+        # to the one container path its default carries.
+        wanted = ["classify", "diamond", "minimap2"]
+        if "rfam" not in set(cfg.run.get("report_without") or []):
+            wanted.append("cmscan")
+        binaries = tools.resolve_all(cfg, tuple(wanted))
     except ConfigError as e:
         if not absent:
             raise
@@ -274,7 +302,7 @@ def cmd_run(args) -> int:
     # what that costs.
     from .enrich import enrich
 
-    for record in enrich(cfg, out, root, cfg.seed):
+    for record in enrich(cfg, out, root, cfg.seed, (r1, r2)):
         if record["status"] != "ok":
             print(f"  {record['stage']}: {record['status']} - {record['reason']}",
                   file=sys.stderr)
@@ -375,6 +403,11 @@ def main(argv: list[str] | None = None) -> int:
                    help="do not measure, assemble or split; the config must then state "
                         "every value the stages need. For re-running the cascade over an "
                         "assembly this run directory already has")
+    r.add_argument("--seed", type=int, default=None,
+                   help="which block of the library this run reads, overriding [run] "
+                        "seed. A seed is a property of a run and not of a configuration: "
+                        "five seeds are five invocations of this command over five "
+                        "disjoint blocks of one flow cell")
     r.add_argument("--report", action="store_true",
                    help="build the page when the stages finish, which is what makes this "
                         "one command from reads to report")

@@ -442,6 +442,13 @@ class Run:
             argv += ["--dmnd", *[str(d) for d in a.dmnd]]
         if a.diamond_bin:
             argv += ["--diamond-bin", str(a.diamond_bin)]
+        # Infernal's cmscan, for the rfam field only. Its script default is one
+        # container's layout (`/home/user/tools/inf/bin/cmscan`), which is the same fault
+        # as a default trim: it runs on the machine it was written on and fails elsewhere,
+        # here after the whole cascade. The field is either left out by name, in which
+        # case no binary is needed, or the caller resolved one.
+        if "rfam" not in without and a.cmscan_bin:
+            argv += ["--cmscan-bin", str(a.cmscan_bin)]
         if a.single_end:
             argv += ["--single-end"]
         if a.report_without:
@@ -1025,10 +1032,12 @@ class Run:
         one that only the residue points at is a relative of something in the database and
         nothing more until it assembles.
 
-        EVERY SUBJECT CARRIES ITS E-VALUE DISTRIBUTION. A 107 nt query against a large
-        index finds about 40 bases at about 88% by chance, and the chance band reads
-        identically on residue and identified reads, so a subject built out of chance hits
-        would look exactly like a divergent strain without one.
+        EVERY SUBJECT CARRIES ITS E-VALUE DISTRIBUTION. A short nucleotide query against a
+        large index finds about 40 bases at about 88% by chance - measured on SRR23973193's
+        107 nt reads, and quoted with that library because a read length is a fact about one
+        sequencing run - and the chance band reads identically on residue and identified
+        reads, so a subject built out of chance hits would look exactly like a divergent
+        strain without one.
         """
         p = self.dir / "reads.jsonl"
         if not p.exists():
@@ -1124,10 +1133,17 @@ class Run:
                            "from a database and score ordering tracks database proximity, "
                            "so the ordering here is by how many residue reads point at the "
                            "subject",
-            "caveat": "a 107 nt query against a large index finds about 40 bases at about "
-                      "88% by chance and the chance band reads identically on residue and "
-                      "identified reads, so every row carries its worst E-value as well as "
-                      "its median",
+            # THE 107 nt IS BERLIN'S READ LENGTH, AND THIS FIELD TRAVELS TO EVERY
+            # LIBRARY. Written as a bare property of "a query", it told a 2 x 150 library's
+            # own report that its reads were 107 nt. The chance band was measured on the
+            # discriminating dataset and the measurement is still the right one to quote;
+            # what it cannot do is describe this run's reads, so it is quoted with the
+            # library it came from, which is the same rule the trim follows.
+            "caveat": "a short nucleotide query against a large index finds a chance-level "
+                      "partial match - about 40 bases at about 88% identity, measured on "
+                      "SRR23973193's 107 nt reads - and the chance band reads identically "
+                      "on residue and identified reads, so every row carries its worst "
+                      "E-value as well as its median",
         }
         (self.dir / "strains.json").write_text(json.dumps(out, indent=2))
         multi = [r for r in rows if r["residue_reads"] >= 3]
@@ -1746,6 +1762,10 @@ def main() -> int:
                         "refuse. Costs twice the search time for the same answer, which "
                         "is cheaper than a second code path through the cascade")
     r.add_argument("--diamond-bin", type=Path, default=None)
+    # Resolved by the caller when the rfam field is requested, and absent otherwise: a
+    # machine with no Infernal can still run every other field, and must not be given a
+    # path that only exists somewhere else.
+    r.add_argument("--cmscan-bin", type=Path, default=None)
     r.add_argument("--classify-bin", type=Path, default=None,
                    help="Kraken2's raw `classify` binary, not the kraken2 wrapper")
     r.add_argument("--threads", type=int, default=4)

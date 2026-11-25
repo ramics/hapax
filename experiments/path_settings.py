@@ -94,6 +94,9 @@ import sys
 import time
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir
+import provenance as _provenance  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[1]
 
 #: The ladder. Every arm inherits BASE and adds its own flags, so the two dead levers
@@ -176,12 +179,11 @@ def sha256(path: Path) -> str:
 
 def provenance(script: str) -> dict:
     """Script hash beside the git SHA, per CLAUDE.md: a -dirty SHA names HEAD, not the code."""
-    try:
-        sha = subprocess.run(["git", "-C", str(ROOT), "describe", "--always", "--dirty"],
-                             capture_output=True, text=True).stdout.strip()
-    except Exception:
-        sha = "unknown"
-    return {"git_sha": sha, "script_sha256": sha256(Path(script)),
+    # The shared record, not a local copy: a `try/except` around `git` answers "unknown"
+    # and a positive `tree_dirty: true` on an instance with no git installed, which is a
+    # claim about a tree nobody looked at. `provenance.py` reads HAPAX_GIT_SHA where
+    # there is no checkout and raises where it can say nothing.
+    return {"git_sha": _provenance.git_sha(), "script_sha256": sha256(Path(script)),
             "python": sys.version.split()[0]}
 
 

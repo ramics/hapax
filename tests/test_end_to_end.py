@@ -266,6 +266,32 @@ def test_reads_to_report_in_one_command(tmp_path):
             f"{record['file']} is absent with no stated consequence, which is the thing "
             f"a reader cannot weigh")
 
+    # PHASE 5: an input the page declares as not run must not be sitting in the run
+    # directory. The distance spectrum - the whole of what class A reports - drew nothing
+    # on a complete production run of SRR34217566 because that declaration was a sentence
+    # typed when it was true, and three of the figure's controls repeated it. A declared
+    # absence is the harder direction to catch, because it reads as scrupulousness rather
+    # than as a gap: an input declared present and missing is a refusal the generator
+    # raises on, while one declared absent and present renders quietly.
+    desc = json.loads((out / "page_descriptor.json").read_text())
+    for key, decl in (desc.get("inputs") or {}).items():
+        if "not_run" not in decl:
+            continue
+        pattern = PAGE_INPUT_OUTPUTS.get(key)
+        if not pattern:
+            continue
+        stray = sorted(f.name for f in out.glob(pattern))
+        assert not stray, (
+            f"the page says of {key!r}: {decl['not_run']!r}, and the run directory holds "
+            f"{stray}. The declaration has to be read off the run, not asserted.")
+
+
+#: What each declarable page input is called where a run writes it. A page declares every
+#: input outside the run directory as a path or as an absence with its reason, and this is
+#: how a test tells the second apart from a stale sentence. One entry per key the
+#: generator accepts; a key this does not name is not checked, because the test cannot
+#: guess where an input it has never heard of would land.
+PAGE_INPUT_OUTPUTS = {"spectrum": "divergent_known_s*.json"}
 
 #: The run configuration, which is the whole of what a new input needs (PLAN.md 2).
 #:
@@ -295,14 +321,17 @@ threads = 2
 pairs = 9000
 report_pairs = 4000
 out = "{out}"
-# Three per-read fields are left out ON PURPOSE, which is a different thing from their
+# Four per-read fields are left out ON PURPOSE, which is a different thing from their
 # being absent. CRISPR scores a read against spacers from this sample's own assemblies,
 # which a 16 kb bacterial window does not carry; Rfam and Pfam each need a multi-gigabyte
 # profile library, and Rfam needs Infernal's cmscan besides, none of which belongs in a
-# job that runs on every pull request. The run refuses to start on a field whose reference
-# is missing, because a dropped field reads as a zero. Named here, each omission is a
-# stated operating point that the page carries rather than a hole in it.
-report_without = ["crispr", "rfam", "pfam"]
+# job that runs on every pull request. Cross-sample recurrence asks whether a sequence
+# assembles in OTHER samples from the same works, and there is exactly one sample here:
+# pointing it at this run's own assembly would count one recurrence, its own, for every
+# read that maps. The run refuses to start on a field whose reference is missing, because
+# a dropped field reads as a zero. Named here, each omission is a stated operating point
+# that the page carries rather than a hole in it.
+report_without = ["crispr", "rfam", "pfam", "cross_sample"]
 
 [inputs]
 label = "fixture"
@@ -330,7 +359,15 @@ protein = "{dbs}/prot_known.dmnd"
 # the same on both piles.
 sprot = "{dbs}/prot_broad.dmnd"
 rrna = "{fixture}/db/silva_toy.fa"
-classifier = "{dbs}/k2_toy"
+# A LIST of one, deliberately, where a bare string would also load: production names four
+# here, and the list is the shape that found a caller asking for a single path. The fixture
+# being smaller than production is fine; being a different SHAPE from production is how a
+# fault reaches a paid run with CI green behind it.
+classifier = ["{dbs}/k2_toy"]
+# The contig stage's single database is its own key, because it is its own operating point:
+# classify_contigs.py reads one database and writes its name into every row. The fixture has
+# one toy library and names it for both.
+classifier_contigs = "{dbs}/k2_toy"
 # The profile library the per-gene distance workup scans ORFs against. Eight toy profiles
 # built by build_dbs.sh, which is why this run reports no domain fraction: the gathering
 # cutoff in them is the fixture's and not a curator's.

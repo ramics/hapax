@@ -84,12 +84,24 @@ def test_a_row_measured_on_one_library_is_not_printed_on_another():
     other = {m["id"]: dict(m["rows"]) for m in make_web.resolve_methods("SRR00000000")}
     assert "Berlin" in berlin["library"]["Input"]
     assert "SRR23973193" not in json.dumps(hold)
-    assert hold["cascade"]["Bias"] == make_web.NOT_MEASURED
+    # The number is Berlin's and does not travel. What does travel is the design: a
+    # shuffled control arm and the direction of a bias are properties of the procedure.
+    # Printing neither is what 28 of this page's 90 rows used to do on a library nobody
+    # had written about, nine of them for rows that state no number in the first place.
+    assert "77.10%" in berlin["cascade"]["Bias"]
+    assert "77.10%" not in hold["cascade"]["Bias"]
+    assert hold["cascade"]["Bias"].endswith(make_web.NO_VALUE)
+    assert "identifiable fraction exceeds the nameable" in hold["cascade"]["Bias"]
     # A procedure row is the tool's, and reads the same everywhere.
     assert berlin["cascade"]["Procedure"] == hold["cascade"]["Procedure"]
     # A sample nobody has written about still gets every entry, numbered the same.
     assert list(other) == list(berlin)
-    assert other["library"]["Input"] == make_web.NOT_MEASURED
+    assert other["library"]["Input"].endswith(make_web.NO_VALUE)
+    bare = [(i, lab) for i, e in other.items() for lab, txt in e.items()
+            if txt == make_web.NOT_MEASURED]
+    assert not bare, (
+        f"{len(bare)} rows say only that nothing was measured, where the row's design "
+        f"holds for any water: {bare}")
 
 
 def test_every_entry_has_the_six_fixed_rows():
@@ -315,3 +327,122 @@ def test_the_row_reader_is_imported_and_not_re_typed():
             if f'{name}.gz' in src:
                 assert "run_rows" in src, f"{f.name} opens {name}.gz on its own"
     assert run_rows.jsonl(ROOT / "results/holdout_cascade/run_s1", "reads.jsonl")
+
+
+def test_the_chimaera_rate_is_over_the_contigs_the_flag_could_fire_on():
+    """The flag needs two named ORFs, so the arm's contig count is the wrong denominator.
+
+    Measured on SRR34217566: 6 of 15 divergent contigs and 11 of 30 near-reference
+    controls carry the flag, which reads 40.0% against 36.7% over the arms and 100%
+    against 84.6% over the contigs that could be flagged. The first invites "the flag
+    separates the arms a little"; only the second is the quantity the Methods entry
+    describes. The page derives it rather than trusting the stage, because runs produced
+    before the stage carried the field would otherwise fall back to the wider
+    denominator, which reads lower in the direction of a separation.
+    """
+    rows = ([{"arm": "divergent", "orfs": 2, "orfs_with_a_subject": 2,
+              "subject_disagreement_flag": True}] * 6
+            + [{"arm": "divergent", "orfs": 1, "orfs_with_a_subject": 1,
+                "subject_disagreement_flag": False}] * 9
+            + [{"arm": "control_near_reference", "orfs": 3, "orfs_with_a_subject": 3,
+                "subject_disagreement_flag": True}] * 11
+            + [{"arm": "control_near_reference", "orfs": 3, "orfs_with_a_subject": 3,
+                "subject_disagreement_flag": False}] * 2
+            + [{"arm": "control_near_reference", "orfs": 1, "orfs_with_a_subject": 0,
+                "subject_disagreement_flag": False}] * 17)
+    out = make_web._flaggable(
+        rows, {"divergent": {"contigs": 15},
+               "control_near_reference": {"contigs": 30}})
+    assert out["divergent"]["contigs_that_could_be_flagged"] == 6
+    assert out["divergent"]["fraction_flagged_of_the_contigs_that_could_be"] == 1.0
+    assert out["control_near_reference"]["contigs_that_could_be_flagged"] == 13
+    assert (out["control_near_reference"]
+            ["fraction_flagged_of_the_contigs_that_could_be"] == 0.8462)
+
+
+def test_an_arm_with_nothing_testable_is_not_reported_as_a_zero_rate():
+    """No contig could be flagged and no contig was flagged render the same as 0.0."""
+    out = make_web._flaggable(
+        [{"arm": "divergent", "orfs": 1, "orfs_with_a_subject": 1,
+          "subject_disagreement_flag": False}],
+        {"divergent": {"contigs": 1}})
+    assert out["divergent"]["contigs_that_could_be_flagged"] == 0
+    assert out["divergent"]["fraction_flagged_of_the_contigs_that_could_be"] is None
+
+
+def test_a_flag_count_above_its_own_denominator_is_refused():
+    """The impossible case, asserted where the quantity is computed."""
+    import pytest
+    with pytest.raises(ValueError, match="two or more named ORFs"):
+        make_web._flaggable(
+            [{"arm": "divergent", "orfs": 1, "orfs_with_a_subject": 1,
+              "subject_disagreement_flag": True}],
+            {"divergent": {"contigs": 1}})
+
+
+def _page_function(name: str) -> str:
+    """One function lifted out of the page code, so node can be asked what it returns."""
+    src = make_web.PAGE
+    start = src.index(f"function {name}(")
+    depth, i = 0, src.index("{", start)
+    for j in range(i, len(src)):
+        if src[j] == "{":
+            depth += 1
+        elif src[j] == "}":
+            depth -= 1
+            if depth == 0:
+                return src[start:j + 1]
+    raise AssertionError(f"{name} does not close")
+
+
+def test_a_dated_kraken2_directory_still_counts_as_a_tier_that_names():
+    """The tier name carries the database release, and a literal map stopped matching.
+
+    `hapax fetch-db` names each Kraken2 directory after the release it downloaded, so the
+    cascade's tiers arrive as `k2_viral_20261022.d` rather than `k2_viral`. Two panels
+    held a literal map of the undated names: every Kraken2 read moved out of the named
+    band into recognised-but-unnamed, the named band read 2.24% against the cascade's
+    4.07%, and the reconciliation panel asserted that its two named rows agreed across a
+    fifteen-point gap. A tier is classified by what it is, and an unrecognised one is
+    reported as unknown so it cannot land in a band by default.
+    """
+    if subprocess.run(["node", "-e", "0"], capture_output=True).returncode:
+        pytest.skip("no node here")
+    probe = _page_function("tierKind") + """
+const cases = {
+  'k2_viral_20261022.d': 'names', 'k2_pluspf_16_GB_20261022.d': 'names',
+  'k2_viral': 'names', 'prot_viral': 'names', 'prot_sprot': 'names',
+  'rrna': 'recognises', 'artefact': 'recognises',
+  'selfasm_sample_contigs_rrna': 'recognises',
+  'selfasm_sample_contigs_identified_norrna': 'recognises',
+  'observe_sample_contigs_unidentified': 'observes',
+  'something_new': 'unknown', '': 'unknown'};
+const bad = Object.entries(cases).filter(([k, v]) => tierKind(k) !== v)
+  .map(([k, v]) => k + ' read ' + tierKind(k) + ', wanted ' + v);
+if (bad.length) { console.log(bad.join('; ')); process.exit(1); }
+console.log('ok');
+"""
+    r = subprocess.run(["node", "-e", probe], capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout + r.stderr
+
+
+def test_the_page_never_pairs_the_two_independent_maxima():
+    """The producer ships a field saying not to, and the page did it anyway.
+
+    `host_confidence_summary` carries `best_identity_percent` and `best_aligned_aa` as
+    maxima over the rows taken separately, usually of different subjects, and carries
+    `best_fields_are_independent` saying in words that they must not be printed as one
+    match. The warning panel honoured that and took the closest row's own length; the
+    headline card above it printed the two maxima together and read "96.3%, and over only
+    60 amino acids" where that 96.3% row is a 31 aa alignment. A pairing of two maxima
+    describes a subject that does not exist, so the page code may not read the maximum
+    length at all: `closest_row_aligned_aa`, or the chosen row's own field, is the only
+    length that may sit beside an identity.
+    """
+    page = make_web.PAGE
+    code = "\n".join(ln for ln in page.split("\n")
+                      if not ln.lstrip().startswith(("//", "*", "/*")))
+    assert "best_aligned_aa" not in code, (
+        "the page reads the maximum aligned length, which belongs to a different "
+        "subject than the maximum identity")
+    assert "longest_alignment_aa" not in code

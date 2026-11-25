@@ -1,0 +1,277 @@
+{
+ "page": "/home/user/hapax/results/prod_SRR34217566/run_s4/report.html",
+ "seed": 4,
+ "allow_partial": true,
+ "generator": {
+  "script": "experiments/make_web.py",
+  "script_sha256": "467427e7460508b1df8abc55725f332bd254820d13aa3b714d71d7934e6b8471",
+  "imports_sha256": {
+   "experiments/berlin_io.py": "2357f8fa390b9b2a60e88d4fc85ea025cce9b83046e3c0580b4220c7525917d2",
+   "experiments/library_facts.py": "057c46d53c7a3abd709917275b9e2ce71d74735bdc769c4bbf17ac16c9f565b4",
+   "experiments/loud.py": "f4092b57016034c2bbf5984604fc43944422cf0592f669f98fa4583d9d110414",
+   "experiments/page_descriptor.py": "83b27812dbad207c1d8992c3c569dff780b79f334fb0a5f03cbc422fa2bafacf",
+   "experiments/provenance.py": "ffe687a85906eed6990f1eb61b96359ed3641dc98ce7ab68201935407390bc54",
+   "experiments/run_rows.py": "2017821d208a9f62dff71ec0cf5baa14092091d80174a22810ede09731e5c4e3",
+   "experiments/subtract_known.py": "8fe97eb5c6c501705ab0fdf100d24069af1ab5913dde7c011c9453946521a3b1",
+   "experiments/web_controls.py": "d121d7317fef75cad23f6d44a8f8e53d9f17798ab29818c81fd7c98f958b7fcf"
+  },
+  "imports_note": "read from the source before the process started; a dynamic import is not seen, so this is a floor on what could load",
+  "argv": [
+   "/home/user/hapax/results/prod_SRR34217566/run_s4/page_descriptor.json",
+   "--rundir",
+   "/home/user/hapax/results/prod_SRR34217566/run_s4",
+   "--out",
+   "/home/user/hapax/results/prod_SRR34217566/run_s4/report.html",
+   "--seed",
+   "4"
+  ],
+  "returncode": 0
+ },
+ "sections_declared": [
+  "Watchlist screen",
+  "What this water is",
+  "How far the assembled viruses sit from anything published",
+  "The unnamed remainder",
+  "Methods"
+ ],
+ "sections_not_drawable": [],
+ "enrichments_absent": [],
+ "inputs": [
+  {
+   "stage": "cascade",
+   "file": "tiers.json",
+   "section": null,
+   "present": true,
+   "problems": [],
+   "optional": false
+  },
+  {
+   "stage": "cascade",
+   "file": "cascade_manifest.json",
+   "section": null,
+   "present": true,
+   "problems": [
+    "(root): 'pairs' is a required property"
+   ],
+   "optional": false
+  },
+  {
+   "stage": "cascade",
+   "file": "cascade_rows.jsonl",
+   "section": null,
+   "present": true,
+   "problems": [],
+   "optional": false
+  },
+  {
+   "stage": "contigs",
+   "file": "contigs.jsonl",
+   "section": null,
+   "present": true,
+   "problems": [],
+   "optional": false
+  },
+  {
+   "stage": "reads",
+   "file": "reads.jsonl",
+   "section": null,
+   "present": true,
+   "problems": [],
+   "optional": false
+  },
+  {
+   "stage": "reads",
+   "file": "fields.json",
+   "section": null,
+   "present": true,
+   "problems": [],
+   "optional": false
+  },
+  {
+   "stage": "intervals",
+   "file": "tier_table.json",
+   "section": "The unnamed remainder",
+   "present": true,
+   "problems": [],
+   "optional": false
+  },
+  {
+   "stage": "shortlist",
+   "file": "removal_shortlist.json",
+   "section": null,
+   "present": true,
+   "problems": [],
+   "optional": false
+  },
+  {
+   "stage": "profile",
+   "file": "public_health_profile_s4.json",
+   "section": "Watchlist screen",
+   "present": true,
+   "problems": [],
+   "optional": false
+  },
+  {
+   "stage": "profile",
+   "file": "public_health_profile_s4.json",
+   "section": "What this water is",
+   "present": true,
+   "problems": [],
+   "optional": false
+  },
+  {
+   "stage": "linkage",
+   "file": "linkage.json",
+   "section": null,
+   "present": true,
+   "problems": [],
+   "optional": false
+  },
+  {
+   "stage": "census",
+   "file": "census.json",
+   "section": "Watchlist screen",
+   "present": true,
+   "problems": [],
+   "optional": false
+  },
+  {
+   "stage": "layers",
+   "file": "layers.json",
+   "section": "Watchlist screen",
+   "present": true,
+   "problems": [],
+   "optional": false
+  },
+  {
+   "stage": "layers",
+   "file": "layers.jsonl",
+   "section": null,
+   "present": true,
+   "problems": [],
+   "optional": false
+  },
+  {
+   "stage": "strains",
+   "file": "strains.json",
+   "section": "How far the assembled viruses sit from anything published",
+   "present": true,
+   "problems": [],
+   "optional": false
+  },
+  {
+   "stage": "divergent",
+   "file": "divergent_known_s4.json",
+   "section": null,
+   "present": true,
+   "problems": [],
+   "optional": false
+  },
+  {
+   "stage": "crossplant",
+   "file": "crossplant_stage.json",
+   "section": null,
+   "present": false,
+   "problems": [],
+   "optional": false,
+   "stage_status": "skipped",
+   "stage_status_reason": "Szeged is not one of the 32 plants in results/crossplant/panel.tsv, and no library from this plant is. A cross-plant figure needs a within-plant stratum, because the within-plant rate itself runs 15-96% and a pooled difference compares plants rather than strata (results/crossplant/REPORT.md); with one library from this plant there is no such stratum. Searching it against the existing 530 would measure how far Hungary is from four other continents, which is a real quantity and not the one the stage reports, so the stage is absent here rather than run on the wrong pairing."
+  },
+  {
+   "stage": "taxa",
+   "file": "known_strain_divergence_s4.json",
+   "section": "How far the assembled viruses sit from anything published",
+   "present": true,
+   "problems": [],
+   "optional": false
+  },
+  {
+   "stage": "ranking",
+   "file": "ranking.json",
+   "section": "The unnamed remainder",
+   "present": true,
+   "problems": [],
+   "optional": false
+  },
+  {
+   "stage": "workup",
+   "file": "divergent_contig_workup_s4.json",
+   "section": "How far the assembled viruses sit from anything published",
+   "present": true,
+   "problems": [],
+   "optional": true
+  },
+  {
+   "stage": "architecture",
+   "file": "architecture_s4.json",
+   "section": "How far the assembled viruses sit from anything published",
+   "present": true,
+   "problems": [],
+   "optional": true
+  },
+  {
+   "stage": "names",
+   "file": "subject_names.json",
+   "section": null,
+   "present": true,
+   "problems": [],
+   "optional": true
+  }
+ ],
+ "errors": [],
+ "top": [
+  "Watchlist screen",
+  "What this water is",
+  "How far the assembled viruses sit from anything published",
+  "The unnamed remainder",
+  "Methods"
+ ],
+ "detail": [
+  "Library partition, one square per percent",
+  "Run summary",
+  "Cascade partition, nested",
+  "Marginal removal per index",
+  "Kind assignment of matched subjects",
+  "Subject ranking, four axes",
+  "Identity against read support, per subject",
+  "Class fractions with intervals",
+  "Tier removal and threshold sweep",
+  "Removal against index size",
+  "Mate recovery in the joint space",
+  "Residue layers, ordered, with controls",
+  "Field calibration: null and known-positive",
+  "Insert-adjacency labels of residue reads",
+  "Candidate divergent strains, grouped by subject",
+  "Joint-space density, residue against identified",
+  "Holdout spike, divergence ladder",
+  "The distance spectrum, one contig per row",
+  "Per-read residue table, un-thresholded",
+  "Blind spots",
+  "Provenance",
+  "Coverage-neighbour labels, residue against identified",
+  "Layer assignment against the identified control",
+  "Named against recognised: cascade reconciliation",
+  "Significance floor, both arms at your setting",
+  "Controls that cannot move, and why"
+ ],
+ "cited": [
+  "watchlist",
+  "library",
+  "nulls",
+  "composition",
+  "contigid",
+  "chimaera",
+  "genespread",
+  "concern",
+  "crossplant",
+  "cascade",
+  "residue",
+  "spectrum",
+  "controls"
+ ],
+ "dangling": [],
+ "missing": [],
+ "absent_not_stated": [],
+ "settings": 5,
+ "controls": 12
+}

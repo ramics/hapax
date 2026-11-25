@@ -1,0 +1,15 @@
+{
+  "producer": "hapax.assembly_input.rename_megahit",
+  "hapax_version": "0.3.0",
+  "git_sha": "1dc582e6621af117ddad75b48baf3d388a724286",
+  "tree_dirty": false,
+  "module_sha256": "654a57b7cb3aaa35fc328d35ba15474f5af7fcffd04c70a3181f37c92a81a2e0",
+  "parameters": {
+    "contigs": "/opt/hapax/wk/asm_baseline/final.contigs.fa",
+    "out": "/opt/hapax/wk/asm_baseline/sample_contigs.fa",
+    "tag": "SRR34217566"
+  },
+  "contigs": 45180,
+  "wall_seconds": 0.1,
+  "what_this_is": "a pure relabelling: sequence is unchanged and the MEGAHIT name is kept as a suffix"
+}

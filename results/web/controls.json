@@ -228,15 +228,18 @@
   },
   {
    "control": "The mate-2 trim",
-   "why": "It changes the reads, so it changes every number downstream. It ships as two measured runs, 14 and 16, 1.7 points apart, with the curve between them, not as a slider."
+   "why": "It changes the reads, so it changes every number downstream. It ships as measured runs with the curve between them, not as a slider.",
+   "measured": {"SRR23973193": "On this library the two runs are 14 and 16, 1.7 points apart."}
   },
   {
    "control": "Assembly path settings",
-   "why": "They move the residue by 8.79 points and need re-assembly and re-identification. They ship as arms with their flags."
+   "why": "They need re-assembly and re-identification, and they move the residue. They ship as arms with their flags.",
+   "measured": {"SRR23973193": "On this library they move it by 8.79 points."}
   },
   {
    "control": "Search sensitivity and seeding",
-   "why": "DIAMOND at three sensitivities, BLASTP, and full Smith-Waterman over every subject with no seeding return the same nearest relative to the decimal. There is nothing to tune: the constraint is the significance statistics."
+   "why": "There is nothing to tune: the constraint is the significance statistics, not the seeding.",
+   "measured": {"SRR23973193": "DIAMOND at three sensitivities, BLASTP, and full Smith-Waterman over every subject with no seeding returned the same nearest relative to the decimal on all 16 divergent contigs of this library."}
   },
   {
    "control": "The interval and the design effect",

@@ -1,0 +1,130 @@
+{
+ "script": "experiments/path_settings.py",
+ "git_sha": "1dc582e6621af117ddad75b48baf3d388a724286",
+ "script_sha256": "80c1e6bbee0a2a8d366a1aa6da09d84d9c8bb6350df1471a6b547e610a2c5bbe",
+ "python": "3.13.18",
+ "argv": [
+  "--seed",
+  "1",
+  "--stages",
+  "assemble",
+  "--arms",
+  "baseline",
+  "--reads",
+  "/opt/hapax/wk/asm_in/SRR34217566_1.fq",
+  "--r2",
+  "/opt/hapax/wk/asm_in/SRR34217566_2.fq",
+  "--megahit",
+  "/opt/hapax/mamba/envs/hapax/bin/megahit",
+  "--minimap2",
+  "/opt/hapax/mamba/envs/hapax/bin/minimap2",
+  "--threads",
+  "8",
+  "--no-truth-panel",
+  "--work",
+  "/opt/hapax/wk",
+  "--out",
+  "/opt/hapax/out/run_s1/assembly"
+ ],
+ "arms": [
+  "baseline"
+ ],
+ "ladder": {
+  "baseline": {
+   "flags": [],
+   "direction": "the committed setting; everything else is read against it"
+  },
+  "baseline_repeat": {
+   "flags": [],
+   "threads_override": 2,
+   "direction": "same setting, different thread count: the same-instrument difference, which bounds what an arm has to beat to mean anything"
+  },
+  "strict_bubble": {
+   "flags": [
+    "--merge-level",
+    "20,0.98"
+   ],
+   "direction": "merge only near-identical bubbles. Expect more, shorter contigs and less lineage fusion; breadth may fall"
+  },
+  "no_bubble": {
+   "flags": [
+    "--bubble-level",
+    "0"
+   ],
+   "direction": "no bubble merging at all. The extreme of keeping paths apart"
+  },
+  "lax_bubble": {
+   "flags": [
+    "--merge-level",
+    "20,0.90"
+   ],
+   "direction": "merge bubbles down to 90% similarity. THE ABSORPTION ARM: expect longer contigs, more mosaics, and a residue that shrinks wrongly"
+  },
+  "keep_thin": {
+   "flags": [
+    "--prune-level",
+    "0",
+    "--prune-depth",
+    "1"
+   ],
+   "direction": "keep low-depth unitigs. Expect more low-depth contigs and more junk"
+  },
+  "keep_local": {
+   "flags": [
+    "--low-local-ratio",
+    "0.05",
+    "--disconnect-ratio",
+    "0.02"
+   ],
+   "direction": "keep low-coverage local branches that the defaults remove"
+  },
+  "prune_hard": {
+   "flags": [
+    "--prune-level",
+    "3"
+   ],
+   "direction": "prune harder. Expect a larger residue and little change deep down"
+  },
+  "no_rescue": {
+   "flags": [
+    "--no-mercy",
+    "--no-local"
+   ],
+   "direction": "remove both low-coverage rescue mechanisms. The least-path-rescue end"
+  },
+  "meta_sensitive": {
+   "flags": [
+    "--presets",
+    "meta-sensitive"
+   ],
+   "direction": "the preset the residue assembly used, never compared to the default until now. NOT a path arm: it also sets --min-count 1, a lever this project already measured as dead, so it is reported separately and no path conclusion rests on it"
+  }
+ },
+ "parameters": {
+  "seed": "1",
+  "arms": "baseline",
+  "stages": "['assemble']",
+  "reads": "/opt/hapax/wk/asm_in/SRR34217566_1.fq",
+  "r2": "/opt/hapax/wk/asm_in/SRR34217566_2.fq",
+  "no_truth_panel": "True",
+  "run": "SRR23421544",
+  "candidates": "/opt/hapax/results/holdout_candidates/candidates.fa",
+  "depth": "/opt/hapax/results/holdout_candidates/depth.tsv",
+  "shortlist": "/opt/hapax/results/holdout_candidates/shortlist.tsv",
+  "megahit": "/opt/hapax/mamba/envs/hapax/bin/megahit",
+  "minimap2": "/opt/hapax/mamba/envs/hapax/bin/minimap2",
+  "threads": "8",
+  "memory": "0.8",
+  "min_identity": "0.95",
+  "min_aln": "200",
+  "min_mosaic": "500",
+  "work": "/opt/hapax/wk",
+  "out": "/opt/hapax/out/run_s1/assembly",
+  "force": "False"
+ },
+ "seconds_total": 1406.563136665,
+ "peak_rss_bytes": 2936758272,
+ "megahit_version": "MEGAHIT v1.2.9",
+ "minimap2_version": "2.31-r1302",
+ "reads_sha256": "6e5d8651dad125c300ae0acf666fa438da1e5a4f7b37929cc116571a62b6e110"
+}

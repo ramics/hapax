@@ -133,7 +133,31 @@ def missing_sections(states: list[InputState]) -> dict[str, list[InputState]]:
     return out
 
 
-def descriptor(rundir: Path, out_path: Path) -> Path:
+def _declare(path: Path, why_absent: str) -> dict:
+    """State a page input as the path the run produced, or as an absence with its reason.
+
+    The generator takes exactly one of `path` or `not_run` per input and refuses a key that
+    carries both or neither, so that "nobody said" and "it does not apply" cannot render
+    the same. This decides between them by looking, which is the only way the answer is
+    about the run in hand: the alternative is a sentence typed once, which goes stale
+    silently and in the direction of under-reporting.
+    """
+    path = Path(path)
+    return {"path": str(path)} if path.exists() else {"not_run": why_absent}
+
+
+def _measured(rundir: Path) -> dict:
+    """The launcher's measured-library record, or an empty dict where none was written."""
+    f = Path(rundir) / "library_measured.json"
+    if not f.exists():
+        return {}
+    try:
+        return json.loads(f.read_text())
+    except (OSError, ValueError):
+        return {}
+
+
+def descriptor(rundir: Path, out_path: Path, seed: int = 1) -> Path:
     """Assemble the page descriptor from what the run recorded about itself.
 
     Everything here comes out of the run directory. `sample_facts` is whatever the run's
@@ -161,12 +185,30 @@ def descriptor(rundir: Path, out_path: Path) -> Path:
     d = {
         "sample": {"accession": accession},
         "rundir": str(rundir),
+        # WHAT THE RUN MEASURED OFF THE READS, WHICH IS NOT WHAT THE REGISTRY STATES.
+        # The registry holds SRR34217566 at 150 nt and the file is 151; separately, the
+        # linkage stage wrote its mate-asymmetry clause with one library's post-trim
+        # lengths in it and every library's output carried the string, so a 2x151 library
+        # was told its own mates were 93 and 107 nt. The page prints the measured answer
+        # beside either. It is carried here rather than read by the renderer because every
+        # run-directory file the renderer reads must be a declared output of a stage, and
+        # this one is written by the launcher before any stage runs.
+        "measured": _measured(rundir),
         # The files outside the run directory that panels may read. Declared as not run,
         # with the reason, rather than left out: a declared absence and an undeclared one
         # look the same on a page and are not the same thing.
         "inputs": {
-            "spectrum": {"not_run": "the divergent-contig workup is not yet a stage of "
-                                    "hapax run (PLAN.md step 6)"},
+            # READ FROM THE RUN, NEVER ASSERTED. This said "the divergent-contig workup is
+            # not yet a stage of hapax run (PLAN.md step 6)" long after the divergent stage
+            # was one, so a complete run of SRR34217566 drew its headline distance spectrum
+            # as an empty axis and told three of its controls that the stage had not run,
+            # beside a run directory holding the stage's 1.7 MB of output. A hardcoded
+            # absence is a claim about this water that nothing measured, and it is the
+            # harder fault to see of the two, because a declared absence renders as
+            # scrupulousness.
+            "spectrum": _declare(rundir / f"divergent_known_s{seed}.json",
+                                 "the divergent stage did not run on this library, so "
+                                 "there are no scored contigs to lay out"),
             "spectrum_big_index": {"not_run": "no larger-index block was run against "
                                               "these contigs"},
         },
@@ -212,7 +254,7 @@ def build(rundir: Path, out: Path | None = None, seed: int = 1,
         raise ReportError("\n".join(lines))
 
     repo = Path(repo) if repo else _repo()
-    page = descriptor(rundir, rundir / "page_descriptor.json")
+    page = descriptor(rundir, rundir / "page_descriptor.json", seed)
     out = Path(out) if out else rundir / "report.html"
     # Without -I, as before: the generator was always started this way, and isolation is
     # a change to what it can import that this refactor does not make.
@@ -237,12 +279,28 @@ def build(rundir: Path, out: Path | None = None, seed: int = 1,
         # Enrichments this run did not produce, each with what the page shows instead.
         # Recorded rather than left out, because an absence a reader cannot see is the
         # same as an absence nobody declared.
+        # WHY IT IS ABSENT COMES FROM THE RUN, NOT FROM THE REGISTRY. `absence_means`
+        # says what the page shows without the file, which is a property of the report
+        # and always true. The CAUSE is not: the registry's note for the per-gene workup
+        # reads "which not every machine has staged", and on this library both indexes
+        # were staged and the stage failed on a stale read-path default. A machine
+        # without the database and a stage that crashed are two different findings, and
+        # `enrichments.json` already holds which one happened.
         "enrichments_absent": [{"stage": s.stage, "file": s.filename,
-                                "section": s.section, "means": s.absence_means}
+                                "section": s.section, "means": s.absence_means,
+                                **_why_absent(rundir, s.stage)}
                                for s in states if s.optional and not s.present],
+        # AN ABSENT FILE CARRIES WHY, WHETHER OR NOT ITS STAGE IS AN ENRICHMENT. Only the
+        # optional rows above said why; everything else read `present: false, problems:
+        # []`, which is how a stage skipped with a reason and a declared output that could
+        # never appear came to look identical in this census. Two of the cascade's three
+        # declared files were the second kind on every library for as long as the registry
+        # named the script's filenames instead of the ones the driver writes, and nothing
+        # in the column distinguished them from a real miss.
         "inputs": [{"stage": s.stage, "file": s.filename, "section": s.section,
                     "present": s.present, "problems": list(s.problems),
-                    "optional": s.optional}
+                    "optional": s.optional,
+                    **({} if s.present else _stage_status(rundir, s.stage))}
                    for s in states],
         **(check or {"top": None, "render_check": _why_no_render_check()}),
     }, indent=1) + "\n")
@@ -269,6 +327,51 @@ def _why_no_render_check() -> str:
                 "written page in a browser and reports which sections reached the DOM.")
     return ("node is installed and its playwright module is not, so the page was not "
             "run: `npm install playwright && npx playwright install chromium`.")
+
+
+def _stage_status(rundir: Path, stage: str) -> dict:
+    """What the run's own manifest says happened to one stage, for an absent output.
+
+    A stage deliberately left out of a production pass and a stage whose output went
+    missing are different findings, and a census that prints `present: false` with an
+    empty problem list for both teaches a reader to ignore the column.
+    """
+    f = Path(rundir) / "manifest.json"
+    if not f.exists():
+        return {"stage_status": "unknown: this run wrote no manifest.json"}
+    try:
+        rows = json.loads(f.read_text()).get("stages") or []
+    except (OSError, ValueError) as exc:
+        return {"stage_status": f"unknown: manifest.json is not readable ({exc})"}
+    for row in rows:
+        if row.get("stage") == stage:
+            return {"stage_status": row.get("status") or "no status recorded",
+                    "stage_status_reason": ((row.get("reason") or "").strip()
+                                            or None)}
+    return {"stage_status": f"unknown: manifest.json has no row for {stage}"}
+
+
+def _why_absent(rundir: Path, stage: str) -> dict:
+    """What the run recorded about one enrichment, or that nothing recorded it.
+
+    Three states a reader must be able to tell apart: the stage ran and failed, the stage
+    was skipped with a reason, and nothing about it was written down at all. The third is
+    not an absence of the stage, it is an absence of the record, and it is reported as
+    that rather than folded into "not produced".
+    """
+    record = rundir / "enrichments.json"
+    if not record.exists():
+        return {"recorded": "nothing: this run wrote no enrichments.json"}
+    try:
+        rows = json.loads(record.read_text()).get("stages", [])
+    except json.JSONDecodeError as exc:
+        return {"recorded": f"unreadable: {record.name} is not JSON ({exc})"}
+    for row in rows:
+        if row.get("stage") == stage:
+            reason = (row.get("reason") or "").strip()
+            return {"recorded": row.get("status", "no status"),
+                    "recorded_reason": reason[-800:] or None}
+    return {"recorded": f"nothing: {record.name} has no row for {stage}"}
 
 
 def _mark_partial(page: Path, absent: dict) -> None:

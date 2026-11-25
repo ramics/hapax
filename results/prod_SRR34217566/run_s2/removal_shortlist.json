@@ -1,0 +1,287 @@
+{
+  "what_this_is": "the pile tier 1 removed, ranked by how much of each contig its best protein hit explains. A cell with a count on it, never a flag and never a score",
+  "spec": "SPEC.md 5.1",
+  "evidence_file": "/opt/hapax/out/run_s2/removal_evidence.tsv",
+  "operating_point": {
+    "significance_evalue": 1e-05,
+    "band_coverage": [
+      0.25,
+      0.5
+    ],
+    "band_identity_percent": [
+      60,
+      70
+    ],
+    "near_reference_identity_percent": 97.0,
+    "band_is_shipped_default": true,
+    "band_provenance": {
+      "_what": "The coverage x identity cell the explained-fraction shortlist ships at, over the pile tier 1 removed.",
+      "coverage": [
+        0.25,
+        0.5
+      ],
+      "identity_percent": [
+        60,
+        70
+      ],
+      "significance_evalue": 1e-05,
+      "near_reference_identity_percent": 97.0,
+      "measured_on": "SRR23421544",
+      "measured_in": "results/holdout_cascade/",
+      "the_measurement": "The withheld genome's best protein hit covers 0.4624 of the contig at 66.5% identity, which lands in this cell: 69 contigs, 0.91% of the removed pile, and not one of the leak arm's 34 known contigs from the same water enters it.",
+      "chosen_after_seeing_the_positive": true,
+      "why_that_is_said_here": "The band was drawn where the one known positive sits, on a positive set of size one. It is an operating point with a provenance, not a validated threshold, and a stage that shipped it silently would be quoting a tuned cut as a property of the method. The whole joint table ships beside it so the band can be moved at output time (SPEC 13.3).",
+      "what_must_not_be_done_instead": "Rank the removed pile by identity. Measured on the same pile: the withheld genome sits at the 93.46th percentile of removal identity, so an identity rule reaches 7,104 other contigs first. 'Flag the low-identity removals' is dead and measured.",
+      "ordering_within_the_cell_is_open": "The candidate ranks 4th by bitscore inside its own cell at nucleotide level and 2nd at protein, so the defensible output is the cell with a count on it, never a flag and never the top row.",
+      "null_citations": {
+        "shuffled_contigs_with_a_significant_hit": "0 of 22,110 (results/holdout_cascade/) and 0 of 11,361 on Berlin (results/crossplant/ shuffle arm, corrected null)",
+        "why_it_is_a_citation_and_not_this_run_s_null": "This stage reads search output the cascade already wrote; it runs no search of its own, so it cannot produce a null. Pass --shuffled-evidence to supply one, or --without-null to record its absence by name."
+      }
+    }
+  },
+  "pile": {
+    "contigs_scored": 5794,
+    "a_contig_is_scored_when": "it has a protein-route row with an E-value below 1e-05 and a recorded query coverage",
+    "identity_median_percent": 41.2,
+    "identity_quartiles_percent": [
+      33.7,
+      41.2,
+      50.4
+    ],
+    "explains_fraction_median": 0.8053
+  },
+  "census": {
+    "rows": 23756,
+    "contigs": 20738,
+    "protein_rows": 5804,
+    "unrecorded_route_rows": 0,
+    "protein_rows_without_coverage": 0,
+    "contigs_with_a_protein_row": 5804,
+    "contigs_with_a_significant_protein_row": 5794,
+    "contigs_removed_by_other_routes_only": 14934,
+    "routes": {
+      "rrna": 10906,
+      "kraken2": 7046,
+      "protein": 5804
+    }
+  },
+  "joint_table": [
+    {
+      "coverage_lo": 0.7,
+      "coverage_hi": 1.0,
+      "identity_lo": 0,
+      "identity_hi": 50,
+      "contigs": 2663,
+      "percent_of_pile": 45.9613
+    },
+    {
+      "coverage_lo": 0.7,
+      "coverage_hi": 1.0,
+      "identity_lo": 50,
+      "identity_hi": 60,
+      "contigs": 615,
+      "percent_of_pile": 10.6144
+    },
+    {
+      "coverage_lo": 0.7,
+      "coverage_hi": 1.0,
+      "identity_lo": 60,
+      "identity_hi": 70,
+      "contigs": 229,
+      "percent_of_pile": 3.9524
+    },
+    {
+      "coverage_lo": 0.7,
+      "coverage_hi": 1.0,
+      "identity_lo": 70,
+      "identity_hi": 80,
+      "contigs": 55,
+      "percent_of_pile": 0.9493
+    },
+    {
+      "coverage_lo": 0.7,
+      "coverage_hi": 1.0,
+      "identity_lo": 80,
+      "identity_hi": 90,
+      "contigs": 35,
+      "percent_of_pile": 0.6041
+    },
+    {
+      "coverage_lo": 0.7,
+      "coverage_hi": 1.0,
+      "identity_lo": 90,
+      "identity_hi": 100,
+      "contigs": 62,
+      "percent_of_pile": 1.0701
+    },
+    {
+      "coverage_lo": 0.5,
+      "coverage_hi": 0.7,
+      "identity_lo": 0,
+      "identity_hi": 50,
+      "contigs": 844,
+      "percent_of_pile": 14.5668
+    },
+    {
+      "coverage_lo": 0.5,
+      "coverage_hi": 0.7,
+      "identity_lo": 50,
+      "identity_hi": 60,
+      "contigs": 154,
+      "percent_of_pile": 2.6579
+    },
+    {
+      "coverage_lo": 0.5,
+      "coverage_hi": 0.7,
+      "identity_lo": 60,
+      "identity_hi": 70,
+      "contigs": 56,
+      "percent_of_pile": 0.9665
+    },
+    {
+      "coverage_lo": 0.5,
+      "coverage_hi": 0.7,
+      "identity_lo": 70,
+      "identity_hi": 80,
+      "contigs": 22,
+      "percent_of_pile": 0.3797
+    },
+    {
+      "coverage_lo": 0.5,
+      "coverage_hi": 0.7,
+      "identity_lo": 80,
+      "identity_hi": 90,
+      "contigs": 12,
+      "percent_of_pile": 0.2071
+    },
+    {
+      "coverage_lo": 0.5,
+      "coverage_hi": 0.7,
+      "identity_lo": 90,
+      "identity_hi": 100,
+      "contigs": 12,
+      "percent_of_pile": 0.2071
+    },
+    {
+      "coverage_lo": 0.25,
+      "coverage_hi": 0.5,
+      "identity_lo": 0,
+      "identity_hi": 50,
+      "contigs": 615,
+      "percent_of_pile": 10.6144
+    },
+    {
+      "coverage_lo": 0.25,
+      "coverage_hi": 0.5,
+      "identity_lo": 50,
+      "identity_hi": 60,
+      "contigs": 141,
+      "percent_of_pile": 2.4336
+    },
+    {
+      "coverage_lo": 0.25,
+      "coverage_hi": 0.5,
+      "identity_lo": 60,
+      "identity_hi": 70,
+      "contigs": 68,
+      "percent_of_pile": 1.1736
+    },
+    {
+      "coverage_lo": 0.25,
+      "coverage_hi": 0.5,
+      "identity_lo": 70,
+      "identity_hi": 80,
+      "contigs": 9,
+      "percent_of_pile": 0.1553
+    },
+    {
+      "coverage_lo": 0.25,
+      "coverage_hi": 0.5,
+      "identity_lo": 80,
+      "identity_hi": 90,
+      "contigs": 6,
+      "percent_of_pile": 0.1036
+    },
+    {
+      "coverage_lo": 0.25,
+      "coverage_hi": 0.5,
+      "identity_lo": 90,
+      "identity_hi": 100,
+      "contigs": 11,
+      "percent_of_pile": 0.1899
+    },
+    {
+      "coverage_lo": 0.0,
+      "coverage_hi": 0.25,
+      "identity_lo": 0,
+      "identity_hi": 50,
+      "contigs": 131,
+      "percent_of_pile": 2.261
+    },
+    {
+      "coverage_lo": 0.0,
+      "coverage_hi": 0.25,
+      "identity_lo": 50,
+      "identity_hi": 60,
+      "contigs": 34,
+      "percent_of_pile": 0.5868
+    },
+    {
+      "coverage_lo": 0.0,
+      "coverage_hi": 0.25,
+      "identity_lo": 60,
+      "identity_hi": 70,
+      "contigs": 10,
+      "percent_of_pile": 0.1726
+    },
+    {
+      "coverage_lo": 0.0,
+      "coverage_hi": 0.25,
+      "identity_lo": 70,
+      "identity_hi": 80,
+      "contigs": 4,
+      "percent_of_pile": 0.069
+    },
+    {
+      "coverage_lo": 0.0,
+      "coverage_hi": 0.25,
+      "identity_lo": 80,
+      "identity_hi": 90,
+      "contigs": 1,
+      "percent_of_pile": 0.0173
+    },
+    {
+      "coverage_lo": 0.0,
+      "coverage_hi": 0.25,
+      "identity_lo": 90,
+      "identity_hi": 100,
+      "contigs": 5,
+      "percent_of_pile": 0.0863
+    }
+  ],
+  "band": {
+    "contigs": 68,
+    "percent_of_scored_pile": 1.1736,
+    "ordering": "ascending explained fraction",
+    "ordering_is_validated": false,
+    "ordering_note": "The candidate ranks 4th by bitscore inside its own cell at nucleotide level and 2nd at protein, so the defensible output is the cell with a count on it, never a flag and never the top row."
+  },
+  "control_arm": {
+    "state": "measured",
+    "what_it_is": "removals at or above 97.0% identity: near-reference material from this same library, the arm that says which cells known sequence occupies",
+    "contigs": 52,
+    "contigs_inside_the_band": 0,
+    "direction_measured_on_known_material": "On the holdout library's 34 leak contigs - known sequence from the same water - not one sits below 80% identity at either level and none enters the band. So crowding inside the band is other background, not recognisable material (results/holdout_cascade/).",
+    "why_not_measured": null
+  },
+  "null": {
+    "state": "not supplied: --without-null",
+    "why": "This stage reads search output the cascade already wrote; it runs no search of its own, so it cannot produce a null. Pass --shuffled-evidence to supply one, or --without-null to record its absence by name.",
+    "citations": "0 of 22,110 (results/holdout_cascade/) and 0 of 11,361 on Berlin (results/crossplant/ shuffle arm, corrected null)"
+  },
+  "what_this_refuses": [
+    "Ranking by identity: measured wrong on the one positive, which sits at the 93.46th percentile of removal identity.",
+    "A per-contig flag: the candidate is not the top row of its own cell.",
+    "A nucleotide-level band from this file: only the protein route carries an identity and a coverage on every row. The nucleotide cell is 137 contigs, 6.64%, measured in results/holdout_cascade/ and not reproducible from here."
+  ]
+}

@@ -1,0 +1,103 @@
+{
+ "sample": {
+  "accession": "SRR34217566"
+ },
+ "rundir": "/home/user/hapax/results/prod_SRR34217566/run_s5",
+ "measured": {
+  "pairs": 11589124,
+  "pairs_basis": "records counted in SRR34217566_1.fastq.gz",
+  "read_length": [
+   151,
+   151
+  ],
+  "layout": "paired",
+  "read_length_basis": "modal sequence length over the first 100000 records of each mate. Read length is the one recognition wall this project has measured moving (SPEC 4.2), so it is recorded rather than assumed comparable to another library's.",
+  "read_length_spread": {
+   "r1": [
+    [
+     151,
+     68088
+    ],
+    [
+     150,
+     20486
+    ],
+    [
+     149,
+     4563
+    ],
+    [
+     148,
+     1101
+    ],
+    [
+     147,
+     517
+    ]
+   ],
+   "r2": [
+    [
+     151,
+     59451
+    ],
+    [
+     150,
+     24140
+    ],
+    [
+     149,
+     8075
+    ],
+    [
+     148,
+     2346
+    ],
+    [
+     147,
+     707
+    ]
+   ]
+  },
+  "seeds": 5,
+  "block": 2500000,
+  "block_basis": "derived from the 11589124 pairs counted in this file: the largest round stride that fits 5 disjoint contiguous blocks of 200000 pairs with a 10% margin, so a file that counts shorter than its metadata still reads five blocks rather than leaving the last seeds empty.",
+  "measured_not_stated": [
+   "pairs",
+   "read_length",
+   "layout",
+   "block"
+  ],
+  "not_measurable_from_the_file": {
+   "trim_r2": "needs the reads mapped onto known sequence; see experiments/nontemplate_prefix_map.py and trim_from_prefix.py",
+   "sample": "the matrix, place, collection date and molecule are properties of the water and of the deposit, not of the FASTQ",
+   "crossplant_panel": "membership of a committed panel, not a property of the reads"
+  },
+  "wall_seconds": 47.2,
+  "accession": "SRR34217566",
+  "r1": "/opt/hapax/data/reads/SRR34217566_1.fastq.gz",
+  "r2": "/opt/hapax/data/reads/SRR34217566_2.fastq.gz",
+  "provenance": {
+   "producer": "hapax.measure.measure_to",
+   "hapax_version": "0.3.0",
+   "git_sha": "1dc582e6621af117ddad75b48baf3d388a724286",
+   "tree_dirty": false,
+   "module_sha256": "af2b90d7ae5d2e590b5e75d64fcc1a05cf1d1775c4e86642648feb62dfe8f73f"
+  }
+ },
+ "inputs": {
+  "spectrum": {
+   "path": "/home/user/hapax/results/prod_SRR34217566/run_s5/divergent_known_s5.json"
+  },
+  "spectrum_big_index": {
+   "not_run": "no larger-index block was run against these contigs"
+  }
+ },
+ "sample_facts": {
+  "matrix": "municipal wastewater",
+  "place": "Szeged",
+  "country": "Hungary",
+  "collected": "2024",
+  "molecule": "RNA",
+  "basis": "PRJNA1282049 run metadata via ENA filereport. The archive gives the year only, with no month or day, so the page says 2024 and does not invent a date. The matrix is recorded as municipal wastewater because the paired DNA libraries of the same study name the plant ('Szeged Municipal Wastewater Treatment Plant') while the RNA libraries name only the city; whether this run is influent or effluent is NOT stated by the archive and is therefore not stated here, which matters because the ribosomal fraction differs by two orders of magnitude between the two."
+ }
+}

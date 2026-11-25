@@ -63,6 +63,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # python3 -I drops the script dir
 import library_facts
+import provenance
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -386,8 +387,13 @@ def main() -> None:
     ap.add_argument("--strains", type=Path, required=True,
                     help="known_strain_divergence_s*.json from the run directory")
     ap.add_argument("--contigs", type=Path, default=ROOT / "data/geo/sample_contigs.fa")
-    ap.add_argument("--r1", type=Path, default=ROOT / "data/berlin/SRR23973193_1.fastq.gz")
-    ap.add_argument("--r2", type=Path, default=ROOT / "data/berlin/SRR23973193_2.fastq.gz")
+    # NO READ-PATH DEFAULT. These were the discriminating dataset's FASTQs, and a caller
+    # who said nothing got them: the package ran this script over another library, called
+    # and searched its genes, and then mapped them back to Berlin's reads - or, on a
+    # machine without them, raised FileNotFoundError after the expensive half. A read path
+    # is a fact about a sequencing run, so it is resolved from the library like the trim.
+    ap.add_argument("--r1", type=Path, default=None)
+    ap.add_argument("--r2", type=Path, default=None)
     library_facts.add_argument(ap)
     ap.add_argument("--trim-r2", type=int, default=None,
                     help="mate 2 bases trimmed when mapping reads back. This stage "
@@ -418,7 +424,8 @@ def main() -> None:
     # It is resolved from experiments/libraries.json under its own key, so the value these
     # results were produced with is pinned and the discrepancy is recorded rather than
     # silently reconciled; changing it means re-running this stage.
-    library_facts.resolve_args(a, {"trim_r2": "trim_r2_for_mapback"})
+    library_facts.resolve_args(a, {"trim_r2": "trim_r2_for_mapback",
+                                   "r1": "r1", "r2": "r2"})
 
     for p in (a.strains, a.contigs, a.dmnd, a.pfam):
         if not p.exists():
@@ -435,6 +442,40 @@ def main() -> None:
     both = {**test, **ctrl}
     print(f"{len(test)} divergent contigs, {len(ctrl)} near-reference controls",
           file=sys.stderr)
+
+    if not both:
+        # NO QUERIES IS A CENSUS, NOT A SEARCH THAT FAILED. Every helper below assumes at
+        # least one sequence: DIAMOND exits 1 on a blank query file ("First line seems to
+        # be blank") and mappy cannot index an empty FASTA, so an empty selection used to
+        # arrive as a traceback beside the line `0 divergent contigs, 0 near-reference
+        # controls` - which reads as a statement about the water and was a statement
+        # about which file was passed in. The distinction the report needs is between
+        # searched-and-found-nothing and never-searched, so it is written down.
+        out = {
+            "unit": "one row per contig; this run has none",
+            "question": "what are the contigs that sit far from any published protein",
+            "state": "not_searched",
+            "not_searched_because":
+                f"no contig in {a.strains} falls in either arm at the stated operating "
+                f"point, so there was nothing to call ORFs on and no search was run",
+            "operating_point": {
+                "min_alignment_aa": MIN_ALN_AA,
+                "divergent_arm_is_below_percent": a.diverged_below,
+                "control_arm_is_at_or_above_percent": a.control_above,
+                "min_orf_aa": a.min_orf_aa,
+            },
+            "counts": {"divergent": 0, "control_near_reference": 0,
+                       "rows_considered": sum(len(tx.get("rows", [])) for tx in
+                                              json.loads(a.strains.read_text())
+                                              .get("taxa", []))},
+            "rows": [],
+            "seed": a.seed,
+        }
+        out.update(provenance.provenance(__file__))
+        a.out.parent.mkdir(parents=True, exist_ok=True)
+        a.out.write_text(json.dumps(out, indent=2) + "\n")
+        print(f"nothing to work up; wrote the census to {a.out}", file=sys.stderr)
+        return
 
     allseqs = read_fasta(a.contigs)
     seqs = {n: allseqs[n] for n in both if n in allseqs}
@@ -469,6 +510,14 @@ def main() -> None:
     def summarise(rs):
         if not rs:
             return {}
+        flagged = sum(1 for r in rs if r["subject_disagreement_flag"])
+        flaggable = sum(1 for r in rs
+                        if r["orfs_with_a_subject"] >= 2 and r["orfs"] > 1)
+        assert flagged <= flaggable, (
+            f"{flagged} contigs flagged for subject disagreement out of {flaggable} "
+            "that carry two or more named ORFs, which is the only way the flag can "
+            "fire; a numerator above its own denominator means the two no longer "
+            "read the same row")
         return {
             "contigs": len(rs),
             "median_orfs": statistics.median([r["orfs"] for r in rs]),
@@ -476,8 +525,22 @@ def main() -> None:
                 round(sum(1 for r in rs if r["orfs_with_a_subject"]) / len(rs), 4),
             "fraction_with_any_pfam_domain":
                 round(sum(1 for r in rs if r["orfs_with_a_pfam_domain"]) / len(rs), 4),
-            "fraction_flagged_subject_disagreement":
-                round(sum(1 for r in rs if r["subject_disagreement_flag"]) / len(rs), 4),
+            # TWO DENOMINATORS, BOTH STATED. The flag can only fire on a contig with
+            # two or more ORFs carrying a subject, so a fraction over every contig in the
+            # arm mixes contigs that were tested with contigs that could not be. On
+            # SRR34217566 the two readings are 40.0% against 36.7% over all contigs
+            # and 100%
+            # against 84.6% over the ones that could be flagged: the first invites "the
+            # flag separates the arms a little", the second says what the Methods entry
+            # already says, that it carries almost no information about divergence. The
+            # count is kept beside the fraction so a reader can see which it is over, and
+            # the conditional fraction is None rather than 0.0 where nothing was testable,
+            # because "no contig was flagged" and "no contig could be" are different
+            # statements and an empty table renders them the same.
+            "fraction_flagged_subject_disagreement": round(flagged / len(rs), 4),
+            "contigs_that_could_be_flagged": flaggable,
+            "fraction_flagged_of_the_contigs_that_could_be": (
+                round(flagged / flaggable, 4) if flaggable else None),
             "median_coding_density":
                 round(statistics.median([r["coding_density"] for r in rs]), 3),
             "median_mapped_depth": statistics.median(
@@ -554,16 +617,12 @@ def main() -> None:
         "timings_seconds": {"diamond_viral": viral["seconds"], "diamond_sprot": sprot_sec,
                             "pfam": pf["seconds"], "total": round(time.time() - t0, 1)},
     }
-    try:
-        sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, check=True,
-                             capture_output=True, text=True).stdout.strip()
-        dirty = bool(subprocess.run(["git", "status", "--porcelain"], cwd=ROOT,
-                                    check=True, capture_output=True,
-                                    text=True).stdout.strip())
-    except Exception:
-        sha, dirty = "unknown", True
-    out["git_sha"] = sha + ("-dirty" if dirty else "")
-    out["tree_dirty"] = dirty
+    # The shared record, not a local copy: a `try/except` around `git` answers "unknown"
+    # and a positive `tree_dirty: true` on an instance with no git installed, which is a
+    # claim about a tree nobody looked at. `provenance.py` reads HAPAX_GIT_SHA where
+    # there is no checkout and raises where it can say nothing.
+    out["git_sha"] = provenance.git_sha()
+    out["tree_dirty"] = provenance.tree_dirty()
     # Taken when the manifest is written, which pins the code that ran whatever the tree
     # looked like. Editing this script while a run of it is in flight stamps the new hash
     # onto the old code's output; that has cost this repo two restarts.

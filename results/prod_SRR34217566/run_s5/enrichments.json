@@ -1,0 +1,91 @@
+{
+ "what_this_is": "the enrichment stages, which the sections that read them render without. An absence here is recorded with what the page shows instead; it is not a hole in the report.",
+ "seed": 5,
+ "stages": [
+  {
+   "stage": "workup",
+   "status": "ok",
+   "script": "experiments/divergent_contig_workup.py",
+   "script_sha256": "ae3dc99aa381f12f4348fd4c092ce1299bf4124eeb32a78fadccb4c022ced188",
+   "imports_sha256": {
+    "experiments/library_facts.py": "057c46d53c7a3abd709917275b9e2ce71d74735bdc769c4bbf17ac16c9f565b4",
+    "experiments/provenance.py": "ffe687a85906eed6990f1eb61b96359ed3641dc98ce7ab68201935407390bc54"
+   },
+   "imports_note": "read from the source before the process started; a dynamic import is not seen, so this is a floor on what could load",
+   "argv": [
+    "--seed",
+    "5",
+    "--strains",
+    "/opt/hapax/out/run_s5/known_strain_divergence_s5.json",
+    "--contigs",
+    "/opt/hapax/wk/asm_baseline/sample_contigs.fa",
+    "--pfam",
+    "/opt/hapax/db/pfam/Pfam-A.hmm",
+    "--dmnd-sprot",
+    "/opt/hapax/db/prot/sprot.dmnd",
+    "--dmnd",
+    "/opt/hapax/db/prot/viral.dmnd",
+    "--threads",
+    "8",
+    "--diamond-bin",
+    "/opt/hapax/mamba/envs/hapax/bin/diamond",
+    "--library",
+    "SRR34217566",
+    "--r1",
+    "/opt/hapax/data/reads/SRR34217566_1.fastq.gz",
+    "--r2",
+    "/opt/hapax/data/reads/SRR34217566_2.fastq.gz",
+    "--trim-r2",
+    "0",
+    "--map-limit",
+    "0",
+    "--work",
+    "/opt/hapax/out/run_s5/work/workup",
+    "--out",
+    "/opt/hapax/out/run_s5/divergent_contig_workup_s5.json"
+   ],
+   "returncode": 0
+  },
+  {
+   "stage": "architecture",
+   "status": "ok",
+   "script": "experiments/architecture_call.py",
+   "script_sha256": "07be28fec0d4d6e52fa5b6e7303c7f8bb4756b9659c960743970ca18d7a1a51b",
+   "imports_sha256": {
+    "experiments/provenance.py": "ffe687a85906eed6990f1eb61b96359ed3641dc98ce7ab68201935407390bc54"
+   },
+   "imports_note": "read from the source before the process started; a dynamic import is not seen, so this is a floor on what could load",
+   "argv": [
+    "--seed",
+    "5",
+    "--scored",
+    "/opt/hapax/out/run_s5/divergent_contig_workup_s5.json",
+    "--out",
+    "/opt/hapax/out/run_s5/architecture_s5.json"
+   ],
+   "returncode": 0
+  },
+  {
+   "stage": "names",
+   "status": "ok",
+   "script": "experiments/subject_names.py",
+   "script_sha256": "e0579916512c6548903b407abe861f21f726e77bf7e175587e6d02ab54d14984",
+   "imports_sha256": {
+    "experiments/berlin_io.py": "2357f8fa390b9b2a60e88d4fc85ea025cce9b83046e3c0580b4220c7525917d2",
+    "experiments/library_facts.py": "057c46d53c7a3abd709917275b9e2ce71d74735bdc769c4bbf17ac16c9f565b4",
+    "experiments/loud.py": "f4092b57016034c2bbf5984604fc43944422cf0592f669f98fa4583d9d110414",
+    "experiments/provenance.py": "ffe687a85906eed6990f1eb61b96359ed3641dc98ce7ab68201935407390bc54",
+    "experiments/subtract_known.py": "8fe97eb5c6c501705ab0fdf100d24069af1ab5913dde7c011c9453946521a3b1"
+   },
+   "imports_note": "read from the source before the process started; a dynamic import is not seen, so this is a floor on what could load",
+   "argv": [
+    "/opt/hapax/out/run_s5",
+    "--sources",
+    "/opt/hapax/db/prot/viral.1.protein.faa.gz",
+    "--out",
+    "/opt/hapax/out/run_s5/subject_names.json"
+   ],
+   "returncode": 0
+  }
+ ]
+}

@@ -30,7 +30,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from . import scripts
+from . import scripts, tools
 from .config import Config
 
 
@@ -47,15 +47,28 @@ def _attempt(repo: Path, name: str, args: list, stage: str, needs: list[str]) ->
     return {"stage": stage, "status": "ok", **code}
 
 
-def enrich(cfg: Config, out: Path, repo: Path, seed: int) -> list[dict]:
+def enrich(cfg: Config, out: Path, repo: Path, seed: int,
+           reads: tuple[Path, Path | None]) -> list[dict]:
     """Run the three, in their declared order, and write what happened.
 
     The order is the registry's: the architecture call reads the per-gene workup, so it is
     absent wherever the workup is, and recording that explicitly is why it is attempted
     rather than skipped on inspection.
     """
+    # THE READS THE RUN ACTUALLY READ, resolved once by the caller. `cfg.inputs["r1"]`
+    # is not that: the command line may name the FASTQs instead, which is how the CI
+    # fixture runs, and a config with no [inputs] r1 then raised a KeyError here after
+    # every stage. One resolution, passed in, is the same rule as the binaries.
     records: list[dict] = []
-    strains = out / "strains.json"
+    # THE TAXA STAGE'S OUTPUT, not `strains.json`. Two files in one run directory answer
+    # to the word strains: the `strains` stage writes a read-level table of SUBJECTS, and
+    # `known_strain_divergence.py` writes the per-CONTIG table of identities this script's
+    # `--strains` documents and its `pick_contigs` reads under a `taxa` key. The read-level
+    # table has no such key, so selection returned nothing, the ORF file was empty, and
+    # DIAMOND exited 1 on a blank query 11 stages into a paid run - reported as `0
+    # divergent contigs, 0 near-reference controls`, which reads like a property of the
+    # water and was a property of the filename.
+    strains = out / f"known_strain_divergence_s{seed}.json"
     workup = out / f"divergent_contig_workup_s{seed}.json"
 
     pfam = cfg.databases.get("pfam")
@@ -76,6 +89,38 @@ def enrich(cfg: Config, out: Path, repo: Path, seed: int) -> list[dict]:
              "--strains", strains, "--contigs", contigs or "",
              "--pfam", pfam, "--dmnd-sprot", sprot,
              "--dmnd", cfg.database("protein"), "--threads", cfg.threads,
+             # Always passed, never left to the script's default, which is the layout of
+             # one container written where a parameter goes: `/home/user/tools/diamond`.
+             # On an instance that is not there, and the workup failed with a
+             # FileNotFoundError 11 stages into a paid run. Same rule as prepare.split.
+             "--diamond-bin", tools.resolve(cfg, "diamond"),
+             # THE READS AND THE TRIM, because this script maps the selected contigs back
+             # to the library and its own defaults are the discriminating dataset's FASTQ
+             # paths. The driver guards its own stages against exactly this with two
+             # tables (LIBRARY_AWARE and SAMPLE_SPECIFIC) asserted against the scripts'
+             # source; the package runs this script and inherited neither, so seed 1 of
+             # an unseen library called 76 genes, searched them, and then opened
+             # `data/berlin/SRR23973193_1.fastq.gz`. `--library` goes with them so that
+             # library_facts.resolve_args can check the paths against the accession
+             # rather than filling a fact from whichever library its default names.
+             # A trim that was NOT stated is left out rather than passed as the word
+             # None: the script then resolves it from the library registry, which raises
+             # for a library it does not know. Stating it is the override, and the
+             # absence is the question, never a value.
+             "--library", cfg.label,
+             "--r1", reads[0], *(["--r2", reads[1]] if reads[1] else []),
+             *(["--trim-r2", cfg.fact("trim_r2")]
+               if cfg.fact("trim_r2") is not None else []),
+             # THE WHOLE LIBRARY, which is what `--map-limit 0` means. Bounding it to
+             # the first 200,000 mates to save half an hour per seed was measured and
+             # withdrawn: the divergent arm is low-abundance by construction, so 1.7% of
+             # the library mapped no read at all and every one of the 45 contigs came
+             # back at depth 0.0. The page's figure drops a contig below depth 1, so the
+             # panel's headline counted 34 assembled viruses above a figure saying no
+             # contig was left to draw. A read-support field computed from a sample that
+             # cannot contain the reads is not a cheaper measurement, it is a different
+             # one that reads zero.
+             "--map-limit", 0,
              # A file, and a work directory beside it: this script writes the path it is
              # given rather than a name of its own inside it, and `--work` is required.
              "--work", out / "work" / "workup",
