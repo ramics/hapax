@@ -280,7 +280,7 @@
     ],
     [
      "Bias",
-     "A region shared with another molecule collects that molecule reads, which raises depth without raising evidence. Evenness is the field that exposes it."
+     "A region shared with another molecule collects that molecule's reads, which raises depth without raising evidence. Evenness is the field that exposes it."
     ]
    ],
    "design": {
@@ -311,7 +311,7 @@
     ],
     [
      "Denominator",
-     "Contigs with two or more scorable genes."
+     "Contigs carrying two or more ORFs with a significant subject, which is the only way the flag can fire. That is not the set used for the identity spread above: an ORF can carry a subject without clearing the coverage and length floors a spread needs, so the two counts differ on the same contigs."
     ],
     [
      "Control",

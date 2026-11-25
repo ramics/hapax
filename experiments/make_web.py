@@ -4760,8 +4760,9 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
      that simply omitted the control would read as though the setting did not exist. */
   const gone = (CTLDEF.controls || []).filter(c => c.absent);
   if (gone.length) {
-    p.append(el('p', 'note', 'And ' + gone.length + (gone.length === 1 ? ' control that '
-      : ' controls that ') + 'moves on a run which measured it, but not on this one. ' +
+    p.append(el('p', 'note', 'And ' + gone.length +
+      (gone.length === 1 ? ' control that moves' : ' controls that move') +
+      ' on a run which measured them, but not on this one. ' +
       'That is not the same thing as a control that cannot move honestly, so it is said ' +
       'separately:'));
     const box = el('div', 'ctls');

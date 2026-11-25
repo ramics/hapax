@@ -302,8 +302,26 @@ def resolve(rundir: Path, bundle: dict, search: dict) -> dict:
         problems.append("the cannot-move table is empty; a control that cannot move "
                         "honestly has to be visible as a stated constraint rather than "
                         "absent from the page")
+    acc = ((bundle.get("page") or {}).get("sample") or {}).get("accession")
+    fixed = []
     for f in doc.get("fixed") or []:
         if not f.get("control") or not f.get("why"):
             problems.append(f"a cannot-move row is missing control or why: {f}")
+        # A REASON A CONTROL CANNOT MOVE IS GENERAL; THE NUMBER ILLUSTRATING IT IS NOT.
+        # Three rows here quoted one library's measurements as what the page ships: the
+        # mate-2 trim "ships as two measured runs, 14 and 16, 1.7 points apart" on a page
+        # whose own trim is 0, the assembly row quoted 8.79 points of residue movement,
+        # and the search row quoted an agreement measured over 16 contigs of another
+        # sample. Same shape as the per-library Methods rows, so the same rule: the
+        # general reason is printed everywhere and a measured sentence is printed only on
+        # the library it was measured on.
+        measured = f.get("measured") or {}
+        if not isinstance(measured, dict):
+            problems.append(f"{f.get('control')!r}: measured is not keyed by accession")
+            measured = {}
+        why = f["why"] if "why" in f else ""
+        extra = measured.get(acc) if acc else None
+        fixed.append({"control": f.get("control"),
+                      "why": f"{why} {extra}".strip() if extra else why})
     _fail(problems)
-    return {"controls": resolved, "fixed": doc["fixed"]}
+    return {"controls": resolved, "fixed": fixed}
