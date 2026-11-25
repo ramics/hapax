@@ -154,7 +154,12 @@ def coverage_axes(f: dict[str, str], mate: int) -> list[float] | None:
             math.log1p(max(step, 0.0))]
 
 
-def kmers(seq: str, k: int = 31) -> set[str]:
+#: The k the mate-sharing split uses, named once so the bias statement and the
+#: split cannot disagree about it.
+KMER_K = 31
+
+
+def kmers(seq: str, k: int = KMER_K) -> set[str]:
     """Canonical k-mers, for the mate-overlap test only."""
     comp = str.maketrans("ACGT", "TGCA")
     out = set()
@@ -284,6 +289,36 @@ def build_space(args, rows, tag: str):
         raise SystemExit(f"only {len(points)} mate points survived in {tag}; nothing can "
                          f"be measured")
     return np.asarray(points, dtype=np.float64), owner, which, dropped, seconds
+
+
+def _bias(rows, k: int) -> str:
+    """The bias statement, with THIS library's mate lengths in it.
+
+    The sentence used to end "Mate 2 is 93 nt against mate 1's 107 and carries 62
+    scorable 31-mers against 76", which is the discriminating dataset after its 14 nt
+    non-template trim. Every library's linkage output carried it, and the web view prints
+    it verbatim under the mate-recovery table, so a 2x151 library was told its mates were
+    93 and 107 nt. The asymmetry is the point of the sentence and is real wherever it
+    exists, so it is measured here and the clause is dropped where the two mates are the
+    same length, which is itself the thing a reader needs to know.
+    """
+    r1 = st.median([len(r[1]) for r in rows]) if rows else 0
+    r2 = st.median([len(r[2]) for r in rows]) if rows else 0
+    head = ("a pair's two mates come from one insert and many of them overlap, so this "
+            "is an UPPER BOUND on friendship resolution between reads of one genome, "
+            "not an estimate of it. The planted-genome purity in "
+            "results/residue_structure/ is the lower bound. ")
+    if r1 == r2:
+        return head + (
+            f"Both mates are {int(r1)} nt here, carrying {max(0, int(r1) - k + 1)} "
+            f"scorable {k}-mers each, so the two directions are the same measurement on "
+            "this library; they are still reported apart, because a mate can map at a "
+            "different rate without being shorter")
+    return head + (
+        f"Mate 2 is {int(r2)} nt against mate 1's {int(r1)} and carries "
+        f"{max(0, int(r2) - k + 1)} scorable {k}-mers against "
+        f"{max(0, int(r1) - k + 1)}, so the two directions are different measurements "
+        "and are reported apart")
 
 
 def main() -> None:
@@ -448,12 +483,7 @@ def main() -> None:
            "readout": "fraction of mates whose own partner is among their k nearest "
                       "neighbours in the standardised 10-axis per-mate space, against the "
                       "chance rate k/(n-1)",
-           "bias": "a pair's two mates come from one insert and 26-27% of them literally "
-                   "overlap, so this is an UPPER BOUND on friendship resolution between "
-                   "reads of one genome, not an estimate of it. The planted-genome purity "
-                   "in results/residue_structure/ is the lower bound. Mate 2 is 93 nt "
-                   "against mate 1's 107 and carries 62 scorable 31-mers against 76, so "
-                   "the two directions are different measurements and are reported apart",
+           "bias": _bias(rows, KMER_K),
            "wall_seconds": time.perf_counter() - t0,
            "python": platform.python_version(), "platform": platform.platform()}
     p = args.out / f"mate_friends_s{args.seed}.json"

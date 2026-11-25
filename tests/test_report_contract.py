@@ -20,7 +20,8 @@ from pathlib import Path
 
 import pytest
 
-from hapax.report import ReportError, build, inspect, missing_sections
+from hapax.report import (ReportError, build, descriptor, inspect,
+                          missing_sections)
 from hapax.schemas import SCHEMAS, SchemaError, validate
 from hapax.stages import R, SECTIONS
 
@@ -229,3 +230,29 @@ def test_the_report_build_passes_its_seed_to_the_descriptor(tmp_path):
     src = _inspect.getsource(report.build)
     assert 'descriptor(rundir, rundir / "page_descriptor.json", seed)' in src, (
         "the descriptor resolves per-seed filenames, so the seed has to reach it")
+
+
+def test_the_descriptor_carries_what_the_run_measured_off_the_reads(tmp_path):
+    """The registry answers what was supplied; only the file answers what the reads are.
+
+    The registry holds SRR34217566 at 150 nt and the file is 151. Separately the linkage
+    stage wrote its mate-asymmetry clause with one library's post-trim lengths inside it,
+    and every library's output carried the string, so a 2x151 library was told its mates
+    were 93 and 107 nt. The page prints the measured answer beside either, and it comes
+    through the descriptor because every run-directory file the renderer reads has to be a
+    declared stage output and this one is written by the launcher.
+    """
+    (tmp_path / "manifest.json").write_text(json.dumps(
+        {"tool": "hapax run", "parameters": {"library": "SRR23702504"}}))
+    (tmp_path / "library_measured.json").write_text(json.dumps(
+        {"pairs": 10, "read_length": [151, 151], "layout": "paired"}))
+    out = descriptor(tmp_path, tmp_path / "d.json", 1)
+    assert json.loads(out.read_text())["measured"]["read_length"] == [151, 151]
+
+
+def test_a_run_that_measured_nothing_carries_an_empty_measured_block(tmp_path):
+    """Absent is empty, not a guess at the registry's answer."""
+    (tmp_path / "manifest.json").write_text(json.dumps(
+        {"tool": "hapax run", "parameters": {"library": "SRR23702504"}}))
+    out = descriptor(tmp_path, tmp_path / "d.json", 1)
+    assert json.loads(out.read_text())["measured"] == {}

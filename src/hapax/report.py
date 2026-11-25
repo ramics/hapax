@@ -146,6 +146,17 @@ def _declare(path: Path, why_absent: str) -> dict:
     return {"path": str(path)} if path.exists() else {"not_run": why_absent}
 
 
+def _measured(rundir: Path) -> dict:
+    """The launcher's measured-library record, or an empty dict where none was written."""
+    f = Path(rundir) / "library_measured.json"
+    if not f.exists():
+        return {}
+    try:
+        return json.loads(f.read_text())
+    except (OSError, ValueError):
+        return {}
+
+
 def descriptor(rundir: Path, out_path: Path, seed: int = 1) -> Path:
     """Assemble the page descriptor from what the run recorded about itself.
 
@@ -174,6 +185,15 @@ def descriptor(rundir: Path, out_path: Path, seed: int = 1) -> Path:
     d = {
         "sample": {"accession": accession},
         "rundir": str(rundir),
+        # WHAT THE RUN MEASURED OFF THE READS, WHICH IS NOT WHAT THE REGISTRY STATES.
+        # The registry holds SRR34217566 at 150 nt and the file is 151; separately, the
+        # linkage stage wrote its mate-asymmetry clause with one library's post-trim
+        # lengths in it and every library's output carried the string, so a 2x151 library
+        # was told its own mates were 93 and 107 nt. The page prints the measured answer
+        # beside either. It is carried here rather than read by the renderer because every
+        # run-directory file the renderer reads must be a declared output of a stage, and
+        # this one is written by the launcher before any stage runs.
+        "measured": _measured(rundir),
         # The files outside the run directory that panels may read. Declared as not run,
         # with the reason, rather than left out: a declared absence and an undeclared one
         # look the same on a page and are not the same thing.

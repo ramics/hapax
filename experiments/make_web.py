@@ -779,6 +779,14 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int,
         # hand-written sentence is visible as one instead of passing for a derived fact.
         "page": {"title": page["title"], "sample": page["sample"],
                  "derived": page.get("derived"), "overrides": page.get("overrides") or [],
+                 # What the run measured off the reads themselves, which the descriptor
+                 # carries because the registry answers a different question: it holds
+                 # this library at 150 nt where the file is 151, and a stage's prose
+                 # carried a third library's lengths. The page states the measured answer
+                 # beside either. It arrives through the descriptor rather than being read
+                 # here, because every run-directory file the renderer reads has to be a
+                 # declared output of a stage and this one is written by the launcher.
+                 "measured": page.get("measured") or {},
                  "inputs": {k: ({"path": _shown(v)} if v is not None else
                                 {"not_run": page["inputs"][k]["not_run"]})
                             for k, v in page["_inputs"].items()}},
@@ -2812,7 +2820,19 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
       'level, is what decides whether linkage is usable at library scale.'));
     p.append(s2);
   }
-  p.append(el('p', 'note', esc(L.bias || '')));
+  /* THE STAGE'S BIAS STATEMENT, WITH THIS RUN'S MATE LENGTHS BESIDE IT. The linkage
+     stage wrote its mate asymmetry clause with one library's post-trim lengths in it -
+     "mate 2 is 93 nt against mate 1's 107" - and every library's output carried the
+     string, so a 2x151 library was told its own mates were 93 and 107 nt. The stage now
+     measures them, and the page states the run's own lengths here as well, because a run
+     produced before that fix would otherwise keep printing the sentence unchallenged. */
+  const lens = ((D.page || {}).measured || {}).read_length;
+  p.append(el('p', 'note', esc(L.bias || '') +
+    (Array.isArray(lens) && lens.length
+      ? ' On this run the mates measure ' + lens.map(String).join(' and ') +
+        ' nt, so read any length in the sentence above as the library it was measured ' +
+        'on and not as this one.'
+      : '')));
   app.append(p);
 })();
 
