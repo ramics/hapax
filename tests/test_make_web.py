@@ -327,3 +327,54 @@ def test_the_row_reader_is_imported_and_not_re_typed():
             if f'{name}.gz' in src:
                 assert "run_rows" in src, f"{f.name} opens {name}.gz on its own"
     assert run_rows.jsonl(ROOT / "results/holdout_cascade/run_s1", "reads.jsonl")
+
+
+def test_the_chimaera_rate_is_over_the_contigs_the_flag_could_fire_on():
+    """The flag needs two named ORFs, so the arm's contig count is the wrong denominator.
+
+    Measured on SRR34217566: 6 of 15 divergent contigs and 11 of 30 near-reference
+    controls carry the flag, which reads 40.0% against 36.7% over the arms and 100%
+    against 84.6% over the contigs that could be flagged. The first invites "the flag
+    separates the arms a little"; only the second is the quantity the Methods entry
+    describes. The page derives it rather than trusting the stage, because runs produced
+    before the stage carried the field would otherwise fall back to the wider
+    denominator, which reads lower in the direction of a separation.
+    """
+    rows = ([{"arm": "divergent", "orfs": 2, "orfs_with_a_subject": 2,
+              "subject_disagreement_flag": True}] * 6
+            + [{"arm": "divergent", "orfs": 1, "orfs_with_a_subject": 1,
+                "subject_disagreement_flag": False}] * 9
+            + [{"arm": "control_near_reference", "orfs": 3, "orfs_with_a_subject": 3,
+                "subject_disagreement_flag": True}] * 11
+            + [{"arm": "control_near_reference", "orfs": 3, "orfs_with_a_subject": 3,
+                "subject_disagreement_flag": False}] * 2
+            + [{"arm": "control_near_reference", "orfs": 1, "orfs_with_a_subject": 0,
+                "subject_disagreement_flag": False}] * 17)
+    out = make_web._flaggable(
+        rows, {"divergent": {"contigs": 15},
+               "control_near_reference": {"contigs": 30}})
+    assert out["divergent"]["contigs_that_could_be_flagged"] == 6
+    assert out["divergent"]["fraction_flagged_of_the_contigs_that_could_be"] == 1.0
+    assert out["control_near_reference"]["contigs_that_could_be_flagged"] == 13
+    assert (out["control_near_reference"]
+            ["fraction_flagged_of_the_contigs_that_could_be"] == 0.8462)
+
+
+def test_an_arm_with_nothing_testable_is_not_reported_as_a_zero_rate():
+    """No contig could be flagged and no contig was flagged render the same as 0.0."""
+    out = make_web._flaggable(
+        [{"arm": "divergent", "orfs": 1, "orfs_with_a_subject": 1,
+          "subject_disagreement_flag": False}],
+        {"divergent": {"contigs": 1}})
+    assert out["divergent"]["contigs_that_could_be_flagged"] == 0
+    assert out["divergent"]["fraction_flagged_of_the_contigs_that_could_be"] is None
+
+
+def test_a_flag_count_above_its_own_denominator_is_refused():
+    """The impossible case, asserted where the quantity is computed."""
+    import pytest
+    with pytest.raises(ValueError, match="two or more named ORFs"):
+        make_web._flaggable(
+            [{"arm": "divergent", "orfs": 1, "orfs_with_a_subject": 1,
+              "subject_disagreement_flag": True}],
+            {"divergent": {"contigs": 1}})

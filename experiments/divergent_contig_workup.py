@@ -510,6 +510,14 @@ def main() -> None:
     def summarise(rs):
         if not rs:
             return {}
+        flagged = sum(1 for r in rs if r["subject_disagreement_flag"])
+        flaggable = sum(1 for r in rs
+                        if r["orfs_with_a_subject"] >= 2 and r["orfs"] > 1)
+        assert flagged <= flaggable, (
+            f"{flagged} contigs flagged for subject disagreement out of {flaggable} "
+            "that carry two or more named ORFs, which is the only way the flag can "
+            "fire; a numerator above its own denominator means the two no longer "
+            "read the same row")
         return {
             "contigs": len(rs),
             "median_orfs": statistics.median([r["orfs"] for r in rs]),
@@ -517,8 +525,22 @@ def main() -> None:
                 round(sum(1 for r in rs if r["orfs_with_a_subject"]) / len(rs), 4),
             "fraction_with_any_pfam_domain":
                 round(sum(1 for r in rs if r["orfs_with_a_pfam_domain"]) / len(rs), 4),
-            "fraction_flagged_subject_disagreement":
-                round(sum(1 for r in rs if r["subject_disagreement_flag"]) / len(rs), 4),
+            # TWO DENOMINATORS, BOTH STATED. The flag can only fire on a contig with
+            # two or more ORFs carrying a subject, so a fraction over every contig in the
+            # arm mixes contigs that were tested with contigs that could not be. On
+            # SRR34217566 the two readings are 40.0% against 36.7% over all contigs
+            # and 100%
+            # against 84.6% over the ones that could be flagged: the first invites "the
+            # flag separates the arms a little", the second says what the Methods entry
+            # already says, that it carries almost no information about divergence. The
+            # count is kept beside the fraction so a reader can see which it is over, and
+            # the conditional fraction is None rather than 0.0 where nothing was testable,
+            # because "no contig was flagged" and "no contig could be" are different
+            # statements and an empty table renders them the same.
+            "fraction_flagged_subject_disagreement": round(flagged / len(rs), 4),
+            "contigs_that_could_be_flagged": flaggable,
+            "fraction_flagged_of_the_contigs_that_could_be": (
+                round(flagged / flaggable, 4) if flaggable else None),
             "median_coding_density":
                 round(statistics.median([r["coding_density"] for r in rs]), 3),
             "median_mapped_depth": statistics.median(

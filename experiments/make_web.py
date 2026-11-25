@@ -268,9 +268,43 @@ def _trim_workup(w):
              "title": o["best_title"], "sig": bool(o.get("significant")),
              "pfam": [x["id"] for x in o["pfam"]]}
             for o in r.get("orf_rows", [])]
-    return {k: w[k] for k in ("summary", "operating_point", "the_number_to_rank_by",
-                              "bands", "blind_spots", "seed", "git_sha",
-                              "script_sha256") if k in w} | {"rows": rows}
+    out = {k: w[k] for k in ("summary", "operating_point", "the_number_to_rank_by",
+                             "bands", "blind_spots", "seed", "git_sha",
+                             "script_sha256") if k in w} | {"rows": rows}
+    out["summary"] = _flaggable(w.get("rows", []), out.get("summary") or {})
+    return out
+
+
+def _flaggable(rows, summary):
+    """Fill in the chimaera flag's own denominator, which is not the arm's contig count.
+
+    The flag fires only where a contig carries two or more ORFs with a subject, so a
+    fraction over every contig in the arm is a fraction over a pile that includes
+    contigs the test could not have fired on. Both readings are kept, each beside its
+    count, because the page prints the conditional one and the archived result files
+    quote the unconditional one. This is computed here as well as in the stage so that a
+    run produced before the stage carried the field renders the same number rather than
+    silently falling back to the wider denominator, which reads lower and in the
+    direction of "the flag separates the two arms".
+    """
+    summary = {k: dict(v) if isinstance(v, dict) else v for k, v in summary.items()}
+    for arm, s in summary.items():
+        if not isinstance(s, dict) or "contigs_that_could_be_flagged" in s:
+            continue
+        rs = [r for r in rows if r.get("arm") == arm]
+        flagged = sum(1 for r in rs if r.get("subject_disagreement_flag"))
+        flaggable = sum(1 for r in rs
+                        if (r.get("orfs_with_a_subject") or 0) >= 2
+                        and (r.get("orfs") or 0) > 1)
+        if flagged > flaggable:
+            raise ValueError(
+                f"arm {arm}: {flagged} contigs carry the subject-disagreement flag out "
+                f"of {flaggable} that carry two or more named ORFs, which is the only "
+                "way it can fire")
+        s["contigs_that_could_be_flagged"] = flaggable
+        s["fraction_flagged_of_the_contigs_that_could_be"] = (
+            round(flagged / flaggable, 4) if flaggable else None)
+    return summary
 
 
 def load(p: Path):
@@ -3923,6 +3957,54 @@ function interval(iv) {
   const deep = rows.filter(r => (r.read_support || {}).mapped_mean_depth >= 100
                                 && r.contig_nt >= 3000);
 
+  /* A length claim with no chimaera number beside it is the thing CLAUDE.md refuses,
+     and this page was making one: the flag was computed by the stage, carried in the
+     payload and read by nothing, so the Methods entry describing it sat uncited while
+     the section above it counted complete genomes. Both arms are printed from the same
+     summary, flagged over the contigs that could be flagged, and the sentence says what
+     the comparison means rather than leaving two percentages side by side. A missing
+     denominator is reported as not testable, never as 0%. */
+  /* A difference of two fractions is points, not a percent: "within 15.38%" invites a
+     reader to take it as a ratio of the two rates. */
+  function points(g) { return (g * 100).toFixed(1) + ' percentage points'; }
+
+  function chimaeraLine() {
+    const pair = [['divergent', dsum], ['control_near_reference', ctrl]];
+    const got = pair.filter(([, s]) => s && s.contigs_that_could_be_flagged);
+    if (!got.length) {
+      return '<div class="vsub">No contig in this run carries two or more named genes, ' +
+        'so the chimaera check could not fire on either arm' + cite('chimaera') +
+        '. Nothing here is dropped on it.</div>';
+    }
+    const say = got.map(([k, s]) =>
+      pct(s.fraction_flagged_of_the_contigs_that_could_be) + ' of the ' +
+      s.contigs_that_could_be_flagged +
+      (k === 'divergent' ? ' divergent' : ' near-reference control') +
+      ' contigs that could be').join(' and ');
+    /* Whether the two arms read alike is a property of the run, not a sentence to
+       type: on a library where the flag did separate them, the clause below would be
+       asserting the opposite of its own numbers. It is read off the gap, and either way
+       nothing is dropped on the flag, which is the part that does not depend on it. */
+    const gap = (dsum && ctrl
+                 && dsum.fraction_flagged_of_the_contigs_that_could_be != null
+                 && ctrl.fraction_flagged_of_the_contigs_that_could_be != null)
+      ? Math.abs(dsum.fraction_flagged_of_the_contigs_that_could_be
+                 - ctrl.fraction_flagged_of_the_contigs_that_could_be)
+      : null;
+    const reading = gap == null
+      ? ' Only one arm could be tested here, so the flag has no comparison on this run.'
+      : (gap <= 0.2
+         ? ' The two arms read within ' + points(gap) + ' of each other, so the flag ' +
+           'tracks how the assembler joined genes rather than how far they sit from a ' +
+           'reference.'
+         : ' The two arms differ by ' + points(gap) + ', which this page reports without ' +
+           'reading it as divergence: the flag has not been calibrated against an ' +
+           'assembly whose joins are known.');
+    return '<div class="vsub">Genes on one contig disagree about which organism they ' +
+      'come from on ' + say + cite('chimaera') + '.' + reading +
+      ' Nothing is dropped on it.</div>';
+  }
+
   const hero = el('div', 'verdict');
   hero.innerHTML = '<div class="vmain"><b>' + belowNinety.length + ' of ' + taxa.length +
     '</b> assembled viruses sit <b>below 90% identity</b> to their closest published ' +
@@ -3940,7 +4022,7 @@ function interval(iv) {
     '<div class="vsub">Identity here means one gene against the single closest protein ' +
     'in the reference sets, at E&lt;1e-5 over at least 60 aa. Below about 90% that ' +
     'protein is a nearest neighbour rather than an identification, and the name it ' +
-    'lends is borrowed.</div>';
+    'lends is borrowed.</div>' + chimaeraLine();
   p.append(hero);
 
   /* THE LINE. One quantity, one chart, no legend: everything that would need one is

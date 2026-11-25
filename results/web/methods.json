@@ -387,7 +387,7 @@
     ],
     [
      "Procedure",
-     "ORFs called by Prodigal in metagenome mode, DIAMOND blastx and blastp against RefSeq viral proteins and Swiss-Prot, roles read from Pfam at gathering cutoffs. Position on the axis is the identity of the polymerase where one is called and the whole-contig hit otherwise, stated per row. The bar is the range across that contig own scorable genes. Colour is the fraction of the scored gene the alignment spans. Height is median mapped depth from minimap2."
+     "ORFs called by Prodigal in metagenome mode, DIAMOND blastx and blastp against RefSeq viral proteins and Swiss-Prot, roles read from Pfam at gathering cutoffs. Position on the axis is the identity of the polymerase where one is called and the whole-contig hit otherwise, stated per row. The bar is the range across that contig's own scorable genes. Colour is the fraction of the scored gene the alignment spans. Height is median mapped depth from minimap2."
     ],
     [
      "Threshold",
