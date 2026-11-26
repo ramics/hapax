@@ -566,6 +566,29 @@ a copy used to fall back. A stage whose reference data is absent writes
 a cheaper index and reports the number as if it were the real one, and it never guesses a
 sample's reference.
 
+**Every arm the tool can run, it runs: there is no control that waits to be asked for.**
+Two of them were opt-in and were therefore not run. The **divergence ladder** — a real viral
+genome walked away from itself and spiked into this library's own background — is a
+production stage and not validation, because the distance in it is one this run fixes rather
+than one a depositor fixed: it assumes nothing about the water and measures this instrument
+against this background, which is what every sensitivity sentence otherwise asserts. Its
+genome must be absent from the sample's own assembly, which no reference set can know, so the
+stage cuts candidates out of the nucleotide release into windows, maps them against the
+contigs this run just produced, and takes the first clean one, recording every candidate it
+rejected and why. Where no candidate in the band is clean the stage fails with that reason,
+because a ladder run against resident sequence reads as sensitivity the tool does not have.
+The spike is written with **this library's measured instrument** — the modal length of each
+mate and the per-base error rate its own Q strings imply, the latter an upper bound
+conservative by about 2.6× where it has been checked — rather than with the two rates and the
+one read length measured on SRR23973193 in 2026, which were defaults inside the stage script
+and reached every library through them. The **search fields' shuffled arm** is the second: the
+per-read report searched the residue and the subtracted reads against both protein indexes
+and never the shuffled copies it was already building for the composition fields, so the
+significance-floor figure had no control row and two fields were reported as unable to
+discriminate for want of a comparator. That arm is a dinucleotide shuffle, the harder of the
+two, and it is labelled as such beside the mononucleotide null the composition fields use:
+they are different draws and must not be read across one figure.
+
 **Sign flips, found twice, so every field states its direction measured on known material:**
 "the unmatched half returns to the same subject" fires 8× more on *identified* contigs, and
 the coverage-shape family has **familiarity polarity** — 0.78 AUC that means *already seen*
@@ -1067,7 +1090,11 @@ run — the withheld genome of §6, the deposited panel of §6d — is a **fixtu
 this tool**, not something the tool found in anybody's water. It therefore belongs to the
 validation suite, `tests/` and `results/holdout_run/`, and **nothing in the report is built
 from it**: no panel, no row, no marker on the distance axis, and no input a descriptor could
-only fill on the fixture library. The report contains what was measured on this water and
+only fill on the fixture library. The **spiked divergence ladder of §8 is not one of these**,
+and the difference is who fixed the distance: its genome is not from this water, the rates
+are the run's own, and it is spiked in rather than looked for, so it describes the instrument
+and never the sample. It is a production stage, it fills no section of the report, and the
+page reads its calibration block where there is one. The report contains what was measured on this water and
 nothing about what we happened to know in advance.
 
 This went wrong twice, in opposite directions, and both are worth recording because both

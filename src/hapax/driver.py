@@ -27,7 +27,7 @@ preflighted: hapax checks its own inputs, and each experiment script is called w
 and tools is the one checked. Anything absent, empty or not executable stops the run in its
 first seconds with every problem listed, exit status 2, and a manifest saying it refused.
 A stage is `skipped` only when the command line asked for that (`--stages`, no
-`--calibrate`, no `--unidentified-contigs`); an input that vanishes mid-run is `failed`.
+`--unidentified-contigs`); an input that vanishes mid-run is `failed`.
 Neither falls back to a cheaper index - the project has already had to withdraw a figure
 whose index silently differed from the one named.
 
@@ -578,40 +578,108 @@ class Run:
                          {"census.json": out / f"linkage_census_s{a.seed}.json"},
                          out / f"linkage_census_s{a.seed}.json")
 
-    def calibration(self) -> dict:
-        """Per-sample divergence ladder: a holdout genome spiked at known divergence.
+    def instrument_argv(self) -> list[str]:
+        """The spike simulator's read lengths and error rates, from this run's own reads.
 
-        Imo's requirement, and the only positive control this tool has. Without it every
-        sensitivity statement in the run is an assertion: the ladder is what converts
-        "survived subtraction" into "would have survived at 20% divergence".
+        A read length and an error rate are facts about one sequencing run, and all four
+        of these were defaults measured on SRR23973193 inside the stage script. They are
+        passed here from `library_measured.json` - the modal length of each mate over the
+        first 100,000 records, and the mean of 10**(-Q/10) over their bases - with the
+        basis, so that the ladder's output says whose instrument it simulated. Mate 2's
+        length has this run's trim taken off it, because that is what every stage reads.
+
+        What is NOT passed is left to the script's default and named as such in its
+        output. Omitting a flag silently is how the problem started.
         """
         a = self.args
-        if not a.calibrate:
-            return self.record("calibration", "skipped",
-                               reason="--calibrate not given. The run's divergence ladder "
-                                      "is therefore absent rather than assumed, and no "
-                                      "sensitivity-at-divergence figure may be read off it")
-        # The ladder's tier 1 has to be THIS run's tier 1: the same Kraken2 databases and
+        argv: list[str] = []
+        basis = []
+        if a.read_len:
+            argv += ["--read-len", str(a.read_len)]
+            basis.append(f"mate 1 {a.read_len} nt")
+        if a.read_len2:
+            second = max(1, a.read_len2 - (a.trim_r2 or 0))
+            argv += ["--read-len2", str(second)]
+            basis.append(f"mate 2 {second} nt ({a.read_len2} less this run's "
+                         f"{a.trim_r2 or 0} nt trim)")
+        if a.err1 is not None:
+            argv += ["--err1", str(a.err1)]
+        if a.err2 is not None:
+            argv += ["--err2", str(a.err2)]
+        if a.err1 is not None or a.err2 is not None:
+            basis.append("error rates from this library's own Q strings, an upper bound "
+                         "conservative by about 2.6x where it has been checked against a "
+                         "reference-free measurement (SRR23973193: 0.00206 implied "
+                         "against 0.00068 measured), so the spike is noisier than the "
+                         "real reads and the bias costs recognition")
+        if argv:
+            argv += ["--instrument-basis",
+                     "measured on this run's own reads by experiments/measure_library.py: "
+                     + "; ".join(basis)]
+        return argv
+
+    def calibration(self) -> dict:
+        """Per-sample divergence ladder: a known genome spiked at known divergence.
+
+        THE ONLY POSITIVE CONTROL THIS TOOL HAS ON UNKNOWN WATER, and why it is in the
+        default set. Imo, 2026-11-23, on the depositor truth panel: *"why would we, with
+        unknown wastewater, have a genome with a distance fixed before the run? by
+        default we know nothing."* That is right about the panel, which scores recovery
+        against genomes somebody else assembled out of the same water, and it is the
+        reason `panel` is still validation. It is not right about this stage, and the
+        difference is who fixed the distance. The ladder takes a genome that is NOT from
+        this water, walks it away from itself at rates this run chooses, and spikes it
+        into this library's own background. Nothing about the sample is assumed; what is
+        measured is this instrument's sensitivity against this background, which is the
+        quantity every sensitivity sentence in the run otherwise asserts. Without it
+        "survived subtraction" cannot be read as "would have survived at 20% divergence".
+
+        WHAT THE STAGE STILL REFUSES. The genome has to be absent from the sample's own
+        assembly, and that is a property of the water rather than of a reference set, so
+        it is measured here and not stated: `spike_holdout.pick_genome` cuts candidates
+        out of the nucleotide release into windows, maps them against this run's own
+        contigs, and takes the first clean one. Where no candidate in the band is clean,
+        the stage fails with that reason rather than running a ladder against resident
+        sequence, which would read as sensitivity the tool does not have.
+        """
+        a = self.args
+        # THE LADDER'S TIER 1 HAS TO BE THIS RUN'S TIER 1: the same Kraken2 databases and
         # protein indexes as the cascade, and this sample's own contigs. None of them was
-        # passed before, so the ladder measured Berlin's subtrahend for any library. The
-        # spike genome is sample-specific too: it is a clean holdout only if it is absent
-        # from this sample's assembly.
-        # The two index sets are in this list for the same reason as the sample's files:
-        # the ladder reports sensitivity AT a divergence, and that number is read against
-        # whatever index the ladder's tier 1 consulted. An empty list here would send the
-        # stage script to its own defaults, so the ladder would be calibrated against one
-        # index and the cascade run against another, with nothing on the page saying so.
-        absent = [f for f, v in (("--spike-genome", a.spike_genome),
-                                 ("--contigs", a.contigs),
+        # passed before, so the ladder measured Berlin's subtrahend for any library. An
+        # empty list here would send the stage script to its own defaults, so the ladder
+        # would be calibrated against one index and the cascade run against another with
+        # nothing on the page saying so.
+        #
+        # `--cross-sample-ref` is NOT in this list, though it used to be. It is assemblies
+        # of other samples from the same works, it feeds one observed field, and it is
+        # excluded from tier 1 by construction, so requiring it refused the whole positive
+        # control on a library with no sibling samples - which is every library production
+        # is for. The ladder records that field as not measured instead.
+        # NO GENOME SOURCE IS A SKIP, not a failure. A run whose configuration names no
+        # nucleotide release and no chosen genome has said it has nothing to spike: that
+        # is a stated operating point, like a per-read field left out with
+        # --report-without, and it marks the run incomplete. Everything else in this list
+        # is an input the ladder cannot be read without, and an absent one is a failure.
+        if not (a.spike_genome or a.spike_genomes):
+            return self.record(
+                "calibration", "skipped",
+                reason="no spike genome source: neither --spike-genome nor "
+                       "--spike-genomes was given, so there is nothing to walk away from "
+                       "itself and no sensitivity-at-divergence figure may be read off "
+                       "this run. `hapax fetch-db --all` stages the nucleotide release "
+                       "the ladder draws from")
+        absent = [f for f, v in (("--contigs", a.contigs),
                                  ("--unidentified-contigs", a.unidentified_contigs),
-                                 ("--cross-sample-ref", a.cross_sample_ref),
                                  ("--k2-dbs", a.k2_dbs),
                                  ("--dmnd", a.dmnd)) if not v]
         if absent:
             return self.record("calibration", "failed",
                                reason=f"the ladder needs this sample's {absent}")
         silva = self.work / "cascade_work" / "silva.fa"
-        gone = self.missing("calibration", [a.r1, a.r2, a.spike_genome, silva, *a.contigs])
+        gone = self.missing("calibration",
+                            [a.r1, a.r2, *( [a.spike_genome] if a.spike_genome else []),
+                             *([a.spike_genomes] if a.spike_genomes else []),
+                             silva, *a.contigs])
         if gone:
             return self.record("calibration", "failed", reason=f"absent inputs: {gone}")
         # The ladder takes one identified-contig file and the cascade subtracts several,
@@ -623,16 +691,28 @@ class Run:
                     h.write(Path(c).read_text())
         out = self.work / "calibration"
         argv = ["--seed", str(a.seed), "--out", str(out),
-                "--genome", str(a.spike_genome),
                 "--r1", str(a.r1), "--r2", str(a.r2), "--threads", str(a.threads),
                 "--trim-r2", str(a.trim_r2),
                 "--silva", str(silva),
                 "--identified", str(ident),
                 "--unidentified", str(a.unidentified_contigs[0]),
-                "--cross-sample-ref", str(a.cross_sample_ref),
                 "--k2-dbs", *[str(d) for d in a.k2_dbs],
                 "--dmnd", *[str(d) for d in a.dmnd],
                 "--work", str(self.work / "calibration_work")]
+        if a.spike_genome:
+            argv += ["--genome", str(a.spike_genome)]
+        else:
+            argv += ["--genome-pool", str(a.spike_genomes)]
+        if a.cross_sample_ref:
+            argv += ["--cross-sample-ref", str(a.cross_sample_ref)]
+        # THE SPIKE IS WRITTEN WITH THIS LIBRARY'S INSTRUMENT, MEASURED. The script's
+        # defaults are SRR23973193's post-trim mate-1 length and its Q-derived error
+        # means, and a default is how one library's instrument reaches every library: a
+        # ladder run at 107 nt into a 2 x 150 library measures sensitivity for an
+        # instrument that library does not have, in the direction of less recognition.
+        # The lengths and the rates come from `library_measured.json`, which this run
+        # wrote off its own reads, and the basis travels with them.
+        argv += self.instrument_argv()
         if a.classify_bin:
             argv += ["--classify-bin", str(a.classify_bin)]
         if a.diamond_bin:
@@ -963,7 +1043,8 @@ class Run:
 
         A LIBRARY WITH NO PANEL IS SKIPPED WITH ITS REASON, which is Berlin's case: no
         depositor genome set exists for that water, so its positive control is the spiked
-        ladder (`--calibrate`). That is a different fact from a panel that was scored and
+        ladder, which is a production stage and needs no depositor. That is a different
+        fact from a panel that was scored and
         found nothing, and the stage's output says which.
         """
         a = self.args
@@ -1093,8 +1174,17 @@ class Run:
                 return self.record("strains", "failed", reason=searched["why"])
             return self.record("strains", "skipped", reason=searched["why"])
         by: dict[str, dict] = {}
+        null_rows_skipped = 0
         for line in open(p):
             r = json.loads(line)
+            if r.get("set") == "shuffled":
+                # The search null's rows. They are in this file so that the page's
+                # significance-floor figure can re-filter all three arms in one pass, and
+                # they carry the search fields only. Counted rather than dropped quietly,
+                # because the two-way test this line replaces filed every one of them as
+                # already-identified material.
+                null_rows_skipped += 1
+                continue
             pile = "residue" if r.get("set", "residue") == "residue" else "known"
             best = None
             for k, v in r.items():
@@ -1150,6 +1240,7 @@ class Run:
             "subjects": rows[:500],
             "subjects_total": len(rows),
             "known_pile_searched_reads": known_searched,
+            "shuffled_null_rows_not_counted": null_rows_skipped,
             "unit": "one row per subject, not per read",
             "not_a_score": "subjects are not ordered by novelty. Identity is a distance "
                            "from a database and score ordering tracks database proximity, "
@@ -1335,6 +1426,12 @@ class Run:
         with open(p) as fh, open(out_rows, "w") as out:
             for line in fh:
                 r = json.loads(line)
+                if r.get("set") == "shuffled":
+                    # The search null carries the search fields only, so every layer field
+                    # would be absent on it and the whole arm would read `undetermined`.
+                    # Its place is the significance-floor figure, where it moves with the
+                    # threshold it controls.
+                    continue
                 pile = "residue" if r.get("set", "residue") == "residue" else "known"
                 cov = coverage.setdefault(pile, {})
                 for f in {f for fs in LAYER_FIELDS.values() for f in fs}:
@@ -1450,19 +1547,24 @@ class Run:
                                           "determinable for this read"}
 
     # -- the manifest ---------------------------------------------------------
-    def finish(self) -> int:
-        a = self.args
-        bs = ROOT / "blind_spots.json"
-        if bs.exists():
-            shutil.copyfile(bs, self.dir / "blind_spots.json")
+    @staticmethod
+    def field_calibration(rundir: Path) -> tuple[dict | str, int]:
+        """Each field's calibration state, and how many known-positive rows there were.
+
+        Extracted from `finish` so it can be asserted on a run directory directly. It is a
+        derived column, and a derived column no figure plots needs a test: the states it
+        can produce are the difference between "this field cannot separate the piles" and
+        "this field was never given a comparator", and a published page carried the first
+        sentence for three fields that were the second.
+        """
         # Field calibration is checked at write time rather than in review, because a field
         # printed without its calibration is the failure this project is built around. A
         # null says what the field reads on meaningless sequence; the known-positive says
         # whether it reads differently on sequence the cascade DID identify. The second
         # comes from the rows file, where subtracted reads travel beside residue reads, so
         # both files are consulted and neither absence is inferred from the other.
-        fields = self.dir / "fields.json"
-        rows = self.dir / "reads.jsonl"
+        fields = rundir / "fields.json"
+        rows = rundir / "reads.jsonl"
         known_positive_rows = 0
         if rows.exists():
             # Parsed, not string-matched: the old test counted a row as known whenever the
@@ -1470,7 +1572,11 @@ class Run:
             # containing that word moved a row between piles.
             with open(rows) as fh:
                 for line in fh:
-                    if json.loads(line).get("set", "residue") != "residue":
+                    # `== "known"`, not `!= "residue"`. reads.jsonl now carries a third
+                    # arm, and the negative test counted every shuffled null row as a
+                    # known positive, which would mark a field calibrated on the strength
+                    # of its own control.
+                    if json.loads(line).get("set", "residue") == "known":
                         known_positive_rows += 1
         field_check: dict | str = {}
         if fields.exists():
@@ -1478,14 +1584,36 @@ class Run:
             for name, v in (d.get("fields", d) or {}).items():
                 if not isinstance(v, dict):
                     continue
-                null = next((v[k] for k in ("null", "shuffled", "shuffled_null")
-                             if k in v), None)
+                # A SEARCH field's null is a hit fraction and a COMPOSITION field's is a
+                # spread, so both key shapes are read here. The arms were added to the
+                # producer in one pass (`residue_report.search_null`,
+                # `_composition_arms`); before it, the two search fields had no null at
+                # all and every composition field's subtracted-read arm was computed per
+                # read and thrown away at the summary, so three fields on a published
+                # page read `cannot discriminate` for want of a comparator rather than
+                # for want of a difference.
+                null = next((v[k] for k in ("null", "shuffled", "shuffled_null",
+                                            "shuffled_null_any_hit_frac")
+                             if v.get(k) is not None), None)
                 real = v.get("residue")
-                state = "null only" if null is not None else \
-                    "cannot discriminate here: no null in this run"
-                if null is not None and known_positive_rows:
-                    state = "calibrated"
-                note = None
+                has_known = any(k in v for k in ("subtracted_reads",
+                                                 "subtracted_reads_any_hit_frac",
+                                                 "subtracted_reads_bitscore"))
+                # A field no shuffle can move is not a field that failed to discriminate.
+                # GC is identical on both arms to the digit because a composition-matched
+                # shuffle permutes bases, and the producer says so in this key rather than
+                # leaving the equality to be read as a result.
+                no_null_because = v.get("shuffled_null_absent_because")
+                if null is not None:
+                    state = "calibrated" if (has_known or known_positive_rows) \
+                        else "null only: no known-positive arm for this field"
+                elif no_null_because:
+                    state = ("no null exists for this field; calibrated against the "
+                             "subtracted pile" if has_known else
+                             "no null exists for this field, and no known-positive arm")
+                else:
+                    state = "cannot discriminate here: no null in this run"
+                note = no_null_because
                 if isinstance(null, dict) and isinstance(real, dict) and \
                         null.get("mean") == real.get("mean") and \
                         null.get("sd") == real.get("sd"):
@@ -1493,13 +1621,26 @@ class Run:
                     # mononucleotide composition, so a composition field's null is the field
                     # itself. A reader shown the two side by side without this would read an
                     # agreement as a result.
+                    # Kept as a tripwire for any field whose null turns out degenerate
+                    # without its producer having said so. Where the subtracted-read arm
+                    # exists the field is still calibrated, against that arm and not
+                    # against the null, and the state says which.
                     note = ("null identical to the measurement by construction: the "
-                            "shuffle preserves this field, so it has no null here and "
-                            "cannot discriminate")
-                    state = "cannot discriminate here: the null is the field itself"
+                            "shuffle preserves this field, so it has no null here")
+                    state = ("the null is the field itself; calibrated against the "
+                             "subtracted pile" if has_known else
+                             "cannot discriminate here: the null is the field itself")
                 field_check[name] = {"state": state, "note": note} if note else state
         else:
             field_check = "fields.json absent in this run"
+        return field_check, known_positive_rows
+
+    def finish(self) -> int:
+        a = self.args
+        bs = ROOT / "blind_spots.json"
+        if bs.exists():
+            shutil.copyfile(bs, self.dir / "blind_spots.json")
+        field_check, known_positive_rows = self.field_calibration(self.dir)
         bad = [s for s in self.stages if s["status"] == "failed"]
         skipped = [s for s in self.stages if s["status"] == "skipped"]
         manifest = {
@@ -1648,7 +1789,7 @@ SAMPLE_SPECIFIC = {
                           ("--rrna-contigs", None), ("--identified-contigs", None),
                           ("--unidentified-contigs", None)],
     "spike_holdout.py": [("--r1", None), ("--r2", None), ("--trim-r2", None),
-                         ("--genome", None), ("--identified", None),
+                         ("--identified", None),
                          ("--unidentified", None), ("--cross-sample-ref", None),
                          ("--silva", None)],
     "mate_friends.py": [("--r1", None), ("--r2", None), ("--trim-r2", None)],
@@ -1689,23 +1830,28 @@ STAGE_ORDER = ["profile", "cascade", "contigs", "reads", "linkage", "census",
                "calibration", "intervals", "layers", "strains", "taxa", "divergent",
                "shortlist", "panel", "crossplant", "ranking"]
 
-#: Stages that score the run against sequence whose distance was fixed BEFORE it, and so
-#: are validation of the tool rather than output of it.
+#: The stage that scores the run against sequence somebody ELSE fixed the distance of,
+#: and so is validation of the tool rather than output of it.
 #:
 #: Imo, 2026-11-23: *"why are we asking for depositor assembled genomes IN PROD THERE IS NO
 #: DEPOSITOR"*, and earlier the same day: *"why would we, with unknown wastewater, have a
 #: genome with a distance fixed before the run? by default we know nothing. we always know
-#: nothing."* `panel` scores recovery against the depositors' own assemblies from that
-#: water; `calibration` scores a spiked divergence ladder. Both are real and both are how
-#: this tool is known to work at all - and neither has an answer on water nobody has
-#: deposited from, which is every sample production is for. So they are not in the default
-#: set: a production run does not ask the question, rather than asking it and recording an
-#: absence. They stay selectable by name, which is how a fixture library runs them.
+#: nothing."* `panel` scores recovery against the depositors' own assemblies out of that
+#: same water. Most water has no depositor, and a run cannot create one, so it is not in
+#: the default set: a production run does not ask the question rather than asking it and
+#: recording an absence. It stays selectable by name, which is how a fixture library runs
+#: it, and SPEC 13.4 says the same thing from the report's end - no ground-truth section
+#: on any page, because a section that renders empty on real water tells its reader
+#: something is missing from their sample.
 #:
-#: This is the same conclusion the report reached from the other end (SPEC 13.4): no
-#: ground-truth section on any page, because a section that renders empty on real water
-#: tells its reader something is missing from their sample.
-VALIDATION_STAGES = ["calibration", "panel"]
+#: `calibration` WAS IN THIS LIST AND IS NOT ANY MORE. The distinction the list was
+#: missing is who fixed the distance. The ladder spikes a genome that is not from this
+#: water, at rates this run chooses, into this library's own background: it assumes
+#: nothing about the sample and measures this instrument against this background, which is
+#: what every sensitivity sentence in a run otherwise asserts. Left opt-in, it was simply
+#: not run, and the one library here that went through the documented command alone
+#: published a report with no positive control of any kind.
+VALIDATION_STAGES = ["panel"]
 PRODUCTION_STAGES = [s for s in STAGE_ORDER if s not in VALIDATION_STAGES]
 
 
@@ -1855,16 +2001,33 @@ def main(argv: list[str] | None = None) -> int:
                         "profile library the domain calls came from is an operating "
                         "point, and the `divergent` stage refuses without it")
     r.add_argument("--spike-genome", type=Path, default=None,
-                   help="REQUIRED with --calibrate, no default: it was chosen as absent "
-                        "from Berlin's assembly, which says nothing about another sample's. "
-                        "Genomes for the divergence ladder. Only a genome ABSENT from "
+                   help="one genome for the divergence ladder, where you have "
+                        "established its distance yourself. Only a genome ABSENT from "
                         "this sample's own assembly is a clean holdout - a resident one "
                         "is removed by the sample's own contigs at every rung and reads "
                         "as the tool working when it is the sample working "
-                        "(results/spike_holdout/)")
-    r.add_argument("--calibrate", action="store_true",
-                   help="run the per-sample divergence ladder. Without it the run carries "
-                        "no positive control and says so")
+                        "(results/spike_holdout/). Naming one is a claim this tool "
+                        "cannot check, so the usual input is --spike-genomes")
+    r.add_argument("--spike-genomes", type=Path, default=None,
+                   help="the nucleotide release the ladder CHOOSES its genome from: the "
+                        "first in the length band whose windows do not already map this "
+                        "sample's own contigs. Absence from one water is not a property "
+                        "a reference set can carry, so it is measured per run and "
+                        "recorded with every candidate it rejected")
+    r.add_argument("--read-len", type=int, default=None,
+                   help="mate 1's length, measured off this run's own reads, for the "
+                        "spike simulator. No default here: the stage script's is "
+                        "SRR23973193's and a default is how one library's instrument "
+                        "reaches every library")
+    r.add_argument("--read-len2", type=int, default=None,
+                   help="mate 2's length before this run's trim, which is taken off it "
+                        "here. The mates are not interchangeable and a ladder that "
+                        "simulates both at one length removes the asymmetry it exists "
+                        "to measure")
+    r.add_argument("--err1", type=float, default=None,
+                   help="mate 1's per-base error rate implied by its own Q strings")
+    r.add_argument("--err2", type=float, default=None,
+                   help="mate 2's per-base error rate implied by its own Q strings")
     r.add_argument("--stages", nargs="+", default=PRODUCTION_STAGES, choices=STAGE_ORDER,
                    help="default: every production stage. The validation stages "
                         + ", ".join(VALIDATION_STAGES) + " are selectable by name and are "

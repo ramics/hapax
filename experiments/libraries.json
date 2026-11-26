@@ -1,190 +1,195 @@
 {
- "what_this_is": "Per-library facts that are properties of a sequencing run, not of this code. They were written as defaults in roughly fifteen scripts and as bare literals inside five more, one copy each, which is how a value measured on one library silently applies itself to another.",
- "how_to_use_it": "Ask for a library by accession. A script that cannot name its library must be told the values explicitly; it must never fall back to another library's. Adding a library means adding an entry here with how each value was established. The `sample` block is what the run viewer's one-line description is assembled from (experiments/page_descriptor.py): the matrix, the place, the collection date and the molecule, each a property of the water and not of this code. A clause whose fact is absent is left out of the sentence rather than guessed, and a library with no sample block gets a page that says so.",
- "libraries": {
-  "SRR23973193": {
-   "label": "Berlin influent, the discriminating dataset",
-   "sample": {
-    "matrix": "influent",
-    "place": "Berlin",
-    "country": "Germany",
-    "molecule": "RNA",
-    "basis": "PRJNA948850/GSE228220: untreated influent from one Berlin treatment plant, RNA library. The collection date is absent here because data/MANIFEST.md does not record one for this run, and a date nobody wrote down is not a date."
-   },
-   "bioproject": "PRJNA948850",
-   "layout": "paired",
-   "pairs": 8731224,
-   "trim_r2": 14,
-   "trim_r2_basis": "mate 2 carries about 14 nt of non-template 5' sequence, mapped base by base in results/nontemplate_prefix_map/. After trimming R1 is 107 nt and R2 93, which is why any field computed symmetrically over a pair has to be reported per mate.",
-   "trim_r2_for_kraken2": 16,
-   "trim_r2_for_kraken2_basis": "two further bases are trimmed before Kraken2 only, measured separately; other kits take 0.",
-   "block": 1500000,
-   "block_basis": "pairs skipped per seed so that five seeds read five distinct contiguous regions of the flow cell. Sized to this library: 5 x 1.5 M sits inside 8.73 M pairs. A larger block on a smaller library runs off the end of the file, and the five seeds are contiguous blocks rather than a random sample, which is why DESIGN_EFFECT is never re-estimated from them.",
-   "r1": "data/berlin/SRR23973193_1.fastq.gz",
-   "r2": "data/berlin/SRR23973193_2.fastq.gz",
-   "trim_r2_for_mapback": 16,
-   "trim_r2_for_mapback_basis": "16, not 14, is what divergent_known.py and divergent_contig_workup.py trimmed when mapping reads back onto contigs, and every depth and evenness number in results/divergent_known/ and results/divergent_contigs/ was produced with it. It is recorded as its own key rather than quietly reconciled to 14, because 14 is the measured prefix and a 2-base over-trim is a real if small difference: changing it means re-running both stages, so the value is pinned here with the discrepancy stated instead of being a bare literal in two scripts.",
-   "truth_panel": null,
-   "truth_panel_absent_because": "No depositor-assembled genome set exists for this water: results/holdout_candidates/depth.tsv covers SRR23421542/43/44 only. This library's positive control is the spiked divergence ladder (--calibrate), not a truth panel, and a run of it reports the panel stage as skipped with this reason rather than scoring against another library's genomes.",
-   "crossplant_panel": "cp3",
-   "panel_basis": "which truth panel and which cross-plant panel apply to this library. The panels themselves are defined in experiments/stage_references.json; a null here is a measured absence and must carry its *_absent_because reason, which experiments/stage_refs.py refuses without."
+  "what_this_is": "Per-library facts that are properties of a sequencing run, not of this code. They were written as defaults in roughly fifteen scripts and as bare literals inside five more, one copy each, which is how a value measured on one library silently applies itself to another.",
+  "how_to_use_it": "Ask for a library by accession. A script that cannot name its library must be told the values explicitly; it must never fall back to another library's. Adding a library means adding an entry here with how each value was established. The `sample` block is what the run viewer's one-line description is assembled from (experiments/page_descriptor.py): the matrix, the place, the collection date and the molecule, each a property of the water and not of this code. A clause whose fact is absent is left out of the sentence rather than guessed, and a library with no sample block gets a page that says so.",
+  "libraries": {
+    "SRR23973193": {
+      "label": "Berlin influent, the discriminating dataset",
+      "sample": {
+        "matrix": "influent",
+        "place": "Berlin",
+        "country": "Germany",
+        "molecule": "RNA",
+        "basis": "PRJNA948850/GSE228220: untreated influent from one Berlin treatment plant, RNA library. The collection date is absent here because data/MANIFEST.md does not record one for this run, and a date nobody wrote down is not a date."
+      },
+      "bioproject": "PRJNA948850",
+      "layout": "paired",
+      "pairs": 8731224,
+      "trim_r2": 14,
+      "trim_r2_basis": "mate 2 carries about 14 nt of non-template 5' sequence, mapped base by base in results/nontemplate_prefix_map/. After trimming R1 is 107 nt and R2 93, which is why any field computed symmetrically over a pair has to be reported per mate.",
+      "trim_r2_for_kraken2": 16,
+      "trim_r2_for_kraken2_basis": "two further bases are trimmed before Kraken2 only, measured separately; other kits take 0.",
+      "block": 1500000,
+      "block_basis": "pairs skipped per seed so that five seeds read five distinct contiguous regions of the flow cell. Sized to this library: 5 x 1.5 M sits inside 8.73 M pairs. A larger block on a smaller library runs off the end of the file, and the five seeds are contiguous blocks rather than a random sample, which is why DESIGN_EFFECT is never re-estimated from them.",
+      "r1": "data/berlin/SRR23973193_1.fastq.gz",
+      "r2": "data/berlin/SRR23973193_2.fastq.gz",
+      "trim_r2_for_mapback": 16,
+      "trim_r2_for_mapback_basis": "16, not 14, is what divergent_known.py and divergent_contig_workup.py trimmed when mapping reads back onto contigs, and every depth and evenness number in results/divergent_known/ and results/divergent_contigs/ was produced with it. It is recorded as its own key rather than quietly reconciled to 14, because 14 is the measured prefix and a 2-base over-trim is a real if small difference: changing it means re-running both stages, so the value is pinned here with the discrepancy stated instead of being a bare literal in two scripts.",
+      "truth_panel": null,
+      "truth_panel_absent_because": "No depositor-assembled genome set exists for this water: results/holdout_candidates/depth.tsv covers SRR23421542/43/44 only. This library's positive control is the spiked divergence ladder (--calibrate), not a truth panel, and a run of it reports the panel stage as skipped with this reason rather than scoring against another library's genomes.",
+      "crossplant_panel": "cp3",
+      "panel_basis": "which truth panel and which cross-plant panel apply to this library. The panels themselves are defined in experiments/stage_references.json; a null here is a measured absence and must carry its *_absent_because reason, which experiments/stage_refs.py refuses without.",
+      "crossplant_within_plant": true,
+      "crossplant_within_plant_basis": "PRJNA948850 contributes 116 libraries from this plant to the panel, so the paired within-plant stratum exists. The query library is excluded from its own subject set, which is rule 1."
+    },
+    "SRR23421544": {
+      "label": "the holdout library, the positive control",
+      "sample": {
+        "matrix": "treated wastewater",
+        "place": "Russia",
+        "molecule": "RNA",
+        "collected": "2022-05-10",
+        "basis": "PRJNA917124 run metadata, read off the BioSample when the holdout was selected (results/holdout_run/). The locality is the country because the deposit gives no finer one."
+      },
+      "bioproject": "PRJNA917124",
+      "layout": "single",
+      "layout_note": "the metadata says library_layout=PAIRED and the library is single-end. Everything SPEC 4.3 gains from merging the mates is untestable here, so this instrument is weaker than production, in the direction that makes the withheld genome harder to find.",
+      "pairs": 4290429,
+      "trim_r2": 0,
+      "trim_r2_basis": "single-end: there is no mate 2 to trim, and trimming 14 nt off anything here would delete real sequence.",
+      "block": 1000000,
+      "block_basis": "5 x 1.5 M does not fit in 4.29 M reads, so the Berlin default leaves seeds 4 and 5 reading nothing. Measured, and it produced a directory that looked like a five-seed result.",
+      "truth_panel": "depositor_25",
+      "crossplant_panel": null,
+      "crossplant_panel_absent_because": "The committed cross-plant panel was built around the Berlin query sample and this library is not one of its plants, so a paired per-plant comparison has no within-plant stratum for it. Running it against cp3 would report a between-plant rate with no comparator, which is the pooled reading this measurement exists to refuse.",
+      "panel_basis": "which truth panel and which cross-plant panel apply to this library. The panels themselves are defined in experiments/stage_references.json; a null here is a measured absence and must carry its *_absent_because reason, which experiments/stage_refs.py refuses without."
+    },
+    "SRR23973265": {
+      "label": "Berlin influent 2022-06-16, RNA: the drift comparison",
+      "sample": {
+        "matrix": "influent",
+        "place": "Berlin",
+        "country": "Germany",
+        "molecule": "RNA",
+        "collected": "2022-06-16",
+        "basis": "PRJNA948850 run metadata; the date is the one results/dna_rna_pair/ selected this library for, eight months after the discriminating run."
+      },
+      "bioproject": "PRJNA948850",
+      "layout": "paired",
+      "trim_r2": 14,
+      "trim_r2_basis": "the same non-template prefix as SRR23973193: results/nontemplate_prefix_map/ measures a 5' soft-clip mode of 14 in 5 of 5 seeds on both RNA libraries.",
+      "block": 1500000,
+      "block_basis": "inherited from results/dna_rna_pair/, which used one 1.5 M stride for all three of its libraries because the seeds have to select the same block of each. It is not measured against this library's own read count, which is the weaker claim of the two block entries in this file."
+    },
+    "SRR23973375": {
+      "label": "Berlin influent 2022-06-16, DNA: the kind control for the RNA pair",
+      "sample": {
+        "matrix": "influent",
+        "place": "Berlin",
+        "country": "Germany",
+        "molecule": "DNA",
+        "collected": "2022-06-16",
+        "basis": "PRJNA948850 run metadata: the same water and date as SRR23973265, sequenced as DNA. It is the kind control for that pair."
+      },
+      "bioproject": "PRJNA948850",
+      "layout": "paired",
+      "trim_r2": 14,
+      "trim_r2_basis": "NOT measured on this library. The prefix was mapped on the two RNA libraries only, and results/dna_rna_pair/ applied their 14 to this DNA library as well. It is written here so that the assumption is visible and attributable rather than a default; a DNA kit has no reason to carry an RNA kit's prefix, and nothing has checked it.",
+      "trim_r2_unverified": true,
+      "block": 1500000,
+      "block_basis": "inherited from results/dna_rna_pair/, which used one 1.5 M stride for all three of its libraries because the seeds have to select the same block of each. It is not measured against this library's own read count, which is the weaker claim of the two block entries in this file."
+    },
+    "SRR23421543": {
+      "label": "treated wastewater RNA, Russia, same deposit series",
+      "truth_panel": "depositor_25",
+      "crossplant_panel": null,
+      "crossplant_panel_absent_because": "As SRR23421544.",
+      "panel_basis": "which truth panel and which cross-plant panel apply to this library. The panels themselves are defined in experiments/stage_references.json; a null here is a measured absence and must carry its *_absent_because reason, which experiments/stage_refs.py refuses without.",
+      "partial_entry": "panel facts only. This library appears in this file because the depositors' genome panel is ground truth for it, and nothing here has measured its trim or sized its block - so asking for either raises, which is the right answer rather than inheriting SRR23421544's. Add them with how they were established if a stage needs to read these reads."
+    },
+    "SRR23421542": {
+      "label": "treated wastewater RNA, Russia, same deposit series",
+      "truth_panel": "depositor_25",
+      "crossplant_panel": null,
+      "crossplant_panel_absent_because": "As SRR23421544.",
+      "panel_basis": "which truth panel and which cross-plant panel apply to this library. The panels themselves are defined in experiments/stage_references.json; a null here is a measured absence and must carry its *_absent_because reason, which experiments/stage_refs.py refuses without.",
+      "partial_entry": "panel facts only. This library appears in this file because the depositors' genome panel is ground truth for it, and nothing here has measured its trim or sized its block - so asking for either raises, which is the right answer rather than inheriting SRR23421544's. Add them with how they were established if a stage needs to read these reads."
+    },
+    "SRR23702504": {
+      "label": "Yeongdok plant effluent, South Korea, collected 2020-09-11, RNA: the first library run through production that nothing in this repo had touched",
+      "sample": {
+        "matrix": "treated effluent",
+        "place": "Yeongdok",
+        "country": "South Korea",
+        "molecule": "RNA",
+        "collected": "2020-09-11",
+        "basis": "PRJNA941081 run metadata and results/crossplant/panel.tsv, which carries 12 libraries from this plant and names it. The matrix is recorded as treated effluent rather than influent because it is the plant's outflow, and this pass measured a consequence of that rather than assuming one: the library anchors 0.13-0.14% of pairs to SILVA against roughly 32% for the Berlin influent, two to three orders of magnitude less ribosomal (see rrna_anchored_fraction)."
+      },
+      "bioproject": "PRJNA941081",
+      "layout": "paired",
+      "pairs": 32125614,
+      "pairs_basis": "ENA filereport read_count for SRR23702504, 9,701,935,428 bases over 2 x 151 nt. It is the count before the run, used to size the block; experiments/prod_run.sh asserts the block arithmetic against the pairs it actually counts in the file rather than against this number.",
+      "read_length": [
+        151,
+        151
+      ],
+      "read_length_basis": "base_count / read_count from ENA. 44 nt longer per mate than SRR23973193's 107/93 after trimming, which matters because read length is the one recognition wall this project has measured moving (SPEC 4.2): a figure from this library is not comparable to Berlin's at matched length.",
+      "trim_r2": 0,
+      "trim_r2_basis": "MEASURED AND THE MEASUREMENT CANNOT CARRY IT, which is why the value is 0 and why this entry is long. experiments/nontemplate_prefix_map.py over 5 x 100,000 pairs (results/prod_SRR23702504/nontemplate_prefix/) finds the mate-2 5' soft-clip mode at 0 in 5 of 5 seeds, holding 47.1-52.5% of anchored mates, with mate 1 also 0 at 73.3-78.5% - the shape of a library with no non-template prefix. But it rests on 127-144 anchored mates per seed, 0.13-0.14% of pairs, against roughly 32,000 and 32% on SRR23973193: this is treated effluent and SILVA has almost nothing in it to anchor to, so by the instrument's own rule (experiments/trim_from_prefix.py, floor 2,000 anchored) it REFUSED to name a trim, and the production run was given the value on the command line instead, which SPEC 4.1 allows because stating it is the override. 0 is chosen because it is the only value that cannot delete real template; the residual risk, if this kit does carry a prefix, is kit sequence left in the reads, which runs towards less recognition and - in the assembler - towards a tip rather than a join. Nothing beyond the mode supports it: the non-zero clip lengths are spread flat over 3-73 nt at 1-3% each, and the 3' end of the same mate clips a mean of 11.0-13.6 nt, so the 5'-minus-3' excess of +7.7 to +11.4 is two large numbers taken from 139 reads rather than a prefix.",
+      "block": 6000000,
+      "block_basis": "pairs skipped per seed so that five seeds read five distinct contiguous regions of the flow cell, sized to THIS library: 5 x 200,000 pairs at stride 6 M puts the blocks at 0, 6 M, 12 M, 18 M and 24 M, the last ending at 24,200,000 of 32,125,614. The ceiling is 7,981,403; 6 M leaves margin for a file that counts short. Berlin's 1.5 M would crowd all five seeds into the first 6.2 M pairs of a 32 M-pair library, which is not wrong so much as unrepresentative.",
+      "r1": "data/yeongdok/SRR23702504_1.fastq.gz",
+      "r2": "data/yeongdok/SRR23702504_2.fastq.gz",
+      "paths_basis": "staged from SRA on the instance that runs the pass; data/ is gitignored, as for every library here.",
+      "trim_r2_unverified": true,
+      "trim_r2_unverified_note": "Same flag and same reason as SRR23973375, the DNA library: a value this repo applies while nothing has checked it. The instrument that would check it is ribosomal, and this library is not. Clipping the reads against the sample's OWN assembled contigs would not need SILVA at all and is the obvious next instrument; it is untested here and would need an untrimmed assembly to measure against, which is a chicken and egg this pass did not break.",
+      "rrna_anchored_fraction": [
+        0.0013,
+        0.0014
+      ],
+      "rrna_anchored_fraction_basis": "fraction of 100,000 pairs whose mate 2 anchors to SILVA at >= 60 matching bases and MAPQ >= 30, per seed, 5 seeds. It is a third rRNA instrument and it says this library is two to three orders of magnitude less ribosomal than the Berlin influent, which is the single biggest difference between the two samples and is expected of effluent.",
+      "plant": "Yeongdok",
+      "truth_panel": null,
+      "truth_panel_absent_because": "No depositor-assembled genome set exists for this water. results/holdout_candidates/depth.tsv covers SRR23421542/43/44 only, and scoring this library against those Russian genomes would report another water's ground truth as this one's. So recovery against truth is ABSENT for this sample, not zero, and the residue fraction it ships beside therefore travels without the recovery figure SPEC 4.3 requires of a path-settings comparison - which is a stated limit of running a new sample, not a result about it.",
+      "positive_control_absent_because": "Berlin's substitute for a panel is the spiked divergence ladder (--calibrate), and that stage needs a cross-sample reference assembly from the same works, which this run did not stage. This library therefore ran with no positive control of any kind: nothing in it has a distance fixed before the run.",
+      "crossplant_panel": "cp3",
+      "crossplant_panel_basis": "The library is NOT a member of cp3 - results/crossplant/panel.tsv holds 536 rows and this accession is not one of them - so its query reads are not searched against its own library, which is the refusal crossplant_stage.py enforces and the one that would invent recurrence (54% false growth against a 6% swap control). The plant IS in the panel with 12 libraries, three of them influent from this same date (2020-09-11, YIF807/808/809), so the paired within-plant stratum the measurement needs exists and is same-plant-same-date-other-water: it separates water type from drift, which no other pairing in the panel does.",
+      "panel_basis": "which truth panel and which cross-plant panel apply to this library. The panels themselves are defined in experiments/stage_references.json; a null here is a measured absence and must carry its *_absent_because reason, which experiments/stage_refs.py refuses without.",
+      "crossplant_within_plant": true,
+      "crossplant_within_plant_basis": "the plant this library was drawn from is represented in results/crossplant/panel.tsv by other libraries, so the paired within-plant stratum exists and the per-plant reading is the paired one. SRR23702504's own plant contributes 12 panel libraries while the library itself is not a member, which is the condition rule 1 requires."
+    },
+    "fixture": {
+      "label": "the CI read fixture, not a sequencing run: 9,987 simulated pairs over three real genomes (tests/fixtures/)",
+      "truth_panel": null,
+      "truth_panel_absent_because": "no depositor has assembled genomes out of this material, because the material is simulated. The fixture's known distance is the measured protein identity of its divergent arm, which belongs to the end-to-end test and never to a report (SPEC 13.4).",
+      "crossplant_panel": null,
+      "crossplant_panel_absent_because": "there are no other plants: the fixture is one simulated library and a cross-plant panel is a set of libraries from elsewhere. A panel pointed at anything real here would compare simulated reads against water.",
+      "panel_basis": "which truth panel and which cross-plant panel apply to this library. Both are measured absences for a fixture and carry their reasons, which experiments/stage_refs.py refuses without.",
+      "partial_entry": "panel facts only, on purpose. The trim and the block are NOT here: the fixture's run configuration states them with their bases (tests/test_end_to_end.py), and a value in this file would be a second source that a config forgetting to state one would inherit silently. It appears here at all because a stage that resolves a per-library panel refuses an unknown library, which is the right answer for real water and would stop a fixture run that has nothing to resolve."
+    },
+    "SRR34217566": {
+      "label": "Szeged municipal wastewater, Hungary, collected 2024, RNA: the first library run through the one-command path, with nothing supplied by hand but the reads, the measured trim and this entry",
+      "sample": {
+        "matrix": "municipal wastewater",
+        "place": "Szeged",
+        "country": "Hungary",
+        "molecule": "RNA",
+        "collected": "2024",
+        "basis": "PRJNA1282049 run metadata via ENA filereport. The archive gives the year only, with no month or day, so the page says 2024 and does not invent a date. The matrix is recorded as municipal wastewater because the paired DNA libraries of the same study name the plant ('Szeged Municipal Wastewater Treatment Plant') while the RNA libraries name only the city; whether this run is influent or effluent is NOT stated by the archive and is therefore not stated here, which matters because the ribosomal fraction differs by two orders of magnitude between the two."
+      },
+      "bioproject": "PRJNA1282049",
+      "layout": "paired",
+      "pairs": 11589124,
+      "pairs_basis": "ENA filereport read_count for SRR34217566, 3,478,969,814 bases. It is the count before the run, used only to size the block; the run counts the pairs it actually reads and asserts the arithmetic against that.",
+      "read_length": [
+        150,
+        150
+      ],
+      "read_length_basis": "base_count / read_count from ENA is 300.2 bases per pair, so 2 x 150 before any trim. Read length is the one recognition wall this project has measured moving (SPEC 4.2), so a figure from this library is not comparable to Berlin's 107/93 at matched length. It is also the first library here on which SPEC 4.3's mate merge is testable: at 2 x 150 a large share of pairs overlap, where the holdout library is single-end and Berlin's mates are shorter.",
+      "instrument": "Illumina NextSeq 550",
+      "instrument_basis": "ENA filereport instrument_model. A third platform for this repo, after Berlin's NovaSeq 6000 and the panel's HiSeq runs, so an error profile measured on one does not transfer.",
+      "r1": "data/reads/SRR34217566_1.fastq.gz",
+      "r2": "data/reads/SRR34217566_2.fastq.gz",
+      "paths_basis": "where experiments/prod_oneshot.sh stages any library from SRA on the instance that runs the pass. data/ is gitignored, as for every library here.",
+      "trim_r2_absent_because": "DELIBERATELY NOT STATED. The mate-2 non-template prefix is a property of a sequencing run and nothing in this repo has measured it for this one, so there is no value to record. experiments/prod_oneshot.sh measures it on the instance with nontemplate_prefix_map.py against SILVA and writes the answer into the run configuration with that measurement as its basis, or refuses the run before the expensive half. A number here would be read as established.",
+      "block_absent_because": "Also deliberately absent: `hapax run` measures the stride off the read count it finds in the file (experiments/measure_library.py, which refuses a stride that would make the seeds overlap). Berlin's 1.5 M would crowd all five seeds into the first 7.5 M pairs of this 11.6 M-pair library, and the holdout's 1.0 M more so.",
+      "truth_panel": null,
+      "truth_panel_absent_because": "No depositor-assembled genome set exists for this water. results/holdout_candidates/ covers SRR23421542/43/44 only, and scoring this library against those genomes would report another water's ground truth as this one's. Recovery against truth is therefore ABSENT for this sample rather than zero. The study does deposit paired DNA metagenomic libraries from the same plant and year (SRR34217541 and others), which is a same-plant cross-molecule comparison and not a truth panel; it is untested here.",
+      "positive_control_absent_because": "The spiked divergence ladder (--calibrate) needs a cross-sample reference assembly from the same works, which this pass does not stage, so this library runs with no positive control of any kind: nothing in it has a distance fixed before the run.",
+      "crossplant_panel": "cp3",
+      "crossplant_within_plant": false,
+      "crossplant_within_plant_basis": "Szeged is not one of the 32 plants in results/crossplant/panel.tsv and no library from this plant is, so this run has no within-plant stratum. The PAIRED per-plant reading is therefore unavailable and the stage declines it: within-plant rates run 0.1530 to 0.9593, a six-fold spread, so a pooled within-minus-between difference compares plants rather than comparing within against between (results/crossplant/REPORT.md). What the panel CAN answer here needs no such stratum - how much of this library's residue is witnessed anywhere in 530 other libraries, read down the depth column, against identified reads at matched depth - and that is the 8.5-point difference the stage exists for. Stated rather than derived from a place name: matching 'Szeged' against the panel's plant column would make a measured absence a string comparison.",
+      "panel_basis": "which truth panel and which cross-plant panel apply to this library. The panels themselves are defined in experiments/stage_references.json; a null here is a measured absence and must carry its *_absent_because reason, which experiments/stage_refs.py refuses without."
+    }
   },
-  "SRR23421544": {
-   "label": "the holdout library, the positive control",
-   "sample": {
-    "matrix": "treated wastewater",
-    "place": "Russia",
-    "molecule": "RNA",
-    "collected": "2022-05-10",
-    "basis": "PRJNA917124 run metadata, read off the BioSample when the holdout was selected (results/holdout_run/). The locality is the country because the deposit gives no finer one."
-   },
-   "bioproject": "PRJNA917124",
-   "layout": "single",
-   "layout_note": "the metadata says library_layout=PAIRED and the library is single-end. Everything SPEC 4.3 gains from merging the mates is untestable here, so this instrument is weaker than production, in the direction that makes the withheld genome harder to find.",
-   "pairs": 4290429,
-   "trim_r2": 0,
-   "trim_r2_basis": "single-end: there is no mate 2 to trim, and trimming 14 nt off anything here would delete real sequence.",
-   "block": 1000000,
-   "block_basis": "5 x 1.5 M does not fit in 4.29 M reads, so the Berlin default leaves seeds 4 and 5 reading nothing. Measured, and it produced a directory that looked like a five-seed result.",
-   "truth_panel": "depositor_25",
-   "crossplant_panel": null,
-   "crossplant_panel_absent_because": "The committed cross-plant panel was built around the Berlin query sample and this library is not one of its plants, so a paired per-plant comparison has no within-plant stratum for it. Running it against cp3 would report a between-plant rate with no comparator, which is the pooled reading this measurement exists to refuse.",
-   "panel_basis": "which truth panel and which cross-plant panel apply to this library. The panels themselves are defined in experiments/stage_references.json; a null here is a measured absence and must carry its *_absent_because reason, which experiments/stage_refs.py refuses without."
-  },
-  "SRR23973265": {
-   "label": "Berlin influent 2022-06-16, RNA: the drift comparison",
-   "sample": {
-    "matrix": "influent",
-    "place": "Berlin",
-    "country": "Germany",
-    "molecule": "RNA",
-    "collected": "2022-06-16",
-    "basis": "PRJNA948850 run metadata; the date is the one results/dna_rna_pair/ selected this library for, eight months after the discriminating run."
-   },
-   "bioproject": "PRJNA948850",
-   "layout": "paired",
-   "trim_r2": 14,
-   "trim_r2_basis": "the same non-template prefix as SRR23973193: results/nontemplate_prefix_map/ measures a 5' soft-clip mode of 14 in 5 of 5 seeds on both RNA libraries.",
-   "block": 1500000,
-   "block_basis": "inherited from results/dna_rna_pair/, which used one 1.5 M stride for all three of its libraries because the seeds have to select the same block of each. It is not measured against this library's own read count, which is the weaker claim of the two block entries in this file."
-  },
-  "SRR23973375": {
-   "label": "Berlin influent 2022-06-16, DNA: the kind control for the RNA pair",
-   "sample": {
-    "matrix": "influent",
-    "place": "Berlin",
-    "country": "Germany",
-    "molecule": "DNA",
-    "collected": "2022-06-16",
-    "basis": "PRJNA948850 run metadata: the same water and date as SRR23973265, sequenced as DNA. It is the kind control for that pair."
-   },
-   "bioproject": "PRJNA948850",
-   "layout": "paired",
-   "trim_r2": 14,
-   "trim_r2_basis": "NOT measured on this library. The prefix was mapped on the two RNA libraries only, and results/dna_rna_pair/ applied their 14 to this DNA library as well. It is written here so that the assumption is visible and attributable rather than a default; a DNA kit has no reason to carry an RNA kit's prefix, and nothing has checked it.",
-   "trim_r2_unverified": true,
-   "block": 1500000,
-   "block_basis": "inherited from results/dna_rna_pair/, which used one 1.5 M stride for all three of its libraries because the seeds have to select the same block of each. It is not measured against this library's own read count, which is the weaker claim of the two block entries in this file."
-  },
-  "SRR23421543": {
-   "label": "treated wastewater RNA, Russia, same deposit series",
-   "truth_panel": "depositor_25",
-   "crossplant_panel": null,
-   "crossplant_panel_absent_because": "As SRR23421544.",
-   "panel_basis": "which truth panel and which cross-plant panel apply to this library. The panels themselves are defined in experiments/stage_references.json; a null here is a measured absence and must carry its *_absent_because reason, which experiments/stage_refs.py refuses without.",
-   "partial_entry": "panel facts only. This library appears in this file because the depositors' genome panel is ground truth for it, and nothing here has measured its trim or sized its block - so asking for either raises, which is the right answer rather than inheriting SRR23421544's. Add them with how they were established if a stage needs to read these reads."
-  },
-  "SRR23421542": {
-   "label": "treated wastewater RNA, Russia, same deposit series",
-   "truth_panel": "depositor_25",
-   "crossplant_panel": null,
-   "crossplant_panel_absent_because": "As SRR23421544.",
-   "panel_basis": "which truth panel and which cross-plant panel apply to this library. The panels themselves are defined in experiments/stage_references.json; a null here is a measured absence and must carry its *_absent_because reason, which experiments/stage_refs.py refuses without.",
-   "partial_entry": "panel facts only. This library appears in this file because the depositors' genome panel is ground truth for it, and nothing here has measured its trim or sized its block - so asking for either raises, which is the right answer rather than inheriting SRR23421544's. Add them with how they were established if a stage needs to read these reads."
-  },
-  "SRR23702504": {
-   "label": "Yeongdok plant effluent, South Korea, collected 2020-09-11, RNA: the first library run through production that nothing in this repo had touched",
-   "sample": {
-    "matrix": "treated effluent",
-    "place": "Yeongdok",
-    "country": "South Korea",
-    "molecule": "RNA",
-    "collected": "2020-09-11",
-    "basis": "PRJNA941081 run metadata and results/crossplant/panel.tsv, which carries 12 libraries from this plant and names it. The matrix is recorded as treated effluent rather than influent because it is the plant's outflow, and this pass measured a consequence of that rather than assuming one: the library anchors 0.13-0.14% of pairs to SILVA against roughly 32% for the Berlin influent, two to three orders of magnitude less ribosomal (see rrna_anchored_fraction)."
-   },
-   "bioproject": "PRJNA941081",
-   "layout": "paired",
-   "pairs": 32125614,
-   "pairs_basis": "ENA filereport read_count for SRR23702504, 9,701,935,428 bases over 2 x 151 nt. It is the count before the run, used to size the block; experiments/prod_run.sh asserts the block arithmetic against the pairs it actually counts in the file rather than against this number.",
-   "read_length": [
-    151,
-    151
-   ],
-   "read_length_basis": "base_count / read_count from ENA. 44 nt longer per mate than SRR23973193's 107/93 after trimming, which matters because read length is the one recognition wall this project has measured moving (SPEC 4.2): a figure from this library is not comparable to Berlin's at matched length.",
-   "trim_r2": 0,
-   "trim_r2_basis": "MEASURED AND THE MEASUREMENT CANNOT CARRY IT, which is why the value is 0 and why this entry is long. experiments/nontemplate_prefix_map.py over 5 x 100,000 pairs (results/prod_SRR23702504/nontemplate_prefix/) finds the mate-2 5' soft-clip mode at 0 in 5 of 5 seeds, holding 47.1-52.5% of anchored mates, with mate 1 also 0 at 73.3-78.5% - the shape of a library with no non-template prefix. But it rests on 127-144 anchored mates per seed, 0.13-0.14% of pairs, against roughly 32,000 and 32% on SRR23973193: this is treated effluent and SILVA has almost nothing in it to anchor to, so by the instrument's own rule (experiments/trim_from_prefix.py, floor 2,000 anchored) it REFUSED to name a trim, and the production run was given the value on the command line instead, which SPEC 4.1 allows because stating it is the override. 0 is chosen because it is the only value that cannot delete real template; the residual risk, if this kit does carry a prefix, is kit sequence left in the reads, which runs towards less recognition and - in the assembler - towards a tip rather than a join. Nothing beyond the mode supports it: the non-zero clip lengths are spread flat over 3-73 nt at 1-3% each, and the 3' end of the same mate clips a mean of 11.0-13.6 nt, so the 5'-minus-3' excess of +7.7 to +11.4 is two large numbers taken from 139 reads rather than a prefix.",
-   "block": 6000000,
-   "block_basis": "pairs skipped per seed so that five seeds read five distinct contiguous regions of the flow cell, sized to THIS library: 5 x 200,000 pairs at stride 6 M puts the blocks at 0, 6 M, 12 M, 18 M and 24 M, the last ending at 24,200,000 of 32,125,614. The ceiling is 7,981,403; 6 M leaves margin for a file that counts short. Berlin's 1.5 M would crowd all five seeds into the first 6.2 M pairs of a 32 M-pair library, which is not wrong so much as unrepresentative.",
-   "r1": "data/yeongdok/SRR23702504_1.fastq.gz",
-   "r2": "data/yeongdok/SRR23702504_2.fastq.gz",
-   "paths_basis": "staged from SRA on the instance that runs the pass; data/ is gitignored, as for every library here.",
-   "trim_r2_unverified": true,
-   "trim_r2_unverified_note": "Same flag and same reason as SRR23973375, the DNA library: a value this repo applies while nothing has checked it. The instrument that would check it is ribosomal, and this library is not. Clipping the reads against the sample's OWN assembled contigs would not need SILVA at all and is the obvious next instrument; it is untested here and would need an untrimmed assembly to measure against, which is a chicken and egg this pass did not break.",
-   "rrna_anchored_fraction": [
-    0.0013,
-    0.0014
-   ],
-   "rrna_anchored_fraction_basis": "fraction of 100,000 pairs whose mate 2 anchors to SILVA at >= 60 matching bases and MAPQ >= 30, per seed, 5 seeds. It is a third rRNA instrument and it says this library is two to three orders of magnitude less ribosomal than the Berlin influent, which is the single biggest difference between the two samples and is expected of effluent.",
-   "plant": "Yeongdok",
-   "truth_panel": null,
-   "truth_panel_absent_because": "No depositor-assembled genome set exists for this water. results/holdout_candidates/depth.tsv covers SRR23421542/43/44 only, and scoring this library against those Russian genomes would report another water's ground truth as this one's. So recovery against truth is ABSENT for this sample, not zero, and the residue fraction it ships beside therefore travels without the recovery figure SPEC 4.3 requires of a path-settings comparison - which is a stated limit of running a new sample, not a result about it.",
-   "positive_control_absent_because": "Berlin's substitute for a panel is the spiked divergence ladder (--calibrate), and that stage needs a cross-sample reference assembly from the same works, which this run did not stage. This library therefore ran with no positive control of any kind: nothing in it has a distance fixed before the run.",
-   "crossplant_panel": "cp3",
-   "crossplant_panel_basis": "The library is NOT a member of cp3 - results/crossplant/panel.tsv holds 536 rows and this accession is not one of them - so its query reads are not searched against its own library, which is the refusal crossplant_stage.py enforces and the one that would invent recurrence (54% false growth against a 6% swap control). The plant IS in the panel with 12 libraries, three of them influent from this same date (2020-09-11, YIF807/808/809), so the paired within-plant stratum the measurement needs exists and is same-plant-same-date-other-water: it separates water type from drift, which no other pairing in the panel does.",
-   "panel_basis": "which truth panel and which cross-plant panel apply to this library. The panels themselves are defined in experiments/stage_references.json; a null here is a measured absence and must carry its *_absent_because reason, which experiments/stage_refs.py refuses without."
-  },
-  "fixture": {
-   "label": "the CI read fixture, not a sequencing run: 9,987 simulated pairs over three real genomes (tests/fixtures/)",
-   "truth_panel": null,
-   "truth_panel_absent_because": "no depositor has assembled genomes out of this material, because the material is simulated. The fixture's known distance is the measured protein identity of its divergent arm, which belongs to the end-to-end test and never to a report (SPEC 13.4).",
-   "crossplant_panel": null,
-   "crossplant_panel_absent_because": "there are no other plants: the fixture is one simulated library and a cross-plant panel is a set of libraries from elsewhere. A panel pointed at anything real here would compare simulated reads against water.",
-   "panel_basis": "which truth panel and which cross-plant panel apply to this library. Both are measured absences for a fixture and carry their reasons, which experiments/stage_refs.py refuses without.",
-   "partial_entry": "panel facts only, on purpose. The trim and the block are NOT here: the fixture's run configuration states them with their bases (tests/test_end_to_end.py), and a value in this file would be a second source that a config forgetting to state one would inherit silently. It appears here at all because a stage that resolves a per-library panel refuses an unknown library, which is the right answer for real water and would stop a fixture run that has nothing to resolve."
-  },
-  "SRR34217566": {
-   "label": "Szeged municipal wastewater, Hungary, collected 2024, RNA: the first library run through the one-command path, with nothing supplied by hand but the reads, the measured trim and this entry",
-   "sample": {
-    "matrix": "municipal wastewater",
-    "place": "Szeged",
-    "country": "Hungary",
-    "molecule": "RNA",
-    "collected": "2024",
-    "basis": "PRJNA1282049 run metadata via ENA filereport. The archive gives the year only, with no month or day, so the page says 2024 and does not invent a date. The matrix is recorded as municipal wastewater because the paired DNA libraries of the same study name the plant ('Szeged Municipal Wastewater Treatment Plant') while the RNA libraries name only the city; whether this run is influent or effluent is NOT stated by the archive and is therefore not stated here, which matters because the ribosomal fraction differs by two orders of magnitude between the two."
-   },
-   "bioproject": "PRJNA1282049",
-   "layout": "paired",
-   "pairs": 11589124,
-   "pairs_basis": "ENA filereport read_count for SRR34217566, 3,478,969,814 bases. It is the count before the run, used only to size the block; the run counts the pairs it actually reads and asserts the arithmetic against that.",
-   "read_length": [
-    150,
-    150
-   ],
-   "read_length_basis": "base_count / read_count from ENA is 300.2 bases per pair, so 2 x 150 before any trim. Read length is the one recognition wall this project has measured moving (SPEC 4.2), so a figure from this library is not comparable to Berlin's 107/93 at matched length. It is also the first library here on which SPEC 4.3's mate merge is testable: at 2 x 150 a large share of pairs overlap, where the holdout library is single-end and Berlin's mates are shorter.",
-   "instrument": "Illumina NextSeq 550",
-   "instrument_basis": "ENA filereport instrument_model. A third platform for this repo, after Berlin's NovaSeq 6000 and the panel's HiSeq runs, so an error profile measured on one does not transfer.",
-   "r1": "data/reads/SRR34217566_1.fastq.gz",
-   "r2": "data/reads/SRR34217566_2.fastq.gz",
-   "paths_basis": "where experiments/prod_oneshot.sh stages any library from SRA on the instance that runs the pass. data/ is gitignored, as for every library here.",
-   "trim_r2_absent_because": "DELIBERATELY NOT STATED. The mate-2 non-template prefix is a property of a sequencing run and nothing in this repo has measured it for this one, so there is no value to record. experiments/prod_oneshot.sh measures it on the instance with nontemplate_prefix_map.py against SILVA and writes the answer into the run configuration with that measurement as its basis, or refuses the run before the expensive half. A number here would be read as established.",
-   "block_absent_because": "Also deliberately absent: `hapax run` measures the stride off the read count it finds in the file (experiments/measure_library.py, which refuses a stride that would make the seeds overlap). Berlin's 1.5 M would crowd all five seeds into the first 7.5 M pairs of this 11.6 M-pair library, and the holdout's 1.0 M more so.",
-   "truth_panel": null,
-   "truth_panel_absent_because": "No depositor-assembled genome set exists for this water. results/holdout_candidates/ covers SRR23421542/43/44 only, and scoring this library against those genomes would report another water's ground truth as this one's. Recovery against truth is therefore ABSENT for this sample rather than zero. The study does deposit paired DNA metagenomic libraries from the same plant and year (SRR34217541 and others), which is a same-plant cross-molecule comparison and not a truth panel; it is untested here.",
-   "positive_control_absent_because": "The spiked divergence ladder (--calibrate) needs a cross-sample reference assembly from the same works, which this pass does not stage, so this library runs with no positive control of any kind: nothing in it has a distance fixed before the run.",
-   "crossplant_panel": null,
-   "crossplant_panel_absent_because": "Szeged is not one of the 32 plants in results/crossplant/panel.tsv, and no library from this plant is. A cross-plant figure needs a within-plant stratum, because the within-plant rate itself runs 15-96% and a pooled difference compares plants rather than strata (results/crossplant/REPORT.md); with one library from this plant there is no such stratum. Searching it against the existing 530 would measure how far Hungary is from four other continents, which is a real quantity and not the one the stage reports, so the stage is absent here rather than run on the wrong pairing.",
-   "panel_basis": "which truth panel and which cross-plant panel apply to this library. The panels themselves are defined in experiments/stage_references.json; a null here is a measured absence and must carry its *_absent_because reason, which experiments/stage_refs.py refuses without."
-  }
- },
- "status": "hand-written from measurements recorded elsewhere in results/. Each value names what established it. Nothing here is derived at run time."
+  "status": "hand-written from measurements recorded elsewhere in results/. Each value names what established it. Nothing here is derived at run time."
 }

@@ -70,6 +70,11 @@ sprot = "data/db/prot/sprot.dmnd"
 # index instead would be a second source for one answer, able to disagree.
 protein_fasta = "data/db/prot/viral.1.protein.faa.gz"
 pfam = "data/db/pfam/Pfam-A.hmm"
+# The nucleotide release the divergence ladder draws its spike genome from. Not a chosen
+# accession: the ladder needs a genome the databases already hold AND one absent from this
+# sample's own assembly, and the second is a property of the water, so the stage measures
+# it per run against the contigs the run just produced.
+spike_genomes = "data/db/nt/viral.1.1.genomic.fna.gz"
 
 [run]
 seed = 1

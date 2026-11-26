@@ -69,7 +69,12 @@ def main() -> None:
                     # excluded and named rather than silently averaged in short.
                     truncated = True
                     break
-                rows["known" if r.get("set") == "known" else "residue"].append(r)
+                pile = r.get("set", "residue")
+                if pile not in rows:
+                    # The shuffled search null travels in the same file and carries the
+                    # search fields only; this ladder is a two-arm figure.
+                    continue
+                rows[pile].append(r)
         if truncated:
             incomplete.append(Path(p).name)
             continue

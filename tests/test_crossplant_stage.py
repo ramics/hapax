@@ -48,6 +48,23 @@ def test_the_published_report_satisfies_the_strata_check():
     assert crossplant_stage.missing_paired_rows(rows) == []
 
 
+def test_a_library_whose_plant_is_not_in_the_panel_needs_only_the_between_plant_arm():
+    """The stratum decides which rows are required, and three of four cannot exist.
+
+    A library whose own plant contributes nothing to the panel has no same-plant water to
+    pair against, so the paired difference and the sign test over plants have nothing to
+    be computed from. Requiring them refused the stage outright, and a published report
+    then carried a cross-plant absence where the panel could answer most of the question:
+    how much of the residue is witnessed anywhere in the panel, read down the depth
+    column. What is declined is whether plant identity matters, by name.
+    """
+    rows = [{"op": op, "stratum": "other_plant_other_project"}
+            for op in crossplant_stage.REQUIRED_OPS]
+    assert crossplant_stage.missing_paired_rows(rows, within_plant=False) == []
+    # and the same table is still refused where the stratum does exist
+    assert crossplant_stage.missing_paired_rows(rows, within_plant=True)
+
+
 def test_a_report_without_the_paired_strata_is_rejected():
     rows = [{"op": "most1", "stratum": "within_plant_other_water"},
             {"op": "most1", "stratum": "other_plant_other_project"}]

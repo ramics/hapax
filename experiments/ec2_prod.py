@@ -82,6 +82,10 @@ NO_REFERENCE_ON_THIS_INSTANCE = {
     "divergent": "experiments/divergent_known.py needs data/pfam/Pfam-A.hmm for its "
                  "domain-presence calibration, which this instance does not stage, and "
                  "its gene-level workup is hours of BLAST over the removed pile",
+    "calibration": "the divergence ladder draws its spike genome from the RefSeq viral "
+                   "nucleotide release, which this template does not stage and "
+                   "`hapax fetch-db --all` does. It is a positive control and belongs in "
+                   "every pass, so --oneshot runs it; here it could only refuse",
 }
 LAUNCHER_STAGES = [s for s in PRODUCTION_STAGES if s not in NO_REFERENCE_ON_THIS_INSTANCE]
 
@@ -353,9 +357,9 @@ def main(argv: list[str] | None = None) -> int:
                     help="hapax stages. The default template drops the stages it stages "
                          "no reference data for (NO_REFERENCE_ON_THIS_INSTANCE says which "
                          "and why); --oneshot keeps them, because `hapax fetch-db --all` "
-                         "downloads the one index that was missing. `panel` and "
-                         "`calibration` are validation stages and are not in the "
-                         "production list at all (SPEC 13.4)")
+                         "downloads the two indexes that were missing. `panel` is "
+                         "validation and is not in the production list at all: a run "
+                         "cannot create a depositor (SPEC 13.4)")
     ap.add_argument("--megahit-memory", type=float, default=0.85,
                     help="MEGAHIT --memory as a fraction of RAM")
     ap.add_argument("--threads", type=int, default=8)

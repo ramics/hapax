@@ -38,6 +38,7 @@ real abundance rather than at the convenient one.
 from __future__ import annotations
 
 import argparse
+import gzip
 import json
 import math
 import platform
@@ -81,14 +82,25 @@ def mutate(seq: str, rate: float, rng: random.Random) -> str:
 
 
 def simulate_pairs(genome: str, n: int, rng: random.Random, read_len: int,
-                   insert_quantiles: list[tuple[float, int]], err1: float, err2: float):
+                   insert_quantiles: list[tuple[float, int]], err1: float, err2: float,
+                   read_len2: int | None = None):
     """Paired reads off a genome with this library's measured insert and error profile.
 
     The insert distribution is the one measured on SRR23973193 itself (PR #10: median 194,
     p75 246, p95 363, p99 485), not a round number, because 53% of this library's pairs
     overlap their mate and that changes how much independent sequence a pair carries.
-    Error rates are Berlin's own measured means, 0.00089 on R1 and 0.00117 on R2 (PR #11),
-    rather than a nominal Q30.
+
+    THE TWO MATES GET TWO LENGTHS, because they have two. The mates are not
+    interchangeable in this library or in any other here: after the non-template prefix
+    comes off SRR23973193's mate 2 it is 93 nt against mate 1's 107, which is 62 scorable
+    31-mers against 76. Simulating both at one length removes the asymmetry from the one
+    instrument that is supposed to measure the real one's sensitivity. `read_len2`
+    defaults to `read_len`, which is what this function did before it had the argument.
+
+    The error rates are the caller's, and whose they are is the caller's to record. They
+    were 0.00089 and 0.00117 as defaults here - SRR23973193's Q-derived means, PR #11 -
+    and a default is how one library's instrument reaches every library. `hapax run`
+    passes the rate the run measured off its own Q strings.
     """
     alt = {"A": "CGT", "C": "AGT", "G": "ACT", "T": "ACG"}
 
@@ -109,7 +121,7 @@ def simulate_pairs(genome: str, n: int, rng: random.Random, read_len: int,
             if u <= q:
                 ins = v
                 break
-        ins = max(ins, read_len + 1)
+        ins = max(ins, max(read_len, read_len2 or read_len) + 1)
         if len(genome) <= ins:
             ins = len(genome) - 1
         start = rng.randrange(0, max(len(genome) - ins, 1))
@@ -117,9 +129,152 @@ def simulate_pairs(genome: str, n: int, rng: random.Random, read_len: int,
         if rng.random() < 0.5:
             frag = revcomp(frag)
         r1 = add_errors(frag[:read_len], err1)
-        r2 = add_errors(revcomp(frag)[:read_len], err2)
+        r2 = add_errors(revcomp(frag)[:read_len2 or read_len], err2)
         pairs.append((f"spike{i}", r1, r2))
     return pairs
+
+
+#: The length band a ladder genome is drawn from. Short enough that 2,000 simulated pairs
+#: cover it many times over, long enough to carry several genes, which is what makes the
+#: per-rung protein scores readable. Most RNA viruses sit inside it.
+SPIKE_LEN_BAND = (2_000, 15_000)
+#: Candidates read out of the pool before the search for a clean one gives up. The pool is
+#: a release file in release order, so this is a prefix of it and reproducible.
+SPIKE_CANDIDATES = 60
+#: Window width the candidate is cut into for the absence test, matching the width the
+#: cross-plant panel cuts contigs to for the same reason: the instrument must not change
+#: between what is tested and what the reads do.
+SPIKE_WINDOW = 150
+
+
+def organism_of(header: str) -> str:
+    """The organism a release header names, with the segment and completeness stripped.
+
+    WHY THIS EXISTS. Asked for three genomes out of the release in order, the choice came
+    back as `NC_042068.1`, `NC_042069.1` and `NC_042070.1`: segments L, M and S of one
+    Pseudomonas phage. Three accessions, one virus. The point of taking several is that
+    one genome's recognition decay is that genome's, and three segments of the same
+    organism do not answer it while looking as though they do.
+
+    The key is the description with ` segment X` and `, complete/partial ...` removed,
+    which is how the release writes a segmented virus. It is a string rule over a header
+    and it can only be approximate, so the organism it derived is recorded beside every
+    candidate rather than trusted silently.
+    """
+    desc = header.split(None, 1)[1] if len(header.split(None, 1)) > 1 else header
+    for cut in (" segment ", " DNA-", ", complete", ", partial", " chromosome "):
+        desc = desc.split(cut)[0]
+    return desc.strip().rstrip(",").lower()
+
+
+def pick_genome(pool: Path, avoid: dict, min_mlen: int,
+                band: tuple[int, int] = SPIKE_LEN_BAND,
+                limit: int = SPIKE_CANDIDATES, want: int = 1) -> tuple[dict, dict]:
+    """Choose a ladder genome out of a release file: present in the databases, absent here.
+
+    WHY THE GENOME IS CHOSEN AND NOT NAMED. The ladder needs a genome with two
+    properties, and only one of them can be written down in advance. It has to be
+    something the public databases already hold, because the 0% rung is the control that
+    the cascade removes what is known - a release file satisfies that by construction. And
+    it has to be ABSENT from this sample's own assembly, because the sample's own contigs
+    are a tier of the cascade and the most efficient one measured here: a genome that is
+    resident in the water is removed by the sample's own assembly at every rung, and the
+    ladder then reads as the tool working when it is the sample working. Absence from one
+    particular water is not a fact any reference set can carry, so it is measured, here,
+    against the assembly this run just produced.
+
+    THE TEST IS THE INSTRUMENT THE READS USE. The candidate is cut into `SPIKE_WINDOW` nt
+    windows and each is mapped against the sample's own contigs, rather than the whole
+    genome being aligned once: a 10 kb alignment says nothing about whether a 150 nt read
+    off that genome would be subtracted, which is the question. A candidate is rejected on
+    its first mapping window, and the fraction of windows that mapped is recorded for
+    every candidate, so the record shows how clean the chosen genome is rather than
+    asserting it.
+
+    Deterministic: the pool is read in release order and the first `want` clean
+    candidates in the band win. No seed enters this, so five seeds of one run spike the
+    same genomes and the spread between them is the spread of the reads.
+
+    WHY `want` IS MORE THAN ONE. In release order the first clean candidate is whichever
+    genome the release happens to list first, and one genome's recognition decay is that
+    genome's: a phage with a short, well-represented gene set and an RNA virus with a
+    long polyprotein do not fall off the same rung. Taking several and reporting the
+    ladder per genome, which is the shape this script's output already has, makes the
+    spread between them visible instead of hiding it behind an arbitrary choice.
+    """
+    chosen: dict[str, str] = {}
+    looked: list[dict] = []
+    taken_organisms: set[str] = set()
+
+    def consider(name: str, seq: str, organism: str) -> bool:
+        windows = [seq[i:i + SPIKE_WINDOW]
+                   for i in range(0, len(seq) - SPIKE_WINDOW + 1, SPIKE_WINDOW)]
+        mapped, worst = 0, 0
+        for w in windows:
+            hit = 0
+            for tag, index in avoid.items():
+                for h in index.map(w):
+                    hit = max(hit, h.mlen)
+            if hit >= min_mlen:
+                mapped += 1
+                worst = max(worst, hit)
+        rec = {"genome": name, "organism": organism, "length": len(seq),
+               "windows": len(windows), "windows_mapping_this_sample": mapped,
+               "longest_match_bases": worst}
+        looked.append(rec)
+        if organism in taken_organisms:
+            rec["rejected_because"] = (
+                f"another segment or record of {organism} is already chosen, and three "
+                f"segments of one virus are one genome's recognition decay wearing three "
+                f"accessions")
+            return False
+        if mapped == 0:
+            taken_organisms.add(organism)
+            chosen[name] = seq
+            rec["chosen"] = True
+            return len(chosen) >= want
+        rec["rejected_because"] = (
+            f"{mapped} of {len(windows)} windows of this genome already map this "
+            f"sample's own contigs, longest match {worst} bases, so the cascade's "
+            f"self-assembly tier would subtract its reads at every rung")
+        return False
+
+    opener = gzip.open if str(pool).endswith(".gz") else open
+    name, org, buf, seen = None, "", [], 0
+    with opener(pool, "rt") as h:
+        for line in h:
+            if line.startswith(">"):
+                if name and band[0] <= sum(map(len, buf)) <= band[1]:
+                    seen += 1
+                    if consider(name, "".join(buf).upper(), org):
+                        name = None
+                        break
+                    if seen >= limit:
+                        name = None
+                        break
+                header = line[1:].rstrip("\n")
+                name, org, buf = header.split()[0], organism_of(header), []
+            else:
+                buf.append(line.strip().upper())
+        if name and len(chosen) < want and band[0] <= sum(map(len, buf)) <= band[1]:
+            consider(name, "".join(buf).upper(), org)
+    record = {"pool": str(pool), "length_band": list(band), "candidates_read": len(looked),
+              "candidate_limit": limit, "wanted": want, "window_nt": SPIKE_WINDOW,
+              "min_match_bases": min_mlen,
+              "avoid_indexes": sorted(avoid),
+              "one_record_per_organism": ("segments of one virus are rejected after the "
+                                          "first: three accessions of one organism are "
+                                          "one genome's decay, not three"),
+              "candidates": looked,
+              "chosen": sorted(chosen) or None}
+    if not chosen:
+        record["failed_because"] = (
+            f"none of the {len(looked)} candidates read out of {pool} in the "
+            f"{band[0]}-{band[1]} nt band is absent from this sample's own assembly. The "
+            f"ladder has no clean genome here and is a refusal rather than a ladder run "
+            f"against resident sequence, which would read as sensitivity the tool does "
+            f"not have.")
+    return chosen, record
 
 
 def main() -> None:
@@ -127,16 +282,40 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--block", type=int, default=None,
                     help="pairs skipped per seed. From the library unless given")
-    ap.add_argument("--genome", type=Path, nargs="+", required=True,
+    ap.add_argument("--spike-genome-count", type=int, default=3,
+                    help="how many clean genomes to take from --genome-pool. More than "
+                         "one because one genome's recognition decay is that genome's, "
+                         "and the ladder is reported per genome")
+    ap.add_argument("--genome-pool", type=Path, default=None,
+                    help="a nucleotide release file to CHOOSE the ladder genome from, "
+                         "when none is named: the first in the length band that is "
+                         "absent from this sample's own assembly wins, which is a "
+                         "property of the water and cannot be written down in advance. "
+                         "See pick_genome")
+    ap.add_argument("--genome", type=Path, nargs="*", default=[],
                     help="fasta of the held-out genome(s) to spike")
     ap.add_argument("--divergence", type=float, nargs="+",
                     default=[0.0, 0.05, 0.10, 0.20, 0.30])
     ap.add_argument("--spike-pairs", type=int, default=2000,
                     help="pairs simulated per divergence rung: enough to resolve a "
                          "survival fraction to ~1%%, unlike the real 1-in-a-million rate")
+    # THE INSTRUMENT, AND WHY THESE FOUR KEEP THEIR DEFAULTS WITH A BASIS BESIDE THEM.
+    # A read length and an error rate are facts about one sequencing run. These four are
+    # SRR23973193's, and they are what this script's committed command lines reproduce
+    # with, so removing the defaults would unpick every result in results/spike_holdout/.
+    # They stay, and `--instrument-basis` makes whose they are a recorded field rather
+    # than something a reader has to know: `hapax run` passes the lengths the run measured
+    # off its own reads and the error rate its own Q strings imply, with the basis. A
+    # caller that states none gets the sentence saying these are another library's.
     ap.add_argument("--read-len", type=int, default=107)
+    ap.add_argument("--read-len2", type=int, default=None,
+                    help="mate 2's length. Defaults to --read-len, which is what this "
+                         "script did before the argument existed")
     ap.add_argument("--err1", type=float, default=0.00089)
     ap.add_argument("--err2", type=float, default=0.00117)
+    ap.add_argument("--instrument-basis", default=None,
+                    help="where the read lengths and error rates came from, recorded "
+                         "beside them in the output")
     ap.add_argument("--background-pairs", type=int, default=100_000,
                     help="real pairs used for the background score distributions")
     ap.add_argument("--library-pairs", type=int, default=400_000,
@@ -159,8 +338,18 @@ def main() -> None:
                     default=ROOT / "data/geo/sample_contigs_identified.fa")
     ap.add_argument("--unidentified", type=Path,
                     default=ROOT / "data/geo/sample_contigs_unidentified.fa")
-    ap.add_argument("--cross-sample-ref", type=Path,
-                    default=ROOT / "data/geo/all_contigs_1kb.fa")
+    # OPTIONAL, AND THE ONE INPUT OF THIS STAGE THAT IS. The cross-sample reference is
+    # assemblies of OTHER samples from the same works, which is a property of a sampling
+    # programme and not of a library: there is no release to fetch and a substitute from
+    # inside the library searched gave 54% false growth against a 6% swap control. It
+    # feeds ONE observed field - whether a spike read recurs across samples - and is
+    # excluded from tier 1 by construction twenty lines below, so the ladder's
+    # sensitivity-at-divergence does not move with it. Requiring it refused the whole
+    # positive control on a library with no sibling samples, which is every library
+    # production is for; the field is recorded as not measured instead, with the reason.
+    # The value the committed runs in results/spike_holdout/ used travels in their own
+    # per-seed manifest, which is where a reproduction of those reads it from.
+    ap.add_argument("--cross-sample-ref", type=Path, default=None)
     ap.add_argument("--k2-dbs", type=Path, nargs="+",
                     default=[ROOT / "data/k2_viral", ROOT / "data/k2_pluspf16"])
     ap.add_argument("--classify-bin", type=Path,
@@ -189,8 +378,16 @@ def main() -> None:
     # of it makes the spike survive tier 1 more often and reads as lower sensitivity of
     # the TOOL. Every index it was asked for has to be there.
     pf = Preflight("spike_holdout.py")
+    if not args.genome and args.genome_pool is None:
+        raise SystemExit(
+            "spike_holdout.py needs either --genome, a genome whose distance from the "
+            "databases you have established, or --genome-pool, a release file to choose "
+            "one from. Neither has a default: a genome chosen for one sample is a clean "
+            "holdout only while it is absent from that sample's assembly.")
     for g in args.genome:
         pf.file(g, "--genome")
+    if args.genome_pool is not None:
+        pf.file(args.genome_pool, "--genome-pool")
     pf.file(args.r1, "--r1")
     pf.file(args.r2, "--r2")
     if not args.abundance_only:
@@ -201,7 +398,8 @@ def main() -> None:
             pf.file(args.silva, "--silva")
             pf.file(args.identified, "--identified")
         pf.file(args.unidentified, "--unidentified")
-        pf.file(args.cross_sample_ref, "--cross-sample-ref")
+        if args.cross_sample_ref is not None:
+            pf.file(args.cross_sample_ref, "--cross-sample-ref")
         for db in args.k2_dbs:
             pf.kraken2_db(db)
         if args.k2_dbs:
@@ -247,7 +445,36 @@ def main() -> None:
         for tag, ref in (("selfasm_identified", args.identified),
                          ("selfasm_unidentified", args.unidentified),
                          ("cross_sample", args.cross_sample_ref)):
+            if ref is None:
+                # Named and skipped, so that a missing recurrence row is a stated
+                # absence. An index silently dropping out of this ladder makes the spike
+                # survive tier 1 more often and reads as lower sensitivity, which is why
+                # the stage checks its index set at all - but this one is not in tier 1,
+                # so its absence costs one observed field and nothing else.
+                continue
             idx[tag] = _mm_index(ref, args.work / f"{ref.stem}.mmi", args.threads)
+
+    # ---- the genome, where it was not named: chosen out of the pool against the indexes
+    # just built. After the indexes because the choice is made against this sample's own
+    # assembly, and before anything is simulated because everything below is about this
+    # genome.
+    genome_pick = None
+    if not genomes:
+        avoid = {t: idx[t] for t in ("selfasm_identified", "selfasm_unidentified")
+                 if t in idx}
+        if not avoid:
+            raise SystemExit(
+                "--genome-pool needs this sample's own contigs to choose against "
+                "(--identified, --unidentified): the one property of a ladder genome "
+                "that no reference set can carry is absence from the water in hand.")
+        genomes, genome_pick = pick_genome(args.genome_pool, avoid, args.min_mlen,
+                                           want=args.spike_genome_count)
+        if not genomes:
+            (args.out / f"spike_genome_pick_s{args.seed}.json").write_text(
+                json.dumps(genome_pick, indent=2))
+            raise SystemExit(genome_pick["failed_because"])
+        (args.out / f"spike_genome_pick_s{args.seed}.json").write_text(
+            json.dumps(genome_pick, indent=2))
 
     rungs: list[dict] = []
     if not args.abundance_only:
@@ -261,7 +488,8 @@ def main() -> None:
                 mut = mutate(gseq, div, random.Random(args.seed * 1000 + int(div * 1000)))
                 tag = f"d{int(div * 1000)}_{gname}"
                 for nm, a, b in simulate_pairs(mut, args.spike_pairs, rng, args.read_len,
-                                               insert_q, args.err1, args.err2):
+                                               insert_q, args.err1, args.err2,
+                                               args.read_len2):
                     key = f"{tag}|{nm}"
                     all_pairs.append((key, a, b))
                     key_of[key] = (div, gname)
@@ -372,7 +600,7 @@ def main() -> None:
     per_genome = {}
     for gname, gseq in genomes.items():
         real_spike = simulate_pairs(gseq, spike_in_library, rng, args.read_len,
-                                    insert_q, args.err1, args.err2)
+                                    insert_q, args.err1, args.err2, args.read_len2)
         for _nm, a, b in real_spike:
             sk.add_seq(a)
             sk.add_seq(b)
@@ -389,6 +617,33 @@ def main() -> None:
         "spike_pairs_per_rung": args.spike_pairs,
         "insert_quantiles": insert_q,
         "error_rates": [args.err1, args.err2],
+        # WHOSE INSTRUMENT THE SPIKE WAS WRITTEN WITH. Four numbers decide how hard the
+        # ladder is - the two read lengths and the two error rates - and all four were
+        # defaults measured on SRR23973193 that travelled to whatever library the ladder
+        # was pointed at. A ladder run at 107 nt into a 2 x 150 library measures the
+        # sensitivity of an instrument that library does not have, in the direction of
+        # less recognition. So the values travel with their source, and a caller that
+        # states none gets told that is what happened.
+        "instrument": {
+            "read_len": [args.read_len, args.read_len2 or args.read_len],
+            "error_rates": [args.err1, args.err2],
+            "basis": args.instrument_basis or
+                     "NOT STATED by the caller, so these are this script's defaults: "
+                     "SRR23973193's post-trim mate-1 length and its Q-derived error "
+                     "means (PR #11). They describe that library's instrument and not "
+                     "necessarily the one these reads came off.",
+        },
+        # Which genome the ladder walked, and how it was established as clean here. None
+        # where the caller named one: then the distance from the databases is the
+        # caller's claim and this script has not checked it.
+        "genome_pick": genome_pick,
+        "cross_sample_recurrence_state": (
+            "measured" if args.cross_sample_ref is not None else
+            "not measured: no cross-sample reference was given. It is assemblies of "
+            "other samples from the same works, which no release can supply, and it is "
+            "excluded from tier 1 by construction, so the ladder's "
+            "sensitivity-at-divergence is unaffected and this one observed field is "
+            "absent rather than zero."),
         "rungs": rungs,
         "background_ladder": bg_fields,
         "abundance_at_real_rate": {

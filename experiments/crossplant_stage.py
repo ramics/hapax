@@ -76,6 +76,10 @@ REQUIRED_OPS = ("most1", "most2", "any1", "any2")
 #: that can only be read pooled, and the pooled reading is the one this measurement refuses.
 REQUIRED_STRATA = ("within_plant_other_water", "other_plant_other_project",
                    "paired_within_minus_other_project", "paired_plants_positive")
+#: The strata that survive when the query library's own plant is not in the panel. Only
+#: the between-plant arm can be computed then, and the paired reading is declined rather
+#: than replaced by the pooled one it refuses.
+WITHOUT_WITHIN_PLANT = ("other_plant_other_project",)
 
 
 def panel_members(panel_tsv: Path) -> dict[str, dict]:
@@ -125,16 +129,29 @@ def read_tsv(path: Path) -> list[dict]:
         return list(csv.DictReader(fh, delimiter="\t"))
 
 
-def missing_paired_rows(rows: list[dict]) -> list[str]:
+def missing_paired_rows(rows: list[dict], within_plant: bool = True) -> list[str]:
     """Which required (operating point, stratum) rows a per-plant report does not carry.
 
     Separate from the stage so it can be asserted on a table directly: the committed
     `results/crossplant/plant_summary.tsv` must come back with nothing missing, which is
     the check that this stage's idea of a readable report is the one the published report
     satisfies rather than a stricter one invented here.
+
+    `within_plant` IS FALSE FOR A LIBRARY WHOSE OWN PLANT IS NOT IN THE PANEL, and then
+    three of the four strata cannot exist: there is no same-plant water to pair against,
+    so the paired difference and the sign test over plants have nothing to be computed
+    from. Requiring them refused the whole stage on such a library, which is how one
+    report came to carry a cross-plant absence where the panel could answer most of the
+    question. What the panel answers WITHOUT the stratum is the measurement the stage
+    exists for - how much of this library's residue is witnessed anywhere in the panel,
+    read down the depth column against identified reads at matched depth, an 8.5-point
+    difference at `most` and 42.0 at `any`. What it cannot answer is whether plant
+    identity matters here, and that is declined by name rather than pooled: pooled, the
+    comparison is between plants rather than within against between.
     """
     have = {(r.get("op"), r.get("stratum")) for r in rows}
-    return [f"{op}/{s}" for op in REQUIRED_OPS for s in REQUIRED_STRATA
+    need = REQUIRED_STRATA if within_plant else WITHOUT_WITHIN_PLANT
+    return [f"{op}/{s}" for op in REQUIRED_OPS for s in need
             if (op, s) not in have]
 
 
@@ -181,6 +198,32 @@ def main() -> int:
                                       stage_refs.load(args.references))
     except (stage_refs.UnknownLibrary, stage_refs.MissingReference) as e:
         pre.require(False, str(e))
+    # WHETHER THIS LIBRARY HAS A WITHIN-PLANT STRATUM, stated by the library rather than
+    # derived here. A library whose own plant contributes other libraries to the panel can
+    # be read paired; one whose plant is absent cannot, and the two are different
+    # measurements rather than the same measurement with fewer rows. It is stated because
+    # the alternative is matching a place name against the panel's plant column, which
+    # would turn a measured absence into a string comparison - and `library_facts` raises
+    # for a library it does not know, so a library that names a panel and says nothing
+    # about the stratum is refused rather than assumed to have one.
+    within_plant, within_plant_basis = True, None
+    if resolved is not None and resolved["state"] == "resolved":
+        entry = stage_refs.resolve_library(args.library)
+        if "crossplant_within_plant" not in entry:
+            pre.require(False,
+                        f"{args.library} names cross-plant panel "
+                        f"{resolved['panel']} but does not say whether its own plant is "
+                        f"in it. Add crossplant_within_plant, with a basis: without the "
+                        f"stratum only the between-plant arm can be computed, and a "
+                        f"report read paired when it is not compares plants rather than "
+                        f"comparing within against between")
+        else:
+            within_plant = bool(entry["crossplant_within_plant"])
+            within_plant_basis = entry.get("crossplant_within_plant_basis")
+            pre.require(bool(within_plant_basis),
+                        f"{args.library}'s crossplant_within_plant has no basis beside "
+                        f"it. Which strata a run can carry decides how its per-plant "
+                        f"table may be read, so it is a stated fact with a reason")
     members: dict[str, dict] = {}
     if resolved is not None and resolved["state"] == "resolved":
         for problem in stage_refs.missing_files(resolved):
@@ -265,6 +308,16 @@ def main() -> int:
             "witness_instrument": record["witness_instrument"],
             "staged_for_reuse": record["staged_for_reuse"],
             "query_library_is_not_a_member": args.library not in members,
+            # Carried on every arm, including a queries-only run, because it decides how
+            # the pass this run is preparing may be read once it comes back.
+            "within_plant_stratum": {
+                "available": within_plant,
+                "basis": within_plant_basis,
+                "consequence": ("the per-plant reading is the paired one"
+                                if within_plant else
+                                "the per-plant reading is declined and the between-plant "
+                                "arm is what this panel can answer for this library"),
+            },
         },
         "rules_enforced": record["rules_that_travel_with_this_panel"],
         "operating_points": {"required": list(REQUIRED_OPS),
@@ -324,7 +377,7 @@ def main() -> int:
             # RULE 2 and RULE 4, as refusals after the fact: a report missing the paired
             # strata or an operating point can only be read in the shape this measurement
             # refuses, so the stage fails rather than passing it on.
-            missing = missing_paired_rows(rows)
+            missing = missing_paired_rows(rows, within_plant)
             if missing:
                 raise SystemExit(
                     f"the per-plant report is missing {len(missing)} required rows "
@@ -342,6 +395,22 @@ def main() -> int:
                     paired.setdefault(r["op"], {})["plants_positive"] = \
                         int(r["witnessed_median"])
             stage["paired_per_plant"] = paired
+            if not within_plant:
+                stage["plant_identity_contrast"] = {
+                    "state": "declined",
+                    "reason": within_plant_basis,
+                    "what_is_still_measured": (
+                        "the between-plant arm: how much of this library's material is "
+                        "witnessed anywhere in the panel, read down the depth column "
+                        "against identified reads at matched depth. That is the "
+                        "measurement this stage exists for and it needs no within-plant "
+                        "stratum."),
+                    "what_is_not": (
+                        "whether plant identity matters for this library. Searching it "
+                        "against the panel and reporting the difference would measure how "
+                        "far this plant sits from four other continents, which is a real "
+                        "quantity and not the one this stage reports."),
+                }
             stage["pooled_reading"] = (
                 "not emitted. Within-plant rates run 0.1530 to 0.9593, so a pooled "
                 "within-minus-between difference compares plants rather than comparing "

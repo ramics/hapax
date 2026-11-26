@@ -66,15 +66,24 @@ def test_a_subset_that_drops_a_need_is_refused_not_quietly_completed():
     assert R.order(["cascade"]) == ["cascade"]
 
 
-def test_the_validation_stages_are_not_in_the_default_set():
-    """SPEC 13.4. A stage that scores a run against sequence whose distance was fixed
-    before it has no answer on water nobody has deposited from, which is every sample
-    production is for."""
+def test_the_depositor_panel_is_the_only_stage_held_out_of_the_default_set():
+    """SPEC 13.4, as it now reads. The question is who fixed the distance.
+
+    `panel` scores recovery against genomes somebody else assembled out of the same
+    water. A run cannot create a depositor, so it is not asked for by default.
+
+    The ladder is in the default set, and the distinction is the point: it spikes a genome
+    that is NOT from this water, at rates the run chooses, into this library's own
+    background. It assumes nothing about the sample. Held out, it was simply not run, and
+    the one library here taken through the documented command alone published a report
+    with no positive control of any kind.
+    """
     validation = {n for n, s in R.stages.items() if s.validation}
-    assert validation == {"calibration", "panel"}
+    assert validation == {"panel"}
     assert not validation & set(R.production())
-    # Still selectable by name, which is how a fixture library runs them.
+    # Still selectable by name, which is how a fixture library runs it.
     assert "panel" in R.order(["cascade", "panel"])
+    assert "calibration" in R.production()
 
 
 def test_the_registry_agrees_with_the_legacy_driver_about_production():

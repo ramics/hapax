@@ -67,24 +67,41 @@ def _open(path: Path):
     return gzip.open(p, "rt") if p.endswith(".gz") else open(p)
 
 
-def count_and_lengths(path: Path, sample: int = LENGTH_SAMPLE) -> tuple[int, Counter]:
-    """Records in a FASTQ, and the length histogram of its first `sample` records.
+def count_and_lengths(path: Path,
+                      sample: int = LENGTH_SAMPLE) -> tuple[int, Counter, float | None]:
+    """Records in a FASTQ, its length histogram, and the error rate its Q strings imply.
 
     Counts lines and divides, which is what every FASTQ reader here does; a record whose
     sequence is wrapped over several lines would break it, and no instrument writes one.
     The file is read once, streaming, so the cost is one pass per mate.
+
+    THE THIRD VALUE IS AN UPPER BOUND AND HAS TO TRAVEL AS ONE. It is the mean of
+    10**(-Q/10) over the sampled bases, which is what the instrument claims about itself.
+    Measured reference-free from self-overlapping pairs, SRR23973193 reads 0.00068 along
+    the body against the 0.00206 its Q strings imply, so a Q-derived rate is conservative
+    by about 2.6x on that library. The direction is therefore known: anything simulated at
+    this rate is noisier than the library's real reads, which costs recognition rather
+    than inventing it. That is why it is worth having at all - the one consumer is the
+    divergence ladder, whose spike reads were otherwise written at the two rates measured
+    on one library in 2026 and carried to every library since.
     """
     lengths: Counter = Counter()
     lines = seen = 0
+    qsum, qn = 0.0, 0
     with _open(path) as h:
         for i, line in enumerate(h):
             lines += 1
             if i % 4 == 1 and seen < sample:
                 lengths[len(line.strip())] += 1
                 seen += 1
+            elif i % 4 == 3 and qn < sample:
+                for c in line.strip():
+                    qsum += 10.0 ** (-(ord(c) - 33) / 10.0)
+                qn += 1
     if lines % 4:
         raise ValueError(f"{path} has {lines} lines, not a multiple of 4: truncated?")
-    return lines // 4, lengths
+    bases = sum(n * ln for ln, n in lengths.items()) or 0
+    return lines // 4, lengths, (qsum / bases if bases else None)
 
 
 def stride_for(pairs: int, pairs_per_seed: int, seeds: int,
@@ -121,11 +138,11 @@ def stride_for(pairs: int, pairs_per_seed: int, seeds: int,
 
 def measure(r1: Path, r2: Path | None, pairs_per_seed: int, seeds: int) -> dict:
     t0 = time.time()
-    pairs, l1 = count_and_lengths(Path(r1))
+    pairs, l1, q1 = count_and_lengths(Path(r1))
     out = {"pairs": pairs, "pairs_basis": f"records counted in {Path(r1).name}",
            "read_length": [max(l1, key=l1.get)]}
     if r2 is not None:
-        n2, l2 = count_and_lengths(Path(r2))
+        n2, l2, q2 = count_and_lengths(Path(r2))
         if n2 != pairs:
             raise ValueError(
                 f"mate 1 has {pairs} records and mate 2 has {n2}. They are not pairs, and "
@@ -139,6 +156,17 @@ def measure(r1: Path, r2: Path | None, pairs_per_seed: int, seeds: int) -> dict:
         f"Read length is the one recognition wall this project has measured moving "
         f"(SPEC 4.2), so it is recorded rather than assumed comparable to another "
         f"library's.")
+    # The error rate the instrument claims about itself, per mate, so that nothing
+    # downstream has to carry another library's. The ladder simulates its spike reads at
+    # these rates; before this it simulated every library's at SRR23973193's.
+    out["q_implied_error"] = [q1] + ([q2] if r2 is not None else [])
+    out["q_implied_error_basis"] = (
+        f"mean of 10**(-Q/10) over the bases of the first {LENGTH_SAMPLE} records of each "
+        f"mate. An UPPER BOUND, not the error rate: measured reference-free from "
+        f"self-overlapping pairs, SRR23973193 reads 0.00068 along the body against the "
+        f"0.00206 its Q strings imply, so this is conservative by about 2.6x there. The "
+        f"bias has a direction - sequence simulated at this rate is noisier than this "
+        f"library's real reads - and it costs recognition rather than inventing it.")
     out["read_length_spread"] = {
         "r1": sorted(l1.items(), key=lambda kv: -kv[1])[:5],
         **({"r2": sorted(l2.items(), key=lambda kv: -kv[1])[:5]} if r2 is not None else {}),
@@ -172,6 +200,10 @@ def measure(r1: Path, r2: Path | None, pairs_per_seed: int, seeds: int) -> dict:
         "sample": "the matrix, place, collection date and molecule are properties of the "
                   "water and of the deposit, not of the FASTQ",
         "crossplant_panel": "membership of a committed panel, not a property of the reads",
+        "error_rate": "the Q strings give an upper bound, recorded above as "
+                      "q_implied_error. The rate itself needs the reads overlapping their "
+                      "own mates (results/berlin_quality/), which is a property of the "
+                      "insert distribution and not of a single record.",
     }
     out["wall_seconds"] = round(time.time() - t0, 1)
     return out

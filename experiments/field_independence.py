@@ -162,7 +162,9 @@ def main() -> None:
     if not paths:
         raise SystemExit(f"no per-read rows in {args.fields}")
     rows = load_rows(paths)
-    residue = [r for r in rows if r.get("set", "residue") != "known"]
+    # Keyed on the row's own set. The file carries a third arm since the search null
+    # was added to residue_report, and `!= "known"` put its rows in the residue pile.
+    residue = [r for r in rows if r.get("set", "residue") == "residue"]
     known = [r for r in rows if r.get("set") == "known"]
 
     cols = matrix(residue, list(FIELDS))

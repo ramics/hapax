@@ -28,7 +28,14 @@ LENGTH = re.compile(r"\b(?:93|100|101|107|125|150|151|250|300) nt\b")
 #: An accession, which is what turns the length into a quotation with a source.
 ACCESSION = re.compile(r"\b[SED]RR\d+\b")
 
-FILES = tuple(sorted((ROOT / "src" / "hapax").glob("*.py")))
+#: The package, plus the renderer. The renderer is here because it is the one file whose
+#: strings a reader of a report actually sees: two sentences in its detail panels carried
+#: SRR23973193's 107 nt to a 2 x 150 library's own page, which is the same defect this
+#: test was written for one layer out. The rest of `experiments/` is not swept yet - 51
+#: docstrings in the archived experiments quote a length without an accession - so the
+#: line is drawn at what ships to a page.
+FILES = tuple(sorted((ROOT / "src" / "hapax").glob("*.py"))) + \
+    (ROOT / "experiments" / "make_web.py",)
 
 
 def test_every_read_length_in_prose_names_its_library():
