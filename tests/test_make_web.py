@@ -158,7 +158,22 @@ def test_the_section_list_is_one_literal_with_no_per_sample_branch():
     src = (ROOT / "experiments/make_web.py").read_text()
     assert src.count("const SUMMARY = [") == 1
     page = make_web.PAGE
-    assert "SRR" not in page, "a run accession is written into the page code"
+    # AN ACCESSION MAY BE QUOTED AS THE SOURCE OF A NUMBER, AND MAY NOT BE BRANCHED ON.
+    # Those are two different things and "SRR not in the page" forbade both, which put
+    # this test in conflict with `test_read_length_prose`: a read length in prose has to
+    # name the library it was measured on, or every library's page is told its reads are
+    # SRR23973193's 107 nt. So the quotation is allowed, from a named set, and what stays
+    # forbidden is the thing SPEC 13.4 is about - a render path that keys on the sample.
+    QUOTABLE = {"SRR23973193"}
+    for m in __import__("re").finditer(r"[SED]RR\d+", page):
+        assert m.group(0) in QUOTABLE, (
+            f"{m.group(0)} is written into the page code. Only a library whose "
+            f"MEASUREMENT the page quotes belongs there, and only as its source")
+    for i, ln in enumerate(page.split("\n"), 1):
+        if __import__("re").search(r"[SED]RR\d+", ln):
+            assert not __import__("re").search(r"==|!=|\?|accession", ln), (
+                f"line {i} compares against an accession, so the page would render "
+                f"differently for one sample: {ln.strip()[:100]}")
     # Comments may name a library to record a bug that printed its numbers elsewhere;
     # code may not, so the check is on the code with the comments stripped.
     code = "\n".join(ln for ln in page.split("\n")

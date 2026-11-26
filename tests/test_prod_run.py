@@ -289,15 +289,20 @@ def test_a_single_end_library_is_recorded_as_single(tmp_path):
 
 
 # ------------------------------------------------- validation is not production
-def test_the_depositor_panel_and_the_spiked_ladder_are_not_production_stages():
-    """Unknown water has no depositor, so a production run does not ask (SPEC 13.4)."""
+def test_the_depositor_panel_is_not_a_production_stage_and_the_ladder_is():
+    """Unknown water has no depositor, so a production run does not ask (SPEC 13.4).
+
+    The ladder is the other way round, and the line between them is who fixed the
+    distance: it spikes a genome that is not from this water into this library's own
+    background, so it needs nobody to have deposited anything.
+    """
     import importlib.util
     spec = importlib.util.spec_from_file_location("hapax_mod", ROOT / "hapax.py")
     hp = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(hp)
-    assert set(hp.VALIDATION_STAGES) == {"panel", "calibration"}
+    assert set(hp.VALIDATION_STAGES) == {"panel"}
     assert "panel" not in hp.PRODUCTION_STAGES
-    assert "calibration" not in hp.PRODUCTION_STAGES
+    assert "calibration" in hp.PRODUCTION_STAGES
     # every other stage is still there, in the same order
     assert hp.PRODUCTION_STAGES == [s for s in hp.STAGE_ORDER
                                     if s not in hp.VALIDATION_STAGES]
@@ -305,7 +310,6 @@ def test_the_depositor_panel_and_the_spiked_ladder_are_not_production_stages():
     run_sh = (ROOT / "experiments/prod_run.sh").read_text()
     stages_line = [l for l in run_sh.splitlines() if l.startswith("STAGES=")][0]
     assert "panel" not in stages_line.replace("crossplant", "")
-    assert "calibration" not in stages_line
 
 
 def test_the_stage_list_is_typed_once(tmp_path):
@@ -344,7 +348,12 @@ def test_the_stage_list_is_typed_once(tmp_path):
     for stage, reason in launcher.NO_REFERENCE_ON_THIS_INSTANCE.items():
         assert stage in hp_stages and len(reason) > 40, stage
     assert "panel" not in launcher.LAUNCHER_STAGES
-    assert "calibration" not in launcher.LAUNCHER_STAGES
+    # `calibration` IS production now, and this template is the one that cannot run it:
+    # the ladder draws its spike genome from the RefSeq viral nucleotide release, which
+    # only `hapax fetch-db --all` stages. So it is omitted here with that reason, like
+    # `divergent`, and the --oneshot pass runs it.
+    assert "calibration" in launcher.PRODUCTION_STAGES
+    assert "calibration" in launcher.NO_REFERENCE_ON_THIS_INSTANCE
 
 
 def test_a_library_with_no_entry_is_not_a_refusal_for_a_launcher():

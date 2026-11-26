@@ -160,6 +160,23 @@ INVENTORY: tuple[RefSet, ...] = (
         extra={"protein_fasta": "prot/viral.1.protein.faa.gz"},
     ),
     RefSet(
+        key="spike_genomes",
+        what="RefSeq viral nucleotide genomes, as the release ships them",
+        why="the positive control's material. The divergence ladder walks a real viral "
+            "genome away from itself and spikes it into this library's own background, "
+            "which is the only measurement here that turns 'survived subtraction' into "
+            "'would have survived at 20% divergence'. The genome has to be one the "
+            "public databases already hold, because the 0% rung is the control that the "
+            "cascade removes what is known; and it has to be absent from THIS sample's "
+            "own assembly, which no download can know and the stage therefore measures. "
+            "A release file rather than a chosen accession: hand-picking one genome for "
+            "every library is a sample fact wearing the clothes of a constant.",
+        sources=(Source("https://ftp.ncbi.nlm.nih.gov/refseq/release/viral/"
+                        "viral.1.1.genomic.fna.gz", "viral.1.1.genomic.fna.gz",
+                        rolling=True),),
+        fills="nt/viral.1.1.genomic.fna.gz",
+    ),
+    RefSet(
         key="sprot",
         what="UniProt Swiss-Prot, as a DIAMOND index",
         why="the second protein tier, added because 88% of Berlin reads score 1.0 "

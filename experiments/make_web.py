@@ -113,8 +113,9 @@ def _best(row: dict, key: str):
     """The strongest protein hit on a row, whichever index found it.
 
     Reported with its E-value elsewhere and never without one: an identity quoted without
-    its E-value is the retracted claim this project is most careful about, because a 107 nt
-    query against a large database finds about 40 bases at about 88% by chance.
+    its E-value is the retracted claim this project is most careful about, because a short
+    nucleotide query against a large database finds a chance-level partial match: about 40
+    bases at about 88% identity, measured on SRR23973193's 107 nt reads.
     """
     best = None
     for k, v in row.items():
@@ -684,10 +685,12 @@ def search_table(piles: dict[str, list[dict]]) -> dict:
     residue at some floor is uninterpretable until the same floor is applied to material
     the cascade already identified. So the residue rows and the identified rows are
     carried together and filtered by the same predicate in the same pass, and a panel
-    draws both or neither. The shuffled arm is NOT here, because this run has no shuffled
-    search at read level - the composition fields have their shuffled null, the search
-    does not - and the page says that rather than drawing two arms as though they were
-    three.
+    THE THIRD ARM. The shuffled search null travels in the same file, tagged `set:
+    shuffled` by `residue_report.search_null`, and is filtered by this same predicate in
+    this same pass. It was absent for one reason only: the search ran over the residue and
+    over the subtracted reads and never over the shuffled copies, which were already being
+    built in the same loop for the composition fields. Where a run has no such rows the
+    panel draws two bars and says why, rather than drawing an arm it does not have.
 
     WHY PER MATE AND NOT PER PAIR. The two mates are not interchangeable: mate 2 carries a
     non-template prefix and is 14 nt shorter, which is 62 scorable 31-mers against 76, and
@@ -737,13 +740,19 @@ def bundle(rundir: Path, scatter_per_pile: int, table_rows: int, seed: int,
     if manifest is None:
         raise SystemExit(f"{rundir}/manifest.json is absent; this is not a hapax run "
                          f"directory")
-    piles: dict[str, list[dict]] = {"residue": [], "known": []}
+    # KEYED ON THE ROW'S OWN `set`, not on "residue or else known". A third arm arrived in
+    # this file - the shuffled search null - and under the old two-way test every one of
+    # its rows was filed as already-identified material, which would have moved the
+    # control into the comparator.
+    piles: dict[str, list[dict]] = {"residue": [], "known": [], "shuffled": []}
     for r in run_rows.jsonl(rundir, "reads.jsonl") or []:
-        piles.setdefault("residue" if r.get("set", "residue") == "residue"
-                         else "known", []).append(r)
+        piles.setdefault(r.get("set", "residue"), []).append(r)
 
     scatter = {}
-    for pile, rows in piles.items():
+    # The scatter and the sampled table are the per-read FIELD views, and the shuffled arm
+    # carries the search fields only, so it is not drawn there: a pile of rows with every
+    # axis absent would plot as a column on zero.
+    for pile, rows in {k: piles[k] for k in ("residue", "known")}.items():
         take = rows if len(rows) <= scatter_per_pile else rng.sample(rows,
                                                                     scatter_per_pile)
         scatter[pile] = {"n_drawn": len(take), "n_total": len(rows),
@@ -2826,8 +2835,9 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
   }
   /* THE STAGE'S BIAS STATEMENT, WITH THIS RUN'S MATE LENGTHS BESIDE IT. The linkage
      stage wrote its mate asymmetry clause with one library's post-trim lengths in it -
-     "mate 2 is 93 nt against mate 1's 107" - and every library's output carried the
-     string, so a 2x151 library was told its own mates were 93 and 107 nt. The stage now
+     "mate 2 is 93 nt against mate 1's 107", which are SRR23973193's - and every
+     library's output carried the string, so a 2x151 library was told its own mates were
+     93 and 107 nt. The stage now
      measures them, and the page states the run's own lengths here as well, because a run
      produced before that fix would otherwise keep printing the sentence unchallenged. */
   const lens = ((D.page || {}).measured || {}).read_length;
@@ -2916,12 +2926,28 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
     const st = state[k];
     const txt = typeof st === 'string' ? st : (st && st.state) || 'not recorded';
     const tr = el('tr');
+    /* FOUR KEY SHAPES PER ARM, AND A FIFTH THAT IS A STATED ABSENCE. A composition field
+       writes its arms as `shuffled_null` and `subtracted_reads`; a search field writes
+       `shuffled_null_any_hit_frac` and `subtracted_reads_any_hit_frac`. Reading only the
+       search shape in the third column printed "not measured" over every composition
+       field's known-positive arm, and reading only the composition shape in the second
+       printed a dash over every search field's null. A field that cannot have a null says
+       so in `shuffled_null_absent_because`, which is a different cell from a dash: a dash
+       is this table's word for not measured. */
+    const nullCell = v.shuffled_null_absent_because
+      ? '<span class="dim" style="white-space:normal;text-align:left">no null: ' +
+        esc(v.shuffled_null_absent_because.replace(/^no null exists for this field: /, '')) +
+        '</span>'
+      : (v.shuffled_null_any_hit_frac != null ? pct(v.shuffled_null_any_hit_frac)
+        : mean(v.shuffled_null));
+    const knownCell = v.subtracted_reads != null ? mean(v.subtracted_reads)
+      : (v.subtracted_reads_any_hit_frac != null ? pct(v.subtracted_reads_any_hit_frac)
+        : (v.subtracted_reads_bitscore ? num(v.subtracted_reads_bitscore.mean, 2)
+          : '<span class="absent">not measured</span>'));
     tr.innerHTML = '<td>' + esc(k) + '</td><td class="mono">' +
       mean(v.residue != null ? v.residue : v) +
-      '</td><td class="mono">' + mean(v.shuffled_null) + '</td><td class="mono">' +
-      (v.subtracted_reads_any_hit_frac != null ? pct(v.subtracted_reads_any_hit_frac)
-        : (v.subtracted_reads_bitscore ? num(v.subtracted_reads_bitscore.mean, 2)
-          : '<span class="absent">not measured</span>')) +
+      '</td><td class="mono" style="max-width:34ch">' + nullCell +
+      '</td><td class="mono">' + knownCell +
       '</td><td class="' + (/cannot/.test(txt) ? 'absent' : 'dim') +
       '" style="white-space:normal;text-align:left;max-width:30ch">' + esc(txt) + '</td>';
     body.append(tr);
@@ -2938,6 +2964,22 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
       'That is why a read-level chimaera call is not made on this page.'));
   }
   p.append(el('p', 'note', esc((D.run || {}).known_positive_note || '')));
+  // The two nulls are different draws and are named here rather than left to be read as
+  // one column. A composition field is calibrated against a mononucleotide shuffle, which
+  // is the null for "is this field just base composition"; a search field is calibrated
+  // against a dinucleotide shuffle, which keeps composition and destroys codon structure
+  // and is the harder null of the two. Reading one row against the other would compare
+  // two nulls drawn by different shuffles.
+  const sn = F.search_null_census;
+  if (sn) {
+    p.append(el('p', 'note', 'The null column is a mononucleotide shuffle for the ' +
+      'composition fields and a dinucleotide shuffle for the two search fields, which ' +
+      'keeps base and dinucleotide composition and destroys codon structure. Of ' +
+      sn.offered_pairs + ' pairs offered to it, ' + sn.shuffled_pairs +
+      ' were shuffled and ' + sn.dropped_pairs + ' dropped: a shuffle that hands back ' +
+      'its input is real sequence wearing the label of a null, so those are counted ' +
+      'and excluded rather than passed through.'));
+  }
   app.append(p);
 })();
 
@@ -3599,8 +3641,9 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
   const p = panel('Per-read residue table, un-thresholded',
     'One row per surviving pair, un-thresholded. The closest relative is printed with its ' +
     'E-value every time: an identity without one is the claim this project has already had ' +
-    'to withdraw, because a 107 nt query against a large database finds about 40 bases at ' +
-    'about 88% by chance.');
+    'to withdraw, because a short nucleotide query against a large database finds a ' +
+    'chance-level partial match: about 40 bases at about 88% identity, measured on ' +
+    'SRR23973193\\'s 107 nt reads.');
   if (!T || !T.rows.length) { p.append(el('div', 'absent', 'no rows in this run'));
     app.append(p); return; }
   const ctl = el('div', 'controls');
@@ -4825,15 +4868,27 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
   const fig = el('div'); p.append(fig);
   const foot = el('div', 'note'); p.append(foot);
   p.append(settingLine(IDS));
-  p.append(nullLine(IDS, {
-    shipped: 'absent at every setting, including this one: this run has no shuffled ' +
-      'search at read level. The composition fields carry their shuffled null; the ' +
-      'search does not, and a panel that drew one anyway would be inventing it.',
-    moved: 'absent at every setting, this one included, for the same reason: there is ' +
-      'no shuffled search arm at read level in this run.'}));
+  const HAS_NULL = (SR.piles.shuffled || []).length;
+  p.append(nullLine(IDS, HAS_NULL ? {
+    shipped: 'the third bar: the same index, the same floor and the same pass over ' +
+      'dinucleotide-shuffled copies of these same reads, which keeps base and ' +
+      'dinucleotide composition and destroys codon structure and gene order. A ' +
+      'dinucleotide shuffle rather than the mononucleotide one the composition fields ' +
+      'use, because the mononucleotide shuffle inflates stop density and makes the ' +
+      'null easier to beat.',
+    moved: 'the third bar, re-filtered at your setting with the other two in the same ' +
+      'pass.'} : {
+    shipped: 'absent at every setting, including this one: no pair in this run survived ' +
+      'the shuffle, so the search null has no queries.',
+    moved: 'absent at every setting, this one included, for the same reason.'}));
 
-  const ARMS = [['residue', 'the residue', 'var(--residual)'],
-                ['known', 'already identified', 'var(--identified)']];
+  // `--residual` is not a variable this page defines, which made the residue bar of
+  // this one figure render with an invalid fill while the other eighteen uses of
+  // `--residue` were right.
+  const ARMS = [['residue', 'the residue', 'var(--residue)'],
+                ['known', 'already identified', 'var(--identified)'],
+                ['shuffled', 'dinucleotide-shuffled null', 'var(--null)']]
+    .filter(a => (SR.piles[a[0]] || []).length);
   function rate(rows, e, unit) {
     let hit = 0, n = 0;
     rows.forEach(r => {
@@ -4875,14 +4930,18 @@ function tierCanName(name) { return tierKind(name) === 'names'; }
     const d = out.residue, k = out.known;
     const pts = (d.frac != null && k.frac != null)
       ? (100 * (k.frac - d.frac)).toFixed(2) : null;
+    const nl = out.shuffled;
     foot.innerHTML = '<b>How to read it.</b> The gap, not either bar: at this floor the ' +
       'identified arm is ' + (pts == null ? 'not comparable' : pts +
       ' points above the residue') + '. Both arms are the same run, the same floor and ' +
       'the same pass, which is the only way either number means anything. ' +
+      (nl ? 'The shuffled arm reads ' + pct(nl.frac) + ' at this floor, which is where ' +
+        'chance alignments sit on reads of this length against this index. ' : '') +
       '<b>The floor is the measurement.</b> Dropping it admits chance alignments - a ' +
-      '107 nt query against a large protein database finds about 34 amino acids at ' +
-      'chance - and those are drawn from whatever the database holds most of, so a ' +
-      'loose floor shows the database rather than the water.' +
+      'short query against a large protein database finds about 34 amino acids at ' +
+      'chance, measured on SRR23973193\\'s 107 nt reads - and those are drawn from ' +
+      'whatever the database holds most of, so a loose floor shows the database rather ' +
+      'than the water.' +
       (ctlMoved('search_unit') ? ' <span class="relabel">Counted per mate at your ' +
         'setting, per pair as shipped: every percentage of this library elsewhere on ' +
         'the page is of pairs.</span>' : '');

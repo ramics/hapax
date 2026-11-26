@@ -82,6 +82,7 @@ import library_facts
 
 from berlin_io import revcomp
 from loud import Consulted, Preflight, require_output, run_tool
+from shuffle_control import ShuffleFailed, shuffle_arm
 from subtract_known import (artefact_fields, dir_bytes, provenance, shannon_entropy,
                             spread, _mm_index)
 
@@ -684,6 +685,17 @@ def main() -> None:
         known_rows[name] = _row(name, s1, s2, rng)
         known_rows[name]["set"] = "known"
 
+    # The search fields' null arm. Drawn from its own generator rather than from `rng`, so
+    # that adding it leaves every field already computed above drawing the same sequence
+    # at the same seed as before.
+    null_pairs, null_census = search_null(pairs, random.Random(args.seed))
+    # One row per shuffled pair, written whether or not it got a hit. Building these from
+    # the hits alone would give the arm a denominator of its own hits, so it would read
+    # 100% at every floor it read anything at - the shape of the withdrawn 92.3%.
+    null_rows: dict[str, dict] = {
+        name: {"name": name, "set": "shuffled", "len1": len(s1), "len2": len(s2)}
+        for name, (s1, s2) in null_pairs.items()}
+
     # ---- closest relative, however far: no bitscore floor
     for db in args.dmnd:
         tag = f"closest_{db.stem}"
@@ -911,24 +923,7 @@ def main() -> None:
     # ---- field calibration: residue against shuffled null and against subtracted reads
     calib = {
         "pairs_scored": len(pairs),
-        "fields": {
-            "gc": {"residue": spread(r["gc"] for r in rows.values()),
-                   "shuffled_null": spread(r["gc_shuffled"] for r in rows.values())},
-            "entropy3": {"residue": spread(r["entropy3"] for r in rows.values()),
-                         "shuffled_null": spread(r["entropy3_shuffled"] for r in rows.values())},
-            "longest_orf_aa": {
-                "residue": spread(r["frame"]["longest_orf_aa"] for r in rows.values()),
-                "shuffled_null": spread(r["frame_shuffled"]["longest_orf_aa"] for r in rows.values()),
-            },
-            "frame_identifiable_frac": {
-                "residue": sum(r["frame"]["frame_identifiable"] for r in rows.values()) / len(rows),
-                "shuffled_null": sum(r["frame_shuffled"]["frame_identifiable"] for r in rows.values()) / len(rows),
-            },
-            "kmer16_duplicate_frac": {
-                "residue": spread(r["repetitive"]["kmer16_duplicate_frac"] for r in rows.values()),
-                "shuffled_null": spread(r["repetitive_shuffled"]["kmer16_duplicate_frac"] for r in rows.values()),
-            },
-        },
+        "fields": _composition_arms(list(rows.values()), list(known_rows.values())),
         "artefact_rates": {
             "adapter": sum(1 for r in rows.values() if r["adapter"]) / len(rows),
             "primer_dimer": sum(1 for r in rows.values() if r["primer_dimer"]) / len(rows),
@@ -976,7 +971,44 @@ def main() -> None:
             "pident": spread(g["pident"] for g in got) if got else None,
             "bitscore_sweep": {str(b): sum(1 for g in got if g["bitscore"] >= b) / len(rows)
                                for b in (30, 40, 50, 60, 80, 100)},
+            "null_kind": "dinuc shuffle of these same reads (shuffle_control.shuffle_arm)",
         }
+        # ---- the same search over the shuffled arm: the significance floor's control row
+        #
+        # The sweep above is the significance-floor figure, and without this it had no
+        # control row: the search ran over the residue and over the subtracted reads and
+        # never over the shuffled copies, so a reader could see where real hits die off
+        # and not where chance hits do. The arm costs one DIAMOND call per index per seed
+        # over the same few thousand reads. Its own denominator travels with it, because
+        # pairs the shuffle could not take are dropped from it and not from the residue.
+        if null_pairs:
+            nb = _diamond_best(args.diamond_bin, db, null_pairs,
+                               args.work / f"{tag}_null_s{args.seed}.fa",
+                               args.threads, args.diamond_mode)
+            consulted.searched(f"{tag} shuffled null", db, queries=len(null_pairs),
+                               hits=len(nb))
+            nv = list(nb.values())
+            calib["fields"][tag].update({
+                "shuffled_null_pairs": len(null_pairs),
+                "shuffled_null_any_hit_frac": len(nb) / len(null_pairs),
+                "shuffled_null_bitscore": spread(g["bitscore"] for g in nv) if nv else None,
+                "shuffled_null_pident": spread(g["pident"] for g in nv) if nv else None,
+                "shuffled_null_bitscore_sweep": {
+                    str(b): sum(1 for g in nv if g["bitscore"] >= b) / len(null_pairs)
+                    for b in (30, 40, 50, 60, 80, 100)},
+                "shuffled_null_census": null_census,
+            })
+            # The hit goes on the null's own row as well as into the summary, for the
+            # reason the known arm's does: a summary cannot be re-filtered, and the
+            # page's significance-floor figure re-filters all three arms at the
+            # reader's setting in one pass. A control that cannot move with the
+            # threshold is not a control for a threshold.
+            for nname, v in nb.items():
+                null_rows[nname][tag] = v
+        else:
+            calib["fields"][tag]["shuffled_null_absent_because"] = (
+                "no pair in this run survived the dinucleotide shuffle, so the search "
+                f"null has no queries: {json.dumps(null_census)}")
         if known:
             kb = _diamond_best(args.diamond_bin, db, known,
                                args.work / f"{tag}_known_s{args.seed}.fa",
@@ -999,6 +1031,7 @@ def main() -> None:
     # cannot tell a missing `closest_*` key (searched, no hit) from an index never searched
     # without this; `hapax.py strains` reads it rather than inferring from hits.
     calib["field_state"] = field_state
+    calib["search_null_census"] = null_census
     calib["consulted"] = consulted.as_list()
     calib["known_pile_pairs"] = len(known)
     (args.out / f"calibration_s{args.seed}.json").write_text(json.dumps(calib, indent=2))
@@ -1006,6 +1039,8 @@ def main() -> None:
         for name, r in rows.items():
             h.write(json.dumps(r) + "\n")
         for name, r in known_rows.items():
+            h.write(json.dumps(r) + "\n")
+        for name, r in null_rows.items():
             h.write(json.dumps(r) + "\n")
 
     (args.out / f"manifest_s{args.seed}.json").write_text(json.dumps({
@@ -1103,6 +1138,123 @@ def _load_fasta_pairs(path: Path | None, limit: int,
         raise SystemExit(f"{path}: {len(broken)} of {len(kept)} pairs lack a mate "
                          f"(first: {broken[0]})")
     return {k: (v[0], v[1]) for k, v in kept}
+
+
+#: The composition fields, each with ONE accessor per arm, which is what makes the three
+#: rows comparable. The residue row, the null row and the subtracted-read row used to be
+#: three separately typed expressions and the third was never typed at all: the header of
+#: this file has promised "the shuffled null and the subtracted-read comparison" for GC and
+#: entropy since it was written, and only the first two arms were ever aggregated. Every
+#: per-read field was already computed on the subtracted pile and thrown away at the
+#: summary, which is how three fields came to be reported as cannot-discriminate when what
+#: was missing was the comparator and not the information.
+#:
+#: `kind` is how the arm is summarised: `spread` for a per-read number, `frac` for a
+#: per-read boolean. `null` is None where no shuffle can move the field.
+COMPOSITION_FIELDS = (
+    ("gc", "spread", lambda r: r["gc"], None),
+    ("entropy3", "spread", lambda r: r["entropy3"], lambda r: r["entropy3_shuffled"]),
+    ("longest_orf_aa", "spread", lambda r: r["frame"]["longest_orf_aa"],
+     lambda r: r["frame_shuffled"]["longest_orf_aa"]),
+    ("frame_identifiable_frac", "frac", lambda r: r["frame"]["frame_identifiable"],
+     lambda r: r["frame_shuffled"]["frame_identifiable"]),
+    ("kmer16_duplicate_frac", "spread", lambda r: r["repetitive"]["kmer16_duplicate_frac"],
+     lambda r: r["repetitive_shuffled"]["kmer16_duplicate_frac"]),
+)
+
+#: Why GC has no null rather than a null that reads the same. A composition-matched
+#: shuffle permutes bases, so GC is identical to the digit on both arms by construction.
+#: Reported as "no null exists for this field" rather than as a measurement that could not
+#: discriminate, because those are different facts and only the second is about the water.
+GC_NULL_ABSENT = ("no null exists for this field: a composition-matched shuffle permutes "
+                  "bases and cannot change GC, so the null is the measurement itself to "
+                  "every digit. Its comparator is the subtracted pile.")
+
+
+def _arm(rowlist: list[dict], accessor, kind: str):
+    if kind == "spread":
+        return spread(accessor(r) for r in rowlist)
+    return sum(accessor(r) for r in rowlist) / len(rowlist)
+
+
+def _composition_arms(residue: list[dict], known: list[dict]) -> dict:
+    """The composition fields over the residue, the shuffled null and the subtracted pile."""
+    out: dict[str, dict] = {}
+    for name, kind, real, null in COMPOSITION_FIELDS:
+        row = {"residue": _arm(residue, real, kind)}
+        if null is None:
+            row["shuffled_null"] = None
+            row["shuffled_null_absent_because"] = GC_NULL_ABSENT
+        else:
+            row["shuffled_null"] = _arm(residue, null, kind)
+            row["null_kind"] = "mono shuffle of these same reads"
+        # The known pile's rows carry every field in this table already: they go through
+        # the same `_row`. An absent arm here therefore means the cascade subtracted
+        # nothing, not that the field was not measurable on it.
+        if known:
+            row["subtracted_reads"] = _arm(known, real, kind)
+        else:
+            row["subtracted_reads_absent_because"] = (
+                "no subtracted reads in this run, so this field has no known-positive arm")
+        out[name] = row
+    return out
+
+
+def search_null(pairs: dict, rng: random.Random) -> tuple[dict, dict]:
+    """Dinucleotide-shuffled copies of the residue pairs, for the SEARCH fields' null.
+
+    WHY THE SEARCH ARM GETS A NULL OF ITS OWN, AND A DIFFERENT ONE. The composition fields
+    are calibrated against the mononucleotide shuffle above, which is the right null for
+    "is this field just base composition". A protein search is a different question, and
+    the stronger null is the only honest one for it: a dinucleotide-preserving shuffle
+    keeps base and dinucleotide composition and destroys codon structure and gene order,
+    so a hit against it is a hit on composition alone. A mononucleotide shuffle inflates
+    stop density, which makes the null easier to beat and the separation look larger than
+    it is. The two nulls are labelled per field in the output for that reason: they are
+    different draws and must never be read across one figure.
+
+    The shuffle is `shuffle_control.shuffle_arm`, imported. The 304 significant protein
+    hits this project once published off a "shuffled" arm were all 324 contigs a broken
+    local walk had handed back unchanged, so a search null built from a local shuffle is
+    the exact shape of that withdrawal. `shuffle_arm` validates every output against its
+    own invariant and raises rather than falling back; a sequence it cannot shuffle is
+    caught here, counted, and reported, because dropping the repetitive reads silently
+    would remove the very inputs that throw chance alignments.
+
+    Returns the pairs and the census. A pair is admitted only when every mate it has was
+    genuinely shuffled, so the arm is never a mixture of shuffled and real sequence.
+    """
+    mates: list[tuple[str, str]] = []
+    for name, (s1, s2) in pairs.items():
+        mates.append((f"{name}/1", s1))
+        if s2:
+            mates.append((f"{name}/2", s2))
+    out: dict[str, str] = {}
+    unshuffleable: list[str] = []
+    identical: list[str] = []
+    for key, seq in mates:
+        try:
+            got = shuffle_arm([(key, seq)], rng, kind="dinuc")
+        except ShuffleFailed:
+            unshuffleable.append(key)
+            continue
+        if not got["shuffled"]:
+            identical.extend(got["dropped_identical"])
+            continue
+        out.update(got["shuffled"])
+    null: dict[str, tuple[str, str]] = {}
+    incomplete = 0
+    for name, (s1, s2) in pairs.items():
+        a, b = out.get(f"{name}/1"), out.get(f"{name}/2")
+        if a is None or (s2 and b is None):
+            incomplete += 1
+            continue
+        null[name] = (a, b or "")
+    census = {"kind": "dinuc", "offered_pairs": len(pairs), "shuffled_pairs": len(null),
+              "dropped_pairs": incomplete,
+              "mates_no_eulerian_walk": len(unshuffleable),
+              "mates_shuffle_returned_input": len(identical)}
+    return null, census
 
 
 def _diamond_best(dbin: Path, db: Path, pairs: dict, fa: Path, threads: int, mode: str):

@@ -248,25 +248,43 @@ R.add(Stage(
                                   "which a run given only a .dmnd does not have."),),
 ))
 
-# ---------------------------------------------------------------- validation, not output
+# ------------------------------------------- the positive control, and what it is not
 #
 # Imo, 2026-11-23: "why would we, with unknown wastewater, have a genome with a distance
-# fixed before the run? by default we know nothing. we always know nothing." Both stages
-# below score a run against sequence whose distance was fixed before it. Both are real and
-# both are how this tool is known to work at all, and neither has an answer on water
-# nobody has deposited from, which is every sample production is for. So they are declared
-# as validation and are not in the default set, and no report section names their output.
+# fixed before the run? by default we know nothing. we always know nothing."
+#
+# That holds for `panel` below, which scores recovery against genomes somebody else
+# assembled out of the same water: no depositor, no panel, and most water has no
+# depositor. It does not hold for the ladder, and the difference is WHO FIXED THE
+# DISTANCE. The ladder takes a genome that is not from this water, walks it away from
+# itself at rates this run chooses, and spikes it into this library's own background.
+# Nothing about the sample is assumed. What it measures is this instrument's sensitivity
+# against this background, which is the quantity every sensitivity sentence in a run
+# otherwise asserts: without it, "survived subtraction" cannot be read as "would have
+# survived at 20% divergence". So it is in the default set, and the one property of its
+# genome that no reference set can carry - absence from the water in hand - is measured
+# per run by `spike_holdout.pick_genome` rather than written down.
 
 R.add(Stage(
     name="calibration",
-    why="The per-sample divergence ladder: a known positive at a chosen distance. The "
-        "only positive control the discriminating dataset has, since no depositor truth "
-        "panel exists for that water.",
+    why="The divergence ladder: a known genome walked away from itself and spiked into "
+        "this library's own background. The positive control, and the only thing that "
+        "turns a removal fraction into a sensitivity at a distance. Its genome is chosen "
+        "against this run's own assembly, because a resident genome is subtracted by the "
+        "sample's own contigs at every rung and reads as the tool working when it is the "
+        "sample working.",
     script="spike_holdout.py",
     needs=("cascade",),
-    validation=True,
+    # NO SECTION. The ladder is a control and not a panel of its own: a `section` here
+    # makes the page refuse to build without it, which is right for a section with no
+    # producer and wrong for this, since it would refuse every run directory produced
+    # before the stage was in the default set. The page reads the file where it has one
+    # and says so where it does not.
     outputs=(Output("calibration_ladder.json", "calibration"),),
 ))
+
+
+# ---------------------------------------------------------------- validation, not output
 
 R.add(Stage(
     name="panel",

@@ -121,6 +121,21 @@ def legacy_argv(cfg: Config, r1: Path, r2: Path | None, out: Path,
         # named in `report_without` rather than quietly dropped.
         if "cross_sample" in cfg.databases:
             argv += ["--cross-sample-ref", str(cfg.database("cross_sample"))]
+        # THE INSTRUMENT THE DIVERGENCE LADDER SIMULATES ITS SPIKE WITH, measured off
+        # this run's own reads rather than left to the stage script's defaults, which are
+        # SRR23973193's post-trim mate-1 length and its Q-derived error means. A ladder
+        # run at one library's read length into another's background measures the
+        # sensitivity of an instrument that library does not have.
+        measured = prepared.measured or {}
+        lengths = measured.get("read_length") or []
+        if lengths:
+            argv += ["--read-len", str(lengths[0])]
+            if len(lengths) > 1:
+                argv += ["--read-len2", str(lengths[1])]
+        for value, flag in zip(measured.get("q_implied_error") or [],
+                               ("--err1", "--err2")):
+            if value:
+                argv += [flag, str(value)]
         if prepared.removal_evidence:
             argv += ["--removal-evidence", str(prepared.removal_evidence)]
         block = cfg.fact("block") or (prepared.measured or {}).get("block")
@@ -134,7 +149,8 @@ def legacy_argv(cfg: Config, r1: Path, r2: Path | None, out: Path,
     if cfg.inputs.get("single_end"):
         argv.append("--single-end")
     for name, flag in (("rrna", "--silva"), ("classifier", "--k2-dbs"),
-                       ("spacers", "--spacers"), ("pfam", "--pfam")):
+                       ("spacers", "--spacers"), ("pfam", "--pfam"),
+                       ("spike_genomes", "--spike-genomes")):
         if name in cfg.databases:
             # `--k2-dbs` is the cascade's TIER LIST and its order is the tier order, so
             # `classifier` may name several databases. One database removes 42.8%, 21.7%

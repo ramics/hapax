@@ -62,7 +62,8 @@ SCHEMA = {
     # its first member for the contig stage, or running the contig stage four times, would
     # both report something other than what the config states.
     "databases": {"nucleotide", "protein", "rrna", "classifier", "classifier_contigs",
-                  "cross_sample", "spacers", "pfam", "sprot", "protein_fasta"},
+                  "cross_sample", "spacers", "pfam", "sprot", "protein_fasta",
+                  "spike_genomes"},
     "tools": {"diamond", "classify", "minimap2", "megahit"},
 }
 
