@@ -58,6 +58,42 @@ def test_the_ladder_genome_is_chosen_as_the_one_absent_from_this_sample(tmp_path
     assert taken and taken[0]["windows_mapping_this_sample"] == 0
 
 
+def test_three_segments_of_one_virus_are_not_three_genomes(tmp_path):
+    """Asked for three out of the real release in order, the first answer was segments L,
+    M and S of one Pseudomonas phage: three accessions, one virus. The point of taking
+    several is that one genome's recognition decay is that genome's, which three segments
+    of the same organism cannot answer while looking as though they do.
+    """
+    pool = tmp_path / "pool.fa"
+    pool.write_text(
+        ">NC_000001.1 Example phage phiX segment L, complete sequence\n"
+        + sequence(11, 3_000) + "\n"
+        ">NC_000002.1 Example phage phiX segment M, complete sequence\n"
+        + sequence(12, 3_000) + "\n"
+        ">NC_000003.1 Another virus 1, complete genome\n"
+        + sequence(13, 3_000) + "\n")
+    assembly = fasta(tmp_path / "asm.fa", {"contig_1": sequence(14, 2_000)})
+    index = mappy.Aligner(str(assembly), preset="sr")
+
+    chosen, record = spike_holdout.pick_genome(pool, {"selfasm_identified": index},
+                                               min_mlen=40, want=3)
+
+    assert list(chosen) == ["NC_000001.1", "NC_000003.1"], record["candidates"]
+    second = [c for c in record["candidates"] if c["genome"] == "NC_000002.1"][0]
+    assert "another segment" in second["rejected_because"]
+    assert second["windows_mapping_this_sample"] == 0, (
+        "the second segment was rejected for being the same organism, not for mapping")
+
+
+def test_the_organism_key_strips_the_segment_and_the_completeness():
+    assert (spike_holdout.organism_of(
+        "NC_042068.1 Pseudomonas phage phiNN segment L, complete sequence")
+        == spike_holdout.organism_of(
+            "NC_042070.1 Pseudomonas phage phiNN segment S, complete sequence"))
+    assert (spike_holdout.organism_of("NC_001477.1 Dengue virus 1, complete genome")
+            != spike_holdout.organism_of("NC_042068.1 Pseudomonas phage phiNN segment L"))
+
+
 def test_a_pool_with_nothing_clean_is_a_refusal_with_its_reason(tmp_path):
     resident = sequence(3, 4_000)
     pool = fasta(tmp_path / "pool.fa", {"resident": resident})

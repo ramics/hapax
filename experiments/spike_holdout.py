@@ -147,9 +147,29 @@ SPIKE_CANDIDATES = 60
 SPIKE_WINDOW = 150
 
 
+def organism_of(header: str) -> str:
+    """The organism a release header names, with the segment and completeness stripped.
+
+    WHY THIS EXISTS. Asked for three genomes out of the release in order, the choice came
+    back as `NC_042068.1`, `NC_042069.1` and `NC_042070.1`: segments L, M and S of one
+    Pseudomonas phage. Three accessions, one virus. The point of taking several is that
+    one genome's recognition decay is that genome's, and three segments of the same
+    organism do not answer it while looking as though they do.
+
+    The key is the description with ` segment X` and `, complete/partial ...` removed,
+    which is how the release writes a segmented virus. It is a string rule over a header
+    and it can only be approximate, so the organism it derived is recorded beside every
+    candidate rather than trusted silently.
+    """
+    desc = header.split(None, 1)[1] if len(header.split(None, 1)) > 1 else header
+    for cut in (" segment ", " DNA-", ", complete", ", partial", " chromosome "):
+        desc = desc.split(cut)[0]
+    return desc.strip().rstrip(",").lower()
+
+
 def pick_genome(pool: Path, avoid: dict, min_mlen: int,
                 band: tuple[int, int] = SPIKE_LEN_BAND,
-                limit: int = SPIKE_CANDIDATES) -> tuple[dict, dict]:
+                limit: int = SPIKE_CANDIDATES, want: int = 1) -> tuple[dict, dict]:
     """Choose a ladder genome out of a release file: present in the databases, absent here.
 
     WHY THE GENOME IS CHOSEN AND NOT NAMED. The ladder needs a genome with two
@@ -171,14 +191,22 @@ def pick_genome(pool: Path, avoid: dict, min_mlen: int,
     every candidate, so the record shows how clean the chosen genome is rather than
     asserting it.
 
-    Deterministic: the pool is read in release order and the first clean candidate in the
-    band wins. No seed enters this, so five seeds of one run spike the same genome and the
-    spread between them is the spread of the reads.
+    Deterministic: the pool is read in release order and the first `want` clean
+    candidates in the band win. No seed enters this, so five seeds of one run spike the
+    same genomes and the spread between them is the spread of the reads.
+
+    WHY `want` IS MORE THAN ONE. In release order the first clean candidate is whichever
+    genome the release happens to list first, and one genome's recognition decay is that
+    genome's: a phage with a short, well-represented gene set and an RNA virus with a
+    long polyprotein do not fall off the same rung. Taking several and reporting the
+    ladder per genome, which is the shape this script's output already has, makes the
+    spread between them visible instead of hiding it behind an arbitrary choice.
     """
     chosen: dict[str, str] = {}
     looked: list[dict] = []
+    taken_organisms: set[str] = set()
 
-    def consider(name: str, seq: str) -> bool:
+    def consider(name: str, seq: str, organism: str) -> bool:
         windows = [seq[i:i + SPIKE_WINDOW]
                    for i in range(0, len(seq) - SPIKE_WINDOW + 1, SPIKE_WINDOW)]
         mapped, worst = 0, 0
@@ -190,14 +218,21 @@ def pick_genome(pool: Path, avoid: dict, min_mlen: int,
             if hit >= min_mlen:
                 mapped += 1
                 worst = max(worst, hit)
-        rec = {"genome": name, "length": len(seq), "windows": len(windows),
-               "windows_mapping_this_sample": mapped,
+        rec = {"genome": name, "organism": organism, "length": len(seq),
+               "windows": len(windows), "windows_mapping_this_sample": mapped,
                "longest_match_bases": worst}
         looked.append(rec)
+        if organism in taken_organisms:
+            rec["rejected_because"] = (
+                f"another segment or record of {organism} is already chosen, and three "
+                f"segments of one virus are one genome's recognition decay wearing three "
+                f"accessions")
+            return False
         if mapped == 0:
+            taken_organisms.add(organism)
             chosen[name] = seq
             rec["chosen"] = True
-            return True
+            return len(chosen) >= want
         rec["rejected_because"] = (
             f"{mapped} of {len(windows)} windows of this genome already map this "
             f"sample's own contigs, longest match {worst} bases, so the cascade's "
@@ -205,27 +240,31 @@ def pick_genome(pool: Path, avoid: dict, min_mlen: int,
         return False
 
     opener = gzip.open if str(pool).endswith(".gz") else open
-    name, buf, seen = None, [], 0
+    name, org, buf, seen = None, "", [], 0
     with opener(pool, "rt") as h:
         for line in h:
             if line.startswith(">"):
                 if name and band[0] <= sum(map(len, buf)) <= band[1]:
                     seen += 1
-                    if consider(name, "".join(buf).upper()):
+                    if consider(name, "".join(buf).upper(), org):
                         name = None
                         break
                     if seen >= limit:
                         name = None
                         break
-                name, buf = line[1:].split()[0], []
+                header = line[1:].rstrip("\n")
+                name, org, buf = header.split()[0], organism_of(header), []
             else:
                 buf.append(line.strip().upper())
-        if name and not chosen and band[0] <= sum(map(len, buf)) <= band[1]:
-            consider(name, "".join(buf).upper())
+        if name and len(chosen) < want and band[0] <= sum(map(len, buf)) <= band[1]:
+            consider(name, "".join(buf).upper(), org)
     record = {"pool": str(pool), "length_band": list(band), "candidates_read": len(looked),
-              "candidate_limit": limit, "window_nt": SPIKE_WINDOW,
+              "candidate_limit": limit, "wanted": want, "window_nt": SPIKE_WINDOW,
               "min_match_bases": min_mlen,
               "avoid_indexes": sorted(avoid),
+              "one_record_per_organism": ("segments of one virus are rejected after the "
+                                          "first: three accessions of one organism are "
+                                          "one genome's decay, not three"),
               "candidates": looked,
               "chosen": sorted(chosen) or None}
     if not chosen:
@@ -243,6 +282,10 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--block", type=int, default=None,
                     help="pairs skipped per seed. From the library unless given")
+    ap.add_argument("--spike-genome-count", type=int, default=3,
+                    help="how many clean genomes to take from --genome-pool. More than "
+                         "one because one genome's recognition decay is that genome's, "
+                         "and the ladder is reported per genome")
     ap.add_argument("--genome-pool", type=Path, default=None,
                     help="a nucleotide release file to CHOOSE the ladder genome from, "
                          "when none is named: the first in the length band that is "
@@ -424,7 +467,8 @@ def main() -> None:
                 "--genome-pool needs this sample's own contigs to choose against "
                 "(--identified, --unidentified): the one property of a ladder genome "
                 "that no reference set can carry is absence from the water in hand.")
-        genomes, genome_pick = pick_genome(args.genome_pool, avoid, args.min_mlen)
+        genomes, genome_pick = pick_genome(args.genome_pool, avoid, args.min_mlen,
+                                           want=args.spike_genome_count)
         if not genomes:
             (args.out / f"spike_genome_pick_s{args.seed}.json").write_text(
                 json.dumps(genome_pick, indent=2))
